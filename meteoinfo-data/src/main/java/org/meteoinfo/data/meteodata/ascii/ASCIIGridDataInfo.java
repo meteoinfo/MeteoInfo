@@ -36,6 +36,7 @@ import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.ndarray.Section;
 import org.meteoinfo.data.meteodata.Attribute;
+import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
 /**
@@ -88,7 +89,7 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
             String yll = dataArray[6];
             yllCenter = Double.parseDouble(dataArray[7]);
             cellSize = Double.parseDouble(dataArray[9]);
-            nodata_value = Double.parseDouble(dataArray[11]);
+            this.missingValue = Double.parseDouble(dataArray[11]);
             if (xll.toLowerCase().equals("xllcorner")) {
                 xllCenter += cellSize * 0.5;
             }
@@ -110,7 +111,6 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
                 }
             }
 
-            this.setMissingValue(nodata_value);
             double[] X = new double[ncols];
             X[0] = xllCenter;
             for (i = 1; i < ncols; i++) {
@@ -144,7 +144,6 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
             aVar.setName("var");
             aVar.addDimension(yDim);
             aVar.addDimension(xDim);
-            aVar.setFillValue(nodata_value);
             if (isInt) {
                 this.dataType = DataType.INT;
             } else {
@@ -152,7 +151,7 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
             }
             this.dataType = DataType.FLOAT;
             aVar.setDataType(dataType);
-            aVar.addAttribute(new Attribute("fill_value", this.getMissingValue()));
+            aVar.addAttribute(new Attribute("fill_value", this.missingValue));
             variables.add(aVar);
             this.setVariables(variables);
 
@@ -213,8 +212,8 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
             int rangeIdx = 0;
             Range yRange = section.getRange(rangeIdx++);
             Range xRange = section.getRange(rangeIdx);
-            //IndexIterator ii = dataArray.getIndexIterator();
             readXY(yRange, xRange, dataArray);
+            ArrayMath.missingToNaN(dataArray, this.missingValue);
 
             return dataArray;
         } catch (InvalidRangeException ex) {
@@ -454,7 +453,7 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
         ga.setData(this.read(varName));
         ga.xArray = this.getXDimension().getValues();
         ga.yArray = this.getYDimension().getValues();
-        ga.missingValue = this.getMissingValue();
+        ga.missingValue = this.missingValue;
 
         return ga;
     }

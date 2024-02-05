@@ -173,7 +173,6 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
                 var.setStation(true);
                 var.setDimension(tdim);
                 var.setDimension(stdim);
-                var.setFillValue(this.getMissingValue());
                 variables.add(var);
             }
             this.setVariables(variables);
@@ -440,6 +439,9 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
         }
         try {
             r = r.section(origin, shape, stride);
+            if (r.getDataType().isNumeric()) {
+                ArrayMath.missingToNaN(r, this.missingValue);
+            }
         } catch (InvalidRangeException ex) {
             Logger.getLogger(MICAPS1DataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }

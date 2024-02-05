@@ -10,6 +10,7 @@ from org.meteoinfo.chart.graphic import GraphicFactory
 from org.meteoinfo.chart import AspectType
 from org.meteoinfo.geometry.legend import BreakTypes, BarBreak, LegendManage
 from org.meteoinfo.geo.layer import LayerTypes
+from org.meteoinfo.geo.io import GraphicUtil
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection
 from org.meteoinfo.chart.jogl import GLPlot, GLForm, JOGLUtil, EarthGLPlot, MapGLPlot
@@ -912,20 +913,18 @@ class Axes3DGL(Axes3D):
             else:
                 plotutil.setlegendscheme(ls, **kwargs)
             layer.setLegendScheme(ls)
-            graphics = GraphicFactory.createGraphicsFromLayer(layer, offset, xshift)
+            graphics = GraphicUtil.layerToGraphics(layer, offset, xshift)
         else:
-            # interpolation = kwargs.pop('interpolation', None)
-            # graphics = GraphicFactory.createTexture(layer, offset, xshift, interpolation)
             nlat = kwargs.pop('nlat', 180)
             nlon = kwargs.pop('nlon', 360)
             if self._axes.getProjInfo() is None:
-                graphics = GraphicFactory.geoSurface(layer, offset, xshift, nlon, nlat)
+                graphics = GraphicFactory.geoSurface(layer.getImage(), layer.getExtent(), offset, xshift, nlon, nlat)
             else:
                 limits = kwargs.pop('limits', None)
                 if limits is None:
-                    graphics = GraphicFactory.geoSurface(layer, offset, xshift, nlon, nlat, self._axes.getProjInfo())
+                    graphics = GraphicFactory.geoSurface(layer.getImage(), layer.getExtent(), offset, xshift, nlon, nlat, self._axes.getProjInfo())
                 else:
-                    graphics = GraphicFactory.geoSurface(layer, offset, xshift, nlon, nlat, self._axes.getProjInfo(),
+                    graphics = GraphicFactory.geoSurface(layer.getImage, layer.getExtent(), offset, xshift, nlon, nlat, self._axes.getProjInfo(),
                                                          limits)
 
         lighting = kwargs.pop('lighting', None)

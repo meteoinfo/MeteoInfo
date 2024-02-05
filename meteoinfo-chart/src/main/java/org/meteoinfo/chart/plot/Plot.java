@@ -7,7 +7,6 @@ package org.meteoinfo.chart.plot;
 
 import org.meteoinfo.chart.Margin;
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.data.Dataset;
 
 import java.awt.*;
@@ -53,7 +52,7 @@ public abstract class Plot {
     
     protected Rectangle2D position = new Rectangle2D.Double(0.13, 0.11, 0.775, 0.815);        
     protected Rectangle2D outerPosition = new Rectangle2D.Double(0, 0, 1, 1);        
-    private Rectangle2D outerPositionArea;
+    protected Rectangle2D outerPositionArea;
     private Margin tightInset = new Margin();
     
     /** If is sub-plot. */
@@ -180,7 +179,7 @@ public abstract class Plot {
     
     /**
      * Update position
-     * @param figureArea Figure areaa
+     * @param figureArea Figure area
      */
     public void updatePosition(Rectangle2D figureArea){
         double x = this.positionArea.getX() / figureArea.getWidth();
@@ -463,7 +462,7 @@ public abstract class Plot {
      * Update position area zoom
      * @return Position area zoom
      */
-    public double updatePostionAreaZoom(){
+    public double updatePositionAreaZoom(){
         Rectangle2D tightInsetArea = this.tightInset.getArea(this.positionArea);
         double left = tightInsetArea.getX() - this.outerPositionArea.getX();
         double right = this.outerPositionArea.getX() + this.outerPositionArea.getWidth() - 

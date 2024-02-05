@@ -10,13 +10,11 @@
  */
 package org.meteoinfo.chart;
 
-import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -26,7 +24,6 @@ import org.meteoinfo.chart.jogl.Plot3DGL;
 import org.meteoinfo.chart.plot.MapPlot;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.geo.drawing.Draw;
 
 /**
  *
@@ -758,7 +755,7 @@ public class Chart {
                 plot.setPositionArea(positionArea);
                 Margin tightInset = plot.getTightInset(g, positionArea);
                 plot.setTightInset(tightInset);
-                double zoom1 = plot.updatePostionAreaZoom();
+                double zoom1 = plot.getPositionAreaZoom();
                 if (zoom1 < zoom) {
                     zoom = zoom1;
                 }
@@ -768,7 +765,7 @@ public class Chart {
                 plot.setPositionArea(positionArea);
                 Margin tightInset = plot.getTightInset(g, positionArea);
                 plot.setTightInset(tightInset);
-                double zoom1 = plot.updatePostionAreaZoom();
+                double zoom1 = plot.getPositionAreaZoom();
                 if (zoom1 < zoom) {
                     zoom = zoom1;
                 }
@@ -791,7 +788,7 @@ public class Chart {
             plot.setPositionArea(positionArea);
             Margin tightInset = plot.getTightInset(g, positionArea);
             plot.setTightInset(tightInset);
-            double zoom = plot.updatePostionAreaZoom();
+            double zoom = plot.getPositionAreaZoom();
             plot.setPositionAreaZoom(zoom);
             return subPlotArea;
         } else {
@@ -800,7 +797,7 @@ public class Chart {
             plot.setPositionArea(positionArea);
             Margin tightInset = plot.getTightInset(g, positionArea);
             plot.setTightInset(tightInset);
-            double zoom = plot.updatePostionAreaZoom();
+            double zoom = plot.getPositionAreaZoom();
             plot.setPositionAreaZoom(zoom);
             //return tightInset.getArea(positionArea);
             return area;

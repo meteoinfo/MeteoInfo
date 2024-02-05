@@ -42,6 +42,7 @@ import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.ndarray.Section;
 import org.meteoinfo.data.meteodata.Attribute;
+import org.meteoinfo.ndarray.math.ArrayMath;
 
  /**
   *
@@ -216,7 +217,6 @@ import org.meteoinfo.data.meteodata.Attribute;
                      aVar.setDataType(dtype);
                      aVar.addDimension(yDim);
                      aVar.addDimension(xDim);
-                     aVar.setFillValue(nodata);
                      variables.add(aVar);
                  }
                  this.setVariables(variables);
@@ -288,6 +288,8 @@ import org.meteoinfo.data.meteodata.Attribute;
              Range xRange = section.getRange(rangeIdx);
              IndexIterator ii = array.getIndexIterator();
              this.readArray_bil_xy(varIdx, array.getDataType(), yRange, xRange, ii);
+             ArrayMath.missingToNaN(array, this.missingValue);
+
              return array;
          } catch (InvalidRangeException ex) {
              Logger.getLogger(BILDataInfo.class.getName()).log(Level.SEVERE, null, ex);

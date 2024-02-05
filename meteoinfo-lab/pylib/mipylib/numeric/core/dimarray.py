@@ -50,7 +50,7 @@ def dimension(value, name='null', type=None):
 # Dimension array
 class DimArray(NDArray):
     
-    def __init__(self, array, dims=None, fill_value=-9999.0, proj=ProjectionInfo.LONG_LAT):
+    def __init__(self, array, dims=None, proj=ProjectionInfo.LONG_LAT):
         if isinstance(array, NDArray):
             array = array._array
         super(DimArray, self).__init__(array)
@@ -58,9 +58,6 @@ class DimArray(NDArray):
         if not dims is None:
             for dim in dims:
                 self.adddim(dim)
-        self.fill_value = fill_value        
-        if math.isnan(self.fill_value):
-            self.fill_value = -9999.0
         self.proj = proj
         
     def __getitem__(self, indices):
@@ -310,124 +307,124 @@ class DimArray(NDArray):
 
         for i in flips:
             r = r.flip(i)
-        data = DimArray(r, ndims, self.fill_value, self.proj)
+        data = DimArray(r, ndims, self.proj)
         if onlyrange:
             data.base = self.get_base()
         return data
         
     def __add__(self, other):
         r = super(DimArray, self).__add__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __radd__(self, other):
         return DimArray.__add__(self, other)
         
     def __sub__(self, other):
         r = super(DimArray, self).__sub__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __rsub__(self, other):
         r = super(DimArray, self).__rsub__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __mul__(self, other):
         r = super(DimArray, self).__mul__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __rmul__(self, other):
         return DimArray.__mul__(self, other)
         
     def __div__(self, other):
         r = super(DimArray, self).__div__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __rdiv__(self, other):
         r = super(DimArray, self).__rdiv__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
 
     def __floordiv__(self, other):
         r = super(DimArray, self).__floordiv__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
 
     def __rfloordiv__(self, other):
         r = super(DimArray, self).__rfloordiv__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
 
     def __mod__(self, other):
         r = super(DimArray, self).__mod__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
 
     def __rmod__(self, other):
         r = super(DimArray, self).__rmod__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
 
     def __divmod__(self, other):
         r = super(DimArray, self).__divmod__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
 
     def __rdivmod__(self, other):
         r = super(DimArray, self).__rdivmod__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __pow__(self, other):
         r = super(DimArray, self).__pow__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __rpow__(self, other):
         r = super(DimArray, self).__rpow__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __neg__(self):
         r = super(DimArray, self).__neg__()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __lt__(self, other):
         r = super(DimArray, self).__lt__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __le__(self, other):
         r = super(DimArray, self).__le__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __eq__(self, other):
         r = super(DimArray, self).__eq__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __ne__(self, other):
         r = super(DimArray, self).__ne__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __gt__(self, other):
         r = super(DimArray, self).__gt__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __ge__(self, other):
         r = super(DimArray, self).__ge__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)  
+        return DimArray(r, self.dims, self.proj)
 
     def __and__(self, other):
         r = super(DimArray, self).__and__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __or__(self, other):
         r = super(DimArray, self).__or__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __xor__(self, other):
         r = super(DimArray, self).__xor__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __invert__(self, other):
         r = super(DimArray, self).__invert__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def __lshift__(self, other):
         r = super(DimArray, self).__lshift__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)      
+        return DimArray(r, self.dims, self.proj)
         
     def __rshift__(self, other):
         r = super(DimArray, self).__rshift__(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
 
     @property
     def array(self):
@@ -477,7 +474,7 @@ class DimArray(NDArray):
             raise KeyError('The member %s not exists!' % member)
             
         a = a.extractMemberArray(m)
-        r = DimArray(a, self.dims, self.fill_value, self.proj)
+        r = DimArray(a, self.dims, self.proj)
         if not indices is None:
             r = r.__getitem__(indices)
             
@@ -493,7 +490,7 @@ class DimArray(NDArray):
         :returns: (*array*) The array with element value of 1 or 0.
         """
         r = super(DimArray, self).in_values(other)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def astype(self, dtype):
         """
@@ -504,7 +501,7 @@ class DimArray(NDArray):
         :returns: (*array*) Converted array.
         """
         r = super(DimArray, self).astype(dtype)
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
     
     def value(self, indices):
         #print type(indices)
@@ -569,14 +566,14 @@ class DimArray(NDArray):
         rr = Array.factory(r.getDataType(), r.getShape());
         MAMath.copy(rr, r);
         array = NDArray(rr)
-        data = DimArray(array, dims, self.fill_value, self.proj)
+        data = DimArray(array, dims, self.proj)
         return data
         
     def copy(self):
         """
         Copy array vlaues to a new array.
         """
-        return DimArray(self._array.copy(), self.dims, self.fill_value, self.proj)
+        return DimArray(self._array.copy(), self.dims, self.proj)
     
     # get dimension length
     def dimlen(self, idx=0):
@@ -776,7 +773,7 @@ class DimArray(NDArray):
         else:
             return False
                    
-    def asgriddata(self, xdata=None, ydata=None, fill_value=None):
+    def asgriddata(self, xdata=None, ydata=None, fill_value=-9999.0):
         if xdata is None or ydata is None:
             xdata = self.dimvalue(1)
             ydata = self.dimvalue(0)
@@ -787,12 +784,11 @@ class DimArray(NDArray):
         if ydata[1] < ydata[0]:
             ydata = ydata[::-1]
             data = self.array[::-1,:]
-        if fill_value is None:
-            fill_value = self.fill_value;
+
         gdata = GridData(data._array, xdata._array, ydata._array, fill_value, self.proj)
         return PyGridData(gdata)
         
-    def asgridarray(self, xdata=None, ydata=None, fill_value=None):
+    def asgridarray(self, xdata=None, ydata=None, fill_value=-9999.0):
         if xdata is None or ydata is None:
             xdata = self.dimvalue(1)
             ydata = self.dimvalue(0)
@@ -803,8 +799,7 @@ class DimArray(NDArray):
         if ydata[1] < ydata[0]:
             ydata = ydata[::-1]
             data = self.array[::-1,:]
-        if fill_value is None:
-            fill_value = self.fill_value
+
         gdata = GridArray(data._array, xdata._array, ydata._array, fill_value, self.proj)
         return gdata
         
@@ -825,7 +820,7 @@ class DimArray(NDArray):
             for i in range(0, self.ndim):
                 if i != axis:
                     dims.append(self.dims[i])
-            return DimArray(r, dims, self.fill_value, self.proj)
+            return DimArray(r, dims, self.proj)
 
     def max(self, axis=None):
         """
@@ -848,7 +843,7 @@ class DimArray(NDArray):
                 else:
                     if i != axis:
                         dims.append(self.dims[i])
-            return DimArray(r, dims, self.fill_value, self.proj)
+            return DimArray(r, dims, self.proj)
 
     def min(self, axis=None):
         """
@@ -871,7 +866,7 @@ class DimArray(NDArray):
                 else:
                     if i != axis:
                         dims.append(self.dims[i])
-            return DimArray(r, dims, self.fill_value, self.proj)
+            return DimArray(r, dims, self.proj)
         
     def mean(self, axis=None, keepdims=False):
         """
@@ -896,7 +891,7 @@ class DimArray(NDArray):
                 else:
                     if i != axis:
                         dims.append(self.dims[i])
-            return DimArray(r, dims, self.fill_value, self.proj)
+            return DimArray(r, dims, self.proj)
             
     def median(self, axis=None):
         """
@@ -915,7 +910,7 @@ class DimArray(NDArray):
             for i in range(0, self.ndim):
                 if i != axis:
                     dims.append(self.dims[i])
-            return DimArray(r, dims, self.fill_value, self.proj)
+            return DimArray(r, dims, self.proj)
             
     def std(self, axis=None, ddof=0):
         """
@@ -936,7 +931,7 @@ class DimArray(NDArray):
             for i in range(0, self.ndim):
                 if i != axis:
                     dims.append(self.dims[i])
-            return DimArray(r, dims, self.fill_value, self.proj)
+            return DimArray(r, dims, self.proj)
 
     def var(self, axis=None, ddof=0):
         """
@@ -957,7 +952,7 @@ class DimArray(NDArray):
             for i in range(0, self.ndim):
                 if i != axis:
                     dims.append(self.dims[i])
-            return DimArray(r, dims, self.fill_value, self.proj)
+            return DimArray(r, dims, self.proj)
         
     def abs(self):
         """
@@ -967,7 +962,7 @@ class DimArray(NDArray):
             For complex input, a + ib, the absolute value is \sqrt{ a^2 + b^2 }.
         """
         r = super(DimArray, self).abs()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
 
     def ceil(self):
         """
@@ -976,7 +971,7 @@ class DimArray(NDArray):
         :return: The ceiling of each element.
         """
         r = super(DimArray, self).ceil()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
 
     def floor(self):
         """
@@ -985,7 +980,7 @@ class DimArray(NDArray):
         :return: The floor of each element.
         """
         r = super(DimArray, self).floor()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def sqrt(self):
         """
@@ -994,7 +989,7 @@ class DimArray(NDArray):
         :returns: (*DimArray*) Sqrt value array.
         """
         r = super(DimArray, self).sqrt()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
     
     def sin(self):
         """
@@ -1003,7 +998,7 @@ class DimArray(NDArray):
         :returns: (*DimArray*) Sin value array.
         """
         r = super(DimArray, self).sin()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
 
     def sinh(self):
         """
@@ -1012,11 +1007,11 @@ class DimArray(NDArray):
         :returns: (*DimArray*) Hyperbolic sin value array.
         """
         r = super(DimArray, self).sinh()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def cos(self):
         r = super(DimArray, self).cos()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
 
     def cosh(self):
         """
@@ -1025,11 +1020,11 @@ class DimArray(NDArray):
         :returns: (*DimArray*) Hyperbolic cos value array.
         """
         r = super(DimArray, self).cosh()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def tan(self):
         r = super(DimArray, self).tan()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
 
     def tanh(self):
         """
@@ -1038,11 +1033,11 @@ class DimArray(NDArray):
         :returns: (*DimArray*) Hyperbolic tan value array.
         """
         r = super(DimArray, self).tanh()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def asin(self):
         r = super(DimArray, self).asin()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def acos(self):
         """
@@ -1051,23 +1046,23 @@ class DimArray(NDArray):
         :returns: (*DimArray*) Acos value array.
         """
         r = super(DimArray, self).acos()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def atan(self):
         r = super(DimArray, self).atan()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def exp(self):
         r = super(DimArray, self).exp()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def log(self):
         r = super(DimArray, self).log()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     def log10(self):
         r = super(DimArray, self).log10()
-        return DimArray(r, self.dims, self.fill_value, self.proj)        
+        return DimArray(r, self.dims, self.proj)
         
     def maskout(self, mask):
         """
@@ -1079,7 +1074,7 @@ class DimArray(NDArray):
         """
         if isinstance(mask, NDArray):
             r = ArrayMath.maskout(self.asarray(), mask.asarray())
-            return DimArray(NDArray(r), self.dims, self.fill_value, self.proj)
+            return DimArray(NDArray(r), self.dims, self.proj)
         else:
             x = self.dims[1].getDimValue()
             y = self.dims[0].getDimValue()
@@ -1089,7 +1084,7 @@ class DimArray(NDArray):
             if not isinstance(mask, (list, ArrayList)):
                 mask = [mask]
             r = GeometryUtil.maskout(self.asarray(), x, y, mask)
-            r = DimArray(NDArray(r), self.dims, self.fill_value, self.proj)
+            r = DimArray(NDArray(r), self.dims, self.proj)
             return r
             
     def maskin(self, mask):
@@ -1102,14 +1097,14 @@ class DimArray(NDArray):
         """
         if isinstance(mask, NDArray):
             r = ArrayMath.maskin(self.asarray(), mask.asarray())
-            return DimArray(r, self.dims, self.fill_value, self.proj)
+            return DimArray(r, self.dims, self.proj)
         else:
             x = self.dimvalue(1)
             y = self.dimvalue(0)
             if not isinstance(mask, (list, ArrayList)):
                 mask = [mask]
             r = GeometryUtil.maskin(self._array, x._array, y._array, mask)
-            r = DimArray(r, self.dims, self.fill_value, self.proj)
+            r = DimArray(r, self.dims, self.proj)
             return r
         
     def transpose(self, axes=None):
@@ -1133,7 +1128,7 @@ class DimArray(NDArray):
             for ax in axes:
                 dims.append(self.dims[ax])
 
-        return DimArray(r, dims, self.fill_value, self.proj)
+        return DimArray(r, dims, self.proj)
         
     T = property(transpose)
 
@@ -1166,7 +1161,7 @@ class DimArray(NDArray):
                 dims.append(self.dims[axis1])
             else:
                 dims.append(self.dims[i])
-        return DimArray(r, dims, self.fill_value, self.proj)
+        return DimArray(r, dims, self.proj)
     
     def inv(self):
         """
@@ -1175,7 +1170,7 @@ class DimArray(NDArray):
         :returns: Inverse matrix array.
         """
         r = super(DimArray, self).inv()
-        return DimArray(r, self.dims, self.fill_value, self.proj)
+        return DimArray(r, self.dims, self.proj)
         
     I = property(inv)                
         
@@ -1342,7 +1337,7 @@ class DimArray(NDArray):
             xdim = Dimension(DimensionType.X)
             xdim.setDimValues(NDArray(x).aslist())    
             dims[-1] = xdim
-            rr = DimArray(NDArray(r), dims, self.fill_value, toproj)
+            rr = DimArray(NDArray(r), dims, toproj)
             return rr
         
         if method == 'bilinear':
@@ -1384,7 +1379,7 @@ class DimArray(NDArray):
                 rdims.append(ndim)
             else:
                 rdims.append(self.dims[i])
-        return DimArray(NDArray(r), rdims, self.fill_value, self.proj)
+        return DimArray(NDArray(r), rdims, self.proj)
         
     def savegrid(self, fname, format='surfer', **kwargs):
         """

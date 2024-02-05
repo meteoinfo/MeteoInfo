@@ -21,9 +21,7 @@ import org.meteoinfo.data.XYListDataset;
 import org.meteoinfo.data.analysis.Statistics;
 import org.meteoinfo.geo.drawing.ContourDraw;
 import org.meteoinfo.geo.drawing.Draw;
-import org.meteoinfo.geo.layer.ImageLayer;
-import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.geo.legend.LegendManage;
+import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.geometry.colors.ExtendType;
 import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.colors.OpacityTransferFunction;
@@ -1980,117 +1978,6 @@ public class GraphicFactory {
     }
 
     /**
-     * Create 3D graphics from a VectorLayer.
-     *
-     * @param layer The layer
-     * @param offset Offset of z axis.
-     * @param xshift X shift - to shift the graphics in x direction, normally
-     * for map in 180 - 360 degree east
-     * @return Graphics
-     */
-    public static GraphicCollection createGraphicsFromLayer(VectorLayer layer, double offset, double xshift) {
-        GraphicCollection3D graphics = new GraphicCollection3D();
-        graphics.setFixZ(true);
-        graphics.setZValue(offset);
-        ShapeTypes shapeType = layer.getShapeType();
-        LegendScheme ls = layer.getLegendScheme();
-        PointZ pz;
-        ColorBreak cb;
-        switch (shapeType) {
-            case POINT:
-                for (PointShape shape : (List<PointShape>) layer.getShapes()) {
-                    PointZShape s = new PointZShape();
-                    PointD pd = shape.getPoint();
-                    pz = new PointZ(pd.X + xshift, pd.Y, offset);
-                    s.setPoint(pz);
-                    cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                    graphics.add(new Graphic(s, cb));
-                }
-                break;
-            case POLYLINE:
-                for (PolylineShape shape : (List<PolylineShape>) layer.getShapes()) {
-                    cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                    for (Polyline pl : (List<Polyline>) shape.getPolylines()) {
-                        PolylineZShape s = new PolylineZShape();
-                        List<PointZ> plist = new ArrayList<>();
-                        for (PointD pd : pl.getPointList()) {
-                            pz = new PointZ(pd.X + xshift, pd.Y, offset);
-                            plist.add(pz);
-                        }
-                        s.setPoints(plist);
-                        graphics.add(new Graphic(s, cb));
-                    }
-                }
-                break;
-            case POLYGON:
-                for (PolygonShape shape : (List<PolygonShape>) layer.getShapes()) {
-                    PolygonZShape s = new PolygonZShape();
-                    List<PointZ> plist = new ArrayList<>();
-                    for (PointD pd : shape.getPoints()) {
-                        pz = new PointZ(pd.X + xshift, pd.Y, offset);
-                        plist.add(pz);
-                    }
-                    s.setPartNum(shape.getPartNum());
-                    s.setParts(shape.getParts());
-                    s.setPoints(plist);
-                    cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                    graphics.add(new Graphic(s, cb));
-                }
-                break;
-            case POINT_Z:
-            case POLYLINE_Z:
-            case POLYGON_Z:
-                graphics.setFixZ(false);
-                switch (shapeType) {
-                    case POINT_Z:
-                        for (PointZShape shape : (List<PointZShape>) layer.getShapes()) {
-                            PointZShape s = new PointZShape();
-                            PointZ pd = (PointZ) shape.getPoint();
-                            pz = new PointZ(pd.X + xshift, pd.Y, pd.Z + offset, pd.M);
-                            s.setPoint(pz);
-                            cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                            graphics.add(new Graphic(s, cb));
-                        }
-                        break;
-                    case POLYLINE_Z:
-                        for (PolylineZShape shape : (List<PolylineZShape>) layer.getShapes()) {
-                            cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                            for (PolylineZ pl : (List<PolylineZ>) shape.getPolylines()) {
-                                PolylineZShape s = new PolylineZShape();
-                                List<PointZ> plist = new ArrayList<>();
-                                for (PointZ pd : (List<PointZ>) pl.getPointList()) {
-                                    pz = new PointZ(pd.X + xshift, pd.Y, pd.Z + offset, pd.M);
-                                    plist.add(pz);
-                                }
-                                s.setPoints(plist);
-                                graphics.add(new Graphic(s, cb));
-                            }
-                        }
-                        break;
-                    case POLYGON_Z:
-                        for (PolygonZShape shape : (List<PolygonZShape>) layer.getShapes()) {
-                            PolygonZShape s = new PolygonZShape();
-                            List<PointZ> plist = new ArrayList<>();
-                            for (PointZ pd : (List<PointZ>) shape.getPoints()) {
-                                pz = new PointZ(pd.X + xshift, pd.Y, pd.Z + offset, pd.M);
-                                plist.add(pz);
-                            }
-                            s.setPartNum(shape.getPartNum());
-                            s.setParts(shape.getParts());
-                            s.setPoints(plist);
-                            cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                            graphics.add(new Graphic(s, cb));
-                        }
-                        break;
-                }
-                break;
-        }
-        graphics.setLegendScheme(ls);
-
-        return graphics;
-    }
-
-    /**
      * Create rectangle graphic
      *
      * @param pos Rectangle position
@@ -3513,45 +3400,8 @@ public class GraphicFactory {
     }
 
     /**
-     * Create image
-     *
-     * @param layer Image layer
-     * @param offset Offset of z axis
-     * @param xshift X shift - to shift the grahpics in x direction, normally
-     * for map in 180 - 360 degree east
-     * @param interpolation Interpolation
-     * @return Graphics
-     */
-    public static GraphicCollection createImage(ImageLayer layer, double offset, double xshift,
-            String interpolation) {
-        GraphicCollection3D graphics = new GraphicCollection3D();
-        graphics.setFixZ(true);
-        graphics.setZDir("z");
-        graphics.setZValue(offset);
-        ImageShape ishape = new ImageShape();
-        ishape.setImage(layer.getImage());
-        Extent extent = layer.getExtent();
-        Extent3D ex3 = new Extent3D(extent.minX + xshift, extent.maxX + xshift, extent.minY, extent.maxY, offset, offset);
-        List<PointZ> coords = new ArrayList<>();
-        coords.add(new PointZ(extent.minX + xshift, extent.minY, offset));
-        coords.add(new PointZ(extent.maxX + xshift, extent.minY, offset));
-        coords.add(new PointZ(extent.maxX + xshift, extent.maxY, offset));
-        coords.add(new PointZ(extent.minX + xshift, extent.maxY, offset));
-        ishape.setExtent(ex3);
-        ishape.setCoords(coords);
-        Graphic gg = new Graphic(ishape, new ColorBreak());
-        if (interpolation != null) {
-            ((ImageShape) gg.getShape()).setInterpolation(interpolation);
-        }
-        graphics.add(gg);
-
-        return graphics;
-    }
-
-    /**
      * Create Texture
      *
-     * @param gl            GL2
      * @param layer         Image layer
      * @param offset        Offset of z axis
      * @param xshift        X shift - to shift the grahpics in x direction, normally
@@ -3560,16 +3410,15 @@ public class GraphicFactory {
      * @return Graphics
      * @throws IOException
      */
-    public static GraphicCollection createTexture(ImageLayer layer, double offset, double xshift,
+    public static GraphicCollection createTexture(String fileName, BufferedImage image, Extent extent, double offset, double xshift,
                                                   String interpolation) throws IOException {
         GraphicCollection3D graphics = new GraphicCollection3D();
         graphics.setFixZ(true);
         graphics.setZDir("z");
         graphics.setZValue(offset);
         TextureShape ishape = new TextureShape();
-        ishape.setFileName(layer.getFileName());
-        ishape.setImage(layer.getImage());
-        Extent extent = layer.getExtent();
+        ishape.setFileName(fileName);
+        ishape.setImage(image);
         Extent3D ex3 = new Extent3D(extent.minX + xshift, extent.maxX + xshift, extent.minY, extent.maxY, offset, offset);
         List<PointZ> coords = new ArrayList<>();
         coords.add(new PointZ(extent.minX + xshift, extent.minY, offset));
@@ -8718,7 +8567,8 @@ public class GraphicFactory {
     /**
      * Create surface graphic
      *
-     * @param layer         Image layer
+     * @param image         The image
+     * @param extent        Then image extent
      * @param offset        Offset of z axis
      * @param xShift        X shift - to shift the graphics in x direction, normally
      *                      for map in 180 - 360 degree east
@@ -8727,9 +8577,8 @@ public class GraphicFactory {
      * @return Graphics
      * @throws IOException
      */
-    public static MeshGraphic geoSurface(ImageLayer layer, double offset, double xShift,
+    public static MeshGraphic geoSurface(BufferedImage image, Extent extent, double offset, double xShift,
                                       int nLon, int nLat) throws IOException {
-        Extent extent = layer.getExtent();
         Array lon = ArrayUtil.lineSpace(extent.minX + xShift, extent.maxX + xShift, nLon + 1, true);
         Array lat = ArrayUtil.lineSpace(extent.minY, extent.maxY, nLat + 1, true);
         lat = lat.flip(0).copy();
@@ -8743,7 +8592,7 @@ public class GraphicFactory {
         ((PolygonBreak) ls.getLegendBreak(0)).setOutlineColor(Color.white);
 
         MeshGraphic graphic = GraphicFactory.surface(lon, lat, alt, ls);
-        graphic.setImage(layer.getImage());
+        graphic.setImage(image);
 
         return graphic;
     }
@@ -8751,7 +8600,8 @@ public class GraphicFactory {
     /**
      * Create surface graphic
      *
-     * @param layer         Image layer
+     * @param image         The image
+     * @param imageExtent   Then image extent
      * @param offset        Offset of z axis
      * @param xShift        X shift - to shift the graphics in x direction, normally
      *                      for map in 180 - 360 degree east
@@ -8761,10 +8611,9 @@ public class GraphicFactory {
      * @return Graphics
      * @throws IOException
      */
-    public static MeshGraphic geoSurface(ImageLayer layer, double offset, double xShift,
+    public static MeshGraphic geoSurface(BufferedImage image, Extent imageExtent, double offset, double xShift,
                                          int nLon, int nLat, ProjectionInfo toProj) throws IOException {
-        Extent layerExtent = layer.getExtent();
-        Extent extent = (Extent) layerExtent.clone();
+        Extent extent = (Extent) imageExtent.clone();
         double width = extent.getWidth();
         double height = extent.getHeight();
         float cutoff = toProj.getCutoff();
@@ -8807,12 +8656,11 @@ public class GraphicFactory {
             extentChanged = true;
         }
 
-        BufferedImage image = layer.getImage();
         if (extentChanged) {
-            int x = (int) ((extent.minX - layerExtent.minX) / width * image.getWidth());
-            int y = (int) ((layerExtent.maxY - extent.maxY) / height * image.getHeight());
-            int w = (int) (extent.getWidth() / layerExtent.getWidth() * image.getWidth());
-            int h = (int) (extent.getHeight() / layerExtent.getHeight() * image.getHeight());
+            int x = (int) ((extent.minX - imageExtent.minX) / width * image.getWidth());
+            int y = (int) ((imageExtent.maxY - extent.maxY) / height * image.getHeight());
+            int w = (int) (extent.getWidth() / imageExtent.getWidth() * image.getWidth());
+            int h = (int) (extent.getHeight() / imageExtent.getHeight() * image.getHeight());
             BufferedImage nImage = new BufferedImage(w, h, image.getType());
             if (cLon == 0) {
                 int[] rgb = new int[w * h];
@@ -8821,7 +8669,7 @@ public class GraphicFactory {
             }
             else {
                 if (cLon > 0) {
-                    int w1 = (int) ((layerExtent.maxX - extent.minX) / extent.getWidth() * w);
+                    int w1 = (int) ((imageExtent.maxX - extent.minX) / extent.getWidth() * w);
                     int[] rgb1 = new int[w1 * h];
                     rgb1 = image.getRGB(x, y, w1, h, rgb1, 0, w1);
                     int[] rgb2 = new int[(w - w1) * h];
@@ -8829,7 +8677,7 @@ public class GraphicFactory {
                     nImage.setRGB(0, 0, w1, h, rgb1, 0, w1);
                     nImage.setRGB(w1, 0, w - w1, h, rgb2, 0, w - w1);
                 } else {
-                    int w1 = (int) ((extent.maxX - layerExtent.minX) / extent.getWidth() * w);
+                    int w1 = (int) ((extent.maxX - imageExtent.minX) / extent.getWidth() * w);
                     int[] rgb1 = new int[w1 * h];
                     rgb1 = image.getRGB(x, y, w1, h, rgb1, 0, w1);
                     int[] rgb2 = new int[(w - w1) * h];
@@ -8862,7 +8710,8 @@ public class GraphicFactory {
     /**
      * Create surface graphic
      *
-     * @param layer         Image layer
+     * @param image         The image
+     * @param imageExtent   Then image extent
      * @param offset        Offset of z axis
      * @param xShift        X shift - to shift the graphics in x direction, normally
      *                      for map in 180 - 360 degree east
@@ -8873,19 +8722,17 @@ public class GraphicFactory {
      * @return Graphics
      * @throws IOException
      */
-    public static MeshGraphic geoSurface(ImageLayer layer, double offset, double xShift,
+    public static MeshGraphic geoSurface(BufferedImage image, Extent imageExtent, double offset, double xShift,
                                          int nLon, int nLat, ProjectionInfo toProj, List<Number> limits) throws IOException {
-        Extent layerExtent = layer.getExtent();
         Extent extent = new Extent(limits.get(0).doubleValue(), limits.get(1).doubleValue(),
                 limits.get(2).doubleValue(), limits.get(3).doubleValue());
-        double width = layerExtent.getWidth();
-        double height = layerExtent.getHeight();
+        double width = imageExtent.getWidth();
+        double height = imageExtent.getHeight();
 
-        BufferedImage image = layer.getImage();
-        int x = (int) ((extent.minX - layerExtent.minX) / width * image.getWidth());
-        int y = (int) ((layerExtent.maxY - extent.maxY) / height * image.getHeight());
-        int w = (int)(extent.getWidth() / layerExtent.getWidth() * image.getWidth());
-        int h = (int)(extent.getHeight() / layerExtent.getHeight() * image.getHeight());
+        int x = (int) ((extent.minX - imageExtent.minX) / width * image.getWidth());
+        int y = (int) ((imageExtent.maxY - extent.maxY) / height * image.getHeight());
+        int w = (int)(extent.getWidth() / imageExtent.getWidth() * image.getWidth());
+        int h = (int)(extent.getHeight() / imageExtent.getHeight() * image.getHeight());
         BufferedImage nImage = new BufferedImage(w, h, image.getType());
         Graphics2D g2 = nImage.createGraphics();
         g2.drawImage(image.getSubimage(x, y, w, h), 0, 0, null);

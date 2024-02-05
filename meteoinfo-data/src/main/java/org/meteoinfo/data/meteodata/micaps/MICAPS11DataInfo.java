@@ -39,6 +39,7 @@ import org.meteoinfo.ndarray.InvalidRangeException;
 import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.ndarray.Section;
 import org.meteoinfo.data.meteodata.Attribute;
+import org.meteoinfo.ndarray.math.ArrayMath;
 
 /**
  *
@@ -196,7 +197,6 @@ public class MICAPS11DataInfo extends DataInfo implements IGridDataInfo {
                 var.setDimension(zdim);
                 var.setDimension(ydim);
                 var.setDimension(xdim);
-                var.setFillValue(this.getMissingValue());
                 variables.add(var);
             }
             this.setVariables(variables);
@@ -268,6 +268,10 @@ public class MICAPS11DataInfo extends DataInfo implements IGridDataInfo {
             Range xRange = section.getRange(rangeIdx);
             IndexIterator ii = dataArray.getIndexIterator();
             readXY(varName, yRange, xRange, ii);
+
+            if (dataArray.getDataType().isNumeric()) {
+                ArrayMath.missingToNaN(dataArray, this.missingValue);
+            }
 
             return dataArray;
         } catch (InvalidRangeException ex) {

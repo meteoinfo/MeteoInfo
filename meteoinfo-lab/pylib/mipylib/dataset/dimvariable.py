@@ -36,9 +36,6 @@ class DimVariable(object):
             self.dims = variable.getDimensions()
             self.ndim = variable.getDimNumber()
             self.attributes = variable.getAttributes()
-            self.fill_value = variable.getFillValue()
-            self.scale_factor = variable.getScaleFactor()
-            self.add_offset = variable.getAddOffset()
         elif not ncvariable is None:
             self.name = ncvariable.getShortName()
             self.dtype = ncvariable.getDataType()
@@ -300,14 +297,14 @@ class DimVariable(object):
             for i in flips:
                 rr = rr.flip(i)
             rr = rr.reduce()
-            ArrayMath.missingToNaN(rr, self.fill_value)
+            #ArrayMath.missingToNaN(rr, self.fill_value)
             if len(flips) > 0:
                 rrr = Array.factory(rr.getDataType(), rr.getShape())
                 MAMath.copy(rrr, rr)
                 array = np.array(rrr)
             else:
                 array = np.array(rr)
-            data = np.DimArray(array, dims, self.fill_value, self.dataset.proj)
+            data = np.DimArray(array, dims, self.dataset.proj)
             return data
     
     def read(self):
@@ -589,9 +586,6 @@ class TDimVariable(object):
         self.name = variable.getName()
         self.dtype = np.dtype.fromjava(variable.getDataType())
         self.ndim = variable.getDimNumber()
-        self.fill_value = variable.getFillValue()
-        self.scale_factor = variable.getScaleFactor()
-        self.add_offset = variable.getAddOffset()
         dims = variable.getDimensions()
         tdim = Dimension(DimensionType.T)
         times = []
@@ -759,5 +753,5 @@ class TDimVariable(object):
 
             dims = aa.dims
             dims[0].setDimValues(times)
-            r = np.DimArray(data, dims, aa.fill_value, aa.proj)
+            r = np.DimArray(data, dims, aa.proj)
             return r

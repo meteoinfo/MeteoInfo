@@ -11,6 +11,7 @@ from org.meteoinfo.chart.graphic import GraphicFactory
 from org.meteoinfo.chart import ChartText3D
 from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
 from org.meteoinfo.geo.legend import LegendManage
+from org.meteoinfo.geo.io import GraphicUtil
 from org.meteoinfo.geometry.legend import BreakTypes, PolylineBreak
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic
@@ -1641,10 +1642,10 @@ class Axes3D(Axes):
 
             plotutil.setlegendscheme(ls, **kwargs)
             layer.setLegendScheme(ls)
-            graphics = GraphicFactory.createGraphicsFromLayer(layer, offset, xshift)
+            graphics = GraphicUtil.layerToGraphics(layer, offset, xshift)
         else:
             interpolation = kwargs.pop('interpolation', None)
-            graphics = GraphicFactory.createImage(layer, offset, xshift, interpolation)
+            graphics = GraphicUtil.layerToGraphics(layer, offset, xshift, interpolation)
 
         lighting = kwargs.pop('lighting', None)
         if not lighting is None:

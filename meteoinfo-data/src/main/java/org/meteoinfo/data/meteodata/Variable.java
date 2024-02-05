@@ -49,9 +49,6 @@ public class Variable {
     private boolean dimVar = false;
     private List<Integer> levelIdxs = new ArrayList<>();
     private List<Integer> varInLevelIdxs = new ArrayList<>();
-    private double fill_value = -9999.0;
-    private double scale_factor = 1;
-    private double add_offset = 0;
     private Array cachedData;
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -546,60 +543,6 @@ public class Variable {
      */
     public void setVarInLevelIdxs(List<Integer> value) {
         varInLevelIdxs = value;
-    }
-
-    /**
-     * Get fill value
-     *
-     * @return Fill value
-     */
-    public double getFillValue() {
-        return this.fill_value;
-    }
-
-    /**
-     * Set fill value
-     *
-     * @param value Fill value
-     */
-    public void setFillValue(double value) {
-        this.fill_value = value;
-    }
-
-    /**
-     * Get scale factor
-     *
-     * @return Scale factor
-     */
-    public double getScaleFactor() {
-        return this.scale_factor;
-    }
-
-    /**
-     * Set scale factor
-     *
-     * @param value Scale factor
-     */
-    public void setScaleFactor(double value) {
-        this.scale_factor = value;
-    }
-
-    /**
-     * Get add offset
-     *
-     * @return Add offset
-     */
-    public double getAddOffset() {
-        return this.add_offset;
-    }
-
-    /**
-     * Set add offset
-     *
-     * @param value Add offset
-     */
-    public void setAddOffset(double value) {
-        this.add_offset = value;
     }
 
     /**

@@ -23,23 +23,28 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import org.meteoinfo.chart.plot.MapPlot;
-import org.meteoinfo.geo.layout.NorthArrowType;
 
 /**
  *
  * @author Yaqiang Wang
  */
 public class ChartNorthArrow extends ChartElement {
+
+    public enum NorthArrowType {
+        NORTH_ARROW_1,
+        NORTH_ARROW_2,
+    }
+
 // <editor-fold desc="Variables">
 
-    private MapPlot mapPlot;
-    private boolean _antiAlias;
+    private final MapPlot mapPlot;
+    private final boolean antiAlias;
     private float lineWidth;
-    private boolean _drawNeatLine;
-    private Color _neatLineColor;
-    private float _neatLineSize;
-    private NorthArrowType _northArrowType;
-    private float _angle;
+    private boolean drawNeatLine;
+    private Color neatLineColor;
+    private float neatLineSize;
+    private NorthArrowType northArrowType;
+    private float angle;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -56,12 +61,12 @@ public class ChartNorthArrow extends ChartElement {
 
         this.mapPlot = mapPlot;
         this.lineWidth = 1;
-        _antiAlias = true;
-        _drawNeatLine = false;
-        _neatLineColor = Color.black;
-        _neatLineSize = 1;
-        _northArrowType = NorthArrowType.NORTH_ARROW_1;
-        _angle = 0;
+        antiAlias = true;
+        drawNeatLine = false;
+        neatLineColor = Color.black;
+        neatLineSize = 1;
+        northArrowType = NorthArrowType.NORTH_ARROW_1;
+        angle = 0;
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -76,7 +81,7 @@ public class ChartNorthArrow extends ChartElement {
     }
     
     /**
-     * Get line widht
+     * Get line width
      * @return Line width
      */
     public float getLineWidth() {
@@ -97,16 +102,16 @@ public class ChartNorthArrow extends ChartElement {
      * @return If draw neat line
      */
     public boolean isDrawNeatLine() {
-        return _drawNeatLine;
+        return drawNeatLine;
     }
 
     /**
      * Set if draw neat line
      *
-     * @param istrue If draw neat line
+     * @param value If draw neat line
      */
-    public void setDrawNeatLine(boolean istrue) {
-        _drawNeatLine = istrue;
+    public void setDrawNeatLine(boolean value) {
+        drawNeatLine = value;
     }
 
     /**
@@ -115,7 +120,7 @@ public class ChartNorthArrow extends ChartElement {
      * @return Neat line color
      */
     public Color getNeatLineColor() {
-        return _neatLineColor;
+        return neatLineColor;
     }
 
     /**
@@ -124,7 +129,7 @@ public class ChartNorthArrow extends ChartElement {
      * @param color Neat line color
      */
     public void setNeatLineColor(Color color) {
-        _neatLineColor = color;
+        neatLineColor = color;
     }
 
     /**
@@ -133,7 +138,7 @@ public class ChartNorthArrow extends ChartElement {
      * @return Neat line size
      */
     public float getNeatLineSize() {
-        return _neatLineSize;
+        return neatLineSize;
     }
 
     /**
@@ -142,7 +147,25 @@ public class ChartNorthArrow extends ChartElement {
      * @param size Neat line size
      */
     public void setNeatLineSize(float size) {
-        _neatLineSize = size;
+        neatLineSize = size;
+    }
+
+    /**
+     * Get north arrow type
+     *
+     * @return North arrow type
+     */
+    public NorthArrowType getNorthArrowType() {
+        return this.northArrowType;
+    }
+
+    /**
+     * Set north arrow type
+     *
+     * @param value North arrow type
+     */
+    public void setNorthArrowType(NorthArrowType value) {
+        this.northArrowType = value;
     }
 
     /**
@@ -151,7 +174,7 @@ public class ChartNorthArrow extends ChartElement {
      * @return Angle
      */
     public float getAngle() {
-        return _angle;
+        return angle;
     }
 
     /**
@@ -160,7 +183,7 @@ public class ChartNorthArrow extends ChartElement {
      * @param angle The angle
      */
     public void setAngle(float angle) {
-        _angle = angle;
+        this.angle = angle;
     }
 
     // </editor-fold>
@@ -175,10 +198,10 @@ public class ChartNorthArrow extends ChartElement {
     public void draw(Graphics2D g, float x, float y) {
         AffineTransform oldMatrix = g.getTransform();
         g.translate(x, y);
-        if (_angle != 0) {
-            g.rotate(_angle);
+        if (angle != 0) {
+            g.rotate(angle);
         }
-        if (_antiAlias) {
+        if (antiAlias) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         } else {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -193,11 +216,11 @@ public class ChartNorthArrow extends ChartElement {
         drawNorthArrow(g);
 
         //Draw neatline
-        if (_drawNeatLine) {
-            Rectangle.Float mapRect = new Rectangle.Float(_neatLineSize - 1, _neatLineSize - 1,
-                    (this.getWidth() - _neatLineSize), (this.getHeight() - _neatLineSize));
-            g.setColor(_neatLineColor);
-            g.setStroke(new BasicStroke(_neatLineSize));
+        if (drawNeatLine) {
+            Rectangle.Float mapRect = new Rectangle.Float(neatLineSize - 1, neatLineSize - 1,
+                    (this.getWidth() - neatLineSize), (this.getHeight() - neatLineSize));
+            g.setColor(neatLineColor);
+            g.setStroke(new BasicStroke(neatLineSize));
             g.draw(mapRect);
         }
 
@@ -216,10 +239,10 @@ public class ChartNorthArrow extends ChartElement {
         PointF aP = pageToScreen(this.getX(), this.getY(), pageLocation, zoom);
         g.translate(aP.X, aP.Y);
         g.scale(zoom, zoom);
-        if (_angle != 0) {
-            g.rotate(_angle);
+        if (angle != 0) {
+            g.rotate(angle);
         }
-        if (_antiAlias) {
+        if (antiAlias) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         } else {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -234,11 +257,11 @@ public class ChartNorthArrow extends ChartElement {
         drawNorthArrow(g);
 
         //Draw neatline
-        if (_drawNeatLine) {
-            Rectangle.Float mapRect = new Rectangle.Float(_neatLineSize - 1, _neatLineSize - 1,
-                    (this.getWidth() - _neatLineSize) * zoom, (this.getHeight() - _neatLineSize) * zoom);
-            g.setColor(_neatLineColor);
-            g.setStroke(new BasicStroke(_neatLineSize));
+        if (drawNeatLine) {
+            Rectangle.Float mapRect = new Rectangle.Float(neatLineSize - 1, neatLineSize - 1,
+                    (this.getWidth() - neatLineSize) * zoom, (this.getHeight() - neatLineSize) * zoom);
+            g.setColor(neatLineColor);
+            g.setStroke(new BasicStroke(neatLineSize));
             g.draw(mapRect);
         }
 
@@ -246,7 +269,7 @@ public class ChartNorthArrow extends ChartElement {
     }
 
     private void drawNorthArrow(Graphics2D g) {
-        switch (_northArrowType) {
+        switch (northArrowType) {
             case NORTH_ARROW_1:
                 drawNorthArrow1(g);
                 break;

@@ -172,7 +172,6 @@ public class MICAPS3DataInfo extends DataInfo implements IStationDataInfo {
                 //var.setDimension(tdim);
                 //var.setDimension(zdim);
                 var.setDimension(stdim);
-                var.setFillValue(this.getMissingValue());
                 variables.add(var);
             }
             this.setVariables(variables);
@@ -271,6 +270,10 @@ public class MICAPS3DataInfo extends DataInfo implements IStationDataInfo {
                     r.setFloat(i, Float.parseFloat(dataList.get(varIdx)));
                     break;
             }
+        }
+
+        if (r.getDataType().isNumeric()) {
+            ArrayMath.missingToNaN(r, this.missingValue);
         }
         
         return r;

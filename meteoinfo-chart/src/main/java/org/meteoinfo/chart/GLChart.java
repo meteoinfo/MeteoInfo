@@ -6,7 +6,6 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.jogamp.opengl.util.gl2.GLUT;
-import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.jogl.GLPlot;
 import org.meteoinfo.chart.jogl.Plot3DGL;
 import org.meteoinfo.chart.jogl.Program;
@@ -813,7 +812,7 @@ public class GLChart implements GLEventListener {
                 plot.setPositionArea(positionArea);
                 Margin tightInset = plot.getTightInset(g, positionArea);
                 plot.setTightInset(tightInset);
-                double zoom1 = plot.updatePostionAreaZoom();
+                double zoom1 = plot.getPositionAreaZoom();
                 if (zoom1 < zoom) {
                     zoom = zoom1;
                 }
@@ -823,7 +822,7 @@ public class GLChart implements GLEventListener {
                 plot.setPositionArea(positionArea);
                 Margin tightInset = plot.getTightInset(g, positionArea);
                 plot.setTightInset(tightInset);
-                double zoom1 = plot.updatePostionAreaZoom();
+                double zoom1 = plot.getPositionAreaZoom();
                 if (zoom1 < zoom) {
                     zoom = zoom1;
                 }
@@ -846,7 +845,7 @@ public class GLChart implements GLEventListener {
             plot.setPositionArea(positionArea);
             Margin tightInset = plot.getTightInset(g, positionArea);
             plot.setTightInset(tightInset);
-            double zoom = plot.updatePostionAreaZoom();
+            double zoom = plot.getPositionAreaZoom();
             plot.setPositionAreaZoom(zoom);
             return subPlotArea;
         } else {
@@ -855,7 +854,7 @@ public class GLChart implements GLEventListener {
             plot.setPositionArea(positionArea);
             Margin tightInset = plot.getTightInset(g, positionArea);
             plot.setTightInset(tightInset);
-            double zoom = plot.updatePostionAreaZoom();
+            double zoom = plot.getPositionAreaZoom();
             plot.setPositionAreaZoom(zoom);
             //return tightInset.getArea(positionArea);
             return area;

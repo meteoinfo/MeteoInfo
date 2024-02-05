@@ -30,6 +30,7 @@ import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.data.meteodata.Attribute;
+import org.meteoinfo.ndarray.math.ArrayMath;
 
 /**
  *
@@ -145,7 +146,6 @@ public class MICAPS2DataInfo extends DataInfo implements IStationDataInfo {
                 //var.setDimension(tdim);
                 //var.setDimension(zdim);
                 var.setDimension(stdim);
-                var.setFillValue(this.getMissingValue());
                 variables.add(var);
             }
             this.setVariables(variables);
@@ -256,6 +256,10 @@ public class MICAPS2DataInfo extends DataInfo implements IStationDataInfo {
                     r.setFloat(i, v);
                     break;
             }
+        }
+
+        if (r.getDataType().isNumeric()) {
+            ArrayMath.missingToNaN(r, this.missingValue);
         }
 
         return r;

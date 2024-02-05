@@ -22,7 +22,6 @@ from org.meteoinfo.projection import ProjectionInfo
 from org.meteoinfo.common import Extent
 from org.meteoinfo.geo.layer import LayerTypes, WebMapLayer
 from org.meteoinfo.data.mapdata.webmap import WebMapProvider, DefaultTileFactory, TileFactoryInfo
-from org.meteoinfo.geo.layout import ScaleBarType
 
 from java.awt import Font, Color
 
@@ -278,7 +277,7 @@ class MapAxes(Axes):
         sb.setY(y)
         bartype = kwargs.pop('bartype', None)
         if not bartype is None:
-            bartype = ScaleBarType.valueOf(bartype.upper())
+            bartype = ChartScaleBar.ScaleBarType.valueOf(bartype.upper())
             sb.setScaleBarType(bartype)
         linewidth = kwargs.pop('linewidth', None)
         if not linewidth is None:

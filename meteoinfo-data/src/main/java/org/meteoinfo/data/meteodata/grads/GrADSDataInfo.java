@@ -24,6 +24,7 @@ import org.meteoinfo.data.dimarray.DimensionType;
 import org.meteoinfo.data.meteodata.IGridDataInfo;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.common.io.EndianDataOutputStream;
+import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
@@ -328,7 +329,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
         int i;
         boolean isEnd = false;
 
-        //Set dufault value
+        //Set default value
         DESCRIPTOR = aFile;
         boolean isReadLine = true;
         boolean isNotPath = false;
@@ -940,7 +941,6 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                         if (this.getDataType() == MeteoDataType.GRADS_STATION) {
                             aVar.setStation(true);
                         }
-                        aVar.setFillValue(this.getMissingValue());
 
                         VARDEF.addVar(aVar);
                         this.addVariable(aVar);
@@ -1404,6 +1404,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                     }
                 }
             }
+            ArrayMath.missingToNaN(dataArray, this.missingValue);
 
             return dataArray;
         } catch (InvalidRangeException ex) {

@@ -33,6 +33,8 @@ public abstract class AbstractPlot2D extends Plot {
     private Color selectColor = Color.yellow;
     private Extent extent;
     private Extent drawExtent;
+    protected double xScale = 1.0;
+    protected double yScale = 1.0;
     private final Map<Location, Axis> axis;
     private Location xAxisLocation;
     private Location yAxisLocation;
@@ -62,10 +64,7 @@ public abstract class AbstractPlot2D extends Plot {
     public AbstractPlot2D() {
         super();
         this.background = null;
-        //this.drawBackground = false;
         this.drawExtent = new Extent(0, 1, 0, 1);
-        //this.xAxis = new Axis("X", true);
-        //this.yAxis = new Axis("Y", false);
         this.axis = new HashMap<>();
         this.axis.put(Location.BOTTOM, new Axis("X", true, Location.BOTTOM));
         this.axis.put(Location.LEFT, new Axis("Y", false, Location.LEFT));
@@ -333,6 +332,22 @@ public abstract class AbstractPlot2D extends Plot {
     }
 
     /**
+     * Get x scale
+     * @return X scale
+     */
+    public double getXScale() {
+        return this.xScale;
+    }
+
+    /**
+     * Get y scale
+     * @return Y scale
+     */
+    public double getYScale() {
+        return this.yScale;
+    }
+
+    /**
      * Get background
      *
      * @return Background
@@ -349,24 +364,6 @@ public abstract class AbstractPlot2D extends Plot {
     public void setBackground(Color value) {
         this.background = value;
     }
-
-//    /**
-//     * Get if draw background
-//     *
-//     * @return Boolean
-//     */
-//    public boolean isDrawBackground() {
-//        return this.drawBackground;
-//    }
-
-//    /**
-//     * Set if draw background
-//     *
-//     * @param value Boolean
-//     */
-//    public void setDrawBackground(boolean value) {
-//        this.drawBackground = value;
-//    }
 
     @Override
     public PlotType getPlotType() {
@@ -798,6 +795,19 @@ public abstract class AbstractPlot2D extends Plot {
         return this.getAxis(Location.BOTTOM).isInsideTick();
     }
 
+    protected void updateScale(Rectangle2D area) {
+        double width = drawExtent.getWidth();
+        double height = drawExtent.getHeight();
+        if (this.isLogY()) {
+            height = Math.log10(drawExtent.maxY) - Math.log10(drawExtent.minY);
+        }
+        if (this.isLogX()) {
+            width = Math.log10(drawExtent.maxX) - Math.log10(drawExtent.minX);
+        }
+        xScale = area.getWidth() / width;
+        yScale = area.getHeight() / height;
+    }
+
     /**
      * Draw plot
      *
@@ -815,6 +825,7 @@ public abstract class AbstractPlot2D extends Plot {
 
         Rectangle2D graphArea = this.getPositionArea();
         this.setGraphArea(graphArea);
+        updateScale(graphArea);
 
         //Draw title
         this.drawTitle(g, graphArea);
@@ -1002,10 +1013,34 @@ public abstract class AbstractPlot2D extends Plot {
                 double delta = plotArea.getWidth() - w;
                 plotArea.setRect(plotArea.getX() + delta / 2, plotArea.getY(), w, plotArea.getHeight());
             }
+            this.positionArea = plotArea;
 
             return plotArea;
         }
     }
+
+    /**
+     * Set position area
+     *
+     * @param area Position area
+     *//*
+    @Override
+    public void setPositionArea(Rectangle2D area) {
+        this.positionArea = area;
+        if (this.aspectType != AspectType.AUTO) {
+            double width = this.drawExtent.getWidth();
+            double height = this.drawExtent.getHeight();
+            if (width / height / aspect > positionArea.getWidth() / positionArea.getHeight()) {
+                double h = positionArea.getWidth() * height * aspect / width;
+                double delta = positionArea.getHeight() - h;
+                positionArea.setRect(positionArea.getX(), positionArea.getY() + delta / 2, positionArea.getWidth(), h);
+            } else {
+                double w = width * positionArea.getHeight() / height / aspect;
+                double delta = positionArea.getWidth() - w;
+                positionArea.setRect(positionArea.getX() + delta / 2, positionArea.getY(), w, positionArea.getHeight());
+            }
+        }
+    }*/
     
     /**
      * Get outer position area

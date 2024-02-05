@@ -141,7 +141,6 @@ public class MICAPS120DataInfo extends DataInfo implements IStationDataInfo {
                 }
                 var.setStation(true);
                 var.setDimension(stdim);
-                var.setFillValue(this.getMissingValue());
                 variables.add(var);
             }
             this.setVariables(variables);
@@ -265,6 +264,10 @@ public class MICAPS120DataInfo extends DataInfo implements IStationDataInfo {
                         break;
                 }
             }
+        }
+
+        if (r.getDataType().isNumeric()) {
+            ArrayMath.missingToNaN(r, this.missingValue);
         }
         
         return r;

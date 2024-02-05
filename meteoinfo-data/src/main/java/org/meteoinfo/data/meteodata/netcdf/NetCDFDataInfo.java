@@ -362,10 +362,10 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 }
 
                 //nvar.setAttributes(var.getAttributes());
-                double[] packData = this.getPackData(var);
+                /*double[] packData = this.getPackData(var);
                 nvar.setAddOffset(packData[0]);
                 nvar.setScaleFactor(packData[1]);
-                nvar.setFillValue(packData[2]);
+                nvar.setFillValue(packData[2]);*/
 
                 vars.add(nvar);
             }

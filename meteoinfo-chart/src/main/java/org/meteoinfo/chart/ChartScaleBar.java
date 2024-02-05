@@ -16,29 +16,46 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
 import org.meteoinfo.chart.plot.MapPlot;
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.geo.layout.ScaleBarType;
-import org.meteoinfo.geo.layout.ScaleBarUnits;
 
 /**
  *
  * @author Yaqiang Wang
  */
 public class ChartScaleBar extends ChartElement {
+
+    public enum ScaleBarType {
+        SCALE_LINE_1,
+        SCALE_LINE_2,
+        // Alternating scale bar
+        ALTERNATING_BAR;
+    }
+
+    public enum ScaleBarUnits {
+        KILOMETERS,
+        METERS,
+        CENTIMETERS,
+        MILLIMETERS,
+        MILES,
+        YARDS,
+        FEET,
+        INCHES
+    }
+
     // <editor-fold desc="Variables">
 
     private MapPlot mapPlot;
-    private boolean _antiAlias;
+    private boolean antiAlias;
     private float lineWidth;
-    private Font _font;
-    private ScaleBarType _scaleBarType;
-    private ScaleBarUnits _unit;
-    private String _unitText;
-    private int _numBreaks;
-    private boolean _drawNeatLine;
-    private Color _neatLineColor;
-    private float _neatLineSize;
-    private boolean _drawScaleText;
-    private float _yShiftScale = 2.0f;
+    private Font font;
+    private ScaleBarType scaleBarType;
+    private ScaleBarUnits unit;
+    private String unitText;
+    private int numBreaks;
+    private boolean drawNeatLine;
+    private Color neatLineColor;
+    private float neatLineSize;
+    private boolean drawScaleText;
+    private float yShiftScale = 2.0f;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -49,23 +66,21 @@ public class ChartScaleBar extends ChartElement {
      */
     public ChartScaleBar(MapPlot mapPlot) {
         super();
-        //this.setElementType(ElementType.LayoutScaleBar);
-        //this.setResizeAbility(ResizeAbility.ResizeAll);
 
         this.width = 200;
         this.height = 50;
         this.mapPlot = mapPlot;
-        _antiAlias = true;
-        _scaleBarType = ScaleBarType.SCALE_LINE_1;
+        antiAlias = true;
+        scaleBarType = ScaleBarType.SCALE_LINE_1;
         lineWidth = 1;
-        _drawNeatLine = false;
-        _neatLineColor = Color.black;
-        _neatLineSize = 1;
-        _font = new Font("Arial", Font.PLAIN, 12);
-        _unit = ScaleBarUnits.KILOMETERS;
-        _unitText = "km";
-        _numBreaks = 4;
-        _drawScaleText = false;
+        drawNeatLine = false;
+        neatLineColor = Color.black;
+        neatLineSize = 1;
+        font = new Font("Arial", Font.PLAIN, 12);
+        unit = ScaleBarUnits.KILOMETERS;
+        unitText = "km";
+        numBreaks = 4;
+        drawScaleText = false;
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -80,7 +95,7 @@ public class ChartScaleBar extends ChartElement {
     }
     
     /**
-     * Get line widht
+     * Get line width
      * @return Line width
      */
     public float getLineWidth() {
@@ -101,7 +116,7 @@ public class ChartScaleBar extends ChartElement {
      * @return Scale bar type
      */
     public ScaleBarType getScaleBarType() {
-        return _scaleBarType;
+        return scaleBarType;
     }
 
     /**
@@ -110,7 +125,7 @@ public class ChartScaleBar extends ChartElement {
      * @param type Scale bar type
      */
     public void setScaleBarType(ScaleBarType type) {
-        _scaleBarType = type;
+        scaleBarType = type;
     }
 
     /**
@@ -119,7 +134,7 @@ public class ChartScaleBar extends ChartElement {
      * @return If draw neat line
      */
     public boolean isDrawNeatLine() {
-        return _drawNeatLine;
+        return drawNeatLine;
     }
 
     /**
@@ -128,7 +143,7 @@ public class ChartScaleBar extends ChartElement {
      * @param istrue If draw neat line
      */
     public void setDrawNeatLine(boolean istrue) {
-        _drawNeatLine = istrue;
+        drawNeatLine = istrue;
     }
 
     /**
@@ -137,7 +152,7 @@ public class ChartScaleBar extends ChartElement {
      * @return Neat line color
      */
     public Color getNeatLineColor() {
-        return _neatLineColor;
+        return neatLineColor;
     }
 
     /**
@@ -146,7 +161,7 @@ public class ChartScaleBar extends ChartElement {
      * @param color Neat line color
      */
     public void setNeatLineColor(Color color) {
-        _neatLineColor = color;
+        neatLineColor = color;
     }
 
     /**
@@ -155,7 +170,7 @@ public class ChartScaleBar extends ChartElement {
      * @return Neat line size
      */
     public float getNeatLineSize() {
-        return _neatLineSize;
+        return neatLineSize;
     }
 
     /**
@@ -164,7 +179,7 @@ public class ChartScaleBar extends ChartElement {
      * @param size Neat line size
      */
     public void setNeatLineSize(float size) {
-        _neatLineSize = size;
+        neatLineSize = size;
     }
 
     /**
@@ -173,7 +188,7 @@ public class ChartScaleBar extends ChartElement {
      * @return The font
      */
     public Font getFont() {
-        return _font;
+        return font;
     }
 
     /**
@@ -182,7 +197,7 @@ public class ChartScaleBar extends ChartElement {
      * @param font The font
      */
     public void setFont(Font font) {
-        _font = font;
+        this.font = font;
     }
 
     /**
@@ -191,7 +206,7 @@ public class ChartScaleBar extends ChartElement {
      * @return The break number
      */
     public int getBreakNumber() {
-        return _numBreaks;
+        return numBreaks;
     }
 
     /**
@@ -200,7 +215,7 @@ public class ChartScaleBar extends ChartElement {
      * @param num Break number
      */
     public void setBreakNumber(int num) {
-        _numBreaks = num;
+        numBreaks = num;
     }
 
     /**
@@ -209,7 +224,7 @@ public class ChartScaleBar extends ChartElement {
      * @return If draw scale text
      */
     public boolean isDrawScaleText() {
-        return _drawScaleText;
+        return drawScaleText;
     }
 
     /**
@@ -218,7 +233,7 @@ public class ChartScaleBar extends ChartElement {
      * @param istrue If draw scale text
      */
     public void setDrawScaleText(boolean istrue) {
-        _drawScaleText = istrue;
+        drawScaleText = istrue;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
@@ -232,7 +247,7 @@ public class ChartScaleBar extends ChartElement {
     public void draw(Graphics2D g, float x, float y) {
         AffineTransform oldMatrix = g.getTransform();
         g.translate(x, y);
-        if (_antiAlias) {
+        if (antiAlias) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         } else {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -247,11 +262,11 @@ public class ChartScaleBar extends ChartElement {
         drawScaleBar(g);
 
         //Draw neatline
-        if (_drawNeatLine) {
-            Rectangle.Float mapRect = new Rectangle.Float(_neatLineSize - 1, _neatLineSize - 1,
-                    (this.getWidth() - _neatLineSize), (this.getHeight() - _neatLineSize));
-            g.setColor(_neatLineColor);
-            g.setStroke(new BasicStroke(_neatLineSize));
+        if (drawNeatLine) {
+            Rectangle.Float mapRect = new Rectangle.Float(neatLineSize - 1, neatLineSize - 1,
+                    (this.getWidth() - neatLineSize), (this.getHeight() - neatLineSize));
+            g.setColor(neatLineColor);
+            g.setStroke(new BasicStroke(neatLineSize));
             g.draw(mapRect);
         }
 
@@ -269,7 +284,7 @@ public class ChartScaleBar extends ChartElement {
         AffineTransform oldMatrix = g.getTransform();
         PointF aP = pageToScreen(this.getX(), this.getY(), pageLocation, 1);
         g.translate(aP.X, aP.Y);
-        if (_antiAlias) {
+        if (antiAlias) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         } else {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -284,11 +299,11 @@ public class ChartScaleBar extends ChartElement {
         drawScaleBar(g);
 
         //Draw neatline
-        if (_drawNeatLine) {
-            Rectangle.Float mapRect = new Rectangle.Float(_neatLineSize - 1, _neatLineSize - 1,
-                    (this.getWidth() - _neatLineSize), (this.getHeight() - _neatLineSize));
-            g.setColor(_neatLineColor);
-            g.setStroke(new BasicStroke(_neatLineSize));
+        if (drawNeatLine) {
+            Rectangle.Float mapRect = new Rectangle.Float(neatLineSize - 1, neatLineSize - 1,
+                    (this.getWidth() - neatLineSize), (this.getHeight() - neatLineSize));
+            g.setColor(neatLineColor);
+            g.setStroke(new BasicStroke(neatLineSize));
             g.draw(mapRect);
         }
 
@@ -296,13 +311,13 @@ public class ChartScaleBar extends ChartElement {
     }
 
     private void drawScaleBar(Graphics2D g) {
-        //Calculates the width of one break in greographic units
-        FontMetrics metrics = g.getFontMetrics(this._font);
-        float unitLegnth = metrics.stringWidth(_unitText) * 2;
-        float widthNoUnit = (this.getWidth() - unitLegnth);
-        long geoBreakWidth = (long) (getGeoWidth(widthNoUnit / _numBreaks));
+        //Calculates the width of one break in geographic units
+        FontMetrics metrics = g.getFontMetrics(this.font);
+        float unitLength = metrics.stringWidth(unitText) * 2;
+        float widthNoUnit = (this.getWidth() - unitLength);
+        long geoBreakWidth = (long) (getGeoWidth(widthNoUnit / numBreaks));
 
-        //If the geobreakWidth is less than 1 we return and don't draw anything
+        //If the geoBreakWidth is less than 1 we return and don't draw anything
         if (geoBreakWidth < 1) {
             return;
         }
@@ -311,21 +326,21 @@ public class ChartScaleBar extends ChartElement {
         geoBreakWidth = (long) (Math.floor(geoBreakWidth / n) * n);
 
         long breakWidth = (long) (getWidth(geoBreakWidth));
-        FontMetrics metrics1 = g.getFontMetrics(_font);
+        FontMetrics metrics1 = g.getFontMetrics(font);
         float fontHeight = metrics1.getHeight();
         float leftStart = metrics1.stringWidth(String.valueOf(Math.abs(geoBreakWidth))) / 2F;
 
         //Draw scale text
-        double scale = geoBreakWidth * getConversionFactor(_unit) * 100 / (breakWidth / 96 * 2.539999918);
-        if (_drawScaleText) {
-            g.setFont(this._font);
+        double scale = geoBreakWidth * getConversionFactor(unit) * 100 / (breakWidth / 96 * 2.539999918);
+        if (drawScaleText) {
+            g.setFont(this.font);
             g.setColor(this.getForeground());
             g.drawString("1 : " + String.format("{0:0,0}", scale),
                     leftStart - (metrics.stringWidth(String.valueOf(Math.abs(0))) / 2), fontHeight * 2.5F);
         }
 
         //Draw scale bar
-        switch (_scaleBarType) {
+        switch (scaleBarType) {
             case SCALE_LINE_1:
                 drawScaleLine1(g, breakWidth, geoBreakWidth);
                 break;
@@ -348,8 +363,8 @@ public class ChartScaleBar extends ChartElement {
     }
 
     private double getGeoWidth(double width) {
-        double geoWidth = width / mapPlot.getMapFrame().getMapView().getXScale() / getConversionFactor(_unit);
-        if (mapPlot.getMapFrame().getMapView().getProjection().isLonLatMap()) {
+        double geoWidth = width / mapPlot.getXScale() / getConversionFactor(unit);
+        if (mapPlot.isLonLatMap()) {
             geoWidth = geoWidth * getLonDistScale();
         }
 
@@ -357,8 +372,8 @@ public class ChartScaleBar extends ChartElement {
     }
 
     private double getWidth(double geoWidth) {
-        double width = geoWidth * mapPlot.getMapFrame().getMapView().getXScale() * getConversionFactor(_unit);
-        if (mapPlot.getMapFrame().getMapView().getProjection().isLonLatMap()) {
+        double width = geoWidth * mapPlot.getXScale() * getConversionFactor(unit);
+        if (mapPlot.isLonLatMap()) {
             width = width / getLonDistScale();
         }
 
@@ -367,7 +382,7 @@ public class ChartScaleBar extends ChartElement {
 
     private double getLonDistScale() {
         //Get meters of one longitude degree
-        double pY = (mapPlot.getMapFrame().getMapView().getViewExtent().maxY + mapPlot.getMapFrame().getMapView().getViewExtent().minY) / 2;
+        double pY = (mapPlot.getViewExtent().maxY + mapPlot.getViewExtent().minY) / 2;
         double ProjX = 0, ProjY = pY, pProjX = 1, pProjY = pY;
         double dx = Math.abs(ProjX - pProjX);
         double dy = Math.abs(ProjY - pProjY);
@@ -382,45 +397,45 @@ public class ChartScaleBar extends ChartElement {
     }
 
     private void drawScaleLine1(Graphics2D g, long breakWidth, long geoBreakWidth) {
-        FontMetrics metrics = g.getFontMetrics(_font);
+        FontMetrics metrics = g.getFontMetrics(font);
         float fontHeight = metrics.getHeight();
         float leftStart = metrics.stringWidth(String.valueOf(Math.abs(geoBreakWidth))) / 2F;
         int yShift = 10;
 
         g.setColor(this.getForeground());
         g.setStroke(new BasicStroke(this.lineWidth));
-        g.draw(new Line2D.Float(leftStart, fontHeight * 1.6f + yShift, leftStart + (breakWidth * _numBreaks), fontHeight * 1.6f + yShift));
-        g.setFont(this._font);
-        for (int i = 0; i <= _numBreaks; i++) {
+        g.draw(new Line2D.Float(leftStart, fontHeight * 1.6f + yShift, leftStart + (breakWidth * numBreaks), fontHeight * 1.6f + yShift));
+        g.setFont(this.font);
+        for (int i = 0; i <= numBreaks; i++) {
             g.draw(new Line2D.Float(leftStart, fontHeight * 1.1f + yShift, leftStart, fontHeight * 1.6f + yShift));
             g.drawString(String.valueOf(Math.abs(geoBreakWidth * i)),
-                    leftStart - (metrics.stringWidth(String.valueOf(Math.abs(geoBreakWidth * i))) / 2), yShift * _yShiftScale);
+                    leftStart - (metrics.stringWidth(String.valueOf(Math.abs(geoBreakWidth * i))) / 2), yShift * yShiftScale);
             leftStart = leftStart + breakWidth;
         }
-        g.drawString(_unitText, leftStart - breakWidth + (fontHeight / 2), fontHeight * 1.1f + yShift * _yShiftScale);
+        g.drawString(unitText, leftStart - breakWidth + (fontHeight / 2), fontHeight * 1.1f + yShift * yShiftScale);
     }
 
     private void drawScaleLine2(Graphics2D g, long breakWidth, long geoBreakWidth) {
-        FontMetrics metrics = g.getFontMetrics(_font);
+        FontMetrics metrics = g.getFontMetrics(font);
         float fontHeight = metrics.getHeight();
         float leftStart = metrics.stringWidth(String.valueOf(Math.abs(geoBreakWidth))) / 2F;
         int yShift = 5;
 
         g.setColor(this.getForeground());
         g.setStroke(new BasicStroke(this.lineWidth));
-        g.draw(new Line2D.Float(leftStart, fontHeight * 1.6f + yShift, leftStart + (breakWidth * _numBreaks), fontHeight * 1.6f + yShift));
-        g.setFont(this._font);
-        for (int i = 0; i <= _numBreaks; i++) {
+        g.draw(new Line2D.Float(leftStart, fontHeight * 1.6f + yShift, leftStart + (breakWidth * numBreaks), fontHeight * 1.6f + yShift));
+        g.setFont(this.font);
+        for (int i = 0; i <= numBreaks; i++) {
             g.draw(new Line2D.Float(leftStart, fontHeight * 1.1f + yShift, leftStart, fontHeight + (fontHeight * 1.1f) + yShift));
             g.drawString(String.valueOf(Math.abs(geoBreakWidth * i)),
-                    leftStart - (metrics.stringWidth(String.valueOf(Math.abs(geoBreakWidth * i))) / 2), yShift * _yShiftScale);
+                    leftStart - (metrics.stringWidth(String.valueOf(Math.abs(geoBreakWidth * i))) / 2), yShift * yShiftScale);
             leftStart = leftStart + breakWidth;
         }
-        g.drawString(_unitText, leftStart - breakWidth + (fontHeight / 2), fontHeight * 1.1f + yShift * _yShiftScale);
+        g.drawString(unitText, leftStart - breakWidth + (fontHeight / 2), fontHeight * 1.1f + yShift * yShiftScale);
     }
 
     private void drawAlternatingBar(Graphics2D g, long breakWidth, long geoBreakWidth) {
-        FontMetrics metrics = g.getFontMetrics(_font);
+        FontMetrics metrics = g.getFontMetrics(font);
         float fontHeight = metrics.getHeight();
         float leftStart = metrics.stringWidth(String.valueOf(Math.abs(geoBreakWidth))) / 2F;
         int yShift = 5;
@@ -429,21 +444,21 @@ public class ChartScaleBar extends ChartElement {
         boolean isFill = false;
         g.setStroke(new BasicStroke(this.lineWidth));
         g.setColor(this.getForeground());
-        g.setFont(this._font);
-        for (int i = 0; i <= _numBreaks; i++) {
-            if (i < _numBreaks) {
+        g.setFont(this.font);
+        for (int i = 0; i <= numBreaks; i++) {
+            if (i < numBreaks) {
                 if (isFill) {                    
                     g.fill(new Rectangle.Float(leftStart, fontHeight * 1.1f + yShift, breakWidth, rHeight));
                 }
                 g.draw(new Rectangle.Float(leftStart, fontHeight * 1.1f + yShift, breakWidth, rHeight));
             }            
             g.drawString(String.valueOf(Math.abs(geoBreakWidth * i)),
-                    leftStart - (metrics.stringWidth(String.valueOf(Math.abs(geoBreakWidth * i))) / 2), yShift * _yShiftScale);
+                    leftStart - (metrics.stringWidth(String.valueOf(Math.abs(geoBreakWidth * i))) / 2), yShift * yShiftScale);
             leftStart = leftStart + breakWidth;
             isFill = !isFill;
         }
         g.setColor(this.getForeground());
-        g.drawString(_unitText, leftStart - breakWidth + (fontHeight / 2), fontHeight * 1.1f + yShift * _yShiftScale);
+        g.drawString(unitText, leftStart - breakWidth + (fontHeight / 2), fontHeight * 1.1f + yShift * yShiftScale);
     }
 
     @Override

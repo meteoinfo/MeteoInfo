@@ -53,6 +53,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     // <editor-fold desc="Variables">
     private MapFrame mapFrame;
     private MapView mapView;
+    private ProjectionInfo projInfo;
     private boolean antialias;
     private MapLayer selectedLayer;
     protected TileLoadListener tileLoadListener = new TileLoadListener(this);
@@ -70,7 +71,17 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      * Constructor
      */
     public MapPlot() {
+        this(KnownCoordinateSystems.geographic.world.WGS1984);
+    }
+
+    /**
+     * Constructor
+     * @param projInfo The projection info
+     */
+    public MapPlot(ProjectionInfo projInfo) {
         super();
+
+        this.projInfo = projInfo;
         this.antialias = false;
         this.aspectType = AspectType.EQUAL;
         try {
@@ -94,6 +105,8 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      */
     public MapPlot(MapView mapView) {
         this();
+
+        this.projInfo = mapView.getProjection().getProjInfo();
         this.setMapView(mapView, true);
         this.mapFrame = new MapFrame();
         this.mapFrame.setMapView(mapView);
@@ -106,6 +119,8 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      */
     public MapPlot(MapFrame mapFrame) {
         this();
+
+        this.projInfo = mapFrame.getMapView().getProjection().getProjInfo();
         this.mapFrame = mapFrame;
         this.setMapView(mapFrame.getMapView(), true);
     }
@@ -163,10 +178,36 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
         this.mapView.setMultiGlobalDraw(isGeoMap);
         Extent extent = this.getAutoExtent();
         this.setDrawExtent(extent);
-        PolygonShape bvs = this.mapView.getProjection().getProjInfo().getBoundary();
+        PolygonShape bvs = this.getProjInfo().getBoundary();
         if (bvs != null) {
             this.setBoundary(bvs);
         }
+    }
+
+    /**
+     * Get view extent
+     * @return View extent
+     */
+    public Extent getViewExtent() {
+        return this.mapView.getViewExtent();
+    }
+
+    /**
+     * Get x scale
+     * @return X scale
+     */
+    @Override
+    public double getXScale() {
+        return this.mapView.getXScale();
+    }
+
+    /**
+     * Get y scale
+     * @return Y scale
+     */
+    @Override
+    public double getYScale() {
+        return this.mapView.getYScale();
     }
 
     @Override
@@ -237,7 +278,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      * @return Projection info
      */
     public ProjectionInfo getProjInfo() {
-        return this.getMapView().getProjection().getProjInfo();
+        return this.projInfo;
     }
     
     /**
@@ -245,6 +286,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      * @param proj Projection info
      */
     public void setProjInfo(ProjectionInfo proj) {
+        this.projInfo = proj;
         this.getMapView().getProjection().setProjInfo(proj);
         if (proj.getBoundary() != null) {
             this.setBoundary(proj.getBoundary());
@@ -257,7 +299,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      * @return Boolean
      */
     public boolean isLonLatMap() {
-        return this.getMapView().getProjection().isLonLatMap();
+        return this.projInfo.isLonLat();
     }
 
     /**
@@ -567,7 +609,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      * @return Added graphic
      */
     public Graphic addGraphic(Graphic graphic, ProjectionInfo proj) {
-        ProjectionInfo toProj = this.getMapView().getProjection().getProjInfo();
+        ProjectionInfo toProj = this.getProjInfo();
         if (proj.equals(toProj)) {
             this.getMapView().addGraphic(graphic);
             return graphic;
@@ -711,11 +753,11 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     public void addPoint(double lat, double lon, PointBreak pb) {
         PointShape ps = new PointShape();
         PointD lonlatp = new PointD(lon, lat);
-        if (this.getMapView().getProjection().isLonLatMap()) {
+        if (this.isLonLatMap()) {
             ps.setPoint(lonlatp);
         } else {
             PointD xyp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
-                    this.getMapView().getProjection().getProjInfo());
+                    this.getProjInfo());
             ps.setPoint(xyp);
         }
         Graphic aGraphic = new Graphic(ps, pb);
@@ -739,11 +781,11 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
             x = lon.get(i).doubleValue();
             y = lat.get(i).doubleValue();
             lonlatp = new PointD(x, y);
-            if (this.getMapView().getProjection().isLonLatMap()) {
+            if (this.isLonLatMap()) {
                 ps.setPoint(lonlatp);
             } else {
                 xyp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
-                        this.getMapView().getProjection().getProjInfo());
+                        this.getProjInfo());
                 ps.setPoint(xyp);
             }
             Graphic aGraphic = new Graphic(ps, pb);
@@ -779,7 +821,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                 points = new ArrayList<>();
             } else {
                 lonlatp = new PointD(x, y);
-                if (!this.getMapView().getProjection().isLonLatMap()) {
+                if (!this.isLonLatMap()) {
                     lonlatp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
                             this.getMapView().getProjection().getProjInfo());
                 }
@@ -903,36 +945,11 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     public Graphic addCircle(float x, float y, float radius, PolygonBreak pgb) {
         CircleShape aPGS = ShapeUtil.createCircleShape(x, y, radius);
         Graphic graphic = new Graphic(aPGS, pgb);
-        this.mapView.addGraphic(graphic);
+        this.addGraphic(graphic);
 
         return graphic;
     }
 
-//    /**
-//     * Add a layer
-//     * @param idx Index
-//     * @param layer Layer
-//     */
-//    public void addLayer(int idx, MapLayer layer){
-//        this.mapFrame.addLayer(idx, layer);
-//    }
-//    
-//    /**
-//     * Add a layer
-//     * @param layer Layer 
-//     */
-//    public void addLayer(MapLayer layer){
-//        this.mapFrame.addLayer(layer);
-//    }
-//    
-//    /**
-//     * Set extent
-//     *
-//     * @param extent Extent
-//     */
-//    public void setExtent(Extent extent) {
-//        this.mapFrame.getMapView().setViewExtent(extent);
-//    }
     /**
      * Get position area
      *

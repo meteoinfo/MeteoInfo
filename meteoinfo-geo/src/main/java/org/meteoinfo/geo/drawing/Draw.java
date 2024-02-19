@@ -3139,10 +3139,12 @@ public class Draw {
             drawArrowLine(points, (ArrowLineBreak) aPLB, g);
         } else {
             if (aPLB.isUsingDashStyle()) {
-                g.setColor(aPLB.getColor());
-                float[] dashPattern = getDashPattern(aPLB.getStyle());
-                g.setStroke(new BasicStroke(aPLB.getWidth(), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dashPattern, 0.0f));
-                drawPolyline(points, g);
+                if (aPLB.isDrawPolyline()) {
+                    g.setColor(aPLB.getColor());
+                    float[] dashPattern = getDashPattern(aPLB.getStyle());
+                    g.setStroke(new BasicStroke(aPLB.getWidth(), BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 10.0f, dashPattern, 0.0f));
+                    drawPolyline(points, g);
+                }
 
                 //Draw symbol            
                 if (aPLB.isDrawSymbol()) {

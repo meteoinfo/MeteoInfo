@@ -379,22 +379,43 @@ def getplotstyle(style, caption, **kwargs):
     if not pointStyle is None:
         fill = kwargs.pop('fill', True)
         if lineStyle is None:
-            pb = PointBreak()
-            pb.setCaption(caption)
-            if '.' in style:
-                pb.setSize(4)
-                pb.setDrawOutline(False)
-            else:
-                pb.setSize(8)
-            pb.setStyle(pointStyle)
-            pb.setDrawFill(fill)
+            # pb = PointBreak()
+            # pb.setCaption(caption)
+            # if '.' in style:
+            #     pb.setSize(4)
+            #     pb.setDrawOutline(False)
+            # else:
+            #     pb.setSize(8)
+            # pb.setStyle(pointStyle)
+            # pb.setDrawFill(fill)
+            # if not c is None:
+            #     pb.setColor(c)
+            # edgecolor = kwargs.pop('edgecolor', pb.getColor())
+            # edgecolor = getcolor(edgecolor)
+            # pb.setOutlineColor(edgecolor)
+            # setpointlegendbreak(pb, **kwargs)
+            # return pb
+            plb = PolylineBreak()
+            plb.setCaption(caption)
+            plb.setDrawPolyline(False)
+            plb.setDrawSymbol(True)
+            plb.setSymbolStyle(pointStyle)
+            plb.setFillSymbol(fill)
+            interval = kwargs.pop('markerinterval', 1)
+            plb.setSymbolInterval(interval)
             if not c is None:
-                pb.setColor(c)
-            edgecolor = kwargs.pop('edgecolor', pb.getColor())
-            edgecolor = getcolor(edgecolor)
-            pb.setOutlineColor(edgecolor)
-            setpointlegendbreak(pb, **kwargs)
-            return pb
+                plb.setColor(c)
+            markersize = kwargs.pop('markersize', None)
+            if not markersize is None:
+                plb.setSymbolSize(markersize)
+            markercolor = kwargs.pop('markeredgecolor', plb.getColor())
+            markercolor = getcolor(markercolor)
+            plb.setSymbolColor(markercolor)
+            markerfillcolor = kwargs.pop('markerfacecolor', markercolor)
+            markerfillcolor = getcolor(markerfillcolor)
+            plb.setSymbolFillColor(markerfillcolor)
+            plb.setFillSymbol(not markerfillcolor is None)
+            return plb
         else:
             plb = PolylineBreak()
             plb.setCaption(caption)

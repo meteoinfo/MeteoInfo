@@ -33,8 +33,8 @@ package org.meteoinfo.geometry.graphic;
  public class Graphic {
      // <editor-fold desc="Variables">
 
-     private Shape _shape = null;
-     private ColorBreak _legend = null;
+     protected Shape shape = null;
+     protected ColorBreak legend = null;
      private ResizeAbility _resizeAbility = ResizeAbility.RESIZE_ALL;
      // </editor-fold>
      // <editor-fold desc="Constructor">
@@ -52,8 +52,8 @@ package org.meteoinfo.geometry.graphic;
       * @param legend a legend
       */
      public Graphic(Shape shape, ColorBreak legend) {
-         _shape = shape;
-         _legend = legend;
+         this.shape = shape;
+         this.legend = legend;
          updateResizeAbility();
      }
      // </editor-fold>
@@ -65,7 +65,7 @@ package org.meteoinfo.geometry.graphic;
       * @return Shape
       */
      public Shape getShape() {
-         return _shape;
+         return shape;
      }
 
      /**
@@ -74,7 +74,7 @@ package org.meteoinfo.geometry.graphic;
       * @param aShape a shape
       */
      public void setShape(Shape aShape) {
-         _shape = aShape;
+         shape = aShape;
          updateResizeAbility();
      }
 
@@ -84,11 +84,11 @@ package org.meteoinfo.geometry.graphic;
       * @return Legend
       */
      public ColorBreak getLegend() {
-         return _legend;
+         return legend;
      }
 
      public void setLegend(ColorBreak legend) {
-         _legend = legend;
+         this.legend = legend;
          updateResizeAbility();
      }
 
@@ -107,7 +107,7 @@ package org.meteoinfo.geometry.graphic;
       * @return The extent
       */
      public Extent getExtent() {
-         return this._shape.getExtent();
+         return this.shape.getExtent();
      }
 
      /**
@@ -115,7 +115,7 @@ package org.meteoinfo.geometry.graphic;
       * @param value The extent
       */
      public void setExtent(Extent value){
-         this._shape.setExtent(value);
+         this.shape.setExtent(value);
      }
 
      /**
@@ -136,6 +136,15 @@ package org.meteoinfo.geometry.graphic;
 
      // </editor-fold>
      // <editor-fold desc="Methods">
+
+     /**
+      * Get shape type
+      * @return The shape type
+      */
+     public ShapeTypes getShapeType(){
+         return shape.getShapeType();
+     }
+
      /**
       * Get graphics number
       * @return 1
@@ -164,10 +173,10 @@ package org.meteoinfo.geometry.graphic;
      }
 
      private void updateResizeAbility() {
-         if (_shape != null && _legend != null) {
-             switch (_shape.getShapeType()) {
+         if (shape != null && legend != null) {
+             switch (shape.getShapeType()) {
                  case POINT:
-                     switch (_legend.getBreakType()) {
+                     switch (legend.getBreakType()) {
                          case POINT_BREAK:
                              _resizeAbility = ResizeAbility.SAME_WIDTH_HEIGHT;
                              break;
@@ -195,8 +204,8 @@ package org.meteoinfo.geometry.graphic;
       * @param newY New Y
       */
      public void verticeMoveUpdate(int vIdx, double newX, double newY) {
-         List<PointD> points = (List<PointD>)_shape.getPoints();
-         switch (_shape.getShapeType()){
+         List<PointD> points = (List<PointD>) shape.getPoints();
+         switch (shape.getShapeType()){
              case POLYGON:
              case CURVE_POLYGON:
              case RECTANGLE:
@@ -219,7 +228,7 @@ package org.meteoinfo.geometry.graphic;
          aP.X = newX;
          aP.Y = newY;
          //points.set(vIdx, aP);
-         _shape.setPoints(points);
+         shape.setPoints(points);
      }
 
      /**
@@ -229,9 +238,9 @@ package org.meteoinfo.geometry.graphic;
       * @param point The add vertice
       */
      public void verticeAddUpdate(int vIdx, PointD point) {
-         List<PointD> points = (List<PointD>)_shape.getPoints();
+         List<PointD> points = (List<PointD>) shape.getPoints();
          points.add(vIdx, point);
-         _shape.setPoints(points);
+         shape.setPoints(points);
      }
 
      /**
@@ -240,9 +249,9 @@ package org.meteoinfo.geometry.graphic;
       * @param vIdx Vertice index
       */
      public void verticeRemoveUpdate(int vIdx) {
-         List<PointD> points = (List<PointD>)_shape.getPoints();
+         List<PointD> points = (List<PointD>) shape.getPoints();
          points.remove(vIdx);
-         _shape.setPoints(points);
+         shape.setPoints(points);
      }
 
      /**
@@ -252,8 +261,8 @@ package org.meteoinfo.geometry.graphic;
       */
      public void exportToXML(Document doc, Element parent) {
          Element graphic = doc.createElement("Graphic");
-         addShape(doc, graphic, _shape);
-         addLegend(doc, graphic, _legend, _shape.getShapeType());
+         addShape(doc, graphic, shape);
+         addLegend(doc, graphic, legend, shape.getShapeType());
 
          parent.appendChild(graphic);
      }
@@ -508,10 +517,10 @@ package org.meteoinfo.geometry.graphic;
       */
      public void importFromXML(Element graphicNode) {
          Node shape = graphicNode.getElementsByTagName("Shape").item(0);
-         _shape = loadShape(shape);
+         this.shape = loadShape(shape);
 
          Node legend = graphicNode.getElementsByTagName("Legend").item(0);
-         _legend = loadLegend(legend, _shape.getShapeType());
+         this.legend = loadLegend(legend, this.shape.getShapeType());
 
          updateResizeAbility();
      }

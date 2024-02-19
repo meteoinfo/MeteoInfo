@@ -35,6 +35,7 @@ from mipylib.geolib.milayer import MILayer, MIXYListData
 import plotutil
 import colors
 import mipylib.miutil as miutil
+from .graphic import Line2D
 
 __all__ = ['Axes', 'PolarAxes']
 
@@ -1085,6 +1086,8 @@ class Axes(object):
             else:
                 self._axes.addGraphic(zorder, graphic, projection)
 
+        self._axes.setAutoExtent()
+
     def get_graphics(self):
         """
         Get graphics
@@ -1364,7 +1367,7 @@ class Axes(object):
 
         # Add graphics
         zorder = kwargs.pop('zorder', None)
-        iscurve = kwargs.pop('iscurve', False)
+        iscurve = kwargs.pop('curve', False)
         graphics = []
         if isxylistdata:
             graphic = GraphicFactory.createLineString(dataset, lines)
@@ -1375,8 +1378,10 @@ class Axes(object):
                 # Add data series
                 snum = len(xdatalist)
                 if snum == 1:
-                    xdata = plotutil.getplotdata(xdatalist[0])
-                    ydata = plotutil.getplotdata(ydatalist[0])
+                    #xdata = plotutil.getplotdata(xdatalist[0])
+                    #ydata = plotutil.getplotdata(ydatalist[0])
+                    xdata = np.asarray(xdatalist[0])
+                    ydata = np.asarray(ydatalist[0])
                     if len(lines) == 1:
                         colors = kwargs.pop('colors', None)
                         if not colors is None:
@@ -1387,26 +1392,31 @@ class Axes(object):
                                 ncb = cb.clone()
                                 ncb.setColor(cc)
                                 lines.append(ncb)
-                            graphic = GraphicFactory.createLineString(xdata, ydata, lines, iscurve)
+                            graphic = GraphicFactory.createLineString(xdata._array, ydata._array, lines, iscurve)
                         else:
-                            graphic = GraphicFactory.createLineString(xdata, ydata, lines[0], iscurve)
+                            #graphic = GraphicFactory.createLineString(xdata, ydata, lines[0], iscurve)
+                            graphic = Line2D(xdata, ydata, legend=lines[0], curve=iscurve)
                     else:  # >1
-                        graphic = GraphicFactory.createLineString(xdata, ydata, lines, iscurve)
+                        graphic = GraphicFactory.createLineString(xdata._array, ydata._array, lines, iscurve)
                     self.add_graphic(graphic, zorder=zorder)
                     graphics.append(graphic)
                 else:
                     for i in range(0, snum):
                         label = kwargs.pop('label', 'S_' + str(i + 1))
-                        xdata = plotutil.getplotdata(xdatalist[i])
-                        ydata = plotutil.getplotdata(ydatalist[i])
-                        graphic = GraphicFactory.createLineString(xdata, ydata, lines[i], iscurve)
+                        #xdata = plotutil.getplotdata(xdatalist[i])
+                        #ydata = plotutil.getplotdata(ydatalist[i])
+                        xdata = np.asarray(xdatalist[i])
+                        ydata = np.asarray(ydatalist[i])
+                        #graphic = GraphicFactory.createLineString(xdata, ydata, lines[i], iscurve)
+                        graphic = Line2D(xdata, ydata, legend=lines[i], curve=iscurve)
                         self.add_graphic(graphic)
                         graphics.append(graphic)
             else:
-                xdata = plotutil.getplotdata(xdatalist[0])
-                ydata = plotutil.getplotdata(ydatalist[0])
-                zdata = plotutil.getplotdata(cdata)
-                graphic = GraphicFactory.createLineString(xdata, ydata, zdata, ls, iscurve)
+                xdata = np.asarray(xdatalist[0])
+                ydata = np.asarray(ydatalist[0])
+                cdata = np.asarray(cdata)
+                #graphic = GraphicFactory.createLineString(xdata, ydata, cdata, ls, iscurve)
+                graphic = Line2D(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
                 self.add_graphic(graphic, zorder=zorder)
                 graphics.append(graphic)
         self._axes.setAutoExtent()

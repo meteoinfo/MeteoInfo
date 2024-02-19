@@ -26,6 +26,7 @@ import org.meteoinfo.geo.drawing.Draw;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.graphic.ImageGraphic;
+import org.meteoinfo.geometry.graphic.Line2DGraphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.Polygon;
 import org.meteoinfo.geometry.shape.Shape;
@@ -275,6 +276,11 @@ public class Plot2D extends AbstractPlot2D {
             }
             for (int i = 0; i < graphic.getNumGraphics(); i++) {
                 Graphic gg = graphic.getGraphicN(i);
+                if (gg instanceof Line2DGraphic) {
+                    this.drawLine2D(g, (Line2DGraphic) gg, area);
+                    break;
+                }
+
                 if (!graphic.isSingleLegend()) {
                     cb = gg.getLegend();
                 }
@@ -435,6 +441,25 @@ public class Plot2D extends AbstractPlot2D {
         Draw.drawArrow(pf, aPS, aPB, g, zoom);
     }
 
+    private void drawLine2D(Graphics2D g, Line2DGraphic line2D, Rectangle2D area) {
+        if (line2D.isCurve()) {
+            drawCurveline(g, (PolylineShape) line2D.getShape(), (PolylineBreak) line2D.getLegend(), area);
+        } else {
+            BreakTypes breakType = line2D.getLegend().getBreakType();
+            switch (breakType) {
+                case POINT_BREAK:
+                    drawPolyline(g, (PolylineShape) line2D.getShape(), (PointBreak) line2D.getLegend(), area);
+                    break;
+                case COLOR_BREAK_COLLECTION:
+                    drawPolyline(g, (PolylineShape) line2D.getShape(), (ColorBreakCollection) line2D.getLegend(), area);
+                    break;
+                default:
+                    drawPolyline(g, (PolylineShape) line2D.getShape(), (PolylineBreak) line2D.getLegend(), area);
+                    break;
+            }
+        }
+    }
+
     private void drawPolyline(Graphics2D g, PolylineShape aPLS, PointBreak aPB, Rectangle2D area) {
         for (Polyline aline : aPLS.getPolylines()) {
             double[] sXY;
@@ -512,7 +537,7 @@ public class Plot2D extends AbstractPlot2D {
         }
     }
     
-    private void drawCurveline(Graphics2D g, CurveLineShape aPLS, PolylineBreak aPLB, Rectangle2D area) {
+    private void drawCurveline(Graphics2D g, PolylineShape aPLS, PolylineBreak aPLB, Rectangle2D area) {
         for (Polyline aline : aPLS.getPolylines()) {
             double[] sXY;
             PointF[] points = new PointF[aline.getPointList().size()];

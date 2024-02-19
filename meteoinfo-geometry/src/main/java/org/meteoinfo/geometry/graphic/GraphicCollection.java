@@ -554,6 +554,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      *
      * @return Shape type
      */
+    @Override
     public ShapeTypes getShapeType() {
         return this.graphics.get(0).getShape().getShapeType();
     }

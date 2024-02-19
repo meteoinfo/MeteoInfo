@@ -2,7 +2,7 @@ from org.meteoinfo.geometry.graphic import Graphic
 from org.meteoinfo.geometry.shape import ShapeUtil, CircleShape, EllipseShape, \
     RectangleShape, ArcShape
 
-from . import plotutil
+from .. import plotutil
 import mipylib.numeric as np
 
 __all__ = ['Arc','Circle','Ellipse','Rectangle','Polygon','Wedge']

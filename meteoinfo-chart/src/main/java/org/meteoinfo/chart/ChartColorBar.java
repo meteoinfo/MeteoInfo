@@ -1019,14 +1019,14 @@ public class ChartColorBar extends ChartLegend {
                 }
                 
                 if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
-                    sP.X -= barWidth / 2;
+                    aP.X = sP.X - barWidth / 2;
                     g.setColor(this.tickLabelColor);
                     if (this.tickLabelAngle == 0) {
-                        Draw.drawString(g, sP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                        Draw.drawString(g, aP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
                     } else if (this.tickLabelAngle < 45) {
-                        Draw.drawString(g, sP.X, sP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
+                        Draw.drawString(g, aP.X, sP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
                     } else {
-                        Draw.drawString(g, sP.X, sP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+                        Draw.drawString(g, aP.X, sP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
                     }
                 } else {
                     if (i == 0) {
@@ -1601,7 +1601,7 @@ public class ChartColorBar extends ChartLegend {
         g.setStroke(new BasicStroke(this.tickWidth));
         aP.X = barWidth / 2 + x_shift;
         if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
-            aP.Y = this.legendHeight - barHeight / 2;
+            aP.Y = this.legendHeight + barHeight / 2;
             sP.X = aP.X + barWidth / 2 + 5;
         } else {
             aP.Y = this.legendHeight;

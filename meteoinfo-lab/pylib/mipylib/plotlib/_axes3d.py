@@ -10,9 +10,9 @@ from org.meteoinfo.chart.plot import Plot3D
 from org.meteoinfo.chart.graphic import GraphicFactory
 from org.meteoinfo.chart import ChartText3D
 from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
-from org.meteoinfo.geo.legend import LegendManage
+#from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geo.io import GraphicUtil
-from org.meteoinfo.geometry.legend import BreakTypes, PolylineBreak
+from org.meteoinfo.geometry.legend import BreakTypes, PolylineBreak, LegendManage
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic
 from org.meteoinfo.geo.layer import LayerTypes
@@ -1451,27 +1451,25 @@ class Axes3D(Axes):
                     x = rgbdata.dimvalue(1)
                     y = rgbdata.dimvalue(0)
             else:
-                gdata = np.asgridarray(args[0])
-                if isinstance(args[0], DimArray):
-                    if args[0].islondim(1):
-                        xaxistype = 'lon'
-                    elif args[0].islatdim(1):
-                        xaxistype = 'lat'
-                    elif args[0].istimedim(1):
-                        xaxistype = 'time'
+                arr = args[0]
+                if isinstance(arr, DimArray):
+                    x = arr.dimvalue(1)
+                    y = arr.dimvalue(0)
+                else:
+                    x = np.arange(0, arr.shape[1])
+                    y = np.arange(0, arr.shape[0])
                 args = args[1:]
         elif n <=4:
             x = args[0]
             y = args[1]
-            a = args[2]
-            if isinstance(a, (list, tuple)):
+            arr = args[2]
+            if isinstance(arr, (list, tuple)):
                 isrgb = True
-                rgbdata = a
-            elif a.ndim > 2:
+                rgbdata = arr
+            elif arr.ndim > 2:
                 isrgb = True
-                rgbdata = a
+                rgbdata = arr
             else:
-                gdata = np.asgridarray(a, x, y, fill_value)
                 args = args[3:]   
         
         offset = kwargs.pop('offset', 0)
@@ -1494,20 +1492,21 @@ class Axes3D(Axes):
                 level_arg = args[0]
                 if isinstance(level_arg, int):
                     cn = level_arg
-                    ls = LegendManage.createImageLegend(gdata, cn, cmap)
+                    ls = LegendManage.createImageLegend(arr._array, cn, cmap)
                 else:
                     if isinstance(level_arg, NDArray):
                         level_arg = level_arg.aslist()
-                    ls = LegendManage.createImageLegend(gdata, level_arg, cmap)
+                    ls = LegendManage.createImageLegend(arr._array, level_arg, cmap)
             else:
-                ls = plotutil.getlegendscheme(args, gdata.min(), gdata.max(), **kwargs)
+                ls = plotutil.getlegendscheme(args, arr.min(), arr.max(), **kwargs)
             ls = ls.convertTo(ShapeTypes.IMAGE)
             plotutil.setlegendscheme(ls, **kwargs)
             if zdir == 'xy':
                 sepoint = kwargs.pop('sepoint', [0,0,1,1])
             else:
                 sepoint = None
-            graphics = GraphicFactory.createImage(gdata, ls, offset, zdir, sepoint, interpolation)
+            graphics = GraphicFactory.createImage(arr._array, x._array, y._array, fill_value,
+                                                  ls, offset, zdir, sepoint, interpolation)
                 
         visible = kwargs.pop('visible', True)
         if visible:

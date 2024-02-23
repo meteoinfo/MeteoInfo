@@ -14,8 +14,8 @@ from org.meteoinfo.chart.plot import MapPlot
 from org.meteoinfo.chart.graphic import GraphicFactory
 from org.meteoinfo.geo.meteodata import DrawMeteoData
 from org.meteoinfo.geo.mapview import MapView
-from org.meteoinfo.geometry.legend import BreakTypes, LegendScheme, LegendType
-from org.meteoinfo.geo.legend import LegendManage
+from org.meteoinfo.geometry.legend import BreakTypes, LegendScheme, LegendType, LegendManage
+#from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geometry.shape import Shape, PolylineShape, PolygonShape, ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic
 from org.meteoinfo.projection import ProjectionInfo
@@ -188,6 +188,8 @@ class MapAxes(Axes):
             if select:
                 self._axes.setSelectedLayer(layer)
 
+        self.stale = True
+
     def num_layers(self):
         """
         Get number of layers.
@@ -242,6 +244,8 @@ class MapAxes(Axes):
             self._axes.addGraphic(graphic)
         else:
             graphic = self._axes.addGraphic(graphic, proj)
+
+        self.stale = True
         return graphic
         
     def add_circle(self, xy, radius=5, **kwargs):
@@ -252,6 +256,7 @@ class MapAxes(Axes):
             kwargs['facecolor'] = None
         lbreak, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         circle = self._axes.addCircle(xy[0], xy[1], radius, lbreak)
+        self.stale = True
         return circle
         
     def scale_bar(self, x, y, **kwargs):
@@ -1143,20 +1148,25 @@ class MapAxes(Axes):
                 x = rgbdata.dimvalue(1)
                 y = rgbdata.dimvalue(0)
             else:
-                gdata = np.asgridarray(args[0], fill_value=fill_value)
+                arr = args[0]
+                if isinstance(arr, DimArray):
+                    x = arr.dimvalue(1)
+                    y = arr.dimvalue(0)
+                else:
+                    x = np.arange(0, arr.shape[1])
+                    y = np.arange(0, arr.shape[0])
                 args = args[1:]
         elif n <=4:
             x = args[0]
             y = args[1]
-            a = args[2]
-            if isinstance(a, (list, tuple)):
+            arr = args[2]
+            if isinstance(arr, (list, tuple)):
                 isrgb = True
-                rgbdata = a
-            elif a.ndim > 2:
+                rgbdata = arr
+            elif arr.ndim > 2:
                 isrgb = True
-                rgbdata = a
+                rgbdata = arr
             else:
-                gdata = np.asgridarray(a, x, y, fill_value)
                 args = args[3:]    
         
         isadd = kwargs.pop('isadd', True)
@@ -1181,20 +1191,26 @@ class MapAxes(Axes):
             y = plotutil.getplotdata(y)
             layer = DrawMeteoData.createImageLayer(x, y, igraphic, 'layer_image')
         else:
+            if x[1] < x[0]:
+                x = x[::-1]
+                arr = arr[:,::-1]
+            if y[1] < y[0]:
+                y = y[::-1]
+                arr = arr[::-1,:]
             if ls is None:
-                vmin = kwargs.pop('vmin', gdata.min())
-                vmax = kwargs.pop('vmax', gdata.max())
+                vmin = kwargs.pop('vmin', arr.min())
+                vmax = kwargs.pop('vmax', arr.max())
                 if len(args) > 0:
                     level_arg = args[0]
                     if isinstance(level_arg, int):
                         cn = level_arg
-                        ls = LegendManage.createImageLegend(gdata, cn, cmap)
+                        ls = LegendManage.createImageLegend(arr._array, cn, cmap)
                     else:
                         if isinstance(level_arg, NDArray):
                             level_arg = level_arg.aslist()
-                        ls = LegendManage.createImageLegend(gdata, level_arg, cmap)
+                        ls = LegendManage.createImageLegend(arr._array, level_arg, cmap)
                 else:
-                    ls = LegendManage.createImageLegend(gdata, cmap)
+                    ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
                     norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
                     ls.setNormalize(norm._norm)
                     ls.setColorMap(cmap)
@@ -1205,7 +1221,7 @@ class MapAxes(Axes):
                 if cb.isNoData():
                     cb.setColor(plotutil.getcolor(fill_color))
 
-            layer = DrawMeteoData.createRasterLayer(gdata, 'layer', ls)
+            layer = DrawMeteoData.createRasterLayer(arr._array, x._array, y._array, fill_value, 'layer', ls)
             if not fill_color is None:
                 layer.setMissingColor(plotutil.getcolor(fill_color))
                             

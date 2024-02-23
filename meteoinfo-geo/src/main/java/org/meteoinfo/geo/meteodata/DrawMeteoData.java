@@ -2143,6 +2143,23 @@ public class DrawMeteoData {
     /**
      * Create raster layer
      *
+     * @param data Grid data array
+     * @param xa X coordinates array
+     * @param ya Y coordinates array
+     * @param missingValue Missing value
+     * @param LName Layer name
+     * @param aLS Legend scheme
+     * @return Raster layer
+     */
+    public static RasterLayer createRasterLayer(Array data, Array xa, Array ya, double missingValue,
+                                                String LName, LegendScheme aLS) {
+        GridArray gridData = new GridArray(data, xa, ya, missingValue);
+        return createRasterLayer(gridData, LName, aLS);
+    }
+
+    /**
+     * Create raster layer
+     *
      * @param gridData Grid data
      * @param LName Layer name
      * @param aLS Legend scheme

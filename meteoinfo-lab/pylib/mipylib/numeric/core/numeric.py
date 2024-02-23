@@ -24,8 +24,7 @@ from org.meteoinfo.math.linalg import LinalgUtil
 from org.python.core import PyComplex
 
 import _dtype
-from dimarray import PyGridData, DimArray, PyStationData
-from mitable import PyTableData
+from dimarray import DimArray
 from ._ndarray import NDArray
 from org.meteoinfo.console.jython import JythonUtil
 
@@ -38,9 +37,9 @@ newaxis = None
 
 __all__ = [
     'pi','e','inf','nan','acos','abs','all','allclose','any','arange','arange1',
-    'argmin','argmax','argsort','array','array_split','amax','amin','asanyarray','asarray','asgridarray',
-    'asgriddata','arcsin','asin','asmiarray','asstationdata','atleast_1d','atleast_2d','arctan','atan',
-    'arctan2','atan2','ave_month','average','histogram','broadcast_to','cdiff','ceil',
+    'argmin','argmax','argsort','array','array_split','amax','amin','asanyarray','asarray',
+    'arcsin','asin','asmiarray','atleast_1d','atleast_2d','arctan','atan',
+    'arctan2','atan2','average','histogram','broadcast_to','cdiff','ceil',
     'concatenate','conj','conjugate','corrcoef','cos','cosh','cylinder','degrees','delnan','diag','diff',
     'datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
     'fmax','fmin','full','hcurl','hdivg','hstack','hypot','identity','indices','interp2d','interpn','isarray',
@@ -52,12 +51,7 @@ __all__ = [
     'transpose','trapz','vdot','unravel_index','var','vstack','zeros','zeros_like'
     ]
 
-def isgriddata(gdata):
-    return isinstance(gdata, PyGridData)
-    
-def isstationdata(sdata):
-    return isinstance(sdata, PyStationData)
-    
+
 def array(object, dtype=None, copy=True, order='K', subok=False, ndmin=0):
     """
     Create an array.
@@ -139,16 +133,6 @@ def isarray(a):
     :returns: (*boolean*) True if the input object is an array.
     """
     return isinstance(a, NDArray)
-    
-def datatable(data=None):
-    """
-    Create a PyTableData object.
-    
-    :param data: (*TableData*) Table data.
-    
-    :returns: (*PyTableData*) PyTableData object.
-    """
-    return PyTableData(data)   
     
 def arange(*args, **kwargs):
     """
@@ -1025,10 +1009,7 @@ def atan2(x1, x2):
     """    
     if isinstance(x1, NDArray):
         r = NDArray(ArrayMath.atan2(x1._array, x2._array))
-        if isinstance(x1, DimArray):
-            return DimArray(r, x1.dims, x1.fill_value, x1.proj)
-        else:
-            return r
+        return x1.array_wrap(r)
     else:
         return math.atan2(x1, x2)
 
@@ -1051,10 +1032,7 @@ def arctan2(x1, x2):
     """
     if isinstance(x1, NDArray):
         r = NDArray(ArrayMath.atan2(x1._array, x2._array))
-        if isinstance(x1, DimArray):
-            return DimArray(r, x1.dims, x1.fill_value, x1.proj)
-        else:
-            return r
+        return x1.array_wrap(r)
     else:
         return math.atan2(x1, x2)
 
@@ -1315,10 +1293,7 @@ def mean(x, axis=None, keepdims=False):
             for xx in x:
                 a.append(xx.asarray())
             r = ArrayMath.mean(a)
-            if type(x[0]) is NDArray:            
-                return NDArray(r)
-            else:
-                return DimArray(NDArray(r), x[0].dims, x[0].fill_value, x[0].proj)
+            return x0.array_wrap(r)
         elif isinstance(x[0], PyStationData):
             a = []
             for xx in x:
@@ -1368,14 +1343,7 @@ def average(a, axis=None, weights=None):
         scl = wgt.sum(axis=axis)
         avg = (a * wgt).sum(axis) / scl
 
-        if type(a) is NDArray:
-            return avg
-        else:
-            dims = []
-            for i in range(0, a.ndim):
-                if i != axis:
-                    dims.append(a.dims[i])
-            return DimArray(avg, dims, x.fill_value, x.proj)
+        return a.array_wrap(avg, axis)
             
 def std(x, axis=None, ddof=0):
     """
@@ -1427,10 +1395,7 @@ def median(x, axis=None):
             for xx in x:
                 a.append(xx.asarray())
             r = ArrayMath.median(a)
-            if type(x[0]) is NDArray:            
-                return NDArray(r)
-            else:
-                return DimArray(NDArray(r), x[0].dims, x[0].fill_value, x[0].proj)
+            return x[0]._unfunc_finalize(r)
         elif isinstance(x[0], PyStationData):
             a = []
             for xx in x:
@@ -1460,11 +1425,9 @@ def maximum(x1, x2):
         x1 = array(x1)
     if isinstance(x2, list):
         x2 = array(x2)
-    if type(x1) is NDArray:
-        return NDArray(ArrayMath.maximum(x1.asarray(), x2.asarray()))
-    elif isinstance(x1, DimArray):
-        r = NDArray(ArrayMath.maximum(x1.asarray(), x2.asarray()))
-        return DimArray(r, x1.dims, x1.fill_value, x1.proj)
+    if isinstance(x1, NDArray):
+        r = ArrayMath.maximum(x1.asarray(), x2.asarray())
+        return x1.array_wrap(r)
     else:
         return max(x1, x2)
         
@@ -1487,11 +1450,9 @@ def fmax(x1, x2):
         x1 = array(x1)
     if isinstance(x2, list):
         x2 = array(x2)
-    if type(x1) is NDArray:
-        return NDArray(ArrayMath.fmax(x1.asarray(), x2.asarray()))
-    elif isinstance(x1, DimArray):
-        r = NDArray(ArrayMath.fmax(x1.asarray(), x2.asarray()))
-        return DimArray(r, x1.dims, x1.fill_value, x1.proj)
+    if isinstance(x1, NDArray):
+        r = ArrayMath.fmax(x1.asarray(), x2.asarray())
+        return x1.array_wrap(r)
     else:
         return max(x1, x2)
         
@@ -1513,11 +1474,9 @@ def minimum(x1, x2):
         x1 = array(x1)
     if isinstance(x2, list):
         x2 = array(x2)
-    if type(x1) is NDArray:
-        return NDArray(ArrayMath.minimum(x1.asarray(), x2.asarray()))
-    elif isinstance(x1, DimArray):
-        r = NDArray(ArrayMath.minimum(x1.asarray(), x2.asarray()))
-        return DimArray(r, x1.dims, x1.fill_value, x1.proj)
+    if isinstance(x1, NDArray):
+        r = ArrayMath.minimum(x1.asarray(), x2.asarray())
+        return x1.array_wrap(r)
     else:
         return min(x1, x2)
         
@@ -1540,11 +1499,9 @@ def fmin(x1, x2):
         x1 = array(x1)
     if isinstance(x2, list):
         x2 = array(x2)
-    if type(x1) is NDArray:
-        return NDArray(ArrayMath.fmin(x1.asarray(), x2.asarray()))
-    elif isinstance(x1, DimArray):
-        r = NDArray(ArrayMath.fmin(x1.asarray(), x2.asarray()))
-        return DimArray(r, x1.dims, x1.fill_value, x1.proj)
+    if isinstance(x1, NDArray):
+        r = ArrayMath.fmin(x1.asarray(), x2.asarray())
+        return x1.array_wrap(r)
     else:
         return min(x1, x2)
         
@@ -1692,26 +1649,6 @@ def unravel_index(indices, dims):
                 coords.append(idx)
         return tuple(coords)
 
-def ave_month(data, colnames, t):
-    """
-    Average data month by month.
-    
-    :param data: (*list of Array*) Data array list.
-    :param colnames: (*list of string*) Column name list.
-    :param t: (*list of datetime*) Datetime list.
-    
-    :returns: (*PyTableData*) Averaged table data.
-    """
-    jt = miutil.jdate(t)
-    if isinstance(data, NDArray):
-        a = [data.asarray()]
-    else:
-        a = []
-        for d in data:
-            a.append(d.asarray())
-    r = TableUtil.ave_Month(a, colnames, jt)
-    return PyTableData(TableData(r))
-    
 def histogram(a, bins=10, density=False):
     """
     Compute the histogram of a set of data.
@@ -2266,16 +2203,7 @@ def squeeze(a):
     :returns: (*array_like*) The input array, but with all or a subset of the dimensions of length 1 
         removed.
     """
-    da = a.asarray()
-    da = da.reduce()
-    if type(a) is NDArray:
-        return NDArray(da)
-    else:
-        dims = []
-        for dim in a.dims:
-            if dim.getLength() > 1:
-                dims.append(dim)
-        return DimArray(NDArray(da), dims, a.fill_value, a.proj)
+    return a.squeeze()
 
 def take(a, indices, axis=None, out=None, mode='raise'):
     """
@@ -2492,7 +2420,6 @@ def moveaxis(a, source, destination):
     """
     Move axes of an array to new positions.
     Other axes remain in their original order.
-    .. versionadded:: 1.11.0
 
     Parameters
     ----------
@@ -2562,20 +2489,7 @@ def rot90(a, k=1):
     
     :returns: (*array_like*) Rotated array.
     """
-    r = ArrayMath.rot90(a.asarray(), k)
-    if type(a) is NDArray:
-        return NDArray(r)
-    else:
-        dims = []
-        if Math.abs(k) == 1 or Math.abs(k) == 3:
-            dims.append(a.dims[1])
-            dims.append(a.dims[0])
-            for i in range(2, len(a.dims)):            
-                dims.append(a.dims[i])
-        else:
-            for i in range(0, len(a.dims)):
-                dims.append(a.dims[i])
-        return DimArray(NDArray(r), dims, a.fill_value, a.proj) 
+    return a.rot90(k)
         
 def trapz(y, x=None, dx=1.0, axis=-1):
     """
@@ -2612,14 +2526,8 @@ def trapz(y, x=None, dx=1.0, axis=-1):
             if isinstance(x, list):
                 x = array(x)
             r = ArrayMath.trapz(y.asarray(), x.asarray(), axis)
-        if type(y) is NDArray:
-            return NDArray(r)
-        else:
-            dims = []
-            for i in range(0, y.ndim):
-                if i != axis:
-                    dims.append(y.dims[i])
-            return DimArray(NDArray(r), dims, y.fill_value, y.proj)
+
+        return y.array_wrap(r, axis)
             
 def rolling_mean(x, window, center=False):
     """
@@ -2821,10 +2729,8 @@ def smooth5(x):
         print('The array must be 2 dimension!')
         raise ValueError()
     r = ArrayUtil.smooth5(x._array)
-    if isinstance(x, DimArray):
-        return DimArray(r, x.dims, x.fill_value, x.proj)
-    else:
-        return NDArray(r)
+
+    return x.array_wrap(r)
         
 def smooth9(x):
     """
@@ -2849,10 +2755,8 @@ def smooth9(x):
         print('The array must be 2 dimension!')
         raise ValueError()
     r = ArrayUtil.smooth9(x._array)
-    if isinstance(x, DimArray):
-        return DimArray(r, x.dims, x.fill_value, x.proj)
-    else:
-        return NDArray(r)
+
+    return x.array_wrap(r)
  
 def cdiff(a, dimidx):
     """
@@ -2863,43 +2767,38 @@ def cdiff(a, dimidx):
     
     :returns: Result array.
     """
-    if isinstance(a, DimArray):
-        r = ArrayMath.cdiff(a.asarray(), dimidx)
-        return DimArray(NDArray(r), a.dims, a.fill_value, a.proj)
-    else:
-        return NDArray(ArrayMath.cdiff(a.asarray(), dimidx))
+    r = ArrayMath.cdiff(a.asarray(), dimidx)
+    return a.array_wrap(r)
 
 # Calculates the vertical component of the curl (ie, vorticity)    
-def hcurl(u, v):
+def hcurl(x, y, u, v):
     """
     Calculates the vertical component of the curl (ie, vorticity). The data should be lon/lat projection.
-    
+
+    :param x: (*array*) X coordinates array with one dimension.
+    :param y: (*array*) Y coordinates array with one dimension.
     :param u: (*array*) U component array.
     :param v: (*array*) V component array.
     
     :returns: Array of the vertical component of the curl.
     """
-    if isinstance(u, DimArray) and isinstance(v, DimArray):
-        ydim = u.ydim()
-        xdim = u.xdim()
-        r = ArrayMath.hcurl(u.asarray(), v.asarray(), xdim.getDimValue(), ydim.getDimValue())
-        return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
+    r = ArrayMath.hcurl(u._array, v._array, x._array, y._array)
+    return u.array_wrap(r)
 
 #  Calculates the horizontal divergence using finite differencing        
 def hdivg(u, v):
     """
     Calculates the horizontal divergence using finite differencing. The data should be lon/lat projection.
-    
+
+    :param x: (*array*) X coordinates array with one dimension.
+    :param y: (*array*) Y coordinates array with one dimension.
     :param u: (*array*) U component array.
     :param v: (*array*) V component array.
     
     :returns: Array of the horizontal divergence.
     """
-    if isinstance(u, DimArray) and isinstance(v, DimArray):
-        ydim = u.ydim()
-        xdim = u.xdim()
-        r = ArrayMath.hdivg(u.asarray(), v.asarray(), xdim.getDimValue(), ydim.getDimValue())
-        return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
+    r = ArrayMath.hdivg(u._array, v._array, x._array, y._array)
+    return u.array_wrap(r)
               
 def magnitude(u, v):
     """
@@ -2910,12 +2809,9 @@ def magnitude(u, v):
     
     :returns: Result array.
     """
-    if isinstance(u, DimArray) and isinstance(v, DimArray):
+    if isinstance(u, NDArray) and isinstance(v, NDArray):
         r = ArrayMath.magnitude(u.asarray(), v.asarray())
-        return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
-    elif isinstance(u, NDArray) and isinstance(v, NDArray):
-        r = ArrayMath.magnitude(u.asarray(), v.asarray())
-        return NDArray(r)
+        return u.array_wrap(r)
     else:
         r = sqrt(u * u + v * v)
         return r
@@ -2965,53 +2861,7 @@ def asmiarray(data):
         return data
     else:
         return array(data)       
-        
-def asgriddata(data, x=None, y=None, fill_value=-9999.0):
-    if isinstance(data, PyGridData):
-        return data
-    elif isinstance(data, DimArray):
-        return data.asgriddata(x, y)
-    elif isinstance(data, NDArray):
-        if x is None:
-            x = arange(0, data.shape[1])
-        if y is None:
-            y = arange(0, data.shape[0])
-        if x[1] < x[0]:
-            x = x[::-1]
-            data = data[:,::-1]
-        if y[1] < y[0]:
-            y = y[::-1]
-            data = data[::-1,:]
-        gdata = GridData(data._array, x._array, y._array, fill_value)
-        return PyGridData(gdata)
-    else:
-        return None
-        
-def asgridarray(data, x=None, y=None, fill_value=-9999.0):
-    if isinstance(data, PyGridData):
-        return data.data.toGridArray()
-    elif isinstance(data, DimArray):
-        return data.asgridarray(x, y, fill_value)
-    elif isinstance(data, NDArray):
-        if x is None:
-            x = arange(0, data.shape[1])
-        if y is None:
-            y = arange(0, data.shape[0])
-        if x[1] < x[0]:
-            x = x[::-1]
-            data = data[:,::-1]
-        if y[1] < y[0]:
-            y = y[::-1]
-            data = data[::-1,:]
-        gdata = GridArray(data._array, x._array, y._array, fill_value)
-        return gdata
-    else:
-        return None
-        
-def asstationdata(data, x, y, fill_value=-9999.0):
-    stdata = StationData(data.asarray(), x.asarray(), y.asarray(), fill_value)
-    return PyStationData(stdata)
-    
+
 def interp2d(*args, **kwargs):
     """
     Interpolate over a 2-D grid.

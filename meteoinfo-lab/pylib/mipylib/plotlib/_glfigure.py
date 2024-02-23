@@ -13,13 +13,14 @@ from ._axes import Axes, PolarAxes
 from ._mapaxes import MapAxes
 from ._axes3d import Axes3D
 from ._axes3dgl import Axes3DGL
+from _figure import _FigureBase
 
 from java.awt import Font, GraphicsEnvironment
 
 __all__ = ['GLFigure']
 
 
-class GLFigure(GLChartPanel):
+class GLFigure(GLChartPanel, _FigureBase):
     """
     top level container for all plot elements
     """
@@ -32,15 +33,17 @@ class GLFigure(GLChartPanel):
         :param facecolor: (*Color*) Optional, fill color of the figure. Default is ``w`` (white).
         :param dpi: (*int*) Dots per inch.
         """
+        _FigureBase.__init__(self)
+
         chart = GLChart()
         facecolor = plotutil.getcolor(facecolor)
         if kwargs.has_key('bgcolor'):
             facecolor = plotutil.getcolor(kwargs.pop('bgcolor'))
         chart.setBackground(plotutil.getcolor(facecolor))
         if figsize is None:
-            super(GLFigure, self).__init__(chart)
+            GLChartPanel.__init__(self, chart)
         else:
-            super(GLFigure, self).__init__(chart, figsize[0], figsize[1])
+            GLChartPanel.__init__(self, chart, figsize[0], figsize[1])
         self.axes = []
         self.current_axes = -1
 
@@ -468,6 +471,7 @@ class GLFigure(GLChartPanel):
                 if position is None:
                     ax.set_position(plot.getPosition())
             chart.setCurrentPlot(ax._axes)
+        ax.figure = self
 
         return ax
 

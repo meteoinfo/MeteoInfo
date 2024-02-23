@@ -2,11 +2,12 @@ from org.meteoinfo.geometry.graphic import Line2DGraphic
 from org.meteoinfo.geometry.legend import PolylineBreak
 
 from .. import plotutil
+from artist import Artist
 
 
 __all__ = ['Line2D']
 
-class Line2D(Line2DGraphic):
+class Line2D(Line2DGraphic, Artist):
     """
     A line - the line can have both a solid linestyle connecting all
     the vertices, and a marker at each vertex.  Additionally, the
@@ -21,6 +22,8 @@ class Line2D(Line2DGraphic):
         Create a `.Line2D` instance with *x* and *y* data in sequences of
         *xdata*, *ydata*.
         """
+        Artist.__init__(self)
+
         if legend is None:
             legend = plotutil.getlegendbreak('line', **kwargs)[0]
 
@@ -29,14 +32,15 @@ class Line2D(Line2DGraphic):
         self._cdata = cdata
 
         if cdata is None:
-            super(Line2D, self).__init__(xdata._array, ydata._array, legend)
+            Line2DGraphic.__init__(self, xdata._array, ydata._array, legend)
         else:
-            super(Line2D, self).__init__(xdata._array, ydata._array, cdata._array, legend)
+            Line2DGraphic.__init__(self, xdata._array, ydata._array, cdata._array, legend)
 
         if curve:
             self.setCurve(curve)
 
-    def get_xdata(self):
+    @property
+    def xdata(self):
         """
         Return the xdata.
 
@@ -44,7 +48,8 @@ class Line2D(Line2DGraphic):
         """
         return self._x
 
-    def set_xdata(self, xdata):
+    @xdata.setter
+    def xdata(self, xdata):
         """
         Set the xdata.
 
@@ -52,8 +57,10 @@ class Line2D(Line2DGraphic):
         """
         self._x = xdata
         self.setXData(xdata._array)
+        self.stale = True
 
-    def get_ydata(self):
+    @property
+    def ydata(self):
         """
         Return the ydata.
 
@@ -61,7 +68,8 @@ class Line2D(Line2DGraphic):
         """
         return self._y
 
-    def set_ydata(self, ydata):
+    @ydata.setter
+    def ydata(self, ydata):
         """
         Set the ydata.
 
@@ -69,8 +77,10 @@ class Line2D(Line2DGraphic):
         """
         self._y = ydata
         self.setYData(ydata._array)
+        self.stale = True
 
-    def get_data(self):
+    @property
+    def data(self):
         """
         Get x, y data.
 
@@ -78,18 +88,28 @@ class Line2D(Line2DGraphic):
         """
         return (self._x, self._y)
 
-    def set_data(self, xdata, ydata):
+    @data.setter
+    def data(self, *args):
         """
         Set x, y data.
 
         :param xdata: (*array*) X data.
         :param ydata: (*array*) Y data.
         """
+        if len(args) == 1:
+            xdata = args[0][0]
+            ydata = args[0][1]
+        else:
+            xdata = args[0]
+            ydata = args[1]
+
         self._x = xdata
         self._y = ydata
         self.setData(xdata._array, ydata._array)
+        self.stale = True
 
-    def get_color(self):
+    @property
+    def color(self):
         """
         Return the line color.
 
@@ -97,7 +117,8 @@ class Line2D(Line2DGraphic):
         """
         return self.legend.getColor()
 
-    def set_color(self, color):
+    @color.setter
+    def color(self, color):
         """
         Set the line color.
 
@@ -105,8 +126,10 @@ class Line2D(Line2DGraphic):
         """
         color = plotutil.getcolor(color)
         self.legend.setColor(color)
+        self.stale = True
 
-    def get_curve(self):
+    @property
+    def curve(self):
         """
         Return curve line or not.
 
@@ -114,10 +137,12 @@ class Line2D(Line2DGraphic):
         """
         return self.isCurve()
 
-    def set_curve(self, curve):
+    @curve.setter
+    def curve(self, curve):
         """
         Set curve line or not.
 
         :param curve: (*bool*) Curve line or not.
         """
         self.setCurve(curve)
+        self.stale = True

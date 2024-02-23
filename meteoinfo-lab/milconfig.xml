@@ -1,32 +1,36 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\plot">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\hdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\web"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\boxplot"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\patch"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\legend"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf">
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\imshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\imshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\calipso\CALIPSO_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_cdata_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\imshow\imshowm_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\conoutm.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\imshow\image_xdir.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_peaks.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\calipso\CALIPSO_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_cdata_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\imshow\imshowm_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\conoutm.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\imshow\image_xdir.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_peaks.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +38,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1310,788"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1426,854"/>
 </MeteoInfo>

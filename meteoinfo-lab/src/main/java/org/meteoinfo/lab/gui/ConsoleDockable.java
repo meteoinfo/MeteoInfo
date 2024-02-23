@@ -155,7 +155,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             System.out.println("Run milab.py ...");
             interp.execfile_(pyPath + "/milab.py");
             System.out.println("Set isinteractive...");
-            interp.exec("mipylib.plotlib.miplot.isinteractive = True");
+            interp.exec("mipylib.migl.interactive = True");
             System.out.println("Set milapp...");
             interp.exec("mipylib.migl.milapp = milapp");
             System.out.println("Set mifolder: " + miPath);
@@ -303,10 +303,10 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                 interp.console.requestFocusInWindow();
 
                 try {
-                    interp.exec("mipylib.plotlib.miplot.isinteractive = False");
+                    interp.exec("mipylib.plotlib.miplot.set_interactive(False)");
                     interp.exec("mipylib.plotlib.miplot.clf()");
                     interp.execfile(fn);
-                    interp.exec("mipylib.plotlib.miplot.isinteractive = True");                    
+                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
                 } catch (Exception e) {
                     e.printStackTrace();
                     try {
@@ -316,7 +316,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                     }
                     interp.console.print(">>> ", consoleColors.getPromptColor());
                     interp.console.setStyle(consoleColors.getCommandColor());
-                    interp.exec("mipylib.plotlib.miplot.isinteractive = True");
+                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
                 }
 
                 return "";
@@ -394,13 +394,13 @@ public class ConsoleDockable extends DefaultSingleCDockable {
 
                 String encoding = "utf-8";
                 try {
-                    interp.exec("mipylib.plotlib.miplot.isinteractive = False");
+                    interp.exec("mipylib.plotlib.miplot.set_interactive(False)");
                     interp.exec("mipylib.plotlib.miplot.clf()");
                     interp.execfile(new ByteArrayInputStream(code.getBytes(encoding)));
-                    interp.exec("mipylib.plotlib.miplot.isinteractive = True");
+                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
                 } catch (Exception e) {
                     e.printStackTrace();
-                    interp.exec("mipylib.plotlib.miplot.isinteractive = True");
+                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
                     interp.fireConsoleExecEvent();
                 }
 

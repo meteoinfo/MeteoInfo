@@ -6,7 +6,7 @@ Ported from MetPy.
 
 from org.meteoinfo.math.meteo import MeteoMath
 import mipylib.numeric as np
-from mipylib.numeric.core import NDArray, DimArray
+from mipylib.numeric.core import NDArray
 from .tools import first_derivative, gradient, get_layer_heights, lat_lon_grid_deltas, geospatial_gradient
 from .basic import coriolis_parameter
 from .. import constants
@@ -29,10 +29,7 @@ def cdiff(a, dimidx):
     :returns: Result array.
     """
     r = MeteoMath.cdiff(a.asarray(), dimidx)
-    if isinstance(a, DimArray):
-        return DimArray(NDArray(r), a.dims, a.fill_value, a.proj)
-    else:
-        return NDArray(r)
+    return a.array_wrap(r)
 
 
 def vorticity(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
@@ -103,10 +100,7 @@ def vorticity(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
         dudy = first_derivative(u, delta=dy, axis=y_dim)
         dvdx = first_derivative(v, delta=dx, axis=x_dim)
     r = dvdx - dudy
-    if isinstance(u, DimArray):
-        return DimArray(r, u.dims, u.fill_value, u.proj)
-    else:
-        return r
+    return u.array_wrap(r)
 
 
 def vorticity_bak(u, v, x=None, y=None):
@@ -123,26 +117,17 @@ def vorticity_bak(u, v, x=None, y=None):
     ny = u.shape[-2]
     nx = u.shape[-1]
     if x is None:
-        if isinstance(u, DimArray):
-            x = u.dimvalue(-1)
-        else:
-            x = np.arange(nx)
+        x = u.dimvalue(-1)
     elif isinstance(x, (list, tuple)):
         x = np.array(x)
 
     if y is None:
-        if isinstance(v, DimArray):
-            y = u.dimvalue(-2)
-        else:
-            y = np.arange(ny)
+        y = u.dimvalue(-2)
     elif isinstance(y, (list, tuple)):
         y = np.array(y)
 
     r = MeteoMath.vorticity(u.asarray(), v.asarray(), x.asarray(), y.asarray())
-    if isinstance(u, DimArray):
-        return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
-    else:
-        return NDArray(r)
+    return u.array_wrap(r)
 
 
 def divergence(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
@@ -214,10 +199,7 @@ def divergence(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):
         dudx = first_derivative(u, delta=dx, axis=x_dim)
         dvdy = first_derivative(v, delta=dy, axis=y_dim)
     r = dudx + dvdy
-    if isinstance(u, DimArray):
-        return DimArray(r, u.dims, u.fill_value, u.proj)
-    else:
-        return r
+    return u.array_wrap(r)
 
 
 def divergence_bak(u, v, x=None, y=None):
@@ -234,26 +216,17 @@ def divergence_bak(u, v, x=None, y=None):
     ny = u.shape[-2]
     nx = u.shape[-1]
     if x is None:
-        if isinstance(u, DimArray):
-            x = u.dimvalue(-1)
-        else:
-            x = np.arange(nx)
+        x = u.dimvalue(-1)
     elif isinstance(x, (list, tuple)):
         x = np.array(x)
 
     if y is None:
-        if isinstance(v, DimArray):
-            y = u.dimvalue(-2)
-        else:
-            y = np.arange(ny)
+        y = u.dimvalue(-2)
     elif isinstance(y, (list, tuple)):
         y = np.array(y)
 
     r = MeteoMath.divergence(u.asarray(), v.asarray(), x.asarray(), y.asarray())
-    if isinstance(u, DimArray):
-        return DimArray(NDArray(r), u.dims, u.fill_value, u.proj)
-    else:
-        return NDArray(r)
+    return u.array_wrap(r)
 
 
 def shearing_deformation(u, v, dx=None, dy=None, x_dim=-1, y_dim=-2):

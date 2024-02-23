@@ -187,7 +187,7 @@ public class MeteoInfoLab {
                 //interp.exec("from toolbox import *");
             }
             interp.exec("mipylib.plotlib.miplot.batchmode = True");
-            interp.exec("mipylib.plotlib.miplot.isinteractive = False");
+            interp.exec("mipylib.migl.interactive = False");
             interp.exec("mipylib.migl.mifolder = u'" + miPath + "'");
             System.out.println("mipylib is loaded...");
             interp.execfile(fn);

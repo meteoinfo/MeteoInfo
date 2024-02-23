@@ -35,7 +35,7 @@ from mipylib.geolib.milayer import MILayer, MIXYListData
 import plotutil
 import colors
 import mipylib.miutil as miutil
-from .graphic import Line2D
+from .graphic import Line2D, Artist
 
 __all__ = ['Axes', 'PolarAxes']
 
@@ -46,11 +46,13 @@ class Axes(object):
     """
 
     def __init__(self, *args, **kwargs):
+        self._stale = True
+
         axes = kwargs.pop('axes', None)
         self._set_plot(axes)
 
         figure = kwargs.pop('figure', None)
-        self.figure = figure
+        self._figure = figure
 
         if len(args) > 0:
             position = args[0]
@@ -145,6 +147,26 @@ class Axes(object):
             self._axes = Plot2D()
         else:
             self._axes = plot
+
+    @property
+    def stale(self):
+        return self._stale
+
+    @stale.setter
+    def stale(self, val):
+        self._stale = val
+        self._axes.setAutoExtent()
+
+        if self._figure is not None:
+            self._figure.stale = val
+
+    @property
+    def figure(self):
+        return self._figure
+
+    @figure.setter
+    def figure(self, val):
+        self._figure = val
 
     @property
     def axestype(self):
@@ -1060,7 +1082,8 @@ class Axes(object):
             self._axes.addGraphics(patch)
         else:
             self._axes.addGraphic(patch)
-        self._axes.setAutoExtent()
+        #self._axes.setAutoExtent()
+        self.stale = True
 
     def add_graphic(self, graphic, projection=None, zorder=None):
         """
@@ -1071,6 +1094,9 @@ class Axes(object):
         :param zorder: (*int*) Z order of the graphic. Default is `None` that the graphic added
             to the end.
         """
+        if isinstance(graphic, Artist):
+            graphic.axes = self
+
         if not zorder is None:
             if zorder > self.num_graphics():
                 zorder = self.num_graphics()
@@ -1086,7 +1112,8 @@ class Axes(object):
             else:
                 self._axes.addGraphic(zorder, graphic, projection)
 
-        self._axes.setAutoExtent()
+        #self._axes.setAutoExtent()
+        self.stale = True
 
     def get_graphics(self):
         """
@@ -1378,8 +1405,6 @@ class Axes(object):
                 # Add data series
                 snum = len(xdatalist)
                 if snum == 1:
-                    #xdata = plotutil.getplotdata(xdatalist[0])
-                    #ydata = plotutil.getplotdata(ydatalist[0])
                     xdata = np.asarray(xdatalist[0])
                     ydata = np.asarray(ydatalist[0])
                     if len(lines) == 1:
@@ -1394,7 +1419,6 @@ class Axes(object):
                                 lines.append(ncb)
                             graphic = GraphicFactory.createLineString(xdata._array, ydata._array, lines, iscurve)
                         else:
-                            #graphic = GraphicFactory.createLineString(xdata, ydata, lines[0], iscurve)
                             graphic = Line2D(xdata, ydata, legend=lines[0], curve=iscurve)
                     else:  # >1
                         graphic = GraphicFactory.createLineString(xdata._array, ydata._array, lines, iscurve)
@@ -1403,11 +1427,8 @@ class Axes(object):
                 else:
                     for i in range(0, snum):
                         label = kwargs.pop('label', 'S_' + str(i + 1))
-                        #xdata = plotutil.getplotdata(xdatalist[i])
-                        #ydata = plotutil.getplotdata(ydatalist[i])
                         xdata = np.asarray(xdatalist[i])
                         ydata = np.asarray(ydatalist[i])
-                        #graphic = GraphicFactory.createLineString(xdata, ydata, lines[i], iscurve)
                         graphic = Line2D(xdata, ydata, legend=lines[i], curve=iscurve)
                         self.add_graphic(graphic)
                         graphics.append(graphic)
@@ -1415,11 +1436,9 @@ class Axes(object):
                 xdata = np.asarray(xdatalist[0])
                 ydata = np.asarray(ydatalist[0])
                 cdata = np.asarray(cdata)
-                #graphic = GraphicFactory.createLineString(xdata, ydata, cdata, ls, iscurve)
                 graphic = Line2D(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
                 self.add_graphic(graphic, zorder=zorder)
                 graphics.append(graphic)
-        self._axes.setAutoExtent()
 
         if len(graphics) > 1:
             return graphics
@@ -1455,7 +1474,6 @@ class Axes(object):
         graphics = GraphicFactory.createStepLineString(xdata, ydata, fmt, where)
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
-        self._axes.setAutoExtent()
         return graphics
 
     def scatter(self, *args, **kwargs):
@@ -2619,104 +2637,6 @@ class Axes(object):
                 ls = ls.convertTo(ShapeTypes.IMAGE)
                 plotutil.setlegendscheme(ls, **kwargs)
             igraphic = GraphicFactory.createImage(X._array, xdata._array, ydata._array, ls, extent)
-
-        interpolation = kwargs.pop('interpolation', None)
-        if not interpolation is None:
-            igraphic.getShape().setInterpolation(interpolation)
-
-        if not xaxistype is None:
-            self.set_xaxis_type(xaxistype)
-            self._axes.updateDrawExtent()
-
-        zorder = kwargs.pop('zorder', None)
-        self.add_graphic(igraphic, zorder=zorder)
-        self._axes.setAutoExtent()
-        gridline = self._axes.getGridLine()
-        gridline.setTop(True)
-
-        if ls is None:
-            return igraphic
-        else:
-            return ls
-
-    def imshow_bak(self, *args, **kwargs):
-        """
-        Display an image on the axes.
-
-        :param X: (*array_like*) 2-D or 3-D (RGB or RGBA) image value array or BufferedImage.
-        :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level curves
-            to draw, in increasing order.
-        :param cmap: (*string*) Color map string.
-        :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a
-            string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib
-            color args (string, float, rgb, etc.), different levels will be plotted in different colors in
-            the order specified.
-        :param interpolation: (*string*) Interpolation option [None | bilinear | bicubic].
-
-        :returns: (*Image graphic*) Image graphic created from array data.
-        """
-        n = len(args)
-        cmap = plotutil.getcolormap(**kwargs)
-        fill_value = kwargs.pop('fill_value', -9999.0)
-        xaxistype = None
-        isrgb = False
-        isimage = False
-        extent = None
-        if n >= 3:
-            xdata = args[0]
-            ydata = args[1]
-            extent = [xdata[0], xdata[-1], ydata[0], ydata[-1]]
-            args = args[2:]
-        X = args[0]
-        if isinstance(X, (list, tuple)):
-            isrgb = True
-        elif isinstance(X, BufferedImage):
-            isimage = True
-        elif X.ndim > 2:
-            isrgb = True
-        else:
-            if n >= 3:
-                gdata = np.asgridarray(X, xdata, ydata)
-            else:
-                gdata = np.asgridarray(X)
-        args = args[1:]
-
-        extent = kwargs.pop('extent', extent)
-        if isrgb:
-            if isinstance(X, (list, tuple)):
-                rgbd = []
-                for d in rgbdata:
-                    rgbd.append(d.asarray())
-                rgbdata = rgbd
-            else:
-                rgbdata = X.asarray()
-            igraphic = GraphicFactory.createImage(rgbdata, extent)
-            ls = None
-        elif isimage:
-            igraphic = GraphicFactory.createImage(X)
-            ls = None
-        else:
-            ls = kwargs.pop('symbolspec', None)
-            if ls is None:
-                vmin = kwargs.pop('vmin', gdata.min())
-                vmax = kwargs.pop('vmax', gdata.max())
-                if len(args) > 0:
-                    level_arg = args[0]
-                    if isinstance(level_arg, int):
-                        cn = level_arg
-                        ls = LegendManage.createImageLegend(gdata, cn, cmap)
-                    else:
-                        if isinstance(level_arg, NDArray):
-                            level_arg = level_arg.aslist()
-                        ls = LegendManage.createImageLegend(gdata, level_arg, cmap)
-                else:
-                    ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
-                    norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
-                    ls.setNormalize(norm._norm)
-                    ls.setColorMap(cmap)
-                ls = ls.convertTo(ShapeTypes.IMAGE)
-                plotutil.setlegendscheme(ls, **kwargs)
-            igraphic = GraphicFactory.createImage(gdata, ls, extent)
 
         interpolation = kwargs.pop('interpolation', None)
         if not interpolation is None:

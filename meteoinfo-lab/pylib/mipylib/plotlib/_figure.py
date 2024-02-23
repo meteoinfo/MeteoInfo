@@ -8,6 +8,7 @@
 
 from org.meteoinfo.chart import ChartPanel, Chart, Location, MouseMode, ChartText
 
+from abc import ABCMeta, abstractmethod
 import plotutil
 from ._axes import Axes, PolarAxes
 from ._mapaxes import MapAxes
@@ -16,10 +17,45 @@ from ._axes3dgl import Axes3DGL
 
 from java.awt import Font
 
-__all__ = ['Figure']
+
+__all__ = ['Figure', '_FigureBase']
 
 
-class Figure(ChartPanel):
+class _FigureBase(object):
+    """
+    Base class of figure.
+    """
+
+    __metaclass__ = ABCMeta
+
+    def __init__(self, interactive=False):
+        self._stale = True
+        self.interactive = interactive
+
+    @property
+    def stale(self):
+        """
+        Whether the artist is 'stale' and needs to be re-drawn for the output
+        to match the internal state of the artist.
+        """
+        return self._stale
+
+    @stale.setter
+    def stale(self, val):
+        self._stale = val
+
+        if val and self.interactive:
+            self.draw()
+
+    @abstractmethod
+    def draw(self):
+        """
+        Draw figure.
+        """
+        pass
+
+
+class Figure(ChartPanel, _FigureBase):
     """
     top level container for all plot elements
     """
@@ -32,15 +68,17 @@ class Figure(ChartPanel):
         :param facecolor: (*Color*) Optional, fill color of the figure. Default is ``w`` (white).
         :param dpi: (*int*) Dots per inch.
         """
+        _FigureBase.__init__(self)
+
         chart = Chart()
         facecolor = plotutil.getcolor(facecolor)
         if kwargs.has_key('bgcolor'):
             facecolor = plotutil.getcolor(kwargs.pop('bgcolor'))
         chart.setBackground(plotutil.getcolor(facecolor))
         if figsize is None:
-            super(Figure, self).__init__(chart)
+            ChartPanel.__init__(self, chart)
         else:
-            super(Figure, self).__init__(chart, figsize[0], figsize[1])
+            ChartPanel.__init__(self, chart, figsize[0], figsize[1])
         self.axes = []
         self.current_axes = -1
 
@@ -465,6 +503,7 @@ class Figure(ChartPanel):
                 if position is None:
                     ax.set_position(plot.getPosition())
             chart.setCurrentPlot(ax._axes)
+        ax.figure = self
 
         return ax
 

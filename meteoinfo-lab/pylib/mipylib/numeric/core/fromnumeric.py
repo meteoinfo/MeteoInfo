@@ -2,7 +2,6 @@
 
 from .numeric import asarray, array, isscalar
 from ._ndarray import NDArray
-from .dimarray import DimArray
 from org.meteoinfo.ndarray.math import ArrayUtil, ArrayMath
 
 __all__ = ['cumprod', 'cumsum', 'ndim', 'nonzero', 'prod', 'ravel', 'searchsorted', 'sum',
@@ -144,10 +143,7 @@ def sum(x, axis=None):
             for xx in x:
                 a.append(xx.asarray())
             r = ArrayMath.sum(a)
-            if type(x[0]) is NDArray:
-                return NDArray(r)
-            else:
-                return DimArray(NDArray(r), x[0].dims, x[0].fill_value, x[0].proj)
+            return x[0].array_wrap(r)
         else:
             x = array(x)
 
@@ -156,14 +152,7 @@ def sum(x, axis=None):
         return r
     else:
         r = x.sum(axis)
-        if isinstance(x, DimArray):
-            dims = []
-            for i in range(0, x.ndim):
-                if i != axis:
-                    dims.append(x.dims[i])
-            return DimArray(r, dims, x.fill_value, x.proj)
-        else:
-            return r
+        return x.array_wrap(r, axis)
 
 
 def prod(x, axis=None):
@@ -184,14 +173,7 @@ def prod(x, axis=None):
         return r
     else:
         r = ArrayMath.prod(x.asarray(), axis)
-        if type(x) is NDArray:
-            return NDArray(r)
-        else:
-            dims = []
-            for i in range(0, x.ndim):
-                if i != axis:
-                    dims.append(x.dims[i])
-            return DimArray(NDArray(r), dims, x.fill_value, x.proj)
+        x.array_wrap(r, axis)
 
 
 def cumsum(a, axis=None):
@@ -203,7 +185,7 @@ def cumsum(a, axis=None):
     a : array_like
         Input array.
     axis : int, optional
-        Axis along which the cumulative summary is computed.  By default
+        Axis along which the cumulative summary is computed. By default,
         the input is flattened.
 
     Returns
@@ -216,13 +198,7 @@ def cumsum(a, axis=None):
     else:
         r = ArrayMath.cumsum(a._array, axis)
 
-    if type(a) is NDArray:
-        return NDArray(r)
-    else:
-        dims = []
-        for i in range(0, a.ndim):
-            dims.append(a.dims[i])
-        return DimArray(r, dims, a.fill_value, a.proj)
+    return a.array_wrap(r, axis)
 
 
 def cumprod(a, axis=None):
@@ -234,7 +210,7 @@ def cumprod(a, axis=None):
     a : array_like
         Input array.
     axis : int, optional
-        Axis along which the cumulative product is computed.  By default
+        Axis along which the cumulative product is computed. By default,
         the input is flattened.
 
     Returns
@@ -247,10 +223,4 @@ def cumprod(a, axis=None):
     else:
         r = ArrayMath.cumprod(a._array, axis)
 
-    if type(a) is NDArray:
-        return NDArray(r)
-    else:
-        dims = []
-        for i in range(0, a.ndim):
-            dims.append(a.dims[i])
-        return DimArray(r, dims, a.fill_value, a.proj)
+    return a.array_wrap(r, axis)

@@ -79,6 +79,9 @@ class NDArray(object):
         """
         return self.dtype.itemsize
 
+    def __array_finalize__(self, obj):
+        pass
+
     def __len__(self):
         if self.ndim == 0:
             return 0
@@ -560,6 +563,34 @@ class NDArray(object):
         """
         return NDArray(ArrayUtil.view(self._array))
 
+    def _ufunc_finalize(self, obj, axis=None):
+        """
+        Return a new array after universal function finalized.
+
+        :param obj: The object output from the universal function.
+        :param axis: (*int*) The axis for ufunc compute along. Default is `None`, means not consider.
+
+        :return: New array object.
+        """
+        if isinstance(obj, Array):
+            return NDArray(obj)
+        else:
+            return obj
+
+    def array_wrap(self, arr, axis=None):
+        """
+        Return a new array wrapped as self class object.
+
+        :param arr: The array to be wrapped.
+        :param axis: (*int*) The axis for ufunc compute along. Default is `None`, means not consider.
+
+        :return: New array object.
+        """
+        if isinstance(arr, Array):
+            return NDArray(arr)
+        else:
+            return arr
+
     def tojarray(self, dtype=None):
         """
         Convert to java array.
@@ -610,6 +641,15 @@ class NDArray(object):
             other = other.aslist()
         r = NDArray(ArrayMath.inValues(self._array, other))
         return r
+
+    def squeeze(self):
+        """
+        Remove single-dimensional entries from the shape of an array.
+
+        :returns: (*array_like*) The self array, but with all or a subset of the dimensions of length 1
+            removed.
+        """
+        return NDArray(self._array.reduce())
 
     def all(self, axis=None):
         """
@@ -939,6 +979,18 @@ class NDArray(object):
             r = ArrayMath.round(self._array)
         else:
             r = ArrayMath.round(self._array, decimals)
+        return NDArray(r)
+
+    def rot90(self, k=1):
+        """
+        Rotate an array by 90 degrees in the counter-clockwise direction. The first two dimensions
+        are rotated if the array has more than 2 dimensions.
+
+        :param k: (*int*) Number of times the array is rotated by 90 degrees
+
+        :returns: (*array_like*) Rotated array.
+        """
+        r = ArrayMath.rot90(self._array, k)
         return NDArray(r)
 
     def ave(self, fill_value=None):

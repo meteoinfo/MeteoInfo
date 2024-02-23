@@ -348,6 +348,19 @@ public class ChartColorBar extends ChartLegend {
     }
 
     /**
+     * Set if extend rectangle - or triangle
+     *
+     * @param value Boolean
+     */
+    @Override
+    public void setExtendRect(boolean value) {
+        this.extendRect = value;
+        if (!value) {
+            this.extendType = ExtendType.BOTH;
+        }
+    }
+
+    /**
      * Get extend type
      * @return Extend type
      */

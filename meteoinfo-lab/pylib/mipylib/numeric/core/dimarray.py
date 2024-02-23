@@ -574,6 +574,48 @@ class DimArray(NDArray):
         Copy array vlaues to a new array.
         """
         return DimArray(self._array.copy(), self.dims, self.proj)
+
+    def _ufunc_finalize(self, obj, axis=None):
+        """
+        Return a new array after universal function finalized.
+
+        :param obj: The object output from the universal function.
+        :param axis: (*int*) The axis for ufunc compute along. Default is `None`, means not consider.
+
+        :return: New array object.
+        """
+        if isinstance(obj, (Array, NDArray)):
+            if axis is None:
+                return DimArray(obj, self.dims, self.proj)
+            else:
+                dims = []
+                for i in range(0, self.ndim):
+                    if i != axis:
+                        dims.append(self.dims[i])
+                return DimArray(obj, dims, self.proj)
+        else:
+            return obj
+
+    def array_wrap(self, arr, axis=None):
+        """
+        Return a new array wrapped as self class object.
+
+        :param arr: The array to be wrapped.
+        :param axis: (*int*) The axis for ufunc compute along. Default is `None`, means not consider.
+
+        :return: New array object.
+        """
+        if isinstance(arr, (Array, NDArray)):
+            if axis is None:
+                return DimArray(arr, self.dims, self.proj)
+            else:
+                dims = []
+                for i in range(0, self.ndim):
+                    if i != axis:
+                        dims.append(self.dims[i])
+                return DimArray(arr, dims, self.proj)
+        else:
+            return arr
     
     # get dimension length
     def dimlen(self, idx=0):
@@ -786,7 +828,7 @@ class DimArray(NDArray):
             data = self.array[::-1,:]
 
         gdata = GridData(data._array, xdata._array, ydata._array, fill_value, self.proj)
-        return PyGridData(gdata)
+        return gdata
         
     def asgridarray(self, xdata=None, ydata=None, fill_value=-9999.0):
         if xdata is None or ydata is None:
@@ -802,6 +844,20 @@ class DimArray(NDArray):
 
         gdata = GridArray(data._array, xdata._array, ydata._array, fill_value, self.proj)
         return gdata
+
+    def squeeze(self):
+        """
+        Remove single-dimensional entries from the shape of an array.
+
+        :returns: (*array_like*) The self array, but with all or a subset of the dimensions of length 1
+            removed.
+        """
+        r = self._array.reduce()
+        dims = []
+        for dim in a.dims:
+            if dim.getLength() > 1:
+                dims.append(dim)
+        return DimArray(r, dims, self.proj)
         
     def sum(self, axis=None):
         """
@@ -1063,6 +1119,27 @@ class DimArray(NDArray):
     def log10(self):
         r = super(DimArray, self).log10()
         return DimArray(r, self.dims, self.proj)
+
+    def rot90(self, k=1):
+        """
+        Rotate an array by 90 degrees in the counter-clockwise direction. The first two dimensions
+        are rotated if the array has more than 2 dimensions.
+
+        :param k: (*int*) Number of times the array is rotated by 90 degrees
+
+        :returns: (*array_like*) Rotated array.
+        """
+        r = ArrayMath.rot90(self._array, k)
+        dims = []
+        if math.fabs(k) == 1 or math.fabs(k) == 3:
+            dims.append(self.dims[1])
+            dims.append(self.dims[0])
+            for i in range(2, len(self.dims)):
+                dims.append(self.dims[i])
+        else:
+            for i in range(0, len(self.dims)):
+                dims.append(self.dims[i])
+        return DimArray(r, dims, self.proj)
         
     def maskout(self, mask):
         """
@@ -1246,7 +1323,7 @@ class DimArray(NDArray):
         seasons = ['DJF','JFM','FMA','MAM','AMJ','MJJ','JJA','JAS','ASO','SON','OND','NDJ']
         season = season.upper()
         if not season in seasons:
-            print 'Season string is not valid: "' + season + '"!'
+            print('Season string is not valid: "' + season + '"!')
             raise KeyError()
         idx = seasons.index(season) - 1
         keys = []
@@ -1300,14 +1377,6 @@ class DimArray(NDArray):
             return NDArray(r)
         else:
             return r
-     
-    def tostation(self, x, y):
-        gdata = self.asgriddata()
-        if isinstance(x, NDArray) or isinstance(x, DimArray):
-            r = gdata.data.toStation(x.aslist(), y.aslist())
-            return NDArray(ArrayUtil.array(r))
-        else:
-            return gdata.data.toStation(x, y)
             
     def project(self, x=None, y=None, toproj=None, method='bilinear'):
         """
@@ -1443,308 +1512,3 @@ def dim_array(a, dims=None):
             dim.setDimValues(range(a.shape[i]))
             dims.append(dim)
     return DimArray(a, dims)
-
-
-# The encapsulate class of GridData
-class PyGridData():
-    
-    # griddata must be a GridData object
-    def __init__(self, griddata=None):
-        if griddata != None:
-            self.data = griddata
-        else:
-            self.data = GridData()
-    
-    def __getitem__(self, indices):
-        print type(indices)
-        if not isinstance(indices, tuple):
-            print 'indices must be tuple!'
-            return None
-        
-        if len(indices) != 2:
-            print 'indices must be 2 dimension!'
-            return None
-
-        if isinstance(indices[0], int):
-            sxidx = indices[0]
-            exidx = indices[0]
-            xstep = 1
-        else:
-            sxidx = 0 if indices[0].start is None else indices[0].start
-            exidx = self.data.getXNum() if indices[0].stop is None else indices[0].stop
-            xstep = 1 if indices[0].step is None else indices[0].step
-        if isinstance(indices[1], int):
-            syidx = indices[1]
-            eyidx = indices[1]
-            ystep = 1
-        else:
-            syidx = 0 if indices[1].start is None else indices[1].start
-            eyidx = self.data.getYNum() if indices[1].stop is None else indices[1].stop
-            ystep = 1 if indices[1].step is None else indices[1].step
-        gdata = PyGridData(self.data.extract(sxidx, exidx, xstep, syidx, eyidx, ystep))
-        return gdata
-    
-    def add(self, other):
-        gdata = None
-        if isinstance(other, PyGridData):            
-            gdata = PyGridData(self.data.add(other.data))
-        else:
-            gdata = PyGridData(self.data.add(other))
-        return gdata
-    
-    def __add__(self, other):
-        gdata = None
-        print isinstance(other, PyGridData)
-        if isinstance(other, PyGridData):            
-            gdata = PyGridData(self.data.add(other.data))
-        else:
-            gdata = PyGridData(self.data.add(other))
-        return gdata
-        
-    def __radd__(self, other):
-        return PyGridData.__add__(self, other)
-        
-    def __sub__(self, other):
-        gdata = None
-        if isinstance(other, PyGridData):
-            gdata = PyGridData(self.data.sub(other.data))
-        else:
-            gdata = PyGridData(self.data.sub(other))
-        return gdata
-        
-    def __rsub__(self, other):
-        gdata = None
-        if isinstance(other, PyGridData):
-            gdata = PyGridData(other.data.sub(self.data))
-        else:
-            gdata = PyGridData(DataMath.sub(other, self.data))
-        return gdata
-    
-    def __mul__(self, other):
-        gdata = None
-        if isinstance(other, PyGridData):
-            gdata = PyGridData(self.data.mul(other.data))
-        else:
-            gdata = PyGridData(self.data.mul(other))
-        return gdata
-        
-    def __rmul__(self, other):
-        return PyGridData.__mul__(self, other)
-        
-    def __div__(self, other):
-        gdata = None
-        if isinstance(other, PyGridData):
-            gdata = PyGridData(self.data.div(other.data))
-        else:
-            gdata = PyGridData(self.data.div(other))
-        return gdata
-        
-    def __rdiv__(self, other):
-        gdata = None
-        if isinstance(other, PyGridData):
-            gdata = PyGridData(other.data.div(self.data))
-        else:
-            gdata = PyGridData(DataMath.div(other, self))
-        return gdata
-        
-    # other must be a numeric data
-    def __pow__(self, other):
-        gdata = PyGridData(self.data.pow(other))
-        return gdata
-        
-    def min(self):
-        return self.data.getMinValue()
-        
-    def max(self):
-        return self.data.getMaxValue()  
-
-    def interpolate(self):
-        return PyGridData(self.data.interpolate())
-        
-    def asdimarray(self):
-        a = self.data.getArray()
-        dims = self.data.getDimensions()
-        return DimArray(NDArray(a), dims, self.data.missingValue, self.data.projInfo)
-
-    def savedata(self, filename):
-        self.data.saveAsSurferASCIIFile(filename)
-        
-###############################################################         
-# The encapsulate class of StationData
-class PyStationData():
-    
-    # data must be a StationData object
-    def __init__(self, data=None):
-        self.data = data
-    
-    def __len__(self):
-        return self.data.getStNum()
-        
-    def __getitem__(self, indices):
-        if isinstance(indices, int):    #Data index
-            idx = indices
-            stid = self.data.getStid(idx)
-            x = self.data.getX(idx)
-            y = self.data.getY(idx)
-            return stid, x, y
-        elif isinstance(indices, str):    #Station identifer
-            stid = indices
-            idx = self.data.indexOf(stid)
-            x = self.data.getX(idx)
-            y = self.data.getY(idx)
-            return stid, x, y
-        else:
-            return None
-    
-    def add(self, other):
-        gdata = None
-        if isinstance(other, PyStationData):            
-            gdata = PyStationData(self.data.add(other.data))
-        else:
-            gdata = PyStationData(self.data.add(other))
-        return gdata
-    
-    def __add__(self, other):
-        gdata = None
-        if isinstance(other, PyStationData):            
-            gdata = PyStationData(self.data.add(other.data))
-        else:
-            gdata = PyStationData(self.data.add(other))
-        return gdata
-        
-    def __radd__(self, other):
-        return PyStationData.__add__(self, other)
-        
-    def __sub__(self, other):
-        gdata = None
-        if isinstance(other, PyStationData):
-            gdata = PyStationData(self.data.sub(other.data))
-        else:
-            gdata = PyStationData(self.data.sub(other))
-        return gdata
-        
-    def __rsub__(self, other):
-        gdata = None
-        if isinstance(other, PyStationData):
-            gdata = PyStationData(other.data.sub(self.data))
-        else:
-            gdata = PyStationData(DataMath.sub(other, self.data))
-        return gdata
-    
-    def __mul__(self, other):
-        gdata = None
-        if isinstance(other, PyStationData):
-            gdata = PyStationData(self.data.mul(other.data))
-        else:
-            gdata = PyStationData(self.data.mul(other))
-        return gdata
-        
-    def __rmul__(self, other):
-        return PyStationData.__mul__(self, other)
-        
-    def __div__(self, other):
-        gdata = None
-        if isinstance(other, PyStationData):
-            gdata = PyStationData(self.data.div(other.data))
-        else:
-            gdata = PyStationData(self.data.div(other))
-        return gdata
-        
-    def __rdiv__(self, other):
-        gdata = None
-        if isinstance(other, PyStationData):
-            gdata = PyStationData(other.data.div(self.data))
-        else:
-            gdata = PyStationData(DataMath.div(other, self))
-        return gdata
-        
-    # other must be a numeric data
-    def __pow__(self, other):
-        gdata = PyStationData(self.data.pow(other))
-        return gdata        
-        
-    def toarray(self):
-        r = ArrayUtil.getArraysFromStationData(self.data)
-        return NDArray(r[0]), NDArray(r[1]), NDArray(r[2])
-        
-    def min(self):
-        return self.data.getMinValue()
-        
-    def minloc(self):
-        minv = self.data.getMinValueIndex()
-        return minv[0], minv[1]
-        
-    def max(self):
-        return self.data.getMaxValue()    
-
-    def maxloc(self):
-        maxv = self.data.getMaxValueIndex() 
-        return maxv[0], maxv[1]     
-        
-    def maskout(self, polygon):
-        if isinstance(polygon, MILayer):
-            polygon = polygon.layer
-        return PyStationData(self.data.maskout(polygon))
-        
-    def maskin(self, polygon):
-        return PyStationData(self.data.maskin(polygon))
-        
-    def filter(self, stations):
-        return PyStationData(self.data.filter(stations))
-        
-    def join(self, other):
-        return PyStationData(self.data.join(other.data))     
-
-    def ave(self):
-        return self.data.average()
-        
-    def mean(self):
-        return self.data.average()
-        
-    def sum(self):
-        return self.data.sum()
-        
-    def griddata(self, xi=None, **kwargs):
-        method = kwargs.pop('method', 'idw')
-        fill_value = self.data.missingValue
-        x_s = NDArray(ArrayUtil.array(self.data.getXList()))
-        y_s = NDArray(ArrayUtil.array(self.data.getYList()))
-        if xi is None:            
-            xn = int(math.sqrt(len(x_s)))
-            yn = xn
-            x_g = NDArray(ArrayUtil.lineSpace(x_s.min(), x_s.max(), xn, True))
-            y_g = NDArray(ArrayUtil.lineSpace(y_s.min(), y_s.max(), yn, True))     
-        else:
-            x_g = xi[0]
-            y_g = xi[1]
-        if isinstance(x_s, NDArray):
-            x_s = x_s.aslist()
-        if isinstance(y_s, NDArray):
-            y_s = y_s.aslist()    
-        if isinstance(x_g, NDArray):
-            x_g = x_g.aslist()
-        if isinstance(y_g, NDArray):
-            y_g = y_g.aslist()
-        if method == 'idw':
-            pnum = kwargs.pop('pointnum', 2)
-            radius = kwargs.pop('radius', None)
-            if radius is None:
-                r = self.data.interpolate_Neighbor(x_g, y_g, pnum, fill_value)
-                return PyGridData(r)
-            else:
-                r = self.data.interpolate_Radius(x_g, y_g, pnum, radius, fill_value)
-                return PyGridData(r)
-        elif method == 'cressman':
-            radius = kwargs.pop('radius', [10, 7, 4, 2, 1])
-            if isinstance(radius, NDArray):
-                radius = radius.aslist()
-            r = self.data.interpolate_Cressman(x_g, y_g, radius, fill_value)
-            return PyGridData(r)
-        elif method == 'neareast':
-            r = self.data.interpolate_Assign(x_g, y_g, fill_value)
-            return PyGridData(r)
-        else:
-            return None
-        
-    def savedata(self, filename, fieldname='data', savemissingv=False):
-        self.data.saveAsCSVFile(filename, fieldname, savemissingv)

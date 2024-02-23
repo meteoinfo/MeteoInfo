@@ -17,6 +17,8 @@ currentfolder = None
 #MeteoInfo folder
 mifolder = None
 
+interactive = False
+
 #Map folder
 def get_map_folder():
     return None if (mifolder is None) else os.path.join(mifolder, 'map')

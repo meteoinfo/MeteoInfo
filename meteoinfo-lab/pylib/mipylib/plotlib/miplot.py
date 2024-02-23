@@ -34,7 +34,6 @@ import docstring
 
 ## Global ##
 batchmode = False
-isinteractive = False
 g_figure = None
 g_axes = None
 
@@ -54,7 +53,7 @@ __all__ = [
     'streamplotm', 'streamslice', 'subplot', 'subplots', 'suptitle', 'supxlabel', 'supylabel', 'surf',
     'surfc', 'taylor_diagram', 'text', 'text3', 'title', 'trisurf', 'twinx', 'twiny', 'view', 'violinplot',
     'volumeplot', 'weatherspec', 'xaxis', 'xlabel', 'xlim', 'xreverse', 'xticks', 'yaxis', 'ylabel',
-    'ylim', 'yreverse', 'yticks', 'zaxis', 'zlabel', 'zlim', 'zticks', 'isinteractive'
+    'ylim', 'yreverse', 'yticks', 'zaxis', 'zlabel', 'zlim', 'zticks', 'interactive', 'set_interactive'
 ]
 
 
@@ -68,6 +67,19 @@ def _copy_docstring_and_deprecators(method, func=None):
         func = decorator(func)
     return func
 
+
+def interactive():
+    return migl.interactive
+
+def set_interactive(val):
+    """
+    Set interactive mode or not.
+
+    :param val: (*bool*) Interactive mode or not.
+    """
+    migl.interactive = val
+    if g_figure is not None:
+        g_figure.interactive = val
 
 def gcf():
     """
@@ -105,7 +117,7 @@ def draw_if_interactive():
     """
     Draw current figure if is interactive model.
     """
-    if isinteractive:
+    if migl.interactive:
         g_figure.paintGraphics()
 
 
@@ -128,10 +140,7 @@ def plot(*args, **kwargs):
         if g_axes.ndim == 3:
             g_axes = axes()
 
-    r = g_axes.plot(*args, **kwargs)
-    if r is not None:
-        draw_if_interactive()
-    return r
+    return g_axes.plot(*args, **kwargs)
 
 
 @_copy_docstring_and_deprecators(Axes.step)
@@ -624,6 +633,7 @@ def figure(opengl=True, facecolor='w', figsize=None, newfig=True, **kwargs):
     else:
         g_figure = Figure(figsize, facecolor=facecolor, **kwargs)
 
+    g_figure.interactive = migl.interactive
     if not batchmode:
         show(newfig)
 

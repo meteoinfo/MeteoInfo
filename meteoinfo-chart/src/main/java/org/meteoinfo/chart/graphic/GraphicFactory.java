@@ -3337,6 +3337,26 @@ public class GraphicFactory {
     /**
      * Create image
      *
+     * @param data Grid data array
+     * @param xa X coordinates array
+     * @param ya Y coordinates array
+     * @param missingValue Missing value
+     * @param ls Legend scheme
+     * @param offset Offset of z axis
+     * @param zdir Z direction - x, y or z
+     * @param sePoint Start and end points [xstart, ystart, xend, yend]
+     * @param interpolation Interpolation
+     * @return Graphics
+     */
+    public static GraphicCollection createImage(Array data, Array xa, Array ya, Number missingValue, LegendScheme ls, double offset,
+                                                String zdir, List<Number> sePoint, String interpolation) {
+        GridArray gridArray = new GridArray(data, xa, ya, missingValue);
+        return createImage(gridArray, ls, offset, zdir, sePoint, interpolation);
+    }
+
+    /**
+     * Create image
+     *
      * @param gdata Grid data array
      * @param ls Legend scheme
      * @param offset Offset of z axis

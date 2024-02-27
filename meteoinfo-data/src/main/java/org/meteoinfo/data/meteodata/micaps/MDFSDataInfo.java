@@ -34,11 +34,11 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
     private String element;
     private String description;
     float level;
-    private int numLon, numLat, numStation;
+    private int numLon, numLat, numStation, numVariation, idType;
     private boolean yReverse = false;
-    private Map varMap;
-    private Map dataTypeMap;
-    private List<String> variableNames = new ArrayList<>();
+    private Map<Integer, String> varMap;
+    private Map<Integer, DataType> dataTypeMap;
+    private final List<String> variableNames = new ArrayList<>();
     private DataFrame dataFrame;
     // </editor-fold>
 
@@ -81,6 +81,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
             br.read(bytes);
             type = DataConvert.bytes2Short(bytes, ByteOrder.LITTLE_ENDIAN);
             this.addAttribute(new Attribute("data_format", "MICAPS MDFS"));
+            this.addAttribute(new Attribute("data_type", type));
             switch (type) {
                 case 1:
                 case 2:
@@ -110,14 +111,17 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     int second = DataConvert.bytes2Int(bytes, ByteOrder.LITTLE_ENDIAN);
                     br.read(bytes);
                     int timeZone = DataConvert.bytes2Int(bytes, ByteOrder.LITTLE_ENDIAN);
+                    bytes = new byte[2];
+                    br.read(bytes);
+                    this.idType = DataConvert.bytes2Short(bytes, ByteOrder.LITTLE_ENDIAN);
+                    br.skipBytes(98);
 
-                    br.skipBytes(100);
-
+                    bytes = new byte[4];
                     br.read(bytes);
                     this.numStation = DataConvert.bytes2Int(bytes, ByteOrder.LITTLE_ENDIAN);
                     bytes = new byte[2];
                     br.read(bytes);
-                    int varNum = DataConvert.bytes2Short(bytes, ByteOrder.LITTLE_ENDIAN);
+                    this.numVariation = DataConvert.bytes2Short(bytes, ByteOrder.LITTLE_ENDIAN);
 
                     LocalDateTime dt = LocalDateTime.of(year, month, day, hour, 0);
                     Dimension tDim = new Dimension(DimensionType.T);
@@ -177,7 +181,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     var.addAttribute("name", varName);
                     this.variableNames.add(varName);
                     this.addVariable(var);
-                    for (int i = 0; i < varNum; i++) {
+                    for (int i = 0; i < this.numVariation; i++) {
                         br.read(bytes);
                         varId = DataConvert.bytes2Short(bytes, ByteOrder.LITTLE_ENDIAN);
                         br.read(bytes);
@@ -186,7 +190,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                         varName = this.getVariableName(varId);
                         var.setName(varName);
                         var.setStation(true);
-                        var.setDataType((DataType) this.dataTypeMap.get(dataTypeId));
+                        var.setDataType(this.dataTypeMap.get(dataTypeId));
                         var.setDimension(tDim);
                         var.setDimension(zDim);
                         var.setDimension(stDim);
@@ -335,8 +339,12 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                             this.variableNames.add("WindDirection");
                             break;
                     }
+
+                    this.addAttribute(new Attribute("model_name", modelName));
                     break;
             }
+            this.addAttribute(new Attribute("level", level));
+            this.addAttribute(new Attribute("description", description));
 
             br.close();
         } catch (IOException ex) {
@@ -404,14 +412,27 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
         List<String> idxList = new ArrayList<>();
         byte[] bytes;
         int stId, numVar, varId, idx;
+        String stationId;
         float lon, lat;
         String varName;
         for (int i = 0; i < numStation; i++) {
+            if (this.idType == 1) {
+                bytes = new byte[2];
+                br.read(bytes);
+                int idLength = DataConvert.bytes2Short(bytes, ByteOrder.LITTLE_ENDIAN);
+                bytes = new byte[idLength];
+                br.read(bytes);
+                stationId = new String(bytes);
+                idxList.add(stationId);
+                data.get(0).setString(i, stationId);
+            } else {
+                bytes = new byte[4];
+                br.read(bytes);
+                stId = DataConvert.bytes2Int(bytes, ByteOrder.LITTLE_ENDIAN);
+                idxList.add(String.valueOf(stId));
+                data.get(0).setString(i, String.valueOf(stId));
+            }
             bytes = new byte[4];
-            br.read(bytes);
-            stId = DataConvert.bytes2Int(bytes, ByteOrder.LITTLE_ENDIAN);
-            idxList.add(String.valueOf(stId));
-            data.get(0).setString(i, String.valueOf(stId));
             br.read(bytes);
             lon = DataConvert.bytes2Float(bytes, ByteOrder.LITTLE_ENDIAN);
             data.get(1).setFloat(i, lon);
@@ -421,19 +442,18 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
             bytes = new byte[2];
             br.read(bytes);
             numVar = DataConvert.bytes2Short(bytes, ByteOrder.LITTLE_ENDIAN);
+            if (numVar > this.numVariation) {
+                break;
+            }
             for (int j = 0; j < numVar; j++) {
                 bytes = new byte[2];
                 br.read(bytes);
                 varId = DataConvert.bytes2Short(bytes, ByteOrder.LITTLE_ENDIAN);
-                if (varId % 2 == 0 && varId > 21) {
-                    br.readByte();
-                } else {
-                    varName = this.getVariableName(varId);
-                    idx = this.variableNames.indexOf(varName);
-                    bytes = new byte[varSizes.get(idx)];
-                    br.read(bytes);
-                    data.get(idx).setObject(i, this.getValue(bytes, columns.get(idx).getDataType()));
-                }
+                varName = this.getVariableName(varId);
+                idx = this.variableNames.indexOf(varName);
+                bytes = new byte[varSizes.get(idx)];
+                br.read(bytes);
+                data.get(idx).setObject(i, this.getValue(bytes, columns.get(idx).getDataType()));
             }
         }
 
@@ -502,7 +522,8 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
     public Array read(String varName, int[] origin, int[] size, int[] stride) {
         try {
             Section section = new Section(origin, size, stride);
-            Array dataArray = Array.factory(DataType.FLOAT, section.getShape());
+            Variable variable = this.getVariable(varName);
+            Array dataArray = Array.factory(variable.getDataType(), section.getShape());
             IndexIterator ii = dataArray.getIndexIterator();
             int rangeIdx = 2;
             switch (this.type) {
@@ -746,9 +767,17 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
 
     private String getVariableName(int varId) {
         if (this.varMap.containsKey(varId)) {
-            return (String)varMap.get(varId);
+            return varMap.get(varId);
         } else {
-            return "Undefine_" + String.valueOf(varId);
+            if (varId % 2 == 0 && varId > 200) {
+                varId -= 1;
+                if (this.varMap.containsKey(varId)) {
+                    return "Q_" + varMap.get(varId);
+                } else {
+                    return "Undefined_" + String.valueOf(varId);
+                }
+            }
+            return "Undefined_" + String.valueOf(varId);
         }
     }
 

@@ -30,7 +30,6 @@ import org.meteoinfo.common.PointD;
 public class PointShape extends Shape implements Cloneable{
     // <editor-fold desc="Variables">
 
-    protected PointD point = new PointD();
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -72,6 +71,7 @@ public class PointShape extends Shape implements Cloneable{
      */
     @Override
     public Geometry toGeometry(GeometryFactory factory){
+        PointD point = this.getPoint();
         Coordinate c = new Coordinate(point.X, point.Y);        
         return factory.createPoint(c);
     };
@@ -82,7 +82,7 @@ public class PointShape extends Shape implements Cloneable{
      * @return point
      */
     public PointD getPoint() {
-        return point;
+        return this.points.get(0);
     }
 
     /**
@@ -91,51 +91,14 @@ public class PointShape extends Shape implements Cloneable{
      * @param aPoint point
      */
     public void setPoint(PointD aPoint) {
-        point = aPoint;
-        Extent aExtent = new Extent();
-        aExtent.minX = point.X;
-        aExtent.maxX = point.X;
-        aExtent.minY = point.Y;
-        aExtent.maxY = point.Y;
-        this.setExtent(aExtent);
+        List<PointD> pts = new ArrayList<>();
+        pts.add(aPoint);
+        this.setPoints(pts);
     }
 
     // </editor-fold>
     // <editor-fold desc="Methods">
 
-    /**
-     * Get points
-     * 
-     * @return point list
-     */
-    @Override
-    public List<PointD> getPoints() {
-        List<PointD> pList = new ArrayList<>();
-        pList.add(point);
-
-        return pList;
-    }
-
-    /**
-     * Set points
-     * 
-     * @param points point list
-     */
-    @Override
-    public void setPoints(List<? extends PointD> points) {
-        setPoint(points.get(0));
-    }
-
-    /**
-     * Clone
-     * @return PointShape
-     */
-    //@Override
-    public Object clone_back() {
-        PointShape o = (PointShape)super.clone();
-        return o;
-    }
-    
     /**
      * Clone
      *
@@ -145,7 +108,7 @@ public class PointShape extends Shape implements Cloneable{
     public Object clone() {
         PointShape ps = new PointShape();
         ps.setValue(this.getValue());
-        ps.setPoint((PointD)point.clone());
+        ps.setPoint((PointD) this.getPoint().clone());
         ps.setVisible(this.isVisible());
         ps.setSelected(this.isSelected());
         ps.setLegendIndex(this.getLegendIndex());

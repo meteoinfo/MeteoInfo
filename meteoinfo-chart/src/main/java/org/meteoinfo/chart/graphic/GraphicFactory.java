@@ -19,8 +19,13 @@ import org.meteoinfo.data.GridArray;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.XYListDataset;
 import org.meteoinfo.data.analysis.Statistics;
+import org.meteoinfo.data.meteodata.StationModel;
+import org.meteoinfo.data.meteodata.StationModelData;
 import org.meteoinfo.geo.drawing.ContourDraw;
 import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.geo.layer.LayerDrawType;
+import org.meteoinfo.geo.layer.VectorLayer;
+import org.meteoinfo.geo.meteodata.DrawMeteoData;
 import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.geometry.colors.ExtendType;
 import org.meteoinfo.geometry.colors.Normalize;
@@ -44,6 +49,7 @@ import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.projection.ProjectionInfo;
+import org.meteoinfo.table.Field;
 import wcontour.Contour;
 import wcontour.global.Point3D;
 import wcontour.global.PolyLine;
@@ -55,6 +61,8 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -1207,12 +1215,26 @@ public class GraphicFactory {
         IndexIterator xIter = xdata.getIndexIterator();
         IndexIterator yIter = ydata.getIndexIterator();
         IndexIterator zIter = zdata.getIndexIterator();
-        while (xIter.hasNext()) {
-            ps = new PointShape();
-            ps.setPoint(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
-            z = zIter.getDoubleNext();
-            cb = ls.findLegendBreak(z);
-            graphics.add(new Graphic(ps, cb));
+        if (ls.getLegendType() == LegendType.UNIQUE_VALUE && xdata.getSize() == ls.getBreakNum()) {
+            int i = 0;
+            while (xIter.hasNext()) {
+                ps = new PointShape();
+                ps.setPoint(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
+                z = zIter.getDoubleNext();
+                cb = ls.getLegendBreak(i);
+                graphics.add(new Graphic(ps, cb));
+                i += 1;
+            }
+        } else {
+            while (xIter.hasNext()) {
+                ps = new PointShape();
+                ps.setPoint(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
+                z = zIter.getDoubleNext();
+                cb = ls.findLegendBreak(z);
+                if (cb != null) {
+                    graphics.add(new Graphic(ps, cb));
+                }
+            }
         }
         graphics.setSingleLegend(false);
         graphics.setLegendScheme(ls);
@@ -1788,6 +1810,65 @@ public class GraphicFactory {
                 graphics.add(new Graphic(pgs, pgbs.get(i)));
             }
         }
+        return graphics;
+    }
+
+    /**
+     * Create station model graphics
+     *
+     * @param stationModelData Station model data
+     * @param ls Legend scheme
+     * @param isSurface If is surface
+     * @return Station model graphics
+     */
+    public static GraphicCollection createStationModel(StationModelData stationModelData,
+                                                      LegendScheme ls, boolean isSurface) {
+        int i;
+        StationModelShape aSM;
+        float windDir, windSpeed;
+        int weather, cCover, temp, dewPoint, pressure;
+        PointD aPoint;
+
+        GraphicCollection graphics = new GraphicCollection();
+
+        for (i = 0; i < stationModelData.getDataNum(); i++) {
+            StationModel sm = stationModelData.getData().get(i);
+            windDir = (float) sm.getWindDirection();
+            windSpeed = (float) sm.getWindSpeed();
+            if (!(MIMath.doubleEquals(windDir, stationModelData.getMissingValue()))) {
+                if (!(MIMath.doubleEquals(windSpeed, stationModelData.getMissingValue()))) {
+                    aPoint = new PointD();
+                    aPoint.X = (float) sm.getLongitude();
+                    aPoint.Y = (float) sm.getLatitude();
+                    weather = (int) sm.getWeather();
+                    cCover = (int) sm.getCloudCover();
+                    temp = (int) sm.getTemperature();
+                    dewPoint = (int) sm.getDewPoint();
+                    pressure = (int) sm.getPressure();
+                    if (isSurface) {
+                        if (!(MIMath.doubleEquals(sm.getPressure(), stationModelData.getMissingValue()))) {
+                            //pressure = (int)((stationModelData[9, i] - 1000) * 10);
+                            String pStr = String.valueOf((int) (sm.getPressure() * 10));
+                            if (pStr.length() < 3) {
+                                pressure = (int) stationModelData.getMissingValue();
+                            } else {
+                                pStr = pStr.substring(pStr.length() - 3);
+                                pressure = Integer.parseInt(pStr);
+                            }
+                        }
+                    }
+
+                    aSM = Draw.calStationModel(windDir, windSpeed, 0, 12, aPoint, weather,
+                            temp, dewPoint, pressure, cCover);
+
+                    graphics.add(new Graphic(aSM, new ColorBreak()));
+                }
+            }
+        }
+
+        graphics.setLegendScheme(ls);
+        graphics.setAvoidCollision(true);
+
         return graphics;
     }
 
@@ -8454,6 +8535,29 @@ public class GraphicFactory {
             }
         }
         graphics.updateExtent();
+    }
+
+    /**
+     * Convert graphics from polar to cartesian coordinate
+     *
+     * @param graphic Graphic
+     */
+    public static void polarToCartesian(Graphic graphic, double bottom) {
+        if (graphic instanceof GraphicCollection) {
+            polarToCartesian((GraphicCollection) graphic, bottom);
+        } else {
+            for (int i = 0; i < graphic.getNumGraphics(); i++) {
+                Graphic gg = graphic.getGraphicN(i);
+                Shape shape = gg.getShape();
+                List<PointD> points = new ArrayList<>();
+                for (PointD p : shape.getPoints()) {
+                    double[] xy = MIMath.polarToCartesian(p.X, p.Y + bottom);
+                    points.add(new PointD(xy[0], xy[1]));
+                }
+                shape.setPoints(points);
+                gg.setShape(shape);
+            }
+        }
     }
 
     /**

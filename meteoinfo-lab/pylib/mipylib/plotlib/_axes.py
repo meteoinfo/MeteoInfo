@@ -16,7 +16,7 @@ from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
 from org.meteoinfo.geometry.legend import BarBreak, PolygonBreak, PolylineBreak, \
     PointBreak, LineStyles, PointStyle, LegendScheme, LegendType, LegendManage, ExtendFraction
 from org.meteoinfo.geometry.shape import ShapeTypes
-from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection
+from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection, ImageGraphic
 from org.meteoinfo.geometry.colors import ExtendType
 from org.meteoinfo.common import MIMath, Extent
 from org.meteoinfo.geo.layer import MapLayer
@@ -73,6 +73,10 @@ class Axes(object):
             self._axes.setUnits(units)
 
         aspect = kwargs.pop('aspect', 'auto')
+        frameon = kwargs.pop('frameon', None)
+        if frameon is not None:
+            self._axes.setDrawNeatLine(frameon)
+
         axis = kwargs.pop('axis', None)
         if axis is None:
             axis = kwargs.pop('axison', True)
@@ -873,7 +877,7 @@ class Axes(object):
         timetickformat = kwargs.pop('timetickformat', None)
         if not axistype is None:
             self.set_xaxis_type(axistype, timetickformat)
-            self._axes.setAutoExtent()
+            #self._axes.setAutoExtent()
 
         location = kwargs.pop('location', 'both')
         if location == 'top':
@@ -993,7 +997,7 @@ class Axes(object):
         timetickformat = kwargs.pop('timetickformat', None)
         if not axistype is None:
             self.set_yaxis_type(axistype, timetickformat)
-            self._axes.updateDrawExtent()
+            #self._axes.updateDrawExtent()
 
         location = kwargs.pop('location', 'both')
         if location == 'left':
@@ -1103,17 +1107,18 @@ class Axes(object):
 
         if projection is None:
             if zorder is None:
-                self._axes.addGraphic(graphic)
+                rGraphic = self._axes.addGraphic(graphic)
             else:
-                self._axes.addGraphic(zorder, graphic)
+                rGraphic = self._axes.addGraphic(zorder, graphic)
         else:
             if zorder is None:
-                self._axes.addGraphic(graphic, projection)
+                rGraphic = self._axes.addGraphic(graphic, projection)
             else:
-                self._axes.addGraphic(zorder, graphic, projection)
+                rGraphic = self._axes.addGraphic(zorder, graphic, projection)
 
         #self._axes.setAutoExtent()
         self.stale = True
+        return rGraphic
 
     def get_graphics(self):
         """
@@ -1191,8 +1196,9 @@ class Axes(object):
             gridline.setDrawYLine(is_draw)
         color = kwargs.pop('color', None)
         if not color is None:
-            c = plotutil.getcolor(color)
-            gridline.setColor(c)
+            alpha = kwargs.pop('alpha', None)
+            c = plotutil.getcolor(color, alpha)
+            gridline.setColorAndAlpha(c)
         linewidth = kwargs.pop('linewidth', None)
         if not linewidth is None:
             gridline.setSize(linewidth)
@@ -1203,6 +1209,8 @@ class Axes(object):
         top = kwargs.pop('top', None)
         if not top is None:
             gridline.setTop(top)
+
+        return gridline
 
     def plot(self, *args, **kwargs):
         """
@@ -1824,6 +1832,7 @@ class Axes(object):
             line = plotutil.getplotstyle(fmt, label, **kwargs)
         if isinstance(line, PolylineBreak):
             eline = line.clone()
+            eline.setDrawPolyline(True)
         else:
             eline = PolylineBreak()
         eline.setDrawSymbol(False)
@@ -2194,67 +2203,6 @@ class Axes(object):
 
             return mlist, bins, barbreaklist
 
-    def hist_back(self, x, bins=10, range=None, density=False, cumulative=False,
-                  bottom=None, histtype='bar', align='mid',
-                  orientation='vertical', rwidth=None, log=False, **kwargs):
-        """
-        Plot a histogram.
-        
-        :param x: (*array_like*) Input values, this takes either a single array or a sequency of arrays 
-            which are not required to be of the same length.
-        :param bins: (*int*) If an integer is given, bins + 1 bin edges are returned.
-        """
-        # Add data series
-        label = kwargs.pop('label', 'S_0')
-
-        # Set plot data styles
-        fcobj = kwargs.pop('color', None)
-        if fcobj is None:
-            fcobj = kwargs.pop('facecolor', 'b')
-        if isinstance(fcobj, (tuple, list)):
-            colors = plotutil.getcolors(fcobj)
-        else:
-            color = plotutil.getcolor(fcobj)
-            colors = [color]
-        ecobj = kwargs.pop('edgecolor', 'k')
-        edgecolor = plotutil.getcolor(ecobj)
-        linewidth = kwargs.pop('linewidth', 1.0)
-        hatch = kwargs.pop('hatch', None)
-        hatch = plotutil.gethatch(hatch)
-        hatchsize = kwargs.pop('hatchsize', None)
-        bgcolor = kwargs.pop('bgcolor', None)
-        bgcolor = plotutil.getcolor(bgcolor)
-        ecolor = kwargs.pop('ecolor', 'k')
-        ecolor = plotutil.getcolor(ecolor)
-        barbreaks = []
-        for color in colors:
-            lb = BarBreak()
-            lb.setCaption(label)
-            lb.setColor(color)
-            if edgecolor is None:
-                lb.setDrawOutline(False)
-            else:
-                lb.setOutlineColor(edgecolor)
-            lb.setOutlineSize(linewidth)
-            if not hatch is None:
-                lb.setStyle(hatch)
-                if not bgcolor is None:
-                    lb.setBackColor(bgcolor)
-                if not hatchsize is None:
-                    lb.setStyleSize(hatchsize)
-            lb.setErrorColor(ecolor)
-            barbreaks.append(lb)
-
-        # Create bar graphics
-        x = plotutil.getplotdata(x)
-        if not isinstance(bins, numbers.Number):
-            bins = plotutil.getplotdata(bins)
-        graphics = GraphicFactory.createHistBars(x, bins, barbreaks)
-        self.add_graphic(graphics)
-        self._axes.setAutoExtent()
-
-        return lb
-
     def stem(self, *args, **kwargs):
         """
         Make a stem plot.
@@ -2539,6 +2487,7 @@ class Axes(object):
         if x.ndim == 2 and y.ndim == 2:
             griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
             a, x, y = np.griddata((x, y), a, **griddata_props)
+
         igraphic = GraphicFactory.createContourPolygons(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
 
         visible = kwargs.pop('visible', True)
@@ -2648,7 +2597,6 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(igraphic, zorder=zorder)
-        self._axes.setAutoExtent()
         gridline = self._axes.getGridLine()
         gridline.setTop(True)
 
@@ -2697,6 +2645,7 @@ class Axes(object):
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
+
         graphics = GraphicFactory.createPColorPolygons(x.asarray(), y.asarray(), a.asarray(), ls)
         visible = kwargs.pop('visible', True)
         if visible:
@@ -2704,6 +2653,7 @@ class Axes(object):
             self.add_graphic(graphics, zorder=zorder)
             self._axes.setExtent(graphics.getExtent())
             self._axes.setDrawExtent(graphics.getExtent())
+
         return graphics
 
     def gridshow(self, *args, **kwargs):
@@ -2812,7 +2762,7 @@ class Axes(object):
         alb, isunique = plotutil.getlegendbreak('line', **kwargs)
         alb = plotutil.line2arrow(alb, **kwargs)
         if isinstance(x, NDArray):
-            iscurve = kwargs.pop('iscurve', False)
+            iscurve = kwargs.pop('curve', False)
             graphic = GraphicFactory.createArrowLine(x._array, y._array, alb, iscurve)
         else:
             graphic = GraphicFactory.createArrowLine(x, y, dx, dy, alb)
@@ -3194,7 +3144,7 @@ class Axes(object):
         if not color is None:
             color = plotutil.getcolor(color)
         if not sym is None:
-            sym = plotutil.getplotstyle(sym, '')
+            sym = plotutil.getmarkerplotstyle(sym, '')
             sym.setDrawFill(False)
             if not color is None:
                 sym.setColor(color)
@@ -3649,6 +3599,7 @@ class Axes(object):
 
         if not cdata is None:
             cdata = plotutil.getplotdata(cdata)
+
         igraphic = GraphicFactory.createArrows(x, y, u, v, cdata, ls, isuv)
 
         if not xaxistype is None:
@@ -4082,6 +4033,8 @@ class Axes(object):
                 ls = mappable.legend()
             elif isinstance(mappable, LegendScheme):
                 ls = mappable
+            elif isinstance(mappable, ImageGraphic):
+                ls = mappable.getLegendScheme()
             elif isinstance(mappable, GraphicCollection):
                 ls = mappable.getLegendScheme()
             else:
@@ -4123,7 +4076,7 @@ class Axes(object):
         extend = kwargs.pop('extend', None)
         if extend is not None:
             legend.setExtendType(extend)
-        extendrect = kwargs.pop('extendrect', False)
+        extendrect = kwargs.pop('extendrect', True)
         legend.setExtendRect(extendrect)
         extendfrac = kwargs.pop('extendfrac', None)
         if extendfrac is not None:

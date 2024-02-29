@@ -572,7 +572,7 @@ public class MapViewUndoRedo {
         @Override
         public void undo() {
             super.undo();
-            shape.removeVerice(verticeIdx);
+            shape.removeVertice(verticeIdx);
             mapView.paintLayers();
         }
         
@@ -612,7 +612,7 @@ public class MapViewUndoRedo {
         @Override
         public void redo(){
             super.redo();
-            shape.removeVerice(verticeIdx);
+            shape.removeVertice(verticeIdx);
             mapView.paintLayers();
         }
     }

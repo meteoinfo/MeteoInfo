@@ -86,12 +86,8 @@ public class MapPlotBackup extends AbstractPlot2D implements IWebMapPanel {
         this.projInfo = projInfo;
         this.antialias = false;
         this.aspectType = AspectType.EQUAL;
-        try {
-            this.setXAxis(new LonLatAxis("Longitude", true));
-            this.setYAxis(new LonLatAxis("Latitude", false));
-        } catch (CloneNotSupportedException ex) {
-            Logger.getLogger(MapPlotBackup.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this.setXAxis(new LonLatAxis("Longitude", true));
+        this.setYAxis(new LonLatAxis("Latitude", false));
         this.getAxis(Location.TOP).setDrawTickLine(false);
         this.getAxis(Location.TOP).setDrawTickLabel(false);
         this.getAxis(Location.RIGHT).setDrawTickLine(false);

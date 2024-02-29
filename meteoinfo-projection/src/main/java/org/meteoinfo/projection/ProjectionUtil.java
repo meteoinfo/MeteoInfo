@@ -904,14 +904,16 @@ public class ProjectionUtil {
     public static Graphic projectClipGraphic(Graphic graphic, ProjectionInfo fromProj, ProjectionInfo toProj) {
         if (graphic instanceof GraphicCollection) {
             try {
-                Graphic newGCollection = graphic.getClass().getDeclaredConstructor().newInstance();
+                GraphicCollection newGCollection = new GraphicCollection();
                 for (Graphic aGraphic : ((GraphicCollection) graphic).getGraphics()) {
                     List<? extends Shape> shapes = projectClipShape(aGraphic.getShape(), fromProj, toProj);
                     if (shapes != null && shapes.size() > 0) {
                         aGraphic.setShape(shapes.get(0));
-                        ((GraphicCollection) newGCollection).add(aGraphic);
+                        newGCollection.add(aGraphic);
                     }
                 }
+                newGCollection.setLegendScheme(((GraphicCollection) graphic).getLegendScheme());
+                newGCollection.setSingleLegend(((GraphicCollection) graphic).isSingleLegend());
 
                 return newGCollection;
             } catch (Exception ex) {
@@ -995,6 +997,9 @@ public class ProjectionUtil {
             case POINT:
             case POINT_M:
             case POINT_Z:
+            case WIND_ARROW:
+            case WIND_BARB:
+            case STATION_MODEL:
                 PointShape pointShape = projectClipPointShape((PointShape) shape, fromProj, toProj);
                 if (pointShape != null) {
                     List<PointShape> pointShapes = new ArrayList<PointShape>();

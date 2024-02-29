@@ -547,7 +547,8 @@ package org.meteoinfo.geometry.legend;
                  if (this.uniqueValueMap.containsKey(v)) {
                      return this.uniqueValueMap.get(v);
                  } else {
-                     return this.legendBreaks.get(0);
+                     //return this.legendBreaks.get(0);
+                     return null;
                  }
              default:
                  double sv, ev;

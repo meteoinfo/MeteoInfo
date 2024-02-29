@@ -18,10 +18,12 @@ package org.meteoinfo.geometry.graphic;
  import org.meteoinfo.common.PointD;
  import org.meteoinfo.common.colors.ColorUtil;
  import org.meteoinfo.geometry.shape.*;
+ import org.meteoinfo.geometry.shape.Polygon;
  import org.meteoinfo.geometry.shape.Shape;
  import org.w3c.dom.*;
 
  import java.awt.*;
+ import java.awt.geom.GeneralPath;
  import java.util.ArrayList;
  import java.util.List;
 
@@ -33,8 +35,10 @@ package org.meteoinfo.geometry.graphic;
  public class Graphic {
      // <editor-fold desc="Variables">
 
-     protected Shape shape = null;
-     protected ColorBreak legend = null;
+     protected Shape shape;
+     protected ColorBreak legend;
+     protected GeneralPath clipPath;
+     protected Graphic clipGraphic;
      private ResizeAbility _resizeAbility = ResizeAbility.RESIZE_ALL;
      // </editor-fold>
      // <editor-fold desc="Constructor">
@@ -87,9 +91,97 @@ package org.meteoinfo.geometry.graphic;
          return legend;
      }
 
+     /**
+      * Set legend
+      * @param legend Legend
+      */
      public void setLegend(ColorBreak legend) {
          this.legend = legend;
          updateResizeAbility();
+     }
+
+     /**
+      * Get clip path
+      * @return Clip path
+      */
+     public GeneralPath getClipPath() {
+         return clipPath;
+     }
+
+     /**
+      * Has clip path or not
+      * @return Has clip path or not
+      */
+     public boolean isClip(){
+         return this.clipGraphic != null;
+     }
+
+     /**
+      * Set clip path
+      * @param clipPath Clip path
+      */
+     public void setClipPath(GeneralPath clipPath) {
+         this.clipPath = clipPath;
+     }
+
+     /**
+      * Set clip path
+      * @param graphic Clip path
+      */
+     public void setClipPath(Graphic graphic) {
+         if (graphic.getShapeType().isPolygon()) {
+             if (graphic.isCollection()) {
+                 this.clipPath = new GeneralPath();
+                 for (PolygonShape aPGS : (List<PolygonShape>) ((GraphicCollection) graphic).getShapes()) {
+                     for (Polygon aPolygon : aPGS.getPolygons()) {
+                         GeneralPath aPath = new GeneralPath();
+                         PointD wPoint;
+                         double[] sXY;
+                         for (int i = 0; i < aPolygon.getOutLine().size(); i++) {
+                             wPoint = aPolygon.getOutLine().get(i);
+                             if (i == 0) {
+                                 aPath.moveTo(wPoint.X, wPoint.Y);
+                             } else {
+                                 aPath.lineTo(wPoint.X, wPoint.Y);
+                             }
+                         }
+                         this.clipPath.append(aPath, false);
+                     }
+                 }
+             } else {
+                 this.clipPath = new GeneralPath();
+                 for (Polygon aPolygon : ((PolygonShape) graphic.getShape()).getPolygons()) {
+                     GeneralPath aPath = new GeneralPath();
+                     PointD wPoint;
+                     double[] sXY;
+                     for (int i = 0; i < aPolygon.getOutLine().size(); i++) {
+                         wPoint = aPolygon.getOutLine().get(i);
+                         if (i == 0) {
+                             aPath.moveTo(wPoint.X, wPoint.Y);
+                         } else {
+                             aPath.lineTo(wPoint.X, wPoint.Y);
+                         }
+                     }
+                     this.clipPath.append(aPath, false);
+                 }
+             }
+         }
+     }
+
+     /**
+      * Get clip graphic
+      * @return Clip graphic
+      */
+     public Graphic getClipGraphic() {
+         return this.clipGraphic;
+     }
+
+     /**
+      * Set clip graphic
+      * @param graphic Clip graphic
+      */
+     public void setClipGraphic(Graphic graphic) {
+         this.clipGraphic = graphic;
      }
 
      /**

@@ -570,7 +570,7 @@ public class Reproject {
                 for (int i = 0; i < n; i++) {
                     xx = points[i][0];
                     yy = points[i][1];
-                    r.setObject(i, ArrayUtil.toStation(data, x, y, xx, yy));
+                    r.setDouble(i, ArrayUtil.toStation(data, x, y, xx, yy));
                 }
             } else {
                 Index indexr = r.getIndex();

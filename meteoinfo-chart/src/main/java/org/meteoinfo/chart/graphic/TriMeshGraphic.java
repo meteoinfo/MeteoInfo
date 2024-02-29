@@ -341,7 +341,7 @@ public class TriMeshGraphic extends GraphicCollection3D {
             if (maxZ < zz)
                 maxZ = zz;
         }
-        this._extent = new Extent3D(minX, maxX, minY, maxY, minZ, maxZ);
+        this.extent = new Extent3D(minX, maxX, minY, maxY, minZ, maxZ);
 
         this.normalLoaded = true;
 
@@ -531,7 +531,7 @@ public class TriMeshGraphic extends GraphicCollection3D {
                 maxZ = z;
         }
 
-        this._extent = new Extent3D(minX, maxX, minY, maxY, minZ, maxZ);
+        this.extent = new Extent3D(minX, maxX, minY, maxY, minZ, maxZ);
     }
 
     /**

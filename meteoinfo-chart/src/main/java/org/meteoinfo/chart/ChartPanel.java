@@ -78,8 +78,8 @@ import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
 import org.freehep.graphicsio.ps.PSGraphics2D;
-import org.meteoinfo.chart.jogl.EarthPlot3D;
-import org.meteoinfo.chart.jogl.Plot3DGL;
+import org.meteoinfo.chart.jogl.EarthGLPlot;
+import org.meteoinfo.chart.jogl.GLPlot;
 import org.meteoinfo.chart.plot.MapPlot;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.chart.plot.XY1DPlot;
@@ -498,7 +498,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
         }
 
         //Draw identifer shape
-        if (this.currentPlot != null) {
+        /*if (this.currentPlot != null) {
             if (this.currentPlot instanceof MapPlot) {
                 MapPlot plot = (MapPlot) this.currentPlot;
                 if (plot.getMapView().isDrawIdentiferShape()) {
@@ -513,7 +513,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                     }
                 }
             }
-        }
+        }*/
 
         g2.dispose();
     }
@@ -788,7 +788,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
         switch (this.mouseMode) {
             case ZOOM_IN:
             case SELECT:
-                if (plot instanceof Plot3DGL) {
+                if (plot instanceof GLPlot) {
                     this.repaint();
                 } else {
                     this.repaintOld();
@@ -796,8 +796,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
                 break;
             case PAN:
                 if (plot != null) {
-                    if (plot instanceof Plot3DGL) {
-                        Plot3DGL plot3DGL = (Plot3DGL) plot;
+                    if (plot instanceof GLPlot) {
+                        GLPlot plot3DGL = (GLPlot) plot;
                         Dimension size = e.getComponent().getSize();
                         float dx = (float) (x - this.mouseLastPos.x) / size.width;
                         float dy = (float) (this.mouseLastPos.y - y) / size.height;
@@ -884,8 +884,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
                             projector.setElevationAngle(new_value);
                         }
                         this.repaintNew();
-                    } else if (plot instanceof Plot3DGL) {
-                        Plot3DGL plot3DGL = (Plot3DGL) plot;
+                    } else if (plot instanceof GLPlot) {
+                        GLPlot plot3DGL = (GLPlot) plot;
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             if (e.isShiftDown()) {
                                 Dimension size = e.getComponent().getSize();
@@ -905,7 +905,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                                 float thetaY = 360.0f * ((float) (x - this.mouseLastPos.x) / size.width);
                                 float thetaX = 180.0f * ((float) (this.mouseLastPos.y - y) / size.height);
 
-                                if (plot3DGL instanceof EarthPlot3D) {
+                                if (plot3DGL instanceof EarthGLPlot) {
                                     float scale = plot3DGL.getScale();
                                     thetaY /= scale;
                                     thetaX /= scale;
@@ -933,7 +933,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                         } else if (SwingUtilities.isRightMouseButton(e)) {
                             Dimension size = e.getComponent().getSize();
                             float shift = 360.0f * ((float) (this.mouseLastPos.x - x) / size.width);
-                            if (plot3DGL instanceof EarthPlot3D) {
+                            if (plot3DGL instanceof EarthGLPlot) {
                                 float scale = plot3DGL.getScale();
                                 shift /= -scale;
                             }
@@ -949,7 +949,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                                 head = 0;
                             plot3DGL.setHeadAngle(head);
 
-                            if (plot3DGL instanceof EarthPlot3D) {
+                            if (plot3DGL instanceof EarthGLPlot) {
                                 shift = 180.0f * ((float) (this.mouseLastPos.y - y) / size.height);
                                 float pitch = plot3DGL.getPitchAngle() + shift;
                                 if (pitch > 0) {
@@ -985,7 +985,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                             return;
                         }
 
-                        this.currentPlot = plot;
+                        /*this.currentPlot = plot;
                         MapPlot mplot = (MapPlot) plot;
                         final MapView mapView = mplot.getMapView();
                         MapLayer aMLayer = mplot.getSelectedLayer();
@@ -1078,7 +1078,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                                     mapView._frmIdentiferGrid.setVisible(true);
                                 }
                             }
-                        }
+                        }*/
                         break;
                 }
             } else if (e.getButton() == MouseEvent.BUTTON3) {

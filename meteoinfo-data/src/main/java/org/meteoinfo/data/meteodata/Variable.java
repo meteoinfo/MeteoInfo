@@ -38,6 +38,9 @@ public class Variable {
     protected int[] shape = new int[0];
     protected List<Dimension> dimensions = new ArrayList<>();
     protected List<Attribute> attributes = new ArrayList<>();
+    protected double addOffset = 0;
+    protected double scaleFactor = 1;
+    protected double fillValue = Double.NaN;
     private int levelType;
     private List<Double> levels;
     private String units;
@@ -200,6 +203,54 @@ public class Variable {
      */
     public Attribute getAttribute(int index) {
         return this.attributes.get(index);
+    }
+
+    /**
+     * Get add offset value
+     * @return Add offset value
+     */
+    public double getAddOffset() {
+        return this.addOffset;
+    }
+
+    /**
+     * Set add offset value
+     * @param value Add offset value
+     */
+    public void setAddOffset(double value) {
+        this.addOffset = value;
+    }
+
+    /**
+     * Get scale factor value
+     * @return Scale factor value
+     */
+    public double getScaleFactor() {
+        return this.scaleFactor;
+    }
+
+    /**
+     * Set scale factor value
+     * @param value Scale factor value
+     */
+    public void setScaleFactor(double value) {
+        this.scaleFactor = value;
+    }
+
+    /**
+     * Get fill value
+     * @return Fill value
+     */
+    public double getFillValue() {
+        return this.fillValue;
+    }
+
+    /**
+     * Set fill value
+     * @param value Fill value
+     */
+    public void setFillValue(double value) {
+        this.fillValue = value;
     }
 
     /**

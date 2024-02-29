@@ -1975,9 +1975,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     }
 
     private double[] getPackData(ucar.nc2.Variable var) {
-        double add_offset, scale_factor, missingValue = this.getMissingValue();
-        add_offset = 0;
-        scale_factor = 1;
+        double add_offset = 0, scale_factor = 1, missingValue = Double.NaN;
         for (int i = 0; i < var.getAttributes().size(); i++) {
             ucar.nc2.Attribute att = var.getAttributes().get(i);
             String attName = att.getShortName();
@@ -2007,12 +2005,6 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
         }
 
-//        //Adjust undefine data
-//        if (Double.isNaN(missingValue)) {
-//            missingValue = this.getMissingValue();
-//        } else {
-//            missingValue = missingValue * scale_factor + add_offset;
-//        }
         return new double[]{add_offset, scale_factor, missingValue};
     }
 
@@ -3197,44 +3189,20 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             }
 
             if (unpack) {
-                ucar.nc2.Attribute aoAttr = var.findAttribute("add_offset");
-                ucar.nc2.Attribute sfAttr = var.findAttribute("scale_factor");
-                if (aoAttr != null || sfAttr != null) {
-                    Number add_offset = 0;
-                    Number scale_factor = 1;
-                    if (aoAttr != null) {
-                        switch (aoAttr.getDataType()) {
-                            case DOUBLE:
-                                add_offset = aoAttr.getValues().getDouble(0);
-                                break;
-                            case FLOAT:
-                                add_offset = aoAttr.getValues().getFloat(0);
-                                break;
-                        }
-                    }
-                    if (sfAttr != null) {
-                        switch (sfAttr.getDataType()) {
-                            case DOUBLE:
-                                scale_factor = sfAttr.getValues().getDouble(0);
-                                break;
-                            case FLOAT:
-                                scale_factor = sfAttr.getValues().getFloat(0);
-                                break;
-                        }
-                    }
-                    data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
-                }
-
-                /*//Get pack info
-                double add_offset, scale_factor, missingValue;
+                //Get pack info
                 double[] packData = this.getPackData(var);
-                add_offset = packData[0];
-                scale_factor = packData[1];
-                missingValue = packData[2];
-                if (add_offset != 0 || scale_factor != 1) {
-                    //ArrayMath.fill_value = missingValue;
-                    data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
-                }*/
+                double addOffset = packData[0];
+                double scaleFactor = packData[1];
+                double fillValue = packData[2];
+                if (scaleFactor != 1) {
+                    data = ArrayMath.mul(data, scaleFactor);
+                }
+                if (addOffset != 0) {
+                    data = ArrayMath.add(data, addOffset);
+                }
+                if (!Double.isNaN(fillValue)) {
+                    ArrayMath.missingToNaN(data, fillValue);
+                }
             }
 
             return data;
@@ -3286,14 +3254,18 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
             if (unpack) {
                 //Get pack info
-                double add_offset, scale_factor, missingValue;
                 double[] packData = this.getPackData(var);
-                add_offset = packData[0];
-                scale_factor = packData[1];
-                missingValue = packData[2];
-                if (add_offset != 0 || scale_factor != 1) {
-                    //ArrayMath.fill_value = missingValue;
-                    data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
+                double addOffset = packData[0];
+                double scaleFactor = packData[1];
+                double fillValue = packData[2];
+                if (scaleFactor != 1) {
+                    data = ArrayMath.mul(data, scaleFactor);
+                }
+                if (addOffset != 0) {
+                    data = ArrayMath.add(data, addOffset);
+                }
+                if (!Double.isNaN(fillValue)) {
+                    ArrayMath.missingToNaN(data, fillValue);
                 }
             }
 
@@ -3332,14 +3304,18 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             Array data = NCUtil.convertArray(var.read(section));
 
             //Get pack info
-            double add_offset, scale_factor, missingValue;
             double[] packData = this.getPackData(var);
-            add_offset = packData[0];
-            scale_factor = packData[1];
-            missingValue = packData[2];
-            if (add_offset != 0 || scale_factor != 1) {
-                //ArrayMath.fill_value = missingValue;
-                data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
+            double addOffset = packData[0];
+            double scaleFactor = packData[1];
+            double fillValue = packData[2];
+            if (scaleFactor != 1) {
+                data = ArrayMath.mul(data, scaleFactor);
+            }
+            if (addOffset != 0) {
+                data = ArrayMath.add(data, addOffset);
+            }
+            if (!Double.isNaN(fillValue)) {
+                ArrayMath.missingToNaN(data, fillValue);
             }
 
             return data;

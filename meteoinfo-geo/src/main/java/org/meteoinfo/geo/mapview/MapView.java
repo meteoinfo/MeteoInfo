@@ -2834,7 +2834,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                                             UndoableEdit edit = (new MapViewUndoRedo()).new RemoveFeatureVerticeEdit(MapView.this, fShape, _editingVerticeIndex);
                                             selLayer.getUndoManager().addEdit(edit);
                                             MapView.this.fireUndoEditEvent(edit);
-                                            fShape.removeVerice(_editingVerticeIndex);
+                                            fShape.removeVertice(_editingVerticeIndex);
                                             //paintLayers();
                                             repaintNew();
                                         }

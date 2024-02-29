@@ -13,6 +13,7 @@ import com.jogamp.opengl.*;
 import org.apache.commons.imaging.ImageWriteException;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.GLChart;
+import org.meteoinfo.chart.GLChartPanel;
 import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.chart.jogl.mc.CallbackMC;
 import org.meteoinfo.chart.jogl.mc.MarchingCubes;
@@ -454,57 +455,6 @@ public class JOGLUtil {
     /**
      * Paint view image
      *
-     * @param plot3DGL Plot3DGL
-     * @param width Image width
-     * @param height Image height
-     * @return View image
-     */
-    public static BufferedImage paintViewImage(Plot3DGL plot3DGL, int width, int height) {
-        final GLProfile glp = GLProfile.get(GLProfile.GL2);
-        GLCapabilities caps = new GLCapabilities(glp);
-        caps.setHardwareAccelerated(true);
-        caps.setDoubleBuffered(false);
-        caps.setAlphaBits(8);
-        caps.setRedBits(8);
-        caps.setBlueBits(8);
-        caps.setGreenBits(8);
-        caps.setOnscreen(false);
-        caps.setPBuffer(true);
-        GLDrawableFactory factory = GLDrawableFactory.getFactory(glp);
-        GLOffscreenAutoDrawable drawable = factory.createOffscreenAutoDrawable(null, caps, null,
-                width, height);
-        drawable.addGLEventListener(plot3DGL);
-        plot3DGL.setDoScreenShot(true);
-        drawable.display();
-
-        BufferedImage image = plot3DGL.getScreenImage();
-        drawable.destroy();
-
-        return image;
-    }
-
-    /**
-     * Paint view image
-     *
-     * @param plot3DGL Plot3DGL
-     * @param width    Image width
-     * @param height   Image height
-     * @param dpi      Image dpi
-     * @return View image
-     */
-    public static BufferedImage paintViewImage(Plot3DGL plot3DGL, int width, int height, int dpi) {
-        double scaleFactor = dpi / 72.0;
-        width = (int) (width * scaleFactor);
-        height = (int) (height * scaleFactor);
-        plot3DGL.setDpiScale((float) scaleFactor);
-        BufferedImage image = paintViewImage(plot3DGL, width, height);
-        plot3DGL.setDpiScale(1);
-        return image;
-    }
-
-    /**
-     * Paint view image
-     *
      * @param chart The GLChart
      * @param width Image width
      * @param height Image height
@@ -563,7 +513,7 @@ public class JOGLUtil {
      * @param height Image height
      * @throws InterruptedException
      */
-    public static void saveImage(Plot3DGL plot3DGL, String fn, int width, int height) throws InterruptedException {
+    public static void saveImage(GLChart plot3DGL, String fn, int width, int height) throws InterruptedException {
         BufferedImage image = paintViewImage(plot3DGL, width, height);
         if (image != null) {
             //String extension = fn.substring(fn.lastIndexOf('.') + 1);
@@ -586,7 +536,7 @@ public class JOGLUtil {
      * @param dpi      Image dpi
      * @throws InterruptedException
      */
-    public static void saveImage(Plot3DGL plot3DGL, String fn, int width, int height, int dpi) throws InterruptedException, IOException {
+    public static void saveImage(GLChart plot3DGL, String fn, int width, int height, int dpi) throws InterruptedException, IOException {
         BufferedImage image = paintViewImage(plot3DGL, width, height, dpi);
 
         if (image != null) {
@@ -608,7 +558,7 @@ public class JOGLUtil {
      * @param dpi      Image dpi
      * @throws InterruptedException
      */
-    public static void saveImage_bak(Plot3DGL plot3DGL, String fn, int width, int height, int dpi) throws InterruptedException, IOException {
+    public static void saveImage_bak(GLChart plot3DGL, String fn, int width, int height, int dpi) throws InterruptedException, IOException {
         String formatName = fn.substring(fn.lastIndexOf('.') + 1);
         if (formatName.equals("jpg")) {
             formatName = "jpeg";
@@ -651,7 +601,7 @@ public class JOGLUtil {
         }
     }
 
-    private static void saveImage_Jpeg(Plot3DGL plot3DGL, String file, int width, int height, int dpi) {
+    private static void saveImage_Jpeg(GLChart plot3DGL, String file, int width, int height, int dpi) {
         BufferedImage bufferedImage = paintViewImage(plot3DGL, width, height, dpi);
 
         if (bufferedImage != null) {

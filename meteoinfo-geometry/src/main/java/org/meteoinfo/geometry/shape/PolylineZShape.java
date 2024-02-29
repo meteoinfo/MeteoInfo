@@ -116,18 +116,6 @@ public class PolylineZShape extends PolylineShape {
     public double[] getMRange() {
         return MIMath.arrayMinMax(getMArray());
     }
-    
-    //@Override
-    public Object clone_back(){
-        PolylineZShape o = (PolylineZShape)super.clone();
-//        List<PointZ> points = new ArrayList<>();
-//        for (PointZ point : (List<PointZ>)this.getPoints()){
-//            points.add((PointZ)point.clone());
-//        }
-//        o.setPoints(points);
-        
-        return o;
-    }
 
     /**
      * Clone

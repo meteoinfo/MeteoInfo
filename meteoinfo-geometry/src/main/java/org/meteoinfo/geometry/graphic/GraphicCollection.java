@@ -35,13 +35,14 @@ public class GraphicCollection extends Graphic implements Iterator {
 
     // <editor-fold desc="Variables">
     protected List<Graphic> graphics = new ArrayList<>();
-    protected Extent _extent = new Extent();
+    protected Extent extent = new Extent();
     protected boolean singleLegend = true;
-    private int index;
-    private LabelSet labelSet;
-    private List<Graphic> labelPoints;
+    protected int index;
+    protected LabelSet labelSet;
+    protected List<Graphic> labelPoints;
     protected LegendScheme legendScheme;
     protected ColorBreak legendBreak;
+    protected boolean avoidCollision = false;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -82,7 +83,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      */
     @Override
     public Extent getExtent() {
-        return _extent;
+        return extent;
     }
 
     /**
@@ -92,7 +93,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      */
     @Override
     public void setExtent(Extent value) {
-        this._extent = value;
+        this.extent = value;
     }
 
     /**
@@ -135,7 +136,7 @@ public class GraphicCollection extends Graphic implements Iterator {
     /**
      * Get label points
      *
-     * @return The lable points
+     * @return The label points
      */
     public List<Graphic> getLabelPoints() {
         return this.labelPoints;
@@ -144,7 +145,7 @@ public class GraphicCollection extends Graphic implements Iterator {
     /**
      * Set label points
      *
-     * @param lps The lable points
+     * @param lps The label points
      */
     public void setLabelPoints(List<Graphic> lps) {
         this.labelPoints = lps;
@@ -205,6 +206,22 @@ public class GraphicCollection extends Graphic implements Iterator {
         return true;
     }
 
+    /**
+     * Return avoid collision or not
+     * @return Avoid collision or not
+     */
+    public boolean isAvoidCollision() {
+        return this.avoidCollision;
+    }
+
+    /**
+     * Set avoid collision or not
+     * @param value Avoid collision or not
+     */
+    public void setAvoidCollision(boolean value) {
+        this.avoidCollision = value;
+    }
+
     // </editor-fold>
     // <editor-fold desc="Methods">
     /**
@@ -214,15 +231,11 @@ public class GraphicCollection extends Graphic implements Iterator {
         int i = 0;
         Extent extent;
         for (Graphic g : this.graphics) {
-            if (g instanceof GraphicCollection) {
-                extent = g.getExtent();
-            } else {
-                extent = g.getShape().getExtent();
-            }
+            extent = g.getExtent();
             if (i == 0) {
-                _extent = extent;
+                this.extent = extent;
             } else {
-                _extent = MIMath.getLagerExtent(_extent, extent);
+                this.extent = MIMath.getLagerExtent(this.extent, extent);
             }
 
             i += 1;
@@ -240,9 +253,9 @@ public class GraphicCollection extends Graphic implements Iterator {
 
         //Update extent
         if (this.graphics.size() == 1) {
-            _extent = aGraphic.getExtent();
+            extent = aGraphic.getExtent();
         } else {
-            _extent = MIMath.getLagerExtent(_extent, aGraphic.getExtent());
+            extent = MIMath.getLagerExtent(extent, aGraphic.getExtent());
         }
 
         return istrue;
@@ -259,9 +272,9 @@ public class GraphicCollection extends Graphic implements Iterator {
 
         //Update extent
         if (this.graphics.size() == 1) {
-            _extent = aGraphic.getExtent();
+            extent = aGraphic.getExtent();
         } else {
-            _extent = MIMath.getLagerExtent(_extent, aGraphic.getExtent());
+            extent = MIMath.getLagerExtent(extent, aGraphic.getExtent());
         }
     }
 
@@ -388,15 +401,11 @@ public class GraphicCollection extends Graphic implements Iterator {
         int i = 0;
         Extent extent;
         for (Graphic g : gs) {
-            if (g instanceof GraphicCollection) {
-                extent = g.getExtent();
-            } else {
-                extent = g.getShape().getExtent();
-            }
+            extent = g.getExtent();
             if (i == 0) {
-                _extent = extent;
+                this.extent = extent;
             } else {
-                _extent = MIMath.getLagerExtent(_extent, extent);
+                this.extent = MIMath.getLagerExtent(this.extent, extent);
             }
 
             i += 1;
@@ -412,9 +421,9 @@ public class GraphicCollection extends Graphic implements Iterator {
         if (graphic.isCollection()) {
             //Update extent
             if (this.isEmpty()) {
-                _extent = graphic.getExtent();
+                extent = graphic.getExtent();
             } else {
-                _extent = MIMath.getLagerExtent(_extent, graphic.getExtent());
+                extent = MIMath.getLagerExtent(extent, graphic.getExtent());
             }
             for (int i = 0; i < graphic.getNumGraphics(); i++) {
                 this.graphics.add(graphic.getGraphicN(i));
@@ -541,7 +550,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      *
      * @return Shapes
      */
-    public List<Shape> getShapes() {
+    public List<? extends Shape> getShapes() {
         List<Shape> shapes = new ArrayList<>();
         for (Graphic g : this.graphics) {
             shapes.add(g.getShape());
@@ -723,7 +732,7 @@ public class GraphicCollection extends Graphic implements Iterator {
             }
             g.setExtent(g.getExtent().shift(xs, 0));
         }
-        this._extent.shift(xs, 0);
+        this.extent.shift(xs, 0);
 
         return this;
     }

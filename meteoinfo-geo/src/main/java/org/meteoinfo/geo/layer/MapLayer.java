@@ -14,6 +14,7 @@
 package org.meteoinfo.geo.layer;
 
 import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
@@ -33,13 +34,13 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      protected String _layerName;
      protected String _fileName;
      protected ProjectionInfo _projInfo;
-     private Extent _extent;
-     private boolean _visible;
-     private LayerDrawType _layerDrawType;
-     private boolean _isMaskout;
-     private LegendScheme _legendScheme;
-     private boolean _expanded;
-     private int _transparencyPerc;
+     protected Extent _extent;
+     protected boolean _visible;
+     protected LayerDrawType _layerDrawType;
+     protected boolean _isMaskout;
+     protected LegendScheme legendScheme;
+     protected boolean _expanded;
+     protected int _transparencyPerc;
      private String _tag;
      private VisibleScale _visibleScale;
      // </editor-fold>
@@ -206,7 +207,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
       * @return Legend scheme
       */
      public LegendScheme getLegendScheme() {
-         return _legendScheme;
+         return legendScheme;
      }
      
      /**
@@ -231,7 +232,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
       * @param ls
       */
      public void setLegendScheme(LegendScheme ls) {
-         _legendScheme = ls;
+         legendScheme = ls;
      }
  
      /**
@@ -324,14 +325,14 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
       * @return Boolean
       */
      public boolean hasLegendScheme(){
-         return this._legendScheme != null;
+         return this.legendScheme != null;
      }
      
      @Override
      public Object clone() throws CloneNotSupportedException {
          MapLayer aLayer = (MapLayer)super.clone();
-         if (_legendScheme != null)
-             aLayer._legendScheme = (LegendScheme)this._legendScheme.clone();
+         if (legendScheme != null)
+             aLayer.legendScheme = (LegendScheme)this.legendScheme.clone();
          
          return aLayer;
      }

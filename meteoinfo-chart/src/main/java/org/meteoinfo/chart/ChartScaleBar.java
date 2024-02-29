@@ -382,7 +382,7 @@ public class ChartScaleBar extends ChartElement {
 
     private double getLonDistScale() {
         //Get meters of one longitude degree
-        double pY = (mapPlot.getViewExtent().maxY + mapPlot.getViewExtent().minY) / 2;
+        double pY = (mapPlot.getDrawExtent().maxY + mapPlot.getDrawExtent().minY) / 2;
         double ProjX = 0, ProjY = pY, pProjX = 1, pProjY = pY;
         double dx = Math.abs(ProjX - pProjX);
         double dy = Math.abs(ProjY - pProjY);

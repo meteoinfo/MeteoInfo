@@ -39,7 +39,7 @@ __all__ = [
 
 def shaperead(fn, encoding=None):
     """
-    Returns a layer readed from a shape file.
+    Returns a layer read from a shape file.
     
     :param fn: (*string*) The shape file name (.shp).
     :param encoding: (*string*) Encoding
@@ -58,8 +58,8 @@ def shaperead(fn, encoding=None):
                 if encoding == 'ISO8859_1':
                     encoding = 'UTF-8'
             layer = MILayer(MapDataManage.readMapFile_ShapeFile(fn, encoding))
-            if not layer.legend() is None:
-                lb = layer.legend().getLegendBreaks()[0]
+            if not layer.legend is None:
+                lb = layer.legend.getLegendBreaks()[0]
                 if lb.getBreakType() == BreakTypes.POLYGON_BREAK:
                     lb.setDrawFill(False)
             return layer
@@ -91,8 +91,8 @@ def georead(fn, encoding=None):
         else:
             try:
                 layer = MILayer(MapDataManage.loadLayer(fn))
-                if not layer.legend() is None:
-                    lb = layer.legend().getLegendBreaks()[0]
+                if not layer.legend is None:
+                    lb = layer.legend.getLegendBreaks()[0]
                     if lb.getBreakType() == BreakTypes.POLYGON_BREAK:
                         lb.setDrawFill(False)
                 return layer
@@ -361,10 +361,7 @@ def maskout(data, mask, x=None, y=None):
         return data
     elif isinstance(mask, NDArray):
         r = ArrayMath.maskout(data.asarray(), mask.asarray())
-        if isinstance(data, DimArray):
-            return DimArray(r, data.dims, data.fill_value, data.proj)
-        else:
-            return NDArray(r)
+        return data.array_wrap(r)
 
     if x is None or y is None:
         if isinstance(data, DimArray):
@@ -386,10 +383,7 @@ def maskout(data, mask, x=None, y=None):
         x, y = np.meshgrid(x, y)
 
     r = GeometryUtil.maskout(data._array, x._array, y._array, mask)
-    if isinstance(data, DimArray):
-        return DimArray(r, data.dims, data.fill_value, data.proj)
-    else:
-        return NDArray(r)
+    return data.array_wrap(r)
 
 
 def rmaskout(data, x, y, mask):
@@ -424,10 +418,7 @@ def maskin(data, mask, x=None, y=None):
         return data
     elif isinstance(mask, NDArray):
         r = ArrayMath.maskin(data._array, mask._array)
-        if isinstance(data, DimArray):
-            return DimArray(r, data.dims, data.fill_value, data.proj)
-        else:
-            return NDArray(r)
+        return data.array_wrap(r)
 
     if x is None or y is None:
         if isinstance(data, DimArray):
@@ -442,10 +433,7 @@ def maskin(data, mask, x=None, y=None):
     if not isinstance(mask, (list, ArrayList)):
         mask = [mask]
     r = GeometryUtil.maskin(data._array, x._array, y._array, mask)
-    if isinstance(data, DimArray):
-        return DimArray(r, data.dims, data.fill_value, data.proj)
-    else:
-        return NDArray(r)
+    return data.array_wrap(r)
 
 
 def rmaskin(data, x, y, mask):
@@ -660,7 +648,7 @@ def reproject(a, x=None, y=None, fromproj=None, xp=None, yp=None, toproj=None, m
         method = ResampleMethods.NearestNeighbor
 
     if xp is None or yp is None:
-        pr = Reproject.reproject(a.asarray(), x.aslist(), y.aslist(), fromproj, toproj, method)
+        pr = Reproject.reproject(a._array, x._array, y._array, fromproj, toproj, method)
         return NDArray(pr[0]), NDArray(pr[1]), NDArray(pr[2])
 
     if isinstance(xp, (list, tuple)):

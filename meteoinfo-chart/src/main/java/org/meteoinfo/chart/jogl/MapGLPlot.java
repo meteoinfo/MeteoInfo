@@ -148,12 +148,6 @@ public class MapGLPlot extends GLPlot {
             yMax = (float) axesExtent.maxY;
             zMin = (float) axesExtent.minZ;
             zMax = (float) axesExtent.maxZ;
-            /*xMin = this.transform.transform_x((float) axesExtent.minX);
-            xMax = this.transform.transform_x((float) axesExtent.maxX);
-            yMin = this.transform.transform_y((float) axesExtent.minY);
-            yMax = this.transform.transform_y((float) axesExtent.maxY);
-            zMin = this.transform.transform_z((float) axesExtent.minZ);
-            zMax = this.transform.transform_z((float) axesExtent.maxZ);*/
 
             gl.glDepthFunc(GL.GL_ALWAYS);
 

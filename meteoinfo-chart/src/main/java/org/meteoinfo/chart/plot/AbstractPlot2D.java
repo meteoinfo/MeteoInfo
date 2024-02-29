@@ -31,15 +31,15 @@ public abstract class AbstractPlot2D extends Plot {
     protected Color background;
     //private boolean drawBackground;
     private Color selectColor = Color.yellow;
-    private Extent extent;
-    private Extent drawExtent;
+    protected Extent extent;
+    protected Extent drawExtent;
     protected double xScale = 1.0;
     protected double yScale = 1.0;
-    private final Map<Location, Axis> axis;
+    protected final Map<Location, Axis> axis;
     private Location xAxisLocation;
     private Location yAxisLocation;
     private PlotOrientation orientation;
-    private final GridLine gridLine;
+    protected GridLine gridLine;
     private boolean drawTopAxis;
     private boolean drawRightAxis;
     protected boolean drawNeatLine;
@@ -383,14 +383,17 @@ public abstract class AbstractPlot2D extends Plot {
      * Set x axis
      *
      * @param axis Axis
-     * @throws CloneNotSupportedException
      */
-    public void setXAxis(Axis axis) throws CloneNotSupportedException {
+    public void setXAxis(Axis axis) {
         axis.setLocation(Location.BOTTOM);
         this.axis.put(Location.BOTTOM, axis);
-        Axis topAxis = (Axis) axis.clone();
-        topAxis.setLocation(Location.TOP);
-        this.axis.put(Location.TOP, topAxis);
+        try {
+            Axis topAxis = (Axis) axis.clone();
+            topAxis.setLocation(Location.TOP);
+            this.axis.put(Location.TOP, topAxis);
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -406,14 +409,17 @@ public abstract class AbstractPlot2D extends Plot {
      * Set y axis
      *
      * @param axis Axis
-     * @throws CloneNotSupportedException
      */
-    public void setYAxis(Axis axis) throws CloneNotSupportedException {
+    public void setYAxis(Axis axis) {
         axis.setLocation(Location.LEFT);
         this.axis.put(Location.LEFT, axis);
-        Axis rightAxis = (Axis) axis.clone();
-        rightAxis.setLocation(Location.RIGHT);
-        this.axis.put(Location.RIGHT, rightAxis);
+        try {
+            Axis rightAxis = (Axis) axis.clone();
+            rightAxis.setLocation(Location.RIGHT);
+            this.axis.put(Location.RIGHT, rightAxis);
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -856,7 +862,29 @@ public abstract class AbstractPlot2D extends Plot {
         if (this.drawNeatLine) {
             g.setStroke(new BasicStroke(this.neatLineWidth));
             g.setColor(this.neatLineColor);
-            g.draw(graphArea);
+            for (Location loc : this.axis.keySet()) {
+                Axis ax = this.axis.get(loc);
+                if (!ax.isVisible()) {
+                    switch (loc) {
+                        case BOTTOM:
+                            g.draw(new Line2D.Double(graphArea.getMinX(), graphArea.getMaxY(),
+                                    graphArea.getMaxX(), graphArea.getMaxY()));
+                            break;
+                        case TOP:
+                            g.draw(new Line2D.Double(graphArea.getMinX(), graphArea.getMinY(),
+                                    graphArea.getMaxX(), graphArea.getMinY()));
+                            break;
+                        case LEFT:
+                            g.draw(new Line2D.Double(graphArea.getMinX(), graphArea.getMinY(),
+                                    graphArea.getMinX(), graphArea.getMaxY()));
+                            break;
+                        case RIGHT:
+                            g.draw(new Line2D.Double(graphArea.getMaxX(), graphArea.getMinY(),
+                                    graphArea.getMaxX(), graphArea.getMaxY()));
+                            break;
+                    }
+                }
+            }
         }
 
         //Draw axis
@@ -1381,6 +1409,55 @@ public abstract class AbstractPlot2D extends Plot {
             }
             wa.draw(g, x, y);
         }
+    }
+
+    /**
+     * Convert x coordinate from map to screen
+     *
+     * @param projX Map X
+     * @param area Drawing area
+     * @return Screen X
+     */
+    public double projToScreenX(double projX, Rectangle2D area) {
+        double width = drawExtent.getWidth();
+        if (this.isLogX()) {
+            width = Math.log10(drawExtent.maxX) - Math.log10(drawExtent.minX);
+        }
+        double scaleX = area.getWidth() / width;
+        double screenX = (projX - drawExtent.minX) * scaleX;
+        if (this.isLogX()) {
+            screenX = (Math.log10(projX) - Math.log10(drawExtent.minX)) * scaleX;
+        }
+        if (this.isXReverse()) {
+            screenX = area.getWidth() - screenX;
+        }
+
+        return screenX;
+    }
+
+    /**
+     * Convert y coordinate from map to screen
+     *
+     * @param projY Map Y
+     * @param area Drawing area
+     * @return Screen Y
+     */
+    public double projToScreenY(double projY, Rectangle2D area) {
+        double height = drawExtent.getHeight();
+        if (this.isLogY()) {
+            height = Math.log10(drawExtent.maxY) - Math.log10(drawExtent.minY);
+        }
+        double scaleY = area.getHeight() / height;
+        double screenY = (drawExtent.maxY - projY) * scaleY;
+        if (this.isLogY()) {
+            screenY = (Math.log10(drawExtent.maxY) - Math.log10(projY)) * scaleY;
+        }
+
+        if (this.isYReverse()) {
+            screenY = area.getHeight() - screenY;
+        }
+
+        return screenY;
     }
 
     /**

@@ -184,11 +184,19 @@ public class ArrayShort extends Array {
 
     public double getDouble(Index i) {
         short val = storage[i.currentElement()];
-        return (double) (isUnsigned() ? DataType.unsignedShortToInt(val) : val);
+        if (val == Short.MIN_VALUE) {
+            return Double.NaN;
+        } else {
+            return (double) (isUnsigned() ? DataType.unsignedShortToInt(val) : val);
+        }
     }
 
     public void setDouble(Index i, double value) {
-        storage[i.currentElement()] = (short) value;
+        if (Double.isNaN(value)) {
+            storage[i.currentElement()] = Short.MIN_VALUE;
+        } else {
+            storage[i.currentElement()] = (short) value;
+        }
     }
 
     public float getFloat(Index i) {
@@ -296,11 +304,19 @@ public class ArrayShort extends Array {
     // package private : mostly for iterators
     public double getDouble(int index) {
         short val = storage[index];
-        return (double) (isUnsigned() ? DataType.unsignedShortToInt(val) : val);
+        if (val == Short.MIN_VALUE) {
+            return Double.NaN;
+        } else {
+            return (double) (isUnsigned() ? DataType.unsignedShortToInt(val) : val);
+        }
     }
 
     public void setDouble(int index, double value) {
-        storage[index] = (short) value;
+        if (Double.isNaN(value)) {
+            storage[index] = Short.MIN_VALUE;
+        } else {
+            storage[index] = (short) value;
+        }
     }
 
     public float getFloat(int index) {

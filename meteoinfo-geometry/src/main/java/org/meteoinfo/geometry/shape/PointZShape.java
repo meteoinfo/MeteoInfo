@@ -19,6 +19,9 @@ import org.locationtech.jts.geom.Geometry;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.PointD;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  *
  * @author yaqiang
@@ -35,8 +38,7 @@ public class PointZShape extends PointShape {
      * Constructor
      */
     public PointZShape(){
-        this.point = new PointZ();
-        this.updateExtent((PointZ)this.point);
+        this(new PointZ());
     }
 
     /**
@@ -44,8 +46,9 @@ public class PointZShape extends PointShape {
      * @param pointZ The PointZ object
      */
     public PointZShape(PointZ pointZ) {
-        this.point = pointZ;
-        this.updateExtent(pointZ);
+        this.points = new ArrayList<PointZ>();
+        ((List<PointZ>) this.points).add(pointZ);
+        this.updateExtent();
     }
     
     /**
@@ -64,25 +67,6 @@ public class PointZShape extends PointShape {
         return ShapeTypes.POINT_Z;
     }
 
-//    /**
-//     * Get point
-//     *
-//     * @return Point
-//     */
-//    @Override
-//    public PointZ getPoint() {
-//        return _point;
-//    }
-//
-//    /**
-//     * Set point
-//     *
-//     * @param point Point
-//     */
-//    public void setPoint(PointZ point) {
-//        _point = point;
-//    }
-
     // </editor-fold>
     // <editor-fold desc="Methods">
     /**
@@ -93,36 +77,12 @@ public class PointZShape extends PointShape {
     @Override
     public void setPoint(PointD aPoint) {
         if (aPoint instanceof PointZ){
-            this.point = aPoint;
+            this.setPoint(aPoint);
         } else {
-            this.point.X = aPoint.X;
-            this.point.Y = aPoint.Y;  
+            this.getPoint().X = aPoint.X;
+            this.getPoint().Y = aPoint.Y;
         }
-        this.updateExtent((PointZ)this.point);
-    }
-    
-    /**
-     * Set point
-     * @param p PointZ
-     */
-    public void setPoint(PointZ p){
-        this.point = p;
-        this.updateExtent(p);
-    }
-    
-    /**
-     * Update extent
-     * @param p PointZ
-     */
-    public void updateExtent(PointZ p){
-        Extent3D aExtent = new Extent3D();
-        aExtent.minX = p.X;
-        aExtent.maxX = p.X;
-        aExtent.minY = p.Y;
-        aExtent.maxY = p.Y;
-        aExtent.minZ = p.Z;
-        aExtent.maxZ = p.Z;
-        this.setExtent(aExtent);
+        this.updateExtent();
     }
     
     /**

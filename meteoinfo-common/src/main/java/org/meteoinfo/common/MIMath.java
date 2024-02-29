@@ -918,10 +918,10 @@ public class MIMath {
 
         //Extend values
         if (isExtend) {
-            if (values.get(0) > min) {
+            while (values.get(0) > min) {
                 values.add(0, BigDecimalUtil.sub(values.get(0), interval));
             }
-            if (values.get(values.size() - 1) < max) {
+            while (values.get(values.size() - 1) < max) {
                 values.add(BigDecimalUtil.add(values.get(values.size() - 1), interval));
             }
         }

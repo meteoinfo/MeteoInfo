@@ -213,7 +213,7 @@ class GLFigure(GLChartPanel, _FigureBase):
 
     def __create_axesm(self, *args, **kwargs):
         """
-        Create an map axes.
+        Create a map axes.
 
         :param projinfo: (*ProjectionInfo*) Optional, map projection, default is longlat projection.
         :param position: (*list*) Optional, axes position specified by *position=* [left, bottom, width

@@ -8438,9 +8438,9 @@ public class ArrayMath {
      * Set missing value to NaN
      *
      * @param a Array a
-     * @param missingv Missing value
+     * @param missingValue Missing value
      */
-    public static void missingToNaN(Array a, Number missingv) {
+    public static void missingToNaN(Array a, Number missingValue) {
         if (!a.getDataType().isNumeric()) {
             return;
         }
@@ -8451,14 +8451,14 @@ public class ArrayMath {
             case FLOAT:
                 while (iterA.hasNext()) {
                     float val = iterA.getFloatNext();
-                    if (val == missingv.floatValue()) {
+                    if (val == missingValue.floatValue()) {
                         iterA.setFloatCurrent(Float.NaN);
                     }
                 }
             default:
                 while (iterA.hasNext()) {
                     double val = iterA.getDoubleNext();
-                    if (val == missingv.doubleValue()) {
+                    if (val == missingValue.doubleValue()) {
                         iterA.setDoubleCurrent(Double.NaN);
                     }
                 }

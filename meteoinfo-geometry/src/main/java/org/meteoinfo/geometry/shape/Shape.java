@@ -26,6 +26,7 @@ import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointD;
+import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 
 /**
  * Shape class
@@ -35,24 +36,23 @@ import org.meteoinfo.common.PointD;
 public abstract class Shape implements Cloneable{
     // <editor-fold desc="Variables">
 
-    //private ShapeTypes _shapeType;
-    private boolean _visible;
-    private boolean _selected;
+    protected List<? extends PointD> points;
+    protected boolean visible;
+    protected boolean selected;
     private boolean editing;
-    private Extent _extent = new Extent();
-    private int _legendIndex = 0;
-    private double value;
+    protected Extent extent = new Extent();
+    protected int legendIndex = 0;
+    protected double value;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
-     * Contructor
+     * Constructor
      */
     public Shape() {
-        //_shapeType = ShapeTypes.Point;
-        _visible = true;
+        visible = true;
         editing = false;
-        _selected = false;
+        selected = false;
     }
     
     /**
@@ -76,7 +76,7 @@ public abstract class Shape implements Cloneable{
      * @return is visible or not
      */
     public boolean isVisible() {
-        return _visible;
+        return visible;
     }
 
     /**
@@ -85,7 +85,25 @@ public abstract class Shape implements Cloneable{
      * @param isTrue True or not
      */
     public void setVisible(boolean isTrue) {
-        _visible = isTrue;
+        visible = isTrue;
+    }
+
+    /**
+     * Get points
+     * @return The points
+     */
+    public List<? extends PointD> getPoints() {
+        return this.points;
+    }
+
+    /**
+     * Set points
+     *
+     * @param points point list
+     */
+    public void setPoints(List<? extends PointD> points) {
+        this.points = points;
+        this.updateExtent();
     }
 
     /**
@@ -94,7 +112,7 @@ public abstract class Shape implements Cloneable{
      * @return Boolean
      */
     public boolean isSelected() {
-        return _selected;
+        return selected;
     }
 
     /**
@@ -103,11 +121,11 @@ public abstract class Shape implements Cloneable{
      * @param isTrue True or not
      */
     public void setSelected(boolean isTrue) {
-        _selected = isTrue;
+        selected = isTrue;
     }
 
     /**
-     * Get if is editing
+     * Get if editing
      *
      * @return Boolean
      */
@@ -116,7 +134,7 @@ public abstract class Shape implements Cloneable{
     }
 
     /**
-     * Set if is editing
+     * Set if editing
      *
      * @param value Boolean
      */
@@ -130,7 +148,7 @@ public abstract class Shape implements Cloneable{
      * @return extent Extent
      */
     public Extent getExtent() {
-        return _extent;
+        return extent;
     }
 
     /**
@@ -139,7 +157,7 @@ public abstract class Shape implements Cloneable{
      * @param aExtent Extent
      */
     public void setExtent(Extent aExtent) {
-        _extent = aExtent;
+        extent = aExtent;
     }
 
     /**
@@ -148,7 +166,7 @@ public abstract class Shape implements Cloneable{
      * @return Legend index
      */
     public int getLegendIndex() {
-        return _legendIndex;
+        return legendIndex;
     }
 
     /**
@@ -157,7 +175,7 @@ public abstract class Shape implements Cloneable{
      * @param value Legend index
      */
     public void setLegendIndex(int value) {
-        _legendIndex = value;
+        legendIndex = value;
     }
     
     /**
@@ -179,12 +197,12 @@ public abstract class Shape implements Cloneable{
     // </editor-fold>
     // <editor-fold desc="Methods">
     /**
-     * Get points
-     *
-     * @return point list
+     * Update extent
      */
-    public List<? extends PointD> getPoints() {
-        return null;
+    public void updateExtent() {
+        if (this.points != null) {
+            this.extent = GeometryUtil.getPointsExtent(points);
+        }
     }
 
     /**
@@ -202,14 +220,6 @@ public abstract class Shape implements Cloneable{
     public int getPartNum() {
         return 1;
     }
-
-    /**
-     * Set points
-     *
-     * @param points point list
-     */
-    public void setPoints(List<? extends PointD> points) {
-    }
     
     /**
      * Add a vertice
@@ -223,7 +233,7 @@ public abstract class Shape implements Cloneable{
      * Remove a vertice
      * @param vIdx Vertice index
      */
-    public void removeVerice(int vIdx){        
+    public void removeVertice(int vIdx){
     }
 
     /**

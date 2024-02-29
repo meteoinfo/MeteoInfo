@@ -18,6 +18,11 @@ import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.util.GlobalUtil;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.legend.ColorBreak;
+import org.meteoinfo.geometry.shape.ImageShape;
+import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import java.awt.Color;
 import java.awt.Image;
@@ -473,6 +478,64 @@ public class ImageLayer extends MapLayer {
         List<Color> colors = getColorsFromPaletteFile(aFile);
 
         setPalette(colors);
+    }
+
+    /**
+     * Get graphics
+     *
+     * @return Graphics
+     */
+    public GraphicCollection getGraphics() {
+        return getGraphics(0, null);
+    }
+
+    /**
+     * Get graphics
+     *
+     * @param interpolation Image interpolation
+     * @return Graphics
+     */
+    public GraphicCollection getGraphics(String interpolation) {
+        return getGraphics(0, interpolation);
+    }
+
+    /**
+     * Get graphics
+     *
+     * @param xShift X shift
+     * @return Graphics
+     */
+    public GraphicCollection getGraphics(double xShift) {
+        return getGraphics(xShift, null);
+    }
+
+    /**
+     * Get graphics
+     *
+     * @param xShift X shift
+     * @param interpolation Image interpolation
+     * @return Graphics
+     */
+    public GraphicCollection getGraphics(double xShift, String interpolation) {
+        GraphicCollection graphics = new GraphicCollection();
+        ImageShape ishape = new ImageShape();
+        ishape.setImage(this.getImage());
+        Extent extent = this.getExtent();
+        extent = extent.shift(xShift, 0);
+        List<PointZ> coords = new ArrayList<>();
+        coords.add(new PointZ(extent.minX + xShift, extent.minY, 0));
+        coords.add(new PointZ(extent.maxX + xShift, extent.minY, 0));
+        coords.add(new PointZ(extent.maxX + xShift, extent.maxY, 0));
+        coords.add(new PointZ(extent.minX + xShift, extent.maxY, 0));
+        ishape.setExtent(extent);
+        ishape.setCoords(coords);
+        Graphic gg = new Graphic(ishape, new ColorBreak());
+        if (interpolation != null) {
+            ((ImageShape) gg.getShape()).setInterpolation(interpolation);
+        }
+        graphics.add(gg);
+
+        return graphics;
     }
     // </editor-fold>
 

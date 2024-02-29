@@ -876,7 +876,7 @@ public class ChartColorBar extends ChartLegend {
             }                      
 
             if (DrawShape) {
-                if (this.extendRect) {
+                if (this.extendRect && this.extendType == ExtendType.NONE) {
                     if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                         aPGB.setDrawOutline(false);
@@ -960,7 +960,7 @@ public class ChartColorBar extends ChartLegend {
         //Draw neatline
         g.setStroke(new BasicStroke(this.neatLineSize));
         g.setColor(this.neatLineColor);
-        if (this.extendRect) {
+        if (this.extendRect && this.extendType == ExtendType.NONE) {
             g.draw(new Rectangle.Double(0, y_shift, this.barWidth * bNum, this.barHeight));
         } else {
             switch (this.extendType) {
@@ -1483,7 +1483,7 @@ public class ChartColorBar extends ChartLegend {
             }
 
             if (DrawShape) {
-                if (this.extendRect) {
+                if (this.extendRect && this.extendType == ExtendType.NONE) {
                     aP.Y = aP.Y - barHeight;
                     if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
@@ -1570,7 +1570,7 @@ public class ChartColorBar extends ChartLegend {
         //Draw neatline
         g.setStroke(new BasicStroke(this.neatLineSize));
         g.setColor(this.neatLineColor);
-        if (this.extendRect) {
+        if (this.extendRect && this.extendType == ExtendType.NONE) {
             g.draw(new Rectangle.Double(x_shift, 0, this.barWidth, this.barHeight * bNum));
         } else {
             switch (this.extendType) {

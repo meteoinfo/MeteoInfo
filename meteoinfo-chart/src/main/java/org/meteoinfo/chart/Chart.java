@@ -20,7 +20,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.meteoinfo.chart.jogl.Plot3DGL;
+import org.meteoinfo.chart.jogl.GLPlot;
 import org.meteoinfo.chart.plot.MapPlot;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.common.PointF;
@@ -430,7 +430,7 @@ public class Chart {
      */
     public boolean contains3DGLPlot() {
         for (Plot plot : this.plots) {
-            if (plot instanceof Plot3DGL) {
+            if (plot instanceof GLPlot) {
                 return true;
             }
         }
@@ -522,7 +522,7 @@ public class Chart {
                 if (plot instanceof MapPlot) {
                     ((MapPlot) plot).setAntialias(this.antiAlias);
                 }
-                if (plot instanceof Plot3DGL) {
+                if (plot instanceof GLPlot) {
                     Rectangle2D graphArea = plot.getPositionArea();
                     plot.setGraphArea(graphArea);
                 } else {

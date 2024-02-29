@@ -10,10 +10,11 @@ import os
 import numbers
 
 from org.meteoinfo.chart import ChartScaleBar, ChartNorthArrow
-from org.meteoinfo.chart.plot import MapPlot
+from org.meteoinfo.chart.plot import MapPlot, GridLabelPosition
 from org.meteoinfo.chart.graphic import GraphicFactory
 from org.meteoinfo.geo.meteodata import DrawMeteoData
 from org.meteoinfo.geo.mapview import MapView
+from org.meteoinfo.geo.io import GraphicUtil
 from org.meteoinfo.geometry.legend import BreakTypes, LegendScheme, LegendType, LegendManage
 #from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geometry.shape import Shape, PolylineShape, PolygonShape, ShapeTypes
@@ -91,50 +92,8 @@ class MapAxes(Axes):
             projinfo.setCutoff(cutoff)        
         self._axes.setProjInfo(projinfo)
         self.proj = self._axes.getProjInfo()
-        
-        # set other properties
-        frameon = kwargs.pop('frameon', None)
-        if not frameon is None:
-            self._axes.setDrawNeatLine(frameon)
-        framelinewidth = kwargs.pop('framelinewidth', None)
-        if not framelinewidth is None:
-            self._axes.setNeatLineWidth(framelinewidth)
-        framelinecolor = kwargs.pop('framelinecolor', None)
-        if not framelinecolor is None:
-            framelinecolor = plotutil.getcolor(framelinecolor)
-            self._axes.setNeatLineColor(framelinecolor)
-        gridlabel = kwargs.pop('gridlabel', True)
-        gridlabelloc = kwargs.pop('gridlabelloc', 'left_bottom')
-        gridline = kwargs.pop('gridline', False)
-        tickin = kwargs.pop('tickin', False)
-        ticklength = kwargs.pop('ticklength', None)
-        tickwidth = kwargs.pop('tickwidth', None)
-        tickcolor = kwargs.pop('tickcolor', None)
-        if not tickcolor is None:
-            tickcolor = plotutil.getcolor(tickcolor)
-        griddx = kwargs.pop('griddx', 10)
-        griddy = kwargs.pop('griddy', 10)
-        start_lon = kwargs.pop('start_lon', -180)
-        start_lat = kwargs.pop('start_lat', -90)
+
         xyscale = kwargs.pop('xyscale', 1)
-        mapframe = self._axes.getMapFrame()
-        mapframe.setDrawGridLabel(gridlabel)
-        mapframe.setDrawGridTickLine(gridlabel)
-        mapframe.setInsideTickLine(tickin)
-        if not ticklength is None:
-            mapframe.setTickLineLength(ticklength)
-        if not tickwidth is None:
-            mapframe.setTickLineWidth(tickwidth)
-        if not tickcolor is None:
-            mapframe.setTickLineColor(tickcolor)
-        mapframe.setGridLabelPosition(gridlabelloc)
-        mapframe.setDrawGridLine(gridline)
-        mapframe.setGridXDelt(griddx)
-        mapframe.setGridYDelt(griddy)
-        mapframe.setGridXOrigin(start_lon)
-        mapframe.setGridYOrigin(start_lat)
-        mapview = self._axes.getMapView()
-        mapview.setXYScaleFactor(xyscale)
         self._axes.setAspect(xyscale)
         boundaryprop = kwargs.pop('boundaryprop', None)
         if not boundaryprop is None:
@@ -148,8 +107,7 @@ class MapAxes(Axes):
         :param plot: (*Axes3D*) Plot.
         """
         if plot is None:
-            mapview = MapView()
-            self._axes = MapPlot(mapview)
+            self._axes = MapPlot()
         else:
             self._axes = plot
     
@@ -231,22 +189,22 @@ class MapAxes(Axes):
         """
         self._axes.setSelectedLayer(layer._layer)
         
-    def add_graphic(self, graphic, proj=None, **kwargs):
-        """
-        Add a graphic
-        
-        :param graphic: (*Graphic*) The graphic to be added.
-        :param proj: (*ProjectionInfo*) Graphic projection.
-        
-        :returns: Added graphic
-        """
-        if proj is None:
-            self._axes.addGraphic(graphic)
-        else:
-            graphic = self._axes.addGraphic(graphic, proj)
-
-        self.stale = True
-        return graphic
+    # def add_graphic(self, graphic, proj=None, **kwargs):
+    #     """
+    #     Add a graphic
+    #
+    #     :param graphic: (*Graphic*) The graphic to be added.
+    #     :param proj: (*ProjectionInfo*) Graphic projection.
+    #
+    #     :returns: Added graphic
+    #     """
+    #     if proj is None:
+    #         self._axes.addGraphic(graphic)
+    #     else:
+    #         graphic = self._axes.addGraphic(graphic, proj)
+    #
+    #     self.stale = True
+    #     return graphic
         
     def add_circle(self, xy, radius=5, **kwargs):
         """
@@ -383,48 +341,6 @@ class MapAxes(Axes):
                 cna.setNeatlineSize(linewidth)
                 cna.setDrawNeatline(True)
         self._axes.setNorthArrow(cna)
-        
-    def grid(self, b=None, **kwargs):
-        """
-        Turn the aexs grids on or off.
-        
-        :param b: If b is *None* and *len(kwargs)==0* , toggle the grid state. If *kwargs*
-            are supplied, it is assumed that you want a grid and *b* is thus set to *True* .
-        :param which: *which* can be 'major' (default), 'minor', or 'both' to control
-            whether major tick grids, minor tick grids, or both are affected.
-        :param axis: *axis* can be 'both' (default), 'x', or 'y' to control which set of
-            gridlines are drawn.
-        :param kwargs: *kwargs* are used to set the grid line properties.
-        """
-
-        if self.islonlat():
-            super(MapAxes, self).grid(b, **kwargs)
-        else:
-            mapframe = self._axes.getMapFrame()
-            gridline = mapframe.isDrawGridLine()
-            if b is None:
-                gridline = not gridline
-            else:
-                gridline = b
-            griddx = kwargs.pop('griddx', None)
-            griddy = kwargs.pop('griddy', None)            
-            if not gridline is None:
-                mapframe.setDrawGridLine(gridline)
-            if not griddx is None:
-                mapframe.setGridXDelt(griddx)
-            if not griddy is None:
-                mapframe.setGridYDelt(griddy)
-            color = kwargs.pop('color', None)
-            if not color is None:
-                c = plotutil.getcolor(color)
-                mapframe.setGridLineColor(c)
-            linewidth = kwargs.pop('linewidth', None)
-            if not linewidth is None:
-                mapframe.setGridLineSize(linewidth)
-            linestyle = kwargs.pop('linestyle', None)
-            if not linestyle is None:
-                linestyle = plotutil.getlinestyle(linestyle)
-                mapframe.setGridLineStyle(linestyle)
                 
     def axis(self, limits=None, lonlat=True):
         """
@@ -472,6 +388,59 @@ class MapAxes(Axes):
         sy = r[1] + rect.getY()
         sy = self.figure.get_size()[1] - sy
         return sx, sy
+
+    def grid(self, b=None, **kwargs):
+        """
+        Turn the axes grids on or off.
+
+        :param b: If b is *None* and *len(kwargs)==0* , toggle the grid state. If *kwargs*
+            are supplied, it is assumed that you want a grid and *b* is thus set to *True* .
+        :param which: *which* can be 'major' (default), 'minor', or 'both' to control
+            whether major tick grids, minor tick grids, or both are affected.
+        :param axis: *axis* can be 'both' (default), 'x', or 'y' to control which set of
+            gridlines are drawn.
+        :param kwargs: *kwargs* are used to set the grid line properties.
+        """
+        gridline = Axes.grid(self, b, **kwargs)
+
+        tickvisible = kwargs.pop('tickvisible', None)
+        if not tickvisible is None:
+            gridline.setLabelVisible(tickvisible)
+        tickposition =kwargs.pop( 'tickposition', None)
+        if not tickposition is None:
+            tickposition = GridLabelPosition.valueOf(tickposition.upper())
+            gridline.setLabelPosition(tickposition)
+        tickcolor = kwargs.pop('tickcolor', None)
+        if not tickcolor is None:
+            c = plotutil.getcolor(tickcolor)
+            gridline.setLabelColor(c)
+        tickfontdic = kwargs.pop('tickfont', None)
+        if tickfontdic is None:
+            tickfont = plotutil.getfont_1(**kwargs)
+        else:
+            tickfont = plotutil.getfont(tickfontdic)
+        gridline.setLabelFont(tickfont)
+        fixlocation = kwargs.pop('fixlocation', None)
+        if fixlocation is not None:
+            gridline.setFixLocations(fixlocation)
+
+    def set_xticks(self, locs):
+        """
+        Set x axis tick locations.
+        """
+        gridline = self._axes.getGridLine()
+        if isinstance(locs, (NDArray, DimArray)):
+            locs = locs.aslist()
+        gridline.setLongitudeLocations(locs)
+
+    def set_yticks(self, locs):
+        """
+        Set y axis tick locations.
+        """
+        gridline = self._axes.getGridLine()
+        if isinstance(locs, (NDArray, DimArray)):
+            locs = locs.aslist()
+        gridline.setLatitudeLocations(locs)
         
     def loadmip(self, mipfn, mfidx=0):
         """
@@ -505,27 +474,23 @@ class MapAxes(Axes):
             islayer = True
 
         visible = kwargs.pop('visible', True)
-        if islayer:    
-            layer = layer._layer
-            layer.setVisible(visible)
+        if islayer:
+            layer.visible = visible
+            xshift = kwargs.pop('xshift', 0)
             zorder = kwargs.pop('zorder', None)
-            interpolation = kwargs.pop('interpolation', None)
-            if not interpolation is None:
-                layer.setInterpolation(interpolation)
-            if layer.getLayerType() == LayerTypes.IMAGE_LAYER:
-                if zorder is None:
-                    self.add_layer(layer)
-                else:
-                    self.add_layer(layer, zorder)
+            if layer.layer_type == LayerTypes.IMAGE_LAYER:
+                interpolation = kwargs.pop('interpolation', None)
+                graphics = layer.get_graphics(xshift, interpolation)
+                self.add_graphic(graphics, projection=layer.proj, zorder=zorder)
             else:
                 #LegendScheme
                 ls = kwargs.pop('symbolspec', None)
                 if ls is None:
-                    if layer.getShapeType().isPolygon():
+                    if layer.shapetype.isPolygon():
                         if not kwargs.has_key('edgecolor'):
                             kwargs['edgecolor'] = 'k'
-                    if len(kwargs) > 0 and layer.getLegendScheme().getBreakNum() == 1:
-                        lb = layer.getLegendScheme().getLegendBreaks().get(0)
+                    if len(kwargs) > 0 and layer.legend.getBreakNum() == 1:
+                        lb = layer.legend.getLegendBreaks().get(0)
                         btype = lb.getBreakType()
                         geometry = 'point'
                         if btype == BreakTypes.POLYLINE_BREAK:
@@ -535,17 +500,16 @@ class MapAxes(Axes):
                             if not kwargs.has_key('facecolor'):
                                 kwargs['facecolor'] = None
                         lb, isunique = plotutil.getlegendbreak(geometry, **kwargs)
-                        layer.getLegendScheme().getLegendBreaks().set(0, lb)
+                        layer.legend.getLegendBreaks().set(0, lb)
                 else:
-                    layer.setLegendScheme(ls)
-                if zorder is None:
-                    self.add_layer(layer)
-                else:
-                    self.add_layer(layer, zorder)
+                    layer.legend = ls
+                graphics = layer.get_graphics(xshift)
+                self.add_graphic(graphics, projection=layer.proj, zorder=zorder)
+
                 #Labels        
                 labelfield = kwargs.pop('labelfield', None)
                 if not labelfield is None:
-                    labelset = layer.getLabelSet()
+                    labelset = layer._layer.getLabelSet()
                     labelset.setFieldName(labelfield)
                     fontname = kwargs.pop('fontname', 'Arial')
                     fontsize = kwargs.pop('fontsize', 14)
@@ -569,10 +533,11 @@ class MapAxes(Axes):
                         labelset.setAutoDecimal(False)
                         labelset.setDecimalDigits(decimals)
                     labelset.setAvoidCollision(avoidcoll)
-                    layer.addLabels()  
-            self._axes.setDrawExtent(layer.getExtent().clone())
-            self._axes.setExtent(layer.getExtent().clone())
-            return MILayer(layer)
+                    layer._layer.addLabels()
+
+            self._axes.setDrawExtent(graphics.getExtent().clone())
+            self._axes.setExtent(graphics.getExtent().clone())
+            return graphics
         else:
             if isinstance(args[0], Graphic):
                 graphic = args[0]
@@ -754,105 +719,52 @@ class MapAxes(Axes):
                     ls = plotutil.getlegendscheme([levels], cdata.min(), cdata.max(), **kwargs)
                 ls = plotutil.setlegendscheme_line(ls, **kwargs)
             ls.setFieldName('Geometry_Z')
-        
-        aslayer = kwargs.pop('aslayer', True)
-        if aslayer:            
-            if cdata is None:
-                for i in range(snum):
-                    xdatalist[i] = plotutil.getplotdata(xdatalist[i])
-                    ydatalist[i] = plotutil.getplotdata(ydatalist[i])
-                if snum == 1:
-                    if len(lines) == 1:
-                        colors = kwargs.pop('colors', None)
-                        if not colors is None:
-                            colors = plotutil.getcolors(colors)
-                            cb = lines[0]
-                            lines = []
-                            idx = 0
-                            for cc in colors:
-                                ncb = cb.clone()
-                                ncb.setColor(cc)
-                                ncb.setStartValue(idx)
-                                ncb.setEndValue(idx)
-                                lines.append(ncb)
-                                idx += 1
-                            ls = LegendScheme(lines)
-                if is_lonlat:
-                    layer = DrawMeteoData.createPolylineLayer(xdatalist, ydatalist, ls, \
-                        'Plot_lines', 'ID', -180, 180)
-                else:
-                    layer = DrawMeteoData.createPolylineLayer(xdatalist, ydatalist, ls, \
-                                                              'Plot_lines', 'ID')
-            else:
-                xdata = plotutil.getplotdata(xdatalist[0])
-                ydata = plotutil.getplotdata(ydatalist[0])
-                zdata = plotutil.getplotdata(cdata)
-                if is_lonlat:
-                    layer = DrawMeteoData.createPolylineLayer(xdata, ydata, zdata, ls, \
-                        'Plot_lines', 'ID', -180, 180)
-                else:
-                    layer = DrawMeteoData.createPolylineLayer(xdata, ydata, zdata, ls, \
-                                                              'Plot_lines', 'ID')
-            if not proj is None:
-                layer.setProjInfo(proj)
-         
-            # Add layer
-            isadd = kwargs.pop('isadd', True)
-            if isadd:
-                zorder = kwargs.pop('zorder', None)
-                select = kwargs.pop('select', True)
-                self.add_layer(layer, zorder, select)
-                self._axes.setDrawExtent(layer.getExtent().clone())
-                self._axes.setExtent(layer.getExtent().clone())
-                
-            return MILayer(layer)
-        else:
-            iscurve = False
-            graphics = []
-            if cdata is None:
-                #Add data series
-                if snum == 1:
-                    xdata = plotutil.getplotdata(xdatalist[0])
-                    ydata = plotutil.getplotdata(ydatalist[0])
-                    if len(lines) == 1:
-                        colors = kwargs.pop('colors', None)
-                        if not colors is None:
-                            colors = plotutil.getcolors(colors)
-                            cb = lines[0]
-                            lines = []
-                            for cc in colors:
-                                ncb = cb.clone()
-                                ncb.setColor(cc)
-                                lines.append(ncb)
-                            graphic = GraphicFactory.createLineString(xdata, ydata, lines, iscurve)
-                        else:
-                            graphic = GraphicFactory.createLineString(xdata, ydata, lines[0], iscurve)
-                    else:    #>1                        
-                        graphic = GraphicFactory.createLineString(xdata, ydata, lines, iscurve)
-                    self.add_graphic(graphic)
-                    graphics.append(graphic)
-                else:
-                    for i in range(0, snum):
-                        label = kwargs.pop('label', 'S_' + str(i + 1))
-                        xdata = plotutil.getplotdata(xdatalist[i])
-                        ydata = plotutil.getplotdata(ydatalist[i])
-                        graphic = GraphicFactory.createLineString(xdata, ydata, lines[i], iscurve)
-                        graphic = self.add_graphic(graphic, proj)
-                        graphics.append(graphic)
-            else:
-                xdata = plotutil.getplotdata(xdatalist[0])
-                ydata = plotutil.getplotdata(ydatalist[0])
-                zdata = plotutil.getplotdata(cdata)
-                graphic = GraphicFactory.createLineString(xdata, ydata, zdata, ls, iscurve)
-                self.add_graphic(graphic, proj)
-                graphics.append(graphic)
-            
-            self._axes.setAutoExtent()
 
-            if len(graphics) > 1:
-                return graphics
+        iscurve = kwargs.pop('curve', False)
+        graphics = []
+        if cdata is None:
+            #Add data series
+            if snum == 1:
+                xdata = plotutil.getplotdata(xdatalist[0])
+                ydata = plotutil.getplotdata(ydatalist[0])
+                if len(lines) == 1:
+                    colors = kwargs.pop('colors', None)
+                    if not colors is None:
+                        colors = plotutil.getcolors(colors)
+                        cb = lines[0]
+                        lines = []
+                        for cc in colors:
+                            ncb = cb.clone()
+                            ncb.setColor(cc)
+                            lines.append(ncb)
+                        graphic = GraphicFactory.createLineString(xdata, ydata, lines, iscurve)
+                    else:
+                        graphic = GraphicFactory.createLineString(xdata, ydata, lines[0], iscurve)
+                else:    #>1
+                    graphic = GraphicFactory.createLineString(xdata, ydata, lines, iscurve)
+                self.add_graphic(graphic)
+                graphics.append(graphic)
             else:
-                return graphics[0]
+                for i in range(0, snum):
+                    label = kwargs.pop('label', 'S_' + str(i + 1))
+                    xdata = plotutil.getplotdata(xdatalist[i])
+                    ydata = plotutil.getplotdata(ydatalist[i])
+                    graphic = GraphicFactory.createLineString(xdata, ydata, lines[i], iscurve)
+                    graphic = self.add_graphic(graphic, proj)
+                    graphics.append(graphic)
+        else:
+            xdata = plotutil.getplotdata(xdatalist[0])
+            ydata = plotutil.getplotdata(ydatalist[0])
+            zdata = plotutil.getplotdata(cdata)
+            graphic = GraphicFactory.createLineString(xdata, ydata, zdata, ls, iscurve)
+            self.add_graphic(graphic, proj)
+            graphics.append(graphic)
+
+        if len(graphics) > 1:
+            return graphics
+        else:
+            return graphics[0]
+
 
     def scatter(self, *args, **kwargs):
         """
@@ -926,40 +838,20 @@ class MapAxes(Axes):
             ls = plotutil.setlegendscheme_point(ls, **kwargs)
 
         proj = kwargs.pop('proj', None)
-        aslayer = kwargs.pop('aslayer', True)
-        if aslayer:
-            if a.size == ls.getBreakNum() and ls.getLegendType() == LegendType.UNIQUE_VALUE:
-                layer = DrawMeteoData.createSTPointLayer_Unique(a._array, x._array, y._array, ls, 'layer', 'data')
-            else:
-                layer = DrawMeteoData.createSTPointLayer(a._array, x._array, y._array, ls, 'layer', 'data')
-
-            if not proj is None:
-                layer.setProjInfo(proj)
-            avoidcoll = kwargs.pop('avoidcoll', None)
-            if not avoidcoll is None:
-                layer.setAvoidCollision(avoidcoll)
-
-            # Add layer
-            isadd = kwargs.pop('isadd', True)
-            if isadd:
-                zorder = kwargs.pop('zorder', None)
-                select = kwargs.pop('select', True)
-                self.add_layer(layer, zorder, select)
-                self._axes.setDrawExtent(layer.getExtent().clone())
-                self._axes.setExtent(layer.getExtent().clone())
-
-            return MILayer(layer)
+        # Create graphics
+        if a.ndim == 0:
+            graphics = GraphicFactory.createPoints(x._array, y._array, ls.getLegendBreak(0))
         else:
-            # Create graphics
-            if a.ndim == 0:
-                graphics = GraphicFactory.createPoints(x._array, y._array, ls.getLegendBreak(0))
-            else:
-                graphics = GraphicFactory.createPoints(x._array, y._array, a._array, ls)
+            graphics = GraphicFactory.createPoints(x._array, y._array, a._array, ls)
 
-            self.add_graphic(graphics, proj)
-            self._axes.setAutoExtent()
+        visible = kwargs.pop('visible', True)
+        if visible:
+            zorder = kwargs.pop('zorder', None)
+            self.add_graphic(graphics, projection=proj, zorder=zorder)
+            self._axes.setExtent(graphics.getExtent())
+            self._axes.setDrawExtent(graphics.getExtent())
 
-            return graphics
+        return graphics
 
     def text(self, x, y, s, **kwargs):
         """
@@ -995,7 +887,7 @@ class MapAxes(Axes):
         :param cmap: (*string*) Color map string.
         :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
             string, like ``r`` or ``red``, all levels will be plotted in this color. If a tuple of matplotlib 
-            color args (string, float, rgb, etc), different levels will be plotted in different colors in 
+            color args (string, float, rgb, etc.), different levels will be plotted in different colors in
             the order specified.
         :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
         :param isadd: (*boolean*) Add layer or not. Default is ``True``.
@@ -1003,7 +895,7 @@ class MapAxes(Axes):
         :param smooth: (*boolean*) Smooth countour lines or not.
         :param select: (*boolean*) Set the return layer as selected layer or not.
         
-        :returns: (*VectoryLayer*) Contour VectoryLayer created from array data.
+        :returns: (*GraphicCollection*) Contour graphics created from array data.
         """
         n = len(args) 
         if n <= 2:
@@ -1023,24 +915,20 @@ class MapAxes(Axes):
         if x.ndim == 2 and y.ndim == 2:
             griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
             a, x, y = np.griddata((x,y), a, **griddata_props)
-        layer = DrawMeteoData.createContourLayer(a._array, x._array, y._array, ls, 'layer', 'data', smooth)
-        if layer is None:
-            return None
-            
+
+        contours = GraphicFactory.createContourLines(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
+
         proj = kwargs.pop('proj', None)
-        if not proj is None:
-            layer.setProjInfo(proj)
         
         # Add layer
-        isadd = kwargs.pop('isadd', True)
-        if isadd:
+        visible = kwargs.pop('visible', True)
+        if visible:
             zorder = kwargs.pop('zorder', None)
-            select = kwargs.pop('select', True)
-            self.add_layer(layer, zorder, select)
-            self._axes.setDrawExtent(layer.getExtent().clone())
-            self._axes.setExtent(layer.getExtent().clone())
+            self.add_graphic(contours, projection=proj, zorder=zorder)
+            self._axes.setDrawExtent(contours.getExtent())
+            self._axes.setExtent(contours.getExtent())
                 
-        return MILayer(layer)
+        return contours
         
     def contourf(self, *args, **kwargs):  
         """
@@ -1087,23 +975,21 @@ class MapAxes(Axes):
         if x.ndim == 2 and y.ndim == 2:
             griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
             a, x, y = np.griddata((x,y), a, **griddata_props)
-        layer = DrawMeteoData.createShadedLayer(a._array, x._array, y._array, ls, 'layer', 'data', smooth)
+
+        graphics = GraphicFactory.createContourPolygons(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
         proj = kwargs.pop('proj', None)
-        if not proj is None:
-            layer.setProjInfo(proj)
         
-        # Add layer
-        isadd = kwargs.pop('isadd', True)
-        if isadd:
+        # Add graphics
+        visible = kwargs.pop('visible', True)
+        if visible:
             zorder = kwargs.pop('zorder', None)
-            select = kwargs.pop('select', True)
             if zorder is None:
                 zorder = 0
-            self.add_layer(layer, zorder, select)
-            self._axes.setDrawExtent(layer.getExtent().clone())
-            self._axes.setExtent(layer.getExtent().clone())
+            self.add_graphic(graphics, projection=proj, zorder=zorder)
+            self._axes.setDrawExtent(graphics.getExtent())
+            self._axes.setExtent(graphics.getExtent())
                 
-        return MILayer(layer)
+        return graphics
         
     def imshow(self, *args, **kwargs):
         """
@@ -1117,7 +1003,7 @@ class MapAxes(Axes):
         :param cmap: (*string*) Color map string.
         :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
             string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-            color args (string, float, rgb, etc), different levels will be plotted in different colors in 
+            color args (string, float, rgb, etc.), different levels will be plotted in different colors in
             the order specified.
         :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
         :param fill_color: (*color*) Fill_color. Default is None (white color).
@@ -1169,8 +1055,9 @@ class MapAxes(Axes):
             else:
                 args = args[3:]    
         
-        isadd = kwargs.pop('isadd', True)
+        visible = kwargs.pop('visible', True)
         interpolation = kwargs.pop('interpolation', None)
+        proj = kwargs.pop('proj', migeo.projinfo())
         if isrgb:
             if isinstance(rgbdata, (list, tuple)):
                 rgbd = []
@@ -1187,9 +1074,6 @@ class MapAxes(Axes):
                 y_reverse = True
             extent = [x[0],x[-1],y[0],y[-1]]
             igraphic = GraphicFactory.createImage(rgbdata, extent, y_reverse)
-            x = plotutil.getplotdata(x)
-            y = plotutil.getplotdata(y)
-            layer = DrawMeteoData.createImageLayer(x, y, igraphic, 'layer_image')
         else:
             if x[1] < x[0]:
                 x = x[::-1]
@@ -1197,6 +1081,7 @@ class MapAxes(Axes):
             if y[1] < y[0]:
                 y = y[::-1]
                 arr = arr[::-1,:]
+            extent = [x[0],x[-1],y[0],y[-1]]
             if ls is None:
                 vmin = kwargs.pop('vmin', arr.min())
                 vmax = kwargs.pop('vmax', arr.max())
@@ -1221,24 +1106,25 @@ class MapAxes(Axes):
                 if cb.isNoData():
                     cb.setColor(plotutil.getcolor(fill_color))
 
-            layer = DrawMeteoData.createRasterLayer(arr._array, x._array, y._array, fill_value, 'layer', ls)
-            if not fill_color is None:
-                layer.setMissingColor(plotutil.getcolor(fill_color))
-                            
-        proj = kwargs.pop('proj', None)
-        if not proj is None:
-            layer.setProjInfo(proj)
+            if not proj.equals(self.proj):
+                arr, x, y = migeo.reproject(arr, x, y, fromproj=proj, toproj=self.proj)
+                extent = [x[0],x[-1],y[0],y[-1]]
+            igraphic = GraphicFactory.createImage(arr._array, x._array, y._array, ls, extent)
+
         if not interpolation is None:
-            layer.setInterpolation(interpolation)
-        if isadd:
+            igraphic.getShape().setInterpolation(interpolation)
+
+        if visible:
             zorder = kwargs.pop('zorder', None)
-            select = kwargs.pop('select', True)
             if zorder is None:
                 zorder = 0
-            self.add_layer(layer, zorder, select)
-            self._axes.setDrawExtent(layer.getExtent().clone())
-            self._axes.setExtent(layer.getExtent().clone())
-        return MILayer(layer)
+            self.add_graphic(igraphic, zorder=zorder)
+            self._axes.setDrawExtent(igraphic.getExtent())
+            self._axes.setExtent(igraphic.getExtent())
+            gridline = self._axes.getGridLine()
+            gridline.setTop(True)
+
+        return igraphic
         
     def pcolor(self, *args, **kwargs):
         """
@@ -1289,22 +1175,16 @@ class MapAxes(Axes):
         else:
             lonlim = 0
             #x, y = np.project(x, y, toproj=proj)
-        layer = DrawMeteoData.meshLayer(x.asarray(), y.asarray(), a.asarray(), ls, lonlim)
-        if not proj is None:
-            layer.setProjInfo(proj)
-            
-        # Add layer
-        isadd = kwargs.pop('isadd', True)
-        if isadd:
-            zorder = kwargs.pop('zorder', None)
-            select = kwargs.pop('select', True)
-            if zorder is None:
-                zorder = 0
-            self.add_layer(layer, zorder, select)
-            self._axes.setDrawExtent(layer.getExtent().clone())
-            self._axes.setExtent(layer.getExtent().clone())
 
-        return MILayer(layer)
+        graphics = GraphicFactory.createPColorPolygons(x.asarray(), y.asarray(), a.asarray(), ls)
+        visible = kwargs.pop('visible', True)
+        if visible:
+            zorder = kwargs.pop('zorder', None)
+            self.add_graphic(graphics, projection=proj, zorder=zorder)
+            self._axes.setExtent(graphics.getExtent())
+            self._axes.setDrawExtent(graphics.getExtent())
+
+        return graphics
         
     def gridshow(self, *args, **kwargs):
         """
@@ -1345,22 +1225,19 @@ class MapAxes(Axes):
         ls = ls.convertTo(ShapeTypes.POLYGON)
         plotutil.setlegendscheme(ls, **kwargs)
 
-        layer = DrawMeteoData.createGridFillLayer(x._array, y._array, a._array, ls, 'layer', 'data')
-        if not proj is None:
-            layer.setProjInfo(proj)
+        graphics = GraphicFactory.createGridPolygons(x.asarray(), y.asarray(), a.asarray(), ls)
             
-        # Add layer
-        isadd = kwargs.pop('isadd', True)
-        if isadd:
+        # Add graphics
+        visible = kwargs.pop('visible', True)
+        if visible:
             zorder = kwargs.pop('zorder', None)
-            select = kwargs.pop('select', True)
             if zorder is None:
                 zorder = 0
-            self.add_layer(layer, zorder, select)
-            self._axes.setDrawExtent(layer.getExtent().clone())
-            self._axes.setExtent(layer.getExtent().clone())
+            self.add_graphic(graphics, projection=proj, zorder=zorder)
+            self._axes.setDrawExtent(graphics.getExtent().clone())
+            self._axes.setExtent(graphics.getExtent().clone())
 
-        return MILayer(layer)
+        return graphics
     
     def quiver(self, *args, **kwargs):
         """
@@ -1385,7 +1262,7 @@ class MapAxes(Axes):
         """
         cmap = plotutil.getcolormap(**kwargs)
         fill_value = kwargs.pop('fill_value', -9999.0)
-        proj = kwargs.pop('proj', None)
+        proj = kwargs.pop('proj', migeo.projinfo())
         order = kwargs.pop('order', None)
         isuv = kwargs.pop('isuv', True)
         n = len(args) 
@@ -1433,25 +1310,24 @@ class MapAxes(Axes):
             else:
                 c = Color.black
             ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, c, 10)
+
         ls = plotutil.setlegendscheme_arrow(ls, **kwargs)
         if not cdata is None:
             cdata = cdata._array
         if u.ndim == 2 and x.ndim == 1:
             x, y = np.meshgrid(x, y)
-        layer = DrawMeteoData.createVectorLayer(x._array, y._array, u._array, v._array, cdata, ls, 'layer', isuv)
-        if not proj is None:
-            layer.setProjInfo(proj)
-            
-        # Add layer
-        isadd = kwargs.pop('isadd', True)
-        if isadd:
-            zorder = kwargs.pop('zorder', None)
-            select = kwargs.pop('select', True)
-            self.add_layer(layer, zorder, select)
-            self._axes.setDrawExtent(layer.getExtent().clone())
-            self._axes.setExtent(layer.getExtent().clone())
 
-        return MILayer(layer)
+        graphics = GraphicFactory.createArrows(x._array, y._array, u._array, v._array, cdata, ls, isuv)
+            
+        # Add graphics
+        visible = kwargs.pop('visible', True)
+        if visible:
+            zorder = kwargs.pop('zorder', None)
+            rGraphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+            self._axes.setDrawExtent(rGraphics.getExtent().clone())
+            self._axes.setExtent(rGraphics.getExtent().clone())
+
+        return graphics
     
     def barbs(self, *args, **kwargs):
         """
@@ -1529,20 +1405,18 @@ class MapAxes(Axes):
         ls = plotutil.setlegendscheme_point(ls, **kwargs)
         if not cdata is None:
             cdata = cdata._array
-        layer = DrawMeteoData.createBarbLayer(x._array, y._array, u._array, v._array, cdata, ls, 'layer', isuv)
-        if not proj is None:
-            layer.setProjInfo(proj)
+
+        graphics = GraphicFactory.createBarbs(x._array, y._array, u._array, v._array, cdata, ls, isuv)
             
         # Add layer
-        isadd = kwargs.pop('isadd', True)
-        if isadd:
+        visible = kwargs.pop('visible', True)
+        if visible:
             zorder = kwargs.pop('zorder', None)
-            select = kwargs.pop('select', True)
-            self.add_layer(layer, zorder, select)
-            self._axes.setDrawExtent(layer.getExtent().clone())
-            self._axes.setExtent(layer.getExtent().clone())
+            self.add_graphic(graphics, projection=proj, zorder=zorder)
+            self._axes.setDrawExtent(graphics.getExtent().clone())
+            self._axes.setExtent(graphics.getExtent().clone())
 
-        return MILayer(layer)
+        return graphics
         
     def streamplot(self, *args, **kwargs):
         """
@@ -1585,11 +1459,10 @@ class MapAxes(Axes):
 
         cdata = kwargs.pop('cdata', None)
         if cdata is None:
-            ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE)
             lb, isunique = plotutil.getlegendbreak('line', **kwargs)
             lb = plotutil.line2stream(lb, **kwargs)
-            ls.setLegendBreak(0, lb)
-            layer = DrawMeteoData.createStreamlineLayer(u._array, v._array, x._array, y._array, density, ls, 'layer', isuv)
+            graphics = GraphicFactory.createStreamlines(x._array, y._array, u._array, v._array,
+                                                        density, lb, isuv)
         else:
             if isinstance(cdata, (list, tuple)):
                 cdata = np.array(cdata)
@@ -1606,22 +1479,19 @@ class MapAxes(Axes):
             for i in range(ls.getBreakNum()):
                 lb = plotutil.line2stream(ls.getLegendBreak(i), **kwargs)
                 ls.setLegendBreak(i, lb)
-            layer = DrawMeteoData.createStreamlineLayer(u._array, v._array, x._array, y._array, cdata._array,
-                                                        density, ls, 'layer', isuv)
 
-        if not proj is None:
-            layer.setProjInfo(proj)
+            graphics = GraphicFactory.createStreamlines(x._array, y._array, u._array, v._array,
+                                                        cdata._array, density, ls, isuv)
             
-        # Add layer
-        isadd = kwargs.pop('isadd', True)
-        if isadd:
+        # Add graphics
+        visible = kwargs.pop('visible', True)
+        if visible:
             zorder = kwargs.pop('zorder', None)
-            select = kwargs.pop('select', True)
-            self.add_layer(layer, zorder, select)
-            self._axes.setDrawExtent(layer.getExtent().clone())
-            self._axes.setExtent(layer.getExtent().clone())
+            rGraphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+            self._axes.setDrawExtent(rGraphics.getExtent().clone())
+            self._axes.setExtent(rGraphics.getExtent().clone())
             
-        return MILayer(layer)
+        return graphics
         
     def stationmodel(self, smdata, **kwargs):
         """
@@ -1633,7 +1503,7 @@ class MapAxes(Axes):
         :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
         :param order: (*int*) Z-order of created layer for display.
         
-        :returns: (*VectoryLayer*) Station model VectoryLayer.
+        :returns: (*graphics*) Station model graphics.
         """
         proj = kwargs.pop('proj', None)
         size = kwargs.pop('size', 12)
@@ -1641,20 +1511,17 @@ class MapAxes(Axes):
         color = kwargs.pop('color', 'b')
         color = plotutil.getcolor(color)
         ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, color, size)
-        layer = DrawMeteoData.createStationModelLayer(smdata, ls, 'stationmodel', surface)
-        if not proj is None:
-            layer.setProjInfo(proj)
+        graphics = GraphicFactory.createStationModel(smdata, ls, surface)
      
-        # Add layer
-        isadd = kwargs.pop('isadd', True)
-        if isadd:
+        # Add graphics
+        visible = kwargs.pop('visible', True)
+        if visible:
             zorder = kwargs.pop('zorder', None)
-            select = kwargs.pop('select', True)
-            self.add_layer(layer, zorder, select)
-            self._axes.setDrawExtent(layer.getExtent().clone())
-            self._axes.setExtent(layer.getExtent().clone())
+            self.add_graphic(graphics, projection=proj, zorder=zorder)
+            self._axes.setDrawExtent(graphics.getExtent().clone())
+            self._axes.setExtent(graphics.getExtent().clone())
             
-        return MILayer(layer)
+        return graphics
         
     def webmap(self, provider='OpenStreetMap', zorder=0):
         """
@@ -1676,18 +1543,18 @@ class MapAxes(Axes):
         self.add_layer(layer, zorder)
         return MILayer(layer)
         
-    def masklayer(self, mobj, layers):
+    def masklayer(self, mask, graphics):
         """
         Mask layers.
         
-        :param mobj: (*layer or polgyons*) Mask object.
-        :param layers: (*list*) The layers will be masked.       
+        :param mask: (*layer or polygon graphic*) Mask object.
+        :param graphics: (*list*) The graphics will be masked.
         """
-        mapview = self._axes.getMapView()
-        mapview.getMaskOut().setMask(True)
-        mapview.getMaskOut().setMaskLayer(mobj._layer.getLayerName())
-        for layer in layers:
-            layer._layer.setMaskout(True)
+        if isinstance(mask, MILayer):
+            mask = mask.get_graphics()
+
+        for graphic in graphics:
+            graphic.setClipGraphic(mask)
             
     def move_graphic(self, graphic, x=0, y=0, coordinates='screen'):
         """

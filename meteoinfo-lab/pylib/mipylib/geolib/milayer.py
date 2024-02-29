@@ -57,6 +57,18 @@ class MILayer(object):
         return self._layer.getLayerInfo()
 
     @property
+    def visible(self):
+        return self._layer.isVisible()
+
+    @visible.setter
+    def visible(self, val):
+        self._layer.setVisible(val)
+
+    @property
+    def layer_type(self):
+        return self._layer.getLayerType()
+
+    @property
     def x_coord(self):
         """
         Get X coordinate array.
@@ -184,25 +196,41 @@ class MILayer(object):
             index = np.asarray(index)
             self._layer.getAttributeTable().getTable().setColumnData(fieldname, value.jarray, index.jarray)
 
+    @property
     def shapes(self):
         """
         Get shapes.
         """
         return self._layer.getShapes()
 
+    def get_graphics(self, xshift=0, interpolation=None):
+        """
+        Get graphics.
+
+        :param xshift: (*float*) X coordinate shift.
+        :param interpolation: (*str*) Image interpolation.
+        """
+        if interpolation is None:
+            return self._layer.getGraphics(xshift)
+        else:
+            return self._layer.getGraphics(xshift, interpolation)
+
+    @property
     def shapenum(self):
         """
         Get shape number
         """
         return self._layer.getShapeNum()
 
+    @property
     def legend(self):
         """
         Get legend scheme.
         """
         return self._layer.getLegendScheme()
 
-    def setlegend(self, legend):
+    @legend.setter
+    def legend(self, legend):
         """
         Set legend scheme.
         

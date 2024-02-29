@@ -107,7 +107,7 @@ public class ChartLegend {
         this.tickLabelColor = Color.black;
         this.tickLabelAngle = 0;
         this.symbolDimension = new Dimension(16, 10);
-        this.extendRect = false;
+        this.extendRect = true;
         this.extendFraction = ls.getExtendFraction();
         this.xshift = 0;
         this.yshift = 0;

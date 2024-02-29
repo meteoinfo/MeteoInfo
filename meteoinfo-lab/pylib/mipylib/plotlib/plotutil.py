@@ -362,6 +362,32 @@ def gethatch(h):
         return HatchStyle.getStyle(h)
 
 
+def getmarkerplotstyle(style, caption, **kwargs):
+    c, style = getcolor_style(style)
+    if kwargs.has_key('color'):
+        c = getcolor(kwargs.pop('color'))
+    alpha = kwargs.pop('alpha', None)
+    if alpha is not None:
+        c = getcolor(c, alpha)
+    pointStyle = getpointstyle(style)
+    fill = kwargs.pop('fill', True)
+    pb = PointBreak()
+    pb.setCaption(caption)
+    if '.' in style:
+        pb.setSize(4)
+        pb.setDrawOutline(False)
+    else:
+        pb.setSize(8)
+    pb.setStyle(pointStyle)
+    pb.setDrawFill(fill)
+    if not c is None:
+        pb.setColor(c)
+    edgecolor = kwargs.pop('edgecolor', pb.getColor())
+    edgecolor = getcolor(edgecolor)
+    pb.setOutlineColor(edgecolor)
+    setpointlegendbreak(pb, **kwargs)
+    return pb
+
 def getplotstyle(style, caption, **kwargs):
     linewidth = kwargs.pop('linewidth', 1.0)
     if style is None:
@@ -597,7 +623,9 @@ def getlegendscheme(args, min, max, **kwargs):
     ls = kwargs.pop('symbolspec', None)
     if ls is None:
         extend = kwargs.pop('extend', None)
-        if extend is not None:
+        if extend is None:
+            extend = ExtendType.NONE
+        else:
             extend = ExtendType.valueOf(extend.upper())
         cmap = getcolormap(**kwargs)
         level_arg = kwargs.pop('levels', None)

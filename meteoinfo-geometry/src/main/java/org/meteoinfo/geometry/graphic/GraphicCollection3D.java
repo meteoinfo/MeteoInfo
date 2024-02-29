@@ -257,7 +257,7 @@ public class GraphicCollection3D extends GraphicCollection{
             }
             g.setExtent(((Extent3D) g.getExtent()).shift(xs, 0, 0));
         }
-        this._extent.shift(xs, 0);
+        this.extent.shift(xs, 0);
 
         return this;
     }

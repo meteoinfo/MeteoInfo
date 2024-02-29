@@ -111,7 +111,7 @@ public class GLPlot extends Plot {
     protected float pitchAngle;
     protected AspectType aspectType = AspectType.AUTO;
 
-    protected Plot3DGL.TessCallback tessCallback;
+    protected GLPlot.TessCallback tessCallback;
     protected int width;
     protected int height;
     protected float tickSpace = 5.0f;
@@ -4206,7 +4206,7 @@ public class GLPlot extends Plot {
         gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
 
         //jogl specific addition for tessellation
-        tessCallback = new Plot3DGL.TessCallback(gl, glu);
+        tessCallback = new GLPlot.TessCallback(gl, glu);
 
         this.positionArea = new Rectangle2D.Double(0, 0, 1, 1);
     }
@@ -4339,7 +4339,7 @@ public class GLPlot extends Plot {
      * @return Cloned Plot3DGL
      */
     public Object clone() {
-        Plot3DGL plot3DGL = new Plot3DGL();
+        GLPlot plot3DGL = new GLPlot();
         plot3DGL.graphics = this.graphics;
         plot3DGL.angleX = this.angleX;
         plot3DGL.angleY = this.angleY;
@@ -4369,7 +4369,7 @@ public class GLPlot extends Plot {
         final GLProfile gp = GLProfile.get(GLProfile.GL2);
         GLCapabilities cap = new GLCapabilities(gp);
 
-        final GLChartPanel gc = new GLChartPanel(cap, new Plot3DGL());
+        final GLChartPanel gc = new GLChartPanel();
         gc.setSize(400, 400);
 
         final JFrame frame = new JFrame("JOGL Line");

@@ -329,6 +329,13 @@ public class Axis implements Cloneable {
      */
     public void setVisible(boolean value) {
         visible = value;
+        if (visible) {
+            this.drawTickLine = true;
+            this.drawTickLabel = true;
+        } else {
+            this.drawTickLine = false;
+            this.drawTickLabel = false;
+        }
     }
 
     /**
@@ -1485,7 +1492,7 @@ public class Axis implements Cloneable {
         }
     }
 
-    private void drawXAxis(Graphics2D g, Rectangle2D area, AbstractPlot2D plot) {
+    void drawXAxis(Graphics2D g, Rectangle2D area, AbstractPlot2D plot) {
         double[] xy;
         double x, sy = 0;
         double miny = area.getY();
@@ -1716,7 +1723,7 @@ public class Axis implements Cloneable {
         }
     }
 
-    private void drawYAxis(Graphics2D g, Rectangle2D area, AbstractPlot2D plot) {
+    void drawYAxis(Graphics2D g, Rectangle2D area, AbstractPlot2D plot) {
         double[] xy;
         double x, y, sx = 0;
         double miny = area.getY();

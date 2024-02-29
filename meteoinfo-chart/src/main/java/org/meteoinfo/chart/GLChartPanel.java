@@ -511,7 +511,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
         }
 
         //Draw identifer shape
-        if (this.currentPlot != null) {
+        /*if (this.currentPlot != null) {
             if (this.currentPlot instanceof MapPlot) {
                 MapPlot plot = (MapPlot) this.currentPlot;
                 if (plot.getMapView().isDrawIdentiferShape()) {
@@ -526,7 +526,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
                     }
                 }
             }
-        }
+        }*/
 
         g2.dispose();
     }
@@ -1011,7 +1011,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
                             return;
                         }
 
-                        this.currentPlot = plot;
+                        /*this.currentPlot = plot;
                         MapPlot mplot = (MapPlot) plot;
                         final MapView mapView = mplot.getMapView();
                         MapLayer aMLayer = mplot.getSelectedLayer();
@@ -1104,7 +1104,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
                                     mapView._frmIdentiferGrid.setVisible(true);
                                 }
                             }
-                        }
+                        }*/
                         break;
                 }
             } else if (e.getButton() == MouseEvent.BUTTON3) {

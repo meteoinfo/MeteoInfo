@@ -1248,6 +1248,9 @@ public class GeoComputation {
         clipLine.setValue(lat);
         clipLine.setLeftOrTop(isTop);
         polylines.addAll(clipPolylines(aPLS.getPolylines(), clipLine));
+        if (polylines.size() == 0) {
+            return null;
+        }
 
         PolylineShape bPLS = (PolylineShape) aPLS.valueClone();
         bPLS.setPolylines(polylines);

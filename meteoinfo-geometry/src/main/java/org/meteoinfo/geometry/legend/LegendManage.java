@@ -31,8 +31,10 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 /**
  * Legend manage class
@@ -942,7 +944,7 @@ public class LegendManage {
             for (int i = 0; i < cs.length; i++) {
                 cs[i] = colors.get(i);
             }
-            return createGraduatedLegendScheme(vs, cs, ShapeTypes.IMAGE, -Double.MAX_VALUE, Double.MIN_VALUE);
+            return createGraduatedLegendScheme(vs, cs, ShapeTypes.IMAGE, -Double.MAX_VALUE, Double.MAX_VALUE);
         }
     }
 
@@ -1213,7 +1215,14 @@ public class LegendManage {
      * @return Legend scheme
      */
     public static LegendScheme createLegendScheme(double[] values, Color[] colors) {
-        return createGraduatedLegendScheme(values, colors, ShapeTypes.IMAGE);
+        if (values.length == colors.length) {
+            List<Number> vList = Arrays.stream(values).boxed().collect(Collectors.toList());
+            return createUniqValueLegendScheme(vList, colors, ShapeTypes.IMAGE);
+        } else if (values.length > colors.length) {
+            return createGraduatedLegendScheme(values, colors, ShapeTypes.IMAGE);
+        } else {
+            return createGraduatedLegendScheme(values, colors, ShapeTypes.IMAGE, -Double.MAX_VALUE, Double.MAX_VALUE);
+        }
     }
 
     /**

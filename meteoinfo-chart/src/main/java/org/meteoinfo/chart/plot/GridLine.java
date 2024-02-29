@@ -33,7 +33,7 @@ public class GridLine {
 
     /**
      * Constructor
-     * @param visible
+     * @param visible Draw grid lines or not
      */
     public GridLine(boolean visible) {
         this.lineBreak = new PolylineBreak();

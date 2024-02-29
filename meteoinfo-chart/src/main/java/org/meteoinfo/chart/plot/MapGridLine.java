@@ -1,5 +1,6 @@
 package org.meteoinfo.chart.plot;
 
+import org.meteoinfo.chart.axis.PositionType;
 import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.graphic.Graphic;
@@ -12,6 +13,7 @@ import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
 import org.meteoinfo.projection.ProjectionUtil;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -20,7 +22,6 @@ import java.util.stream.Collectors;
 
 public class MapGridLine extends GridLine {
     protected ProjectionInfo projInfo;
-    protected ProjectionInfo longLat = ProjectionInfo.LONG_LAT;
     protected Extent extent;
     protected Extent lonLatExtent;
     protected List<Double> longitudeLocations;
@@ -29,13 +30,37 @@ public class MapGridLine extends GridLine {
     protected GraphicCollection longitudeLines;
     protected GraphicCollection latitudeLines;
     protected int nPoints = 100;
+    protected boolean drawDegreeSymbol = true;
+    protected boolean degreeSpace;
     protected List<GridLabel> gridLabels = new ArrayList<>();
+    protected boolean labelVisible = false;
+    protected GridLabelPosition labelPosition = GridLabelPosition.LEFT_BOTTOM;
+    protected Color labelColor = Color.BLACK;
+    protected Font labelFont = new Font("Arial", Font.PLAIN, 14);
 
     /**
      * Constructor
      */
     public MapGridLine() {
-        this(null, null);
+        this(false);
+    }
+
+    /**
+     * Constructor
+     * @param visible Draw grid lines or not
+     */
+    public MapGridLine(boolean visible) {
+        super(visible);
+        this.lineBreak.setColor(new Color(0.15f, 0.15f, 0.15f));
+    }
+
+    /**
+     * Constructor
+     * @param projInfo Projection
+     */
+    public MapGridLine(ProjectionInfo projInfo) {
+        this();
+        this.projInfo = projInfo;
     }
 
     /**
@@ -44,9 +69,17 @@ public class MapGridLine extends GridLine {
      * @param extent Extent
      */
     public MapGridLine(ProjectionInfo projInfo, Extent extent) {
-        super(true);
+        this();
         this.projInfo = projInfo;
         this.setExtent(extent);
+    }
+
+    /**
+     * Get projection
+     * @return Projection
+     */
+    public ProjectionInfo getProjInfo() {
+        return projInfo;
     }
 
     /**
@@ -71,11 +104,32 @@ public class MapGridLine extends GridLine {
     }
 
     /**
+     * Get if draw degree symbol
+     * @return Boolean
+     */
+    public boolean isDrawDegreeSymbol(){
+        return this.drawDegreeSymbol;
+    }
+
+    /**
+     * Set if draw degree symbol
+     * @param value Boolean
+     */
+    public void setDrawDegreeSymbol(boolean value){
+        this.drawDegreeSymbol = value;
+    }
+
+    /**
      * Update longitude/latitude extent
      */
     public void updateLonLatExtent() {
-        if (this.projInfo == null || this.extent == null)
+        if (this.projInfo == null || this.extent == null) {
             return;
+        }
+
+        if (this.extent.getWidth() == 0 || this.extent.getHeight() == 0) {
+            return;
+        }
 
         this.lonLatExtent = ProjectionUtil.getProjectionExtent(this.projInfo, ProjectionInfo.LONG_LAT, extent, 100);
         if (!this.fixLocations) {
@@ -93,9 +147,10 @@ public class MapGridLine extends GridLine {
      * Set longitude locations
      * @param value Longitude locations
      */
-    public void setLongitudeLocations(List<Double> value) {
-        this.longitudeLocations = value;
+    public void setLongitudeLocations(List<Number> value) {
+        this.longitudeLocations = value.stream().map(Number::doubleValue).collect(Collectors.toList());
         updateLongitudeLines();
+        this.updateLonLatGridLabels();
         this.fixLocations = true;
     }
 
@@ -103,9 +158,10 @@ public class MapGridLine extends GridLine {
      * Set latitude locations
      * @param value Latitude locations
      */
-    public void setLatitudeLocations(List<Double> value) {
-        this.latitudeLocations = value;
+    public void setLatitudeLocations(List<Number> value) {
+        this.latitudeLocations = value.stream().map(Number::doubleValue).collect(Collectors.toList());
         updateLatitudeLines();
+        this.updateLonLatGridLabels();
         this.fixLocations = true;
     }
 
@@ -126,11 +182,92 @@ public class MapGridLine extends GridLine {
     }
 
     /**
+     * Return fixed lon/lat locations or not
+     * @return Fixed lon/lat locations or not
+     */
+    public boolean isFixLocations() {
+        return this.fixLocations;
+    }
+
+    /**
+     * Set fixed lon/lat locations or not
+     * @param value Fixed lon/lat locations or not
+     */
+    public void setFixLocations(boolean value) {
+        this.fixLocations = value;
+        updateLonLatExtent();
+    }
+
+    /**
      * Get longitude/latitude grid labels
      * @return Grid labels
      */
     public List<GridLabel> getGridLabels() {
         return this.gridLabels;
+    }
+
+    /**
+     * Return label visible or not
+     * @return Label visible o not
+     */
+    public boolean isLabelVisible() {
+        return this.labelVisible;
+    }
+
+    /**
+     * Set label visible or not
+     * @param value Label visible or not
+     */
+    public void setLabelVisible(boolean value) {
+        this.labelVisible = value;
+    }
+
+    /**
+     * Get label position
+     * @return Label position
+     */
+    public GridLabelPosition getLabelPosition() {
+        return this.labelPosition;
+    }
+
+    /**
+     * Set label position
+     * @param value Label position
+     */
+    public void setLabelPosition(GridLabelPosition value) {
+        this.labelPosition = value;
+    }
+
+    /**
+     * Get label color
+     * @return Label color
+     */
+    public Color getLabelColor() {
+        return this.labelColor;
+    }
+
+    /**
+     * Set label color
+     * @param value Label color
+     */
+    public void setLabelColor(Color value) {
+        this.labelColor = value;
+    }
+
+    /**
+     * Get label font
+     * @return Label font
+     */
+    public Font getLabelFont() {
+        return this.labelFont;
+    }
+
+    /**
+     * Set label font
+     * @param value Label font
+     */
+    public void setLabelFont(Font value) {
+        this.labelFont = value;
     }
 
     protected void updateLongitudeLines() {
@@ -145,10 +282,11 @@ public class MapGridLine extends GridLine {
                 points.add(new PointD(lon, lat));
                 lat += delta;
             }
+            points.add((new PointD(lon, lat)));
             PolylineShape line = new PolylineShape();
             line.setPoints(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
-            graphic = ProjectionUtil.projectClipGraphic(graphic, longLat, projInfo);
+            graphic = ProjectionUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
             graphic.getShape().setValue(lon);
             this.longitudeLines.add(graphic);
         }
@@ -175,7 +313,11 @@ public class MapGridLine extends GridLine {
             PolylineShape line = new PolylineShape();
             line.setPoints(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
-            graphic = ProjectionUtil.projectClipGraphic(graphic, longLat, projInfo);
+            graphic = ProjectionUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
+            if (graphic == null) {
+                continue;
+            }
+
             if (graphic.getNumGraphics() > 1) {
                 points = (List<PointD>) graphic.getGraphicN(0).getShape().getPoints();
                 List<PointD> points1 = (List<PointD>) graphic.getGraphicN(1).getShape().getPoints();
@@ -421,6 +563,24 @@ public class MapGridLine extends GridLine {
             default:
                 gridLabels = tLabels;
                 break;
+        }
+
+        if (this.drawDegreeSymbol) {
+            for (GridLabel gridLabel : gridLabels) {
+                String lab = gridLabel.getLabString();
+                if (lab.endsWith("E") || lab.endsWith("W") || lab.endsWith("N") || lab.endsWith("S")) {
+                    if (degreeSpace) {
+                        lab = lab.substring(0, lab.length() - 1) + String.valueOf((char) 186) + " " +
+                                lab.substring(lab.length() - 1);
+                    } else {
+                        lab = lab.substring(0, lab.length() - 1) + String.valueOf((char) 186) +
+                                lab.substring(lab.length() - 1);
+                    }
+                } else {
+                    lab = lab + String.valueOf((char) 186);
+                }
+                gridLabel.setLabString(lab);
+            }
         }
     }
 

@@ -6,20 +6,23 @@
 package org.meteoinfo.chart.plot;
 
 import org.meteoinfo.chart.*;
+import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.axis.LonLatAxis;
+import org.meteoinfo.chart.axis.ProjLonLatAxis;
+import org.meteoinfo.chart.graphic.WebMapImage;
+import org.meteoinfo.chart.shape.PolylineErrorShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.data.Dataset;
 import org.meteoinfo.data.mapdata.webmap.IWebMapPanel;
 import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
 import org.meteoinfo.geo.drawing.Draw;
-import org.meteoinfo.geo.layer.LayerCollection;
-import org.meteoinfo.geo.layer.MapLayer;
-import org.meteoinfo.geo.legend.MapFrame;
-import org.meteoinfo.geo.mapview.MapView;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.geometry.graphic.Line2DGraphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.geometry.shape.Polygon;
+import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionUtil;
@@ -41,6 +44,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -48,14 +52,11 @@ import java.util.logging.Logger;
  *
  * @author wyq
  */
-public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
+public class MapPlot extends Plot2D implements IWebMapPanel {
 
     // <editor-fold desc="Variables">
-    private MapFrame mapFrame;
-    private MapView mapView;
     private ProjectionInfo projInfo;
     private boolean antialias;
-    private MapLayer selectedLayer;
     protected TileLoadListener tileLoadListener = new TileLoadListener(this);
     private IChartPanel parent;
     private float[] lonLim;
@@ -84,45 +85,25 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
         this.projInfo = projInfo;
         this.antialias = false;
         this.aspectType = AspectType.EQUAL;
-        try {
+        this.gridLine = new MapGridLine(projInfo);
+        this.gridLine.setTop(true);
+        if (this.projInfo.isLonLat()) {
             this.setXAxis(new LonLatAxis("Longitude", true));
             this.setYAxis(new LonLatAxis("Latitude", false));
-        } catch (CloneNotSupportedException ex) {
-            Logger.getLogger(MapPlot.class.getName()).log(Level.SEVERE, null, ex);
+        } else {
+            this.setXAxis(new ProjLonLatAxis("Longitude", true, (MapGridLine) this.gridLine));
+            this.setYAxis(new ProjLonLatAxis("Latitude", false, (MapGridLine) this.gridLine));
         }
-        this.getAxis(Location.TOP).setDrawTickLine(false);
-        this.getAxis(Location.TOP).setDrawTickLabel(false);
-        this.getAxis(Location.RIGHT).setDrawTickLine(false);
-        this.getAxis(Location.RIGHT).setDrawTickLabel(false);
+        this.getAxis(Location.TOP).setVisible(false);
+        this.getAxis(Location.RIGHT).setVisible(false);
         this.setDrawNeatLine(true);
-        this.getGridLine().setTop(true);
-    }
 
-    /**
-     * Constructor
-     *
-     * @param mapView MapView
-     */
-    public MapPlot(MapView mapView) {
-        this();
-
-        this.projInfo = mapView.getProjection().getProjInfo();
-        this.setMapView(mapView, true);
-        this.mapFrame = new MapFrame();
-        this.mapFrame.setMapView(mapView);
-    }
-
-    /**
-     * Constructor
-     *
-     * @param mapFrame MapFrame
-     */
-    public MapPlot(MapFrame mapFrame) {
-        this();
-
-        this.projInfo = mapFrame.getMapView().getProjection().getProjInfo();
-        this.mapFrame = mapFrame;
-        this.setMapView(mapFrame.getMapView(), true);
+        Extent extent = this.getAutoExtent();
+        this.setDrawExtent(extent);
+        PolygonShape bvs = this.projInfo.getBoundary();
+        if (bvs != null) {
+            this.setBoundary(bvs);
+        }
     }
 
     // </editor-fold>
@@ -156,60 +137,6 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    /**
-     * Get map view
-     *
-     * @return Map view
-     */
-    public MapView getMapView() {
-        return this.mapView;
-    }
-
-    /**
-     * Set map view
-     *
-     * @param value Map view
-     * @param isGeoMap If is geo map
-     */
-    public void setMapView(MapView value, boolean isGeoMap) {
-        this.mapView = value;
-        this.mapView.setLockViewUpdate(true);
-        this.mapView.setGeoMap(isGeoMap);
-        this.mapView.setMultiGlobalDraw(isGeoMap);
-        Extent extent = this.getAutoExtent();
-        this.setDrawExtent(extent);
-        PolygonShape bvs = this.getProjInfo().getBoundary();
-        if (bvs != null) {
-            this.setBoundary(bvs);
-        }
-    }
-
-    /**
-     * Get view extent
-     * @return View extent
-     */
-    public Extent getViewExtent() {
-        return this.mapView.getViewExtent();
-    }
-
-    /**
-     * Get x scale
-     * @return X scale
-     */
-    @Override
-    public double getXScale() {
-        return this.mapView.getXScale();
-    }
-
-    /**
-     * Get y scale
-     * @return Y scale
-     */
-    @Override
-    public double getYScale() {
-        return this.mapView.getYScale();
-    }
-
     @Override
     public PlotType getPlotType() {
         return PlotType.XY2D;
@@ -234,45 +161,6 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     }
 
     /**
-     * Get background color
-     *
-     * @return Background color
-     */
-    @Override
-    public Color getBackground() {
-        return this.mapView.getBackground();
-    }
-
-    /**
-     * Set background color
-     *
-     * @param value Background color
-     */
-    @Override
-    public void setBackground(Color value) {
-        this.mapView.setBackground(value);
-    }
-
-    /**
-     * Get map frame
-     *
-     * @return Map frame
-     */
-    public MapFrame getMapFrame() {
-        return this.mapFrame;
-    }
-
-    /**
-     * Set map frame
-     *
-     * @param value Map frame
-     */
-    public void setMapFrame(MapFrame value) {
-        this.mapFrame = value;
-        this.setMapView(mapFrame.getMapView(), true);
-    }
-
-    /**
      * Get projection info
      *
      * @return Projection info
@@ -287,7 +175,25 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      */
     public void setProjInfo(ProjectionInfo proj) {
         this.projInfo = proj;
-        this.getMapView().getProjection().setProjInfo(proj);
+        ((MapGridLine) this.gridLine).setProjInfo(proj);
+        if (proj.isLonLat()) {
+            if (this.getXAxis() instanceof ProjLonLatAxis) {
+                for (Location loc : this.axis.keySet()) {
+                    Axis axis = this.axis.get(loc);
+                    axis = new LonLatAxis(axis);
+                    this.axis.put(loc, axis);
+                }
+            }
+        } else {
+            if (!(this.getXAxis() instanceof ProjLonLatAxis)) {
+                for (Location loc : this.axis.keySet()) {
+                    Axis axis = this.axis.get(loc);
+                    axis = new ProjLonLatAxis((LonLatAxis)axis, (MapGridLine) this.gridLine);
+                    this.axis.put(loc, axis);
+                }
+            }
+        }
+
         if (proj.getBoundary() != null) {
             this.setBoundary(proj.getBoundary());
         }
@@ -300,30 +206,6 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      */
     public boolean isLonLatMap() {
         return this.projInfo.isLonLat();
-    }
-
-    /**
-     * Get selected layer
-     *
-     * @return Selected layer
-     */
-    public MapLayer getSelectedLayer() {
-        if (this.selectedLayer != null) {
-            return this.selectedLayer;
-        } else if (this.mapView.getLastAddedLayer() != null) {
-            return this.mapView.getLastAddedLayer();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Set selected layer
-     *
-     * @param value Selected layer
-     */
-    public void setSelectedLayer(MapLayer value) {
-        this.selectedLayer = value;
     }
 
     /**
@@ -477,7 +359,25 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      * @return Boolean
      */
     public boolean hasWebMapLayer() {
-        return this.mapView.hasWebMapLayer();
+        for (Graphic g : this.graphics.getGraphics()) {
+            if (g instanceof WebMapImage) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get web map image
+     * @return Web map image
+     */
+    public WebMapImage getWebMapImage() {
+        for (Graphic g : this.graphics.getGraphics()) {
+            if (g instanceof WebMapImage) {
+                return (WebMapImage) g;
+            }
+        }
+        return null;
     }
 
     /**
@@ -487,7 +387,9 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      */
     @Override
     public int getWebMapZoom() {
-        return this.mapView.getWebMapZoom();
+        WebMapImage webMapImage = getWebMapImage();
+
+        return webMapImage == null ? 0 : webMapImage.getZoom();
     }
 
     @Override
@@ -519,6 +421,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     @Override
     public void draw(Graphics2D g, Rectangle2D area) {
         super.draw(g, area);
+
         if (this.scaleBar != null) {
             float x = (float) (area.getWidth() * this.scaleBar.getX());
             float y = (float) (area.getHeight() * (1 - this.scaleBar.getY()));
@@ -534,70 +437,118 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
 
     @Override
     void drawGraph(Graphics2D g, Rectangle2D area) {
-        this.mapView.setLockViewUpdate(false);
-        this.mapView.setAntiAlias(this.antialias);        
-        //this.mapView.setViewExtent((Extent) this.getDrawExtent().clone());
-        if (this.mapView.hasWebMapLayer()) {
-            this.mapView.setViewExtent((Extent) this.getDrawExtent().clone());
-            this.mapView.refreshXYScaleWebMap((Extent) this.getDrawExtent().clone(), area.getWidth(),
-                    area.getHeight());
-            /*this.mapView.zoomToExtent((Extent) this.getDrawExtent().clone(),
-                    (int) area.getWidth(), (int) area.getHeight());*/
+        //fill boundary polygon
+        java.awt.Shape oldRegion = g.getClip();
+        if (this.clip) {
+            g.setClip(area);
         }
+        AffineTransform oldMatrix = g.getTransform();
+        g.translate(area.getX(), area.getY());
+
         if (this.boundary != null) {
             PolygonBreak pb = (PolygonBreak)this.boundary.getLegend().clone();
             if (pb.isDrawFill()) {
                 pb.setDrawOutline(false);
-                this.mapView.drawGraphic(g, new Graphic(this.boundary.getShape(), pb), area.getBounds());
-                //pb.setDrawOutline(true);
+                this.drawGraphic(g, this.boundary, pb, area);
             }
         }
-        this.mapView.paintGraphics(g, area, this.tileLoadListener);
+
+        g.setTransform(oldMatrix);
+
+        //Plot graphics
+        g.translate(area.getX(), area.getY());
+
+        plotGraphics(g, area);
+
+        //Draw boundary line
         if (this.boundary != null) {
             PolygonBreak pb = (PolygonBreak)this.boundary.getLegend().clone();
             pb.setDrawFill(false);
-            this.mapView.drawGraphic(g, new Graphic(this.boundary.getShape(), pb), area.getBounds());
-            //pb.setDrawFill(true);
+            this.drawGraphic(g, this.boundary, pb, area);
         }
-        this.mapView.setLockViewUpdate(true);
-    }
 
-    /**
-     * Get auto extent
-     *
-     * @return Auto extent
-     */
-    @Override
-    public Extent getAutoExtent() {
-        return this.mapView.getLayersWholeExtent();
+        g.setTransform(oldMatrix);
+        if (this.clip) {
+            g.setClip(oldRegion);
+        }
     }
 
     @Override
-    public void setAutoExtent() {
+    void plotGraphics(Graphics2D g, Rectangle2D area) {
+        int barIdx = 0;
+        for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
+            Graphic graphic = this.graphics.get(m);
+            ColorBreak cb = graphic.getLegend();
+            ShapeTypes shapeType = graphic.getGraphicN(0).getShape().getShapeType();
+            switch(shapeType){
+                case BAR:
+                    this.drawBars(g, (GraphicCollection) graphic, barIdx, area);
+                    barIdx += 1;
+                    break;
+                case STATION_MODEL:
+                    this.drawStationModel(g, (GraphicCollection) graphic, area);
+                    break;
+            }
 
+            if (graphic.getExtent().intersects(this.drawExtent)) {
+                drawGraphics(g, graphic, area);
+            }
+        }
     }
 
-    @Override
-    public void updateLegendScheme() {
+    void drawStationModel(Graphics2D g, GraphicCollection graphics, Rectangle2D area) {
+        PointF pointF = new PointF();
+        LegendScheme ls = graphics.getLegendScheme();
+        List<Extent> extentList = new ArrayList<>();
+        Extent maxExtent = new Extent();
+        Extent aExtent;
+        PointBreak pointBreak = (PointBreak) ls.getLegendBreak(0);
+        for (Graphic graphic : graphics.getGraphics()) {
+            StationModelShape shape = (StationModelShape) graphic.getShape();
+            PointD p = shape.getPoint();
+            if (p.X < drawExtent.minX || p.X > drawExtent.maxX
+                    || p.Y < drawExtent.minY || p.Y > drawExtent.maxY) {
+                continue;
+            }
 
-    }
+            if (pointBreak.isDrawShape()) {
+                double[] screenXY;
+                screenXY = projToScreen(p.X, p.Y, area);
+                pointF.X = (float) screenXY[0];
+                pointF.Y = (float) screenXY[1];
+                boolean isDraw = true;
+                if (graphics.isAvoidCollision()) {
+                    float aSize = pointBreak.getSize();
+                    aExtent = new Extent();
+                    aExtent.minX = pointF.X - aSize;
+                    aExtent.maxX = pointF.X + aSize;
+                    aExtent.minY = pointF.Y - aSize;
+                    aExtent.maxY = pointF.Y + aSize;
+                    if (extentList.isEmpty()) {
+                        maxExtent = (Extent) aExtent.clone();
+                        extentList.add(aExtent);
+                    } else if (!MIMath.isExtentCross(aExtent, maxExtent)) {
+                        extentList.add(aExtent);
+                        maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                    } else {
+                        for (Extent extent : extentList) {
+                            if (MIMath.isExtentCross(aExtent, extent)) {
+                                isDraw = false;
+                                break;
+                            }
+                        }
+                        if (isDraw) {
+                            extentList.add(aExtent);
+                            maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                        }
+                    }
+                }
 
-    /**
-     * Add a graphic
-     *
-     * @param graphic The graphic
-     */
-    public void addGraphic(Graphic graphic) {
-        this.getMapView().addGraphic(graphic);
-    }
-
-    /**
-     * Add graphics
-     * @param graphics The graphics
-     */
-    public void addGraphics(GraphicCollection graphics) {
-        for (int i = 0; i < graphics.getNumGraphics(); i++) {
-            this.getMapView().addGraphic(graphics.getGraphicN(i));
+                if (isDraw) {
+                    Draw.drawStationModel(pointBreak.getColor(), pointBreak.getOutlineColor(), pointF, shape,
+                            g, pointBreak.getSize(), pointBreak.getSize() / 8 * 3);
+                }
+            }
         }
     }
 
@@ -611,11 +562,31 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     public Graphic addGraphic(Graphic graphic, ProjectionInfo proj) {
         ProjectionInfo toProj = this.getProjInfo();
         if (proj.equals(toProj)) {
-            this.getMapView().addGraphic(graphic);
+            this.addGraphic(graphic);
             return graphic;
         } else {
-            Graphic nGraphic = ProjectionUtil.projectGraphic(graphic, proj, toProj);
-            this.getMapView().addGraphic(nGraphic);
+            Graphic nGraphic = ProjectionUtil.projectClipGraphic(graphic, proj, toProj);
+            this.addGraphic(nGraphic);
+            return nGraphic;
+        }
+    }
+
+    /**
+     * Add a graphic
+     *
+     * @param index The graphic index
+     * @param graphic The graphic
+     * @param proj The graphic projection
+     * @return Added graphic
+     */
+    public Graphic addGraphic(int index, Graphic graphic, ProjectionInfo proj) {
+        ProjectionInfo toProj = this.getProjInfo();
+        if (proj.equals(toProj)) {
+            this.addGraphic(index, graphic);
+            return graphic;
+        } else {
+            Graphic nGraphic = ProjectionUtil.projectClipGraphic(graphic, proj, toProj);
+            this.addGraphic(index, nGraphic);
             return nGraphic;
         }
     }
@@ -629,60 +600,61 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      */
     public GraphicCollection addGraphics(GraphicCollection graphics, ProjectionInfo proj) {
 
-        ProjectionInfo toProj = this.getMapView().getProjection().getProjInfo();
+        ProjectionInfo toProj = this.projInfo;
         if (proj.equals(toProj)) {
             for (int i = 0; i < graphics.getNumGraphics(); i++)
-                this.getMapView().addGraphic(graphics.getGraphicN(i));
+                this.addGraphic(graphics.getGraphicN(i));
             return graphics;
         } else {
             GraphicCollection nGraphics = new GraphicCollection();
             for (int i = 0; i < graphics.getNumGraphics(); i++) {
-                Graphic nGraphic = ProjectionUtil.projectGraphic(graphics.getGraphicN(i), proj, toProj);
+                Graphic nGraphic = ProjectionUtil.projectClipGraphic(graphics.getGraphicN(i), proj, toProj);
                 nGraphics.add(nGraphic);
-                this.getMapView().addGraphic(nGraphic);
+                this.addGraphic(nGraphic);
             }
             return nGraphics;
         }
     }
 
     /**
-     * Add a layer
+     * Add graphics
      *
-     * @param layer The layer
+     * @param index The graphics index
+     * @param graphics The graphics
+     * @param proj The graphic projection
+     * @return Added graphics
      */
-    public void addLayer(MapLayer layer) {
-        this.mapView.addLayer(layer);
-        this.setDrawExtent(layer.getExtent());
+    public GraphicCollection addGraphics(int index, GraphicCollection graphics, ProjectionInfo proj) {
+        ProjectionInfo toProj = this.projInfo;
+        if (proj.equals(toProj)) {
+            this.addGraphic(index, graphics);
+            return graphics;
+        } else {
+            GraphicCollection nGraphics = new GraphicCollection();
+            for (int i = 0; i < graphics.getNumGraphics(); i++) {
+                Graphic nGraphic = ProjectionUtil.projectClipGraphic(graphics.getGraphicN(i), proj, toProj);
+                this.addGraphic(nGraphic);
+            }
+            this.addGraphic(nGraphics);
+            return nGraphics;
+        }
     }
 
-    /**
-     * Add a layer
-     *
-     * @param idx Index
-     * @param layer Layer
-     */
-    public void addLayer(int idx, MapLayer layer) {
-        this.mapView.addLayer(idx, layer);
-        this.setDrawExtent(layer.getExtent());
-    }
-
-    /**
-     * Remove last added layer
-     */
-    public void removeLastLayer() {
-        this.mapView.removeLayer(this.mapView.getLastAddedLayer());
-    }
-
-    /**
-     * Set all axis visible or not
-     *
-     * @param value Boolean
-     */
     @Override
-    public void setAxisOn(boolean value) {
-        super.setAxisOn(value);
-        this.mapFrame.setDrawGridTickLine(value);
-        this.mapFrame.setDrawGridLabel(value);
+    public void addText(ChartText text) {
+        addText(text, true);
+    }
+
+    public void addText(ChartText text, boolean isLonLat) {
+        if (isLonLat) {
+            if (!this.projInfo.isLonLat()) {
+                PointD xyp = Reproject.reprojectPoint(text.getX(), text.getY(), KnownCoordinateSystems.geographic.world.WGS1984,
+                        this.projInfo);
+                text.setX(xyp.X);
+                text.setY(xyp.Y);
+            }
+        }
+        super.addText(text);
     }
 
     /**
@@ -691,7 +663,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
      * @return Full extent
      */
     public Extent getFullExtent() {
-        Extent ext = this.mapView.getExtent();
+        Extent ext = this.getExtent();
         if (this.boundary != null) {
             ext = ext.union(this.boundary.getExtent().extend(0.01));
         }
@@ -700,16 +672,29 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
     }
 
     /**
+     * Zoom to exactly lon/lat extent
+     *
+     * @param aExtent The extent
+     */
+    public void zoomToExtentLonLatEx(Extent aExtent) {
+        if (!this.projInfo.isLonLat()) {
+            aExtent = ProjectionUtil.getProjectionExtent(ProjectionInfo.LONG_LAT, this.projInfo, aExtent, 10);
+        }
+
+        this.setDrawExtent(aExtent);
+    }
+
+    /**
      * Set longitude/latitude extent
      *
      * @param extent Extent
      */
     public void setLonLatExtent(Extent extent) {
-        if (this.getMapView().getProjection().isLonLatMap()) {
+        if (this.projInfo.isLonLat()) {
             super.setDrawExtent(extent);
         } else {
-            this.getMapView().zoomToExtentLonLatEx(extent);
-            super.setDrawExtent1(this.getMapView().getViewExtent());
+            this.zoomToExtentLonLatEx(extent);
+            super.setDrawExtent1(this.getDrawExtent());
             this.setAxisExtent(extent);
         }
     }
@@ -726,21 +711,18 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
         this.getAxis(Location.RIGHT).setMinMaxValue(extent.minY, extent.maxY);
     }
 
+    /**
+     * Set draw extent
+     *
+     * @param extent Extent
+     */
     @Override
-    public void addText(ChartText text) {
-        addText(text, true);
-    }
+    public void setDrawExtent(Extent extent) {
+        super.setDrawExtent(extent);
 
-    public void addText(ChartText text, boolean isLonLat) {
-        if (isLonLat) {
-            if (!this.getMapView().getProjection().isLonLatMap()) {
-                PointD xyp = Reproject.reprojectPoint(text.getX(), text.getY(), KnownCoordinateSystems.geographic.world.WGS1984,
-                        this.getMapView().getProjection().getProjInfo());
-                text.setX(xyp.X);
-                text.setY(xyp.Y);
-            }
+        if (!this.isLonLatMap()) {
+            ((MapGridLine) this.gridLine).setExtent(extent);
         }
-        super.addText(text);
     }
 
     /**
@@ -761,14 +743,14 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
             ps.setPoint(xyp);
         }
         Graphic aGraphic = new Graphic(ps, pb);
-        this.getMapView().addGraphic(aGraphic);
+        this.addGraphic(aGraphic);
     }
 
     /**
      * Add point graphic
      *
      * @param lat Latitude
-     * @param lon Lontitude
+     * @param lon Longitude
      * @param pb Point break
      * @return Graphic
      */
@@ -789,7 +771,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                 ps.setPoint(xyp);
             }
             Graphic aGraphic = new Graphic(ps, pb);
-            this.getMapView().addGraphic(aGraphic);
+            this.addGraphic(aGraphic);
             return aGraphic;
         }
         return null;
@@ -816,14 +798,14 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                     pls = new PolylineShape();
                     pls.setPoints(points);
                     Graphic aGraphic = new Graphic(pls, plb);
-                    this.getMapView().addGraphic(aGraphic);
+                    this.addGraphic(aGraphic);
                 }
                 points = new ArrayList<>();
             } else {
                 lonlatp = new PointD(x, y);
                 if (!this.isLonLatMap()) {
                     lonlatp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
-                            this.getMapView().getProjection().getProjInfo());
+                            this.projInfo);
                 }
                 points.add(lonlatp);
             }
@@ -832,7 +814,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
             pls = new PolylineShape();
             pls.setPoints(points);
             Graphic aGraphic = new Graphic(pls, plb);
-            this.getMapView().addGraphic(aGraphic);
+            this.addGraphic(aGraphic);
             return aGraphic;
         }
         return null;
@@ -864,14 +846,14 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                     }
                     pls.setPoints(points);
                     Graphic aGraphic = new Graphic(pls, plb);
-                    this.getMapView().addGraphic(aGraphic);
+                    this.addGraphic(aGraphic);
                 }
                 points = new ArrayList<>();
             } else {
                 lonlatp = new PointD(x, y);
-                if (!this.getMapView().getProjection().isLonLatMap()) {
+                if (!this.projInfo.isLonLat()) {
                     lonlatp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
-                            this.getMapView().getProjection().getProjInfo());
+                            this.projInfo);
                 }
                 points.add(lonlatp);
             }
@@ -884,7 +866,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
             }
             pls.setPoints(points);
             Graphic aGraphic = new Graphic(pls, plb);
-            this.getMapView().addGraphic(aGraphic);
+            this.addGraphic(aGraphic);
             return aGraphic;
         }
         return null;
@@ -911,14 +893,14 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
                     pgs = new PolygonShape();
                     pgs.setPoints(points);
                     Graphic aGraphic = new Graphic(pgs, pgb);
-                    this.getMapView().addGraphic(aGraphic);
+                    this.addGraphic(aGraphic);
                 }
                 points = new ArrayList<>();
             } else {
                 lonlatp = new PointD(x, y);
-                if (!this.getMapView().getProjection().isLonLatMap()) {
+                if (!this.projInfo.isLonLat()) {
                     lonlatp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
-                            this.getMapView().getProjection().getProjInfo());
+                            this.projInfo);
                 }
                 points.add(lonlatp);
             }
@@ -927,7 +909,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
             pgs = new PolygonShape();
             pgs.setPoints(points);
             Graphic aGraphic = new Graphic(pgs, pgb);
-            this.getMapView().addGraphic(aGraphic);
+            this.addGraphic(aGraphic);
             return aGraphic;
         }
         return null;
@@ -950,315 +932,346 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
         return graphic;
     }
 
-    /**
-     * Get position area
-     *
-     * @param area Whole area
-     * @return Graphic area
-     */
-    @Override
-    public Rectangle2D getPositionArea(Rectangle2D area) {
-        Rectangle2D plotArea = super.getPositionArea(area);
-        if (this.aspectType != AspectType.AUTO) {
-            MapView mv = this.mapFrame.getMapView();
-            mv.setViewExtent((Extent) this.getDrawExtent().clone());
-            Extent extent = mv.getViewExtent();
-            double width = extent.getWidth();
-            double height = extent.getHeight();
-            double scaleFactor = mv.getXYScaleFactor();
-            if (width / height / scaleFactor > plotArea.getWidth() / plotArea.getHeight()) {
-                double h = plotArea.getWidth() * height * scaleFactor / width;
-                double delta = plotArea.getHeight() - h;
-                plotArea.setRect(plotArea.getX(), plotArea.getY() + delta / 2, plotArea.getWidth(), h);
-            } else {
-                double w = width * plotArea.getHeight() / height / scaleFactor;
-                double delta = plotArea.getWidth() - w;
-                plotArea.setRect(plotArea.getX() + delta / 2, plotArea.getY(), w, plotArea.getHeight());
+    /*@Override
+    void drawAxis(Graphics2D g, Rectangle2D area) {
+        if (this.projInfo.isLonLat()) {
+            super.drawAxis(g, area);
+        } else {
+            MapGridLine mapGridLine = (MapGridLine) this.gridLine;
+            double xMin = area.getX();
+            double xMax = area.getX() + area.getWidth();
+            double yMin = area.getY();
+            double yMax = area.getY() + area.getHeight();
+
+            //Draw axis
+            //X axis
+            Axis xAxis = this.getXAxis();
+            //Axis line
+            g.setColor(xAxis.getLineColor());
+            g.setStroke(new BasicStroke(xAxis.getLineWidth()));
+            g.draw(new Line2D.Double(xMin, yMax, xMax, yMax));
+
+            //Longitude axis ticks
+            double x, y;
+            double[] xy;
+            if (xAxis.isDrawTickLine()) {
+                List<GridLabel> lonLabels = mapGridLine.getLongitudeLabels();
+                g.setColor(xAxis.getTickColor());
+                g.setStroke(new BasicStroke(xAxis.getTickWidth()));
+                for (GridLabel gridLabel : lonLabels) {
+                    PointD point = gridLabel.getCoord();
+                    x = point.X;
+                    if (x < this.drawExtent.minX || x > this.drawExtent.maxX) {
+                        continue;
+                    }
+
+                    //Draw tick line
+                    x = this.projToScreenX(x, area) + xMin;
+                    if (xAxis.getLocation() == Location.BOTTOM) {
+                        if (xAxis.isInsideTick()) {
+                            g.draw(new Line2D.Double(x, yMax, x, yMax - xAxis.getTickLength()));
+                        } else {
+                            g.draw(new Line2D.Double(x, yMax, x, yMax + xAxis.getTickLength()));
+                        }
+                    } else {
+                        if (xAxis.isInsideTick()) {
+                            g.draw(new Line2D.Double(x, yMin, x, yMin + xAxis.getTickLength()));
+                        } else {
+                            g.draw(new Line2D.Double(x, yMin, x, yMin - xAxis.getTickLength()));
+                        }
+                    }
+
+                    //Draw tick label
+                    if (xAxis.isDrawTickLabel()) {
+                        if (xAxis.getLocation() == Location.BOTTOM) {
+                            if (xAxis.isInsideTick()){
+                                y = yMax;
+                            } else {
+                                y = yMax + xAxis.getTickLength();
+                            }
+                            y += xAxis.getTickSpace();
+                        } else {
+                            if (xAxis.isInsideTick()){
+                                y = yMin;
+                            } else {
+                                y = yMin - xAxis.getTickLength();
+                            }
+                            y -= xAxis.getTickSpace();
+                        }
+                        g.setColor(xAxis.getTickLabelColor());
+                        g.setFont(xAxis.getTickLabelFont());
+                        Draw.drawString(g, x, y, gridLabel.getLabString(), XAlign.CENTER, YAlign.TOP, true);
+                    }
+                }
+            }
+
+            //Y axis
+            Axis yAxis = this.getYAxis();
+            //Axis line
+            g.setColor(yAxis.getLineColor());
+            g.setStroke(new BasicStroke(yAxis.getLineWidth()));
+            g.draw(new Line2D.Double(xMin, yMin, xMin, yMax));
+
+            //Latitude axis ticks
+            if (yAxis.isDrawTickLine()) {
+                List<GridLabel> latLabels = mapGridLine.getLatitudeLabels();
+                g.setColor(yAxis.getTickColor());
+                g.setStroke(new BasicStroke(yAxis.getTickWidth()));
+                for (GridLabel gridLabel : latLabels) {
+                    PointD point = gridLabel.getCoord();
+                    y = point.Y;
+                    if (y < this.drawExtent.minY || y > this.drawExtent.maxY) {
+                        continue;
+                    }
+
+                    //Draw tick line
+                    y = this.projToScreenY(y, area) + yMin;
+                    if (yAxis.getLocation() == Location.LEFT) {
+                        if (yAxis.isInsideTick()) {
+                            g.draw(new Line2D.Double(xMin, y, xMin + yAxis.getTickLength(), y));
+                        } else {
+                            g.draw(new Line2D.Double(xMin, y, xMin - yAxis.getTickLength(), y));
+                        }
+                    } else {
+                        if (yAxis.isInsideTick()) {
+                            g.draw(new Line2D.Double(xMax, y, xMax - yAxis.getTickLength(), y));
+                        } else {
+                            g.draw(new Line2D.Double(xMax, y, xMax + yAxis.getTickLength(), y));
+                        }
+                    }
+
+                    //Draw tick label
+                    if (yAxis.isDrawTickLabel()) {
+                        if (yAxis.getLocation() == Location.LEFT) {
+                            if (yAxis.isInsideTick()){
+                                x = xMin;
+                            } else {
+                                x = xMin - yAxis.getTickLength();
+                            }
+                            x -= yAxis.getTickSpace();
+                        } else {
+                            if (yAxis.isInsideTick()){
+                                x = xMax;
+                            } else {
+                                x = xMax + yAxis.getTickLength();
+                            }
+                            x += yAxis.getTickSpace();
+                        }
+                        g.setColor(yAxis.getTickLabelColor());
+                        g.setFont(yAxis.getTickLabelFont());
+                        Draw.drawString(g, x, y, gridLabel.getLabString(), XAlign.RIGHT, YAlign.CENTER, true);
+                    }
+                }
             }
         }
-        return plotArea;
-    }
+    }*/
 
-    @Override
-    void drawAxis(Graphics2D g, Rectangle2D area) {
-        if (this.mapFrame.getMapView().getProjection().isLonLatMap()) {
-            super.drawAxis(g, area);
-            return;
-        }
+    void drawGridLine(Graphics2D g, Rectangle2D area) {
+        if (this.projInfo.isLonLat()) {
+            super.drawGridLine(g, area);
+        } else {
+            AffineTransform oldMatrix = g.getTransform();
+            java.awt.Shape oldRegion = g.getClip();
+            if (this.clip) {
+                g.setClip(area);
+            }
+            g.translate(area.getX(), area.getY());
 
-        //Draw lon/lat grid labels
-        if (this.mapFrame.isDrawGridLabel()) {
-            final float shift = 5.0F;
-            List<Extent> extentList = new ArrayList<>();
-            Extent maxExtent = new Extent();
-            Extent aExtent;
-            Dimension aSF;
-            g.setColor(this.mapFrame.getGridLineColor());
-            g.setStroke(new BasicStroke(this.mapFrame.getGridLineSize()));
-            String drawStr;
-            PointF sP = new PointF(0, 0);
-            PointF eP = new PointF(0, 0);
-            Font font = this.getXAxis().getTickLabelFont();
-            //Font font = new Font(this.mapFrame.getGridFont().getFontName(), this.mapFrame.getGridFont().getStyle(), (int) (this.mapFrame.getGridFont().getSize()));
-            g.setFont(font);
-            float labX, labY;
-            int len = mapFrame.getTickLineLength();
-            int space = mapFrame.getGridLabelShift();
-
-            Object[] objs;
-            float xShift, yShift;
-            XAlign xAlign = XAlign.CENTER;
-            YAlign yAlign = YAlign.CENTER;
-            for (int i = 0; i < mapFrame.getMapView().getGridLabels().size(); i++) {
-                GridLabel aGL = mapFrame.getMapView().getGridLabels().get(i);
-                switch (mapFrame.getGridLabelPosition()) {
-                    case LEFT_BOTTOM:
-                        switch (aGL.getLabDirection()) {
-                            case East:
-                            case North:
-                                continue;
-                        }
-                        break;
-                    case LEFT_UP:
-                        switch (aGL.getLabDirection()) {
-                            case East:
-                            case South:
-                                continue;
-                        }
-                        break;
-                    case RIGHT_BOTTOM:
-                        switch (aGL.getLabDirection()) {
-                            case Weast:
-                            case North:
-                                continue;
-                        }
-                        break;
-                    case RIGHT_UP:
-                        switch (aGL.getLabDirection()) {
-                            case Weast:
-                            case South:
-                                continue;
-                        }
-                        break;
+            MapGridLine mapGridLine = (MapGridLine) gridLine;
+            //Longitude
+            if (mapGridLine.isDrawXLine()) {
+                if (mapGridLine.getLongitudeLines() != null) {
+                    this.drawGraphics(g, mapGridLine.getLongitudeLines(), area);
                 }
+            }
+            //Latitude
+            if (mapGridLine.isDrawYLine()) {
+                if (mapGridLine.getLatitudeLines() != null) {
+                    this.drawGraphics(g, mapGridLine.getLatitudeLines(), area);
+                }
+            }
 
-                labX = (float) aGL.getLabPoint().X;
-                labY = (float) aGL.getLabPoint().Y;
-                labX = labX + (float) area.getX();
-                labY = labY + (float) area.getY();
-                sP.X = labX;
-                sP.Y = labY;
-                if (aGL.isBorder()) {
-                    switch (aGL.getLabDirection()) {
-                        case South:
-                            sP.Y = (float) area.getMaxY();
+            g.setTransform(oldMatrix);
+            if (this.clip) {
+                g.setClip(oldRegion);
+            }
+
+            //Draw lon/lat grid labels
+            if (mapGridLine.isLabelVisible()) {
+                double xMin = area.getX();
+                double xMax = area.getX() + area.getWidth();
+                double yMin = area.getY();
+                double yMax = area.getY() + area.getHeight();
+
+                final float shift = 5.0F;
+                List<Extent> extentList = new ArrayList<>();
+                Extent maxExtent = new Extent();
+                Extent aExtent;
+                Dimension aSF;
+                g.setColor(mapGridLine.getColor());
+                g.setStroke(new BasicStroke(mapGridLine.getSize()));
+                String drawStr;
+                PointF sP = new PointF(0, 0);
+                PointF eP = new PointF(0, 0);
+                Axis axis = this.getXAxis();
+                Font font = axis.getTickLabelFont();
+                g.setFont(font);
+                double labX, labY;
+                float len = axis.getTickLength();
+                int space = axis.getTickSpace();
+
+                Object[] objs;
+                float xShift, yShift;
+                XAlign xAlign = XAlign.CENTER;
+                YAlign yAlign = YAlign.CENTER;
+                double[] xy;
+                for (int i = 0; i < mapGridLine.getGridLabels().size(); i++) {
+                    GridLabel aGL = mapGridLine.getGridLabels().get(i);
+                    switch (mapGridLine.getLabelPosition()) {
+                        case LEFT_BOTTOM:
+                            switch (aGL.getLabDirection()) {
+                                case East:
+                                case North:
+                                    continue;
+                            }
+                            break;
+                        case LEFT_UP:
+                            switch (aGL.getLabDirection()) {
+                                case East:
+                                case South:
+                                    continue;
+                            }
+                            break;
+                        case RIGHT_BOTTOM:
+                            switch (aGL.getLabDirection()) {
+                                case Weast:
+                                case North:
+                                    continue;
+                            }
+                            break;
+                        case RIGHT_UP:
+                            switch (aGL.getLabDirection()) {
+                                case Weast:
+                                case South:
+                                    continue;
+                            }
                             break;
                     }
-                }
 
-                drawStr = aGL.getLabString();
-                //if (this.drawDegreeSymbol) {
-                if (drawStr.endsWith("E") || drawStr.endsWith("W") || drawStr.endsWith("N") || drawStr.endsWith("S")) {
-                    if (this.degreeSpace) {
-                        drawStr = drawStr.substring(0, drawStr.length() - 1) + String.valueOf((char) 186) +
-                                " " + drawStr.substring(drawStr.length() - 1);
-                    } else {
-                        drawStr = drawStr.substring(0, drawStr.length() - 1) + String.valueOf((char) 186) +
-                                drawStr.substring(drawStr.length() - 1);
-                    }
-                } else {
-                    drawStr = drawStr + String.valueOf((char) 186);
-                }
-                //}
-                aSF = Draw.getStringDimension(drawStr, g);
-                boolean ifDraw = true;
-                aExtent = new Extent();
-                aExtent.minX = labX;
-                aExtent.maxX = labX + aSF.width;
-                aExtent.minY = labY - aSF.height;
-                aExtent.maxY = labY;
-
-                //Judge extent                                        
-                if (extentList.isEmpty()) {
-                    maxExtent = (Extent) aExtent.clone();
-                    extentList.add((Extent) aExtent.clone());
-                } else if (!MIMath.isExtentCross(aExtent, maxExtent)) {
-                    extentList.add((Extent) aExtent.clone());
-                    maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
-                } else {
-                    for (int j = 0; j < extentList.size(); j++) {
-                        if (MIMath.isExtentCross(aExtent, extentList.get(j))) {
-                            ifDraw = false;
-                            break;
-                        }
-                    }
-                    if (ifDraw) {
-                        extentList.add(aExtent);
-                        maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
-                    }
-                }
-                if (ifDraw) {
+                    labX = aGL.getCoord().X;
+                    labY = aGL.getCoord().Y;
+                    xy = projToScreen(labX, labY, area);
+                    labX = xy[0] + xMin;
+                    labY = xy[1] + yMin;
+                    sP.X = (float) labX;
+                    sP.Y = (float) labY;
                     if (aGL.isBorder()) {
                         switch (aGL.getLabDirection()) {
                             case South:
-                                eP.X = sP.X;
-                                if (mapFrame.isInsideTickLine()) {
-                                    eP.Y = sP.Y - len;
-                                    labY = sP.Y + space;
-                                } else {
-                                    eP.Y = sP.Y + len;
-                                    labY = eP.Y + space;
-                                }
-                                xAlign = XAlign.CENTER;
-                                yAlign = YAlign.TOP;
-                                break;
-                            case Weast:
-                                eP.Y = sP.Y;
-                                if (mapFrame.isInsideTickLine()) {
-                                    eP.X = sP.X + len;
-                                    labX = sP.X - space;
-                                } else {
-                                    eP.X = sP.X - len;
-                                    labX = eP.X - space;
-                                }
-                                xAlign = XAlign.RIGHT;
-                                yAlign = YAlign.CENTER;
-                                break;
-                            case North:
-                                eP.X = sP.X;
-                                if (mapFrame.isInsideTickLine()) {
-                                    eP.Y = sP.Y + len;
-                                    labY = sP.Y - space;
-                                } else {
-                                    eP.Y = sP.Y - len;
-                                    labY = eP.Y - space;
-                                }
-                                xAlign = XAlign.CENTER;
-                                yAlign = YAlign.BOTTOM;
-                                break;
-                            case East:
-                                eP.Y = sP.Y;
-                                if (mapFrame.isInsideTickLine()) {
-                                    eP.X = sP.X - len;
-                                    labX = sP.X + space;
-                                } else {
-                                    eP.X = sP.X + len;
-                                    labX = eP.X + space;
-                                }
-                                xAlign = XAlign.LEFT;
-                                yAlign = YAlign.CENTER;
+                                sP.Y = (float) area.getMaxY();
                                 break;
                         }
-                        g.setColor(mapFrame.getTickLineColor());
-                        g.setStroke(new BasicStroke(mapFrame.getTickLineWidth()));
-                        g.draw(new Line2D.Float(sP.X, sP.Y, eP.X, eP.Y));
-                        g.setColor(this.getXAxis().getTickLabelColor());
-                        //g.drawString(drawStr, labX, labY);
-                        Draw.drawString(g, labX, labY, drawStr, xAlign, yAlign, false);
+                    }
+
+                    drawStr = aGL.getLabString();
+                    aSF = Draw.getStringDimension(drawStr, g);
+                    boolean ifDraw = true;
+                    aExtent = new Extent();
+                    aExtent.minX = labX;
+                    aExtent.maxX = labX + aSF.width;
+                    aExtent.minY = labY - aSF.height;
+                    aExtent.maxY = labY;
+
+                    //Judge extent
+                    if (extentList.isEmpty()) {
+                        maxExtent = (Extent) aExtent.clone();
+                        extentList.add((Extent) aExtent.clone());
+                    } else if (!MIMath.isExtentCross(aExtent, maxExtent)) {
+                        extentList.add((Extent) aExtent.clone());
+                        maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
                     } else {
-                        g.setColor(this.getXAxis().getTickLabelColor());
-                        objs = this.getProjInfo().checkGridLabel(aGL, shift);
-                        xShift = (float)objs[0];
-                        yShift = (float)objs[1];
-                        xAlign = (XAlign)objs[2];
-                        yAlign = (YAlign)objs[3];
-                        Draw.drawString(g, labX+xShift, labY+yShift, drawStr, xAlign, yAlign, false);
+                        for (int j = 0; j < extentList.size(); j++) {
+                            if (MIMath.isExtentCross(aExtent, extentList.get(j))) {
+                                ifDraw = false;
+                                break;
+                            }
+                        }
+                        if (ifDraw) {
+                            extentList.add(aExtent);
+                            maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                        }
+                    }
+                    if (ifDraw) {
+                        if (aGL.isBorder()) {
+                            switch (aGL.getLabDirection()) {
+                                case South:
+                                    eP.X = sP.X;
+                                    if (axis.isInsideTick()) {
+                                        eP.Y = sP.Y - len;
+                                        labY = sP.Y + space;
+                                    } else {
+                                        eP.Y = sP.Y + len;
+                                        labY = eP.Y + space;
+                                    }
+                                    xAlign = XAlign.CENTER;
+                                    yAlign = YAlign.TOP;
+                                    break;
+                                case Weast:
+                                    eP.Y = sP.Y;
+                                    if (axis.isInsideTick()) {
+                                        eP.X = sP.X + len;
+                                        labX = sP.X - space;
+                                    } else {
+                                        eP.X = sP.X - len;
+                                        labX = eP.X - space;
+                                    }
+                                    xAlign = XAlign.RIGHT;
+                                    yAlign = YAlign.CENTER;
+                                    break;
+                                case North:
+                                    eP.X = sP.X;
+                                    if (axis.isInsideTick()) {
+                                        eP.Y = sP.Y + len;
+                                        labY = sP.Y - space;
+                                    } else {
+                                        eP.Y = sP.Y - len;
+                                        labY = eP.Y - space;
+                                    }
+                                    xAlign = XAlign.CENTER;
+                                    yAlign = YAlign.BOTTOM;
+                                    break;
+                                case East:
+                                    eP.Y = sP.Y;
+                                    if (axis.isInsideTick()) {
+                                        eP.X = sP.X - len;
+                                        labX = sP.X + space;
+                                    } else {
+                                        eP.X = sP.X + len;
+                                        labX = eP.X + space;
+                                    }
+                                    xAlign = XAlign.LEFT;
+                                    yAlign = YAlign.CENTER;
+                                    break;
+                            }
+                            g.setColor(axis.getLineColor());
+                            g.setStroke(new BasicStroke(axis.getLineWidth()));
+                            g.draw(new Line2D.Float(sP.X, sP.Y, eP.X, eP.Y));
+                            g.setColor(this.getXAxis().getTickLabelColor());
+                            //g.drawString(drawStr, labX, labY);
+                            Draw.drawString(g, labX, labY, drawStr, xAlign, yAlign, false);
+                        } else {
+                            g.setColor(this.getXAxis().getTickLabelColor());
+                            objs = this.getProjInfo().checkGridLabel(aGL, shift);
+                            xShift = (float)objs[0];
+                            yShift = (float)objs[1];
+                            xAlign = (XAlign)objs[2];
+                            yAlign = (YAlign)objs[3];
+                            Draw.drawString(g, labX+xShift, labY+yShift, drawStr, xAlign, yAlign, false);
+                        }
                     }
                 }
             }
         }
-    }
-
-    @Override
-    int getXAxisHeight(Graphics2D g) {
-        if (this.isLonLatMap()) {
-            return super.getXAxisHeight(g);
-        }
-
-        int space = 4;
-        if (this.mapFrame.isDrawGridLabel()) {
-            int height = space;
-            height += mapFrame.getTickLineLength() + mapFrame.getGridLabelShift();
-            FontMetrics m = g.getFontMetrics(mapFrame.getGridFont());
-            height += m.getHeight();
-            return height;
-        }
-
-        return 0;
-    }
-
-    @Override
-    int getYAxisWidth(Graphics2D g) {
-        if (this.isLonLatMap()) {
-            return super.getYAxisWidth(g);
-        }
-
-        int space = 4;
-        if (this.mapFrame.isDrawGridLabel()) {
-            int width = space;
-            width += mapFrame.getTickLineLength() + mapFrame.getGridLabelShift();
-            FontMetrics m = g.getFontMetrics(mapFrame.getGridFont());
-            List<GridLabel> labels = mapFrame.getMapView().getGridLabels();
-            int labWidth = 0, w;
-            for (int i = 0; i < labels.size(); i++) {
-                w = m.stringWidth(labels.get(i).getLabString());
-                if (w > labWidth) {
-                    labWidth = w;
-                }
-            }
-            width += labWidth;
-            return width;
-        }
-
-        return 0;
-    }
-
-    /**
-     * Get layer number
-     *
-     * @return Layer number
-     */
-    public int getLayerNum() {
-        return this.mapView.getLayerNum();
-    }
-
-    /**
-     * Get layers
-     *
-     * @return Layers
-     */
-    public LayerCollection getLayers() {
-        return this.mapView.getLayers();
-    }
-
-    /**
-     * Get layer by index
-     *
-     * @param i The layer index
-     * @return The layer
-     */
-    public MapLayer getLayer(int i) {
-        return this.mapView.getLayers().get(i);
-    }
-
-    /**
-     * Get layer by name
-     *
-     * @param name The layer name
-     * @return The layer
-     */
-    public MapLayer getLayer(String name) {
-        return this.mapView.getLayer(name);
-    }
-
-    /**
-     * Get legend scheme
-     *
-     * @return Legend scheme
-     */
-    public LegendScheme getLegendScheme() {
-        MapLayer layer = this.mapView.getLastAddedLayer();
-        return layer == null ? null : layer.getLegendScheme();
     }
 
     /**
@@ -1282,7 +1295,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
         Element root = doc.getDocumentElement();
 
         Element mapFrames = (Element) root.getElementsByTagName("MapFrames").item(0);
-        if (mapFrames == null) {
+        /*if (mapFrames == null) {
             this.mapFrame.importProjectXML(pPath, root);
         } else {
             NodeList mfNodes = mapFrames.getElementsByTagName("MapFrame");
@@ -1290,7 +1303,7 @@ public class MapPlot extends AbstractPlot2D implements IWebMapPanel {
             this.mapFrame.importProjectXML(pPath, (Element) mfNode);
         }
         this.setDrawExtent(this.mapView.getViewExtent());
-        this.setExtent(this.mapView.getViewExtent());
+        this.setExtent(this.mapView.getViewExtent());*/
         System.setProperty("user.dir", userDir);
     }
 

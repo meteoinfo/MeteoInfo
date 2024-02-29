@@ -8,7 +8,6 @@ package org.meteoinfo.lab.gui;
 import bibliothek.gui.dock.common.DefaultSingleCDockable;
 import bibliothek.gui.dock.common.action.CAction;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import org.meteoinfo.chart.jogl.GLChartPanel;
 import org.meteoinfo.console.ConsoleColors;
 import org.meteoinfo.console.JConsole;
 import java.awt.BorderLayout;

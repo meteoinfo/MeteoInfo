@@ -6,12 +6,18 @@
 package org.meteoinfo.chart.axis;
 
 import org.meteoinfo.chart.ChartText;
-import org.meteoinfo.common.DataConvert;
-import org.meteoinfo.common.MIMath;
+import org.meteoinfo.chart.Location;
+import org.meteoinfo.chart.plot.AbstractPlot2D;
+import org.meteoinfo.chart.plot.MapGridLine;
+import org.meteoinfo.common.*;
+import org.meteoinfo.geo.drawing.Draw;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.Reproject;
 
+import java.awt.*;
+import java.awt.geom.Line2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,155 +27,204 @@ import java.util.List;
  */
 public class ProjLonLatAxis extends LonLatAxis{
     // <editor-fold desc="Variables">
-    private ProjectionInfo proj;
-    private double x_y;
+    protected MapGridLine mapGridLine;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
      * Constructor
      * @param label Label
      * @param isX Is x/longitude axis or not
-     * @param proj Projection
+     * @param mapGridLine MapGridLine object
      */
-    public ProjLonLatAxis(String label, boolean isX, ProjectionInfo proj){
-        super(label, isX, isX);
-        this.proj = proj;
+    public ProjLonLatAxis(String label, boolean isX, MapGridLine mapGridLine){
+        super(label, isX);
+
+        this.mapGridLine = mapGridLine;
     }
-    
+
     /**
      * Constructor
-     * @param label Label
-     * @param isX Is x/longitude axis or not
-     * @param proj Projection
-     * @param xy X or Y value of the axis - using for projection
+     * @param axis The LonLatAxis object
+     * @param mapGridLine MapGridLine object
      */
-    public ProjLonLatAxis(String label, boolean isX, ProjectionInfo proj, double xy){
-        super(label, isX);
-        this.proj = proj;
-        this.x_y = xy;
+    public ProjLonLatAxis(LonLatAxis axis,  MapGridLine mapGridLine) {
+        super(axis);
+
+        this.drawDegreeSymbol = axis.drawDegreeSymbol;
+        this.degreeSpace = axis.degreeSpace;
+
+        this.mapGridLine = mapGridLine;
     }
+
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
     /**
      * Get projection
      * @return Projection
      */
-    public ProjectionInfo getProject(){
-        return this.proj;
+    public ProjectionInfo getProjInfo(){
+        return this.mapGridLine.getProjInfo();
     }
-    
+
     /**
-     * Set projection
-     * @param value Projection
+     * Get map grid line
+     * @return Map grid line
      */
-    public void setProject(ProjectionInfo value){
-        this.proj = value;
+    public MapGridLine getMapGridLine() {
+        return mapGridLine;
     }
-    
+
     /**
-     * Get x_y value
-     * @return x_y value
+     * Set map grid line
+     * @param mapGridLine Map grid line
      */
-    public double getX_Y(){
-        return this.x_y;
-    }
-    
-    /**
-     * Set x_y value
-     * @param value x_y value
-     */
-    public void setX_Y(double value){
-        this.x_y = value;
-        //this.updateTickValues();
+    public void setMapGridLine(MapGridLine mapGridLine) {
+        this.mapGridLine = mapGridLine;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
-    /**
-     * Update tick values
-     */
-    @Override
-    public void updateTickValues() {       
-        if (this.proj == null)
-            return;
-        
-        double min = this.getMinValue();
-        double max = this.getMaxValue();
-        //Calculate min and max lon or lat
-        ProjectionInfo toproj = KnownCoordinateSystems.geographic.world.WGS1984;
-        double minv, maxv;
-        double[][] points = new double[2][];
-        if (this.isXAxis()){
-            points[0] = new double[]{min, this.x_y};
-            points[1] = new double[]{max, this.x_y};
-            Reproject.reprojectPoints(points, this.proj, toproj);
-            minv = points[0][0];
-            maxv = points[1][0];
-        } else {
-            points[0] = new double[]{this.x_y, min};
-            points[1] = new double[]{this.x_y, max};
-            Reproject.reprojectPoints(points, this.proj, toproj);
-            minv = points[0][1];
-            maxv = points[1][1];
-        }
-        //Get tick values
-        List<Object> r = MIMath.getIntervalValues1(minv, maxv);
-        double[] values = (double[])r.get(0);
-        double[] tickValues = new double[values.length];
-        
-        this.setTickValues((double[]) r.get(0));
-        this.setTickDeltaValue((Double) r.get(1));
-    }
-    
-    /**
-     * Get tick labels
-     *
-     */
-    @Override
-    public void updateTickLabels() {
-        List<ChartText> tls = new ArrayList<>();
-        String lab;
-        for (double v : this.getTickValues()) {
-            double value = v;
-            if (value > 180) {
-                value = value - 360;
-            }
-            lab = String.valueOf(value);
-            lab = DataConvert.removeTailingZeros(lab);
-            if (this.isXAxis()) {
-                if (value == -180) {
-                    lab = "180";
-                } else if (!(value == 0 || value == 180)) {
-                    if (lab.substring(0, 1).equals("-")) {
-                        lab = lab.substring(1) + "W";
-                    } else {
-                        lab = lab + "E";
-                    }
-                }
-            } else {
-                if (!(value == 0)) {
-                    if (lab.substring(0, 1).equals("-")) {
-                        lab = lab.substring(1) + "S";
-                    } else {
-                        lab = lab + "N";
-                    }
-                }
-            }
-            if (this.isDrawDegreeSymbol()) {
-                if (lab.endsWith("E") || lab.endsWith("W") || lab.endsWith("N") || lab.endsWith("S")) {
-                    lab = lab.substring(0, lab.length() - 1) + String.valueOf((char) 186) + lab.substring(lab.length() - 1);
-                } else {
-                    lab = lab + String.valueOf((char) 186);
-                }
-            }
-            tls.add(new ChartText(lab));
-        }
 
-        this.setTickLabels(tls);
+    @Override
+    void drawXAxis(Graphics2D g, Rectangle2D area, AbstractPlot2D plot) {
+        double xMin = area.getX();
+        double xMax = area.getX() + area.getWidth();
+        double yMin = area.getY();
+        double yMax = area.getY() + area.getHeight();
+
+        //Draw X axis
+        //Axis line
+        g.setColor(this.getLineColor());
+        g.setStroke(new BasicStroke(this.getLineWidth()));
+        g.draw(new Line2D.Double(xMin, yMax, xMax, yMax));
+
+        //Longitude axis ticks
+        double x, y;
+        double[] xy;
+        if (this.isDrawTickLine()) {
+            List<GridLabel> lonLabels = mapGridLine.getLongitudeLabels();
+            g.setColor(this.getTickColor());
+            g.setStroke(new BasicStroke(this.getTickWidth()));
+            for (GridLabel gridLabel : lonLabels) {
+                PointD point = gridLabel.getCoord();
+                x = point.X;
+                if (x < plot.getDrawExtent().minX || x > plot.getDrawExtent().maxX) {
+                    continue;
+                }
+
+                //Draw tick line
+                x = plot.projToScreenX(x, area) + xMin;
+                if (this.getLocation() == Location.BOTTOM) {
+                    if (this.isInsideTick()) {
+                        g.draw(new Line2D.Double(x, yMax, x, yMax - this.getTickLength()));
+                    } else {
+                        g.draw(new Line2D.Double(x, yMax, x, yMax + this.getTickLength()));
+                    }
+                } else {
+                    if (this.isInsideTick()) {
+                        g.draw(new Line2D.Double(x, yMin, x, yMin + this.getTickLength()));
+                    } else {
+                        g.draw(new Line2D.Double(x, yMin, x, yMin - this.getTickLength()));
+                    }
+                }
+
+                //Draw tick label
+                if (this.isDrawTickLabel()) {
+                    if (this.getLocation() == Location.BOTTOM) {
+                        if (this.isInsideTick()){
+                            y = yMax;
+                        } else {
+                            y = yMax + this.getTickLength();
+                        }
+                        y += this.getTickSpace();
+                    } else {
+                        if (this.isInsideTick()){
+                            y = yMin;
+                        } else {
+                            y = yMin - this.getTickLength();
+                        }
+                        y -= this.getTickSpace();
+                    }
+                    g.setColor(this.getTickLabelColor());
+                    g.setFont(this.getTickLabelFont());
+                    Draw.drawString(g, x, y, gridLabel.getLabString(), XAlign.CENTER, YAlign.TOP, true);
+                }
+            }
+        }
+    }
+
+    @Override
+    void drawYAxis(Graphics2D g, Rectangle2D area, AbstractPlot2D plot) {
+        double xMin = area.getX();
+        double xMax = area.getX() + area.getWidth();
+        double yMin = area.getY();
+        double yMax = area.getY() + area.getHeight();
+
+        //Y axis
+        //Axis line
+        g.setColor(this.getLineColor());
+        g.setStroke(new BasicStroke(this.getLineWidth()));
+        g.draw(new Line2D.Double(xMin, yMin, xMin, yMax));
+
+        //Latitude axis ticks
+        double x, y;
+        double[] xy;
+        if (this.isDrawTickLine()) {
+            List<GridLabel> latLabels = mapGridLine.getLatitudeLabels();
+            g.setColor(this.getTickColor());
+            g.setStroke(new BasicStroke(this.getTickWidth()));
+            for (GridLabel gridLabel : latLabels) {
+                PointD point = gridLabel.getCoord();
+                y = point.Y;
+                if (y < plot.getDrawExtent().minY || y > plot.getDrawExtent().maxY) {
+                    continue;
+                }
+
+                //Draw tick line
+                y = plot.projToScreenY(y, area) + yMin;
+                if (this.getLocation() == Location.LEFT) {
+                    if (this.isInsideTick()) {
+                        g.draw(new Line2D.Double(xMin, y, xMin + this.getTickLength(), y));
+                    } else {
+                        g.draw(new Line2D.Double(xMin, y, xMin - this.getTickLength(), y));
+                    }
+                } else {
+                    if (this.isInsideTick()) {
+                        g.draw(new Line2D.Double(xMax, y, xMax - this.getTickLength(), y));
+                    } else {
+                        g.draw(new Line2D.Double(xMax, y, xMax + this.getTickLength(), y));
+                    }
+                }
+
+                //Draw tick label
+                if (this.isDrawTickLabel()) {
+                    if (this.getLocation() == Location.LEFT) {
+                        if (this.isInsideTick()){
+                            x = xMin;
+                        } else {
+                            x = xMin - this.getTickLength();
+                        }
+                        x -= this.getTickSpace();
+                    } else {
+                        if (this.isInsideTick()){
+                            x = xMax;
+                        } else {
+                            x = xMax + this.getTickLength();
+                        }
+                        x += this.getTickSpace();
+                    }
+                    g.setColor(this.getTickLabelColor());
+                    g.setFont(this.getTickLabelFont());
+                    Draw.drawString(g, x, y, gridLabel.getLabString(), XAlign.RIGHT, YAlign.CENTER, true);
+                }
+            }
+        }
     }
     
     @Override
     public Object clone() throws CloneNotSupportedException {
-        return (ProjLonLatAxis)super.clone();
+        ProjLonLatAxis axis = (ProjLonLatAxis) super.clone();
+        axis.mapGridLine = this.mapGridLine;
+        return axis;
     }
     // </editor-fold>
 }

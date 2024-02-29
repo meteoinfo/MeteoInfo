@@ -73,7 +73,7 @@ public class PolygonZShape extends PolygonShape {
         _polygons = new ArrayList<>();
         if (_numParts == 1) {
             PolygonZ aPolygon = new PolygonZ();
-            aPolygon.setOutLine(_points);
+            aPolygon.setOutLine(points);
             ((List<PolygonZ>)_polygons).add(aPolygon);
         } else {
             PointZ[] Pointps;
@@ -83,12 +83,12 @@ public class PolygonZShape extends PolygonShape {
                 if (p == _numParts - 1) {
                     Pointps = new PointZ[numPoints - parts[p]];
                     for (int pp = parts[p]; pp < numPoints; pp++) {
-                        Pointps[pp - parts[p]] = (PointZ)_points.get(pp);
+                        Pointps[pp - parts[p]] = (PointZ)points.get(pp);
                     }
                 } else {
                     Pointps = new PointZ[parts[p + 1] - parts[p]];
                     for (int pp = parts[p]; pp < parts[p + 1]; pp++) {
-                        Pointps[pp - parts[p]] = (PointZ)_points.get(pp);
+                        Pointps[pp - parts[p]] = (PointZ)points.get(pp);
                     }
                 }
                 

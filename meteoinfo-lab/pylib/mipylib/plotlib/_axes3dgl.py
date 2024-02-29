@@ -924,7 +924,7 @@ class Axes3DGL(Axes3D):
                 if limits is None:
                     graphics = GraphicFactory.geoSurface(layer.getImage(), layer.getExtent(), offset, xshift, nlon, nlat, self._axes.getProjInfo())
                 else:
-                    graphics = GraphicFactory.geoSurface(layer.getImage, layer.getExtent(), offset, xshift, nlon, nlat, self._axes.getProjInfo(),
+                    graphics = GraphicFactory.geoSurface(layer.getImage(), layer.getExtent(), offset, xshift, nlon, nlat, self._axes.getProjInfo(),
                                                          limits)
 
         lighting = kwargs.pop('lighting', None)

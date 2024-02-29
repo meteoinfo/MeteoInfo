@@ -2,7 +2,6 @@ import org.meteoinfo.chart.GLChart;
 import org.meteoinfo.chart.GLChartPanel;
 import org.meteoinfo.chart.MouseMode;
 import org.meteoinfo.chart.jogl.GLPlot;
-import org.meteoinfo.chart.jogl.Plot3DGL;
 import org.meteoinfo.chart.graphic.VolumeGraphic;
 import org.meteoinfo.chart.render.jogl.RayCastingType;
 

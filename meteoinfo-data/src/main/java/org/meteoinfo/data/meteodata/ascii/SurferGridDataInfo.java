@@ -97,6 +97,10 @@ import org.meteoinfo.data.meteodata.Attribute;
                  this.setGlobal(true);
              }
 
+             this.addAttribute(new Attribute("data_format", "Surfer ASCII Grid"));
+             this.addAttribute(new Attribute("minimum_value", zmin));
+             this.addAttribute(new Attribute("maximum_value", zmax));
+
              double[] Y = new double[ynum];
              for (i = 0; i < ynum; i++) {
                  Y[i] = ymin + i * ydelt;

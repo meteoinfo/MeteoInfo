@@ -7,7 +7,6 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.jogamp.opengl.util.gl2.GLUT;
 import org.meteoinfo.chart.jogl.GLPlot;
-import org.meteoinfo.chart.jogl.Plot3DGL;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.plot.MapPlot;
 import org.meteoinfo.chart.plot.Plot;
@@ -1009,7 +1008,7 @@ public class GLChart implements GLEventListener {
     protected GLU glu;
     protected final GLUT glut = new GLUT();
 
-    protected Plot3DGL.TessCallback tessCallback;
+    protected GLPlot.TessCallback tessCallback;
     protected int width;
     protected int height;
 
@@ -1031,7 +1030,7 @@ public class GLChart implements GLEventListener {
         gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
 
         //jogl specific addition for tessellation
-        tessCallback = new Plot3DGL.TessCallback(gl, glu);
+        tessCallback = new GLPlot.TessCallback(gl, glu);
     }
 
     @Override

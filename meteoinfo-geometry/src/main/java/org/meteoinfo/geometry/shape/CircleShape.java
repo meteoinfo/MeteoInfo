@@ -82,7 +82,7 @@ public class CircleShape extends PolygonShape {
     @Override
     public boolean contains(Shape other){
         if (other instanceof PointShape) {
-            return this.contains(((PointShape)other).point);
+            return this.contains(((PointShape)other).getPoint());
         } else {
             PointD center = this.getCenter();
             double radius = this.getRadius();

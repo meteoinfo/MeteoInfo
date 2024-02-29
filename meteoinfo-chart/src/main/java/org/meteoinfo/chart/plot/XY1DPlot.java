@@ -87,11 +87,7 @@ public class XY1DPlot extends AbstractPlot2D {
     public XY1DPlot(boolean isTime, XYDataset dateset) {
         this();
         if (isTime) {
-            try {
-                this.setXAxis(new TimeAxis("X", true));
-            } catch (CloneNotSupportedException ex) {
-                Logger.getLogger(XY1DPlot.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            this.setXAxis(new TimeAxis("X", true));
             this.getAxis(Location.TOP).setDrawTickLabel(false);
         }
         //this.getXAxis().setTimeAxis(isTime);
@@ -108,11 +104,7 @@ public class XY1DPlot extends AbstractPlot2D {
     public XY1DPlot(boolean isTime, ChartPlotMethod cpMethod, XYDataset dateset) {
         this();
         if (isTime) {
-            try {
-                this.setXAxis(new TimeAxis("X", true));
-            } catch (CloneNotSupportedException ex) {
-                Logger.getLogger(XY1DPlot.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            this.setXAxis(new TimeAxis("X", true));
             this.getAxis(Location.TOP).setDrawTickLabel(false);
         }
         //this.getXAxis().setTimeAxis(isTime);
@@ -130,11 +122,7 @@ public class XY1DPlot extends AbstractPlot2D {
     public XY1DPlot(boolean isTime, PlotOrientation orientation, XYDataset dateset) {
         this();
         if (isTime) {
-            try {
-                this.setXAxis(new TimeAxis("X", true));
-            } catch (CloneNotSupportedException ex) {
-                Logger.getLogger(XY1DPlot.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            this.setXAxis(new TimeAxis("X", true));
             this.getAxis(Location.TOP).setDrawTickLabel(false);
         }
         //this.getXAxis().setTimeAxis(isTime);

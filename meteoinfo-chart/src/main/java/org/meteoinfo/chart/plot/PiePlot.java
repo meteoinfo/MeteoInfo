@@ -88,7 +88,7 @@ public class PiePlot extends Plot2D {
         return ex;
     }
 
-    private void drawArc(Graphics2D g, ArcShape aShape, PolygonBreak aPGB,
+    void drawArc(Graphics2D g, ArcShape aShape, PolygonBreak aPGB,
             Rectangle2D area, float dist, float ex, Font labelFont, Color labelColor) {
         float startAngle = aShape.getStartAngle();
         float sweepAngle = aShape.getSweepAngle();

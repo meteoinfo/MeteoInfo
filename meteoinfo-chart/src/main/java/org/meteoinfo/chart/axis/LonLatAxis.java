@@ -6,6 +6,7 @@
 package org.meteoinfo.chart.axis;
 
 import org.meteoinfo.chart.ChartText;
+import org.meteoinfo.chart.plot.MapGridLine;
 import org.meteoinfo.common.DataConvert;
 
 import java.util.ArrayList;
@@ -17,31 +18,19 @@ import java.util.List;
  */
 public class LonLatAxis extends Axis implements Cloneable {
 
-    private boolean drawDegreeSymbol;
-    private boolean longitude;
-    private boolean degreeSpace;
+    protected boolean drawDegreeSymbol;
+    protected boolean degreeSpace;
     
     /**
      * Constructor
      * @param label Axis label
-     * @param isX Is x axis or not
-     * @param longitude Is longitude or not
+     * @param xAxis Is longitude or not
      */
-    public LonLatAxis(String label, boolean isX, boolean longitude){
-        super(label, isX);
+    public LonLatAxis(String label, boolean xAxis){
+        super(label, xAxis);
         
         this.drawDegreeSymbol = true;
-        this.longitude = longitude;
         this.degreeSpace = false;
-    }
-    
-    /**
-     * Constructor
-     * @param label Axis label
-     * @param isX Is x axis or not
-     */
-    public LonLatAxis(String label, boolean isX){
-        this(label, isX, isX);
     }
     
     /**
@@ -75,6 +64,35 @@ public class LonLatAxis extends Axis implements Cloneable {
         this.positionType = axis.positionType;
         this.position = axis.position;
     }
+
+    /**
+     * Create a new LonLatAxis object
+     * @param axis The Axis object
+     * @return LonLatAxis object
+     */
+    public static LonLatAxis factory(Axis axis) {
+        return new LonLatAxis(axis);
+    }
+
+    /**
+     * Create a new LonLatAxis object
+     * @param label Axis label
+     * @param xAxis is X axis or not
+     * @return LonLatAxis object
+     */
+    public static LonLatAxis factory(String label, boolean xAxis) {
+        return new LonLatAxis(label, xAxis);
+    }
+
+    /**
+     * Create a new LonLatAxis object
+     * @param label Axis label
+     * @param xAxis is X axis or not
+     * @return LonLatAxis object
+     */
+    public static LonLatAxis factory(String label, boolean xAxis, MapGridLine mapGridLine) {
+        return new ProjLonLatAxis(label, xAxis, mapGridLine);
+    }
     
     /**
      * Get if draw degree symbol
@@ -97,7 +115,7 @@ public class LonLatAxis extends Axis implements Cloneable {
      * @return Longitude or not
      */
     public boolean isLongitude(){
-        return this.longitude;
+        return this.xAxis;
     }
     
     /**
@@ -105,7 +123,7 @@ public class LonLatAxis extends Axis implements Cloneable {
      * @param value Longitude or not
      */
     public void setLongitude(boolean value){
-        this.longitude = value;
+        this.xAxis = value;
     }
 
     /**

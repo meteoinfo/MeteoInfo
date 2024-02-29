@@ -289,7 +289,7 @@ public class MeshGraphic extends GraphicCollection3D {
                 maxZ = z;
         }
 
-        this._extent = new Extent3D(minX, maxX, minY, maxY, minZ, maxZ);
+        this.extent = new Extent3D(minX, maxX, minY, maxY, minZ, maxZ);
     }
 
     /**

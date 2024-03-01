@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\satellite\FY">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\micaps">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\violinplot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\weather"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
@@ -13,22 +13,18 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\micaps"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\micaps"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\imshow\imshow_relief_lcc.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\projection\robinson_proj.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\projection\lcc_proj.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\FY\FY4A_AGRI-1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\micaps\micaps_1_rain_contour_us.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\micaps\micaps_1.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\imshow\imshow_relief_lcc.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\projection\robinson_proj.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\projection\lcc_proj.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\FY\FY4A_AGRI-1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\micaps\micaps_1_rain_contour_us.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\micaps\micaps_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +32,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1384,837"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
 </MeteoInfo>

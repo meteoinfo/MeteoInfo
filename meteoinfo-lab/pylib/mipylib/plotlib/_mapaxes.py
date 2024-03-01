@@ -438,19 +438,25 @@ class MapAxes(Axes):
         """
         Set x axis tick locations.
         """
-        gridline = self._axes.getGridLine()
-        if isinstance(locs, (NDArray, DimArray)):
-            locs = locs.aslist()
-        gridline.setLongitudeLocations(locs)
+        if self.islonlat():
+            Axes.set_xticks(self, locs)
+        else:
+            gridline = self._axes.getGridLine()
+            if isinstance(locs, (NDArray, DimArray)):
+                locs = locs.aslist()
+            gridline.setLongitudeLocations(locs)
 
     def set_yticks(self, locs):
         """
         Set y axis tick locations.
         """
-        gridline = self._axes.getGridLine()
-        if isinstance(locs, (NDArray, DimArray)):
-            locs = locs.aslist()
-        gridline.setLatitudeLocations(locs)
+        if self.islonlat():
+            Axes.set_yticks(self, locs)
+        else:
+            gridline = self._axes.getGridLine()
+            if isinstance(locs, (NDArray, DimArray)):
+                locs = locs.aslist()
+            gridline.setLatitudeLocations(locs)
         
     def loadmip(self, mipfn, mfidx=0):
         """
@@ -491,7 +497,7 @@ class MapAxes(Axes):
             if layer.layer_type == LayerTypes.IMAGE_LAYER:
                 interpolation = kwargs.pop('interpolation', None)
                 graphics = layer.get_graphics(xshift, interpolation)
-                self.add_graphic(graphics, projection=layer.proj, zorder=zorder)
+                graphics = self.add_graphic(graphics, projection=layer.proj, zorder=zorder)
             else:
                 #LegendScheme
                 ls = kwargs.pop('symbolspec', None)
@@ -514,7 +520,7 @@ class MapAxes(Axes):
                 else:
                     layer.legend = ls
                 graphics = layer.get_graphics(xshift)
-                self.add_graphic(graphics, projection=layer.proj, zorder=zorder)
+                graphics = self.add_graphic(graphics, projection=layer.proj, zorder=zorder)
 
                 #Labels        
                 labelfield = kwargs.pop('labelfield', None)
@@ -629,11 +635,8 @@ class MapAxes(Axes):
         :returns: (*VectorLayer*) Line VectorLayer.
         """
         fill_value = kwargs.pop('fill_value', -9999.0)
-        proj = kwargs.pop('proj', None)
-        if proj is None:
-            is_lonlat = True
-        else:
-            is_lonlat = proj.isLonLat()
+        proj = kwargs.pop('proj', migeo.projinfo())
+        is_lonlat = proj.isLonLat()
         n = len(args) 
         xdatalist = []
         ydatalist = []    
@@ -767,7 +770,7 @@ class MapAxes(Axes):
             ydata = plotutil.getplotdata(ydatalist[0])
             zdata = plotutil.getplotdata(cdata)
             graphic = GraphicFactory.createLineString(xdata, ydata, zdata, ls, iscurve)
-            self.add_graphic(graphic, proj)
+            graphic = self.add_graphic(graphic, proj)
             graphics.append(graphic)
 
         if len(graphics) > 1:
@@ -847,7 +850,7 @@ class MapAxes(Axes):
                 ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
             ls = plotutil.setlegendscheme_point(ls, **kwargs)
 
-        proj = kwargs.pop('proj', None)
+        proj = kwargs.pop('proj', migeo.projinfo())
         # Create graphics
         if a.ndim == 0:
             graphics = GraphicFactory.createPoints(x._array, y._array, ls.getLegendBreak(0))
@@ -857,7 +860,7 @@ class MapAxes(Axes):
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
-            self.add_graphic(graphics, projection=proj, zorder=zorder)
+            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
             self._axes.setExtent(graphics.getExtent())
             self._axes.setDrawExtent(graphics.getExtent())
 
@@ -902,7 +905,7 @@ class MapAxes(Axes):
         :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
         :param isadd: (*boolean*) Add layer or not. Default is ``True``.
         :param zorder: (*int*) Z-order of created layer for display.
-        :param smooth: (*boolean*) Smooth countour lines or not.
+        :param smooth: (*boolean*) Smooth contour lines or not.
         :param select: (*boolean*) Set the return layer as selected layer or not.
         
         :returns: (*GraphicCollection*) Contour graphics created from array data.
@@ -928,13 +931,13 @@ class MapAxes(Axes):
 
         contours = GraphicFactory.createContourLines(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
 
-        proj = kwargs.pop('proj', None)
+        proj = kwargs.pop('proj', migeo.projinfo())
         
         # Add layer
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
-            self.add_graphic(contours, projection=proj, zorder=zorder)
+            contours = self.add_graphic(contours, projection=proj, zorder=zorder)
             self._axes.setDrawExtent(contours.getExtent())
             self._axes.setExtent(contours.getExtent())
                 
@@ -987,7 +990,7 @@ class MapAxes(Axes):
             a, x, y = np.griddata((x,y), a, **griddata_props)
 
         graphics = GraphicFactory.createContourPolygons(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
-        proj = kwargs.pop('proj', None)
+        proj = kwargs.pop('proj', migeo.projinfo())
         
         # Add graphics
         visible = kwargs.pop('visible', True)
@@ -995,7 +998,7 @@ class MapAxes(Axes):
             zorder = kwargs.pop('zorder', None)
             if zorder is None:
                 zorder = 0
-            self.add_graphic(graphics, projection=proj, zorder=zorder)
+            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
             self._axes.setDrawExtent(graphics.getExtent())
             self._axes.setExtent(graphics.getExtent())
                 
@@ -1128,7 +1131,7 @@ class MapAxes(Axes):
             zorder = kwargs.pop('zorder', None)
             if zorder is None:
                 zorder = 0
-            self.add_graphic(igraphic, zorder=zorder)
+            igraphic = self.add_graphic(igraphic, zorder=zorder)
             self._axes.setDrawExtent(igraphic.getExtent())
             self._axes.setExtent(igraphic.getExtent())
             gridline = self._axes.getGridLine()
@@ -1157,8 +1160,8 @@ class MapAxes(Axes):
         :param select: (*boolean*) Set the return layer as selected layer or not.
         
         :returns: (*VectoryLayer*) Polygon VectoryLayer created from array data.
-        """    
-        proj = kwargs.pop('proj', None)            
+        """
+        proj = kwargs.pop('proj', migeo.projinfo())
         n = len(args) 
         if n <= 2:
             a = args[0]
@@ -1190,7 +1193,7 @@ class MapAxes(Axes):
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
-            self.add_graphic(graphics, projection=proj, zorder=zorder)
+            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
             self._axes.setExtent(graphics.getExtent())
             self._axes.setDrawExtent(graphics.getExtent())
 
@@ -1217,8 +1220,7 @@ class MapAxes(Axes):
         :param select: (*boolean*) Set the return layer as selected layer or not.
         
         :returns: (*VectoryLayer*) Polygon VectoryLayer created from array data.
-        """    
-        proj = kwargs.pop('proj', None)            
+        """
         n = len(args) 
         if n <= 2:
             a = args[0]
@@ -1238,12 +1240,13 @@ class MapAxes(Axes):
         graphics = GraphicFactory.createGridPolygons(x.asarray(), y.asarray(), a.asarray(), ls)
             
         # Add graphics
+        proj = kwargs.pop('proj', migeo.projinfo())
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
             if zorder is None:
                 zorder = 0
-            self.add_graphic(graphics, projection=proj, zorder=zorder)
+            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
             self._axes.setDrawExtent(graphics.getExtent().clone())
             self._axes.setExtent(graphics.getExtent().clone())
 
@@ -1362,8 +1365,6 @@ class MapAxes(Axes):
         """
         cmap = plotutil.getcolormap(**kwargs)
         fill_value = kwargs.pop('fill_value', -9999.0)
-        proj = kwargs.pop('proj', None)
-        order = kwargs.pop('order', None)
         isuv = kwargs.pop('isuv', True)
         n = len(args) 
         iscolor = False
@@ -1418,11 +1419,12 @@ class MapAxes(Axes):
 
         graphics = GraphicFactory.createBarbs(x._array, y._array, u._array, v._array, cdata, ls, isuv)
             
-        # Add layer
+        # Add graphics
+        proj = kwargs.pop('proj', migeo.projinfo())
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
-            self.add_graphic(graphics, projection=proj, zorder=zorder)
+            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
             self._axes.setDrawExtent(graphics.getExtent().clone())
             self._axes.setExtent(graphics.getExtent().clone())
 
@@ -1447,7 +1449,7 @@ class MapAxes(Axes):
         
         :returns: (*VectoryLayer*) Created streamline VectoryLayer.
         """
-        proj = kwargs.pop('proj', None)
+        proj = kwargs.pop('proj', migeo.projinfo())
         isuv = kwargs.pop('isuv', True)
         density = kwargs.pop('density', 4)
         n = len(args)
@@ -1497,9 +1499,9 @@ class MapAxes(Axes):
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
-            rGraphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self._axes.setDrawExtent(rGraphics.getExtent().clone())
-            self._axes.setExtent(rGraphics.getExtent().clone())
+            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+            self._axes.setDrawExtent(graphics.getExtent().clone())
+            self._axes.setExtent(graphics.getExtent().clone())
             
         return graphics
         
@@ -1515,7 +1517,7 @@ class MapAxes(Axes):
         
         :returns: (*graphics*) Station model graphics.
         """
-        proj = kwargs.pop('proj', None)
+        proj = kwargs.pop('proj', migeo.projinfo())
         size = kwargs.pop('size', 12)
         surface = kwargs.pop('surface', True)
         color = kwargs.pop('color', 'b')
@@ -1527,7 +1529,7 @@ class MapAxes(Axes):
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
-            self.add_graphic(graphics, projection=proj, zorder=zorder)
+            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
             self._axes.setDrawExtent(graphics.getExtent().clone())
             self._axes.setExtent(graphics.getExtent().clone())
             

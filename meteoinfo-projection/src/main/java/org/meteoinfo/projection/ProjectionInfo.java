@@ -328,7 +328,7 @@ package org.meteoinfo.projection;
 
      /**
       * Get reference cut longitude for projection operation
-      * @return Refrence cut longitude
+      * @return Reference cut longitude
       */
      public double getRefCutLon() {
          double refLon = this.getCoordinateReferenceSystem().getProjection().getProjectionLongitudeDegrees();

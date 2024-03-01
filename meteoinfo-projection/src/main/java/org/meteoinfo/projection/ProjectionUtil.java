@@ -163,7 +163,46 @@ public class ProjectionUtil {
             X[i] = extent.minX + i * dx;
             Y[i] = extent.minY + i * dy;
         }
-        return getProjectionExtent(fromProj, toProj, X, Y);
+
+        if (toProj.isLonLat()) {
+            return getLonLatExtent(fromProj, toProj, X, Y);
+        } else {
+            return getProjectionExtent(fromProj, toProj, X, Y);
+        }
+    }
+
+    public static Extent getLonLatExtent(ProjectionInfo fromProj, ProjectionInfo toProj, double[] X, double[] Y) {
+        double x, y, minX = 180, minY = 90, maxX = -180, maxY = -90;
+        PointD p;
+        for (int i = 0; i < Y.length; i++) {
+            for (int j = 0; j < X.length; j++) {
+                p = Reproject.reprojectPoint(X[j], Y[i], fromProj, toProj);
+                if (Double.isNaN(p.X) || Double.isNaN(p.Y)) {
+                    continue;
+                }
+
+                if (p.X < minX) {
+                    minX = p.X;
+                }
+                if (p.Y < minY) {
+                    minY = p.Y;
+                }
+                if (p.X > maxX) {
+                    maxX = p.X;
+                }
+                if (p.Y > maxY) {
+                    maxY = p.Y;
+                }
+            }
+        }
+
+        Extent aExtent = new Extent();
+        aExtent.minX = minX;
+        aExtent.maxX = maxX;
+        aExtent.minY = minY;
+        aExtent.maxY = maxY;
+
+        return aExtent;
     }
 
     /**
@@ -179,7 +218,7 @@ public class ProjectionUtil {
         double x, y, minX = Double.NaN, minY = Double.NaN, maxX = Double.NaN, maxY = Double.NaN;
         int i, j;
         int minXI = X.length, minYI = Y.length, maxXI = -1, maxYI = -1;
-        for (i = 0; i < Y.length; i++) {
+        loop1:for (i = 0; i < Y.length; i++) {
             for (j = 0; j < X.length; j++) {
                 double[][] points = new double[1][];
                 points[0] = new double[]{X[j], Y[i]};
@@ -218,14 +257,14 @@ public class ProjectionUtil {
                             maxY = y;
                         }
                     } else if (i > minYI) {
-                        break;
+                        break loop1;
                     }
                 } catch (Exception e) {
                 }
             }
         }
 
-        for (i = Y.length - 1; i >= 0; i--) {
+        loop2:for (i = Y.length - 1; i >= 0; i--) {
             for (j = 0; j < X.length; j++) {
                 double[][] points = new double[1][];
                 points[0] = new double[]{X[j], Y[i]};
@@ -264,14 +303,14 @@ public class ProjectionUtil {
                             minY = y;
                         }
                     } else if (i < maxYI) {
-                        break;
+                        break loop2;
                     }
                 } catch (Exception e) {
                 }
             }
         }
 
-        for (j = 0; j < X.length; j++) {
+        loop3:for (j = 0; j < X.length; j++) {
             for (i = 0; i < Y.length; i++) {
                 double[][] points = new double[1][];
                 points[0] = new double[]{X[j], Y[i]};
@@ -310,14 +349,14 @@ public class ProjectionUtil {
                             maxY = y;
                         }
                     } else if (j > minXI) {
-                        break;
+                        break loop3;
                     }
                 } catch (Exception e) {
                 }
             }
         }
 
-        for (j = X.length - 1; j >= 0; j--) {
+        loop4:for (j = X.length - 1; j >= 0; j--) {
             for (i = 0; i < Y.length; i++) {
                 double[][] points = new double[1][];
                 points[0] = new double[]{X[j], Y[i]};
@@ -344,7 +383,7 @@ public class ProjectionUtil {
                             maxY = y;
                         }
                     } else if (j < maxXI) {
-                        break;
+                        break loop4;
                     }
                 } catch (Exception e) {
                 }
@@ -922,7 +961,7 @@ public class ProjectionUtil {
             }
         } else {
             List<? extends Shape> shapes = projectClipShape(graphic.getShape(), fromProj, toProj);
-            if (shapes != null) {
+            if (shapes != null && shapes.size() > 0) {
                 return new Graphic(shapes.get(0), graphic.getLegend());
             } else {
                 return null;

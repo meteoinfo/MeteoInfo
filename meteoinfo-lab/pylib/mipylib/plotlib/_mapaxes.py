@@ -399,7 +399,17 @@ class MapAxes(Axes):
             whether major tick grids, minor tick grids, or both are affected.
         :param axis: *axis* can be 'both' (default), 'x', or 'y' to control which set of
             gridlines are drawn.
-        :param kwargs: *kwargs* are used to set the grid line properties.
+        :param color: (*color*) Line color.
+        :param alpha: (*float*) Color alpha.
+        :param linewidth: (*float*) Line width.
+        :param linestyle: (*str*) Line dash style.
+        :param top: (*bool*) Plot grid line on top of the graphics or not.
+        :param tickvisible: (*bool*) Tick label visible or not.
+        :param tickposition: (*str*) Tick label position ['all' | 'left_bottom' | 'left_top' |
+            'right_bottom' | 'right_up'].
+        :param tickcolor: (*color*) Tick label color.
+        :param tickfont: (*dict*) Tick label font.
+        :param fixlocation: (*bool*) Fix lon/lat locations or not.
         """
         gridline = Axes.grid(self, b, **kwargs)
 

@@ -1176,13 +1176,21 @@ class Axes(object):
             whether major tick grids, minor tick grids, or both are affected.
         :param axis: *axis* can be 'both' (default), 'x', or 'y' to control which set of
             gridlines are drawn.
-        :param kwargs: *kwargs* are used to set the grid line properties.
+        :param color: (*color*) Line color.
+        :param alpha: (*float*) Color alpha.
+        :param linewidth: (*float*) Line width.
+        :param linestyle: (*str*) Line dash style.
+        :param top: (*bool*) Plot grid line on top of the graphics or not.
         """
         gridline = self._axes.getGridLine()
         is_draw = gridline.isDrawXLine()
         if b is None:
-            is_draw = not gridline.isDrawXLine()
-        elif b == True or b == 'on':
+            if len(kwargs) == 0:
+                b = not is_draw
+            else:
+                b = True
+
+        if b == True or b == 'on':
             is_draw = True
         elif b == False or b == 'on':
             is_draw = False

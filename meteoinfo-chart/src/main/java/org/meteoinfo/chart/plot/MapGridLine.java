@@ -51,7 +51,7 @@ public class MapGridLine extends GridLine {
      */
     public MapGridLine(boolean visible) {
         super(visible);
-        this.lineBreak.setColor(new Color(0.15f, 0.15f, 0.15f));
+        this.lineBreak.setColor(Color.gray);
     }
 
     /**
@@ -287,8 +287,10 @@ public class MapGridLine extends GridLine {
             line.setPoints(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
             graphic = ProjectionUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
-            graphic.getShape().setValue(lon);
-            this.longitudeLines.add(graphic);
+            if (graphic != null) {
+                graphic.getShape().setValue(lon);
+                this.longitudeLines.add(graphic);
+            }
         }
     }
 

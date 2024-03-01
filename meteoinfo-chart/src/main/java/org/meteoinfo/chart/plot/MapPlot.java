@@ -932,140 +932,6 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         return graphic;
     }
 
-    /*@Override
-    void drawAxis(Graphics2D g, Rectangle2D area) {
-        if (this.projInfo.isLonLat()) {
-            super.drawAxis(g, area);
-        } else {
-            MapGridLine mapGridLine = (MapGridLine) this.gridLine;
-            double xMin = area.getX();
-            double xMax = area.getX() + area.getWidth();
-            double yMin = area.getY();
-            double yMax = area.getY() + area.getHeight();
-
-            //Draw axis
-            //X axis
-            Axis xAxis = this.getXAxis();
-            //Axis line
-            g.setColor(xAxis.getLineColor());
-            g.setStroke(new BasicStroke(xAxis.getLineWidth()));
-            g.draw(new Line2D.Double(xMin, yMax, xMax, yMax));
-
-            //Longitude axis ticks
-            double x, y;
-            double[] xy;
-            if (xAxis.isDrawTickLine()) {
-                List<GridLabel> lonLabels = mapGridLine.getLongitudeLabels();
-                g.setColor(xAxis.getTickColor());
-                g.setStroke(new BasicStroke(xAxis.getTickWidth()));
-                for (GridLabel gridLabel : lonLabels) {
-                    PointD point = gridLabel.getCoord();
-                    x = point.X;
-                    if (x < this.drawExtent.minX || x > this.drawExtent.maxX) {
-                        continue;
-                    }
-
-                    //Draw tick line
-                    x = this.projToScreenX(x, area) + xMin;
-                    if (xAxis.getLocation() == Location.BOTTOM) {
-                        if (xAxis.isInsideTick()) {
-                            g.draw(new Line2D.Double(x, yMax, x, yMax - xAxis.getTickLength()));
-                        } else {
-                            g.draw(new Line2D.Double(x, yMax, x, yMax + xAxis.getTickLength()));
-                        }
-                    } else {
-                        if (xAxis.isInsideTick()) {
-                            g.draw(new Line2D.Double(x, yMin, x, yMin + xAxis.getTickLength()));
-                        } else {
-                            g.draw(new Line2D.Double(x, yMin, x, yMin - xAxis.getTickLength()));
-                        }
-                    }
-
-                    //Draw tick label
-                    if (xAxis.isDrawTickLabel()) {
-                        if (xAxis.getLocation() == Location.BOTTOM) {
-                            if (xAxis.isInsideTick()){
-                                y = yMax;
-                            } else {
-                                y = yMax + xAxis.getTickLength();
-                            }
-                            y += xAxis.getTickSpace();
-                        } else {
-                            if (xAxis.isInsideTick()){
-                                y = yMin;
-                            } else {
-                                y = yMin - xAxis.getTickLength();
-                            }
-                            y -= xAxis.getTickSpace();
-                        }
-                        g.setColor(xAxis.getTickLabelColor());
-                        g.setFont(xAxis.getTickLabelFont());
-                        Draw.drawString(g, x, y, gridLabel.getLabString(), XAlign.CENTER, YAlign.TOP, true);
-                    }
-                }
-            }
-
-            //Y axis
-            Axis yAxis = this.getYAxis();
-            //Axis line
-            g.setColor(yAxis.getLineColor());
-            g.setStroke(new BasicStroke(yAxis.getLineWidth()));
-            g.draw(new Line2D.Double(xMin, yMin, xMin, yMax));
-
-            //Latitude axis ticks
-            if (yAxis.isDrawTickLine()) {
-                List<GridLabel> latLabels = mapGridLine.getLatitudeLabels();
-                g.setColor(yAxis.getTickColor());
-                g.setStroke(new BasicStroke(yAxis.getTickWidth()));
-                for (GridLabel gridLabel : latLabels) {
-                    PointD point = gridLabel.getCoord();
-                    y = point.Y;
-                    if (y < this.drawExtent.minY || y > this.drawExtent.maxY) {
-                        continue;
-                    }
-
-                    //Draw tick line
-                    y = this.projToScreenY(y, area) + yMin;
-                    if (yAxis.getLocation() == Location.LEFT) {
-                        if (yAxis.isInsideTick()) {
-                            g.draw(new Line2D.Double(xMin, y, xMin + yAxis.getTickLength(), y));
-                        } else {
-                            g.draw(new Line2D.Double(xMin, y, xMin - yAxis.getTickLength(), y));
-                        }
-                    } else {
-                        if (yAxis.isInsideTick()) {
-                            g.draw(new Line2D.Double(xMax, y, xMax - yAxis.getTickLength(), y));
-                        } else {
-                            g.draw(new Line2D.Double(xMax, y, xMax + yAxis.getTickLength(), y));
-                        }
-                    }
-
-                    //Draw tick label
-                    if (yAxis.isDrawTickLabel()) {
-                        if (yAxis.getLocation() == Location.LEFT) {
-                            if (yAxis.isInsideTick()){
-                                x = xMin;
-                            } else {
-                                x = xMin - yAxis.getTickLength();
-                            }
-                            x -= yAxis.getTickSpace();
-                        } else {
-                            if (yAxis.isInsideTick()){
-                                x = xMax;
-                            } else {
-                                x = xMax + yAxis.getTickLength();
-                            }
-                            x += yAxis.getTickSpace();
-                        }
-                        g.setColor(yAxis.getTickLabelColor());
-                        g.setFont(yAxis.getTickLabelFont());
-                        Draw.drawString(g, x, y, gridLabel.getLabString(), XAlign.RIGHT, YAlign.CENTER, true);
-                    }
-                }
-            }
-        }
-    }*/
-
     void drawGridLine(Graphics2D g, Rectangle2D area) {
         if (this.projInfo.isLonLat()) {
             super.drawGridLine(g, area);
@@ -1114,7 +980,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
                 PointF sP = new PointF(0, 0);
                 PointF eP = new PointF(0, 0);
                 Axis axis = this.getXAxis();
-                Font font = axis.getTickLabelFont();
+                Font font = mapGridLine.labelFont;
                 g.setFont(font);
                 double labX, labY;
                 float len = axis.getTickLength();

@@ -1457,7 +1457,7 @@ def axism(limits=None, lonlat=True):
         draw_if_interactive()
 
 
-@_copy_docstring_and_deprecators(Axes.grid)
+@_copy_docstring_and_deprecators(MapAxes.grid)
 def grid(b=None, **kwargs):
     g_axes.grid(b, **kwargs)
     draw_if_interactive()

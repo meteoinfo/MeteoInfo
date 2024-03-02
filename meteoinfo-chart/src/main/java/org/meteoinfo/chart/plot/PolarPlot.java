@@ -292,7 +292,7 @@ public class PolarPlot extends Plot2D {
     }
 
     @Override
-    Extent getAutoExtent() {
+    protected Extent getAutoExtent() {
         Extent extent = this.getGraphics().getExtent();
         if (extent.minX == extent.maxX) {
             extent.minX = extent.minX - Math.abs(extent.minX);
@@ -489,12 +489,12 @@ public class PolarPlot extends Plot2D {
     }
 
     @Override
-    void drawGraph(Graphics2D g, Rectangle2D area) {
+    protected void drawGraph(Graphics2D g, Rectangle2D area) {
         super.drawGraph(g, area);
     }
 
     @Override
-    void drawGridLine(Graphics2D g, Rectangle2D area) {
+    protected void drawGridLine(Graphics2D g, Rectangle2D area) {
         GridLine gridLine = this.getGridLine();
         if (!gridLine.isDrawXLine() && !gridLine.isDrawYLine()) {
             return;

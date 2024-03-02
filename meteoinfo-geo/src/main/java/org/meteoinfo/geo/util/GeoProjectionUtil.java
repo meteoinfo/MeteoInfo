@@ -17,8 +17,11 @@ import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.data.GridArray;
+import org.meteoinfo.geo.graphic.GeoGraphicCollection;
 import org.meteoinfo.geo.layer.RasterLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
@@ -640,6 +643,54 @@ public class GeoProjectionUtil {
 
         if (oLayer.getLabelPoints().size() > 0) {
             oLayer.setLabelPoints(ProjectionUtil.projectGraphic(oLayer.getLabelPoints(), fromProj, toProj));
+        }
+    }
+
+    /**
+     * Project graphic
+     *
+     * @param graphic The graphic
+     * @param fromProj From projection
+     * @param toProj To projection
+     * @return Projected graphic
+     */
+    public static Graphic projectClipGraphic(Graphic graphic, ProjectionInfo fromProj, ProjectionInfo toProj) {
+        if (graphic instanceof GeoGraphicCollection) {
+            GeoGraphicCollection geoGraphic = (GeoGraphicCollection) graphic;
+            try {
+                GeoGraphicCollection newGCollection = new GeoGraphicCollection();
+                DataTable dataTable = new DataTable();
+                for (DataColumn aDC : geoGraphic.getAttributeTable().getTable().getColumns()) {
+                    Field bDC = new Field(aDC.getColumnName(), aDC.getDataType());
+                    dataTable.getColumns().add(bDC);
+                }
+                int idx = 0;
+                for (Graphic aGraphic : geoGraphic.getGraphics()) {
+                    List<? extends Shape> shapes = ProjectionUtil.projectClipShape(aGraphic.getShape(), fromProj, toProj);
+                    if (shapes != null && shapes.size() > 0) {
+                        aGraphic.setShape(shapes.get(0));
+                        newGCollection.add(aGraphic);
+                        DataRow aDR = geoGraphic.getAttributeTable().getTable().getRows().get(idx);
+                        try {
+                            dataTable.addRow(aDR);
+                        } catch (Exception ex) {
+                            Logger.getLogger(GeoProjectionUtil.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    idx += 1;
+                }
+                newGCollection.setLegendScheme(geoGraphic.getLegendScheme());
+                newGCollection.setSingleLegend(geoGraphic.isSingleLegend());
+                newGCollection.getAttributeTable().setTable(dataTable);
+                newGCollection.setProjInfo(toProj);
+
+                return newGCollection;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return null;
+            }
+        } else {
+            return ProjectionUtil.projectClipGraphic(graphic, fromProj, toProj);
         }
     }
 

@@ -61,6 +61,30 @@ public abstract class Shape implements Cloneable{
      */
     public Shape(Geometry geometry) {};
 
+    /**
+     * Create a new Shape object
+     * @param shapeType Shape type
+     * @return Shape object
+     */
+    public static Shape factory(ShapeTypes shapeType) {
+        switch (shapeType) {
+            case POINT:
+                return new PointShape();
+            case POINT_Z:
+                return new PointZShape();
+            case POLYLINE:
+                return new PolylineShape();
+            case POLYLINE_Z:
+                return new PolylineZShape();
+            case POLYGON:
+                return new PolygonShape();
+            case POLYGON_Z:
+                return new PolygonZShape();
+            default:
+                throw new IllegalArgumentException("Shape type not supported");
+        }
+    }
+
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
     /**

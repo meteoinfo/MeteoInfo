@@ -22,7 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import org.meteoinfo.chart.plot.MapPlot;
+import org.meteoinfo.chart.geo.MapPlot;
 
 /**
  *
@@ -38,7 +38,6 @@ public class ChartNorthArrow extends ChartElement {
 // <editor-fold desc="Variables">
 
     private final MapPlot mapPlot;
-    private final boolean antiAlias;
     private float lineWidth;
     private boolean drawNeatLine;
     private Color neatLineColor;

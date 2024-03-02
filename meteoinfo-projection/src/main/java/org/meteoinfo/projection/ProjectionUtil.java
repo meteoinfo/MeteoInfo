@@ -993,7 +993,7 @@ public class ProjectionUtil {
         return newGraphics;
     }
 
-    private static Shape projectShape(Shape aShape, ProjectionInfo fromProj, ProjectionInfo toProj) {
+    public static Shape projectShape(Shape aShape, ProjectionInfo fromProj, ProjectionInfo toProj) {
         Shape newShape;
         switch (aShape.getShapeType()) {
             case POINT:
@@ -1030,7 +1030,7 @@ public class ProjectionUtil {
         return newShape;
     }
 
-    private static List<? extends Shape> projectClipShape(Shape shape, ProjectionInfo fromProj, ProjectionInfo toProj) {
+    public static List<? extends Shape> projectClipShape(Shape shape, ProjectionInfo fromProj, ProjectionInfo toProj) {
         List<? extends Shape> shapes = null;
         switch (shape.getShapeType()) {
             case POINT:

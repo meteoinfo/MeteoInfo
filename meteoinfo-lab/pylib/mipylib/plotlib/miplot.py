@@ -10,7 +10,8 @@ from javax.swing import WindowConstants
 from org.meteoinfo.chart import Location
 from org.meteoinfo.chart.form import ChartForm
 from org.meteoinfo.chart.jogl import JOGLUtil
-from org.meteoinfo.chart.plot import Plot2D, MapPlot, Plot3D
+from org.meteoinfo.chart.plot import Plot2D, Plot3D
+from org.meteoinfo.chart.geo import MapPlot
 from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geo.meteodata import DrawMeteoData
 from org.meteoinfo.geometry.legend import LegendScheme, LegendType

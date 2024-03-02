@@ -55,6 +55,7 @@ public abstract class AbstractPlot2D extends Plot {
     protected double aspect = 1;
     protected boolean clip = true;
     protected boolean fixDrawExtent = false;
+    protected boolean antiAlias = false;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -719,6 +720,22 @@ public abstract class AbstractPlot2D extends Plot {
         this.fixDrawExtent = value;
     }
 
+    /**
+     * Return antiAlias
+     * @return AntiAlias
+     */
+    public boolean isAntiAlias() {
+        return this.antiAlias;
+    }
+
+    /**
+     * Set antiAlias
+     * @param value Set antiAlias
+     */
+    public void setAntiAlias(boolean value) {
+        this.antiAlias = value;
+    }
+
     // </editor-fold>
     // <editor-fold desc="Method">
     /**
@@ -1178,9 +1195,23 @@ public abstract class AbstractPlot2D extends Plot {
         }        
     }
 
-    void drawGridLine(Graphics2D g, Rectangle2D area) {
+    protected void drawGridLine(Graphics2D g, Rectangle2D area) {
         if (!this.gridLine.isDrawXLine() && !this.gridLine.isDrawYLine()) {
             return;
+        }
+
+        if (this.gridLine.isAntiAlias()) {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        } else {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
+            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_DEFAULT);
+            g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
         }
 
         double[] xy;
@@ -1247,6 +1278,20 @@ public abstract class AbstractPlot2D extends Plot {
     abstract void drawGraph(Graphics2D g, Rectangle2D area);
 
     void drawAxis(Graphics2D g, Rectangle2D area) {
+        if (this.antiAlias) {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        } else {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
+            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_DEFAULT);
+            g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
+        }
+
         for (Location loc : this.axis.keySet()) {
             Axis ax = this.axis.get(loc);
             if (ax.isVisible()) {

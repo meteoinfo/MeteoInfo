@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.meteoinfo.chart.jogl.GLPlot;
-import org.meteoinfo.chart.plot.MapPlot;
+import org.meteoinfo.chart.geo.MapPlot;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.common.PointF;
 

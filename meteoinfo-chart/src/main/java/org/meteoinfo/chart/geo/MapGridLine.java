@@ -1,6 +1,8 @@
-package org.meteoinfo.chart.plot;
+package org.meteoinfo.chart.geo;
 
 import org.meteoinfo.chart.axis.PositionType;
+import org.meteoinfo.chart.plot.GridLabelPosition;
+import org.meteoinfo.chart.plot.GridLine;
 import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.graphic.Graphic;

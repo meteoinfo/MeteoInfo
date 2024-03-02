@@ -14,6 +14,7 @@
 package org.meteoinfo.chart;
 
 import org.meteoinfo.common.PointF;
+import org.meteoinfo.geometry.graphic.Artist;
 import org.meteoinfo.ui.event.ILocationChangedListener;
 import org.meteoinfo.ui.event.ISizeChangedListener;
 import org.meteoinfo.ui.event.LocationChangedEvent;
@@ -28,7 +29,7 @@ import org.meteoinfo.geometry.graphic.ResizeAbility;
  *
  * @author yaqiang
  */
-public abstract class ChartElement {
+public abstract class ChartElement extends Artist {
     // <editor-fold desc="Events">
 
     public void addLocationChangedListener(ILocationChangedListener listener) {

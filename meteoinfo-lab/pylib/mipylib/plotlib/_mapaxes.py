@@ -10,13 +10,13 @@ import os
 import numbers
 
 from org.meteoinfo.chart import ChartScaleBar, ChartNorthArrow
-from org.meteoinfo.chart.plot import MapPlot, GridLabelPosition
+from org.meteoinfo.chart.plot import GridLabelPosition
+from org.meteoinfo.chart.geo import MapPlot
 from org.meteoinfo.chart.graphic import GraphicFactory
 from org.meteoinfo.geo.meteodata import DrawMeteoData
 from org.meteoinfo.geo.mapview import MapView
 from org.meteoinfo.geo.io import GraphicUtil
 from org.meteoinfo.geometry.legend import BreakTypes, LegendScheme, LegendType, LegendManage
-#from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geometry.shape import Shape, PolylineShape, PolygonShape, ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic
 from org.meteoinfo.projection import ProjectionInfo
@@ -30,6 +30,7 @@ from ._axes import Axes
 import mipylib.numeric as np
 from mipylib.numeric.core import NDArray, DimArray
 from mipylib.geolib.milayer import MILayer
+from mipylib.geolib._graphic import GeoGraphicCollection
 import mipylib.geolib.migeo as migeo
 import plotutil
 import colors
@@ -553,7 +554,7 @@ class MapAxes(Axes):
 
             self._axes.setDrawExtent(graphics.getExtent().clone())
             self._axes.setExtent(graphics.getExtent().clone())
-            return graphics
+            return GeoGraphicCollection(graphics)
         else:
             if isinstance(args[0], Graphic):
                 graphic = args[0]
@@ -1311,6 +1312,7 @@ class MapAxes(Axes):
                 ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cn, cmap)
             else:
                 levs = kwargs.pop('levs', None)
+                levs = kwargs.pop('levels', levs)
                 if levs is None:
                     ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cmap)
                 else:
@@ -1333,6 +1335,10 @@ class MapAxes(Axes):
         graphics = GraphicFactory.createArrows(x._array, y._array, u._array, v._array, cdata, ls, isuv)
             
         # Add graphics
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
+
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
@@ -1401,6 +1407,7 @@ class MapAxes(Axes):
                 ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cn, cmap)
             else:
                 levs = kwargs.pop('levs', None)
+                levs = kwargs.pop('levels', levs)
                 if levs is None:
                     ls = LegendManage.createLegendScheme(cdata.min(), cdata.max(), cmap)
                 else:
@@ -1420,6 +1427,10 @@ class MapAxes(Axes):
         graphics = GraphicFactory.createBarbs(x._array, y._array, u._array, v._array, cdata, ls, isuv)
             
         # Add graphics
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
+
         proj = kwargs.pop('proj', migeo.projinfo())
         visible = kwargs.pop('visible', True)
         if visible:

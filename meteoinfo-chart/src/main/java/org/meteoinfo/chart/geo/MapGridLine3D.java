@@ -1,5 +1,6 @@
-package org.meteoinfo.chart.plot;
+package org.meteoinfo.chart.geo;
 
+import org.meteoinfo.chart.geo.MapGridLine;
 import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.Extent3D;

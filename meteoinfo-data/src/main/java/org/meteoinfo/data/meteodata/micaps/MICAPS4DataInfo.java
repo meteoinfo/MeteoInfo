@@ -27,6 +27,7 @@ import java.io.*;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -170,6 +171,7 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
                 _yArray[i] = YMin + i * YDelt;
             }
 
+            this.addAttribute(new Attribute("data_format", "MICAPS 4"));
             Dimension tdim = new Dimension(DimensionType.T);
             double[] values = new double[1];
             values[0] = JDateUtil.toOADate(time);
@@ -210,6 +212,17 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
     @Override
     public List<Attribute> getGlobalAttributes(){
         return new ArrayList<>();
+    }
+
+    @Override
+    public String generateInfoText() {
+        String dataInfo;
+        dataInfo = "Description: " + _description;
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
+        dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().get(0));
+        dataInfo += System.getProperty("line.separator") + super.generateInfoText();
+
+        return dataInfo;
     }
 
     /**

@@ -168,7 +168,7 @@ public class Plot2D extends AbstractPlot2D {
     }
 
     @Override
-    void drawGraph(Graphics2D g, Rectangle2D area) {
+    protected void drawGraph(Graphics2D g, Rectangle2D area) {
         AffineTransform oldMatrix = g.getTransform();
         java.awt.Shape oldRegion = g.getClip();
         if (this.clip) {
@@ -271,7 +271,7 @@ public class Plot2D extends AbstractPlot2D {
         g.setTransform(oldMatrix);
     }
     
-    void plotGraphics(Graphics2D g, Rectangle2D area) {
+    protected void plotGraphics(Graphics2D g, Rectangle2D area) {
         int barIdx = 0;
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);
@@ -290,7 +290,21 @@ public class Plot2D extends AbstractPlot2D {
         }
     }
 
-    void drawGraphics(Graphics2D g, Graphic graphic, Rectangle2D area) {
+    protected void drawGraphics(Graphics2D g, Graphic graphic, Rectangle2D area) {
+        if (graphic.isAntiAlias()) {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        } else {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
+            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_DEFAULT);
+            g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
+        }
+
         java.awt.Shape oldClip = g.getClip();
         if (graphic.isClip()) {
             GeneralPath clipPath = getClipPath(graphic.getClipGraphic(), area);
@@ -324,7 +338,7 @@ public class Plot2D extends AbstractPlot2D {
         drawGraphic(g, graphic, cb, area);
     }
 
-    void drawGraphic(Graphics2D g, Graphic graphic, ColorBreak cb, Rectangle2D area) {
+    protected void drawGraphic(Graphics2D g, Graphic graphic, ColorBreak cb, Rectangle2D area) {
         if (graphic instanceof Line2DGraphic) {
             this.drawLine2D(g, (Line2DGraphic) graphic, area);
             return;
@@ -1189,7 +1203,7 @@ public class Plot2D extends AbstractPlot2D {
         return n;
     }
 
-    void drawBars(Graphics2D g, GraphicCollection bars, int barIdx, Rectangle2D area) {
+    protected void drawBars(Graphics2D g, GraphicCollection bars, int barIdx, Rectangle2D area) {
         double[] xy;
         xy = this.projToScreen(0, 0, area);
         float y0 = (float) xy[1];
@@ -1336,7 +1350,7 @@ public class Plot2D extends AbstractPlot2D {
     }
 
     @Override
-    Extent getAutoExtent() {
+    protected Extent getAutoExtent() {
         this.graphics.updateExtent();
         Extent extent = (Extent)this.graphics.getExtent().clone();
         if (extent.minX == extent.maxX) {

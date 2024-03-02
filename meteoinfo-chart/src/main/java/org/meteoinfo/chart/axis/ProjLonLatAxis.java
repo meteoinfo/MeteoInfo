@@ -5,20 +5,16 @@
  */
 package org.meteoinfo.chart.axis;
 
-import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.Location;
 import org.meteoinfo.chart.plot.AbstractPlot2D;
-import org.meteoinfo.chart.plot.MapGridLine;
+import org.meteoinfo.chart.geo.MapGridLine;
 import org.meteoinfo.common.*;
 import org.meteoinfo.geo.drawing.Draw;
-import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
-import org.meteoinfo.projection.Reproject;
 
 import java.awt.*;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
 import java.util.List;
 
 /**

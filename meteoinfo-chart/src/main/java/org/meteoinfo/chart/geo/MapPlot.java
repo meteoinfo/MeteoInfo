@@ -3,34 +3,33 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.meteoinfo.chart.plot;
+package org.meteoinfo.chart.geo;
 
 import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.axis.LonLatAxis;
 import org.meteoinfo.chart.axis.ProjLonLatAxis;
+import org.meteoinfo.chart.geo.MapGridLine;
 import org.meteoinfo.chart.graphic.WebMapImage;
-import org.meteoinfo.chart.shape.PolylineErrorShape;
+import org.meteoinfo.chart.plot.Plot2D;
+import org.meteoinfo.chart.plot.PlotType;
 import org.meteoinfo.common.*;
 import org.meteoinfo.data.Dataset;
 import org.meteoinfo.data.mapdata.webmap.IWebMapPanel;
 import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
 import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.geo.graphic.GeoGraphicCollection;
+import org.meteoinfo.geo.util.GeoProjectionUtil;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
-import org.meteoinfo.geometry.graphic.Line2DGraphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.*;
-import org.meteoinfo.geometry.shape.Polygon;
-import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionUtil;
 import org.meteoinfo.projection.Reproject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -44,9 +43,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -436,7 +432,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     }
 
     @Override
-    void drawGraph(Graphics2D g, Rectangle2D area) {
+    protected void drawGraph(Graphics2D g, Rectangle2D area) {
         //fill boundary polygon
         java.awt.Shape oldRegion = g.getClip();
         if (this.clip) {
@@ -474,7 +470,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     }
 
     @Override
-    void plotGraphics(Graphics2D g, Rectangle2D area) {
+    protected void plotGraphics(Graphics2D g, Rectangle2D area) {
         int barIdx = 0;
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);
@@ -492,6 +488,12 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
 
             if (graphic.getExtent().intersects(this.drawExtent)) {
                 drawGraphics(g, graphic, area);
+            }
+
+            if (this.isLonLatMap() && graphic instanceof GeoGraphicCollection) {
+                if (this.drawExtent.maxX > 180) {
+                    drawGraphics(g, ((GeoGraphicCollection) graphic).xShiftCopy(360), area);
+                }
             }
         }
     }
@@ -565,7 +567,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
             this.addGraphic(graphic);
             return graphic;
         } else {
-            Graphic nGraphic = ProjectionUtil.projectClipGraphic(graphic, proj, toProj);
+            Graphic nGraphic = GeoProjectionUtil.projectClipGraphic(graphic, proj, toProj);
             this.addGraphic(nGraphic);
             return nGraphic;
         }
@@ -585,58 +587,9 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
             this.addGraphic(index, graphic);
             return graphic;
         } else {
-            Graphic nGraphic = ProjectionUtil.projectClipGraphic(graphic, proj, toProj);
+            Graphic nGraphic = GeoProjectionUtil.projectClipGraphic(graphic, proj, toProj);
             this.addGraphic(index, nGraphic);
             return nGraphic;
-        }
-    }
-
-    /**
-     * Add graphics
-     *
-     * @param graphics The graphics
-     * @param proj The graphic projection
-     * @return Added graphics
-     */
-    public GraphicCollection addGraphics(GraphicCollection graphics, ProjectionInfo proj) {
-
-        ProjectionInfo toProj = this.projInfo;
-        if (proj.equals(toProj)) {
-            for (int i = 0; i < graphics.getNumGraphics(); i++)
-                this.addGraphic(graphics.getGraphicN(i));
-            return graphics;
-        } else {
-            GraphicCollection nGraphics = new GraphicCollection();
-            for (int i = 0; i < graphics.getNumGraphics(); i++) {
-                Graphic nGraphic = ProjectionUtil.projectClipGraphic(graphics.getGraphicN(i), proj, toProj);
-                nGraphics.add(nGraphic);
-                this.addGraphic(nGraphic);
-            }
-            return nGraphics;
-        }
-    }
-
-    /**
-     * Add graphics
-     *
-     * @param index The graphics index
-     * @param graphics The graphics
-     * @param proj The graphic projection
-     * @return Added graphics
-     */
-    public GraphicCollection addGraphics(int index, GraphicCollection graphics, ProjectionInfo proj) {
-        ProjectionInfo toProj = this.projInfo;
-        if (proj.equals(toProj)) {
-            this.addGraphic(index, graphics);
-            return graphics;
-        } else {
-            GraphicCollection nGraphics = new GraphicCollection();
-            for (int i = 0; i < graphics.getNumGraphics(); i++) {
-                Graphic nGraphic = ProjectionUtil.projectClipGraphic(graphics.getGraphicN(i), proj, toProj);
-                this.addGraphic(nGraphic);
-            }
-            this.addGraphic(nGraphics);
-            return nGraphics;
         }
     }
 
@@ -932,10 +885,25 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         return graphic;
     }
 
-    void drawGridLine(Graphics2D g, Rectangle2D area) {
+    @Override
+    protected void drawGridLine(Graphics2D g, Rectangle2D area) {
         if (this.projInfo.isLonLat()) {
             super.drawGridLine(g, area);
         } else {
+            if (this.antiAlias) {
+                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+                g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+                g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+            } else {
+                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+                g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
+                g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+                g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_DEFAULT);
+                g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
+            }
+
             AffineTransform oldMatrix = g.getTransform();
             java.awt.Shape oldRegion = g.getClip();
             if (this.clip) {

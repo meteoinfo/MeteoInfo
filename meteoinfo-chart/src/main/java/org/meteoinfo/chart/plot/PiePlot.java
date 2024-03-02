@@ -40,7 +40,7 @@ public class PiePlot extends Plot2D {
     // </editor-fold>
     // <editor-fold desc="Methods">
     @Override
-    void drawGraph(Graphics2D g, Rectangle2D area) {
+    protected void drawGraph(Graphics2D g, Rectangle2D area) {
         AffineTransform oldMatrix = g.getTransform();
         //Rectangle oldRegion = g.getClipBounds();
         //g.setClip(area);

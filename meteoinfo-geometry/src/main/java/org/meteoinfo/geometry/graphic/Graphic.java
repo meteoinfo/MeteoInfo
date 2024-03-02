@@ -32,7 +32,7 @@ package org.meteoinfo.geometry.graphic;
   *
   * @author Yaqiang Wang
   */
- public class Graphic {
+ public class Graphic extends Artist {
      // <editor-fold desc="Variables">
 
      protected Shape shape;

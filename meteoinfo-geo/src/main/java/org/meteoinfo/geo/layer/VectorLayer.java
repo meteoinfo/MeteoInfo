@@ -14,6 +14,7 @@
 package org.meteoinfo.geo.layer;
 
 import org.meteoinfo.common.*;
+import org.meteoinfo.geo.graphic.GeoGraphicCollection;
 import org.meteoinfo.geo.mapdata.ShapeFileManage;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.*;
@@ -2830,7 +2831,7 @@ public class VectorLayer extends MapLayer {
      *
      * @return Graphics
      */
-    public GraphicCollection getGraphics() {
+    public GeoGraphicCollection getGraphics() {
         return getGraphics(0);
     }
 
@@ -2840,8 +2841,10 @@ public class VectorLayer extends MapLayer {
      * @param xShift X shift
      * @return Graphics
      */
-    public GraphicCollection getGraphics(double xShift) {
-        GraphicCollection graphics = new GraphicCollection();
+    public GeoGraphicCollection getGraphics(double xShift) {
+        GeoGraphicCollection graphics = new GeoGraphicCollection();
+        graphics.setAttributeTable(this._attributeTable);
+        graphics.setProjInfo(this._projInfo);
         ColorBreak cb;
         if (xShift == 0) {
             for (Shape shape : this.shapes) {

@@ -163,6 +163,7 @@ public class MICAPS11DataInfo extends DataInfo implements IGridDataInfo {
                 _yArray[i] = YMin + i * YDelt;
             }
 
+            this.addAttribute(new Attribute("data_format", "MICAPS 11"));
             Dimension tdim = new Dimension(DimensionType.T);
             tdim.setShortName("time");
             double[] values = new double[1];

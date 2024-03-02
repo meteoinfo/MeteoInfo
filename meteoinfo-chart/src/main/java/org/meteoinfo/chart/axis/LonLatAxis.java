@@ -6,7 +6,7 @@
 package org.meteoinfo.chart.axis;
 
 import org.meteoinfo.chart.ChartText;
-import org.meteoinfo.chart.plot.MapGridLine;
+import org.meteoinfo.chart.geo.MapGridLine;
 import org.meteoinfo.common.DataConvert;
 
 import java.util.ArrayList;

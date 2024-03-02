@@ -8,7 +8,7 @@ import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.jogamp.opengl.util.gl2.GLUT;
 import org.meteoinfo.chart.jogl.GLPlot;
 import org.meteoinfo.chart.jogl.Program;
-import org.meteoinfo.chart.plot.MapPlot;
+import org.meteoinfo.chart.geo.MapPlot;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.common.PointF;
 

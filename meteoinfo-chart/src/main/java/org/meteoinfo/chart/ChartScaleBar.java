@@ -14,7 +14,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
-import org.meteoinfo.chart.plot.MapPlot;
+import org.meteoinfo.chart.geo.MapPlot;
 import org.meteoinfo.common.PointF;
 
 /**
@@ -44,7 +44,6 @@ public class ChartScaleBar extends ChartElement {
     // <editor-fold desc="Variables">
 
     private MapPlot mapPlot;
-    private boolean antiAlias;
     private float lineWidth;
     private Font font;
     private ScaleBarType scaleBarType;

@@ -582,7 +582,7 @@ public class GraphicCollection extends Graphic implements Iterator {
     /**
      * Add labels
      */
-    private void addLabelsByColor() {
+    protected void addLabelsByColor() {
         if (labelSet.isAutoDecimal()) {
             double min = getMinValue();
             labelSet.setDecimalDigits(MIMath.getDecimalNum(min));
@@ -685,6 +685,56 @@ public class GraphicCollection extends Graphic implements Iterator {
     }
 
     /**
+     * Get a label by text
+     *
+     * @param text Text
+     * @return Label
+     */
+    public Graphic getLabel(String text) {
+        for (Graphic lb : labelPoints) {
+            if (((LabelBreak) lb.getLegend()).getText().equals(text)) {
+                return lb;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Move label
+     *
+     * @param text Label text
+     * @param x X
+     * @param y Y
+     */
+    public void moveLabel(String text, float x, float y) {
+        Graphic lb = this.getLabel(text);
+        if (lb != null) {
+            this.moveLabel(lb, x, y);
+        }
+    }
+
+    /**
+     * Move label
+     *
+     * @param lb Label
+     * @param x X
+     * @param y Y
+     */
+    public void moveLabel(Graphic lb, float x, float y) {
+        LabelBreak lbb = (LabelBreak) lb.getLegend();
+        lbb.setXShift(lbb.getXShift() + x);
+        lbb.setYShift(lbb.getYShift() + y);
+    }
+
+    /**
+     * Remove all labels
+     */
+    public void removeLabels() {
+        labelPoints.clear();
+        labelSet.setDrawLabels(false);
+    }
+
+    /**
      * Get arrow zoom
      *
      * @return Arrow zoom
@@ -735,6 +785,25 @@ public class GraphicCollection extends Graphic implements Iterator {
         this.extent.shift(xs, 0);
 
         return this;
+    }
+
+    /**
+     * X coordinate shift as a new GraphicCollection object
+     * @param xs X shift value
+     */
+    public GraphicCollection xShiftCopy(double xs) {
+        GraphicCollection graphicCollection = new GraphicCollection();
+        for (Graphic g : this.graphics) {
+            Shape shape = (Shape) g.getShape().clone();
+            for (PointD p : shape.getPoints()) {
+                p.X += xs;
+            }
+            Graphic graphic = new Graphic(shape, g.legend);
+            graphic.setExtent(graphic.getExtent().shift(xs, 0));
+            graphicCollection.add(graphic);
+        }
+
+        return graphicCollection;
     }
     // </editor-fold>
 }

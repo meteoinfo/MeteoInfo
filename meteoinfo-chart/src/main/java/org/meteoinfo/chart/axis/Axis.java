@@ -14,6 +14,7 @@ import org.meteoinfo.common.XAlign;
 import org.meteoinfo.common.YAlign;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.geometry.graphic.Artist;
 import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
@@ -29,7 +30,7 @@ import java.util.List;
  *
  * @author yaqiang
  */
-public class Axis implements Cloneable {
+public class Axis extends Artist implements Cloneable {
     
     // <editor-fold desc="Variables">
     protected boolean xAxis;
@@ -767,54 +768,6 @@ public class Axis implements Cloneable {
         }
     }
 
-//    /**
-//     * Get if is time axis
-//     *
-//     * @return Boolean
-//     */
-//    public boolean isTimeAxis() {
-//        return this.timeAxis;
-//    }
-//
-//    /**
-//     * Set if is time axis
-//     *
-//     * @param value Boolean
-//     */
-//    public void setTimeAxis(boolean value) {
-//        this.timeAxis = value;
-//    }
-//    /**
-//     * Get time format
-//     * @return Time format
-//     */
-//    public String getTimeFormat(){
-//        return this.timeFormat;
-//    }
-//    
-//    /**
-//     * Set time format
-//     * @param value 
-//     */
-//    public void setTimeFormat(String value){
-//        this.timeFormat = value;
-//    }
-//    
-//    /**
-//     * Get time unit
-//     * @return Time unit
-//     */
-//    public TimeUnit getTimeUnit(){
-//        return this.timeUnit;
-//    }
-//    
-//    /**
-//     * Set time unit
-//     * @param value Time unit
-//     */
-//    public void setTimeUnit(TimeUnit value){
-//        this.timeUnit = value;
-//    }
     /**
      * Get if is inverse
      *
@@ -832,24 +785,6 @@ public class Axis implements Cloneable {
     public void setInverse(boolean value) {
         this.inverse = value;
     }
-
-//    /**
-//     * Get shift
-//     *
-//     * @return Shift
-//     */
-//    public float getShift() {
-//        return this.shift;
-//    }
-//
-//    /**
-//     * Set shift
-//     *
-//     * @param value Shift
-//     */
-//    public void setShift(float value) {
-//        this.shift = value;
-//    }
 
     /**
      * Tick locations
@@ -1485,6 +1420,21 @@ public class Axis implements Cloneable {
         if (plot.getDrawExtent() == null) {
             return;
         }
+
+        if (this.antiAlias) {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        } else {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
+            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_DEFAULT);
+            g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
+        }
+
         if (this.xAxis) {
             this.drawXAxis(g, area, plot);
         } else {

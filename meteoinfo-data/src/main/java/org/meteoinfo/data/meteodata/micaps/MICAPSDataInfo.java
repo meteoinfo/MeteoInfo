@@ -59,6 +59,18 @@ public class MICAPSDataInfo {
                 dataArray = aLine.split("\\s+");
                 dataType = dataArray[0] + " " + dataArray[1];
                 dataType = dataType.trim().toLowerCase();
+                if (dataType.equals("diamond 11")) {
+                    mdType = MeteoDataType.MICAPS_11;
+                }
+                if (dataType.equals("diamond 13")) {
+                    mdType = MeteoDataType.MICAPS_13;
+                }
+                if (dataType.contains("iamond 120")) {
+                    mdType = MeteoDataType.MICAPS_120;
+                }
+                if (dataType.contains("diamond 131")) {
+                    mdType = MeteoDataType.MICAPS_131;
+                }
                 if (dataType.contains("diamond 1")) {
                     mdType = MeteoDataType.MICAPS_1;
                 }
@@ -73,18 +85,6 @@ public class MICAPSDataInfo {
                 }
                 if (dataType.equals("diamond 7")) {
                     mdType = MeteoDataType.MICAPS_7;
-                }
-                if (dataType.equals("diamond 11")) {
-                    mdType = MeteoDataType.MICAPS_11;
-                }
-                if (dataType.equals("diamond 13")) {
-                    mdType = MeteoDataType.MICAPS_13;
-                }
-                if (dataType.contains("iamond 120")) {
-                    mdType = MeteoDataType.MICAPS_120;
-                }
-                if (dataType.contains("diamond 131")) {
-                    mdType = MeteoDataType.MICAPS_131;
                 }
                 if (mdType == null) {
                     System.out.println(String.format("Unknown MICAPS data file type: %s", dataType));
@@ -126,7 +126,15 @@ public class MICAPSDataInfo {
                 StringTokenizer stoker = new StringTokenizer(line);
                 if (stoker.countTokens() >= 2) {
                     String dataType = stoker.nextToken() + " " + stoker.nextToken();
-                    if (dataType.contains("diamond 1")) {
+                    if (dataType.equals("diamond 11")) {
+                        dataInfo = new MICAPS11DataInfo();
+                    } else if (dataType.equals("diamond 13")) {
+                        dataInfo = new MICAPS13DataInfo();
+                    } else if (dataType.contains("iamond 120")) {
+                        dataInfo = new MICAPS120DataInfo();
+                    } else if (dataType.contains("diamond 131")) {
+                        dataInfo = new MICAPS131DataInfo();
+                    } else if (dataType.contains("diamond 1")) {
                         dataInfo = new MICAPS1DataInfo();
                     } else if (dataType.equals("diamond 2")) {
                         dataInfo = new MICAPS2DataInfo();
@@ -136,14 +144,6 @@ public class MICAPSDataInfo {
                         dataInfo = new MICAPS4DataInfo();
                     } else if (dataType.equals("diamond 7")) {
                         dataInfo = new MICAPS7DataInfo();
-                    } else if (dataType.equals("diamond 11")) {
-                        dataInfo = new MICAPS11DataInfo();
-                    } else if (dataType.equals("diamond 13")) {
-                        dataInfo = new MICAPS13DataInfo();
-                    } else if (dataType.contains("iamond 120")) {
-                        dataInfo = new MICAPS120DataInfo();
-                    } else if (dataType.contains("diamond 131")) {
-                        dataInfo = new MICAPS131DataInfo();
                     }
                 }
             }

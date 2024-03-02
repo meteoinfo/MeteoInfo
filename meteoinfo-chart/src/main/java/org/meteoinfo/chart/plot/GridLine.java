@@ -6,6 +6,7 @@
 package org.meteoinfo.chart.plot;
 
 import org.meteoinfo.common.colors.ColorUtil;
+import org.meteoinfo.geometry.graphic.Artist;
 import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.geometry.legend.PolylineBreak;
 
@@ -15,7 +16,7 @@ import java.awt.*;
  *
  * @author yaqiang
  */
-public class GridLine {
+public class GridLine extends Artist {
     // <editor-fold desc="Variables">
     protected PolylineBreak lineBreak;
     protected boolean drawXLine;

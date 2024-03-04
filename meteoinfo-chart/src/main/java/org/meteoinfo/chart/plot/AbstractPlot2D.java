@@ -55,7 +55,6 @@ public abstract class AbstractPlot2D extends Plot {
     protected double aspect = 1;
     protected boolean clip = true;
     protected boolean fixDrawExtent = false;
-    protected boolean antiAlias = false;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -718,22 +717,6 @@ public abstract class AbstractPlot2D extends Plot {
      */
     public void setFixDrawExtent(boolean value) {
         this.fixDrawExtent = value;
-    }
-
-    /**
-     * Return antiAlias
-     * @return AntiAlias
-     */
-    public boolean isAntiAlias() {
-        return this.antiAlias;
-    }
-
-    /**
-     * Set antiAlias
-     * @param value Set antiAlias
-     */
-    public void setAntiAlias(boolean value) {
-        this.antiAlias = value;
     }
 
     // </editor-fold>

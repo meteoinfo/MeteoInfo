@@ -88,12 +88,11 @@ public class PointShape extends Shape implements Cloneable{
     /**
      * Set point
      * 
-     * @param aPoint point
+     * @param point Point
      */
-    public void setPoint(PointD aPoint) {
-        List<PointD> pts = new ArrayList<>();
-        pts.add(aPoint);
-        this.setPoints(pts);
+    public void setPoint(PointD point) {
+        ((List<PointD>) this.points).set(0, point);
+        updateExtent();
     }
 
     // </editor-fold>

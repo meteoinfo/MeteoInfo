@@ -566,7 +566,8 @@ public class GLChart implements GLEventListener {
             Margin shrink = this.getPlotsShrink(g, plotArea);
             for (int i = 0; i < this.plots.size(); i++) {
                 Plot plot = this.plots.get(i);
-                plot.setSymbolAntialias(this.symbolAntialias);
+                plot.setAntiAlias(this.antialias);
+                plot.setSymbolAntiAlias(this.symbolAntialias);
                 if (plot.isOuterPosActive()){
                     if (plot.isSubPlot || plot.isSameShrink()) {
                         plot.setPlotShrink(shrink);

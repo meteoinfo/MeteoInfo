@@ -8,6 +8,7 @@ package org.meteoinfo.chart.plot;
 import org.meteoinfo.chart.Margin;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.data.Dataset;
+import org.meteoinfo.geometry.graphic.Artist;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
@@ -18,7 +19,7 @@ import java.util.List;
  *
  * @author yaqiang
  */
-public abstract class Plot {
+public abstract class Plot extends Artist {
     
     /** The default outline stroke. */
     public static final Stroke DEFAULT_OUTLINE_STROKE = new BasicStroke(0.5f,
@@ -69,8 +70,8 @@ public abstract class Plot {
     
     //units - normalized or pixels
     protected AxesUnits units = AxesUnits.NORMALIZED;
-    
-    protected boolean symbolAntialias = true;
+
+    protected boolean symbolAntiAlias = true;
     
     /**
      * Get units
@@ -286,16 +287,16 @@ public abstract class Plot {
      * Get symbol antialias
      * @return Boolean
      */
-    public boolean isSymbolAntialias() {
-        return this.symbolAntialias;
+    public boolean isSymbolAntiAlias() {
+        return this.symbolAntiAlias;
     }
     
     /**
      * Set symbol antialias
      * @param value Boolean
      */
-    public void setSymbolAntialias(boolean value) {
-        this.symbolAntialias = value;
+    public void setSymbolAntiAlias(boolean value) {
+        this.symbolAntiAlias = value;
     }
 
     /**

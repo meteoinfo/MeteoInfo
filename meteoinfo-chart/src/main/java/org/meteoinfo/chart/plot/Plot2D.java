@@ -292,7 +292,7 @@ public class Plot2D extends AbstractPlot2D {
     }
 
     protected void drawGraphics(Graphics2D g, Graphic graphic, Rectangle2D area) {
-        if (graphic.isAntiAlias()) {
+        if (this.antiAlias || graphic.isAntiAlias()) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
             g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
@@ -461,7 +461,7 @@ public class Plot2D extends AbstractPlot2D {
         PointF pf = new PointF((float) sXY[0], (float) sXY[1]);
         RenderingHints rend = g.getRenderingHints();
         boolean rc = false;
-        if (this.symbolAntialias && rend.get(RenderingHints.KEY_ANTIALIASING) != RenderingHints.VALUE_ANTIALIAS_ON) {
+        if (this.symbolAntiAlias && rend.get(RenderingHints.KEY_ANTIALIASING) != RenderingHints.VALUE_ANTIALIAS_ON) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             rc = true;
         }

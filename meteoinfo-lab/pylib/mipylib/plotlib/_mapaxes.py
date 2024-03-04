@@ -37,7 +37,7 @@ import colors
 import mipylib.migl as migl
 import mipylib.miutil as miutil
 
-__all__ = ['MapAxes']
+__all__ = ['MapAxes','WebMapProvider']
 
 ##############################################        
 class MapAxes(Axes):
@@ -1567,8 +1567,10 @@ class MapAxes(Axes):
         if isinstance(provider, TileFactoryInfo):
             tf = DefaultTileFactory(provider)
             graphic.setTileFactory(tf)
-        else:
+        elif isinstance(provider, basestring):
             provider = WebMapProvider.valueOf(provider)
+            graphic.setWebMapProvider(provider)
+        else:
             graphic.setWebMapProvider(provider)
 
         self.add_graphic(graphic, zorder=zorder)

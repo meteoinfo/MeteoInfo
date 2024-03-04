@@ -643,7 +643,11 @@ public class ArrayUtil {
      * @return Array
      */
     public static Array array(Object data, DataType dt) {
-        if (data instanceof Array) {
+        if (data == null) {
+            Array a = Array.factory(DataType.OBJECT, new int[0]);
+            a.setObject(0, null);
+            return a;
+        } else if (data instanceof Array) {
             return (Array) data;
         } else if (data instanceof List) {
             return array_list((List) data, dt);

@@ -3,6 +3,7 @@ from org.meteoinfo.geometry.legend import PolylineBreak
 
 from .. import plotutil
 from artist import Artist
+import mipylib.numeric as np
 
 
 __all__ = ['Line2D']
@@ -27,14 +28,14 @@ class Line2D(Line2DGraphic, Artist):
         if legend is None:
             legend = plotutil.getlegendbreak('line', **kwargs)[0]
 
-        self._x = xdata
-        self._y = ydata
-        self._cdata = cdata
+        self._x = np.asarray(xdata)
+        self._y = np.asarray(ydata)
+        self._cdata = np.asarray(cdata)
 
         if cdata is None:
-            Line2DGraphic.__init__(self, xdata._array, ydata._array, legend)
+            Line2DGraphic.__init__(self, self._x._array, self._y._array, legend)
         else:
-            Line2DGraphic.__init__(self, xdata._array, ydata._array, cdata._array, legend)
+            Line2DGraphic.__init__(self, self._x._array, self._y._array, self._cdata._array, legend)
 
         if curve:
             self.setCurve(curve)

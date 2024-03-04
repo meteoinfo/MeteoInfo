@@ -1658,6 +1658,8 @@ package org.meteoinfo.geometry.legend;
          bLS.setMinValue(minValue);
          bLS.setMaxValue(maxValue);
          bLS.setUndefValue(undef);
+         bLS.setExtendType(extendType);
+         bLS.setExtendFraction(extendFraction);
          for (ColorBreak aCB : legendBreaks) {
              bLS.getLegendBreaks().add((ColorBreak) aCB.clone());
          }

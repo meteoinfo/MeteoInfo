@@ -924,11 +924,16 @@ public class ProjectionUtil {
                     newGCollection.add(aGraphic);
                 }
             }
+            newGCollection.setLegendScheme(((GraphicCollection) graphic).getLegendScheme());
+            newGCollection.setSingleLegend(((GraphicCollection) graphic).isSingleLegend());
+            newGCollection.setAntiAlias(graphic.isAntiAlias());
 
             return newGCollection;
         } else {
             Shape shape = projectShape(graphic.getShape(), fromProj, toProj);
-            return new Graphic(shape, graphic.getLegend());
+            Graphic rGraphic = new Graphic(shape, graphic.getLegend());
+            rGraphic.setAntiAlias(graphic.isAntiAlias());
+            return rGraphic;
         }
     }
 
@@ -953,6 +958,7 @@ public class ProjectionUtil {
                 }
                 newGCollection.setLegendScheme(((GraphicCollection) graphic).getLegendScheme());
                 newGCollection.setSingleLegend(((GraphicCollection) graphic).isSingleLegend());
+                newGCollection.setAntiAlias(graphic.isAntiAlias());
 
                 return newGCollection;
             } catch (Exception ex) {
@@ -962,7 +968,9 @@ public class ProjectionUtil {
         } else {
             List<? extends Shape> shapes = projectClipShape(graphic.getShape(), fromProj, toProj);
             if (shapes != null && shapes.size() > 0) {
-                return new Graphic(shapes.get(0), graphic.getLegend());
+                Graphic rGraphic = new Graphic(shapes.get(0), graphic.getLegend());
+                rGraphic.setAntiAlias(graphic.isAntiAlias());
+                return rGraphic;
             } else {
                 return null;
             }

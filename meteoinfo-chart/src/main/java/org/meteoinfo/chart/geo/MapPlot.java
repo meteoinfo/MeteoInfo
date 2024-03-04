@@ -15,10 +15,13 @@ import org.meteoinfo.chart.plot.Plot2D;
 import org.meteoinfo.chart.plot.PlotType;
 import org.meteoinfo.common.*;
 import org.meteoinfo.data.Dataset;
+import org.meteoinfo.data.mapdata.webmap.GeoPosition;
+import org.meteoinfo.data.mapdata.webmap.GeoUtil;
 import org.meteoinfo.data.mapdata.webmap.IWebMapPanel;
 import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
 import org.meteoinfo.geo.drawing.Draw;
 import org.meteoinfo.geo.graphic.GeoGraphicCollection;
+import org.meteoinfo.geo.layer.WebMapLayer;
 import org.meteoinfo.geo.util.GeoProjectionUtil;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
@@ -38,6 +41,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Line2D;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
@@ -388,6 +392,39 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         return webMapImage == null ? 0 : webMapImage.getZoom();
     }
 
+    /**
+     * Get geographic center with longitude/latitude
+     *
+     * @return Geographic center
+     */
+    public PointD getGeoCenter() {
+        PointD viewCenter = this.getViewCenter();
+        return Reproject.reprojectPoint(viewCenter, this.projInfo,
+                KnownCoordinateSystems.geographic.world.WGS1984);
+    }
+
+    /**
+     * Get view center point
+     *
+     * @return The view center point
+     */
+    public PointD getViewCenter() {
+        return this.drawExtent.getCenterPoint();
+    }
+
+    /**
+     * Set view center point
+     *
+     * @param center The view center point
+     */
+    public void setViewCenter(PointD center) {
+        PointD oldCenter = this.getViewCenter();
+        double dx = center.X - oldCenter.X;
+        double dy = center.Y - oldCenter.Y;
+        Extent extent = this.drawExtent.shift(dx, dy);
+        this.drawExtent = extent;
+    }
+
     @Override
     public void reDraw() {
         if (this.parent != null) {
@@ -474,16 +511,21 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         int barIdx = 0;
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);
+            if (graphic instanceof WebMapImage) {
+                this.drawWebMapImage(g, (WebMapImage) graphic, area);
+                continue;
+            }
+
             ColorBreak cb = graphic.getLegend();
             ShapeTypes shapeType = graphic.getGraphicN(0).getShape().getShapeType();
             switch(shapeType){
                 case BAR:
                     this.drawBars(g, (GraphicCollection) graphic, barIdx, area);
                     barIdx += 1;
-                    break;
+                    continue;
                 case STATION_MODEL:
                     this.drawStationModel(g, (GraphicCollection) graphic, area);
-                    break;
+                    continue;
             }
 
             if (graphic.getExtent().intersects(this.drawExtent)) {
@@ -552,6 +594,72 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
                 }
             }
         }
+    }
+
+    private double getWebMapScale(WebMapImage graphic, int zoom, double width, double height) {
+        Point2D center = graphic.getCenter();
+        double minx = center.getX() - width / 2.;
+        double miny = center.getY() - height / 2.;
+        double maxx = center.getX() + width / 2.;
+        double maxy = center.getY() + height / 2.;
+        GeoPosition pos1 = GeoUtil.getPosition(new Point2D.Double(minx, miny), zoom, graphic.getTileFactory().getInfo());
+        GeoPosition pos2 = GeoUtil.getPosition(new Point2D.Double(maxx, maxy), zoom, graphic.getTileFactory().getInfo());
+        PointD p1 = Reproject.reprojectPoint(new PointD(pos1.getLongitude(), pos1.getLatitude()),
+                KnownCoordinateSystems.geographic.world.WGS1984, this.projInfo);
+        PointD p2 = Reproject.reprojectPoint(new PointD(pos2.getLongitude(), pos2.getLatitude()),
+                KnownCoordinateSystems.geographic.world.WGS1984, this.projInfo);
+        if (pos2.getLongitude() - pos1.getLongitude() < 360.0 && pos2.getLongitude() <= 180) {
+            double xlen = Math.abs(p2.X - p1.X);
+            return (double) width / xlen;
+        } else {
+            double ylen = Math.abs(p2.Y - p1.Y);
+            return (double) height / ylen;
+        }
+    }
+
+    private void setScale(double scale, double width, double height) {
+        this.xScale = scale;
+        this.yScale = scale;
+        PointD center = (PointD)this.drawExtent.getCenterPoint().clone();
+        double xlen = width / scale * 0.5;
+        double ylen = height / scale * 0.5;
+        this.drawExtent.minX = center.X - xlen;
+        this.drawExtent.maxX = center.X + xlen;
+        this.drawExtent.minY = center.Y - ylen;
+        this.drawExtent.maxY = center.Y + ylen;
+    }
+
+    void drawWebMapImage(Graphics2D g, WebMapImage graphic, Rectangle2D area) {
+        PointD geoCenter = this.getGeoCenter();
+        graphic.setAddressLocation(new GeoPosition(geoCenter.Y, geoCenter.X));
+        double webMapScale = graphic.getWebMapScale();
+        if (!MIMath.doubleEquals(this.xScale, webMapScale)) {
+            int minZoom = graphic.getTileFactory().getInfo().getMinimumZoomLevel();
+            int maxZoom = graphic.getTileFactory().getInfo().getMaximumZoomLevel();
+            int newZoom = minZoom;
+            double scale = webMapScale;
+            double width = area.getWidth();
+            double height = area.getHeight();
+            for (int i = maxZoom; i >= minZoom; i--) {
+                graphic.setZoom(i);
+                scale = getWebMapScale(graphic, i, width, height);
+                if (xScale < scale) {
+                    newZoom = i;
+                    if (xScale < webMapScale) {
+                        if (i < maxZoom) {
+                            newZoom = i + 1;
+                            scale = getWebMapScale(graphic, newZoom, width, height);
+                        }
+                    }
+                    break;
+                }
+            }
+            this.setScale(scale, width, height);
+            graphic.setWebMapScale(scale);
+            graphic.setZoom(newZoom);
+        }
+
+        graphic.draw(g, area, this.tileLoadListener);
     }
 
     /**

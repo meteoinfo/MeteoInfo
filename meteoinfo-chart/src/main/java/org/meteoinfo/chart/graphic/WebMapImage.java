@@ -1,5 +1,6 @@
 package org.meteoinfo.chart.graphic;
 
+import org.meteoinfo.common.Extent;
 import org.meteoinfo.data.mapdata.webmap.*;
 import org.meteoinfo.data.mapdata.webmap.empty.EmptyTileFactory;
 import org.meteoinfo.geometry.graphic.Graphic;
@@ -51,6 +52,7 @@ public class WebMapImage extends Graphic {
     private double webMapScale = 0.;
     private double width;
     private double height;
+    private Extent extent = new Extent(-180, 180, -90, 90);
 
     /**
      * Constructor
@@ -72,6 +74,22 @@ public class WebMapImage extends Graphic {
         this.factory = factory;
         //this.setZoom(factory.getInfo().getDefaultZoomLevel());
         //this.setCenterPosition(new GeoPosition(0, 0));
+    }
+
+    /**
+     * Get extent
+     * @return Extent
+     */
+    public Extent getExtent() {
+        return extent;
+    }
+
+    /**
+     * Set extent
+     * @param extent The extent
+     */
+    public void setExtent(Extent extent) {
+        this.extent = extent;
     }
 
     /**

@@ -681,6 +681,7 @@ public class GeoProjectionUtil {
                 }
                 newGCollection.setLegendScheme(geoGraphic.getLegendScheme());
                 newGCollection.setSingleLegend(geoGraphic.isSingleLegend());
+                newGCollection.setAntiAlias(geoGraphic.isAntiAlias());
                 newGCollection.getAttributeTable().setTable(dataTable);
                 newGCollection.setProjInfo(toProj);
 

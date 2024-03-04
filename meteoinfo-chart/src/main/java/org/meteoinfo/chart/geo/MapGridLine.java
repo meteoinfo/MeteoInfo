@@ -277,10 +277,13 @@ public class MapGridLine extends GridLine {
         double latMin = this.lonLatExtent.minY;
         double latMax = this.lonLatExtent.maxY;
         double delta = this.lonLatExtent.getHeight() / (this.nPoints - 1);
+        if (delta <= 0) {
+            return;
+        }
         for (double lon : this.longitudeLocations) {
             List<PointD> points = new ArrayList<>();
             double lat = latMin;
-            while (lat <= latMax) {
+            while (lat < latMax) {
                 points.add(new PointD(lon, lat));
                 lat += delta;
             }
@@ -307,10 +310,13 @@ public class MapGridLine extends GridLine {
             lonMax = 180;
         }
         double delta = (lonMax - lonMin) / (this.nPoints - 1);
+        if (delta <= 0) {
+            return;
+        }
         for (double lat : this.latitudeLocations) {
             List<PointD> points = new ArrayList<>();
             double lon = lonMin;
-            while (lon <= lonMax) {
+            while (lon < lonMax) {
                 points.add(new PointD(lon, lat));
                 lon += delta;
             }

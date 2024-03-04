@@ -12,7 +12,7 @@ import numbers
 from org.meteoinfo.chart import ChartScaleBar, ChartNorthArrow
 from org.meteoinfo.chart.plot import GridLabelPosition
 from org.meteoinfo.chart.geo import MapPlot
-from org.meteoinfo.chart.graphic import GraphicFactory
+from org.meteoinfo.chart.graphic import GraphicFactory, WebMapImage
 from org.meteoinfo.geo.meteodata import DrawMeteoData
 from org.meteoinfo.geo.mapview import MapView
 from org.meteoinfo.geo.io import GraphicUtil
@@ -498,7 +498,6 @@ class MapAxes(Axes):
             if layer.layer_type == LayerTypes.IMAGE_LAYER:
                 interpolation = kwargs.pop('interpolation', None)
                 graphics = layer.get_graphics(xshift, interpolation)
-                graphics = self.add_graphic(graphics, projection=layer.proj, zorder=zorder)
             else:
                 #LegendScheme
                 ls = kwargs.pop('symbolspec', None)
@@ -521,37 +520,12 @@ class MapAxes(Axes):
                 else:
                     layer.legend = ls
                 graphics = layer.get_graphics(xshift)
-                graphics = self.add_graphic(graphics, projection=layer.proj, zorder=zorder)
 
-                #Labels        
-                labelfield = kwargs.pop('labelfield', None)
-                if not labelfield is None:
-                    labelset = layer._layer.getLabelSet()
-                    labelset.setFieldName(labelfield)
-                    fontname = kwargs.pop('fontname', 'Arial')
-                    fontsize = kwargs.pop('fontsize', 14)
-                    bold = kwargs.pop('bold', False)
-                    if bold:
-                        font = Font(fontname, Font.BOLD, fontsize)
-                    else:
-                        font = Font(fontname, Font.PLAIN, fontsize)
-                    labelset.setLabelFont(font)
-                    lcolor = kwargs.pop('labelcolor', None)
-                    if not lcolor is None:
-                        lcolor = miutil.getcolor(lcolor)
-                        labelset.setLabelColor(lcolor)
-                    xoffset = kwargs.pop('xoffset', 0)
-                    labelset.setXOffset(xoffset)
-                    yoffset = kwargs.pop('yoffset', 0)
-                    labelset.setYOffset(yoffset)
-                    avoidcoll = kwargs.pop('avoidcoll', True)
-                    decimals = kwargs.pop('decimals', None)
-                    if not decimals is None:
-                        labelset.setAutoDecimal(False)
-                        labelset.setDecimalDigits(decimals)
-                    labelset.setAvoidCollision(avoidcoll)
-                    layer._layer.addLabels()
+            antialias = kwargs.pop('antialias', None)
+            if antialias is not None:
+                graphics.setAntiAlias(antialias)
 
+            graphics = self.add_graphic(graphics, projection=layer.proj, zorder=zorder)
             self._axes.setDrawExtent(graphics.getExtent().clone())
             self._axes.setExtent(graphics.getExtent().clone())
             return GeoGraphicCollection(graphics)
@@ -756,7 +730,7 @@ class MapAxes(Axes):
                         graphic = GraphicFactory.createLineString(xdata, ydata, lines[0], iscurve)
                 else:    #>1
                     graphic = GraphicFactory.createLineString(xdata, ydata, lines, iscurve)
-                self.add_graphic(graphic)
+                graphic = self.add_graphic(graphic, proj)
                 graphics.append(graphic)
             else:
                 for i in range(0, snum):
@@ -774,6 +748,11 @@ class MapAxes(Axes):
             graphic = self.add_graphic(graphic, proj)
             graphics.append(graphic)
 
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            for graphic in graphics:
+                graphic.setAntiAlias(antialias)
+
         if len(graphics) > 1:
             return graphics
         else:
@@ -787,7 +766,7 @@ class MapAxes(Axes):
         :param x: (*array_like*) Input x data.
         :param y: (*array_like*) Input y data.
         :param z: (*array_like*) Input z data.
-        :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
+        :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level curves
             to draw, in increasing order.
         :param cmap: (*string*) Color map string.
         :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
@@ -832,19 +811,20 @@ class MapAxes(Axes):
         
         ls = kwargs.pop('symbolspec', None)
         if ls is None:
-            isunique = False
-            colors = kwargs.get('colors', None) 
-            if not colors is None:
-                if isinstance(colors, (list, tuple)) and len(colors) == x.size:
-                    isunique = True
-            size = kwargs.get('size', None)
-            if not size is None:
-                if isinstance(size, (list, tuple, NDArray)) and len(size) == x.size:
-                    isunique = True
-            marker = kwargs.get('marker', None)
-            if not marker is None:
-                if isinstance(marker, (list, tuple, NDArray)) and len(marker) == x.size:
-                    isunique = True
+            isunique = (a.ndim == 0)
+            if not isunique:
+                colors = kwargs.get('colors', None)
+                if not colors is None:
+                    if isinstance(colors, (list, tuple)) and len(colors) == x.size:
+                        isunique = True
+                size = kwargs.get('size', None)
+                if not size is None:
+                    if isinstance(size, (list, tuple, NDArray)) and len(size) == x.size:
+                        isunique = True
+                marker = kwargs.get('marker', None)
+                if not marker is None:
+                    if isinstance(marker, (list, tuple, NDArray)) and len(marker) == x.size:
+                        isunique = True
             if isunique:
                 ls = LegendManage.createUniqValueLegendScheme(x.size, ShapeTypes.POINT)
             else:
@@ -930,19 +910,23 @@ class MapAxes(Axes):
             griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
             a, x, y = np.griddata((x,y), a, **griddata_props)
 
-        contours = GraphicFactory.createContourLines(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
+        graphics = GraphicFactory.createContourLines(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
 
         proj = kwargs.pop('proj', migeo.projinfo())
         
-        # Add layer
+        # Add graphics
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
+
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
-            contours = self.add_graphic(contours, projection=proj, zorder=zorder)
-            self._axes.setDrawExtent(contours.getExtent())
-            self._axes.setExtent(contours.getExtent())
+            contours = self.add_graphic(graphics, projection=proj, zorder=zorder)
+            self._axes.setDrawExtent(graphics.getExtent())
+            self._axes.setExtent(graphics.getExtent())
                 
-        return contours
+        return graphics
         
     def contourf(self, *args, **kwargs):  
         """
@@ -994,6 +978,10 @@ class MapAxes(Axes):
         proj = kwargs.pop('proj', migeo.projinfo())
         
         # Add graphics
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
+
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
@@ -1128,6 +1116,10 @@ class MapAxes(Axes):
         if not interpolation is None:
             igraphic.getShape().setInterpolation(interpolation)
 
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            igraphic.setAntiAlias(antialias)
+
         if visible:
             zorder = kwargs.pop('zorder', None)
             if zorder is None:
@@ -1191,6 +1183,10 @@ class MapAxes(Axes):
             #x, y = np.project(x, y, toproj=proj)
 
         graphics = GraphicFactory.createPColorPolygons(x.asarray(), y.asarray(), a.asarray(), ls)
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
+
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
@@ -1241,6 +1237,10 @@ class MapAxes(Axes):
         graphics = GraphicFactory.createGridPolygons(x.asarray(), y.asarray(), a.asarray(), ls)
             
         # Add graphics
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
+
         proj = kwargs.pop('proj', migeo.projinfo())
         visible = kwargs.pop('visible', True)
         if visible:
@@ -1362,7 +1362,7 @@ class MapAxes(Axes):
         :param cmap: (*string*) Color map string.
         :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
         :param isuv: (*boolean*) Is U/V or direction/speed data array pairs. Default is True.
-        :param size: (*float*) Base size of the arrows.
+        :param size: (*float*) Base size of the arrows. Default is 10.
         :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
         :param zorder: (*int*) Z-order of created layer for display.
         :param select: (*boolean*) Set the return layer as selected layer or not.
@@ -1507,6 +1507,10 @@ class MapAxes(Axes):
                                                         cdata._array, density, ls, isuv)
             
         # Add graphics
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
+
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
@@ -1537,6 +1541,10 @@ class MapAxes(Axes):
         graphics = GraphicFactory.createStationModel(smdata, ls, surface)
      
         # Add graphics
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
+
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
@@ -1555,16 +1563,16 @@ class MapAxes(Axes):
         
         :returns: Web map layer
         """
-        layer = WebMapLayer()
+        graphic = WebMapImage()
         if isinstance(provider, TileFactoryInfo):
             tf = DefaultTileFactory(provider)
-            layer.setTileFactory(tf)
+            graphic.setTileFactory(tf)
         else:
             provider = WebMapProvider.valueOf(provider)
-            layer.setWebMapProvider(provider)
+            graphic.setWebMapProvider(provider)
 
-        self.add_layer(layer, zorder)
-        return MILayer(layer)
+        self.add_graphic(graphic, zorder=zorder)
+        return graphic
         
     def masklayer(self, mask, graphics):
         """
@@ -1573,7 +1581,7 @@ class MapAxes(Axes):
         :param mask: (*layer or polygon graphic*) Mask object.
         :param graphics: (*list*) The graphics will be masked.
         """
-        if isinstance(mask, MILayer):
+        if isinstance(mask, (MILayer, GeoGraphicCollection)):
             mask = mask.get_graphics()
 
         for graphic in graphics:

@@ -13,6 +13,17 @@ class GeoGraphicCollection(object):
         """
         self._geographic = geographic
 
+    def get_graphics(self):
+        """
+        Get graphics.
+        :return: Graphics.
+        """
+        return self._geographic
+
+    @property
+    def shapes(self):
+        return self._geographic.getShapes()
+
     def addlabels(self, fieldname, **kwargs):
         """
         Add labels

@@ -1488,6 +1488,10 @@ class Axes(object):
 
         # Create graphics
         graphics = GraphicFactory.createStepLineString(xdata, ydata, fmt, where)
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
+
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
         return graphics
@@ -1602,6 +1606,10 @@ class Axes(object):
                     pbs.append(npb)
             # Create graphics
             graphics = GraphicFactory.createPoints(xdata, ydata, pbs)
+
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
@@ -2273,6 +2281,10 @@ class Axes(object):
         graphics = GraphicFactory.createStems(xdata, ydata, linefmt, markerfmt, \
                                               basefmt, bottom)
 
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
+
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
         self._axes.setAutoExtent()
@@ -2341,19 +2353,22 @@ class Axes(object):
         if x.ndim == 2 and y.ndim == 2:
             griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
             a, x, y = np.griddata((x, y), a, **griddata_props)
-        igraphic = GraphicFactory.createContourLines(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
+        graphics = GraphicFactory.createContourLines(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
 
         if not xaxistype is None:
             self.set_xaxis_type(xaxistype)
             self._axes.updateDrawExtent()
 
-        zorder = kwargs.pop('zorder', None)
-        self.add_graphic(igraphic, zorder=zorder)
-        # self._axes.setAutoExtent()
-        self._axes.setExtent(igraphic.getExtent())
-        self._axes.setDrawExtent(igraphic.getExtent())
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
 
-        return igraphic
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphics, zorder=zorder)
+        self._axes.setExtent(graphics.getExtent())
+        self._axes.setDrawExtent(graphics.getExtent())
+
+        return graphics
 
     def clabel(self, layer, **kwargs):
         """
@@ -2496,7 +2511,11 @@ class Axes(object):
             griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
             a, x, y = np.griddata((x, y), a, **griddata_props)
 
-        igraphic = GraphicFactory.createContourPolygons(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
+        graphics = GraphicFactory.createContourPolygons(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
+
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
 
         visible = kwargs.pop('visible', True)
         if visible:
@@ -2505,12 +2524,11 @@ class Axes(object):
                 self._axes.updateDrawExtent()
 
             zorder = kwargs.pop('zorder', None)
-            self.add_graphic(igraphic, zorder=zorder)
-            # self.setAutoExtent()
-            self._axes.setExtent(igraphic.getExtent())
-            self._axes.setDrawExtent(igraphic.getExtent())
+            self.add_graphic(graphics, zorder=zorder)
+            self._axes.setExtent(graphics.getExtent())
+            self._axes.setDrawExtent(graphics.getExtent())
 
-        return igraphic
+        return graphics
 
     def imshow(self, *args, **kwargs):
         """
@@ -2603,6 +2621,10 @@ class Axes(object):
             self.set_xaxis_type(xaxistype)
             self._axes.updateDrawExtent()
 
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            igraphic.setAntiAlias(antialias)
+
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(igraphic, zorder=zorder)
         gridline = self._axes.getGridLine()
@@ -2655,6 +2677,10 @@ class Axes(object):
         plotutil.setlegendscheme(ls, **kwargs)
 
         graphics = GraphicFactory.createPColorPolygons(x.asarray(), y.asarray(), a.asarray(), ls)
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
+
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
@@ -2699,6 +2725,10 @@ class Axes(object):
         ls = ls.convertTo(ShapeTypes.POLYGON)
         plotutil.setlegendscheme(ls, **kwargs)
         graphics = GraphicFactory.createGridPolygons(x.asarray(), y.asarray(), a.asarray(), ls)
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
+
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
@@ -3077,6 +3107,10 @@ class Axes(object):
         graphics = GraphicFactory.createPieArcs(x, colors, labels, startangle, explode, font, fontcolor, \
                                                 labeldistance, autopct, pctdistance, radius, wedgeprops)
 
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
+
         for graphic in graphics:
             self.add_graphic(graphic)
 
@@ -3093,7 +3127,7 @@ class Axes(object):
     def boxplot(self, x, sym=None, vert=True, positions=None, widths=None, color=None, showcaps=True, showfliers=True,
                 showmeans=False, \
                 showmedians=True, meanline=False, medianline=True, boxprops=None, medianprops=None, meanprops=None,
-                whiskerprops=None, capprops=None, flierprops=None):
+                whiskerprops=None, capprops=None, flierprops=None, **kwargs):
         """
         Make a box and whisker plot.
         
@@ -3220,6 +3254,10 @@ class Axes(object):
             graphics = GraphicFactory.createHBox(x, positions, widths, showcaps, showfliers, showmeans, \
                                                  showmedians, boxprops, medianprops, whiskerprops, capprops, meanprops,
                                                  flierprops)
+
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
 
         self.add_graphic(graphics)
         self._axes.setAutoExtent()
@@ -3437,7 +3475,7 @@ class Axes(object):
         :param cmap: (*string*) Color map string.
         :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
         :param isuv: (*boolean*) Is U/V or direction/speed data array pairs. Default is True.
-        :param size: (*float*) Base size of the arrows.
+        :param size: (*float*) Base size of the arrows. Default is 10.
         :param order: (*int*) Z-order of created layer for display.
         
         :returns: Barbs graphics.
@@ -3506,17 +3544,21 @@ class Axes(object):
 
         if not cdata is None:
             cdata = plotutil.getplotdata(cdata)
-        igraphic = GraphicFactory.createBarbs(x, y, u, v, cdata, ls, isuv)
+        graphics = GraphicFactory.createBarbs(x, y, u, v, cdata, ls, isuv)
+
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
 
         if not xaxistype is None:
             self.set_xaxis_type(xaxistype)
             self._axes.updateDrawExtent()
 
         zorder = kwargs.pop('zorder', None)
-        self.add_graphic(igraphic, zorder=zorder)
+        self.add_graphic(graphics, zorder=zorder)
         self._axes.setAutoExtent()
 
-        return igraphic
+        return graphics
 
     def quiver(self, *args, **kwargs):
         """
@@ -3613,6 +3655,10 @@ class Axes(object):
         if not xaxistype is None:
             self.set_xaxis_type(xaxistype)
             self._axes.updateDrawExtent()
+
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            igraphic.setAntiAlias(antialias)
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(igraphic, zorder=zorder)
@@ -3764,6 +3810,10 @@ class Axes(object):
 
             igraphic = GraphicFactory.createStreamlines(x._array, y._array, u._array, v._array,
                                                         cdata._array, density, ls, isuv)
+
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            igraphic.setAntiAlias(antialias)
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(igraphic, zorder=zorder)
@@ -3967,6 +4017,10 @@ class Axes(object):
         if newlegend:
             self._axes.addLegend(clegend)
 
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            clegend.setAntiAlias(antialias)
+
         return clegend
 
     def colorbar(self, mappable=None, **kwargs):
@@ -4038,7 +4092,7 @@ class Axes(object):
             ls = self.get_legend()
         else:
             if isinstance(mappable, MILayer):
-                ls = mappable.legend()
+                ls = mappable.legend
             elif isinstance(mappable, LegendScheme):
                 ls = mappable
             elif isinstance(mappable, ImageGraphic):
@@ -4149,6 +4203,10 @@ class Axes(object):
         minortick = kwargs.pop('minortick', None)
         if not minortick is None:
             legend.setDrawMinorTick(minortick)
+
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            legend.setAntiAlias(antialias)
 
         return legend
 

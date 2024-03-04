@@ -17,6 +17,7 @@ import org.meteoinfo.chart.ChartLegend;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.axis.LogAxis;
 import org.meteoinfo.chart.axis.TimeAxis;
+import org.meteoinfo.chart.graphic.WebMapImage;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
@@ -281,7 +282,7 @@ public class Plot2D extends AbstractPlot2D {
                 case BAR:
                     this.drawBars(g, (GraphicCollection) graphic, barIdx, area);
                     barIdx += 1;
-                    break;
+                    continue;
             }
 
             if (graphic.getExtent().intersects(this.drawExtent)) {
@@ -1312,6 +1313,9 @@ public class Plot2D extends AbstractPlot2D {
     private int getBarIndex() {
         int idx = -1;
         for (int i = 0; i < this.graphics.size(); i++) {
+            if (this.graphics.get(i) instanceof WebMapImage) {
+                continue;
+            }
             if (this.graphics.get(i).getGraphicN(0).getShape().getShapeType() == ShapeTypes.BAR) {
                 idx = i;
                 break;
@@ -1323,6 +1327,9 @@ public class Plot2D extends AbstractPlot2D {
     private int getImageIndex() {
         int idx = -1;
         for (int i = 0; i < this.graphics.size(); i++) {
+            if (this.graphics.get(i) instanceof WebMapImage) {
+                continue;
+            }
             if (this.graphics.get(i).getGraphicN(0).getShape().getShapeType() == ShapeTypes.IMAGE) {
                 idx = i;
                 break;
@@ -1354,12 +1361,22 @@ public class Plot2D extends AbstractPlot2D {
         this.graphics.updateExtent();
         Extent extent = (Extent)this.graphics.getExtent().clone();
         if (extent.minX == extent.maxX) {
-            extent.minX = extent.minX - Math.abs(extent.minX);
-            extent.maxX = extent.maxX + Math.abs(extent.minX);
+            if (extent.minX == 0) {
+                extent.minX = -1;
+                extent.maxX = 1;
+            } else {
+                extent.minX = extent.minX - Math.abs(extent.minX);
+                extent.maxX = extent.maxX + Math.abs(extent.minX);
+            }
         }
         if (extent.minY == extent.maxY) {
-            extent.minY = extent.minY - Math.abs(extent.minY);
-            extent.maxY = extent.maxY + Math.abs(extent.maxY);
+            if (extent.minY == 0) {
+                extent.minY = -1;
+                extent.maxY = 1;
+            } else {
+                extent.minY = extent.minY - Math.abs(extent.minY);
+                extent.maxY = extent.maxY + Math.abs(extent.maxY);
+            }
         }        
         
         int imageIdx = this.getImageIndex();

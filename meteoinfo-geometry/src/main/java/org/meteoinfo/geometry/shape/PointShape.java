@@ -37,7 +37,7 @@ public class PointShape extends Shape implements Cloneable{
      * Constructor
      */
     public PointShape(){
-        
+        this(new PointD());
     }
 
     /**
@@ -91,7 +91,8 @@ public class PointShape extends Shape implements Cloneable{
      * @param point Point
      */
     public void setPoint(PointD point) {
-        ((List<PointD>) this.points).set(0, point);
+        this.points = new ArrayList<>();
+        ((List<PointD>) this.points).add(point);
         updateExtent();
     }
 

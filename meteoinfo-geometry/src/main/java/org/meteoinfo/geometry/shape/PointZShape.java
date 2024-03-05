@@ -43,12 +43,10 @@ public class PointZShape extends PointShape {
 
     /**
      * Constructor
-     * @param pointZ The PointZ object
+     * @param point The PointD or PointZ object
      */
-    public PointZShape(PointZ pointZ) {
-        this.points = new ArrayList<PointZ>();
-        ((List<PointZ>) this.points).add(pointZ);
-        this.updateExtent();
+    public PointZShape(PointD point) {
+        setPoint(point);
     }
     
     /**
@@ -76,12 +74,20 @@ public class PointZShape extends PointShape {
      */
     @Override
     public void setPoint(PointD point) {
-        PointZ p = (PointZ) this.getPoint();
+        PointZ p;
+        if (this.points == null) {
+            p = new PointZ();
+            this.points = new ArrayList<>();
+            ((List<PointZ>)this.points).add(p);
+        } else {
+            p = (PointZ) this.getPoint();
+        }
         p.X = point.X;
         p.Y = point.Y;
         if (point instanceof PointZ){
             p.Z = ((PointZ) point).Z;
         }
+
         this.updateExtent();
     }
     

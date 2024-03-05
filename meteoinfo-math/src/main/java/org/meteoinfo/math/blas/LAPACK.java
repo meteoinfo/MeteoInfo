@@ -33,35 +33,6 @@ import java.util.logging.Logger;
  * @author Haifeng Li
  */
 public interface LAPACK {
-    /** The default LAPACK engine. */
-    LAPACK engine = getInstance();
-
-    /**
-     * Creates an instance.
-     * @return a LAPACK instance.
-     */
-    static LAPACK getInstance() {
-        LAPACK mkl = MKL();
-        return mkl != null ? mkl : new org.meteoinfo.math.blas.openblas.OpenBLAS();
-    }
-
-    /**
-     * Creates an MKL instance.
-     * @return a LAPACK instance of MKL.
-     */
-    static LAPACK MKL() {
-        Logger logger = Logger.getLogger("LAPACK.class");
-
-        try {
-            Class<?> clazz = Class.forName("org.meteoinfo.math.blas.mkl.MKL");
-            logger.info("mkl module is available.");
-            return (LAPACK) clazz.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            logger.info(String.format("Failed to create MKL instance: %s", e));
-        }
-
-        return null;
-    }
 
     /**
      * Solves a real system of linear equations.

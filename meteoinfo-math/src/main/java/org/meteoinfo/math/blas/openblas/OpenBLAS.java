@@ -30,7 +30,7 @@ import static org.bytedeco.openblas.global.openblas.*;
  *
  * @author Haifeng Li
  */
-public class OpenBLAS implements BLAS, LAPACK {
+public class OpenBLAS extends LinearAlgebra {
     @Override
     public double asum(int n, double[] x, int incx) {
         return cblas_dasum(n, x, incx);

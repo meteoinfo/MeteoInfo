@@ -9,6 +9,7 @@ import org.apache.commons.math4.legacy.fitting.leastsquares.*;
 import org.apache.commons.math4.legacy.linear.*;
 import org.apache.commons.math4.legacy.core.Pair;
 import org.meteoinfo.math.blas.LAPACK;
+import org.meteoinfo.math.blas.LinearAlgebra;
 import org.meteoinfo.math.blas.SVDJob;
 import org.meteoinfo.math.matrix.Matrix;
 import org.meteoinfo.math.matrix.MatrixUtil;
@@ -175,7 +176,7 @@ public class LinalgUtil {
             U = new Matrix(m, m);
             VT = new Matrix(n, n);
 
-            int info = LAPACK.engine.gesdd(W.layout(), SVDJob.ALL, m, n, W.getA(), W.ld(), DoubleBuffer.wrap(s), U.getA(), U.ld(), VT.getA(), VT.ld());
+            int info = LinearAlgebra.engine.gesdd(W.layout(), SVDJob.ALL, m, n, W.getA(), W.ld(), DoubleBuffer.wrap(s), U.getA(), U.ld(), VT.getA(), VT.ld());
             if (info != 0) {
                 logger.severe(String.format("LAPACK GESDD error code: {%s}", info));
                 throw new ArithmeticException("LAPACK GESDD error code: " + info);
@@ -184,7 +185,7 @@ public class LinalgUtil {
             U = new Matrix(m, k);
             VT = new Matrix(k, n);
 
-            int info = LAPACK.engine.gesdd(W.layout(), SVDJob.COMPACT, m, n, W.getA(), W.ld(), DoubleBuffer.wrap(s), U.getA(), U.ld(), VT.getA(), VT.ld());
+            int info = LinearAlgebra.engine.gesdd(W.layout(), SVDJob.COMPACT, m, n, W.getA(), W.ld(), DoubleBuffer.wrap(s), U.getA(), U.ld(), VT.getA(), VT.ld());
             if (info != 0) {
                 logger.severe(String.format("LAPACK GESDD error code: {%s}", info));
                 throw new ArithmeticException("LAPACK GESDD error code: " + info);

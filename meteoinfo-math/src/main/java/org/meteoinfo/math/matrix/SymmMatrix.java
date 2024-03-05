@@ -199,14 +199,14 @@ public class SymmMatrix extends DMatrix {
 
     @Override
     public void mv(Transpose trans, double alpha, double[] x, double beta, double[] y) {
-        BLAS.engine.spmv(layout(), uplo, n, alpha, AP, x, 1, beta, y, 1);
+        LinearAlgebra.engine.spmv(layout(), uplo, n, alpha, AP, x, 1, beta, y, 1);
     }
 
     @Override
     public void mv(double[] work, int inputOffset, int outputOffset) {
         DoubleBuffer xb = DoubleBuffer.wrap(work, inputOffset, n);
         DoubleBuffer yb = DoubleBuffer.wrap(work, outputOffset, n);
-        BLAS.engine.spmv(layout(), uplo, n, 1.0f, DoubleBuffer.wrap(AP), xb, 1, 0.0f, yb, 1);
+        LinearAlgebra.engine.spmv(layout(), uplo, n, 1.0f, DoubleBuffer.wrap(AP), xb, 1, 0.0f, yb, 1);
     }
 
     @Override
@@ -221,7 +221,7 @@ public class SymmMatrix extends DMatrix {
     public BunchKaufman bk() {
         SymmMatrix lu = clone();
         int[] ipiv = new int[n];
-        int info = LAPACK.engine.sptrf(lu.layout(), lu.uplo, lu.n, lu.AP, ipiv);
+        int info = LinearAlgebra.engine.sptrf(lu.layout(), lu.uplo, lu.n, lu.AP, ipiv);
         if (info < 0) {
             logger.severe(String.format("LAPACK SPTRF error code: {%d}", info));
             throw new ArithmeticException("LAPACK SPTRF error code: " + info);
@@ -242,7 +242,7 @@ public class SymmMatrix extends DMatrix {
         }
 
         SymmMatrix lu = clone();
-        int info = LAPACK.engine.pptrf(lu.layout(), lu.uplo, lu.n, lu.AP);
+        int info = LinearAlgebra.engine.pptrf(lu.layout(), lu.uplo, lu.n, lu.AP);
         if (info != 0) {
             logger.severe(String.format("LAPACK PPTRF error code: {%d}", info));
             throw new ArithmeticException("LAPACK PPTRF error code: " + info);
@@ -366,7 +366,7 @@ public class SymmMatrix extends DMatrix {
                 throw new RuntimeException("The matrix is singular.");
             }
 
-            int ret = LAPACK.engine.sptrs(lu.layout(), lu.uplo, lu.n, B.n, DoubleBuffer.wrap(lu.AP), IntBuffer.wrap(ipiv), B.A, B.ld);
+            int ret = LinearAlgebra.engine.sptrs(lu.layout(), lu.uplo, lu.n, B.n, DoubleBuffer.wrap(lu.AP), IntBuffer.wrap(ipiv), B.A, B.ld);
             if (ret != 0) {
                 logger.severe(String.format("LAPACK GETRS error code: {%d}", ret));
                 throw new ArithmeticException("LAPACK GETRS error code: " + ret);
@@ -474,7 +474,7 @@ public class SymmMatrix extends DMatrix {
                 throw new IllegalArgumentException(String.format("Row dimensions do not agree: A is %d x %d, but B is %d x %d", lu.n, lu.n, B.m, B.n));
             }
 
-            int info = LAPACK.engine.pptrs(lu.layout(), lu.uplo, lu.n, B.n, DoubleBuffer.wrap(lu.AP), B.A, B.ld);
+            int info = LinearAlgebra.engine.pptrs(lu.layout(), lu.uplo, lu.n, B.n, DoubleBuffer.wrap(lu.AP), B.A, B.ld);
             if (info != 0) {
                 logger.severe(String.format("LAPACK POTRS error code: {%d}", info));
                 throw new ArithmeticException("LAPACK POTRS error code: " + info);

@@ -33,35 +33,6 @@ import java.util.logging.Logger;
  * @author Haifeng Li
  */
 public interface BLAS {
-    /** The default BLAS engine. */
-    BLAS engine = getInstance();
-
-    /**
-     * Creates an instance.
-     * @return a BLAS instance.
-     */
-    static BLAS getInstance() {
-        BLAS mkl = MKL();
-        return mkl != null ? mkl : new org.meteoinfo.math.blas.openblas.OpenBLAS();
-    }
-
-    /**
-     * Creates an MKL instance.
-     * @return a BLAS instance of MKL.
-     */
-    static BLAS MKL() {
-        Logger logger = Logger.getLogger("BLAS.class");
-
-        try {
-            Class<?> clazz = Class.forName("org.meteoinfo.math.blas.mkl.MKL");
-            logger.info("mkl module is available.");
-            return (BLAS) clazz.getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            logger.info(String.format("Failed to create MKL instance: %s", e));
-        }
-
-        return null;
-    }
 
     /**
      * Sums the absolute values of the elements of a vector.

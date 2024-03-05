@@ -1227,9 +1227,9 @@ public class Matrix extends DMatrix {
         }
 
         if (isSymmetric() && x == y) {
-            BLAS.engine.syr(layout(), uplo, m, alpha, DoubleBuffer.wrap(x), 1, A, ld);
+            LinearAlgebra.engine.syr(layout(), uplo, m, alpha, DoubleBuffer.wrap(x), 1, A, ld);
         } else {
-            BLAS.engine.ger(layout(), m, n, alpha, DoubleBuffer.wrap(x), 1, DoubleBuffer.wrap(y), 1, A, ld);
+            LinearAlgebra.engine.ger(layout(), m, n, alpha, DoubleBuffer.wrap(x), 1, DoubleBuffer.wrap(y), 1, A, ld);
         }
 
         return this;
@@ -1531,12 +1531,12 @@ public class Matrix extends DMatrix {
         Matrix inv = eye(n);
         int[] ipiv = new int[n];
         if (isSymmetric()) {
-            int info = LAPACK.engine.sysv(lu.layout(), uplo,  n, n, lu.A, lu.ld, IntBuffer.wrap(ipiv), inv.A, inv.ld);
+            int info = LinearAlgebra.engine.sysv(lu.layout(), uplo,  n, n, lu.A, lu.ld, IntBuffer.wrap(ipiv), inv.A, inv.ld);
             if (info != 0) {
                 throw new ArithmeticException("SYSV fails: " + info);
             }
         } else {
-            int info = LAPACK.engine.gesv(lu.layout(), n, n, lu.A, lu.ld, IntBuffer.wrap(ipiv), inv.A, inv.ld);
+            int info = LinearAlgebra.engine.gesv(lu.layout(), n, n, lu.A, lu.ld, IntBuffer.wrap(ipiv), inv.A, inv.ld);
             if (info != 0) {
                 throw new ArithmeticException("GESV fails: " + info);
             }
@@ -1561,15 +1561,15 @@ public class Matrix extends DMatrix {
         if (uplo != null) {
             if (diag != null) {
                 if (alpha == 1.0 && beta == 0.0 && x == y) {
-                    BLAS.engine.trmv(layout(), uplo, trans, diag, m, A, ld, y, 1);
+                    LinearAlgebra.engine.trmv(layout(), uplo, trans, diag, m, A, ld, y, 1);
                 } else {
-                    BLAS.engine.gemv(layout(), trans, m, n, alpha, A, ld, x, 1, beta, y, 1);
+                    LinearAlgebra.engine.gemv(layout(), trans, m, n, alpha, A, ld, x, 1, beta, y, 1);
                 }
             } else {
-                BLAS.engine.symv(layout(), uplo, m, alpha, A, ld, x, 1, beta, y, 1);
+                LinearAlgebra.engine.symv(layout(), uplo, m, alpha, A, ld, x, 1, beta, y, 1);
             }
         } else {
-            BLAS.engine.gemv(layout(), trans, m, n, alpha, A, ld, x, 1, beta, y, 1);
+            LinearAlgebra.engine.gemv(layout(), trans, m, n, alpha, A, ld, x, 1, beta, y, 1);
         }
     }
 
@@ -1613,15 +1613,15 @@ public class Matrix extends DMatrix {
      */
     public void mm(Transpose transA, Transpose transB, double alpha, Matrix B, double beta, Matrix C) {
         if (isSymmetric() && transB == NO_TRANSPOSE && B.layout() == C.layout()) {
-            BLAS.engine.symm(C.layout(), LEFT, uplo, C.m, C.n, alpha, A, ld, B.A, B.ld, beta, C.A, C.ld);
+            LinearAlgebra.engine.symm(C.layout(), LEFT, uplo, C.m, C.n, alpha, A, ld, B.A, B.ld, beta, C.A, C.ld);
         } else if (B.isSymmetric() && transA == NO_TRANSPOSE && layout() == C.layout()) {
-            BLAS.engine.symm(C.layout(), RIGHT, B.uplo, C.m, C.n, alpha, B.A, B.ld, A, ld, beta, C.A, C.ld);
+            LinearAlgebra.engine.symm(C.layout(), RIGHT, B.uplo, C.m, C.n, alpha, B.A, B.ld, A, ld, beta, C.A, C.ld);
         } else {
             if (C.layout() != layout()) transA = flip(transA);
             if (C.layout() != B.layout()) transB = flip(transB);
             int k = transA == NO_TRANSPOSE ? n : m;
 
-            BLAS.engine.gemm(layout(), transA, transB, C.m, C.n, k, alpha,  A, ld,  B.A, B.ld, beta, C.A, C.ld);
+            LinearAlgebra.engine.gemm(layout(), transA, transB, C.m, C.n, k, alpha,  A, ld,  B.A, B.ld, beta, C.A, C.ld);
         }
     }
 
@@ -1759,7 +1759,7 @@ public class Matrix extends DMatrix {
     public LU lu(boolean overwrite) {
         Matrix lu = overwrite ? this : clone();
         int[] ipiv = new int[Math.min(m, n)];
-        int info = LAPACK.engine.getrf(lu.layout(), lu.m, lu.n, lu.A, lu.ld, IntBuffer.wrap(ipiv));
+        int info = LinearAlgebra.engine.getrf(lu.layout(), lu.m, lu.n, lu.A, lu.ld, IntBuffer.wrap(ipiv));
         if (info < 0) {
             logger.severe(String.format("LAPACK GETRF error code: {%d}", info));
             throw new ArithmeticException("LAPACK GETRF error code: " + info);
@@ -1791,7 +1791,7 @@ public class Matrix extends DMatrix {
         }
 
         Matrix lu = overwrite ? this : clone();
-        int info = LAPACK.engine.potrf(lu.layout(), lu.uplo, lu.n, lu.A, lu.ld);
+        int info = LinearAlgebra.engine.potrf(lu.layout(), lu.uplo, lu.n, lu.A, lu.ld);
         if (info != 0) {
             logger.severe(String.format("LAPACK GETRF error code: {%d}", info));
             throw new ArithmeticException("LAPACK GETRF error code: " + info);
@@ -1817,7 +1817,7 @@ public class Matrix extends DMatrix {
     public QR qr(boolean overwrite) {
         Matrix qr = overwrite ? this : clone();
         double[] tau = new double[Math.min(m, n)];
-        int info = LAPACK.engine.geqrf(qr.layout(), qr.m, qr.n, qr.A, qr.ld, DoubleBuffer.wrap(tau));
+        int info = LinearAlgebra.engine.geqrf(qr.layout(), qr.m, qr.n, qr.A, qr.ld, DoubleBuffer.wrap(tau));
         if (info != 0) {
             logger.severe(String.format("LAPACK GEQRF error code: {%d}", info));
             throw new ArithmeticException("LAPACK GEQRF error code: " + info);
@@ -1872,7 +1872,7 @@ public class Matrix extends DMatrix {
             Matrix U = new Matrix(m, k);
             Matrix VT = new Matrix(k, n);
 
-            int info = LAPACK.engine.gesdd(W.layout(), SVDJob.COMPACT, W.m, W.n, W.A, W.ld, DoubleBuffer.wrap(s), U.A, U.ld, VT.A, VT.ld);
+            int info = LinearAlgebra.engine.gesdd(W.layout(), SVDJob.COMPACT, W.m, W.n, W.A, W.ld, DoubleBuffer.wrap(s), U.A, U.ld, VT.A, VT.ld);
             if (info != 0) {
                 logger.severe(String.format("LAPACK GESDD error code: {%s}", info));
                 throw new ArithmeticException("LAPACK GESDD error code: " + info);
@@ -1883,7 +1883,7 @@ public class Matrix extends DMatrix {
             Matrix U = new Matrix(1, 1);
             Matrix VT = new Matrix(1, 1);
 
-            int info = LAPACK.engine.gesdd(W.layout(), SVDJob.NO_VECTORS, W.m, W.n, W.A, W.ld, DoubleBuffer.wrap(s), U.A, U.ld, VT.A, VT.ld);
+            int info = LinearAlgebra.engine.gesdd(W.layout(), SVDJob.NO_VECTORS, W.m, W.n, W.A, W.ld, DoubleBuffer.wrap(s), U.A, U.ld, VT.A, VT.ld);
             if (info != 0) {
                 logger.severe(String.format("LAPACK GESDD error code: {}", info));
                 throw new ArithmeticException("LAPACK GESDD error code: " + info);
@@ -1929,7 +1929,7 @@ public class Matrix extends DMatrix {
         Matrix eig = overwrite ? this : clone();
         if (isSymmetric()) {
             double[] w = new double[n];
-            int info = LAPACK.engine.syevd(eig.layout(), vr ? EVDJob.VECTORS : EVDJob.NO_VECTORS, eig.uplo, n, eig.A, eig.ld, DoubleBuffer.wrap(w));
+            int info = LinearAlgebra.engine.syevd(eig.layout(), vr ? EVDJob.VECTORS : EVDJob.NO_VECTORS, eig.uplo, n, eig.A, eig.ld, DoubleBuffer.wrap(w));
             if (info != 0) {
                 logger.severe(String.format("LAPACK SYEV error code: {%d}", info));
                 throw new ArithmeticException("LAPACK SYEV error code: " + info);
@@ -1940,7 +1940,7 @@ public class Matrix extends DMatrix {
             double[] wi = new double[n];
             Matrix Vl = vl ? new Matrix(n, n) : new Matrix(1, 1);
             Matrix Vr = vr ? new Matrix(n, n) : new Matrix(1, 1);
-            int info = LAPACK.engine.geev(eig.layout(), vl ? EVDJob.VECTORS : EVDJob.NO_VECTORS, vr ? EVDJob.VECTORS : EVDJob.NO_VECTORS, n, eig.A, eig.ld, DoubleBuffer.wrap(wr), DoubleBuffer.wrap(wi), Vl.A, Vl.ld, Vr.A, Vr.ld);
+            int info = LinearAlgebra.engine.geev(eig.layout(), vl ? EVDJob.VECTORS : EVDJob.NO_VECTORS, vr ? EVDJob.VECTORS : EVDJob.NO_VECTORS, n, eig.A, eig.ld, DoubleBuffer.wrap(wr), DoubleBuffer.wrap(wi), Vl.A, Vl.ld, Vr.A, Vr.ld);
             if (info != 0) {
                 logger.severe(String.format("LAPACK GEEV error code: {%d}", info));
                 throw new ArithmeticException("LAPACK GEEV error code: " + info);
@@ -2536,7 +2536,7 @@ public class Matrix extends DMatrix {
                 throw new RuntimeException("The matrix is singular.");
             }
 
-            int ret = LAPACK.engine.getrs(lu.layout(), NO_TRANSPOSE, lu.n, B.n, lu.A, lu.ld, IntBuffer.wrap(ipiv), B.A, B.ld);
+            int ret = LinearAlgebra.engine.getrs(lu.layout(), NO_TRANSPOSE, lu.n, B.n, lu.A, lu.ld, IntBuffer.wrap(ipiv), B.A, B.ld);
             if (ret != 0) {
                 logger.severe(String.format("LAPACK GETRS error code: {%d}", ret));
                 throw new ArithmeticException("LAPACK GETRS error code: " + ret);
@@ -2645,7 +2645,7 @@ public class Matrix extends DMatrix {
                 throw new IllegalArgumentException(String.format("Row dimensions do not agree: A is %d x %d, but B is %d x %d", lu.m, lu.n, B.m, B.n));
             }
 
-            int info = LAPACK.engine.potrs(lu.layout(), lu.uplo, lu.n, B.n, lu.A, lu.ld, B.A, B.ld);
+            int info = LinearAlgebra.engine.potrs(lu.layout(), lu.uplo, lu.n, B.n, lu.A, lu.ld, B.A, B.ld);
             if (info != 0) {
                 logger.severe(String.format("LAPACK POTRS error code: {%d}", info));
                 throw new ArithmeticException("LAPACK POTRS error code: " + info);
@@ -2727,7 +2727,7 @@ public class Matrix extends DMatrix {
             int n = qr.n;
             int k = Math.min(m, n);
             Matrix Q = qr.clone();
-            int info = LAPACK.engine.orgqr(qr.layout(), m, n, k, Q.A, qr.ld, DoubleBuffer.wrap(tau));
+            int info = LinearAlgebra.engine.orgqr(qr.layout(), m, n, k, Q.A, qr.ld, DoubleBuffer.wrap(tau));
             if (info != 0) {
                 logger.severe(String.format("LAPACK ORGRQ error code: {%d}", info));
                 throw new ArithmeticException("LAPACK ORGRQ error code: " + info);
@@ -2768,13 +2768,13 @@ public class Matrix extends DMatrix {
             int n = qr.n;
             int k = Math.min(m, n);
 
-            int info = LAPACK.engine.ormqr(qr.layout(), LEFT, TRANSPOSE, B.nrows(), B.ncols(), k, qr.A, qr.ld, DoubleBuffer.wrap(tau), B.A, B.ld);
+            int info = LinearAlgebra.engine.ormqr(qr.layout(), LEFT, TRANSPOSE, B.nrows(), B.ncols(), k, qr.A, qr.ld, DoubleBuffer.wrap(tau), B.A, B.ld);
             if (info != 0) {
                 logger.severe(String.format("LAPACK ORMQR error code: {%d}", info));
                 throw new IllegalArgumentException("LAPACK ORMQR error code: " + info);
             }
 
-            info = LAPACK.engine.trtrs(qr.layout(), UPPER, NO_TRANSPOSE, NON_UNIT, qr.n, B.n, qr.A, qr.ld, B.A, B.ld);
+            info = LinearAlgebra.engine.trtrs(qr.layout(), UPPER, NO_TRANSPOSE, NON_UNIT, qr.n, B.n, qr.A, qr.ld, B.A, B.ld);
 
             if (info != 0) {
                 logger.severe(String.format("LAPACK TRTRS error code: {%d}", info));

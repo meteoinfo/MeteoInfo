@@ -19,12 +19,12 @@
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\geoshow\map_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\projection\lcc_proj_gridlabel.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\bindundun.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\xuerongrong.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\geoshow\map_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\projection\lcc_proj_gridlabel.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\bindundun.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\xuerongrong.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -32,5 +32,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1426,817"/>
 </MeteoInfo>

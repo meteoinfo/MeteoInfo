@@ -32,7 +32,7 @@ import static org.bytedeco.openblas.global.openblas.LAPACKE_dorgrq;
  *
  * @author Haifeng Li
  */
-public class MKL implements BLAS, LAPACK {
+public class MKL extends LinearAlgebra {
     @Override
     public double asum(int n, double[] x, int incx) {
         return cblas_dasum(n, x, incx);

@@ -272,8 +272,10 @@ public class GeoProjectionUtil {
                                 if (aPLS.getExtent().maxY > cutoff) {
                                     aPLS = GeoComputation.clipPolylineShape_Lat(aPLS, cutoff, false);
                                 }
-                                if (aPLS.getExtent().minY < -cutoff) {
-                                    aPLS = GeoComputation.clipPolylineShape_Lat(aPLS, -cutoff, true);
+                                if (aPLS != null) {
+                                    if (aPLS.getExtent().minY < -cutoff) {
+                                        aPLS = GeoComputation.clipPolylineShape_Lat(aPLS, -cutoff, true);
+                                    }
                                 }
                                 break;
                         }

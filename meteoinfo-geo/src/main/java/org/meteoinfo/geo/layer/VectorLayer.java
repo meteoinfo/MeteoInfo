@@ -177,7 +177,7 @@ public class VectorLayer extends MapLayer {
      * @param shapes Shape list
      */
     public void setShapes(List<? extends Shape> shapes) {
-        shapes = (List<Shape>) shapes;
+        this.shapes = (List<Shape>) shapes;
     }
 
     /**

@@ -16,6 +16,7 @@ from org.meteoinfo.geometry.geoprocess import GeoComputation, GeometryUtil
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.geo.mapdata import MapDataManage
 from org.meteoinfo.geo.util import GeoIOUtil
+from org.meteoinfo.geo.io import GeoJSONWriter
 from org.meteoinfo.table import AttributeTable
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from org.meteoinfo.projection import ProjectionInfo
@@ -23,7 +24,8 @@ from org.meteoinfo.common import PointD
 from org.meteoinfo.common.io import IOUtil
 from org.meteoinfo.common import ResampleMethods
 
-from milayer import MILayer
+from .milayer import MILayer
+from ._graphic import GeoGraphicCollection
 from mipylib.numeric.core import NDArray, DimArray
 import mipylib.migl as migl
 import mipylib.numeric as np
@@ -31,7 +33,7 @@ import mipylib.numeric as np
 from java.util import ArrayList
 
 __all__ = [
-    'arrayinpolygon', 'bilwrite', 'circle', 'convert_encoding_dbf', 'distance', 'georead', 'geotiffread', 'gridarea',
+    'arrayinpolygon', 'bilwrite', 'circle', 'convert_encoding_dbf', 'distance', 'geojson_write', 'georead', 'geotiffread', 'gridarea',
     'maplayer', 'inpolygon', 'maskin', 'maskout', 'polyarea', 'polygon', 'rmaskin', 'rmaskout', 'shaperead',
     'polygonindex', 'projinfo', 'project', 'projectxy', 'reproject', 'reproject_image'
 ]
@@ -711,3 +713,30 @@ def bilwrite(fn, data, x, y, proj=projinfo()):
     :param proj: (*ProjectionInfo*) The projection. Default is long_lat projection.
     """
     GeoIOUtil.saveAsBILFile(fn, data.asarray(), x.asarray(), y.asarray(), proj)
+
+def geojson_write(fn, graphics):
+    """
+    Save as GeoJSON file.
+
+    :param fn: (*str*) GeoJSON file name.
+    :param graphics: (*Graphics*) The graphics to be saved as GeoJSON file.
+    """
+    if isinstance(graphics, MILayer):
+        graphics = MILayer._layer
+    elif isinstance(graphics, GeoGraphicCollection):
+        graphics = graphics.get_graphics()
+
+    features = GeoJSONWriter.write(graphics)
+    with open(fn, 'w') as f:
+        f.write("{\n")
+        f.write(""""type": "FeatureCollection",\n""")
+        f.write(""""features": [\n""")
+        for i in range(features.getNumFeatures()):
+            feature = features.getFeature(i)
+            f.write(feature.toString())
+            if i < features.getNumFeatures() - 1:
+                f.write(",\n")
+            else:
+                f.write("\n")
+        f.write("]\n")
+        f.write("}")

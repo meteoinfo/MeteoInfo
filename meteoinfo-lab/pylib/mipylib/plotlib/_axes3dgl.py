@@ -487,54 +487,81 @@ class Axes3DGL(Axes3D):
         cylinder = kwargs.pop('cylinder', False)
 
         # Set plot data styles
-        fcobj = kwargs.pop('color', None)
-        if fcobj is None:
-            fcobj = kwargs.pop('facecolor', 'b')
-        if isinstance(fcobj, (tuple, list)):
-            colors = plotutil.getcolors(fcobj)
-        else:
-            color = plotutil.getcolor(fcobj)
-            colors = [color]
-        ecobj = kwargs.pop('edgecolor', 'k')
-        edgecolor = plotutil.getcolor(ecobj)
-        linewidth = kwargs.pop('linewidth', 1.0)
-        hatch = kwargs.pop('hatch', None)
-        hatch = plotutil.gethatch(hatch)
-        hatchsize = kwargs.pop('hatchsize', None)
-        bgcolor = kwargs.pop('bgcolor', None)
-        bgcolor = plotutil.getcolor(bgcolor)
-        ecolor = kwargs.pop('ecolor', 'k')
-        ecolor = plotutil.getcolor(ecolor)
-        barbreaks = []
-        for color in colors:
-            lb = BarBreak()
-            lb.setCaption(label)
-            lb.setColor(color)
-            if edgecolor is None:
-                lb.setDrawOutline(False)
+        cdata = kwargs.pop('cdata', None)
+        if cdata is None:
+            fcobj = kwargs.pop('color', None)
+            if fcobj is None:
+                fcobj = kwargs.pop('facecolor', 'b')
+            if isinstance(fcobj, (tuple, list)):
+                colors = plotutil.getcolors(fcobj)
             else:
-                lb.setOutlineColor(edgecolor)
-            lb.setOutlineSize(linewidth)
-            if not hatch is None:
-                lb.setStyle(hatch)
-                if not bgcolor is None:
-                    lb.setBackColor(bgcolor)
-                if not hatchsize is None:
-                    lb.setStyleSize(hatchsize)
-            lb.setErrorColor(ecolor)
-            barbreaks.append(lb)
+                color = plotutil.getcolor(fcobj)
+                colors = [color]
+            ecobj = kwargs.pop('edgecolor', 'k')
+            edgecolor = plotutil.getcolor(ecobj)
+            linewidth = kwargs.pop('linewidth', 1.0)
+            hatch = kwargs.pop('hatch', None)
+            hatch = plotutil.gethatch(hatch)
+            hatchsize = kwargs.pop('hatchsize', None)
+            bgcolor = kwargs.pop('bgcolor', None)
+            bgcolor = plotutil.getcolor(bgcolor)
+            ecolor = kwargs.pop('ecolor', 'k')
+            ecolor = plotutil.getcolor(ecolor)
+            barbreaks = []
+            for color in colors:
+                lb = BarBreak()
+                lb.setCaption(label)
+                lb.setColor(color)
+                if edgecolor is None:
+                    lb.setDrawOutline(False)
+                else:
+                    lb.setOutlineColor(edgecolor)
+                lb.setOutlineSize(linewidth)
+                if not hatch is None:
+                    lb.setStyle(hatch)
+                    if not bgcolor is None:
+                        lb.setBackColor(bgcolor)
+                    if not hatchsize is None:
+                        lb.setStyleSize(hatchsize)
+                lb.setErrorColor(ecolor)
+                barbreaks.append(lb)
 
-        # Create bar graphics
-        if isinstance(width, NDArray):
-            width = width.asarray()
-        if cylinder:
-            graphics = GraphicFactory.createCylinderBars3D(xdata, ydata, zdata, autowidth, width, bottom, barbreaks)
+            # Create bar graphics
+            if isinstance(width, NDArray):
+                width = width.asarray()
+
+            if cylinder:
+                graphics = GraphicFactory.createCylinderBars3D(xdata, ydata, zdata, autowidth, width, bottom, barbreaks)
+            else:
+                graphics = GraphicFactory.createBars3D(xdata, ydata, zdata, autowidth, width, bottom, barbreaks)
         else:
-            graphics = GraphicFactory.createBars3D(xdata, ydata, zdata, autowidth, width, bottom, barbreaks)
+            if isinstance(cdata, (list, tuple)):
+                cdata = np.array(cdata)
+
+            levels = kwargs.pop('levels', None)
+            if levels is None:
+                cnum = kwargs.pop('cnum', None)
+                if cnum is None:
+                    ls = plotutil.getlegendscheme([], cdata.min(), cdata.max(), **kwargs)
+                else:
+                    ls = plotutil.getlegendscheme([cnum], cdata.min(), cdata.max(), **kwargs)
+            else:
+                ls = plotutil.getlegendscheme([levels], cdata.min(), cdata.max(), **kwargs)
+
+            ls = plotutil.setlegendscheme_polygon(ls, **kwargs)
+
+            # Create bar graphics
+            if isinstance(width, NDArray):
+                width = width.asarray()
+
+            if cylinder:
+                graphics = GraphicFactory.createCylinderBars3D(xdata, ydata, zdata, cdata._array, autowidth, width, bottom, ls)
+            else:
+                graphics = GraphicFactory.createBars3D(xdata, ydata, zdata, cdata._array, autowidth, width, bottom, ls)
 
         self.add_graphic(graphics)
 
-        return barbreaks
+        return graphics
 
     def streamplot(self, *args, **kwargs):
         """

@@ -2479,6 +2479,76 @@ public class GraphicFactory {
             }
         }
 
+        LegendScheme ls = new LegendScheme();
+        for (BarBreak barBreak : bbs) {
+            ls.addLegendBreak(barBreak);
+        }
+        graphics.setLegendScheme(ls);
+        graphics.setSingleLegend(false);
+
+        return graphics;
+    }
+
+    /**
+     * Create 3D bar graphics
+     *
+     * @param xdata X data array
+     * @param ydata Y data array
+     * @param zdata Z data array
+     * @param cdata Color data array
+     * @param autoWidth Is auto width or not
+     * @param widths Width
+     * @param bottom Bottom
+     * @param ls Legend scheme
+     * @return Bar graphics
+     */
+    public static GraphicCollection3D createBars3D(Array xdata, Array ydata, Array zdata, Array cdata, boolean autoWidth,
+                                                   Array widths, Array bottom, LegendScheme ls) {
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        int n = (int) xdata.getSize();
+        double x, y, z, v;
+        BarBreak bb;
+        double width = widths.getDouble(0);
+        if (autoWidth && xdata.getSize() > 1) {
+            width = (xdata.getDouble(1) - xdata.getDouble(0)) * width;
+        }
+        double bot = 0;
+        double minz = 0;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
+        IndexIterator cIter = cdata.getIndexIterator();
+        int i = 0;
+        double hw = width * 0.5;
+        while (xIter.hasNext()){
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
+            z = zIter.getDoubleNext();
+            v = cIter.getDoubleNext();
+            if (!Double.isNaN(z)) {
+                // Add bar
+                if (widths.getSize() > 1 && widths.getSize() > i) {
+                    width = widths.getDouble(i);
+                    hw = width * 0.5;
+                }
+                List<PointZ> pList = new ArrayList<>();
+                pList.add(new PointZ(x + hw, y + hw, minz));
+                pList.add(new PointZ(x + hw, y - hw, minz));
+                pList.add(new PointZ(x + hw, y + hw, z));
+                pList.add(new PointZ(x + hw, y - hw, z));
+                pList.add(new PointZ(x - hw, y + hw, minz));
+                pList.add(new PointZ(x - hw, y - hw, minz));
+                pList.add(new PointZ(x - hw, y + hw, z));
+                pList.add(new PointZ(x - hw, y - hw, z));
+                CubicShape cs = new CubicShape();
+                cs.setPoints(pList);
+                bb = new BarBreak((PolygonBreak) ls.findLegendBreak(v));
+                graphics.add(new Graphic(cs, bb));
+
+                i++;
+            }
+        }
+        graphics.setLegendScheme(ls);
         graphics.setSingleLegend(false);
 
         return graphics;
@@ -2534,6 +2604,68 @@ public class GraphicFactory {
             i++;
         }
 
+        LegendScheme ls = new LegendScheme();
+        for (BarBreak barBreak : bbs) {
+            ls.addLegendBreak(barBreak);
+        }
+        graphics.setLegendScheme(ls);
+        graphics.setSingleLegend(false);
+
+        return graphics;
+    }
+
+    /**
+     * Create 3D cylinder bar graphics
+     *
+     * @param xdata X data array
+     * @param ydata Y data array
+     * @param zdata Z data array
+     * @param cdata Color data array
+     * @param autoWidth Is auto width or not
+     * @param widths Width
+     * @param bottom Bottom
+     * @param ls Legend scheme
+     * @return Bar graphics
+     */
+    public static GraphicCollection3D createCylinderBars3D(Array xdata, Array ydata, Array zdata, Array cdata, boolean autoWidth,
+                                                           Array widths, Array bottom, LegendScheme ls) {
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        int n = (int) xdata.getSize();
+        double x, y, z, v;
+        BarBreak bb;
+        double width = widths.getDouble(0);
+        if (autoWidth && xdata.getSize() > 1) {
+            width = (xdata.getDouble(1) - xdata.getDouble(0)) * width;
+        }
+        double bot = 0;
+        double minz = 0;
+        IndexIterator xIter = xdata.getIndexIterator();
+        IndexIterator yIter = ydata.getIndexIterator();
+        IndexIterator zIter = zdata.getIndexIterator();
+        IndexIterator cIter = cdata.getIndexIterator();
+        int i = 0;
+        double hw = width * 0.5;
+        while (xIter.hasNext()){
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
+            z = zIter.getDoubleNext();
+            v = cIter.getDoubleNext();
+            // Add bar
+            if (widths.getSize() > 1 && widths.getSize() > i) {
+                width = widths.getDouble(i);
+                hw = width * 0.5;
+            }
+            List<PointZ> pList = new ArrayList<>();
+            pList.add(new PointZ(x, y, minz));
+            pList.add(new PointZ(x, y, z));
+            CylinderShape cs = new CylinderShape(pList, hw);
+            bb = new BarBreak((PolygonBreak) ls.findLegendBreak(v));
+            graphics.add(new Graphic(cs, bb));
+
+            i++;
+        }
+
+        graphics.setLegendScheme(ls);
         graphics.setSingleLegend(false);
 
         return graphics;

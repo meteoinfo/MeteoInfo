@@ -21,11 +21,34 @@ public class BarBreak extends PolygonBreak {
     /**
      * Constructor
      */
-    public BarBreak(){
+    public BarBreak() {
         super();
         errorColor = Color.black;
         errorSize = 1.0f;
         capSize = 0;
+    }
+
+    /**
+     * Constructor
+     * @param pb Polygon break
+     */
+    public BarBreak(PolygonBreak pb) {
+        this();
+        this.setCaption(pb.getCaption());
+        this.setColor(pb.getColor());
+        this.setDrawShape(pb.isDrawShape());
+        this.setEndValue(pb.getEndValue());
+        this.setNoData(pb.isNoData());
+        this.setStartValue(pb.getStartValue());
+        this.setOutlineColor(pb.outlineColor);
+        this.setOutlineSize(pb.outlineSize);
+        this.setDrawOutline(pb.drawOutline);
+        this.setDrawFill(pb.drawFill);
+        this.setStyle(pb.style);
+        this.setStyleSize(pb.styleSize);
+        this.setStyleLineWidth(pb.styleLineWidth);
+        this.setBackColor(pb.backColor);
+        this.setMaskout(pb.isMaskout);
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

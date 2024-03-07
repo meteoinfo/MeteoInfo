@@ -58,6 +58,20 @@ public class GraphicCollection extends Graphic implements Iterator {
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
     /**
+     * Get shape
+     *
+     * @return Shape
+     */
+    @Override
+    public Shape getShape() {
+        if (this.graphics.isEmpty()) {
+            return null;
+        } else {
+            return this.graphics.get(0).getShape();
+        }
+    }
+
+    /**
      * Get graphic list
      *
      * @return Graphic list

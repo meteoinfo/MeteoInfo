@@ -3099,7 +3099,8 @@ public class GraphicFactory {
             ((ImageShape) gg.getShape()).setInterpolation(interpolation);
         }
         ImageShape shape = (ImageShape)gg.getShape();
-        Extent extent = shape.getExtent();
+        Extent extent = new Extent(x.getDouble(0), x.getDouble((int) x.getSize() - 1),
+                y.getDouble(0), y.getDouble((int) y.getSize() - 1));
         Extent3D ex3 = new Extent3D();
         List<PointZ> coords = new ArrayList<>();
         switch (zdir.toLowerCase()) {

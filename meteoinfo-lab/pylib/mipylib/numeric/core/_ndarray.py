@@ -20,16 +20,12 @@ class NDArray(object):
         if not isinstance(array, Array):
             array = ArrayUtil.array(array, None)
 
-        # if array.getRank() == 0 and array.getDataType() != DataType.STRUCTURE:
-        #     array = ArrayUtil.array([array.getIndexIterator().getObjectNext()])
-
         self._array = array
         self.ndim = array.getRank()
         s = array.getShape()
         self._shape = tuple(s)
         self.dtype = _dtype.dtype.fromjava(array.getDataType())
         self.size = int(self._array.getSize())
-        self.iterator = array.getIndexIterator()
         self.base = None
         if self.ndim > 0:
             self.sizestr = str(self.shape[0])
@@ -337,7 +333,6 @@ class NDArray(object):
             else:
                 r = ArrayMath.setSection_Mix(self._array, ranges, value)
         self._array = r
-        self.iterator = self._array.getIndexIterator()
 
     def __value_other(self, other):
         if isinstance(other, NDArray):
@@ -514,14 +509,16 @@ class NDArray(object):
         """
         provide iteration over the values of the array
         """
-        self.iterator = self._array.getIndexIterator()
+        self._idx = 0
         return self
 
     def next(self):
-        if self.iterator.hasNext():
-            return self.iterator.getObjectNext()
-        else:
+        if self._idx >= self.shape[0]:
             raise StopIteration()
+        else:
+            value = self.__getitem__(self._idx)
+            self._idx += 1
+            return value
 
     def item(self, *args):
         """

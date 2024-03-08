@@ -1,6 +1,26 @@
 from org.meteoinfo.ndarray import FlatIndex
 from org.meteoinfo.ndarray.math import ArrayUtil
 
+
+class nditer(object):
+
+    def __init__(self, array):
+        self.array = array
+
+    def __iter__(self):
+        """
+        provide iteration over the values of the array
+        """
+        self.iterator = self.array._array.getIndexIterator()
+        return self
+
+    def next(self):
+        if self.iterator.hasNext():
+            return self.iterator.getObjectNext()
+        else:
+            raise StopIteration()
+
+
 class flatiter(object):
 
     def __init__(self, array):

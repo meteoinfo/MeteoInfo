@@ -24,7 +24,7 @@ import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.common.util.GlobalUtil;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geo.analysis.GeoComputation;
 import org.meteoinfo.common.colors.ColorUtil;

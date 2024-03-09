@@ -14,7 +14,7 @@
 package org.meteoinfo.geo.layer;
 
 import org.meteoinfo.common.*;
-import org.meteoinfo.geo.graphic.GeoGraphicCollection;
+import org.meteoinfo.chart.graphic.GeoGraphicCollection;
 import org.meteoinfo.geo.mapdata.ShapeFileManage;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;

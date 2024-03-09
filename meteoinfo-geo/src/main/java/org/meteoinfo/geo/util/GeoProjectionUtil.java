@@ -17,7 +17,6 @@ import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.data.GridArray;
-import org.meteoinfo.geo.graphic.GeoGraphicCollection;
 import org.meteoinfo.geo.layer.RasterLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.geometry.shape.*;

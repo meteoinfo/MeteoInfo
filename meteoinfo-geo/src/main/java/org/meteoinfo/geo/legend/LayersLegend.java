@@ -18,7 +18,7 @@ import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.geo.mapdata.MapDataManage;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.ui.event.ActiveMapFrameChangedEvent;
 import org.meteoinfo.ui.event.IActiveMapFrameChangedListener;

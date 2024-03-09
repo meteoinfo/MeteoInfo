@@ -15,7 +15,7 @@ package org.meteoinfo.geo.layout;
 
 import com.l2fprod.common.beans.BaseBeanInfo;
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.graphic.ResizeAbility;
 
 import java.awt.BasicStroke;

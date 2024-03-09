@@ -1,4 +1,4 @@
-from org.meteoinfo.geo.graphic import GeoGraphicCollection as JGeoGraphicCollection
+from org.meteoinfo.chart.graphic import GeoGraphicCollection as JGeoGraphicCollection
 from java.awt import Font
 
 import mipylib.miutil as miutil

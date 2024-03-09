@@ -14,7 +14,7 @@
 package org.meteoinfo.geo.layout;
 
 import org.meteoinfo.common.*;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.graphic.ResizeAbility;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.ui.event.IMapViewUpdatedListener;

@@ -14,7 +14,7 @@
 package org.meteoinfo.geo.legend;
 
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.ui.event.ISelectedCellChangedListener;
 import org.meteoinfo.ui.event.SelectedCellChangedEvent;

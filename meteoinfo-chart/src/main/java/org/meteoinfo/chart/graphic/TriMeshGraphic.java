@@ -3,7 +3,7 @@ package org.meteoinfo.chart.graphic;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.geo.legend.LegendManage;
+import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.geometry.colors.TransferFunction;
 import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.geometry.legend.LegendScheme;

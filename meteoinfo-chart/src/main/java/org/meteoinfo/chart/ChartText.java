@@ -20,7 +20,7 @@ import java.util.List;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.XAlign;
 import org.meteoinfo.common.YAlign;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.meteoinfo.geometry.shape.Shape;

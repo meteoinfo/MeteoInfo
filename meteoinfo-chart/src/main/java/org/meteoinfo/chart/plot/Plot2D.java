@@ -23,7 +23,7 @@ import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.data.Dataset;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.graphic.ImageGraphic;
@@ -41,7 +41,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.meteoinfo.geo.drawing.Draw.getHatchImage;
+import static org.meteoinfo.render.java2d.Draw.getHatchImage;
 
 /**
  *

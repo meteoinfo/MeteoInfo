@@ -43,7 +43,7 @@ import org.meteoinfo.map.config.GenericFileFilter;
 import org.meteoinfo.image.AnimatedGifEncoder;
 import org.meteoinfo.geo.layer.LayerDrawType;
 import org.meteoinfo.geo.layer.MapLayer;
-import org.meteoinfo.chart.LayoutChart;
+import org.meteoinfo.geo.layout.LayoutChart;
 import org.meteoinfo.geo.layout.MapLayout;
 import org.meteoinfo.geo.legend.LegendManage;
 import org.meteoinfo.geometry.shape.ShapeTypes;

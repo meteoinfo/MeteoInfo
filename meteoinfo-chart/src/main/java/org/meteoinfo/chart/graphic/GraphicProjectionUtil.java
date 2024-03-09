@@ -3,12 +3,22 @@ package org.meteoinfo.chart.graphic;
 import org.locationtech.proj4j.CoordinateTransform;
 import org.locationtech.proj4j.CoordinateTransformFactory;
 import org.locationtech.proj4j.ProjCoordinate;
+import org.meteoinfo.chart.graphic.GeoGraphicCollection;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
 import org.meteoinfo.projection.ProjectionUtil;
 import org.meteoinfo.projection.Reproject;
+import org.meteoinfo.table.DataColumn;
+import org.meteoinfo.table.DataRow;
+import org.meteoinfo.table.DataTable;
+import org.meteoinfo.table.Field;
+
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GraphicProjectionUtil extends ProjectionUtil {
     /**
@@ -33,8 +43,44 @@ public class GraphicProjectionUtil extends ProjectionUtil {
             }
             ((MeshGraphic) graphic).setVertexPosition(vertex);
             return graphic;
+        } else if (graphic instanceof GeoGraphicCollection) {
+            GeoGraphicCollection geoGraphic = (GeoGraphicCollection) graphic;
+            try {
+                GeoGraphicCollection newGCollection = new GeoGraphicCollection();
+                DataTable dataTable = new DataTable();
+                for (DataColumn aDC : geoGraphic.getAttributeTable().getTable().getColumns()) {
+                    Field bDC = new Field(aDC.getColumnName(), aDC.getDataType());
+                    dataTable.getColumns().add(bDC);
+                }
+                int idx = 0;
+                for (Graphic aGraphic : geoGraphic.getGraphics()) {
+                    List<? extends Shape> shapes = org.meteoinfo.projection.ProjectionUtil.projectClipShape(aGraphic.getShape(), fromProj, toProj);
+                    if (shapes != null && shapes.size() > 0) {
+                        aGraphic.setShape(shapes.get(0));
+                        newGCollection.add(aGraphic);
+                        DataRow aDR = geoGraphic.getAttributeTable().getTable().getRows().get(idx);
+                        try {
+                            dataTable.addRow(aDR);
+                        } catch (Exception ex) {
+                            Logger.getLogger(org.meteoinfo.chart.graphic.GraphicProjectionUtil.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    idx += 1;
+                }
+                newGCollection.setLegendScheme(geoGraphic.getLegendScheme());
+                newGCollection.setSingleLegend(geoGraphic.isSingleLegend());
+                newGCollection.setAntiAlias(geoGraphic.isAntiAlias());
+                newGCollection.getAttributeTable().setTable(dataTable);
+                newGCollection.setProjInfo(toProj);
+
+                return newGCollection;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return null;
+            }
         } else {
             return ProjectionUtil.projectClipGraphic(graphic, fromProj, toProj);
         }
     }
+
 }

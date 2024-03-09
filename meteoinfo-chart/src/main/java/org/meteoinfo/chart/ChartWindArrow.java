@@ -14,9 +14,8 @@ import java.awt.geom.Rectangle2D;
 
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.legend.ArrowBreak;
-import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.shape.WindArrow;
 
@@ -384,9 +383,7 @@ public class ChartWindArrow {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         float zoom = 1.0f;
         if (this.layer != null) {
-            if (this.layer instanceof VectorLayer) {
-                zoom = ((VectorLayer) this.layer).getDrawingZoom();
-            } else if (this.layer instanceof GraphicCollection) {
+            if (this.layer instanceof GraphicCollection) {
                 zoom = ((GraphicCollection) this.layer).getArrowZoom();
             }
         }

@@ -14,7 +14,7 @@
 package org.meteoinfo.chart;
 
 import org.meteoinfo.common.*;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import com.l2fprod.common.beans.BaseBeanInfo;
 import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor;

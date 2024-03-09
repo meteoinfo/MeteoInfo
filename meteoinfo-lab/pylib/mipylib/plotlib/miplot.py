@@ -12,9 +12,7 @@ from org.meteoinfo.chart.form import ChartForm
 from org.meteoinfo.chart.jogl import JOGLUtil
 from org.meteoinfo.chart.plot import Plot2D, Plot3D
 from org.meteoinfo.chart.geo import MapPlot
-from org.meteoinfo.geo.legend import LegendManage
-from org.meteoinfo.geo.meteodata import DrawMeteoData
-from org.meteoinfo.geometry.legend import LegendScheme, LegendType
+from org.meteoinfo.geometry.legend import LegendManage, LegendScheme, LegendType
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.image import AnimatedGifEncoder
 
@@ -2298,11 +2296,11 @@ def weatherspec(weather='all', size=20, color='b'):
     :returns: Weather symbol legend.
     """
     if isinstance(weather, str):
-        wlist = DrawMeteoData.getWeatherTypes(weather)
+        wlist = LegendManage.getWeatherTypes(weather)
     else:
         wlist = weather
     c = plotutil.getcolor(color)
-    return DrawMeteoData.createWeatherLegendScheme(wlist, size, c)
+    return LegendManage.createWeatherLegendScheme(wlist, size, c)
 
 
 def cloudspec(size=12, color='b'):
@@ -2315,7 +2313,7 @@ def cloudspec(size=12, color='b'):
     :returns: Cloud amount symbol legend.
     """
     c = plotutil.getcolor(color)
-    return DrawMeteoData.createCloudLegendScheme(size, c)
+    return LegendManage.createCloudLegendScheme(size, c)
 
 
 @_copy_docstring_and_deprecators(MapAxes.masklayer)

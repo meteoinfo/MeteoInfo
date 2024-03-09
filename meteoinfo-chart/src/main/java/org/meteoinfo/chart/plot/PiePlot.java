@@ -7,7 +7,7 @@ package org.meteoinfo.chart.plot;
 
 import org.meteoinfo.chart.AspectType;
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.ColorBreak;

@@ -9,9 +9,8 @@ import org.meteoinfo.chart.AspectType;
 import org.meteoinfo.chart.Margin;
 import org.meteoinfo.chart.graphic.GraphicFactory;
 import org.meteoinfo.common.*;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
@@ -22,7 +21,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.meteoinfo.geo.drawing.Draw.getDashPattern;
+import static org.meteoinfo.render.java2d.Draw.getDashPattern;
 
 /**
  *

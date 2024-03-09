@@ -82,7 +82,7 @@ public class PlotUtil {
      * @param fileName The file name
      * @param chart The chart
      * @param width Width
-     * @param height Heigth
+     * @param height Height
      * @throws FileNotFoundException
      * @throws InterruptedException
      */

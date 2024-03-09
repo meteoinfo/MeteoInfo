@@ -1809,4 +1809,86 @@ public class LegendManage {
             }
         }
     }
+
+    /**
+     * Get weather list
+     *
+     * @param weatherType Weather type
+     * @return Weather list
+     */
+    public static List<Integer> getWeatherTypes(String weatherType) {
+        List<Integer> weatherList = new ArrayList<>();
+        int i;
+        int[] weathers;
+        switch (weatherType.toLowerCase()) {
+            case "all weather":
+            case "all":
+            default:
+                weathers = new int[96];
+                for (i = 4; i < 100; i++) {
+                    weathers[i - 4] = i;
+                }
+                break;
+            case "sds":
+            case "dust":
+                weathers = new int[]{6, 7, 8, 9, 30, 31, 32, 33, 34, 35};
+                break;
+            case "sds, haze":
+                weathers = new int[]{5, 6, 7, 8, 9, 30, 31, 32, 33, 34, 35};
+                break;
+            case "smoke, haze, mist":
+                weathers = new int[]{4, 5, 10};
+                break;
+            case "smoke":
+                weathers = new int[]{4};
+                break;
+            case "haze":
+                weathers = new int[]{5};
+                break;
+            case "mist":
+                weathers = new int[]{10};
+                break;
+            case "Fog":
+                weathers = new int[10];
+                for (i = 40; i < 50; i++) {
+                    weathers[i - 40] = i;
+                }
+                break;
+        }
+
+        for (int w : weathers) {
+            weatherList.add(w);
+        }
+
+        return weatherList;
+    }
+
+    /**
+     * Create could amount legend scheme
+     *
+     * @param size Size
+     * @param color Color
+     * @return Cloud amount legend scheme
+     */
+    public static LegendScheme createCloudLegendScheme(int size, Color color) {
+        LegendScheme aLS = new LegendScheme(ShapeTypes.POINT);
+        aLS.setLegendType(LegendType.UNIQUE_VALUE);
+        int[] clouds = new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        for (int w : clouds) {
+            PointBreak aPB = new PointBreak();
+            aPB.setMarkerType(MarkerType.CHARACTER);
+            aPB.setSize(size);
+            aPB.setColor(color);
+            aPB.setFontName("Weather");
+            aPB.setStartValue(w);
+            aPB.setEndValue(w);
+            int charIdx = w + 197;
+            aPB.setCharIndex(charIdx);
+            aPB.setCaption(String.valueOf(w));
+
+            aLS.getLegendBreaks().add(aPB);
+        }
+
+        return aLS;
+    }
 }

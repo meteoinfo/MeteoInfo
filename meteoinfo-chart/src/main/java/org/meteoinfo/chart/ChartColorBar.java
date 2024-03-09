@@ -13,12 +13,11 @@ import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.colors.ColorMap;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.colors.BoundaryNorm;
 import org.meteoinfo.geometry.colors.ExtendType;
 import org.meteoinfo.geometry.colors.LogNorm;

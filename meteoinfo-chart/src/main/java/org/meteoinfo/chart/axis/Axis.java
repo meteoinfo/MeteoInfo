@@ -13,7 +13,7 @@ import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.XAlign;
 import org.meteoinfo.common.YAlign;
 import org.meteoinfo.common.util.JDateUtil;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.graphic.Artist;
 import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;

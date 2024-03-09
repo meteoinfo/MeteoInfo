@@ -15,6 +15,7 @@
         <module name="meteoinfo-console" />
         <module name="meteoinfo-geo" />
         <module name="meteoinfo-chart" />
+        <module name="meteoinfo-render2d" />
         <module name="meteoinfo-ndarray" />
         <module name="meteoinfo-table" />
         <module name="meteoinfo-data" />

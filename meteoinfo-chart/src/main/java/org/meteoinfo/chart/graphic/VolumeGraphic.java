@@ -7,7 +7,7 @@ import org.meteoinfo.chart.render.jogl.RayCastingType;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.colors.ColorMap;
-import org.meteoinfo.geo.legend.LegendManage;
+import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.colors.TransferFunction;
 import org.meteoinfo.geometry.graphic.GraphicCollection3D;

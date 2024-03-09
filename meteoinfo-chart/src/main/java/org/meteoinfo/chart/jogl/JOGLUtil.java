@@ -22,7 +22,6 @@ import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.colors.ColorMap;
-import org.meteoinfo.geo.layer.ImageLayer;
 import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;

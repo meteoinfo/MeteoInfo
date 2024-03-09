@@ -14,7 +14,7 @@
 package org.meteoinfo.chart;
 
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 
 import java.awt.BasicStroke;
 import java.awt.Color;

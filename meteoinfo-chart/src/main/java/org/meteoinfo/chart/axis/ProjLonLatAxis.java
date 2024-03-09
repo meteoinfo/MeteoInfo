@@ -9,7 +9,7 @@ import org.meteoinfo.chart.Location;
 import org.meteoinfo.chart.plot.AbstractPlot2D;
 import org.meteoinfo.chart.geo.MapGridLine;
 import org.meteoinfo.common.*;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.projection.ProjectionInfo;
 
 import java.awt.*;

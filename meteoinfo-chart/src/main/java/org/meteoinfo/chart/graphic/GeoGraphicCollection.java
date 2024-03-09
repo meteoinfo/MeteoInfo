@@ -1,4 +1,4 @@
-package org.meteoinfo.geo.graphic;
+package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;

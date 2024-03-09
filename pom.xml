@@ -29,6 +29,7 @@
         <module>meteoinfo-data</module>
         <module>meteoinfo-projection</module>
         <module>meteoinfo-mkl</module>
+        <module>meteoinfo-render2d</module>
     </modules>
     
     <properties>

@@ -13,7 +13,7 @@ import org.meteoinfo.chart.plot3d.Projector;
 import org.meteoinfo.common.*;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.Dataset;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.*;

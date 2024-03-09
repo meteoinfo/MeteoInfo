@@ -13,7 +13,7 @@ import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.data.*;
-import org.meteoinfo.geo.drawing.Draw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 
@@ -23,8 +23,6 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

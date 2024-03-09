@@ -21,11 +21,8 @@ import org.meteoinfo.data.XYListDataset;
 import org.meteoinfo.data.analysis.Statistics;
 import org.meteoinfo.data.meteodata.StationModel;
 import org.meteoinfo.data.meteodata.StationModelData;
-import org.meteoinfo.geo.drawing.ContourDraw;
-import org.meteoinfo.geo.drawing.Draw;
-import org.meteoinfo.geo.layer.LayerDrawType;
-import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.geo.meteodata.DrawMeteoData;
+import org.meteoinfo.render.java2d.ContourDraw;
+import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.geometry.colors.ExtendType;
 import org.meteoinfo.geometry.colors.Normalize;
@@ -49,7 +46,6 @@ import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 import org.meteoinfo.projection.ProjectionInfo;
-import org.meteoinfo.table.Field;
 import wcontour.Contour;
 import wcontour.global.Point3D;
 import wcontour.global.PolyLine;
@@ -61,8 +57,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.List;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

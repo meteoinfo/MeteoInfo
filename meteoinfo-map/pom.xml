@@ -21,6 +21,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>meteoinfo-geo</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>meteoinfo-console</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -9,7 +9,6 @@ import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.axis.LonLatAxis;
 import org.meteoinfo.chart.axis.ProjLonLatAxis;
-import org.meteoinfo.chart.geo.MapGridLine;
 import org.meteoinfo.chart.graphic.WebMapImage;
 import org.meteoinfo.chart.plot.Plot2D;
 import org.meteoinfo.chart.plot.PlotType;
@@ -19,12 +18,11 @@ import org.meteoinfo.data.mapdata.webmap.GeoPosition;
 import org.meteoinfo.data.mapdata.webmap.GeoUtil;
 import org.meteoinfo.data.mapdata.webmap.IWebMapPanel;
 import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
-import org.meteoinfo.geo.drawing.Draw;
-import org.meteoinfo.geo.graphic.GeoGraphicCollection;
-import org.meteoinfo.geo.layer.WebMapLayer;
-import org.meteoinfo.geo.util.GeoProjectionUtil;
+import org.meteoinfo.render.java2d.Draw;
+import org.meteoinfo.chart.graphic.GeoGraphicCollection;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.chart.graphic.GraphicProjectionUtil;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.projection.KnownCoordinateSystems;
@@ -675,7 +673,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
             this.addGraphic(graphic);
             return graphic;
         } else {
-            Graphic nGraphic = GeoProjectionUtil.projectClipGraphic(graphic, proj, toProj);
+            Graphic nGraphic = GraphicProjectionUtil.projectClipGraphic(graphic, proj, toProj);
             this.addGraphic(nGraphic);
             return nGraphic;
         }
@@ -695,7 +693,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
             this.addGraphic(index, graphic);
             return graphic;
         } else {
-            Graphic nGraphic = GeoProjectionUtil.projectClipGraphic(graphic, proj, toProj);
+            Graphic nGraphic = GraphicProjectionUtil.projectClipGraphic(graphic, proj, toProj);
             this.addGraphic(index, nGraphic);
             return nGraphic;
         }

@@ -13,7 +13,7 @@ import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.graphic.GraphicFactory;
 import org.meteoinfo.chart.graphic.MeshGraphic;
 import org.meteoinfo.common.*;
-import org.meteoinfo.geo.legend.LegendManage;
+import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolygonBreak;

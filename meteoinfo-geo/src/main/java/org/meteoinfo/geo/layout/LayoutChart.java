@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.meteoinfo.chart;
+package org.meteoinfo.geo.layout;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;

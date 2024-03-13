@@ -586,7 +586,7 @@ def binread(fn, dim, datatype=None, skip=0, byteorder='little_endian'):
     :param dim: (*list*) Dimensions.
     :param datatype: (*string*) Data type string [byte | short | int | float | double].
     :param skip: (*int*) Skip bytes number.
-    :param byteorder: (*string*) Byte order. ``little_endian`` or ``big_endian``.
+    :param byteorder: (*string*) Byte order. `little_endian` or `big_endian`. Default is `little_endian`.
     
     :returns: (*NDArray*) Data array
     """
@@ -614,10 +614,10 @@ def binwrite(out, data, byteorder='little_endian', append=False, sequential=Fals
     
     :param out: (*string or EndianDataOutputStream*) File path or data output stream.
     :param data: (*array_like*) A numeric array variable of any dimensionality.
-    :param byteorder: (*string*) Byte order. ``little_endian`` or ``big_endian``.
-    :param append: (*boolean*) Append to an existing file or not. Only valid when ``out``
+    :param byteorder: (*string*) Byte order. `little_endian` or `big_endian`. Default is `little_endian`.
+    :param append: (*boolean*) Append to an existing file or not. Only valid when `out`
         is file path.
-    :param sequential: (*boolean*) If write binary data as sequential - Fortran
+    :param sequential: (*boolean*) If write binary data as sequential - Fortran. Default is `False`.
     """
     if isinstance(out, basestring):
         ArrayUtil.saveBinFile(out, data.asarray(), byteorder, append, sequential)

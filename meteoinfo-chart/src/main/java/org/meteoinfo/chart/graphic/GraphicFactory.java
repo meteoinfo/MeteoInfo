@@ -3447,6 +3447,10 @@ public class GraphicFactory {
      * @return Image graphic
      */
     public static Graphic createImage(Array data, Array xa, Array ya, LegendScheme ls, List<Number> extent) {
+        data = data.copyIfView();
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+
         int width, height, breakNum;
         width = (int) xa.getSize();
         height = (int) ya.getSize();

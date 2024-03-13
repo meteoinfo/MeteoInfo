@@ -81,3 +81,21 @@ class GeoGraphicCollection(object):
         :param y: (*float*) Y shift for moving in pixel unit.
         """
         self._geographic.moveLabel(label, x, y)
+
+    def update_legend(self, ltype, fieldname):
+        """
+        Update legend scheme.
+
+        :param ltype: (*string*) Legend type [single | unique | graduate].
+        :param fieldname: (*string*) Field name.
+        """
+        if ltype == 'single':
+            ltype = LegendType.SINGLE_SYMBOL
+        elif ltype == 'unique':
+            ltype = LegendType.UNIQUE_VALUE
+        elif ltyp == 'graduate':
+            ltype = LegendType.GRADUATED_COLOR
+        else:
+            raise ValueError(ltype)
+        self._geographic.updateLegendScheme(ltype, fieldname)
+        return self._geographic.getLegendScheme()

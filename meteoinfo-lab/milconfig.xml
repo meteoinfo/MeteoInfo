@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\traj">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\json"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\plot">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\imshow"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
+    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\MeteoInfo\meteoinfo-lab"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\flower_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\frontogenesis.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\hy_part_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\plot_basic.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_nan.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\flower_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\frontogenesis.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\hy_part_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\plot_basic.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_nan.py"/>
     </RecentFiles>
   </File>
   <Font>

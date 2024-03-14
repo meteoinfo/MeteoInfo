@@ -1475,6 +1475,10 @@ public class Axis extends Artist implements Cloneable {
         //Draw tick lines   
         float len = 0;
         if (this.drawTickLine) {
+            if (this.getTickValues() == null) {
+                this.updateTickValues();
+            }
+
             g.setColor(this.tickColor);
             g.setStroke(new BasicStroke(this.tickWidth));
             g.setFont(this.tickLabelFont);
@@ -1706,6 +1710,10 @@ public class Axis extends Artist implements Cloneable {
         //Draw tick lines   
         float len = 0;
         if (this.drawTickLine) {
+            if (this.getTickValues() == null) {
+                this.updateTickValues();
+            }
+
             g.setColor(this.getTickColor());
             g.setStroke(new BasicStroke(this.tickWidth));
             g.setFont(this.getTickLabelFont());

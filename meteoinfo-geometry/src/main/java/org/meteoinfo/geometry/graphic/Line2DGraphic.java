@@ -74,8 +74,14 @@ public class Line2DGraphic extends Graphic {
         List<PointD> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
+        double x, y;
         while (xIter.hasNext()) {
-            points.add(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
+            if (Double.isNaN(x) || Double.isNaN(y)) {
+                continue;
+            }
+            points.add(new PointD(x, y));
         }
         if (this.shape == null) {
             this.shape = new PolylineShape();
@@ -90,10 +96,15 @@ public class Line2DGraphic extends Graphic {
         IndexIterator cIter = this.cData.getIndexIterator();
         ColorBreakCollection cbc = new ColorBreakCollection();
         ColorBreak cb;
-        double c;
+        double x, y, c;
         while (xIter.hasNext()) {
-            points.add(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
             c = cIter.getDoubleNext();
+            if (Double.isNaN(x) || Double.isNaN(y)) {
+                continue;
+            }
+            points.add(new PointD(x, y));
             cb = legendScheme.findLegendBreak(c);
             cbc.add(cb);
         }

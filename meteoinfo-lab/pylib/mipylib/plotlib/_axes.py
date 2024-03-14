@@ -1227,8 +1227,10 @@ class Axes(object):
         :param x: (*array_like*) Input x data.
         :param y: (*array_like*) Input y data.
         :param style: (*string*) Line style for plot.
+        :param linewidth: (*float*) Line width.
+        :param color: (*Color*) Line color.
         
-        :returns: Legend breaks of the lines.
+        :returns: lines.
         
         The following format string characters are accepted to control the line style or marker:
         
@@ -1273,27 +1275,22 @@ class Axes(object):
         xaxistype = None
         isxylistdata = False
         if len(args) == 1:
-            if isinstance(args[0], MIXYListData):
-                dataset = args[0].data
-                snum = args[0].size()
-                isxylistdata = True
+            ydata = np.array(args[0])
+            if isinstance(ydata, DimArray):
+                xdata = ydata.dimvalue(0)
+                if ydata.ndim == 2:
+                    xdata = ydata.dimvalue(1)
+                    xx = np.zeros(ydata.shape)
+                    xx[:, :] = xdata
+                    xdata = xx
             else:
-                ydata = np.array(args[0])
-                if isinstance(ydata, DimArray):
-                    xdata = ydata.dimvalue(0)
-                    if ydata.ndim == 2:
-                        xdata = ydata.dimvalue(1)
-                        xx = np.zeros(ydata.shape)
-                        xx[:, :] = xdata
-                        xdata = xx
-                else:
-                    xdata = np.arange(ydata.shape[-1])
-                    if ydata.ndim == 2:
-                        xx = np.zeros(ydata.shape)
-                        xx[:, :] = xdata
-                        xdata = xx
-                xdatalist.append(xdata)
-                ydatalist.append(ydata)
+                xdata = np.arange(ydata.shape[-1])
+                if ydata.ndim == 2:
+                    xx = np.zeros(ydata.shape)
+                    xx[:, :] = xdata
+                    xdata = xx
+            xdatalist.append(xdata)
+            ydatalist.append(ydata)
         elif len(args) == 2:
             if isinstance(args[1], basestring):
                 ydata = np.array(args[0])
@@ -1333,6 +1330,7 @@ class Axes(object):
                         styles.append(None)
                         xdatalist.append(arg)
                         c = 'y'
+
         if len(styles) == 0:
             styles = None
         else:
@@ -1411,49 +1409,49 @@ class Axes(object):
         zorder = kwargs.pop('zorder', None)
         iscurve = kwargs.pop('curve', False)
         graphics = []
-        if isxylistdata:
-            graphic = GraphicFactory.createLineString(dataset, lines)
-            self.add_graphic(graphic, zorder=zorder)
-            graphics.append(graphic)
-        else:
-            if cdata is None:
-                # Add data series
-                snum = len(xdatalist)
-                if snum == 1:
-                    xdata = np.asarray(xdatalist[0])
-                    ydata = np.asarray(ydatalist[0])
-                    if len(lines) == 1:
-                        colors = kwargs.pop('colors', None)
-                        if not colors is None:
-                            colors = plotutil.getcolors(colors)
-                            cb = lines[0]
-                            lines = []
-                            for cc in colors:
-                                ncb = cb.clone()
-                                ncb.setColor(cc)
-                                lines.append(ncb)
-                            graphic = GraphicFactory.createLineString(xdata._array, ydata._array, lines, iscurve)
-                        else:
-                            graphic = Line2D(xdata, ydata, legend=lines[0], curve=iscurve)
-                    else:  # >1
-                        graphic = GraphicFactory.createLineString(xdata._array, ydata._array, lines, iscurve)
-                    self.add_graphic(graphic, zorder=zorder)
-                    graphics.append(graphic)
-                else:
-                    for i in range(0, snum):
-                        label = kwargs.pop('label', 'S_' + str(i + 1))
-                        xdata = np.asarray(xdatalist[i])
-                        ydata = np.asarray(ydatalist[i])
-                        graphic = Line2D(xdata, ydata, legend=lines[i], curve=iscurve)
-                        self.add_graphic(graphic)
-                        graphics.append(graphic)
-            else:
+        if cdata is None:
+            # Add data series
+            snum = len(xdatalist)
+            if snum == 1:
                 xdata = np.asarray(xdatalist[0])
                 ydata = np.asarray(ydatalist[0])
-                cdata = np.asarray(cdata)
-                graphic = Line2D(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
+                if len(lines) == 1:
+                    colors = kwargs.pop('colors', None)
+                    if not colors is None:
+                        colors = plotutil.getcolors(colors)
+                        cb = lines[0]
+                        lines = []
+                        for cc in colors:
+                            ncb = cb.clone()
+                            ncb.setColor(cc)
+                            lines.append(ncb)
+                        graphic = GraphicFactory.createLineString(xdata._array, ydata._array, lines, iscurve)
+                    else:
+                        graphic = Line2D(xdata, ydata, legend=lines[0], curve=iscurve)
+                else:  # >1
+                    graphic = GraphicFactory.createLineString(xdata._array, ydata._array, lines, iscurve)
                 self.add_graphic(graphic, zorder=zorder)
                 graphics.append(graphic)
+            else:
+                for i in range(0, snum):
+                    label = kwargs.pop('label', 'S_' + str(i + 1))
+                    xdata = np.asarray(xdatalist[i])
+                    ydata = np.asarray(ydatalist[i])
+                    graphic = Line2D(xdata, ydata, legend=lines[i], curve=iscurve)
+                    self.add_graphic(graphic)
+                    graphics.append(graphic)
+        else:
+            xdata = np.asarray(xdatalist[0])
+            ydata = np.asarray(ydatalist[0])
+            cdata = np.asarray(cdata)
+            graphic = Line2D(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
+            self.add_graphic(graphic, zorder=zorder)
+            graphics.append(graphic)
+
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            for graphic in graphics:
+                graphic.setAntiAlias(antialias)
 
         if len(graphics) > 1:
             return graphics

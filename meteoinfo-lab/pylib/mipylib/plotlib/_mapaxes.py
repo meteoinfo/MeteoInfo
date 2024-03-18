@@ -1125,8 +1125,8 @@ class MapAxes(Axes):
             if zorder is None:
                 zorder = 0
             igraphic = self.add_graphic(igraphic, zorder=zorder)
-            self._axes.setDrawExtent(igraphic.getExtent())
-            self._axes.setExtent(igraphic.getExtent())
+            self._axes.setDrawExtent(igraphic.getExtent().clone())
+            self._axes.setExtent(igraphic.getExtent().clone())
             gridline = self._axes.getGridLine()
             gridline.setTop(True)
 

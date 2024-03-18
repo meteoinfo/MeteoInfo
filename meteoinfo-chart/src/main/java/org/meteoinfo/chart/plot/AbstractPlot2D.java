@@ -1380,7 +1380,7 @@ public abstract class AbstractPlot2D extends Plot {
                 y = (float) area.getHeight() / 2 - dim.height / 2;
                 break;
             case RIGHT_OUTSIDE:
-                if (this.getAxis(Location.RIGHT).isDrawTickLabel() || this instanceof PolarPlot) {
+                if (this.getAxis(Location.RIGHT).isDrawTickLine() || this instanceof PolarPlot) {
                     x = (float) area.getX() + (float) area.getWidth() + (float) this.getTightInset().getRight();
                     x = x - dim.width;
                 } else {

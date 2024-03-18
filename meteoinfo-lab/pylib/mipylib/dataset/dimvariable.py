@@ -336,7 +336,7 @@ class DimVariable(object):
         """
         a = self.read()
         if a._array.getDataType() != DataType.STRUCTURE:
-            print 'This method is only valid for structure array!'
+            print('This method is only valid for structure array!')
             return None
         a = a._array.getArrayObject()
         return a.findMember(member)
@@ -352,7 +352,7 @@ class DimVariable(object):
         """
         a = self.read()
         if a._array.getDataType() != DataType.STRUCTURE:
-            print 'This method is only valid for structure array!'
+            print('This method is only valid for structure array!')
             return None
 
         a = a._array.getArrayObject()

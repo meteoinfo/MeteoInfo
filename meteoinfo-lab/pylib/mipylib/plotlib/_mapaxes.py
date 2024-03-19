@@ -1270,9 +1270,9 @@ class MapAxes(Axes):
         :param size: (*float*) Base size of the arrows.
         :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
         :param zorder: (*int*) Z-order of created layer for display.
-        :param select: (*boolean*) Set the return layer as selected layer or not.
+        :param avoidcoll: (*boolean*) Avoid graphic collision or not.
         
-        :returns: (*VectoryLayer*) Created barbs VectoryLayer.
+        :returns: (*graphics*) Created barbs graphics.
         """
         cmap = plotutil.getcolormap(**kwargs)
         fill_value = kwargs.pop('fill_value', -9999.0)
@@ -1339,6 +1339,10 @@ class MapAxes(Axes):
         if antialias is not None:
             graphics.setAntiAlias(antialias)
 
+        avoidcoll = kwargs.pop('avoidcoll', None)
+        if avoidcoll is not None:
+            graphics.setAvoidCollision(avoidcoll)
+
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
@@ -1357,7 +1361,7 @@ class MapAxes(Axes):
         :param u: (*array_like*) U component of the arrow vectors (wind field) or wind direction.
         :param v: (*array_like*) V component of the arrow vectors (wind field) or wind speed.
         :param z: (*array_like*) Optional, 2-D z value array.
-        :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level 
+        :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level
             barbs to draw, in increasing order.
         :param cmap: (*string*) Color map string.
         :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
@@ -1365,9 +1369,9 @@ class MapAxes(Axes):
         :param size: (*float*) Base size of the arrows. Default is 10.
         :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
         :param zorder: (*int*) Z-order of created layer for display.
-        :param select: (*boolean*) Set the return layer as selected layer or not.
+        :param avoidcoll: (*boolean*) Avoid graphic collision or not.
         
-        :returns: (*VectoryLayer*) Created barbs VectoryLayer.
+        :returns: (*GraphicCollection*) Created barbs graphic collection.
         """
         cmap = plotutil.getcolormap(**kwargs)
         fill_value = kwargs.pop('fill_value', -9999.0)
@@ -1430,6 +1434,10 @@ class MapAxes(Axes):
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:
             graphics.setAntiAlias(antialias)
+
+        avoidcoll = kwargs.pop('avoidcoll', None)
+        if avoidcoll is not None:
+            graphics.setAvoidCollision(avoidcoll)
 
         proj = kwargs.pop('proj', migeo.projinfo())
         visible = kwargs.pop('visible', True)
@@ -1528,7 +1536,8 @@ class MapAxes(Axes):
         :param surface: (*boolean*) Is surface data or not. Default is True.
         :param size: (*float*) Size of the station model symbols. Default is 12.
         :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
-        :param order: (*int*) Z-order of created layer for display.
+        :param zorder: (*int*) Z-order of created layer for display.
+        :param avoidcoll: (*boolean*) Avoid graphic collision or not.
         
         :returns: (*graphics*) Station model graphics.
         """
@@ -1544,6 +1553,10 @@ class MapAxes(Axes):
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:
             graphics.setAntiAlias(antialias)
+
+        avoidcoll = kwargs.pop('avoidcoll', None)
+        if avoidcoll is not None:
+            graphics.setAvoidCollision(avoidcoll)
 
         visible = kwargs.pop('visible', True)
         if visible:

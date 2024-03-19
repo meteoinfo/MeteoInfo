@@ -579,7 +579,11 @@ public class GraphicCollection extends Graphic implements Iterator {
      */
     @Override
     public ShapeTypes getShapeType() {
-        return this.graphics.get(0).getShape().getShapeType();
+        if (this.graphics.isEmpty()) {
+            return null;
+        } else {
+            return this.graphics.get(0).getShape().getShapeType();
+        }
     }
 
     private double getMinValue() {

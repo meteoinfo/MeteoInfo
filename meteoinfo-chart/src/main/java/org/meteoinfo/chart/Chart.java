@@ -22,6 +22,7 @@ import java.util.List;
 
 import org.meteoinfo.chart.jogl.GLPlot;
 import org.meteoinfo.chart.geo.MapPlot;
+import org.meteoinfo.chart.plot.AbstractPlot2D;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.common.PointF;
 
@@ -520,8 +521,8 @@ public class Chart {
                         plot.setPlotShrink(this.getPlotShrink(g, plotArea, plot));
                     }
                 }
-                if (plot instanceof MapPlot) {
-                    ((MapPlot) plot).setAntialias(this.antiAlias);
+                if (plot instanceof AbstractPlot2D) {
+                    ((AbstractPlot2D) plot).setAntiAlias(this.antiAlias);
                 }
                 if (plot instanceof GLPlot) {
                     Rectangle2D graphArea = plot.getPositionArea();

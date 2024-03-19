@@ -316,19 +316,72 @@ public class Plot2D extends AbstractPlot2D {
         }
 
         ColorBreak cb = graphic.getLegend();
-        for (int i = 0; i < graphic.getNumGraphics(); i++) {
-            Graphic gg = graphic.getGraphicN(i);
-            if (gg.getExtent().intersects(this.drawExtent)) {
-                if (!graphic.isSingleLegend()) {
-                    cb = gg.getLegend();
-                }
-                drawGraphic(g, gg, cb, area);
-            }
-        }
         if (graphic instanceof GraphicCollection) {
+            if (((GraphicCollection) graphic).isAvoidCollision() && graphic.getShapeType().isPoint()) {
+                List<Extent> extentList = new ArrayList<>();
+                Extent maxExtent = new Extent();
+                Extent ext = new Extent();
+                PointD point;
+                double[] xy;
+                float size;
+                for (int i = 0; i < graphic.getNumGraphics(); i++) {
+                    Graphic gg = graphic.getGraphicN(i);
+                    if (gg.getExtent().intersects(this.drawExtent)) {
+                        if (!graphic.isSingleLegend()) {
+                            cb = gg.getLegend();
+                        }
+                        PointShape shape = (PointShape) gg.getShape();
+                        PointBreak pointBreak = (PointBreak) cb;
+                        point = shape.getPoint();
+                        xy = projToScreen(point.X, point.Y, area);
+                        size = pointBreak.getSize() / 2;
+                        ext.minX = xy[0] - size;
+                        ext.maxX = xy[0] + size;
+                        ext.minY = xy[1] - size;
+                        ext.maxY = xy[1] + size;
+                        if (extentList.isEmpty()) {
+                            maxExtent = (Extent) ext.clone();
+                            extentList.add((Extent) ext.clone());
+                            drawGraphic(g, gg, cb, area);
+                        } else if (!MIMath.isExtentCross(ext, maxExtent)) {
+                            extentList.add((Extent) ext.clone());
+                            maxExtent = MIMath.getLagerExtent(maxExtent, ext);
+                            drawGraphic(g, gg, cb, area);
+                        } else {
+                            boolean ifDraw = true;
+                            for (int j = 0; j < extentList.size(); j++) {
+                                if (MIMath.isExtentCross(ext, extentList.get(j))) {
+                                    ifDraw = false;
+                                    break;
+                                }
+                            }
+                            if (ifDraw) {
+                                extentList.add((Extent) ext.clone());
+                                maxExtent = MIMath.getLagerExtent(maxExtent, ext);
+                                drawGraphic(g, gg, cb, area);
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (int i = 0; i < graphic.getNumGraphics(); i++) {
+                    Graphic gg = graphic.getGraphicN(i);
+                    if (gg.getExtent().intersects(this.drawExtent)) {
+                        if (!graphic.isSingleLegend()) {
+                            cb = gg.getLegend();
+                        }
+                        drawGraphic(g, gg, cb, area);
+                    }
+                }
+            }
+
             GraphicCollection gc = (GraphicCollection) graphic;
             if (gc.getLabelSet().isDrawLabels()) {
                 this.drawLabels(g, gc, area);
+            }
+        } else {
+            if (graphic.getExtent().intersects(this.drawExtent)) {
+                drawGraphic(g, graphic, cb, area);
             }
         }
 

@@ -9,6 +9,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import org.meteoinfo.chart.jogl.GLPlot;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.geo.MapPlot;
+import org.meteoinfo.chart.plot.AbstractPlot2D;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.common.PointF;
 
@@ -576,8 +577,8 @@ public class GLChart implements GLEventListener {
                         plot.setPlotShrink(this.getPlotShrink(g, plotArea, plot));
                     }
                 }
-                if (plot instanceof MapPlot) {
-                    ((MapPlot) plot).setAntialias(this.antialias);
+                if (plot instanceof AbstractPlot2D) {
+                    ((AbstractPlot2D) plot).setAntiAlias(this.antialias);
                 }
                 if (plot instanceof GLPlot) {
                     Rectangle2D graphArea = plot.getPositionArea();

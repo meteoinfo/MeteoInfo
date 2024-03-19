@@ -54,7 +54,6 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
 
     // <editor-fold desc="Variables">
     private ProjectionInfo projInfo;
-    private boolean antialias;
     protected TileLoadListener tileLoadListener = new TileLoadListener(this);
     private IChartPanel parent;
     private float[] lonLim;
@@ -81,7 +80,6 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         super();
 
         this.projInfo = projInfo;
-        this.antialias = false;
         this.aspectType = AspectType.EQUAL;
         this.gridLine = new MapGridLine(projInfo);
         this.gridLine.setTop(true);
@@ -138,24 +136,6 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     @Override
     public PlotType getPlotType() {
         return PlotType.XY2D;
-    }
-
-    /**
-     * Get if is antialias
-     *
-     * @return Boolean
-     */
-    public boolean isAntialias() {
-        return this.antialias;
-    }
-
-    /**
-     * Set if is antialias
-     *
-     * @param value Boolean
-     */
-    public void setAntialias(boolean value) {
-        this.antialias = value;
     }
 
     /**

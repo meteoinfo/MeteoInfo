@@ -1335,6 +1335,10 @@ public abstract class AbstractPlot2D extends Plot {
             Object rendering = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             for (ChartLegend legend : this.legends) {
+                if (this.antiAlias) {
+                    legend.setAntiAlias(true);
+                }
+
                 if (legend.isColorbar()) {
                     if (legend.getPlotOrientation() == PlotOrientation.VERTICAL) {
                         legend.setHeight((int) (graphArea.getHeight() * legend.getShrink()));

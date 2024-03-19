@@ -310,6 +310,9 @@ public class Plot2D extends AbstractPlot2D {
         if (graphic.isClip()) {
             GeneralPath clipPath = getClipPath(graphic.getClipGraphic(), area);
             g.setClip(clipPath);
+            if (oldClip != null) {
+                g.clip(oldClip);
+            }
         }
 
         ColorBreak cb = graphic.getLegend();

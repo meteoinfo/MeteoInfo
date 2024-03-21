@@ -747,6 +747,7 @@ class Axes(object):
         extent = self._axes.getDrawExtent()
         extent.minX = xmin
         extent.maxX = xmax
+        self._axes.setFixDrawExtent(False)
         self._axes.setDrawExtent(extent)
         self._axes.setExtent(extent.clone())
         self._axes.setFixDrawExtent(True)
@@ -775,6 +776,7 @@ class Axes(object):
         extent = self._axes.getDrawExtent()
         extent.minY = ymin
         extent.maxY = ymax
+        self._axes.setFixDrawExtent(False)
         self._axes.setDrawExtent(extent)
         self._axes.setExtent(extent.clone())
         self._axes.setFixDrawExtent(True)
@@ -1135,16 +1137,30 @@ class Axes(object):
 
     def remove_graphic(self, graphic):
         """
-        Remove a graphic
-        :param graphic: (*int or Graphic*) The graphic
-        :return:
+        Remove a graphic.
+
+        :param graphic: (*int or Graphic*) The graphic.
         """
         if isinstance(graphic, int):
             if graphic < 0:
                 graphic = self._axes.getGraphicNumber() + graphic
+
         self._axes.getGraphics().remove(graphic)
 
     def remove(self):
+        """
+        Remove all graphics.
+        """
+        self._axes.getGraphics().clear()
+
+    def cll(self):
+        """
+        Remove last graphic.
+        """
+        self._axes.removeLastGraphic()
+        self.stale = True
+
+    def clear(self):
         """
         Remove all graphics.
         """
@@ -1504,7 +1520,7 @@ class Axes(object):
         :param alpha: (*int*) The alpha blending value, between 0 (transparent) and 1 (opaque).
         :param marker: (*string*) Marker of the points.
         :param label: (*string*) Label of the point series.
-        :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level 
+        :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level
             points to draw, in increasing order.
         
         :returns: Points legend break.

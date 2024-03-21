@@ -40,6 +40,7 @@ package org.meteoinfo.geometry.graphic;
      protected GeneralPath clipPath;
      protected Graphic clipGraphic;
      private ResizeAbility _resizeAbility = ResizeAbility.RESIZE_ALL;
+     protected int handle;
      // </editor-fold>
      // <editor-fold desc="Constructor">
 
@@ -191,6 +192,22 @@ package org.meteoinfo.geometry.graphic;
       */
      public ResizeAbility getResizeAbility() {
          return _resizeAbility;
+     }
+
+     /**
+      * Get handle
+      * @return Handle
+      */
+     public int getHandle() {
+         return this.handle;
+     }
+
+     /**
+      * Set handle
+      * @param value Handle
+      */
+     public void setHandle(int value) {
+         this.handle = value;
      }
 
      /**

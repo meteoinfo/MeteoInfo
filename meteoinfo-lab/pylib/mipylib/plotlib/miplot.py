@@ -1190,12 +1190,10 @@ def cll():
     Clear last added plot object.
     """
     if not g_axes is None:
-        if isinstance(g_axes, MapAxes):
-            g_axes._axes.removeLastLayer()
-        else:
-            g_axes._axes.removeLastGraphic()
-            g_axes._axes.setAutoExtent()
-        draw_if_interactive()
+        g_axes.cll()
+        # g_axes._axes.removeLastGraphic()
+        # g_axes._axes.setAutoExtent()
+        # draw_if_interactive()
 
 
 def clc():

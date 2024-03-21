@@ -757,10 +757,12 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      */
     @Override
     public void setDrawExtent(Extent extent) {
-        super.setDrawExtent(extent);
+        if (!this.fixDrawExtent) {
+            super.setDrawExtent(extent);
 
-        if (!this.isLonLatMap()) {
-            ((MapGridLine) this.gridLine).setExtent(extent);
+            if (!this.isLonLatMap()) {
+                ((MapGridLine) this.gridLine).setExtent(extent);
+            }
         }
     }
 

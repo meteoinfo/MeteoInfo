@@ -160,6 +160,15 @@ public class Plot2D extends AbstractPlot2D {
     }
 
     /**
+     * Remove last added graphic
+     */
+    public void removeLastAddedGraphic() {
+        if (this.lastAddedGraphic != null) {
+            this.graphics.remove(this.lastAddedGraphic);
+        }
+    }
+
+    /**
      * Add graphic list
      *
      * @param gs Graphic list

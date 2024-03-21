@@ -139,7 +139,7 @@ class DimArray(NDArray):
                         ylim = [float(ylims[0]), float(ylims[1])]
                         yidx = i
             if not xlim is None and not ylim is None:                
-                fromproj=KnownCoordinateSystems.geographic.world.WGS1984
+                fromproj = KnownCoordinateSystems.geographic.world.WGS1984
                 inpt = PointD(xlim[0], ylim[0])
                 outpt1 = Reproject.reprojectPoint(inpt, fromproj, self.proj)
                 inpt = PointD(xlim[1], ylim[1])

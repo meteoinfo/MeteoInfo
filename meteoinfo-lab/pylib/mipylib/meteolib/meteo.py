@@ -540,24 +540,37 @@ def eof(x, svd=True, transform=False, return_index=False):
         else:
             return EOF, E, PC
     
-def varimax(x, normalize=False, tol=1e-10, it_max=1000):
+def varimax(x, norm=True, tol=1e-10, it_max=1000):
     """
     Rotate EOFs according to varimax algorithm
     
     :param x: (*array_like*) Input 2-D array.
-    :param normalize: (*boolean*) Determines whether to normalize the rows or columns
-        of the loadings before performing the rotation.
+    :param norm: (*boolean*) Determines whether to do Kaiser normalization the rows
+        of the loadings before performing the rotation. Default is `True`.
     :param tol: (*float*) Tolerance.
     :param it_max: (*int*) Specifies the maximum number of iterations to do.
     
     :returns: Rotated EOFs and rotate matrix.
     """
-    p, nc = x.shape
+    has_nan = False
+    if x.contains_nan():       #Has NaN value
+        mask = np.isnan(x).sum(axis=1)
+        valid_idx = np.where(mask==0)[0]
+        xx = x[valid_idx,:]
+        has_nan = True
+    else:
+        xx = x.copy()
+
+    if norm:
+        h = np.sqrt(np.sum(xx**2, axis=1))
+        xx = xx / h[:, None]
+
+    p, nc = xx.shape
     TT = np.eye(nc)
     d = 0
     for _ in range(it_max):
-        z = np.dot(x, TT)
-        B = np.dot(x.T, (z**3 - np.dot(z, np.diag(np.squeeze(np.dot(np.ones((1,p)), (z**2))))) / p))
+        z = np.dot(xx, TT)
+        B = np.dot(xx.T, (z**3 - np.dot(z, np.diag(np.squeeze(np.dot(np.ones((1,p)), (z**2))))) / p))
         U, S, Vh = np.linalg.svd(B)
         TT = np.dot(U, Vh)        
         d2 = d
@@ -567,5 +580,14 @@ def varimax(x, normalize=False, tol=1e-10, it_max=1000):
             break
             
     # Final matrix.
-    r = np.dot(x, TT)
+    r = np.dot(xx, TT)
+
+    if norm:
+        r = r * h[:,None]
+
+    if has_nan:
+        rr = np.ones(x.shape) * np.nan
+        rr[valid_idx,:] = r
+        r = rr
+
     return r, TT

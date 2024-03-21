@@ -351,8 +351,10 @@ class MapAxes(Axes):
         :param lonlat: (*boolean*) Is longitude/latitude or not.
         """
         if limits is None:
+            self._axes.setFixDrawExtent(False)
             self._axes.setDrawExtent(self._axes.getFullExtent())
             self._axes.setExtent(self._axes.getDrawExtent().clone())
+            self._axes.setFixDrawExtent(True)
             return True
         else:
             if len(limits) == 4:
@@ -361,12 +363,14 @@ class MapAxes(Axes):
                 ymin = limits[2]
                 ymax = limits[3]
                 extent = Extent(xmin, xmax, ymin, ymax)
+                self._axes.setFixDrawExtent(False)
                 if lonlat:
                     self._axes.setLonLatExtent(extent)
                     self._axes.setExtent(self._axes.getDrawExtent().clone())
                 else:
                     self._axes.setDrawExtent(extent)
                     self._axes.setExtent(extent)
+                self._axes.setFixDrawExtent(True)
                 return True
             else:
                 print('The limits parameter must be a list with 4 elements: xmin, xmax, ymin, ymax!')
@@ -837,6 +841,10 @@ class MapAxes(Axes):
             graphics = GraphicFactory.createPoints(x._array, y._array, ls.getLegendBreak(0))
         else:
             graphics = GraphicFactory.createPoints(x._array, y._array, a._array, ls)
+
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            graphics.setAntiAlias(antialias)
 
         visible = kwargs.pop('visible', True)
         if visible:

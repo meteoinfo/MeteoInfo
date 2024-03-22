@@ -19,7 +19,7 @@ __all__ = [
     'moist_lapse','p2h','qair2rh','rh2dewpoint',
     'sigma_to_pressure','tc2tf',
     'tf2tc','uv2ds','pressure_to_height_std',
-    'height_to_pressure_std','eof','vapor_pressure','varimax'
+    'height_to_pressure_std','eof','vapor_pressure'
     ]
 
 def uv2ds(u, v):

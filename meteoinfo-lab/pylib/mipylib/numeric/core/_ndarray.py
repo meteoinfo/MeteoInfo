@@ -100,8 +100,12 @@ class NDArray(object):
 
         #deal with Ellipsis
         if Ellipsis in indices:
+            n = 0
+            for ii in indices:
+                if ii is not None:
+                    n += 1;
+
             indices1 = []
-            n = self.ndim - len(indices) + 1
             for ii in indices:
                 if ii is Ellipsis:
                     for _ in range(n):
@@ -110,7 +114,7 @@ class NDArray(object):
                     indices1.append(ii)
             indices = indices1
 
-#for all int indices
+        #for all int indices
         if len(indices) == self.ndim:
             allint = True
             aindex = self._array.getIndex()
@@ -977,6 +981,40 @@ class NDArray(object):
         else:
             r = ArrayMath.round(self._array, decimals)
         return NDArray(r)
+
+    def clip(self, min=None, max=None):
+        """
+        Clip (limit) the values in an array.
+
+        Given an interval, values outside the interval are clipped to the interval edges. For example,
+        if an interval of [0, 1] is specified, values smaller than 0 become 0, and values larger than 1
+        become 1.
+
+        Parameters
+        ----------
+        min, max : array_like or None
+            Minimum and maximum value. If ``None``, clipping is not performed on
+            the corresponding edge. Only one of `min` and `max` may be
+            ``None``. Both are broadcast against this array.
+
+        Returns
+        -------
+        clipped_array : NDArray
+            An array with the elements of this array, but where values
+            < `min` are replaced with `min`, and those > `max`
+            with `max`.
+        """
+        if min is None:
+            if max is None:
+                raise ValueError("Only one of min and max my be None!")
+
+            r = ArrayMath.clipMax(self._array, max)
+        elif max is None:
+            r = ArrayMath.clipMin(self._array, min)
+        else:
+            r = ArrayMath.clip(self._array, min, max)
+
+        return self.array_wrap(r)
 
     def rot90(self, k=1):
         """

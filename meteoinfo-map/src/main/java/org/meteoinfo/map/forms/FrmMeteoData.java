@@ -1044,9 +1044,11 @@ public class FrmMeteoData extends javax.swing.JDialog {
             viewGridData();
         } else if (_meteoDataInfo.isStationData()) {
             viewStationData();
-            if (_gridData.getXArray() != null && _gridData.getYArray() != null) {
-                if (_gridData.getXNum() > 0 && _gridData.getYNum() > 0) {
-                    viewGridData();
+            if (_gridData != null) {
+                if (_gridData.getXArray() != null && _gridData.getYArray() != null) {
+                    if (_gridData.getXNum() > 0 && _gridData.getYNum() > 0) {
+                        viewGridData();
+                    }
                 }
             }
         }

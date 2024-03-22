@@ -747,7 +747,6 @@ class Axes(object):
         extent = self._axes.getDrawExtent()
         extent.minX = xmin
         extent.maxX = xmax
-        self._axes.setFixDrawExtent(False)
         self._axes.setDrawExtent(extent)
         self._axes.setExtent(extent.clone())
         self._axes.setFixDrawExtent(True)
@@ -776,10 +775,19 @@ class Axes(object):
         extent = self._axes.getDrawExtent()
         extent.minY = ymin
         extent.maxY = ymax
-        self._axes.setFixDrawExtent(False)
         self._axes.setDrawExtent(extent)
         self._axes.setExtent(extent.clone())
         self._axes.setFixDrawExtent(True)
+
+    def set_draw_extent(self, extent):
+        """
+        Set axes draw extent.
+
+        :param extent: The extent
+        """
+        if not self._axes.isFixDrawExtent():
+            self._axes.setDrawExtent(extent.clone())
+            self._axes.setExtent(extent.clone())
 
     def twinx(self):
         """
@@ -1507,6 +1515,7 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
+
         return graphics
 
     def scatter(self, *args, **kwargs):
@@ -1626,7 +1635,6 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
-        self._axes.setAutoExtent()
 
         return graphics
 
@@ -1879,7 +1887,6 @@ class Axes(object):
                                                         yerrU, line, eline, capsize)
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
-        self._axes.setAutoExtent()
 
         return graphics
 
@@ -2008,7 +2015,6 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
-        self._axes.setAutoExtent()
         if autowidth:
             barswidth = kwargs.pop('barswidth', 0.8)
             self._axes.setBarsWidth(barswidth)
@@ -2135,7 +2141,7 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
-        self._axes.setAutoExtent()
+
         if autoheight:
             barsheight = kwargs.pop('barsheight', 0.8)
             self._axes.setBarsWidth(barsheight)
@@ -2300,7 +2306,6 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
-        self._axes.setAutoExtent()
 
         return linefmt
 
@@ -2378,8 +2383,7 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
-        self._axes.setExtent(graphics.getExtent())
-        self._axes.setDrawExtent(graphics.getExtent())
+        self.set_draw_extent(graphics.getExtent())
 
         return graphics
 
@@ -2538,8 +2542,7 @@ class Axes(object):
 
             zorder = kwargs.pop('zorder', None)
             self.add_graphic(graphics, zorder=zorder)
-            self._axes.setExtent(graphics.getExtent())
-            self._axes.setDrawExtent(graphics.getExtent())
+            self.set_draw_extent(graphics.getExtent())
 
         return graphics
 
@@ -2640,6 +2643,7 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(igraphic, zorder=zorder)
+        self.set_draw_extent(igraphic.getExtent())
         gridline = self._axes.getGridLine()
         gridline.setTop(True)
 
@@ -2698,8 +2702,7 @@ class Axes(object):
         if visible:
             zorder = kwargs.pop('zorder', None)
             self.add_graphic(graphics, zorder=zorder)
-            self._axes.setExtent(graphics.getExtent())
-            self._axes.setDrawExtent(graphics.getExtent())
+            self.set_draw_extent(graphics.getExtent())
 
         return graphics
 
@@ -2746,8 +2749,8 @@ class Axes(object):
         if visible:
             zorder = kwargs.pop('zorder', None)
             self.add_graphic(graphics, zorder=zorder)
-            self._axes.setExtent(graphics.getExtent())
-            self._axes.setDrawExtent(graphics.getExtent())
+            self.set_draw_extent(graphics.getExtent())
+
         return graphics
 
     def text(self, x, y, s, **kwargs):
@@ -2790,7 +2793,6 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphic, zorder=zorder)
-        self._axes.setAutoExtent()
 
         return graphic
 
@@ -2820,7 +2822,6 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphic, zorder=zorder)
-        self._axes.setAutoExtent()
 
         return graphic
 
@@ -2865,7 +2866,6 @@ class Axes(object):
             dy = dy - sy * 2
         graphic = GraphicFactory.createArrowLine(x0, y0, dx, dy, alb)
         self.add_graphic(graphic)
-        self._axes.setAutoExtent()
 
         return ctext, graphic
 
@@ -2911,7 +2911,7 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
-        self._axes.setAutoExtent()
+
         return graphics
 
     def patch(self, x, y=None, **kwargs):
@@ -2932,7 +2932,7 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
-        self._axes.setAutoExtent()
+
         return graphics
 
     def rectangle(self, position, curvature=None, **kwargs):
@@ -2949,7 +2949,7 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphic, zorder=zorder)
-        self._axes.setAutoExtent()
+
         return graphic
 
     def fill_between(self, x, y1, y2=0, where=None, **kwargs):
@@ -2997,7 +2997,6 @@ class Axes(object):
         graphics = GraphicFactory.createFillBetweenPolygons(xdata, y1, y2, where, pb)
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
-        self._axes.setAutoExtent()
 
         return pb
 
@@ -3046,7 +3045,6 @@ class Axes(object):
         graphics = GraphicFactory.createFillBetweenPolygonsX(ydata, x1, x2, where, pb)
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
-        self._axes.setAutoExtent()
 
         return pb
 
@@ -3127,7 +3125,6 @@ class Axes(object):
         for graphic in graphics:
             self.add_graphic(graphic)
 
-        self._axes.setAutoExtent()
         self._axes.setAspectType(AspectType.EQUAL)
         self._axes.getAxis(Location.BOTTOM).setVisible(False)
         self._axes.getAxis(Location.LEFT).setVisible(False)
@@ -3273,7 +3270,6 @@ class Axes(object):
             graphics.setAntiAlias(antialias)
 
         self.add_graphic(graphics)
-        self._axes.setAutoExtent()
 
         return graphics
 
@@ -3569,7 +3565,6 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
-        self._axes.setAutoExtent()
 
         return graphics
 
@@ -3675,7 +3670,6 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(igraphic, zorder=zorder)
-        self._axes.setAutoExtent()
 
         return igraphic
 
@@ -3830,7 +3824,6 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(igraphic, zorder=zorder)
-        self._axes.setAutoExtent()
 
         return igraphic
 

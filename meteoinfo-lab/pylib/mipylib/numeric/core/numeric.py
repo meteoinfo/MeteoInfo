@@ -616,6 +616,37 @@ def round(x, decimals=0):
     else:
         return __builtin__.round(x, decimals)
 
+def clip(a, a_min, a_max):
+    """
+    Clip (limit) the values in an array.
+
+    Given an interval, values outside the interval are clipped to
+    the interval edges.  For example, if an interval of ``[0, 1]``
+    is specified, values smaller than 0 become 0, and values larger
+    than 1 become 1.
+
+    Equivalent to but faster than ``np.minimum(a_max, np.maximum(a, a_min))``.
+
+    No check is performed to ensure ``a_min < a_max``.
+
+    Parameters
+    ----------
+    a : array_like
+        Array containing elements to clip.
+    a_min, a_max : array_like or None
+        Minimum and maximum value. If ``None``, clipping is not performed on
+        the corresponding edge. Only one of `a_min` and `a_max` may be
+        ``None``. Both are broadcast against `a`.
+
+    Returns
+    -------
+    clipped_array : ndarray
+        An array with the elements of `a`, but where values
+        < `a_min` are replaced with `a_min`, and those > `a_max`
+        with `a_max`.
+    """
+    return a.clip(a_min, a_max)
+
 def square(x):
     """
     Return the element-wise square of the input.

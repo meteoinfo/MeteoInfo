@@ -850,8 +850,7 @@ class MapAxes(Axes):
         if visible:
             zorder = kwargs.pop('zorder', None)
             graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self._axes.setExtent(graphics.getExtent())
-            self._axes.setDrawExtent(graphics.getExtent())
+            self.set_draw_extent(graphics.getExtent())
 
         return graphics
 
@@ -931,8 +930,7 @@ class MapAxes(Axes):
         if visible:
             zorder = kwargs.pop('zorder', None)
             contours = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self._axes.setDrawExtent(graphics.getExtent())
-            self._axes.setExtent(graphics.getExtent())
+            self.set_draw_extent(graphics.getExtent())
                 
         return graphics
         
@@ -996,8 +994,7 @@ class MapAxes(Axes):
             if zorder is None:
                 zorder = 0
             graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self._axes.setDrawExtent(graphics.getExtent())
-            self._axes.setExtent(graphics.getExtent())
+            self.set_draw_extent(graphics.getExtent())
                 
         return graphics
         
@@ -1133,8 +1130,7 @@ class MapAxes(Axes):
             if zorder is None:
                 zorder = 0
             igraphic = self.add_graphic(igraphic, zorder=zorder)
-            self._axes.setDrawExtent(igraphic.getExtent().clone())
-            self._axes.setExtent(igraphic.getExtent().clone())
+            self.set_draw_extent(igraphic.getExtent())
             gridline = self._axes.getGridLine()
             gridline.setTop(True)
 
@@ -1152,7 +1148,7 @@ class MapAxes(Axes):
         :param cmap: (*string*) Color map string.
         :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
             string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-            color args (string, float, rgb, etc), different levels will be plotted in different colors in 
+            color args (string, float, rgb, etc.), different levels will be plotted in different colors in
             the order specified.
         :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
         :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
@@ -1199,8 +1195,7 @@ class MapAxes(Axes):
         if visible:
             zorder = kwargs.pop('zorder', None)
             graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self._axes.setExtent(graphics.getExtent())
-            self._axes.setDrawExtent(graphics.getExtent())
+            self.set_draw_extent(graphics.getExtent())
 
         return graphics
         
@@ -1216,7 +1211,7 @@ class MapAxes(Axes):
         :param cmap: (*string*) Color map string.
         :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
             string, like ‘r’ or ‘red’, all levels will be plotted in this color. If a tuple of matplotlib 
-            color args (string, float, rgb, etc), different levels will be plotted in different colors in 
+            color args (string, float, rgb, etc.), different levels will be plotted in different colors in
             the order specified.
         :param fill_value: (*float*) Fill_value. Default is ``-9999.0``.
         :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
@@ -1224,7 +1219,7 @@ class MapAxes(Axes):
         :param zorder: (*int*) Z-order of created layer for display.
         :param select: (*boolean*) Set the return layer as selected layer or not.
         
-        :returns: (*VectoryLayer*) Polygon VectoryLayer created from array data.
+        :returns: (*graphics*) Polygon graphics created from array data.
         """
         n = len(args) 
         if n <= 2:
@@ -1256,8 +1251,7 @@ class MapAxes(Axes):
             if zorder is None:
                 zorder = 0
             graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self._axes.setDrawExtent(graphics.getExtent().clone())
-            self._axes.setExtent(graphics.getExtent().clone())
+            self.set_draw_extent(graphics.getExtent())
 
         return graphics
     
@@ -1354,9 +1348,8 @@ class MapAxes(Axes):
         visible = kwargs.pop('visible', True)
         if visible:
             zorder = kwargs.pop('zorder', None)
-            rGraphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self._axes.setDrawExtent(rGraphics.getExtent().clone())
-            self._axes.setExtent(rGraphics.getExtent().clone())
+            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+            self.set_draw_extent(graphics.getExtent())
 
         return graphics
     
@@ -1452,8 +1445,7 @@ class MapAxes(Axes):
         if visible:
             zorder = kwargs.pop('zorder', None)
             graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self._axes.setDrawExtent(graphics.getExtent().clone())
-            self._axes.setExtent(graphics.getExtent().clone())
+            self.set_draw_extent(graphics.getExtent())
 
         return graphics
         
@@ -1531,8 +1523,7 @@ class MapAxes(Axes):
         if visible:
             zorder = kwargs.pop('zorder', None)
             graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self._axes.setDrawExtent(graphics.getExtent().clone())
-            self._axes.setExtent(graphics.getExtent().clone())
+            self.set_draw_extent(graphics.getExtent())
             
         return graphics
         
@@ -1570,8 +1561,7 @@ class MapAxes(Axes):
         if visible:
             zorder = kwargs.pop('zorder', None)
             graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self._axes.setDrawExtent(graphics.getExtent().clone())
-            self._axes.setExtent(graphics.getExtent().clone())
+            self.set_draw_extent(graphics.getExtent())
             
         return graphics
         

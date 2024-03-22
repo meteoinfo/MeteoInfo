@@ -24,8 +24,8 @@ import java.util.stream.Collectors;
 
 public class MapGridLine extends GridLine {
     protected ProjectionInfo projInfo;
-    protected Extent extent;
-    protected Extent lonLatExtent;
+    protected Extent extent = new Extent(-100, 100, -100, 100);
+    protected Extent lonLatExtent = new Extent(-180, 180, -90, 90);
     protected List<Double> longitudeLocations;
     protected List<Double> latitudeLocations;
     protected boolean fixLocations = false;
@@ -476,7 +476,7 @@ public class MapGridLine extends GridLine {
                 for (GridLabel aGL : tLabels) {
                     if (!aGL.isBorder()) {
                         if (aGL.isLongitude()) {
-                            if (Math.abs(aGL.getCoord().X) < 1000 && Math.abs(aGL.getCoord().Y) < 1000) {
+                            if (Math.abs(aGL.getCoord().X) < 100000 && Math.abs(aGL.getCoord().Y) < 100000) {
                                 continue;
                             }
 

@@ -3549,6 +3549,110 @@ public class ArrayMath {
     }
 
     /**
+     * Clip array by minimum and maximum values
+     *
+     * @param a Input array
+     * @param min Minimum
+     * @param max Maximum
+     * @return Output array
+     */
+    public static Array clip(Array a, double min, double max) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        double v;
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                v = a.getDouble(i);
+                if (v < min) {
+                    v = min;
+                } else if (v > max) {
+                    v = max;
+                }
+                r.setDouble(i, v);
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                v = iterA.getDoubleNext();
+                if (v < min) {
+                    v = min;
+                } else if (v > max) {
+                    v = max;
+                }
+                iterR.setDoubleNext(v);
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Clip array by minimum value
+     *
+     * @param a Input array
+     * @param min Minimum
+     * @return Output array
+     */
+    public static Array clipMin(Array a, double min) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        double v;
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                v = a.getDouble(i);
+                if (v < min) {
+                    v = min;
+                }
+                r.setDouble(i, v);
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                v = iterA.getDoubleNext();
+                if (v < min) {
+                    v = min;
+                }
+                iterR.setDoubleNext(v);
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Clip array by maximum value
+     *
+     * @param a Input array
+     * @param max Maximum
+     * @return Output array
+     */
+    public static Array clipMax(Array a, double max) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        double v;
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                v = a.getDouble(i);
+                if (v > max) {
+                    v = max;
+                }
+                r.setDouble(i, v);
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                v = iterA.getDoubleNext();
+                if (v > max) {
+                    v = max;
+                }
+                iterR.setDoubleNext(v);
+            }
+        }
+
+        return r;
+    }
+
+    /**
      * Return the complex conjugate, element-wise.
      * The complex conjugate of a complex number is obtained by changing the sign of its imaginary part.
      *

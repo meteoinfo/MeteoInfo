@@ -10,15 +10,16 @@ import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.math.ArrayUtil;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
 
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class TriMeshGraphic extends GraphicCollection3D {
 
-    protected Logger logger = Logger.getLogger("TriMeshGraphic");
+    protected Logger logger = LoggerFactory.getLogger("TriMeshGraphic");
     protected float[] vertexPosition;
     protected float[] vertexValue;
     protected float[] vertexColor;

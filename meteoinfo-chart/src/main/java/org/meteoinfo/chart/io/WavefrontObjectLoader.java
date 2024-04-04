@@ -3,19 +3,20 @@ package org.meteoinfo.chart.io;
 import org.meteoinfo.chart.graphic.TriMeshGraphic;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class WavefrontObjectLoader {
 
-    private Logger logger = Logger.getLogger("Wavefront Object Loader");
+    private Logger logger = LoggerFactory.getLogger("Wavefront Object Loader");
     private ArrayList<float[]> vData = new ArrayList<float[]>();    //list of vertex coordinates
     private ArrayList<float[]> vtData = new ArrayList<float[]>();   //list of texture coordinates
     private ArrayList<float[]> vnData = new ArrayList<float[]>();   //list of normal coordinates
@@ -43,13 +44,13 @@ public class WavefrontObjectLoader {
                 tZipEntry = tZipInputStream.getNextEntry();
                 String inZipEntryName = tZipEntry.getName();
                 if (inZipEntryName==null) {
-                    logger.severe("ERROR! ZIP ENTRY IS NULL!");
+                    logger.error("ERROR! ZIP ENTRY IS NULL!");
                 }
                 logger.info("EXTRACTING: " + inZipEntryName);
                 if (!tZipEntry.isDirectory()) {
                     br = new BufferedReader(new InputStreamReader(tZipInputStream));
                 } else {
-                    logger.severe("ERROR! ZIP ENTRY IS DIRECTORY! SHOULD BE PLAIN FILE!");
+                    logger.error("ERROR! ZIP ENTRY IS DIRECTORY! SHOULD BE PLAIN FILE!");
                 }
             } else {
                 br = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(objFileName))));
@@ -74,7 +75,7 @@ public class WavefrontObjectLoader {
             br.close();
             logger.info("MODEL " + objFileName + " SUCCESSFULLY LOADED!");
         } catch (IOException e) {
-            logger.severe(e.toString());
+            logger.error(e.toString());
         }
     }
 

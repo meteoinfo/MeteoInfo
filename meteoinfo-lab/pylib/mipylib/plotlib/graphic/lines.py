@@ -41,6 +41,18 @@ class Line2D(Line2DGraphic, Artist):
             self.setCurve(curve)
 
     @property
+    def visible(self):
+        """
+        The artist is visible or not.
+        """
+        return self.isVisible()
+
+    @visible.setter
+    def visible(self, val):
+        self.setVisible(val)
+        self.stale = True
+
+    @property
     def xdata(self):
         """
         Return the xdata.

@@ -13,7 +13,7 @@ from org.meteoinfo.math.stats import StatsUtil
 from .. import core as np
 
 __all__ = ['solve', 'cholesky', 'cond', 'det', 'lu', 'qr', 'svd', 'eig', 'inv', 'lstsq', 'slogdet',
-           'solve_triangular', 'norm', 'pinv']
+           'solve_triangular', 'norm', 'pinv', 'LinAlgError']
 
 
 class LinAlgError(Exception):

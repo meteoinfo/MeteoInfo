@@ -72,6 +72,19 @@ public class GraphicCollection extends Graphic implements Iterator {
     }
 
     /**
+     * Get shape by index
+     * @param index The index
+     * @return Shape
+     */
+    public Shape getShape(int index) {
+        if (this.graphics.isEmpty()) {
+            return null;
+        } else {
+            return this.graphics.get(index).getShape();
+        }
+    }
+
+    /**
      * Get graphic list
      *
      * @return Graphic list

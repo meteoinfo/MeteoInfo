@@ -521,7 +521,12 @@ public class EarthGLPlot extends GLPlot {
 
     @Override
     protected void drawPolygonShape(GL2 gl, Graphic graphic) {
+        //gl.glDisable(GL2.GL_DEPTH_TEST);
+        //gl.glEnable(GL2.GL_CULL_FACE);
+        //gl.glFrontFace(GL2.GL_CW);
         super.drawPolygonShape(gl, graphic);
+        //gl.glEnable(GL2.GL_DEPTH_TEST);
+        //gl.glDisable(GL2.GL_CULL_FACE);
     }
 
     // </editor-fold>

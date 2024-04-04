@@ -21,6 +21,7 @@ public class MapGridLine3D extends MapGridLine {
      */
     public MapGridLine3D() {
         super();
+        this.extent = new Extent3D(-100, 100, -100, 100, 0, 100);
     }
 
     /**
@@ -28,7 +29,7 @@ public class MapGridLine3D extends MapGridLine {
      * @param projInfo Projection
      * @param extent Extent
      */
-    public MapGridLine3D(ProjectionInfo projInfo, Extent extent) {
+    public MapGridLine3D(ProjectionInfo projInfo, Extent3D extent) {
         super(true);
         this.projInfo = projInfo;
         this.setExtent(extent);

@@ -948,16 +948,16 @@ public class ProjectionUtil {
     public static Graphic projectClipGraphic(Graphic graphic, ProjectionInfo fromProj, ProjectionInfo toProj) {
         if (graphic instanceof GraphicCollection) {
             try {
-                GraphicCollection newGCollection = new GraphicCollection();
+                Graphic newGCollection = graphic.getClass().getDeclaredConstructor().newInstance();
                 for (Graphic aGraphic : ((GraphicCollection) graphic).getGraphics()) {
                     List<? extends Shape> shapes = projectClipShape(aGraphic.getShape(), fromProj, toProj);
                     if (shapes != null && shapes.size() > 0) {
                         aGraphic.setShape(shapes.get(0));
-                        newGCollection.add(aGraphic);
+                        ((GraphicCollection) newGCollection).add(aGraphic);
                     }
                 }
-                newGCollection.setLegendScheme(((GraphicCollection) graphic).getLegendScheme());
-                newGCollection.setSingleLegend(((GraphicCollection) graphic).isSingleLegend());
+                ((GraphicCollection) newGCollection).setLegendScheme(((GraphicCollection) graphic).getLegendScheme());
+                ((GraphicCollection) newGCollection).setSingleLegend(((GraphicCollection) graphic).isSingleLegend());
                 newGCollection.setAntiAlias(graphic.isAntiAlias());
 
                 return newGCollection;

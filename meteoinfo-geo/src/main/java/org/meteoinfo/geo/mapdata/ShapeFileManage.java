@@ -13,16 +13,19 @@
  */
 package org.meteoinfo.geo.mapdata;
 
+ import org.meteoinfo.chart.graphic.GeoGraphicCollection;
  import org.meteoinfo.common.Extent;
  import org.meteoinfo.common.PointD;
  import org.meteoinfo.common.io.EndianDataOutputStream;
  import org.meteoinfo.geo.layer.LayerDrawType;
  import org.meteoinfo.geo.layer.VectorLayer;
  import org.meteoinfo.geo.legend.LegendManage;
+ import org.meteoinfo.geometry.graphic.GraphicCollection;
  import org.meteoinfo.geometry.shape.Shape;
  import org.meteoinfo.geometry.shape.*;
  import org.meteoinfo.projection.ProjectionInfo;
  import org.meteoinfo.table.AttributeTable;
+ import org.w3c.dom.Attr;
 
  import java.awt.*;
  import java.io.*;
@@ -714,28 +717,10 @@ public class ShapeFileManage {
      * @param shpfilepath Shape file path
      * @param aLayer Vector layer
      * @return Boolean
-     * @throws IOException*/
+     * @throws IOException
+     */
     public static boolean saveShapeFile(String shpfilepath, VectorLayer aLayer) throws IOException {
-        String shxfilepath = shpfilepath.replace(shpfilepath.substring(shpfilepath.lastIndexOf(".")), ".shx");
-        String dbffilepath = shpfilepath.replace(shpfilepath.substring(shpfilepath.lastIndexOf(".")), ".dbf");
-        String projFilePath = shpfilepath.replace(shpfilepath.substring(shpfilepath.lastIndexOf(".")), ".prj");        
-
-        switch (aLayer.getShapeType()) {
-            case POINT:
-            case POINT_Z:
-            case POLYLINE:
-            case POLYLINE_Z:
-            case POLYGON:
-            case POLYGON_Z:
-                writeShxFile(shxfilepath, aLayer);
-                writeShpFile(shpfilepath, aLayer);
-                writeDbfFile(dbffilepath, aLayer);
-                writeProjFile(projFilePath, aLayer);
-                return true;
-
-            default:
-                return false;
-        }
+        return saveShapeFile(shpfilepath, aLayer, null);
     }
     
     /**
@@ -743,8 +728,8 @@ public class ShapeFileManage {
      * @param shpfilepath Shape file path
      * @param aLayer Vector layer
      * @param encoding Encoding
-     * @return Boolean
-     * @throws IOException*/
+     * @throws IOException
+     */
     public static boolean saveShapeFile(String shpfilepath, VectorLayer aLayer, String encoding) throws IOException {
         String shxfilepath = shpfilepath.replace(shpfilepath.substring(shpfilepath.lastIndexOf(".")), ".shx");
         String dbffilepath = shpfilepath.replace(shpfilepath.substring(shpfilepath.lastIndexOf(".")), ".dbf");
@@ -759,14 +744,82 @@ public class ShapeFileManage {
             case POLYGON_Z:
                 writeShxFile(shxfilepath, aLayer);
                 writeShpFile(shpfilepath, aLayer);
-                writeDbfFile(dbffilepath, aLayer, encoding);
+                if (encoding == null) {
+                    writeDbfFile(dbffilepath, aLayer);
+                } else {
+                    writeDbfFile(dbffilepath, aLayer, encoding);
+                }
                 writeProjFile(projFilePath, aLayer);
                 return true;
-
             default:
                 return false;
         }
     }
+
+     /**
+      * Save shape file
+      * @param shpFilePath Shape file path
+      * @param graphics Graphics
+      * @throws IOException
+      */
+     public static boolean saveShapeFile(String shpFilePath, GraphicCollection graphics) throws IOException {
+         return saveShapeFile(shpFilePath, GeoGraphicCollection.factory(graphics), null);
+     }
+
+     /**
+      * Save shape file
+      * @param shpFilePath Shape file path
+      * @param graphics Graphics
+      * @param encoding Encoding
+      * @throws IOException
+      */
+     public static boolean saveShapeFile(String shpFilePath, GraphicCollection graphics, String encoding) throws IOException {
+         return saveShapeFile(shpFilePath, GeoGraphicCollection.factory(graphics), encoding);
+     }
+
+     /**
+      * Save shape file
+      * @param shpFilePath Shape file path
+      * @param geoGraphics GeoGraphics
+      * @param encoding Encoding
+      * @throws IOException
+      */
+     public static boolean saveShapeFile(String shpFilePath, GeoGraphicCollection geoGraphics) throws IOException {
+         return saveShapeFile(shpFilePath, geoGraphics, null);
+     }
+
+     /**
+      * Save shape file
+      * @param shpFilePath Shape file path
+      * @param geoGraphics GeoGraphics
+      * @param encoding Encoding
+      * @throws IOException
+      */
+     public static boolean saveShapeFile(String shpFilePath, GeoGraphicCollection geoGraphics, String encoding) throws IOException {
+         String shxFilePath = shpFilePath.replace(shpFilePath.substring(shpFilePath.lastIndexOf(".")), ".shx");
+         String dbfFilePath = shpFilePath.replace(shpFilePath.substring(shpFilePath.lastIndexOf(".")), ".dbf");
+         String projFilePath = shpFilePath.replace(shpFilePath.substring(shpFilePath.lastIndexOf(".")), ".prj");
+
+         switch (geoGraphics.getShapeType()) {
+             case POINT:
+             case POINT_Z:
+             case POLYLINE:
+             case POLYLINE_Z:
+             case POLYGON:
+             case POLYGON_Z:
+                 writeShxFile(shxFilePath, geoGraphics);
+                 writeShpFile(shpFilePath, geoGraphics);
+                 if (encoding == null) {
+                     writeDbfFile(dbfFilePath, geoGraphics.getAttributeTable());
+                 } else {
+                     writeDbfFile(dbfFilePath, geoGraphics.getAttributeTable(), encoding);
+                 }
+                 writeProjFile(projFilePath, geoGraphics.getProjInfo());
+                 return true;
+             default:
+                 return false;
+         }
+     }
 
     private static void writeShpFile(String shpfilepath, VectorLayer aLayer) throws FileNotFoundException, IOException {
         File shpFile = new File(shpfilepath);
@@ -789,6 +842,27 @@ public class ShapeFileManage {
         bw.close();
     }
 
+     private static void writeShpFile(String shpFilePath, GraphicCollection graphics) throws FileNotFoundException, IOException {
+         File shpFile = new File(shpFilePath);
+         EndianDataOutputStream bw = new EndianDataOutputStream(new BufferedOutputStream(new FileOutputStream(shpFile)));
+
+         //Write header
+         int FileLength = getShpFileLength(graphics);
+         writeHeader(bw, graphics, FileLength);
+
+         //Write records
+         int RecordNumber;
+
+         for (int i = 0; i < graphics.getNumGraphics(); i++) {
+             Shape aShape = graphics.getShapes().get(i);
+             RecordNumber = i + 1;
+             writeRecord(bw, RecordNumber, aShape, graphics.getShapeType());
+         }
+
+         //Close
+         bw.close();
+     }
+
     private static int getShpFileLength(VectorLayer aLayer) {
         int fileLength = 50;
 
@@ -800,6 +874,18 @@ public class ShapeFileManage {
 
         return fileLength;
     }
+
+     private static int getShpFileLength(GraphicCollection graphics) {
+         int fileLength = 50;
+
+         for (int i = 0; i < graphics.getNumGraphics(); i++) {
+             Shape aShape = graphics.getShapes().get(i);
+             int cLen = getContentLength(aShape, graphics.getShapeType());
+             fileLength += 4 + cLen;
+         }
+
+         return fileLength;
+     }
 
     private static int getContentLength(Shape aShape, ShapeTypes aST) {
         int contentLength = 0;
@@ -933,31 +1019,39 @@ public class ShapeFileManage {
         }
     }
 
-    private static void writeHeader(EndianDataOutputStream bw, VectorLayer aLayer, int FileLength) throws IOException {
-        int i;
-        int FileCode = 9994;
-        //FileCode = swapByteOrder(FileCode);
-        int Unused = 0;
-        //Unused = swapByteOrder(Unused);
-        //FileLength = swapByteOrder(FileLength);
-        int Version = 1000;
-        int aShapeType = aLayer.getShapeType().getValue();
-
-        bw.writeIntBE(FileCode);
-        for (i = 0; i < 5; i++) {
-            bw.writeIntBE(Unused);
-        }
-        bw.writeIntBE(FileLength);
-        bw.writeIntLE(Version);
-        bw.writeIntLE(aShapeType);
-        bw.writeDoubleLE(aLayer.getExtent().minX);
-        bw.writeDoubleLE(aLayer.getExtent().minY);
-        bw.writeDoubleLE(aLayer.getExtent().maxX);
-        bw.writeDoubleLE(aLayer.getExtent().maxY);
-        for (i = 0; i < 4; i++) {
-            bw.writeDoubleLE(0.0);
-        }
+    private static void writeHeader(EndianDataOutputStream bw, VectorLayer aLayer, int fileLength) throws IOException {
+        writeHeader(bw, aLayer.getShapeType(), aLayer.getExtent(), fileLength);
     }
+
+     private static void writeHeader(EndianDataOutputStream bw, GraphicCollection graphics, int fileLength) throws IOException {
+         writeHeader(bw, graphics.getShapeType(), graphics.getExtent(), fileLength);
+     }
+
+     private static void writeHeader(EndianDataOutputStream bw, ShapeTypes shapeType, Extent extent, int fileLength) throws IOException {
+         int i;
+         int FileCode = 9994;
+         //FileCode = swapByteOrder(FileCode);
+         int Unused = 0;
+         //Unused = swapByteOrder(Unused);
+         //FileLength = swapByteOrder(FileLength);
+         int Version = 1000;
+         int aShapeType = shapeType.getValue();
+
+         bw.writeIntBE(FileCode);
+         for (i = 0; i < 5; i++) {
+             bw.writeIntBE(Unused);
+         }
+         bw.writeIntBE(fileLength);
+         bw.writeIntLE(Version);
+         bw.writeIntLE(aShapeType);
+         bw.writeDoubleLE(extent.minX);
+         bw.writeDoubleLE(extent.minY);
+         bw.writeDoubleLE(extent.maxX);
+         bw.writeDoubleLE(extent.maxY);
+         for (i = 0; i < 4; i++) {
+             bw.writeDoubleLE(0.0);
+         }
+     }
 
     private static void writeShxFile(String shxfilepath, VectorLayer aLayer) throws IOException {
         File shxFile = new File(shxfilepath);
@@ -985,34 +1079,71 @@ public class ShapeFileManage {
         bw.close();
     }
 
-    private static void writeDbfFile(String dbffilepath, VectorLayer aLayer) {
-        aLayer.getAttributeTable().saveAs(dbffilepath, true);
+     private static void writeShxFile(String shxFilePath, GraphicCollection graphics) throws IOException {
+         File shxFile = new File(shxFilePath);
+         EndianDataOutputStream bw = new EndianDataOutputStream(new BufferedOutputStream(new FileOutputStream(shxFile)));
+
+         //Write header
+         int FileLength = graphics.getNumGraphics() * 4 + 50;
+         writeHeader(bw, graphics, FileLength);
+
+         //Write content
+         int OffSet, ContentLength;
+         OffSet = 50;
+
+         for (int i = 0; i < graphics.getNumGraphics(); i++) {
+             Shape aShape = graphics.getShapes().get(i);
+             ContentLength = getContentLength(aShape, graphics.getShapeType());
+
+             bw.writeIntBE(OffSet);
+             bw.writeIntBE(ContentLength);
+
+             OffSet = OffSet + 4 + ContentLength;
+         }
+
+         //Close
+         bw.close();
+     }
+
+    private static void writeDbfFile(String dbfFilePath, VectorLayer aLayer) {
+        writeDbfFile(dbfFilePath, aLayer.getAttributeTable());
     }
     
-    private static void writeDbfFile(String dbffilepath, VectorLayer aLayer, String encoding) {
-        AttributeTable attTable = aLayer.getAttributeTable();
-        attTable.setEncoding(encoding);
-        attTable.saveAs(dbffilepath, true);
+    private static void writeDbfFile(String dbfFilePath, VectorLayer aLayer, String encoding) {
+        writeDbfFile(dbfFilePath, aLayer.getAttributeTable(), encoding);
     }
 
-    private static void writeProjFile(String projFilePath, VectorLayer aLayer) {
-        BufferedWriter sw = null;
-        try {
-            String esriString = aLayer.getProjInfo().toEsriString();
-            sw = new BufferedWriter(new FileWriter(new File(projFilePath)));
-            sw.write(esriString);
-            sw.flush();
-            sw.close();
-        } catch (IOException ex) {
-            Logger.getLogger(ShapeFileManage.class.getName()).log(Level.SEVERE, null, ex);
-        } finally {
-            try {
-                sw.close();
-            } catch (IOException ex) {
-                Logger.getLogger(ShapeFileManage.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+     private static void writeDbfFile(String dbfFilePath, AttributeTable attrTable) {
+         attrTable.saveAs(dbfFilePath, true);
+     }
+
+     private static void writeDbfFile(String dbfFilePath, AttributeTable attrTable, String encoding) {
+         attrTable.setEncoding(encoding);
+         attrTable.saveAs(dbfFilePath, true);
+     }
+
+    private static void writeProjFile(String projFilePath, VectorLayer layer) {
+        writeProjFile(projFilePath, layer.getProjInfo());
     }
+
+     private static void writeProjFile(String projFilePath, ProjectionInfo projectionInfo) {
+         BufferedWriter sw = null;
+         try {
+             String esriString = projectionInfo.toEsriString();
+             sw = new BufferedWriter(new FileWriter(new File(projFilePath)));
+             sw.write(esriString);
+             sw.flush();
+             sw.close();
+         } catch (IOException ex) {
+             Logger.getLogger(ShapeFileManage.class.getName()).log(Level.SEVERE, null, ex);
+         } finally {
+             try {
+                 sw.close();
+             } catch (IOException ex) {
+                 Logger.getLogger(ShapeFileManage.class.getName()).log(Level.SEVERE, null, ex);
+             }
+         }
+     }
 
     /**
      * Swaps the byte order of an int32

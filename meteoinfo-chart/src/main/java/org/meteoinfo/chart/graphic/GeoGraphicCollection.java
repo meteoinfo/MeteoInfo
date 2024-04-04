@@ -7,13 +7,13 @@ import org.meteoinfo.common.PointD;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.geometry.shape.PointShape;
-import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.shape.Shape;
-import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.table.AttributeTable;
+import org.meteoinfo.table.DataRow;
+import org.meteoinfo.table.DataTable;
 import org.meteoinfo.table.Field;
 
 import javax.swing.*;
@@ -36,6 +36,57 @@ public class GeoGraphicCollection extends GraphicCollection {
 
         this.attributeTable = new AttributeTable();
         this.projInfo = ProjectionInfo.LONG_LAT;
+    }
+
+    /**
+     * Factory method create GeoGraphicCollection from GraphicsCollection
+     * @param graphics The GraphicCollection object
+     * @return GeoGraphicCollection object
+     */
+    public static GeoGraphicCollection factory(GraphicCollection graphics) {
+        GeoGraphicCollection geoGraphics = new GeoGraphicCollection();
+        geoGraphics.graphics = graphics.getGraphics();
+        geoGraphics.extent = graphics.getExtent();
+        geoGraphics.setSingleLegend(graphics.isSingleLegend());
+        geoGraphics.setLabelSet(graphics.getLabelSet());
+        geoGraphics.setLabelPoints(graphics.getLabelPoints());
+        geoGraphics.setLegendScheme(graphics.getLegendScheme());
+        geoGraphics.setLegendBreak(graphics.getLegendBreak());
+        geoGraphics.setAntiAlias(graphics.isAntiAlias());
+
+        AttributeTable attrTable = new AttributeTable();
+        ShapeTypes shapeType = graphics.getShapeType();
+        switch (shapeType) {
+            case POLYGON:
+            case POLYGON_Z:
+                attrTable.addField(new Field("data_Low", DataType.DOUBLE));
+                attrTable.addField(new Field("data_High", DataType.DOUBLE));
+                break;
+            default:
+                attrTable.addField(new Field("data", DataType.DOUBLE));
+                break;
+        }
+        DataTable dataTable = attrTable.getTable();
+        for (Graphic graphic : geoGraphics.graphics) {
+            try {
+                DataRow dataRow = dataTable.addRow();
+                switch (shapeType) {
+                    case POLYGON:
+                    case POLYGON_Z:
+                        dataRow.setValue("data_Low", ((PolygonShape) graphic.getShape()).lowValue);
+                        dataRow.setValue("data_High", ((PolygonShape) graphic.getShape()).highValue);
+                        break;
+                    default:
+                        dataRow.setValue("data", graphic.getShape().getValue());
+                        break;
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }
+        geoGraphics.setAttributeTable(attrTable);
+
+        return geoGraphics;
     }
 
     /**

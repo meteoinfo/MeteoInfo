@@ -529,9 +529,10 @@ class MapAxes(Axes):
             if antialias is not None:
                 graphics.setAntiAlias(antialias)
 
-            graphics = self.add_graphic(graphics, projection=layer.proj, zorder=zorder)
-            self._axes.setDrawExtent(graphics.getExtent().clone())
-            self._axes.setExtent(graphics.getExtent().clone())
+            if visible:
+                graphics = self.add_graphic(graphics, projection=layer.proj, zorder=zorder)
+                #self._axes.setDrawExtent(graphics.getExtent().clone())
+                #self._axes.setExtent(graphics.getExtent().clone())
             return GeoGraphicCollection(graphics)
         else:
             if isinstance(args[0], Graphic):

@@ -1,3 +1,7 @@
+"""
+For EOF analysis. The code were ported from Python eofs library - https://github.com/ajdawson/eofs
+"""
+
 import mipylib.numeric as np
 import warnings
 

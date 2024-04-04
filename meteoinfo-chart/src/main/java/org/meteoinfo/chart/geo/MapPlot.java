@@ -489,30 +489,32 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         int barIdx = 0;
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);
-            if (graphic instanceof WebMapImage) {
-                this.drawWebMapImage(g, (WebMapImage) graphic, area);
-                continue;
-            }
-
-            ColorBreak cb = graphic.getLegend();
-            ShapeTypes shapeType = graphic.getGraphicN(0).getShape().getShapeType();
-            switch(shapeType){
-                case BAR:
-                    this.drawBars(g, (GraphicCollection) graphic, barIdx, area);
-                    barIdx += 1;
+            if (graphic.isVisible()) {
+                if (graphic instanceof WebMapImage) {
+                    this.drawWebMapImage(g, (WebMapImage) graphic, area);
                     continue;
-                case STATION_MODEL:
-                    this.drawStationModel(g, (GraphicCollection) graphic, area);
-                    continue;
-            }
+                }
 
-            if (graphic.getExtent().intersects(this.drawExtent)) {
-                drawGraphics(g, graphic, area);
-            }
+                ColorBreak cb = graphic.getLegend();
+                ShapeTypes shapeType = graphic.getGraphicN(0).getShape().getShapeType();
+                switch (shapeType) {
+                    case BAR:
+                        this.drawBars(g, (GraphicCollection) graphic, barIdx, area);
+                        barIdx += 1;
+                        continue;
+                    case STATION_MODEL:
+                        this.drawStationModel(g, (GraphicCollection) graphic, area);
+                        continue;
+                }
 
-            if (this.isLonLatMap() && graphic instanceof GeoGraphicCollection) {
-                if (this.drawExtent.maxX > 180) {
-                    drawGraphics(g, ((GeoGraphicCollection) graphic).xShiftCopy(360), area);
+                if (graphic.getExtent().intersects(this.drawExtent)) {
+                    drawGraphics(g, graphic, area);
+                }
+
+                if (this.isLonLatMap() && graphic instanceof GeoGraphicCollection) {
+                    if (this.drawExtent.maxX > 180) {
+                        drawGraphics(g, ((GeoGraphicCollection) graphic).xShiftCopy(360), area);
+                    }
                 }
             }
         }

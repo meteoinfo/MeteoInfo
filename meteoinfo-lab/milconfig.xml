@@ -1,38 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo\wrf">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grads"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\netcdf">
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\json"/>
+    <RecentFolder Folder="D:\Temp\working\acidrain"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\subplot"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\awx"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\eof"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\wrf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\hdf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\awx"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grads"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\eof\reof_elnino.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\eof\reof_sst.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\projection\stere_proj.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\eof\reof_function_hgt.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\wrf\wrf_destagger_uv_webmap_loop.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\wrf\wrf_destagger_uv_webmap_loop_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\geoshow\geoshow_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\Line2D_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\netcdf\eccc_1.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\eof\reof_elnino.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\eof\reof_sst.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\projection\stere_proj.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\eof\reof_function_hgt.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\wrf\wrf_destagger_uv_webmap_loop.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\wrf\wrf_destagger_uv_webmap_loop_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\geoshow\geoshow_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\Line2D_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\netcdf\eccc_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -40,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1358,821"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
 </MeteoInfo>

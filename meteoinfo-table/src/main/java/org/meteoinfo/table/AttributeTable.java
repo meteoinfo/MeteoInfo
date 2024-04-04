@@ -549,7 +549,7 @@ public final class AttributeTable implements Cloneable {
      * Save this table to the specified file name
      *
      * @param fileName The file name to be saved
-     * @param overwrite If over write the file if it exists
+     * @param overwrite If overwrite the file if it exists
      */
     public void saveAs(String fileName, boolean overwrite) {
         if (_file == null) {

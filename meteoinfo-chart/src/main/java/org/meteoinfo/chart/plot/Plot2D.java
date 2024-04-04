@@ -285,17 +285,19 @@ public class Plot2D extends AbstractPlot2D {
         int barIdx = 0;
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);
-            ColorBreak cb = graphic.getLegend();
-            ShapeTypes shapeType = graphic.getGraphicN(0).getShape().getShapeType();
-            switch(shapeType){
-                case BAR:
-                    this.drawBars(g, (GraphicCollection) graphic, barIdx, area);
-                    barIdx += 1;
-                    continue;
-            }
+            if (graphic.isVisible()) {
+                ColorBreak cb = graphic.getLegend();
+                ShapeTypes shapeType = graphic.getGraphicN(0).getShape().getShapeType();
+                switch (shapeType) {
+                    case BAR:
+                        this.drawBars(g, (GraphicCollection) graphic, barIdx, area);
+                        barIdx += 1;
+                        continue;
+                }
 
-            if (graphic.getExtent().intersects(this.drawExtent)) {
-                drawGraphics(g, graphic, area);
+                if (graphic.getExtent().intersects(this.drawExtent)) {
+                    drawGraphics(g, graphic, area);
+                }
             }
         }
     }

@@ -1154,12 +1154,14 @@ class Axes(object):
                 graphic = self._axes.getGraphicNumber() + graphic
 
         self._axes.getGraphics().remove(graphic)
+        self.stale = True
 
     def remove(self):
         """
         Remove all graphics.
         """
         self._axes.getGraphics().clear()
+        self.stale = True
 
     def cll(self):
         """

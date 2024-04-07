@@ -436,13 +436,14 @@ class DimDataFile(object):
         """
         self.ncfile.create()
 
-    def nc_define(self, dims, gattrs, vars, write_dimvars=True):
+    def nc_define(self, dims, gattrs, vars, write_dimvars=True, proj=None):
         """
         Define dimensions, global attributes, variables of the netcdf file
         :param dims: (*list of Dimension*) The dimensions
         :param gattrs: (*list of Attribute*) The global attributes
         :param vars: (*list of DimVariable*) The variables
         :param write_dimvars: (*bool*) Write dimension variables value or not. Default is ``True``
+        :param proj: (*ProjectionInfo*) Projection info.
         """
         #Add dimensions
         ncdims = []
@@ -453,6 +454,12 @@ class DimDataFile(object):
         if not gattrs is None:
             for key in gattrs:
                 self.addgroupattr(key, gattrs[key])
+
+        #Add grid map variable
+        if proj is not None:
+            if not proj.isLonLat():
+                var = self.addvar('crs', 'int', [])
+                var.addattr('proj4', proj.toProj4String())
 
         #Add dimension variables
         dimvars = []

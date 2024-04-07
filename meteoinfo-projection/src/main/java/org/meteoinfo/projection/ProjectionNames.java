@@ -51,7 +51,7 @@ public enum ProjectionNames {
     
     /**
      * Get proj4 name
-     * @return Porj4 name
+     * @return Proj4 name
      */
     public String getProj4Name() {
         return this.proj4Name;

@@ -16,6 +16,7 @@ from org.meteoinfo.data.meteodata.bufr import BufrDataInfo
 from org.meteoinfo.data.meteodata.netcdf import NetCDFDataInfo
 from org.meteoinfo.data import TableUtil
 from org.meteoinfo.ndarray.math import ArrayUtil
+from org.meteoinfo.projection import ProjectionNames
 from ucar.nc2 import NetcdfFileWriter
 from ucar.nc2.iosp.bufr.tables import BufrTables
 
@@ -654,7 +655,13 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
     #Add global attributes
     for attr in f.attributes():
         ncfile.addgroupattr(attr.getName(), f.attrvalue(attr))
-        
+
+    #Add grid map variable
+    if f.proj is not None:
+        if not f.proj.isLonLat():
+            var = ncfile.addvar('crs', 'int', [])
+            var.addattr('proj4', proj.toProj4String())
+
     #Add dimension variables
     tvar = None
     if writedimvar:
@@ -868,7 +875,7 @@ def dimension(dimvalue, dimname='null', dimtype=None):
     dim.setShortName(dimname)
     return dim
     
-def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, largefile=False,
+def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, proj=None, largefile=False,
             version='netcdf3'):
     """
     Write a netCDF data file from an array.
@@ -879,12 +886,14 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, largefile=Fal
     :param dims: (*list of dimensions*) Dimension list.
     :param attrs: (*dict*) Variable attributes.
     :param gattrs: (*dict*) Global attributes.
+    :param proj: (*ProjectionInfo*) Projection info. Default is `None`, means long/lat projection.
     :param largefile: (*boolean*) Create netCDF as large file or not.
     :param version: (*str*) NetCDF version [netcdf3 | netcdf4].
     """
     if dims is None:
         if isinstance(data, DimArray):
             dims = data.dims
+            proj = data.proj
         else:
             dims = []
             for s in data.shape:
@@ -904,6 +913,13 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, largefile=Fal
     if not gattrs is None:
         for key in gattrs:
             ncfile.addgroupattr(key, gattrs[key])
+
+    #Add grid map variable
+    if proj is not None:
+        if not proj.isLonLat():
+            var = ncfile.addvar('crs', 'int', [])
+            var.addattr('proj4', proj.toProj4String())
+
     #Add dimension variables
     dimvars = []
     wdims = []

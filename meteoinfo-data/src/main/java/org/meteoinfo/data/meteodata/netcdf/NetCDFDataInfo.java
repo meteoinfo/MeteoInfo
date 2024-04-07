@@ -623,6 +623,13 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             ucar.nc2.Variable pVar = null;
             int pvIdx = -1;
             for (ucar.nc2.Variable aVarS : ncVariables) {
+                if (aVarS.getShortName().equalsIgnoreCase("crs")) {
+                    if (aVarS.findAttribute("proj4") != null) {
+                        pVar = aVarS;
+                        break;
+                    }
+                }
+
                 ucar.nc2.Attribute att = aVarS.findAttribute("grid_mapping_name");
                 if (att != null) {
                     pVar = aVarS;

@@ -1188,6 +1188,7 @@ public class GeoTiff {
                                 for (int w = 0; w < tileWidth; w++) {
                                     hIdx = j * tileWidth + w;
                                     if (hIdx == width) {
+                                        buffer.get(new byte[(tileWidth - w) * 2]);
                                         break;
                                     }
                                     index.set0(vIdx);

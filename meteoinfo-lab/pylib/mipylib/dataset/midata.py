@@ -724,13 +724,13 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
     
     #Write variable data
     for var in variables:
-        print 'Variable: ' + var.name
+        print('Variable: ' + var.name)
         data = f[str(var.name)].read()
         ncfile.write(var, data)    
         
     #Close netCDF file
     ncfile.close()
-    print 'Convert finished!'
+    print('Convert finished!')
     
 def grads2nc(infn, outfn, big_endian=None, largefile=False):
     """

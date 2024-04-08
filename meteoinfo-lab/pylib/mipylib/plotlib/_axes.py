@@ -96,7 +96,8 @@ class Axes(object):
         xreverse = kwargs.pop('xreverse', False)
         yreverse = kwargs.pop('yreverse', False)
         xaxistype = kwargs.pop('xaxistype', None)
-        bgcobj = kwargs.pop('bgcolor', None)
+        facecolor = kwargs.pop('bgcolor', None)
+        facecolor = kwargs.pop('facecolor', facecolor)
 
         if aspect == 'equal':
             self._axes.setAspectType(AspectType.EQUAL)
@@ -120,8 +121,9 @@ class Axes(object):
             r_axis.setInverse(True)
         if not xaxistype is None:
             self.set_xaxis_type(xaxistype)
-        bgcolor = plotutil.getcolor(bgcobj)
-        self._axes.setBackground(bgcolor)
+        if facecolor is not None:
+            facecolor = plotutil.getcolor(facecolor)
+            self._axes.setBackground(facecolor)
         tickline = kwargs.pop('tickline', None)
         if not tickline is None:
             b_axis.setDrawTickLine(tickline)

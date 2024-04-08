@@ -151,7 +151,7 @@ def step(x, y, *args, **kwargs):
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.step(x, y, *args, **kwargs)
@@ -238,7 +238,7 @@ def errorbar(x, y, yerr=None, xerr=None, fmt='', ecolor=None, elinewidth=None, c
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.errorbar(x, y, yerr, xerr, fmt, ecolor, elinewidth, capsize, **kwargs)
@@ -256,7 +256,7 @@ def bar(x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.bar(x, height, width, bottom, align, data, **kwargs)
@@ -288,7 +288,7 @@ def barh(*args, **kwargs):
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian' and g_axes.axestype != 'polar':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.barh(*args, **kwargs)
@@ -307,7 +307,7 @@ def hist(x, bins=10, density=False, cumulative=False,
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.hist(x, bins, density, cumulative,
@@ -326,7 +326,7 @@ def stem(*args, **kwargs):
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.stem(*args, **kwargs)
@@ -358,9 +358,9 @@ def scatter(*args, **kwargs):
 
     if g_axes is None:
         g_axes = axes()
-    # else:
-    #     if g_axes.axestype != 'cartesian':
-    #         g_axes = axes()
+    else:
+        if g_axes.ndim == 3:
+            g_axes = axes()
 
     r = g_axes.scatter(*args, **kwargs)
     if r is not None:
@@ -389,7 +389,7 @@ def arrow(x, y, dx, dy, **kwargs):
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.arrow(x, y, dx, dy, **kwargs)
@@ -407,7 +407,7 @@ def arrowline(x, y, dx=0, dy=0, **kwargs):
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.arrowline(x, y, dx, dy, **kwargs)
@@ -425,7 +425,7 @@ def annotate(s, xy, *args, **kwargs):
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.annotate(s, xy, *args, **kwargs)
@@ -442,6 +442,9 @@ def fill(x, y, color=None, **kwargs):
 
     if g_axes is None:
         g_axes = axes()
+    else:
+        if g_axes.ndim == 3:
+            g_axes = axes()
 
     r = g_axes.fill(x, y, color, **kwargs)
     if r is not None:
@@ -472,9 +475,9 @@ def patch(x, y=None, **kwargs):
 
     if g_axes is None:
         g_axes = axes()
-    # else:
-    # if g_axes.axestype != 'cartesian':
-    # g_axes = axes()
+    else:
+        if g_axes.ndim == 3:
+            g_axes = axes()
 
     r = g_axes.patch(x, y, **kwargs)
     if r is not None:
@@ -491,7 +494,7 @@ def rectangle(position, curvature=None, **kwargs):
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.rectangle(position, curvature, **kwargs)
@@ -509,7 +512,7 @@ def fill_between(x, y1, y2=0, where=None, **kwargs):
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.fill_between(x, y1, y2, where, **kwargs)
@@ -527,7 +530,7 @@ def fill_betweenx(y, x1, x2=0, where=None, **kwargs):
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.fill_betweenx(y, x1, x2, where, **kwargs)
@@ -546,7 +549,7 @@ def pie(x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.pie(x, explode, labels, colors, autopct, pctdistance, shadow,
@@ -567,7 +570,7 @@ def boxplot(x, sym=None, vert=True, positions=None, widths=None, color=None, sho
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.boxplot(x, sym, vert, positions, widths, color, showcaps, showfliers, showmeans,
@@ -588,7 +591,7 @@ def violinplot(dataset, positions=None, widths=0.5, boxwidth=0.01, boxprops=None
     if g_axes is None:
         g_axes = axes()
     else:
-        if g_axes.axestype != 'cartesian':
+        if g_axes.ndim == 3:
             g_axes = axes()
 
     r = g_axes.violinplot(dataset, positions, widths, boxwidth, boxprops, whiskerprops, **kwargs)

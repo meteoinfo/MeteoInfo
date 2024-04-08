@@ -8,7 +8,7 @@ def get_pressure(wrfin, timeidx=0):
     object in order to perform the calculation.
 
     :param wrfin: (*DimDataFile*) Data file.
-    :param timeidx: (*int*) Time index.
+    :param timeidx: (*int*) Time index. Default is `0`.
 
     :returns: (*array*) Pressure (hPa).
     """

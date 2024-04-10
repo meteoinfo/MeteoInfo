@@ -323,7 +323,7 @@ public class XY1DPlot extends AbstractPlot2D {
             }
         } else {
             for (int j = 0; j < len; j++) {
-                xy = this.projToScreen(xdata[j], ydata[j], area);
+                xy = this.projToScreen(ydata[j], xdata[j], area);
                 points[j] = new PointF((float) xy[0], (float) xy[1]);
             }
         }

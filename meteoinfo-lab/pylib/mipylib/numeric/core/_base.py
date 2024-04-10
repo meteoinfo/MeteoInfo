@@ -29,10 +29,14 @@ class flatiter(object):
         self.size = self.array.size
 
     def __iter__(self):
+        self._iter = self.array._array.getIndexIterator()
         return self
 
     def next(self):
-        return self.array.next()
+        if self._iter.hasNext():
+            return self._iter.getObjectNext()
+        else:
+            raise StopIteration()
 
     def __getitem__(self, key):
         if isinstance(key, int):

@@ -12,6 +12,7 @@ from org.meteoinfo.geometry.legend import LineStyles, HatchStyle, ColorBreak, Po
     PolygonBreak, ArrowBreak, ArrowLineBreak, ArrowPolygonBreak, StreamlineBreak, \
     PointStyle, MarkerType, LegendScheme, LegendManage, ExtendFraction
 from org.meteoinfo.geometry.colors import ExtendType
+from org.meteoinfo.geometry.graphic import Graphic
 from org.meteoinfo.common.colors import ColorUtil, ColorMap
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.chart import ChartText
@@ -1195,6 +1196,11 @@ def makelegend(source, **kwargs):
         if isinstance(source, list):
             if isinstance(source[0], ColorBreak):
                 ls = LegendScheme(source)
+            elif isinstance(source[0], Graphic):
+                breaks = []
+                for g in source:
+                    breaks.append(g.getLegend())
+                ls = LegendScheme(breaks)
             else:
                 colors = getcolors(source)
                 values = kwargs.pop('values', None)

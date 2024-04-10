@@ -2023,7 +2023,7 @@ class Axes(object):
             barswidth = kwargs.pop('barswidth', 0.8)
             self._axes.setBarsWidth(barswidth)
 
-        return barbreaks
+        return graphics
 
     def barh(self, *args, **kwargs):
         """
@@ -2045,8 +2045,8 @@ class Axes(object):
         :param hatchsize: (*int*) Hatch size. Default is None (8).
         :param bgcolor: (*Color*) Background color, only valid with hatch.
         :param barswidth: (*float*) Bars width (0 - 1), only used for automatic bar with plot
-            (only one argument widthout ``width`` augument). Defaul is 0.8.
-        :param morepoints: (*boolean*) More points in bar rectangle. Defaul is False.
+            (only one argument without ``width`` augment). Default is 0.8.
+        :param morepoints: (*boolean*) More points in bar rectangle. Default is False.
         
         :returns: Bar legend break.
         
@@ -2150,7 +2150,7 @@ class Axes(object):
             barsheight = kwargs.pop('barsheight', 0.8)
             self._axes.setBarsWidth(barsheight)
 
-        return barbreaks
+        return graphics
 
     def hist(self, x, bins=10, density=False, cumulative=False,
              rwidth=None, orientation='vertical', **kwargs):
@@ -3847,7 +3847,7 @@ class Axes(object):
         :param labels: (*list of string*) Legend labels (optional).
         :param orientation: (*string*) Legend orientation: ``vertical`` or ``horizontal``.
         :param loc: (*string*) The location of the legend, including: 'upper right', 'upper left',
-            'lower left', 'lower right', 'right', 'ceter left', 'center right', lower center',
+            'lower left', 'lower right', 'right', 'center left', 'center right', lower center',
             'upper center', 'center' and 'custom'. Default is 'upper right'.
         :param x: (*float*) Location x in normalized (0, 1) units when ``loc=custom`` .
         :param y: (*float*) Location y in normalized (0, 1) units when ``loc=custom`` .
@@ -4476,9 +4476,9 @@ class PolarAxes(Axes):
             rrmax = max(rrmax, wdhist.max())
             lab = '%s - %s' % (wsbins[i], wsbins[i + 1])
             bb = self.bar(theta, wdhist, width, bottom=hhist, color=colors[i], \
-                          edgecolor='gray', label=lab, morepoints=True)[0]
-            bb.setStartValue(wsbins[i])
-            bb.setEndValue(wsbins[i + 1])
+                          edgecolor='gray', label=lab, morepoints=True)
+            #bb.setStartValue(wsbins[i])
+            #bb.setEndValue(wsbins[i + 1])
             bars.append(bb)
             hhist = hhist + wdhist
 

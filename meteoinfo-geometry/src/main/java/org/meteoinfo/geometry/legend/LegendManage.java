@@ -1502,6 +1502,38 @@ public class LegendManage {
     }
 
     /**
+     * Create weather legend scheme
+     *
+     * @param wList Weather index list
+     * @param size Size
+     * @param color Color
+     * @return Weather legend scheme
+     */
+    public static LegendScheme createWeatherLegendScheme(List<Integer> wList, int size, Color color) {
+        LegendScheme aLS = new LegendScheme(ShapeTypes.POINT);
+        aLS.setLegendType(LegendType.UNIQUE_VALUE);
+        for (int w : wList) {
+            PointBreak aPB = new PointBreak();
+            aPB.setMarkerType(MarkerType.CHARACTER);
+            aPB.setSize(size);
+            aPB.setColor(color);
+            aPB.setFontName("Weather");
+            aPB.setStartValue(w);
+            aPB.setEndValue(w);
+            int charIdx = w + 28;
+            if (w == 99) {
+                charIdx = w + 97;
+            }
+            aPB.setCharIndex(charIdx);
+            aPB.setCaption(String.valueOf(w));
+
+            aLS.getLegendBreaks().add(aPB);
+        }
+
+        return aLS;
+    }
+
+    /**
      * Create random colors
      *
      * @param cNum Color number

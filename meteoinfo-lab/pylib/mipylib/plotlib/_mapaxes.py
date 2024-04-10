@@ -529,10 +529,8 @@ class MapAxes(Axes):
             if antialias is not None:
                 graphics.setAntiAlias(antialias)
 
-            if visible:
-                graphics = self.add_graphic(graphics, projection=layer.proj, zorder=zorder)
-                #self._axes.setDrawExtent(graphics.getExtent().clone())
-                #self._axes.setExtent(graphics.getExtent().clone())
+            graphics = self.add_graphic(graphics, projection=layer.proj, zorder=zorder)
+            graphics.setVisible(visible)
             return GeoGraphicCollection(graphics)
         else:
             if isinstance(args[0], Graphic):
@@ -588,17 +586,18 @@ class MapAxes(Axes):
                 if graphic.getNumGraphics() == 1:
                     graphic = graphic.getGraphicN(0)
 
-                if visible:
-                    if graphic.isCollection():
-                        if self.islonlat():
-                            self._axes.addGraphics(graphic)
-                        else:
-                            graphic = self._axes.addGraphics(graphic, migeo.projinfo())
+                if graphic.isCollection():
+                    if self.islonlat():
+                        self._axes.addGraphics(graphic)
                     else:
-                        if self.islonlat():
-                            self._axes.addGraphic(graphic)
-                        else:
-                            graphic = self._axes.addGraphic(graphic, migeo.projinfo())
+                        graphic = self._axes.addGraphics(graphic, migeo.projinfo())
+                else:
+                    if self.islonlat():
+                        self._axes.addGraphic(graphic)
+                    else:
+                        graphic = self._axes.addGraphic(graphic, migeo.projinfo())
+
+                graphic.setVisible(visible)
 
             return graphic
             
@@ -848,10 +847,10 @@ class MapAxes(Axes):
             graphics.setAntiAlias(antialias)
 
         visible = kwargs.pop('visible', True)
-        if visible:
-            zorder = kwargs.pop('zorder', None)
-            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self.set_draw_extent(graphics.getExtent())
+        zorder = kwargs.pop('zorder', None)
+        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        self.set_draw_extent(graphics.getExtent())
+        graphics.setVisible(visible)
 
         return graphics
 
@@ -928,10 +927,10 @@ class MapAxes(Axes):
             graphics.setAntiAlias(antialias)
 
         visible = kwargs.pop('visible', True)
-        if visible:
-            zorder = kwargs.pop('zorder', None)
-            contours = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self.set_draw_extent(graphics.getExtent())
+        zorder = kwargs.pop('zorder', None)
+        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        self.set_draw_extent(graphics.getExtent())
+        graphics.setVisible(visible)
                 
         return graphics
         
@@ -990,12 +989,12 @@ class MapAxes(Axes):
             graphics.setAntiAlias(antialias)
 
         visible = kwargs.pop('visible', True)
-        if visible:
-            zorder = kwargs.pop('zorder', None)
-            if zorder is None:
-                zorder = 0
-            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self.set_draw_extent(graphics.getExtent())
+        zorder = kwargs.pop('zorder', None)
+        if zorder is None:
+            zorder = 0
+        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        self.set_draw_extent(graphics.getExtent())
+        graphics.setVisible(visible)
                 
         return graphics
         
@@ -1126,14 +1125,14 @@ class MapAxes(Axes):
         if antialias is not None:
             igraphic.setAntiAlias(antialias)
 
-        if visible:
-            zorder = kwargs.pop('zorder', None)
-            if zorder is None:
-                zorder = 0
-            igraphic = self.add_graphic(igraphic, zorder=zorder)
-            self.set_draw_extent(igraphic.getExtent())
-            gridline = self._axes.getGridLine()
-            gridline.setTop(True)
+        zorder = kwargs.pop('zorder', None)
+        if zorder is None:
+            zorder = 0
+        igraphic = self.add_graphic(igraphic, zorder=zorder)
+        self.set_draw_extent(igraphic.getExtent())
+        igraphic.setVisible(visible)
+        gridline = self._axes.getGridLine()
+        gridline.setTop(True)
 
         return igraphic
         
@@ -1193,10 +1192,10 @@ class MapAxes(Axes):
             graphics.setAntiAlias(antialias)
 
         visible = kwargs.pop('visible', True)
-        if visible:
-            zorder = kwargs.pop('zorder', None)
-            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self.set_draw_extent(graphics.getExtent())
+        zorder = kwargs.pop('zorder', None)
+        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        self.set_draw_extent(graphics.getExtent())
+        graphics.setVisible(visible)
 
         return graphics
         
@@ -1247,12 +1246,12 @@ class MapAxes(Axes):
 
         proj = kwargs.pop('proj', migeo.projinfo())
         visible = kwargs.pop('visible', True)
-        if visible:
-            zorder = kwargs.pop('zorder', None)
-            if zorder is None:
-                zorder = 0
-            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self.set_draw_extent(graphics.getExtent())
+        zorder = kwargs.pop('zorder', None)
+        if zorder is None:
+            zorder = 0
+        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        self.set_draw_extent(graphics.getExtent())
+        graphics.setVisible(visible)
 
         return graphics
     
@@ -1347,10 +1346,10 @@ class MapAxes(Axes):
             graphics.setAvoidCollision(avoidcoll)
 
         visible = kwargs.pop('visible', True)
-        if visible:
-            zorder = kwargs.pop('zorder', None)
-            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self.set_draw_extent(graphics.getExtent())
+        zorder = kwargs.pop('zorder', None)
+        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        self.set_draw_extent(graphics.getExtent())
+        graphics.setVisible(visible)
 
         return graphics
     
@@ -1443,10 +1442,10 @@ class MapAxes(Axes):
 
         proj = kwargs.pop('proj', migeo.projinfo())
         visible = kwargs.pop('visible', True)
-        if visible:
-            zorder = kwargs.pop('zorder', None)
-            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self.set_draw_extent(graphics.getExtent())
+        zorder = kwargs.pop('zorder', None)
+        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        self.set_draw_extent(graphics.getExtent())
+        graphics.setVisible(visible)
 
         return graphics
         
@@ -1521,10 +1520,10 @@ class MapAxes(Axes):
             graphics.setAntiAlias(antialias)
 
         visible = kwargs.pop('visible', True)
-        if visible:
-            zorder = kwargs.pop('zorder', None)
-            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self.set_draw_extent(graphics.getExtent())
+        zorder = kwargs.pop('zorder', None)
+        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        self.set_draw_extent(graphics.getExtent())
+        graphics.setVisible(visible)
             
         return graphics
         
@@ -1559,10 +1558,10 @@ class MapAxes(Axes):
             graphics.setAvoidCollision(avoidcoll)
 
         visible = kwargs.pop('visible', True)
-        if visible:
-            zorder = kwargs.pop('zorder', None)
-            graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
-            self.set_draw_extent(graphics.getExtent())
+        zorder = kwargs.pop('zorder', None)
+        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        self.set_draw_extent(graphics.getExtent())
+        graphics.setVisible(visible)
             
         return graphics
         

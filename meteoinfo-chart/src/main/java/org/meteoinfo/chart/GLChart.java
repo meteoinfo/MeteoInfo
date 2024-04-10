@@ -565,8 +565,7 @@ public class GLChart implements GLEventListener {
             //double zoom = this.getPositionAreaZoom(g, plotArea);
             //Margin tightInset = this.getPlotsTightInset(g, plotArea);
             Margin shrink = this.getPlotsShrink(g, plotArea);
-            for (int i = 0; i < this.plots.size(); i++) {
-                Plot plot = this.plots.get(i);
+            for (Plot plot : this.plots) {
                 plot.setAntiAlias(this.antialias);
                 plot.setSymbolAntiAlias(this.symbolAntialias);
                 if (plot.isOuterPosActive()){
@@ -713,17 +712,16 @@ public class GLChart implements GLEventListener {
 
     private Margin getPlotsShrink(Graphics2D g, Rectangle2D area) {
         Margin pshrink = null, shrink;
-        for (int i = 0; i < this.plots.size(); i++) {
-            Plot plot = this.plots.get(i);
+        for (Plot plot : this.plots) {
             plot.setOuterPositionArea(plot.getOuterPositionArea(area));
             Rectangle2D positionArea = plot.getPositionArea(area);
             plot.setPositionArea(positionArea);
             Margin tightInset = plot.getTightInset(g, positionArea);
             plot.setTightInset(tightInset);
             shrink = plot.getPlotShrink();
-            if (i == 0) {
+            if (pshrink == null) {
                 pshrink = shrink;
-            } else if (pshrink != null) {
+            } else {
                 pshrink = pshrink.extend(shrink);
             }
         }

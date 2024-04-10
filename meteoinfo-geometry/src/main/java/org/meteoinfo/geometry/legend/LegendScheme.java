@@ -168,6 +168,14 @@ package org.meteoinfo.geometry.legend;
      }
 
      /**
+      * Return the legend scheme is empty or not
+      * @return Empty or not
+      */
+     public boolean isEmpty() {
+         return this.legendBreaks.isEmpty();
+     }
+
+     /**
       * Get legend type
       *
       * @return The legend type
@@ -296,7 +304,11 @@ package org.meteoinfo.geometry.legend;
       * @return A legend break
       */
      public ColorBreak getLegendBreak(int i) {
-         return this.legendBreaks.get(i);
+         if (i >= this.legendBreaks.size()) {
+             return null;
+         } else {
+             return this.legendBreaks.get(i);
+         }
      }
 
      /**

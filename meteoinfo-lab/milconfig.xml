@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\wind">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\imshow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\patch"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\pcolor"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\pie"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\array">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\polar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
@@ -14,19 +8,25 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\taylor"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\violinplot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\weather"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\fitting"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\map\geoshow\geoshow_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\geotiff\geotiff_dem_4.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\windrose_data_func.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\polynomial\polyder_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\convolve_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\map\geoshow\geoshow_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\geotiff\geotiff_dem_4.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\windrose_data_func.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\polynomial\polyder_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\array\convolve_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1376,799"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1400,825"/>
 </MeteoInfo>

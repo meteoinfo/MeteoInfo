@@ -12,8 +12,8 @@ from org.meteoinfo.math.stats import StatsUtil
 
 from .. import core as np
 
-__all__ = ['solve', 'cholesky', 'cond', 'det', 'lu', 'qr', 'svd', 'eig', 'inv', 'lstsq', 'slogdet',
-           'solve_triangular', 'norm', 'pinv', 'LinAlgError']
+__all__ = ['solve', 'cholesky', 'cond', 'det', 'lu', 'qr', 'svd', 'eig', 'eigvals', 'inv',
+           'lstsq', 'slogdet', 'solve_triangular', 'norm', 'pinv', 'LinAlgError']
 
 
 class LinAlgError(Exception):
@@ -224,7 +224,7 @@ def svd(a, full_matrices=True, compute_uv=True):
 def eig(a):
     """
     Compute the eigenvalues and right eigenvectors of a square array.
-    
+
     Parameters
     ----------
     a : (M, M) array
@@ -250,6 +250,39 @@ def eig(a):
     w = np.NDArray(r[0])
     v = np.NDArray(r[1])
     return w, v
+
+
+def eigvals(a):
+    """
+    Compute the eigenvalues of a general matrix.
+
+    Main difference between `eigvals` and `eig`: the eigenvectors aren't
+    returned.
+
+    Parameters
+    ----------
+    a : (M, M) array
+        Matrices for which the eigenvalues and right eigenvectors will
+        be computed
+
+    Returns
+    -------
+    w : (M) array
+        The eigenvalues, each repeated according to its multiplicity.
+        The eigenvalues are not necessarily ordered. The resulting
+        array will be of complex type, unless the imaginary part is
+        zero in which case it will be cast to a real type. When `a`
+        is real the resulting eigenvalues will be real (0 imaginary
+        part) or occur in conjugate pairs
+    v : (M, M) array
+        The normalized (unit "length") eigenvectors, such that the
+        column ``v[:,i]`` is the eigenvector corresponding to the
+        eigenvalue ``w[i]``.
+    """
+    r = LinalgUtil.eigen(a.asarray())
+    # r = LinalgUtil.eigen_EJML(a.asarray())
+    w = np.NDArray(r[0])
+    return w
 
 
 def inv(a):

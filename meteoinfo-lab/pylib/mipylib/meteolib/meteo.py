@@ -214,12 +214,10 @@ def dewpoint2rh(dewpoint, temp):
         Relative humidity - %
     """    
     if isinstance(dewpoint, NDArray):
-        r = NDArray(MeteoMath.dewpoint2rh(dewpoint.asarray(), temp.asarray()))
-        if isinstance(dewpoint, DimArray):
-            r = DimArray(r, dewpoint.dims, dewpoint.fill_value, dewpoint.proj)
-        return r
+        r = MeteoMath.dewpoint2rh(dewpoint.asarray(), temp.asarray())
+        return dewpoint.array_wrap(r)
     else:
-        return MeteoMath.dewpoint2rh(temp, dewpoint)  
+        return MeteoMath.dewpoint2rh(dewpoint, temp)
 
 def rh2dewpoint(rh, temp):    
     """

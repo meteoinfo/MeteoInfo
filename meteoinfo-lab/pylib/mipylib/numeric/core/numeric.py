@@ -40,7 +40,7 @@ __all__ = [
     'argmin','argmax','argsort','array','array_split','amax','amin','asanyarray','asarray',
     'arcsin','asin','asmiarray','atleast_1d','atleast_2d','arctan','atan',
     'arctan2','atan2','average','histogram','broadcast_to','cdiff','ceil',
-    'concatenate','conj','conjugate','corrcoef','cos','cosh','cylinder','degrees','delnan','diag','diff',
+    'concatenate','conj','conjugate','convolve','corrcoef','cos','cosh','cylinder','degrees','delnan','diag','diff',
     'datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
     'fmax','fmin','full','hcurl','hdivg','hstack','hypot','identity','indices','interp2d','interpn','isarray',
     'isclose','isfinite','isinf','isnan','isscalar','linspace','log','log10','logical_not','logspace',
@@ -2132,6 +2132,102 @@ def hstack(tup):
         return concatenate(arrs, 0)
     else:
         return concatenate(arrs, 1)
+
+def convolve(a, v, mode='full'):
+    """
+    Returns the discrete, linear convolution of two one-dimensional sequences.
+
+    The convolution operator is often seen in signal processing, where it
+    models the effect of a linear time-invariant system on a signal [1]_.  In
+    probability theory, the sum of two independent random variables is
+    distributed according to the convolution of their individual
+    distributions.
+
+    If `v` is longer than `a`, the arrays are swapped before computation.
+
+    Parameters
+    ----------
+    a : (N,) array_like
+        First one-dimensional input array.
+    v : (M,) array_like
+        Second one-dimensional input array.
+    mode : {'full', 'valid', 'same'}, optional
+        'full':
+          By default, mode is 'full'.  This returns the convolution
+          at each point of overlap, with an output shape of (N+M-1,). At
+          the end-points of the convolution, the signals do not overlap
+          completely, and boundary effects may be seen.
+
+        'same':
+          Mode 'same' returns output of length ``max(M, N)``.  Boundary
+          effects are still visible.
+
+        'valid':
+          Mode 'valid' returns output of length
+          ``max(M, N) - min(M, N) + 1``.  The convolution product is only given
+          for points where the signals overlap completely.  Values outside
+          the signal boundary have no effect.
+
+    Returns
+    -------
+    out : ndarray
+        Discrete, linear convolution of `a` and `v`.
+
+    Notes
+    -----
+    The discrete convolution operation is defined as
+
+    .. math:: (a * v)_n = \\sum_{m = -\\infty}^{\\infty} a_m v_{n - m}
+
+    It can be shown that a convolution :math:`x(t) * y(t)` in time/space
+    is equivalent to the multiplication :math:`X(f) Y(f)` in the Fourier
+    domain, after appropriate padding (padding is necessary to prevent
+    circular convolution).  Since multiplication is more efficient (faster)
+    than convolution, the function `scipy.signal.fftconvolve` exploits the
+    FFT to calculate the convolution of large data-sets.
+
+    References
+    ----------
+    .. [1] Wikipedia, "Convolution",
+        https://en.wikipedia.org/wiki/Convolution
+
+    Examples
+    --------
+    Note how the convolution operator flips the second array
+    before "sliding" the two across one another:
+
+    >>> np.convolve([1, 2, 3], [0, 1, 0.5])
+    array([0. , 1. , 2.5, 4. , 1.5])
+
+    Only return the middle values of the convolution.
+    Contains boundary effects, where zeros are taken
+    into account:
+
+    >>> np.convolve([1,2,3],[0,1,0.5], 'same')
+    array([1. ,  2.5,  4. ])
+
+    The two arrays are of the same length, so there
+    is only one position where they completely overlap:
+
+    >>> np.convolve([1,2,3],[0,1,0.5], 'valid')
+    array([2.5])
+    """
+    a, v = asarray(a), asarray(v)
+    if (len(v) > len(a)):
+        a, v = v, a
+    if len(a) == 0:
+        raise ValueError('a cannot be empty')
+    if len(v) == 0:
+        raise ValueError('v cannot be empty')
+
+    if mode == 'full':
+        r = ArrayMath.convolveFull(a._array, v._array)
+    elif mode == 'same':
+        r = ArrayMath.convolveSame(a._array, v._array)
+    else:
+        r = ArrayMath.convolveValid(a._array, v._array)
+
+    return NDArray(r)
 
 def dot(a, b):
     """

@@ -57,7 +57,7 @@ def expfit(x, y, func=False):
         
 def polyfit(x, y, degree, func=False):
     """
-    Polynomail fitting.
+    Polynomial fitting.
     
     :param x: (*array_like*) x data array.
     :param y: (*array_like*) y data array.
@@ -88,7 +88,7 @@ def polyval(p, x):
     composite polynomial p(x(t)) is returned.
     
     :param p: (*array_like*) 1D array of polynomial coefficients (including coefficients equal to zero) 
-        from highest degree to the constant term.
+        from the highest degree to the constant term.
     :param x: (*array_like*) A number, an array of numbers, or an instance of poly1d, at which to evaluate 
         p.
         

@@ -15,7 +15,7 @@ import mipylib.numeric.optimize as so
 __all__ = [
     'equivalent_potential_temperature','exner_function',
     'mixing_ratio','mixing_ratio_from_specific_humidity','potential_temperature',
-    'relative_humidity_from_specific_humidity',
+    'relative_humidity_from_specific_humidity', 'relative_humidity_from_dewpoint',
     'saturation_mixing_ratio','saturation_vapor_pressure','temperature_from_potential_temperature',
     'virtual_temperature','dry_static_energy','isentropic_interpolation',
     'dewpoint','dewpoint_from_relative_humidity','specific_humidity_from_dewpoint',
@@ -162,6 +162,43 @@ def relative_humidity_from_specific_humidity(pressure, temperature, specific_hum
     return (mixing_ratio_from_specific_humidity(specific_humidity)
             / saturation_mixing_ratio(pressure, temperature))
 
+def relative_humidity_from_dewpoint(temperature, dewpoint):
+    r"""Calculate the relative humidity.
+
+    Uses temperature and dewpoint to calculate relative humidity as the ratio of vapor
+    pressure to saturation vapor pressures.
+
+    Parameters
+    ----------
+    temperature : `float`
+        Air temperature (celsius)
+
+    dewpoint : `float`
+        Dewpoint temperature (celsius)
+
+    Returns
+    -------
+    `float`
+        Relative humidity
+
+    Examples
+    --------
+    >>> relative_humidity_from_dewpoint(25, 12)
+    <44.2484765>
+
+    See Also
+    --------
+    saturation_vapor_pressure
+
+    Notes
+    -----
+    .. math:: RH = \frac{e(T_d)}{e_s(T)}
+
+    """
+    e = saturation_vapor_pressure(dewpoint + 273.15)
+    e_s = saturation_vapor_pressure(temperature + 273.15)
+    return e / e_s
+
 def exner_function(pressure, reference_pressure=constants.P0):
     r"""Calculate the Exner function.
 
@@ -208,7 +245,7 @@ def potential_temperature(pressure, temperature):
     Returns
     -------
     array_like
-        The potential temperature corresponding to the the temperature and
+        The potential temperature corresponding to the temperature and
         pressure.
 
     See Also

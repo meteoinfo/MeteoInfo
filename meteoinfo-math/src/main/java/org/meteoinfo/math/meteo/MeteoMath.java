@@ -102,11 +102,11 @@ public class MeteoMath {
     /**
      * Calculate relative humidity from dewpoint
      *
-     * @param tc Temperature
      * @param tdc Dewpoint temperature
+     * @param tc Temperature
      * @return Relative humidity as percent (i.e. 80%)
      */
-    public static double dewpoint2rh(double tc, double tdc) {
+    public static double dewpoint2rh(double tdc, double tc) {
         double es = cal_Es(tc);
         double e = cal_Es(tdc);
         return e / es * 100;
@@ -125,7 +125,7 @@ public class MeteoMath {
         IndexIterator iter_tdc = tdc.getIndexIterator();
         IndexIterator iter_tc = tc.getIndexIterator();
         while(iter.hasNext()) {
-            iter.setDoubleNext(MeteoMath.dewpoint2rh(iter_tc.getDoubleNext(), iter_tdc.getDoubleNext()));
+            iter.setDoubleNext(MeteoMath.dewpoint2rh(iter_tdc.getDoubleNext(), iter_tc.getDoubleNext()));
         }
 
         return r;

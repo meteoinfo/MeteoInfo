@@ -9276,6 +9276,148 @@ public class ArrayMath {
         return r;
     }
 
+    /**
+     * Returns the discrete, linear convolution of two one-dimensional sequences with full mode
+     *
+     * @param a First one-dimensional input array
+     * @param v Second one-dimensional input array
+     * @return Discrete, linear convolution of a and v
+     */
+    public static Array convolveFull(Array a, Array v) {
+        a = a.copyIfView();
+        v = v.copyIfView();
+
+        int n = (int) a.getSize() + (int) v.getSize() - 1;
+        DataType dataType = commonType(a.getDataType(), v.getDataType());
+        Array r = Array.factory(dataType, new int[]{n});
+        if (dataType == DataType.COMPLEX) {
+            double real, real1, real2, image, image1, image2;
+            for (int i = 0; i < a.getSize(); i++) {
+                real1 = a.getComplex(i).real();
+                image1 = a.getComplex(i).imag();
+                for (int j = 0; j < v.getSize(); j++) {
+                    real2 = v.getComplex(j).real();
+                    image2 = v.getComplex(j).imag();
+                    real = real1 * real2 - image1 * image2;
+                    image = image1 * real2 + real1 * image2;
+                    r.setComplex(i + j, r.getComplex(i + j).add(new Complex(real, image)));
+                }
+            }
+        } else {
+            for (int i = 0; i < a.getSize(); i++) {
+                for (int j = 0; j < v.getSize(); j++) {
+                    r.setObject(i + j, r.getDouble(i + j) + a.getDouble(i) * v.getDouble(j));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Returns the discrete, linear convolution of two one-dimensional sequences with same mode
+     *
+     * @param a First one-dimensional input array
+     * @param v Second one-dimensional input array
+     * @return Discrete, linear convolution of a and v
+     */
+    public static Array convolveSame(Array a, Array v) {
+        a = a.copyIfView();
+        v = v.copyIfView();
+
+        int n = (int) a.getSize();
+        DataType dataType = commonType(a.getDataType(), v.getDataType());
+        Array r = Array.factory(dataType, new int[]{n});
+        int nv = (int) v.getSize() / 2;
+        int idx;
+        if (dataType == DataType.COMPLEX) {
+            double real, real1, real2, image, image1, image2;
+            for (int i = 0; i < a.getSize(); i++) {
+                real1 = a.getComplex(i).real();
+                image1 = a.getComplex(i).imag();
+                for (int j = 0; j < v.getSize(); j++) {
+                    idx = i + j - nv;
+                    if (idx < 0) {
+                        continue;
+                    } else if (idx == n) {
+                        break;
+                    }
+                    real2 = v.getComplex(j).real();
+                    image2 = v.getComplex(j).imag();
+                    real = real1 * real2 - image1 * image2;
+                    image = image1 * real2 + real1 * image2;
+                    r.setComplex(idx, r.getComplex(idx).add(new Complex(real, image)));
+                }
+            }
+        } else {
+            for (int i = 0; i < a.getSize(); i++) {
+                for (int j = 0; j < v.getSize(); j++) {
+                    idx = i + j - nv;
+                    if (idx < 0) {
+                        continue;
+                    } else if (idx == n) {
+                        break;
+                    }
+                    r.setObject(idx, r.getDouble(idx) + a.getDouble(i) * v.getDouble(j));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Returns the discrete, linear convolution of two one-dimensional sequences with valid mode
+     *
+     * @param a First one-dimensional input array
+     * @param v Second one-dimensional input array
+     * @return Discrete, linear convolution of a and v
+     */
+    public static Array convolveValid(Array a, Array v) {
+        a = a.copyIfView();
+        v = v.copyIfView();
+
+        int n = (int) a.getSize() - (int) v.getSize() + 1;
+        DataType dataType = commonType(a.getDataType(), v.getDataType());
+        Array r = Array.factory(dataType, new int[]{n});
+        int nv = (int) v.getSize();
+        int idx;
+        if (dataType == DataType.COMPLEX) {
+            double real, real1, real2, image, image1, image2;
+            for (int i = 0; i < a.getSize(); i++) {
+                real1 = a.getComplex(i).real();
+                image1 = a.getComplex(i).imag();
+                for (int j = 0; j < v.getSize(); j++) {
+                    idx = i + j - nv + 1;
+                    if (idx < 0) {
+                        continue;
+                    } else if (idx == n) {
+                        break;
+                    }
+                    real2 = v.getComplex(j).real();
+                    image2 = v.getComplex(j).imag();
+                    real = real1 * real2 - image1 * image2;
+                    image = image1 * real2 + real1 * image2;
+                    r.setComplex(idx, r.getComplex(idx).add(new Complex(real, image)));
+                }
+            }
+        } else {
+            for (int i = 0; i < a.getSize(); i++) {
+                for (int j = 0; j < v.getSize(); j++) {
+                    idx = i + j - nv + 1;
+                    if (idx < 0) {
+                        continue;
+                    } else if (idx == n) {
+                        break;
+                    }
+                    r.setObject(idx, r.getDouble(idx) + a.getDouble(i) * v.getDouble(j));
+                }
+            }
+        }
+
+        return r;
+    }
+
     // </editor-fold>    
     // <editor-fold desc="Meteo">
     /**

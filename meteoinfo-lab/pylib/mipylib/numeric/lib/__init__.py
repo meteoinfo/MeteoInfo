@@ -11,6 +11,7 @@ from .type_check import *
 from .arraysetops import *
 from .npyio import *
 from .matio import *
+from .polynomial import *
 
 __all__ = []
 __all__ += shape_base.__all__
@@ -21,3 +22,4 @@ __all__ += type_check.__all__
 __all__ += arraysetops.__all__
 __all__ += npyio.__all__
 __all__ += matio.__all__
+__all__ += polynomial.__all__

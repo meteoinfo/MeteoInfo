@@ -285,7 +285,7 @@ def date_range(start=None, end=None, periods=None, freq='D'):
     :param start: (*string or datetime*) Start date time.
     :param end: (*string or datetime*) End date time.
     :param periods: (*int*) Periods number.
-    :param freq: (*string*) Date time frequent value [ Y | M | D | H | m | S ]. 
+    :param freq: (*string*) Date time frequent value [ Y | M | D | h | min | s ].
     
     :returns: (*DateTimeIndex*) DateTimeIndex
     """

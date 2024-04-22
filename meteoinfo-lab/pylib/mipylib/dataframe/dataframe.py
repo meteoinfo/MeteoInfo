@@ -1084,7 +1084,7 @@ class DataFrame(object):
     def to_csv(self, filepath, delimiter=',', format=None, date_format=None, \
         float_format=None, index=True):
         """
-        Save the data to an csv file.
+        Save the data to a csv file.
         
         :param filepath: (*string*) The output file path.
         :param delimiter: (*string*) Field delimiter character. Default is ``,``.

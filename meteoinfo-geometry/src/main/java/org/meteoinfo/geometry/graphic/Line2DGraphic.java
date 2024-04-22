@@ -133,6 +133,14 @@ public class Line2DGraphic extends Graphic {
     }
 
     /**
+     * Get x data
+     * @return X data
+     */
+    public Array getXData() {
+        return this.xData;
+    }
+
+    /**
      * Set x data
      * @param xData X data
      */
@@ -142,12 +150,28 @@ public class Line2DGraphic extends Graphic {
     }
 
     /**
+     * Get y data
+     * @return Y data
+     */
+    public Array getYData() {
+        return this.yData;
+    }
+
+    /**
      * Set y data
      * @param yData Y data
      */
     public void setYData(Array yData) {
         this.yData = yData;
         updateShape();
+    }
+
+    /**
+     * Get data
+     * @return Data
+     */
+    public Array getData() {
+        return this.cData;
     }
 
     /**

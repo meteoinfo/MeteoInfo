@@ -24,7 +24,8 @@ public class VolumeGraphic extends GraphicCollection3D {
     final int width;
     final int height;
     final int depth;
-    final byte[] data;
+    private Array data;
+    final byte[] byteData;
     private byte[] normals;
     final float[] scale = new float[]{1, 1, 1};
     private byte[] colors;
@@ -53,7 +54,7 @@ public class VolumeGraphic extends GraphicCollection3D {
         this.height = height;
         this.depth = depth;
 
-        this.data = data;
+        this.byteData = data;
         //this.buffer = Buffers.newDirectByteBuffer(this.data);
         this.colors = colors;
 
@@ -75,17 +76,18 @@ public class VolumeGraphic extends GraphicCollection3D {
         this.transferFunction.setColorMap(colorMap);
 
         value = value.copyIfView();
+        this.data = value;
         int[] shape = value.getShape();
         this.depth = shape[0];
         this.height = shape[1];
         this.width = shape[2];
-        this.data = new byte[width * height * depth];
+        this.byteData = new byte[width * height * depth];
         double range = vMax - vMin;
         for (int i = 0; i < value.getSize(); i++) {
             if (Double.isNaN(value.getDouble(i))) {
-                data[i] = 0;
+                byteData[i] = 0;
             } else {
-                data[i] = (byte) ((int) ((value.getDouble(i) - vMin) / range * 255));
+                byteData[i] = (byte) ((int) ((value.getDouble(i) - vMin) / range * 255));
             }
         }
         //buffer = Buffers.newDirectByteBuffer(data);
@@ -114,16 +116,17 @@ public class VolumeGraphic extends GraphicCollection3D {
      */
     public VolumeGraphic(Array value, ColorMap colorMap, Normalize norm) {
         value = value.copyIfView();
+        this.data = value;
         int[] shape = value.getShape();
         this.depth = shape[0];
         this.height = shape[1];
         this.width = shape[2];
-        this.data = new byte[width * height * depth];
+        this.byteData = new byte[width * height * depth];
         for (int i = 0; i < value.getSize(); i++) {
             if (Double.isNaN(value.getDouble(i))) {
-                data[i] = 0;
+                byteData[i] = 0;
             } else {
-                data[i] = (byte) ((int) (norm.apply(value.getDouble(i)).floatValue() * 255));
+                byteData[i] = (byte) ((int) (norm.apply(value.getDouble(i)).floatValue() * 255));
             }
         }
         //buffer = Buffers.newDirectByteBuffer(data);
@@ -138,18 +141,19 @@ public class VolumeGraphic extends GraphicCollection3D {
      */
     public VolumeGraphic(Array value, LegendScheme ls) {
         value = value.copyIfView();
+        this.data = value;
         int[] shape = value.getShape();
         this.depth = shape[0];
         this.height = shape[1];
         this.width = shape[2];
-        this.data = new byte[width * height * depth];
+        this.byteData = new byte[width * height * depth];
         List<Color> oColors = ls.getColors();
         int n = oColors.size();
         for (int i = 0; i < value.getSize(); i++) {
             if (Double.isNaN(value.getDouble(i))) {
-                data[i] = 0;
+                byteData[i] = 0;
             } else {
-                data[i] = (byte) ((int) (ls.legendBreakIndex(value.getDouble(i)) * 255.0 / n));
+                byteData[i] = (byte) ((int) (ls.legendBreakIndex(value.getDouble(i)) * 255.0 / n));
             }
         }
         //buffer = Buffers.newDirectByteBuffer(data);
@@ -308,6 +312,14 @@ public class VolumeGraphic extends GraphicCollection3D {
     }
 
     /**
+     * Get data array
+     * @return Data array
+     */
+    public Array getData() {
+        return this.data;
+    }
+
+    /**
      * Get width
      * @return Width
      */
@@ -335,8 +347,8 @@ public class VolumeGraphic extends GraphicCollection3D {
      * Get data array
      * @return Data array
      */
-    public byte[] getData() {
-        return this.data;
+    public byte[] getByteData() {
+        return this.byteData;
     }
 
     /**
@@ -613,16 +625,16 @@ public class VolumeGraphic extends GraphicCollection3D {
      * Calculate normals
      */
     public void calculateNormals() {
-        this.normals = new byte[this.data.length * 3];
+        this.normals = new byte[this.byteData.length * 3];
         int xn, yn, zn, i1, i2;
-        int n = this.data.length;
+        int n = this.byteData.length;
         for (int i = 0; i < n; i++) {
             i1 = i - 1;
             i2 = i + 1;
             if (i1 < 0 || i2 >= n)
                 xn = 0;
             else
-                xn = data[i1] - data[i2];
+                xn = byteData[i1] - byteData[i2];
             normals[i * 3] = (byte) (xn + 128);
 
             i1 = i - width;
@@ -630,7 +642,7 @@ public class VolumeGraphic extends GraphicCollection3D {
             if (i1 < 0 || i2 >= n)
                 yn = 0;
             else
-                yn = data[i1] - data[i2];
+                yn = byteData[i1] - byteData[i2];
             normals[i * 3 + 1] = (byte) (yn + 128);
 
             i1 = i - (width * height);
@@ -638,7 +650,7 @@ public class VolumeGraphic extends GraphicCollection3D {
             if (i1 < 0 || i2 >= n)
                 zn = 0;
             else
-                zn = data[i1] - data[i2];
+                zn = byteData[i1] - byteData[i2];
             normals[i * 3 + 2] = (byte) (zn + 128);
         }
     }

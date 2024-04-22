@@ -275,14 +275,13 @@ public class JDateUtil {
 
         TemporalAmount pe;
         switch (p) {
-            case "H":
+            case "h":
                 pe = Duration.ofHours(n);
                 break;
-            case "T":
-            case "Min":
+            case "min":
                 pe = Duration.ofMinutes(n);
                 break;
-            case "S":
+            case "s":
                 pe = Duration.ofSeconds(n);
                 break;
             case "D":

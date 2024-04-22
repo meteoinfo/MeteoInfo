@@ -2930,7 +2930,7 @@ public class GLPlot extends Plot {
         PointBreak pb = (PointBreak) graphic.getGraphicN(0).getLegend();
         gl.glPointSize(pb.getSize() * this.dpiScale);
         gl.glBegin(GL2.GL_POINTS);
-        for (Graphic gg : graphic.getGraphics()) {
+        for (Graphic gg : ((GraphicCollection) graphic).getGraphics()) {
             PointZShape shape = (PointZShape) gg.getShape();
             pb = (PointBreak) gg.getLegend();
             float[] rgba = pb.getColor().getRGBComponents(null);
@@ -2966,7 +2966,7 @@ public class GLPlot extends Plot {
     }
 
     private void drawSpheres(GL2 gl, Graphic graphic) {
-        for (Graphic gg : graphic.getGraphics()) {
+        for (Graphic gg : ((GraphicCollection) graphic).getGraphics()) {
             drawSphere(gl, gg);
         }
     }
@@ -3083,7 +3083,7 @@ public class GLPlot extends Plot {
                 0,              // border
                 GL_LUMINANCE,         // format
                 GL_UNSIGNED_BYTE,       // type
-                Buffers.newDirectByteBuffer(volume.getData()).rewind()           // pixel
+                Buffers.newDirectByteBuffer(volume.getByteData()).rewind()           // pixel
         );
 
         // 1st attribute buffer : vertices

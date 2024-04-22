@@ -1,7 +1,6 @@
 package org.meteoinfo.chart.render.jogl;
 
 import com.jogamp.common.nio.Buffers;
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import org.meteoinfo.chart.graphic.VolumeGraphic;
@@ -178,7 +177,7 @@ public class VolumeRender extends JOGLGraphicRender {
                 0,              // border
                 GL_LUMINANCE,         // format
                 GL_UNSIGNED_BYTE,       // type
-                ((Buffer) Buffers.newDirectByteBuffer(volume.getData())).rewind()           // pixel
+                ((Buffer) Buffers.newDirectByteBuffer(volume.getByteData())).rewind()           // pixel
         );
 
         //Normals 3D texture

@@ -15,6 +15,7 @@ package org.meteoinfo.geo.legend;
 
 import com.l2fprod.common.beans.BaseBeanInfo;
 import org.meteoinfo.common.colors.ColorUtil;
+import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.legend.Constants;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.LineStyles;
@@ -1649,7 +1650,7 @@ public class MapFrame extends ItemNode {
         _mapView.exportMaskOutElement(m_Doc, mapFrame);
         _mapView.exportProjectionElement(m_Doc, mapFrame);
         addGroupLayerElement(m_Doc, mapFrame, projectFilePath);
-        _mapView.exportGraphics(m_Doc, mapFrame, _mapView.getGraphicCollection().getGraphics());
+        _mapView.exportGraphics(m_Doc, mapFrame, (List<Graphic>) _mapView.getGraphicCollection().getGraphics());
 
         parent.appendChild(mapFrame);
     }

@@ -225,75 +225,6 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
         }
     }
 
-    void readDataInfo(RandomAccessFile raf) {
-        try {
-            genericHeader = new GenericHeader(raf);
-            siteConfig = new SiteConfig(raf);
-
-            //Add global attributes
-            this.addAttribute(new Attribute("StationCode", siteConfig.siteCode));
-            this.addAttribute(new Attribute("StationName", siteConfig.siteName));
-            this.addAttribute(new Attribute("StationLatitude", siteConfig.latitude));
-            this.addAttribute(new Attribute("StationLongitude", siteConfig.longitude));
-            this.addAttribute(new Attribute("AntennaHeight", siteConfig.antennaHeight));
-            this.addAttribute(new Attribute("GroundHeight", siteConfig.groundHeight));
-            this.addAttribute(new Attribute("featureType", "RADIAL"));
-            this.addAttribute(new Attribute("DataType", "Radial"));
-
-            //Read radial data
-            taskConfig = new TaskConfig(raf);
-            cutConfigs = new ArrayList<>();
-            for (int i = 0; i < taskConfig.cutNumber; i++) {
-                cutConfigs.add(new CutConfig(raf));
-            }
-            radialHeaders = new ArrayList<>();
-            while (raf.length() - raf.getFilePointer() > RadialHeader.length) {
-                RadialHeader radialHeader = new RadialHeader(raf);
-                for (int i = 0; i < radialHeader.momentNumber; i++) {
-                    MomentHeader momentHeader = new MomentHeader(raf);
-                    String product = this.productMap.get(momentHeader.dataType);
-                    RadialRecord record;
-                    if (this.recordMap.containsKey(product)) {
-                        record = this.recordMap.get(product);
-                    } else {
-                        record = new RadialRecord(product);
-                        record.setBinLength(momentHeader.binLength);
-                        record.scale = momentHeader.scale;
-                        record.offset = momentHeader.offset;
-                        this.recordMap.put(product, record);
-                    }
-                    if (radialHeader.radialNumber == 1) {
-                        record.elevation.add(new ArrayList<>());
-                        record.azimuth.add(new ArrayList<>());
-                        record.distance.add(ArrayUtil.arrayRange1(0, momentHeader.dataLength / momentHeader.binLength,
-                                cutConfigs.get(0).logResolution));
-                        record.newScanData();
-                    }
-                    record.elevation.get(record.elevation.size() - 1).add(radialHeader.elevation);
-                    record.azimuth.get(record.azimuth.size() - 1).add(radialHeader.azimuth);
-                    byte[] bytes = new byte[momentHeader.dataLength];
-                    raf.read(bytes);
-                    record.addDataBytes(bytes);
-                }
-                radialHeaders.add(radialHeader);
-            }
-            raf.close();
-
-            //Add dimensions and variables
-            Dimension xyzDim = new Dimension(DimensionType.OTHER);
-            xyzDim.setShortName("xyz");
-            xyzDim.setDimValue(Array.factory(DataType.INT, new int[]{3}, new int[]{1,2,3}));
-            this.addDimension(xyzDim);
-            for (String product : this.recordMap.keySet()) {
-                this.recordMap.get(product).makeVariables(this, xyzDim);
-            }
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     void readDataInfo(InputStream raf) {
         try {
             genericHeader = new GenericHeader(raf);
@@ -310,8 +241,12 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
             this.addAttribute(new Attribute("featureType", "RADIAL"));
             this.addAttribute(new Attribute("DataType", "Radial"));
 
-            //Read radial data
+            //Read task configuration
             taskConfig = new TaskConfig(raf);
+            this.addAttribute(new Attribute("TaskName", taskConfig.taskName));
+            this.addAttribute(new Attribute("TaskDescription", taskConfig.taskDescription));
+
+            //Read radial data
             cutConfigs = new ArrayList<>();
             for (int i = 0; i < taskConfig.cutNumber; i++) {
                 cutConfigs.add(new CutConfig(raf));

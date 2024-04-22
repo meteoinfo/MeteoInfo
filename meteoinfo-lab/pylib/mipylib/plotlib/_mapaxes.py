@@ -27,6 +27,7 @@ from org.meteoinfo.data.mapdata.webmap import WebMapProvider, DefaultTileFactory
 from java.awt import Font, Color
 
 from ._axes import Axes
+from .graphic import Point2DCollection
 import mipylib.numeric as np
 from mipylib.numeric.core import NDArray, DimArray
 from mipylib.geolib.milayer import MILayer
@@ -838,9 +839,11 @@ class MapAxes(Axes):
         proj = kwargs.pop('proj', migeo.projinfo())
         # Create graphics
         if a.ndim == 0:
-            graphics = GraphicFactory.createPoints(x._array, y._array, ls.getLegendBreak(0))
+            #graphics = GraphicFactory.createPoints(x._array, y._array, ls.getLegendBreak(0))
+            graphics = Point2DCollection(x._array, y._array, legend=ls.getLegendBreaks(0))
         else:
-            graphics = GraphicFactory.createPoints(x._array, y._array, a._array, ls)
+            #graphics = GraphicFactory.createPoints(x._array, y._array, a._array, ls)
+            graphics = Point2DCollection(x._array, y._array, a._array, ls)
 
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:

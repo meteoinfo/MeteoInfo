@@ -34,7 +34,7 @@ import java.util.NoSuchElementException;
 public class GraphicCollection extends Graphic implements Iterator {
 
     // <editor-fold desc="Variables">
-    protected List<Graphic> graphics = new ArrayList<>();
+    protected List<? extends Graphic> graphics = new ArrayList<>();
     protected Extent extent = new Extent();
     protected boolean singleLegend = true;
     protected int index;
@@ -89,8 +89,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      *
      * @return Graphic list
      */
-    @Override
-    public List<Graphic> getGraphics() {
+    public List<? extends Graphic> getGraphics() {
         return this.graphics;
     }
 
@@ -276,7 +275,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      * @return Boolean
      */
     public boolean add(Graphic aGraphic) {
-        boolean istrue = this.graphics.add(aGraphic);
+        boolean istrue = ((List<Graphic>) this.graphics).add(aGraphic);
 
         //Update extent
         if (this.graphics.size() == 1) {
@@ -295,7 +294,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      * @param aGraphic The graphic
      */
     public void add(int index, Graphic aGraphic) {
-        this.graphics.add(index, aGraphic);
+        ((List<Graphic>) this.graphics).add(index, aGraphic);
 
         //Update extent
         if (this.graphics.size() == 1) {
@@ -380,7 +379,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      * @param graphic The graphic
      */
     public void setGraphicN(int idx, Graphic graphic) {
-        this.graphics.set(idx, graphic);
+        ((List<Graphic>) this.graphics).set(idx, graphic);
     }
 
     /**
@@ -422,7 +421,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      * @param gs Graphic list
      */
     public void addAll(List<Graphic> gs) {
-        this.graphics.addAll(gs);
+        ((List<Graphic>) this.graphics).addAll(gs);
 
         // Update extent
         int i = 0;
@@ -453,7 +452,7 @@ public class GraphicCollection extends Graphic implements Iterator {
                 extent = MIMath.getLagerExtent(extent, graphic.getExtent());
             }
             for (int i = 0; i < graphic.getNumGraphics(); i++) {
-                this.graphics.add(graphic.getGraphicN(i));
+                ((List<Graphic>) this.graphics).add(graphic.getGraphicN(i));
             }
         } else {
             this.add(graphic);

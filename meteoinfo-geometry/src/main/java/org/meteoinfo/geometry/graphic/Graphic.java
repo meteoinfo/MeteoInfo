@@ -274,12 +274,12 @@ package org.meteoinfo.geometry.graphic;
      /**
       * Get graphic list
       * @return Graphic list
-      */
+      *//*
      public List<Graphic> getGraphics() {
          List<Graphic> gs = new ArrayList<>();
          gs.add(this);
          return gs;
-     }
+     }*/
 
      private void updateResizeAbility() {
          if (shape != null && legend != null) {

@@ -624,9 +624,7 @@ def getlegendscheme(args, min, max, **kwargs):
     ls = kwargs.pop('symbolspec', None)
     if ls is None:
         extend = kwargs.pop('extend', None)
-        if extend is None:
-            extend = ExtendType.NONE
-        else:
+        if extend is not None:
             extend = ExtendType.valueOf(extend.upper())
         cmap = getcolormap(**kwargs)
         level_arg = kwargs.pop('levels', None)

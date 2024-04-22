@@ -8960,7 +8960,7 @@ public class MapView extends JPanel implements IWebMapPanel {
      * Remove selected graphics
      */
     public void removeSelectedGraphics() {
-        UndoableEdit edit = (new MapViewUndoRedo()).new RemoveGraphicsEdit(this, _selectedGraphics.getGraphics());
+        UndoableEdit edit = (new MapViewUndoRedo()).new RemoveGraphicsEdit(this, (List<Graphic>)_selectedGraphics.getGraphics());
         this.fireUndoEditEvent(edit);
         for (Graphic aGraphic : _selectedGraphics.getGraphics()) {
             removeGraphic(aGraphic);
@@ -9669,7 +9669,7 @@ public class MapView extends JPanel implements IWebMapPanel {
 
             //Load label graphics
             GraphicCollection gc = loadGraphicCollection((Element) aVLayer);
-            aLayer.setLabelPoints(gc.getGraphics());
+            aLayer.setLabelPoints((List<Graphic>) gc.getGraphics());
 
             //Load chart set 
             NodeList chartNodes = ((Element) aVLayer).getElementsByTagName("ChartSet");

@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\scatter">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\fitting"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\chart\text">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
@@ -13,20 +9,26 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\text"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\geoshow\geoshow_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\plot_cuace_3d_volume.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter\scatterm_grid.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\FY\FY4A_DSD_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\FY\FY4A_AGRI_CIX_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\text\text_align_axesm.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\geoshow\geoshow_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\plot_cuace_3d_volume.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter\scatterm_grid.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\FY\FY4A_DSD_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\FY\FY4A_AGRI_CIX_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\text\text_align_axesm.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,-7" MainFormSize="1293,685"/>
+  <Startup MainFormLocation="35,0" MainFormSize="1334,786"/>
 </MeteoInfo>

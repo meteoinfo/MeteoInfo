@@ -840,7 +840,7 @@ class MapAxes(Axes):
         # Create graphics
         if a.ndim == 0:
             #graphics = GraphicFactory.createPoints(x._array, y._array, ls.getLegendBreak(0))
-            graphics = Point2DCollection(x._array, y._array, legend=ls.getLegendBreaks(0))
+            graphics = Point2DCollection(x._array, y._array, legend=ls.getLegendBreak(0))
         else:
             #graphics = GraphicFactory.createPoints(x._array, y._array, a._array, ls)
             graphics = Point2DCollection(x._array, y._array, a._array, ls)
@@ -1008,7 +1008,7 @@ class MapAxes(Axes):
         :param x: (*array_like*) Optional. X coordinate array.
         :param y: (*array_like*) Optional. Y coordinate array.
         :param z: (*array_like*) 2-D z value array.
-        :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
+        :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level curves
             to draw, in increasing order.
         :param cmap: (*string*) Color map string.
         :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
@@ -1023,7 +1023,6 @@ class MapAxes(Axes):
         
         :returns: (*RasterLayer*) RasterLayer created from array data.
         """
-        cmap = plotutil.getcolormap(**kwargs)
         fill_value = kwargs.pop('fill_value', -9999.0)        
         ls = kwargs.pop('symbolspec', None)
         n = len(args) 
@@ -1095,6 +1094,8 @@ class MapAxes(Axes):
             if ls is None:
                 vmin = kwargs.pop('vmin', arr.min())
                 vmax = kwargs.pop('vmax', arr.max())
+                has_colors = kwargs.has_key('colors')
+                cmap = plotutil.getcolormap(**kwargs)
                 if len(args) > 0:
                     level_arg = args[0]
                     if isinstance(level_arg, int):
@@ -1105,10 +1106,13 @@ class MapAxes(Axes):
                             level_arg = level_arg.aslist()
                         ls = LegendManage.createImageLegend(arr._array, level_arg, cmap)
                 else:
-                    ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
-                    norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
-                    ls.setNormalize(norm._norm)
-                    ls.setColorMap(cmap)
+                    if has_colors:
+                        ls = LegendManage.createImageLegend(arr._array, cmap)
+                    else:
+                        ls = plotutil.getlegendscheme(args, vmin, vmax, cmap, **kwargs)
+                        norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
+                        ls.setNormalize(norm._norm)
+                        ls.setColorMap(cmap)
             plotutil.setlegendscheme(ls, **kwargs)
             fill_color = kwargs.pop('fill_color', None)
             if not fill_color is None:

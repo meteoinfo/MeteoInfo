@@ -685,7 +685,7 @@ public class ChartText extends Shape {
     public void draw(Graphics2D g, float x, float y) {
         Dimension dim = this.getDimension(g);
         x += this.xShift;
-        y += this.yShift;
+        y -= this.yShift;
 
         AffineTransform tempTrans = g.getTransform();
         if (this.angle != 0) {

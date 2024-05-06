@@ -1209,15 +1209,15 @@ def clc():
 
 
 @_copy_docstring_and_deprecators(Axes.set_title)
-def title(label, loc='center', fontname=None, fontsize=14, bold=True, color='black', **kwargs):
-    r = g_axes.set_title(label, loc, fontname, fontsize, bold, color, **kwargs)
+def title(label, loc='center', **kwargs):
+    r = g_axes.set_title(label, loc, **kwargs)
     draw_if_interactive()
     return r
 
 
 @_copy_docstring_and_deprecators(Figure.set_title)
-def suptitle(label, fontname=None, fontsize=14, bold=True, color='black'):
-    r = g_figure.set_title(label, fontname, fontsize, bold, color)
+def suptitle(label, **kwargs):
+    r = g_figure.set_title(label, **kwargs)
     draw_if_interactive()
     return r
 

@@ -712,7 +712,7 @@ class GLFigure(GLChartPanel, _FigureBase):
         """
         return self.getChart().getTitle()
 
-    def set_title(self, label, fontname=None, fontsize=14, bold=True, color='black'):
+    def set_title(self, label, **kwargs):
         """
         Add a centered title to the figure.
 
@@ -722,21 +722,11 @@ class GLFigure(GLChartPanel, _FigureBase):
         :param bold: (*boolean*) Is bold font or not. Default is ``True`` .
         :param color: (*color*) Title string color. Default is ``black`` .
         """
-        exfont = False
-        if fontname is None:
-            fontname = 'Arial'
-        else:
-            exfont = True
-
-        if bold:
-            font = Font(fontname, Font.BOLD, fontsize)
-        else:
-            font = Font(fontname, Font.PLAIN, fontsize)
-        c = plotutil.getcolor(color)
-        ctitle = ChartText(label, font)
-        ctitle.setXAlign('center')
-        ctitle.setUseExternalFont(exfont)
-        ctitle.setColor(c)
+        if not kwargs.has_key('bold'):
+            kwargs['bold'] = True
+        if not kwargs.has_key('xalign'):
+            kwargs['xalign'] = 'center'
+        ctitle = plotutil.text(0, 0, label, **kwargs)
         self.getChart().setTitle(ctitle)
         return ctitle
 

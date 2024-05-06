@@ -285,7 +285,7 @@ class Axes(object):
         else:
             return self._axes.getTitle()
 
-    def set_title(self, label, loc='center', fontname=None, fontsize=14, bold=True, color='black', **kwargs):
+    def set_title(self, label, loc='center', **kwargs):
         """
         Set a title of the current axes.
         
@@ -298,24 +298,11 @@ class Axes(object):
         :param color: (*color*) Title string color. Default is ``black`` .  
         :param linespace: (*int*) Line space of multiple line title.
         """
-        exfont = False
-        if fontname is None:
-            fontname = 'Arial'
-        else:
-            exfont = True
-
-        if bold:
-            font = Font(fontname, Font.BOLD, fontsize)
-        else:
-            font = Font(fontname, Font.PLAIN, fontsize)
-        c = plotutil.getcolor(color)
-        title = ChartText(label, font)
-        title.setXAlign(loc)
-        title.setUseExternalFont(exfont)
-        title.setColor(c)
-        linespace = kwargs.pop('linespace', None)
-        if not linespace is None:
-            title.setLineSpace(linespace)
+        if not kwargs.has_key('bold'):
+            kwargs['bold'] = True
+        if not kwargs.has_key('xalign'):
+            kwargs['xalign'] = 'center'
+        title = plotutil.text(0, 0, label, **kwargs)
 
         if loc == 'left':
             self._axes.setLeftTitle(title)

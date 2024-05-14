@@ -69,6 +69,14 @@ public class Index<V> implements Iterable<V>{
     public int size(){
         return data.size();
     }
+
+    /**
+     * Return if the index is empty
+     * @return Empty or not
+     */
+    public boolean isEmpty() {
+        return this.data.isEmpty();
+    }
     
     /**
      * Get string format

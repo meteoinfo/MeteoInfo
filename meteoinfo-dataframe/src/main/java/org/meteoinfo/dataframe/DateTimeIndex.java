@@ -163,8 +163,12 @@ public class DateTimeIndex extends Index<LocalDateTime> {
      */
     @Override
     public String getNameFormat() {
-        String str = this.dtFormatter.format(this.data.get(0));
-        return "%" + String.valueOf(str.length()) + "s";
+        if (this.data.isEmpty()) {
+            return this.format;
+        } else {
+            String str = this.dtFormatter.format(this.data.get(0));
+            return "%" + String.valueOf(str.length()) + "s";
+        }
     }
     
 //    /**

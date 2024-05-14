@@ -32,13 +32,16 @@ class Series(object):
         if series is None:
             if isinstance(data, (list, tuple)):
                 data = np.array(data)
+
             if index is None:
                 index = range(0, len(data))
             else:
                 if len(data) != len(index):
                     raise ValueError('Wrong length of index!')
+
             if isinstance(index, np.NDArray):
                 index = index.tolist()
+
             if isinstance(index, Index):
                 self._index = index
             else:
@@ -154,6 +157,8 @@ class Series(object):
             rowkey = Range(sidx, eidx, step)   
             r = self._series.getValues(rowkey)
             return Series(series=r)
+        elif isinstance(key, int):
+            return self._getitem_iloc(key)
         else:
             r = self._series.getValueByIndex(key)
             if isinstance(r, MISeries):

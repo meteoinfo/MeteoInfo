@@ -233,7 +233,11 @@ class DataFrame(object):
             step = 1 if k.step is None else k.step
             rowkey = Range(sidx, eidx, step)
         elif isinstance(k, (list,tuple,np.NDArray,series.Series)):
-            if isinstance(k[0], (int, bool)):
+            if isinstance(k, series.Series):
+                k0 = k.iloc[0]
+            else:
+                k0 = k[0]
+            if isinstance(k0, (int, bool)):
                 if isinstance(k, (list, tuple)):
                     rowkey = k
                 else:

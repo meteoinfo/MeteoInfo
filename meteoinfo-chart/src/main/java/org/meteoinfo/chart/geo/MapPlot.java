@@ -473,9 +473,13 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
 
         //Draw boundary line
         if (this.boundary != null) {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             PolygonBreak pb = (PolygonBreak)this.boundary.getLegend().clone();
             pb.setDrawFill(false);
             this.drawGraphic(g, this.boundary, pb, area);
+            if (!this.antiAlias) {
+                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            }
         }
 
         g.setTransform(oldMatrix);

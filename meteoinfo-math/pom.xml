@@ -15,6 +15,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <ejml.version>0.41.1</ejml.version>
+        <commons-geometry.version>1.0</commons-geometry.version>
     </properties>
 
     <dependencies>
@@ -42,6 +43,16 @@
             <groupId>org.ojalgo</groupId>
             <artifactId>ojalgo</artifactId>
             <version>52.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-geometry-core</artifactId>
+            <version>${commons-geometry.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-geometry-euclidean</artifactId>
+            <version>${commons-geometry.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bytedeco</groupId>

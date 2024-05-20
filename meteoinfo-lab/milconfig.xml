@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\funny">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\netcdf">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
@@ -12,21 +9,24 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\text"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\FY"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter\scatterm_grid.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\FY\FY4A_DSD_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\rose_multi.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\bar\map_bar_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\netcdf\test_read.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter\scatterm_grid.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\FY\FY4A_DSD_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\rose_multi.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\bar\map_bar_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\netcdf\test_read.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1394,829"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1407,851"/>
 </MeteoInfo>

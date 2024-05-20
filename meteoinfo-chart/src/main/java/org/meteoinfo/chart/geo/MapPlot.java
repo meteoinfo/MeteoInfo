@@ -660,7 +660,9 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
             return graphic;
         } else {
             Graphic nGraphic = GraphicProjectionUtil.projectClipGraphic(graphic, proj, toProj);
-            this.addGraphic(nGraphic);
+            if (nGraphic != null) {
+                this.addGraphic(nGraphic);
+            }
             return nGraphic;
         }
     }

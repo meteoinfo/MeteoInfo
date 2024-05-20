@@ -3613,7 +3613,17 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 nvar.addAttribute(new ucar.nc2.Attribute("axis", "T"));
             } else {
                 for (ucar.nc2.Attribute attr : var.getAttributes()) {
-                    nvar.addAttribute(attr);
+                    switch (attr.getDataType()) {
+                        case BYTE:
+                        case CHAR:
+                        case STRING:
+                        case SHORT:
+                        case INT:
+                        case FLOAT:
+                        case DOUBLE:
+                            nvar.addAttribute(attr);
+                            break;
+                    }
                 }
             }
         }

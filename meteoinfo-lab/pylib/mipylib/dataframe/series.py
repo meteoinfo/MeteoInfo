@@ -329,7 +329,7 @@ class Series(object):
         
         :returns: Top rows
         """
-        print self._series.head(n)
+        print(self._series.head(n))
         
     def tail(self, n=5):
         """
@@ -339,7 +339,7 @@ class Series(object):
         
         :returns: Bottom rows
         """
-        print self._series.tail(n)
+        print(self._series.tail(n))
 
     def asarray(self):
         """

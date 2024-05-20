@@ -839,11 +839,11 @@ class MapAxes(Axes):
         proj = kwargs.pop('proj', migeo.projinfo())
         # Create graphics
         if a.ndim == 0:
-            #graphics = GraphicFactory.createPoints(x._array, y._array, ls.getLegendBreak(0))
-            graphics = Point2DCollection(x._array, y._array, legend=ls.getLegendBreak(0))
+            graphics = GraphicFactory.createPoints(x._array, y._array, ls.getLegendBreak(0))
+            #graphics = Point2DCollection(x._array, y._array, legend=ls.getLegendBreak(0))
         else:
-            #graphics = GraphicFactory.createPoints(x._array, y._array, a._array, ls)
-            graphics = Point2DCollection(x._array, y._array, a._array, ls)
+            graphics = GraphicFactory.createPoints(x._array, y._array, a._array, ls)
+            #graphics = Point2DCollection(x._array, y._array, a._array, ls)
 
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:

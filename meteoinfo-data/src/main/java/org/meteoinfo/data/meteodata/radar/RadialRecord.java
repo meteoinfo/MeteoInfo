@@ -19,8 +19,8 @@ public class RadialRecord {
     private int binLength;
     private DataType dataType;
     private int fillValue;
-    public int scale;
-    public int offset;
+    public float scale = 1;
+    public float offset = 0;
     public List<Float> fixedElevation = new ArrayList<>();
     public List<List<Float>> elevation = new ArrayList<>();
     public List<List<Float>> azimuth = new ArrayList<>();
@@ -114,6 +114,18 @@ public class RadialRecord {
     }
 
     /**
+     * Add a data array
+     * @param array Data array
+     */
+    public void addDataArray(Array array) {
+        if (this.data.isEmpty()) {
+            this.data.add(new ArrayList<>());
+        }
+
+        this.data.get(this.data.size() - 1).add(array);
+    }
+
+    /**
      * Add a data bytes
      * @param bytes Data bytes
      */
@@ -151,7 +163,7 @@ public class RadialRecord {
             array = Array.factory(this.dataType, new int[]{bytes.length});
             for (int i = 0; i < bytes.length; i++) {
                 v = (float) DataType.unsignedByteToShort(bytes[i]);
-                v = (v - offset) / scale;
+                v = v * scale + offset;
                 array.setFloat(i, v);
             }
         } else {
@@ -160,7 +172,7 @@ public class RadialRecord {
             for (int i = 0; i < n; i++) {
                 short s = DataConvert.bytes2Short(new byte[]{bytes[i*2], bytes[i*2+1]}, ByteOrder.LITTLE_ENDIAN);
                 v = (float) DataType.unsignedShortToInt(s);
-                v = (v - offset) / scale;
+                v = v * scale + offset;
                 array.setFloat(i, v);
             }
         }
@@ -244,7 +256,7 @@ public class RadialRecord {
      * @param dataInfo The data info
      * @param dimensions Dimensions
      */
-    public void makeVariable(CMARadarBaseDataInfo dataInfo, Dimension[] dimensions) {
+    public void makeVariable(BaseRadarDataInfo dataInfo, Dimension[] dimensions) {
         Variable variable = new Variable();
         variable.setName(this.product);
         variable.setDataType(this.dataType);
@@ -261,7 +273,7 @@ public class RadialRecord {
      * @param dataInfo The data info
      * @param xyzDim xyz dimension
      */
-    public void makeVariables(CMARadarBaseDataInfo dataInfo, Dimension xyzDim) {
+    public void makeVariables(BaseRadarDataInfo dataInfo, Dimension xyzDim) {
         for (int i = 0; i < getScanNumber(); i++) {
             String suffix = "_s" + String.valueOf(i + 1);
             Dimension radialDim = new Dimension(DimensionType.Y);
@@ -495,7 +507,7 @@ public class RadialRecord {
         }
 
         if (!Float.isNaN(v))
-            v = (v - this.offset) / this.scale;
+            v = v * scale + this.offset;
 
         return v;
     }
@@ -575,7 +587,7 @@ public class RadialRecord {
         }
 
         if (!Float.isNaN(v))
-            v = (v - this.offset) / this.scale;
+            v = v * this.scale + this.offset;
 
         return v;
     }

@@ -20,29 +20,28 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
+public class CMARadarBaseDataInfo extends BaseRadarDataInfo implements IRadarDataInfo {
 
     private GenericHeader genericHeader;
     private SiteConfig siteConfig;
     private TaskConfig taskConfig;
     private List<CutConfig> cutConfigs;
     private List<RadialHeader> radialHeaders;
-    private final Map<Integer, String> productMap = Stream.of(new Object[][]{{1,"dBT"}, {2,"dBZ"},
-            {3,"V"}, {4,"W"}, {5,"SQI"}, {6,"CPA"}, {7,"ZDR"}, {8,"LDR"}, {9,"CC"}, {10,"PhiDP"},
-            {11,"KDP"}, {12,"CP"}, {13,"Flag"}, {14,"HCL"}, {15,"CF"}, {16,"SNRH"}, {17,"SNRV"},
-            {18,"Flag"}, {19,"Flag"}, {20,"Flag"}, {21,"Flag"}, {22,"Flag"}, {23,"Flag"},
-            {24,"Flag"}, {25,"Flag"}, {26,"Flag"}, {27,"Flag"}, {28,"Flag"}, {29,"Flag"},
-            {30,"Flag"}, {31,"Flag"}, {32,"Zc"}, {33,"Vc"}, {34,"Wc"}, {35,"ZDRc"}, {0,"Flag"}
-        }).collect(Collectors.toMap(data -> (Integer) data[0], data -> (String) data[1]));
-    private final Map<String, RadialRecord> recordMap = new HashMap<>();
-    private final List<String> velocityGroup = new ArrayList<>(Arrays.asList("V", "W"));
-    private Dimension radialDim, scanDim, gateRDim, gateVDim;
 
     /**
      * Constructor
      */
     public CMARadarBaseDataInfo() {
         this.meteoDataType = MeteoDataType.RADAR;
+    }
+
+    /**
+     * Get radar data type
+     * @return Radar data type
+     */
+    @Override
+    public RadarDataType getRadarDataType() {
+        return RadarDataType.STANDARD;
     }
 
     /**
@@ -83,78 +82,6 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
      */
     public List<RadialHeader> getRadialHeaders() {
         return this.radialHeaders;
-    }
-
-    /**
-     * Get record map
-     * @return Record map
-     */
-    public Map<String, RadialRecord> getRecordMap() {
-        return this.recordMap;
-    }
-
-    @Override
-    public GridArray getGridArray(String varName) {
-        return null;
-    }
-
-    @Override
-    public GridData getGridData_LonLat(int timeIdx, String varName, int levelIdx) {
-        return null;
-    }
-
-    @Override
-    public GridData getGridData_TimeLat(int lonIdx, String varName, int levelIdx) {
-        return null;
-    }
-
-    @Override
-    public GridData getGridData_TimeLon(int latIdx, String varName, int levelIdx) {
-        return null;
-    }
-
-    @Override
-    public GridData getGridData_LevelLat(int lonIdx, String varName, int timeIdx) {
-        return null;
-    }
-
-    @Override
-    public GridData getGridData_LevelLon(int latIdx, String varName, int timeIdx) {
-        return null;
-    }
-
-    @Override
-    public GridData getGridData_LevelTime(int latIdx, String varName, int lonIdx) {
-        return null;
-    }
-
-    @Override
-    public GridData getGridData_Time(int lonIdx, int latIdx, String varName, int levelIdx) {
-        return null;
-    }
-
-    @Override
-    public GridData getGridData_Level(int lonIdx, int latIdx, String varName, int timeIdx) {
-        return null;
-    }
-
-    @Override
-    public GridData getGridData_Lon(int timeIdx, int latIdx, String varName, int levelIdx) {
-        return null;
-    }
-
-    @Override
-    public GridData getGridData_Lat(int timeIdx, int lonIdx, String varName, int levelIdx) {
-        return null;
-    }
-
-    /**
-     * Is a radial record is in velocity group or not
-     * @param record The radial record
-     * @return Velocity group or not
-     */
-    public boolean isVelocityGroup(RadialRecord record) {
-        return velocityGroup.contains(record.product);
     }
 
     @Override
@@ -229,6 +156,8 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
         try {
             genericHeader = new GenericHeader(raf);
             siteConfig = new SiteConfig(raf);
+            this.antennaHeight = siteConfig.antennaHeight;
+            this.beamWidthVert = siteConfig.beamWidthVert;
 
             //Add global attributes
             this.addAttribute(new Attribute("StationCode", siteConfig.siteCode));
@@ -248,8 +177,14 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
 
             //Read radial data
             cutConfigs = new ArrayList<>();
+            CutConfig cutConfig;
             for (int i = 0; i < taskConfig.cutNumber; i++) {
-                cutConfigs.add(new CutConfig(raf));
+                cutConfig = new CutConfig(raf);
+                cutConfigs.add(cutConfig);
+                if (i == 0) {
+                    this.logResolution = cutConfig.logResolution;
+                    this.dopplerResolution = cutConfig.dopplerResolution;
+                }
             }
             radialHeaders = new ArrayList<>();
             byte[] rhBytes = new byte[RadialHeader.length];
@@ -264,8 +199,8 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
                     } else {
                         record = new RadialRecord(product);
                         record.setBinLength(momentHeader.binLength);
-                        record.scale = momentHeader.scale;
-                        record.offset = momentHeader.offset;
+                        record.scale = 1.f / momentHeader.scale;
+                        record.offset = -momentHeader.offset / (float) momentHeader.scale;
                         this.recordMap.put(product, record);
                     }
                     if (radialHeader.radialNumber == 1) {
@@ -331,181 +266,6 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
         }
     }
 
-    private void makeRefVariables(RadialRecord refRadialRecord) {
-        Dimension[] dimensions = new Dimension[]{scanDim, radialDim, gateRDim};
-        for (RadialRecord radialRecord : this.recordMap.values()) {
-            if (!radialRecord.isVelocityGroup())
-                radialRecord.makeVariable(this, dimensions);
-        }
-
-        //coordinate variables
-        Variable elevation = new Variable();
-        elevation.setName("elevationR");
-        elevation.setDataType(DataType.FLOAT);
-        elevation.addDimension(scanDim);
-        elevation.addDimension(radialDim);
-        elevation.addAttribute(new Attribute("units", "degree"));
-        elevation.addAttribute(new Attribute("long_name", "elevation angle in degrees"));
-        this.addVariable(elevation);
-
-        Variable azimuth = new Variable();
-        azimuth.setName("azimuthR");
-        azimuth.setDataType(DataType.FLOAT);
-        azimuth.addDimension(scanDim);
-        azimuth.addDimension(radialDim);
-        azimuth.addAttribute(new Attribute("units", "degree"));
-        azimuth.addAttribute(new Attribute("long_name", "azimuth angle in degrees"));
-        this.addVariable(azimuth);
-
-        Variable distance = new Variable();
-        distance.setName("distanceR");
-        distance.setDataType(DataType.FLOAT);
-        distance.addDimension(gateRDim);
-        distance.addAttribute(new Attribute("units", "m"));
-        distance.addAttribute(new Attribute("long_name", "radial distance to start of gate"));
-        this.addVariable(distance);
-
-        Variable nRadials = new Variable();
-        nRadials.setName("numRadialsR");
-        nRadials.setDataType(DataType.INT);
-        nRadials.addDimension(scanDim);
-        nRadials.addAttribute(new Attribute("long_name", "number of valid radials in this scan"));
-        this.addVariable(nRadials);
-
-        Variable nGates = new Variable();
-        nGates.setName("numGatesR");
-        nGates.setDataType(DataType.INT);
-        nGates.addDimension(scanDim);
-        nGates.addAttribute(new Attribute("long_name", "number of valid gates in this scan"));
-        this.addVariable(nGates);
-
-        int nScan = scanDim.getLength();
-        int nRadial = radialDim.getLength();
-        int nGate = gateRDim.getLength();
-        Array elevData = Array.factory(DataType.FLOAT, new int[]{nScan, nRadial});
-        Array aziData = Array.factory(DataType.FLOAT, new int[]{nScan, nRadial});
-        Array nRData = Array.factory(DataType.INT, new int[]{nScan});
-        Array nGData = Array.factory(DataType.INT, new int[]{nScan});
-        Index elevIndex = elevData.getIndex();
-        Index aziIndex = aziData.getIndex();
-        for (int i = 0; i < nScan; i++) {
-            List<Float> elevList = refRadialRecord.elevation.get(i);
-            List<Float> aziList = refRadialRecord.azimuth.get(i);
-            nRData.setInt(i, aziList.size());
-            nGData.setInt(i, (int) refRadialRecord.distance.get(i).getSize());
-            for (int j = 0; j < nRadial; j++) {
-                if (j < elevList.size()) {
-                    elevData.setFloat(elevIndex.set(i, j), elevList.get(j));
-                    aziData.setFloat(aziIndex.set(i, j), aziList.get(j));
-                } else {
-                    elevData.setFloat(elevIndex.set(i, j), Float.NaN);
-                    aziData.setFloat(aziIndex.set(i, j), Float.NaN);
-                }
-            }
-        }
-        Array disData = refRadialRecord.distance.get(0);
-
-        elevation.setCachedData(elevData);
-        azimuth.setCachedData(aziData);
-        distance.setCachedData(disData);
-        nRadials.setCachedData(nRData);
-        nGates.setCachedData(nGData);
-    }
-
-    private void makeVelVariables(RadialRecord velRadialRecord) {
-        Dimension[] dimensions = new Dimension[]{scanDim, radialDim, gateVDim};
-        for (RadialRecord radialRecord : this.recordMap.values()) {
-            if (radialRecord.isVelocityGroup())
-                radialRecord.makeVariable(this, dimensions);
-        }
-
-        //coordinate variables
-        Variable elevation = new Variable();
-        elevation.setName("elevationV");
-        elevation.setDataType(DataType.FLOAT);
-        elevation.addDimension(scanDim);
-        elevation.addDimension(radialDim);
-        elevation.addAttribute(new Attribute("units", "degree"));
-        elevation.addAttribute(new Attribute("long_name", "elevation angle in degrees"));
-        this.addVariable(elevation);
-
-        Variable azimuth = new Variable();
-        azimuth.setName("azimuthV");
-        azimuth.setDataType(DataType.FLOAT);
-        azimuth.addDimension(scanDim);
-        azimuth.addDimension(radialDim);
-        azimuth.addAttribute(new Attribute("units", "degree"));
-        azimuth.addAttribute(new Attribute("long_name", "azimuth angle in degrees"));
-        this.addVariable(azimuth);
-
-        Variable distance = new Variable();
-        distance.setName("distanceV");
-        distance.setDataType(DataType.FLOAT);
-        distance.addDimension(gateVDim);
-        distance.addAttribute(new Attribute("units", "m"));
-        distance.addAttribute(new Attribute("long_name", "radial distance to start of gate"));
-        this.addVariable(distance);
-
-        Variable nRadials = new Variable();
-        nRadials.setName("numRadialsR");
-        nRadials.setDataType(DataType.INT);
-        nRadials.addDimension(scanDim);
-        nRadials.addAttribute(new Attribute("long_name", "number of valid radials in this scan"));
-        this.addVariable(nRadials);
-
-        Variable nGates = new Variable();
-        nGates.setName("numGatesR");
-        nGates.setDataType(DataType.INT);
-        nGates.addDimension(scanDim);
-        nGates.addAttribute(new Attribute("long_name", "number of valid gates in this scan"));
-        this.addVariable(nGates);
-
-        int nScan = scanDim.getLength();
-        int nRadial = radialDim.getLength();
-        int nGate = gateVDim.getLength();
-        Array elevData = Array.factory(DataType.FLOAT, new int[]{nScan, nRadial});
-        Array aziData = Array.factory(DataType.FLOAT, new int[]{nScan, nRadial});
-        Array nRData = Array.factory(DataType.INT, new int[]{nScan});
-        Array nGData = Array.factory(DataType.INT, new int[]{nScan});
-        Index elevIndex = elevData.getIndex();
-        Index aziIndex = aziData.getIndex();
-        for (int i = 0; i < nScan; i++) {
-            List<Float> elevList = velRadialRecord.elevation.get(i);
-            List<Float> aziList = velRadialRecord.azimuth.get(i);
-            nRData.setInt(i, aziList.size());
-            nGData.setInt(i, (int) velRadialRecord.distance.get(i).getSize());
-            for (int j = 0; j < nRadial; j++) {
-                if (j < elevList.size()) {
-                    elevData.setFloat(elevIndex.set(i, j), elevList.get(j));
-                    aziData.setFloat(aziIndex.set(i, j), aziList.get(j));
-                } else {
-                    elevData.setFloat(elevIndex.set(i, j), Float.NaN);
-                    aziData.setFloat(aziIndex.set(i, j), Float.NaN);
-                }
-            }
-        }
-        Array disData = velRadialRecord.distance.get(0);
-
-        elevation.setCachedData(elevData);
-        azimuth.setCachedData(aziData);
-        distance.setCachedData(disData);
-        nRadials.setCachedData(nRData);
-        nGates.setCachedData(nGData);
-    }
-
-    /**
-     * Get product names
-     * @return product names
-     */
-    public List<String> getProducts() {
-        List<String> products = new ArrayList<>();
-        for (String product : this.recordMap.keySet()) {
-            products.add(product);
-        }
-
-        return products;
-    }
-
     /**
      * Get scan elevations
      * @return Scan elevations
@@ -518,104 +278,6 @@ public class CMARadarBaseDataInfo extends DataInfo implements IGridDataInfo {
         }
 
         return elevations;
-    }
-
-    /**
-     * Get scan elevations
-     * @return Scan elevations
-     */
-    public List<Float> getElevations(String product) {
-        RadialRecord radialRecord = this.recordMap.get(product);
-
-        return radialRecord.fixedElevation;
-    }
-
-    @Override
-    public Array read(String varName) {
-        Variable var = this.getVariable(varName);
-        int n = var.getDimNumber();
-        int[] origin = new int[n];
-        int[] size = new int[n];
-        int[] stride = new int[n];
-        for (int i = 0; i < n; i++) {
-            origin[i] = 0;
-            size[i] = var.getDimLength(i);
-            stride[i] = 1;
-        }
-
-        Array r = read(varName, origin, size, stride);
-
-        return r;
-    }
-
-    @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
-        try {
-            Variable variable = this.getVariable(varName);
-            if (variable.hasCachedData()) {
-                return variable.getCachedData().section(origin, size, stride).copy();
-            }
-
-            Section section = new Section(origin, size, stride);
-            RadialRecord record = this.recordMap.get(varName);
-            Array dataArray = Array.factory(DataType.FLOAT, section.getShape());
-            Range zRange = section.getRange(0);
-            Range yRange = section.getRange(1);
-            Range xRange = section.getRange(2);
-            IndexIterator iter = dataArray.getIndexIterator();
-            for (int s = zRange.first(); s <= zRange.last(); s += zRange.stride()) {
-                List<Array> arrays = record.getDataArray(s);
-                for (int i = yRange.first(); i <= yRange.last(); i += yRange.stride()) {
-                    if (i < arrays.size()) {
-                        Array array = arrays.get(i);
-                        for (int j = xRange.first(); j <= xRange.last(); j += xRange.stride()) {
-                            if (j < array.getSize())
-                                iter.setFloatNext(array.getFloat(j));
-                            else
-                                iter.setFloatNext(Float.NaN);
-                        }
-                    } else {
-                        for (int j = xRange.first(); j <= xRange.last(); j += xRange.stride()) {
-                            iter.setFloatNext(Float.NaN);
-                        }
-                    }
-                }
-            }
-
-            Attribute aoAttr = variable.findAttribute("add_offset");
-            Attribute sfAttr = variable.findAttribute("scale_factor");
-            if (aoAttr != null || sfAttr != null) {
-                Number add_offset = 0.f;
-                Number scale_factor = 1.f;
-                if (aoAttr != null) {
-                    switch (aoAttr.getDataType()) {
-                        case DOUBLE:
-                            add_offset = aoAttr.getValues().getDouble(0);
-                            break;
-                        case FLOAT:
-                        case INT:
-                            add_offset = aoAttr.getValues().getFloat(0);
-                            break;
-                    }
-                }
-                if (sfAttr != null) {
-                    switch (sfAttr.getDataType()) {
-                        case DOUBLE:
-                            scale_factor = sfAttr.getValues().getDouble(0);
-                            break;
-                        case FLOAT:
-                        case INT:
-                            scale_factor = sfAttr.getValues().getFloat(0);
-                            break;
-                    }
-                }
-                dataArray = ArrayMath.div(ArrayMath.sub(dataArray, add_offset), scale_factor);
-            }
-
-            return dataArray;
-        } catch (InvalidRangeException e) {
-            return null;
-        }
     }
 
     @Override

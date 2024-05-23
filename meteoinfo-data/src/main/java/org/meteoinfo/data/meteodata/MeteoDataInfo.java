@@ -41,6 +41,9 @@ import java.util.ArrayList;
 
 import org.meteoinfo.data.meteodata.numpy.NumpyDataInfo;
 import org.meteoinfo.data.meteodata.radar.CMARadarBaseDataInfo;
+import org.meteoinfo.data.meteodata.radar.RadarDataType;
+import org.meteoinfo.data.meteodata.radar.RadarDataUtil;
+import org.meteoinfo.data.meteodata.radar.cinrad.CinradDataInfo;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.projection.ProjectionInfo;
 import java.util.List;
@@ -471,31 +474,31 @@ public class MeteoDataInfo {
      * @return Data info
      */
     public DataInfo getDataInfo(String fileName) {
-        DataInfo di = null;
-        try {
-            RandomAccessFile raf = new RandomAccessFile(fileName, "r");
-            if (GrADSDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
-                di = new GrADSDataInfo();
-            } else if (NetcdfFiles.canOpen(fileName)) {
-                di = new NetCDFDataInfo();
-            } else if (ARLDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
-                di = new ARLDataInfo();
-            } else if (CMARadarBaseDataInfo.canOpen(fileName)) {
-                di = new CMARadarBaseDataInfo();
-            } else if (MatLabDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
-                di = new MatLabDataInfo();
-            } else {
-                di = MICAPSDataInfo.getDataInfo(raf);
+        DataInfo di = RadarDataUtil.getDataInfo(fileName);
+        if (di == null) {
+            try {
+                RandomAccessFile raf = new RandomAccessFile(fileName, "r");
+                if (GrADSDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
+                    di = new GrADSDataInfo();
+                } else if (NetcdfFiles.canOpen(fileName)) {
+                    di = new NetCDFDataInfo();
+                } else if (ARLDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
+                    di = new ARLDataInfo();
+                } else if (MatLabDataInfo.class.getDeclaredConstructor().newInstance().isValidFile(raf)) {
+                    di = new MatLabDataInfo();
+                } else {
+                    di = MICAPSDataInfo.getDataInfo(raf);
+                }
+                raf.close();
+            } catch (IOException | NoSuchMethodException ex) {
+                return null;
+            } catch (InvocationTargetException e) {
+                return null;
+            } catch (InstantiationException e) {
+                return null;
+            } catch (IllegalAccessException e) {
+                return null;
             }
-            raf.close();
-        } catch (IOException | NoSuchMethodException ex) {
-            return null;
-        } catch (InvocationTargetException e) {
-            return null;
-        } catch (InstantiationException e) {
-            return null;
-        } catch (IllegalAccessException e) {
-            return null;
         }
 
         return di;

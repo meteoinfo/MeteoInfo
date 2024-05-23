@@ -96,7 +96,7 @@ import org.meteoinfo.data.GridData;
      /**
       * Read grid data - time
       *
-      * @param lonIdx Lontitude index
+      * @param lonIdx Longitude index
       * @param latIdx Latitude index
       * @param varName Variable name
       * @param levelIdx Level index
@@ -107,7 +107,7 @@ import org.meteoinfo.data.GridData;
      /**
       * Read grid data - level
       *
-      * @param lonIdx Lontitude index
+      * @param lonIdx Longitude index
       * @param latIdx Latitude index
       * @param varName Variable name
       * @param timeIdx Time index
@@ -130,7 +130,7 @@ import org.meteoinfo.data.GridData;
       * Read grid data - latitude
       *
       * @param timeIdx Time index
-      * @param lonIdx Lontitude index
+      * @param lonIdx Longitude index
       * @param varName Variable name
       * @param levelIdx Level index
       * @return Grid data

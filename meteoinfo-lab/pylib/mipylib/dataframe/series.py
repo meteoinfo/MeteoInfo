@@ -407,6 +407,19 @@ class Series(object):
             return Series(series=r)
         else:
             return r
+
+    def isin(self, values):
+        """
+        Whether elements in Series are contained in values.
+
+        Return a boolean Series showing whether each element in the Series matches an element in the passed
+        sequence of values exactly.
+
+        :param values: (*list*) The sequence of values to test.
+        :return: (*Series*) Series of booleans indicating if each element is in values.
+        """
+        r = self._series.isIn(values)
+        return Series(series=r)
         
     def groupby(self, by=None):
         """

@@ -1039,6 +1039,18 @@ class DataFrame(object):
         Return the standard deviation of the values for the requested axis
         """
         return DataFrame(dataframe=self._dataframe.stdDev())
+
+    def isin(self, values):
+        """
+        Whether elements in DataFrame are contained in values.
+
+        Return a boolean DataFrame showing whether each element in the DataFrame matches an element in the passed
+        sequence of values exactly.
+
+        :param values: (*list*) The sequence of values to test.
+        :return: (*DataFrame*) DataFrame of booleans indicating if each element is in values.
+        """
+        return DataFrame(dataframe=self._dataframe.isIn(values))
     
     @classmethod
     def read_table(cls, filepath, **kwargs):

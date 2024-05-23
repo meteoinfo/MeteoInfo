@@ -3513,6 +3513,27 @@ public class DataFrame implements Iterable {
         }
     }
 
+    /**
+     * Whether elements in DataFrame are contained in values
+     *
+     * @param values The values
+     * @return DataFrame of booleans indicating if each element is in values
+     */
+    public DataFrame isIn(List values) {
+        if (this.array2D) {
+            Array a = ArrayMath.inValues((Array) this.data, values);
+            return new DataFrame(a, (Index) this.index.clone(), this.columns.copyAsBoolean());
+        } else {
+            List<Array> arrays = (List<Array>) this.data;
+            List<Array> r = new ArrayList<>();
+            for (Array arr : arrays) {
+                Array a = ArrayMath.inValues(arr, values);
+                r.add(a);
+            }
+            return new DataFrame(r, (Index) this.index.clone(), this.columns.copyAsBoolean());
+        }
+    }
+
     @Override
     public Object clone() {
         Object rdata;

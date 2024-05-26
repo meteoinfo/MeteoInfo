@@ -2887,10 +2887,10 @@ def smooth9(x):
  
 def cdiff(a, dimidx):
     """
-    Performs a centered difference operation on a array in a specific direction
+    Performs a centered difference operation on an array in a specific direction
     
     :param a: (*array*) The input array.
-    :param dimidx: (*int*) Demension index of the specific direction.
+    :param dimidx: (*int*) Dimension index of the specific direction.
     
     :returns: Result array.
     """

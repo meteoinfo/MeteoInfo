@@ -117,9 +117,9 @@ public class RadarDataUtil {
                 case SAB:
                     return new SABRadarDataInfo();
                 /*case CC:
-                    return new CCRadarDataInfo();
+                    return new CCRadarDataInfo();*/
                 case SC:
-                    return new SCRadarDataInfo();*/
+                    return new SCRadarDataInfo();
                 default:
                     return null;
             }

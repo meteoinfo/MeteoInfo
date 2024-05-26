@@ -162,7 +162,7 @@ public class CCRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInfo
 
     @Override
     public RadarDataType getRadarDataType() {
-        return RadarDataType.SAB;
+        return RadarDataType.CC;
     }
 
     static class RadialHeader {

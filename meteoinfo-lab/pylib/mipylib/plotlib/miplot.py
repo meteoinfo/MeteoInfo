@@ -1236,9 +1236,9 @@ def supylabel(label, **kwargs):
     return r
 
 
-def left_title(label, fontname=None, fontsize=14, bold=False, color='black', **kwargs):
+def left_title(label, **kwargs):
     """
-    Set a left sub title of the current axes.
+    Set a left subtitle of the current axes.
     
     :param label: (*string*) Title string.
     :param fontname: (*string*) Font name. Default is ``None``, using ``Arial`` .
@@ -1246,14 +1246,18 @@ def left_title(label, fontname=None, fontsize=14, bold=False, color='black', **k
     :param bold: (*boolean*) Is bold font or not. Default is ``False`` .
     :param color: (*color*) Title string color. Default is ``black`` .    
     """
-    r = g_axes.set_title(label, 'left', fontname, fontsize, bold, color, **kwargs)
+    if not kwargs.has_key('bold'):
+        kwargs['bold'] = False
+    if not kwargs.has_key('xalign'):
+        kwargs['xalign'] = 'left'
+    r = g_axes.set_title(label, loc='left', **kwargs)
     draw_if_interactive()
     return r
 
 
-def right_title(label, fontname=None, fontsize=14, bold=False, color='black', **kwargs):
+def right_title(label, **kwargs):
     """
-    Set a right sub title of the current axes.
+    Set a right subtitle of the current axes.
     
     :param label: (*string*) Title string.
     :param fontname: (*string*) Font name. Default is ``None``, using ``Arial`` .
@@ -1261,7 +1265,11 @@ def right_title(label, fontname=None, fontsize=14, bold=False, color='black', **
     :param bold: (*boolean*) Is bold font or not. Default is ``False`` .
     :param color: (*color*) Title string color. Default is ``black`` .    
     """
-    r = g_axes.set_title(label, 'right', fontname, fontsize, bold, color, **kwargs)
+    if not kwargs.has_key('bold'):
+        kwargs['bold'] = False
+    if not kwargs.has_key('xalign'):
+        kwargs['xalign'] = 'right'
+    r = g_axes.set_title(label, loc='right', **kwargs)
     draw_if_interactive()
     return r
 

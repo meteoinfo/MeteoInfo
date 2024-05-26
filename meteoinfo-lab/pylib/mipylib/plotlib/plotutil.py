@@ -620,14 +620,13 @@ def getlegendbreak(geometry, **kwargs):
     return lb, isunique
 
 
-def getlegendscheme(args, min, max, cmap=None, **kwargs):
+def getlegendscheme(args, min, max, **kwargs):
     ls = kwargs.pop('symbolspec', None)
     if ls is None:
         extend = kwargs.pop('extend', None)
         if extend is not None:
             extend = ExtendType.valueOf(extend.upper())
-        if cmap is None:
-            cmap = getcolormap(**kwargs)
+        cmap = getcolormap(**kwargs)
         level_arg = kwargs.pop('levels', None)
         if level_arg is None and len(args) > 0:
             level_arg = args[0]

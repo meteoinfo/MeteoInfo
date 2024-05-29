@@ -1109,7 +1109,7 @@ class MapAxes(Axes):
                     if has_colors:
                         ls = LegendManage.createImageLegend(arr._array, cmap)
                     else:
-                        ls = plotutil.getlegendscheme(args, vmin, vmax, cmap, **kwargs)
+                        ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
                         norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
                         ls.setNormalize(norm._norm)
                         ls.setColorMap(cmap)

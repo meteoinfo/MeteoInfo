@@ -77,6 +77,15 @@ public class RadarDataUtil {
                 return RadarDataType.STANDARD;
             }
 
+            String radarT = new String(bytes);
+            if (radarT.contains("CINRAD/SC") || radarT.contains("CINRAD/CD")) {
+                return RadarDataType.SC;
+            } else if (radarT.contains("CINRADC")) {
+                return RadarDataType.CC;
+            } else if (!radarT.contains("CINRADC") && radarT.contains("CINRAD/CC")) {
+                return RadarDataType.CC20;
+            }
+
             magicBytes = Arrays.copyOfRange(bytes, 14, 16);
             if (Arrays.equals(magicBytes, new byte[]{1, 0})) {
                 return RadarDataType.SAB;
@@ -87,14 +96,6 @@ public class RadarDataUtil {
                 return RadarDataType.PA;
             }
 
-            String radarT = new String(bytes);
-            if (radarT.contains("CINRAD/SC") || radarT.contains("CINRAD/CD")) {
-                return RadarDataType.SC;
-            } else if (radarT.contains("CINRADC")) {
-                return RadarDataType.CC;
-            } else if (!radarT.contains("CINRADC") && radarT.contains("CINRAD/CC")) {
-                return RadarDataType.CC20;
-            }
         } catch (Exception e) {
             return null;
         }

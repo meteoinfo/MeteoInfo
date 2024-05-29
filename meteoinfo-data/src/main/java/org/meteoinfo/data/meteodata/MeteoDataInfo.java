@@ -43,7 +43,6 @@ import org.meteoinfo.data.meteodata.numpy.NumpyDataInfo;
 import org.meteoinfo.data.meteodata.radar.CMARadarBaseDataInfo;
 import org.meteoinfo.data.meteodata.radar.RadarDataType;
 import org.meteoinfo.data.meteodata.radar.RadarDataUtil;
-import org.meteoinfo.data.meteodata.radar.cinrad.CinradDataInfo;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.projection.ProjectionInfo;
 import java.util.List;

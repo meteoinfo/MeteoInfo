@@ -1294,16 +1294,11 @@ class Axes(object):
             if isinstance(ydata, DimArray):
                 xdata = ydata.dimvalue(0)
                 if ydata.ndim == 2:
-                    xdata = ydata.dimvalue(1)
-                    xx = np.zeros(ydata.shape)
-                    xx[:, :] = xdata
-                    xdata = xx
+                    xdata = xdata[:,np.newaxis].repeat(ydata.shape[1], axis=1)
             else:
-                xdata = np.arange(ydata.shape[-1])
+                xdata = np.arange(ydata.shape[0])
                 if ydata.ndim == 2:
-                    xx = np.zeros(ydata.shape)
-                    xx[:, :] = xdata
-                    xdata = xx
+                    xdata = xdata[:,np.newaxis].repeat(ydata.shape[1], axis=1)
             xdatalist.append(xdata)
             ydatalist.append(ydata)
         elif len(args) == 2:
@@ -1312,16 +1307,11 @@ class Axes(object):
                 if isinstance(ydata, DimArray):
                     xdata = ydata.dimvalue(0)
                     if ydata.ndim == 2:
-                        xdata = ydata.dimvalue(1)
-                        xx = np.zeros(ydata.shape)
-                        xx[:, :] = xdata
-                        xdata = xx
+                        xdata = xdata[:,np.newaxis].repeat(ydata.shape[1], axis=1)
                 else:
-                    xdata = np.arange(ydata.shape[-1])
+                    xdata = np.arange(ydata.shape[0])
                     if ydata.ndim == 2:
-                        xx = np.zeros(ydata.shape)
-                        xx[:, :] = xdata
-                        xdata = xx
+                        xdata = xdata[:,np.newaxis].repeat(ydata.shape[1], axis=1)
                 styles.append(args[1])
             else:
                 xdata = args[0]
@@ -1442,7 +1432,12 @@ class Axes(object):
                             lines.append(ncb)
                         graphic = GraphicFactory.createLineString(xdata._array, ydata._array, lines, iscurve)
                     else:
-                        graphic = Line2D(xdata, ydata, legend=lines[0], curve=iscurve)
+                        if ydata.ndim == 1:
+                            graphic = Line2D(xdata, ydata, legend=lines[0], curve=iscurve)
+                        else:
+                            if xdata.ndim == 1:
+                                xdata = xdata[:,np.newaxis].repeat(ydata.shape[1], axis=1)
+                            graphic = GraphicFactory.createLineString(xdata._array, ydata._array, lines[0], iscurve)
                 else:  # >1
                     graphic = GraphicFactory.createLineString(xdata._array, ydata._array, lines, iscurve)
                 self.add_graphic(graphic, zorder=zorder)

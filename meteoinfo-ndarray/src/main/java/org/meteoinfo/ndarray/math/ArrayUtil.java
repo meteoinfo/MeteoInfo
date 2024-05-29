@@ -1253,6 +1253,66 @@ public class ArrayUtil {
     }
 
     /**
+     * Generate magic 2D array
+     *
+     * @param n Dimension length
+     * @return Magic 2D array
+     */
+    public static Array magic(int n) {
+        int[] M = new int[n * n];
+
+        // Odd order
+        if ((n % 2) == 1) {
+            int a = (n+1)/2;
+            int b = (n+1);
+            for (int j = 0; j < n; j++) {
+                for (int i = 0; i < n; i++) {
+                    M[i * n + j] = n * ((i + j + a) % n) + ((i + 2 * j + b) % n) + 1;
+                }
+            }
+
+            // Doubly Even Order
+        } else if ((n % 4) == 0) {
+            for (int j = 0; j < n; j++) {
+                for (int i = 0; i < n; i++) {
+                    if (((i+1)/2)%2 == ((j+1)/2)%2) {
+                        M[i * n + j] = n * n - n * i - j;
+                    } else {
+                        M[i * n + j] = n * i + j + 1;
+                    }
+                }
+            }
+
+            // Singly Even Order
+        } else {
+            int p = n/2;
+            int k = (n-2)/4;
+            Array A = magic(p);
+            for (int j = 0; j < p; j++) {
+                for (int i = 0; i < p; i++) {
+                    int aij = A.getInt(i * p + j);
+                    M[i * n + j] = aij;
+                    M[i * n + j+p] = aij + 2 * p * p;
+                    M[(i + p) * n + j] = aij + 3 * p * p;
+                    M[(i + p) * n + j + p] = aij + p * p;
+                }
+            }
+            for (int i = 0; i < p; i++) {
+                for (int j = 0; j < k; j++) {
+                    int t = M[i * n + j]; M[i * n + j] = M[(i + p) * n + j]; M[(i + p) * n + j] = t;
+                }
+                for (int j = n-k+1; j < n; j++) {
+                    int t = M[i * n + j]; M[i * n + j] = M[(i + p) * n + j]; M[(i + p) * n + j] = t;
+                }
+            }
+            int t = M[k * n]; M[k * n] = M[(k + p) * n]; M[(k + p) * n] = t;
+            t = M[k * n + k]; M[k * n + k] = M[(k + p) * n + k]; M[(k + p) * n + k] = t;
+        }
+
+        return Array.factory(DataType.INT, new int[]{n, n}, M);
+    }
+
+    /**
      * Repeat a value n times
      *
      * @param v The value

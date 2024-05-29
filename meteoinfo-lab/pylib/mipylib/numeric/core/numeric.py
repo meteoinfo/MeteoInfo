@@ -44,7 +44,7 @@ __all__ = [
     'datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
     'fmax','fmin','full','hcurl','hdivg','hstack','hypot','identity','indices','interp2d','interpn','isarray',
     'isclose','isfinite','isinf','isnan','isscalar','linspace','log','log10','logical_not','logspace',
-    'magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
+    'magic','magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
     'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reciprocal','reshape',
     'repeat','roll','rolling_mean','rot90','round','sec','sign','sin','sinh','shape','smooth5','smooth9','sort',
     'spacing','sphere','squeeze','split','sqrt','square','std','swapaxes','take','tan','tanh','tile',
@@ -490,6 +490,15 @@ def diag(v, k=0):
     if isinstance(v, (list, tuple)):
         v = array(v)
     return NDArray(ArrayUtil.diag(v.asarray(), k))
+
+def magic(n):
+    """
+    Generate a magic 2D array.
+
+    :param n: (*int*) Dimension length.
+    :return: Magic 2D array.
+    """
+    return NDArray(ArrayUtil.magic(n))
     
 def repeat(a, repeats, axis=None):
     """

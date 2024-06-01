@@ -26,6 +26,10 @@ import java.util.List;
 
 public class SABRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInfo {
 
+    private boolean isCACB = false;
+    private int reflectivityFixSize = 460;
+    private int dopplerFixSize = 920;
+
     @Override
     public boolean isValidFile(java.io.RandomAccessFile raf) {
         return false;
@@ -53,6 +57,21 @@ public class SABRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInf
         }
     }
 
+    /**
+     * Set if the data is CA/CB
+     * @param value Boolean
+     */
+    public void setCACB(Boolean value) {
+        this.isCACB = value;
+        if (isCACB) {
+            this.reflectivityFixSize = 800;
+            this.dopplerFixSize = 1600;
+        } else {
+            this.reflectivityFixSize = 460;
+            this.dopplerFixSize = 1600;
+        }
+    }
+
     @Override
     void readDataInfo(InputStream is) {
         try {
@@ -63,9 +82,12 @@ public class SABRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInf
                 if (index == 0) {
                     this.logResolution = radialHeader.gateSizeOfReflectivity;
                     this.dopplerResolution = radialHeader.gateSizeOfDoppler;
+                    if (radialHeader.gatesNumberOfReflectivity > 460) {
+                        this.setCACB(true);
+                    }
                 }
                 if (!radialHeader.hasReflectivityData()) {
-                    is.read(new byte[460]);
+                    is.read(new byte[this.reflectivityFixSize]);
                 }
                 for (String product : radialHeader.getProducts()) {
                     RadialRecord record;
@@ -100,17 +122,17 @@ public class SABRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInf
                     is.read(bytes);
                     record.addDataBytes(bytes);
                     if (isVelocityGroup(record)) {
-                        if (dataLength < 920) {
-                            is.read(new byte[920 - dataLength]);
+                        if (dataLength < this.dopplerFixSize) {
+                            is.read(new byte[this.dopplerFixSize - dataLength]);
                         }
                     } else {
-                        if (dataLength < 460) {
-                            is.read(new byte[460 - dataLength]);
+                        if (dataLength < this.reflectivityFixSize) {
+                            is.read(new byte[this.reflectivityFixSize - dataLength]);
                         }
                     }
                 }
                 if (!radialHeader.hasDopplerData()) {
-                    is.read(new byte[920 + 920]);
+                    is.read(new byte[this.dopplerFixSize * 2]);
                 }
                 is.read(new byte[4]);
                 index += 1;
@@ -119,7 +141,11 @@ public class SABRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInf
 
             this.addAttribute(new Attribute("featureType", "RADIAL"));
             this.addAttribute(new Attribute("DataType", "Radial"));
-            this.addAttribute(new Attribute("RadarDataType", "SA/SB"));
+            String radarDataTypeStr = "SA/SB";
+            if (this.isCACB) {
+                radarDataTypeStr = "CA/CB";
+            }
+            this.addAttribute(new Attribute("RadarDataType", radarDataTypeStr));
 
             //Add dimensions and variables
             RadialRecord refRadialRecord = this.recordMap.get("dBZ");

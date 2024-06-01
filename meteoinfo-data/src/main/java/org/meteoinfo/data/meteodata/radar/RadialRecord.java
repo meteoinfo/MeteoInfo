@@ -10,12 +10,14 @@ import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
 public class RadialRecord {
     public String product;
+    private RadarDataType radarDataType = RadarDataType.STANDARD;
     private int binLength;
     private DataType dataType;
     private int fillValue;
@@ -26,7 +28,7 @@ public class RadialRecord {
     public List<List<Float>> azimuth = new ArrayList<>();
     public List<Integer> azimuthMinIndex = new ArrayList<>();
     public List<Array> distance = new ArrayList<>();
-    public List<Integer> disResolution = new ArrayList<>();
+    public List<Float> disResolution = new ArrayList<>();
     private final List<List<Array>> data = new ArrayList<>();
 
     /**
@@ -35,6 +37,22 @@ public class RadialRecord {
      */
     public RadialRecord(String product) {
         this.product = product;
+    }
+
+    /**
+     * Get radar data type
+     * @return Radar data type
+     */
+    public RadarDataType getRadarDataType() {
+        return this.radarDataType;
+    }
+
+    /**
+     * Set radar data type
+     * @param radarDataType Radar data type
+     */
+    public void setRadarDataType(RadarDataType radarDataType) {
+        this.radarDataType = radarDataType;
     }
 
     /**
@@ -53,6 +71,14 @@ public class RadialRecord {
      */
     public DataType getDataType() {
         return this.dataType;
+    }
+
+    /**
+     * Set data type
+     * @param dataType Data type
+     */
+    public void setDataType(DataType dataType) {
+        this.dataType = dataType;
     }
 
     /**
@@ -265,6 +291,9 @@ public class RadialRecord {
         }
         variable.addAttribute(new Attribute("scale_factor", this.scale));
         variable.addAttribute(new Attribute("add_offset", this.offset));
+        if (this.radarDataType == RadarDataType.CC) {
+            variable.addAttribute(new Attribute("missing_value", -32768));
+        }
         dataInfo.addVariable(variable);
     }
 
@@ -299,6 +328,9 @@ public class RadialRecord {
             variable.addDimension(disDim);
             variable.addAttribute(new Attribute("scale_factor", this.scale));
             variable.addAttribute(new Attribute("add_offset", this.offset));
+            if (this.radarDataType == RadarDataType.CC) {
+                variable.addAttribute(new Attribute("missing_value", -32768));
+            }
             dataInfo.addVariable(variable);
 
             variable = new Variable();
@@ -493,7 +525,7 @@ public class RadialRecord {
     public float getValue(int ei, float a, float r) {
         List<Array> sData = this.data.get(ei);
         int aziIdx = getAzimuthIndex(ei, a);
-        int disRes = this.disResolution.get(ei);
+        float disRes = this.disResolution.get(ei);
         int disIdx = (int) (r / disRes);
         Array rData = sData.get(aziIdx);
         float v;
@@ -522,7 +554,7 @@ public class RadialRecord {
      */
     public float interpolateValue(int ei, int ai, float r) {
         List<Array> sData = this.data.get(ei);
-        int disRes = this.disResolution.get(ei);
+        float disRes = this.disResolution.get(ei);
         float v;
         Array rData = sData.get(ai);
         float disIdx = r / disRes;

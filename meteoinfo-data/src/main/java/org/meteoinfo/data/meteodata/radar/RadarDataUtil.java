@@ -1,14 +1,19 @@
 package org.meteoinfo.data.meteodata.radar;
 
+import org.apache.commons.compress.compressors.FileNameUtil;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
+import org.apache.commons.io.FilenameUtils;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.data.meteodata.DataInfo;
 
-import java.io.RandomAccessFile;
+import java.io.*;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.zip.GZIPInputStream;
 
 public class RadarDataUtil {
 
@@ -54,27 +59,49 @@ public class RadarDataUtil {
     }
 
     /**
+     * Get InputStream from file name.
+     *
+     * @param fileName The file name
+     * @return The InputStream
+     * @throws IOException
+     */
+    public static InputStream getInputStream(String fileName) throws IOException {
+        String fileExtent = FilenameUtils.getExtension(fileName).toLowerCase();
+        switch (fileExtent) {
+            case "bz2":
+                return new BZip2CompressorInputStream(Files.newInputStream(Paths.get(fileName)));
+            case "gz":
+                return new GzipCompressorInputStream(new FileInputStream(fileName));
+            default:
+                return new BufferedInputStream(Files.newInputStream(Paths.get(fileName)));
+        }
+    }
+
+    /**
      * Get radar data type
      * @param fileName Data file name
      * @return Radar data type
      */
     public static RadarDataType getRadarDataType(String fileName) {
         try {
+            InputStream inputStream = getInputStream(fileName);
             byte[] bytes = new byte[136];
-            if (fileName.endsWith("bz2")) {
-                BZip2CompressorInputStream inputStream = new BZip2CompressorInputStream(Files.newInputStream(Paths.get(fileName)));
-                inputStream.read(bytes);
-                inputStream.close();
-            } else {
-                RandomAccessFile raf = new RandomAccessFile(fileName, "r");
-                raf.seek(0);
-                raf.read(bytes);
-                raf.close();
-            }
+            inputStream.read(bytes);
+            inputStream.close();
+
             byte[] magicBytes = Arrays.copyOf(bytes, 4);
             int magic = DataConvert.bytes2Int(magicBytes, ByteOrder.LITTLE_ENDIAN);
             if (magic == 1297371986) {
-                return RadarDataType.STANDARD;
+                byte[] inBytes = Arrays.copyOf(bytes, GenericHeader.length);
+                GenericHeader genericHeader = new GenericHeader(inBytes);
+                switch (genericHeader.genericType) {
+                    case 1:
+                        return RadarDataType.STANDARD;
+                    case 16:
+                        return RadarDataType.PA;
+                    default:
+                        return null;
+                }
             }
 
             String radarT = new String(bytes);
@@ -86,14 +113,17 @@ public class RadarDataUtil {
                 return RadarDataType.CC20;
             }
 
-            magicBytes = Arrays.copyOfRange(bytes, 14, 16);
-            if (Arrays.equals(magicBytes, new byte[]{1, 0})) {
-                return RadarDataType.SAB;
+            magicBytes = Arrays.copyOf(bytes, 128);
+            SABRadarDataInfo.RadialHeader radialHeader = new SABRadarDataInfo.RadialHeader(magicBytes);
+            if (radialHeader.messageType != 1) {
+                return null;
             }
-
-            magicBytes = Arrays.copyOfRange(bytes, 8, 12);
-            if (Arrays.equals(magicBytes, new byte[]{16, 0, 0, 0})) {
-                return RadarDataType.PA;
+            if (radialHeader.mSecond > 86400000) {
+                return null;
+            }
+            LocalDateTime dateTime = radialHeader.getDateTime();
+            if (dateTime.getYear() >= 1990 && dateTime.getYear() <= LocalDateTime.now().getYear()) {
+                return RadarDataType.SAB;
             }
 
         } catch (Exception e) {
@@ -114,11 +144,13 @@ public class RadarDataUtil {
         } else {
             switch (radarDataType) {
                 case STANDARD:
-                    return new CMARadarBaseDataInfo();
+                    return new StandardRadarDataInfo();
+                case PA:
+                    return new PARadarDataInfo();
                 case SAB:
                     return new SABRadarDataInfo();
-                /*case CC:
-                    return new CCRadarDataInfo();*/
+                case CC:
+                    return new CCRadarDataInfo();
                 case SC:
                     return new SCRadarDataInfo();
                 default:

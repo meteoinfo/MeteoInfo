@@ -13,123 +13,118 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CCRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInfo {
+
+    private List<CutConfig> cutConfigs;
+    private int radarHeaderSize = 1024;
+    private int perRadialSize = 3000;
+    private int messageHeaderSize = 28;
 
     @Override
     public boolean isValidFile(java.io.RandomAccessFile raf) {
         return false;
     }
 
-    void setScaleOffset(RadialRecord record, int vResolution) {
+    void setScaleOffset(RadialRecord record) {
         switch (record.product) {
             case "dBZ":
-                record.scale = 0.5f;
-                record.offset = -33.f;
-                break;
             case "V":
-                if (vResolution == 2) {
-                    record.scale = 0.5f;
-                    record.offset = -64.5f;
-                } else {
-                    record.scale = 1.f;
-                    record.offset = -129.f;
-                }
-                break;
             case "W":
-                record.scale = 0.5f;
-                record.offset = -64.5f;
+                record.scale = 0.1f;
+                record.offset = 0.f;
                 break;
         }
     }
 
     @Override
-    public void readDataInfo(String fileName) {
-        this.fileName = fileName;
-        if (fileName.endsWith(".bz2")) {
-            try {
-                BZip2CompressorInputStream inputStream = new BZip2CompressorInputStream(Files.newInputStream(Paths.get(fileName)));
-                readDataInfo(inputStream);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            try {
-                BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(Paths.get(fileName)));
-                readDataInfo(inputStream);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     void readDataInfo(InputStream is) {
         try {
-            int index = 0;
-            byte[] rhBytes = new byte[SABRadarDataInfo.RadialHeader.length];
-            while (is.read(rhBytes) != -1) {
-                SABRadarDataInfo.RadialHeader radialHeader = new SABRadarDataInfo.RadialHeader(rhBytes);
-                if (index == 0) {
-                    this.logResolution = radialHeader.gateSizeOfReflectivity;
-                    this.dopplerResolution = radialHeader.gateSizeOfDoppler;
+            byte[] headerBytes = new byte[this.radarHeaderSize];
+            is.read(headerBytes);
+            byte[] bytes = Arrays.copyOf(headerBytes, RadarHeader.length);
+            RadarHeader radarHeader = new RadarHeader(bytes);
+
+            int sweepN = radarHeader.getSweepNumber();
+            cutConfigs = new ArrayList<>();
+            int idx = RadarHeader.length;
+            for (int i = 0; i < sweepN; i++) {
+                bytes = Arrays.copyOfRange(headerBytes, idx, idx + CutConfig.length);
+                idx += CutConfig.length;
+                CutConfig cutConfig = new CutConfig(bytes);
+                cutConfigs.add(cutConfig);
+                if (i == 0) {
+                    this.logResolution = cutConfig.usBindWidth;
+                    this.dopplerResolution = cutConfig.usBindWidth;
                 }
-                if (!radialHeader.hasReflectivityData()) {
-                    is.read(new byte[460]);
-                }
-                for (String product : radialHeader.getProducts()) {
-                    RadialRecord record;
-                    if (this.recordMap.containsKey(product)) {
-                        record = this.recordMap.get(product);
-                    } else {
-                        record = new RadialRecord(product);
-                        record.setBinLength(1);
-                        setScaleOffset(record, radialHeader.resolutionOfVelocity);
-                        this.recordMap.put(product, record);
-                    }
-                    if (radialHeader.radialNumber == 1) {
-                        record.fixedElevation.add(radialHeader.getElevation());
-                        record.elevation.add(new ArrayList<>());
-                        record.azimuth.add(new ArrayList<>());
-                        record.azimuthMinIndex.add(0);
-                        if (isVelocityGroup(record)) {
-                            record.disResolution.add(radialHeader.gateSizeOfDoppler);
-                            record.distance.add(ArrayUtil.arrayRange1(radialHeader.rangeToFirstGateOfDop,
-                                    radialHeader.gatesNumberOfDoppler, radialHeader.gateSizeOfDoppler));
-                        } else {
-                            record.disResolution.add(radialHeader.gateSizeOfReflectivity);
-                            record.distance.add(ArrayUtil.arrayRange1(radialHeader.rangeToFirstGateOfRef,
-                                    radialHeader.gatesNumberOfReflectivity, radialHeader.gateSizeOfReflectivity));
-                        }
-                        record.newScanData();
-                    }
-                    record.elevation.get(record.elevation.size() - 1).add(radialHeader.getElevation());
-                    record.addAzimuth(radialHeader.getAzimuth());
-                    int dataLength = isVelocityGroup(record) ? radialHeader.gatesNumberOfDoppler : radialHeader.gatesNumberOfReflectivity;
-                    byte[] bytes = new byte[dataLength];
+            }
+
+            idx = 878;
+            bytes = Arrays.copyOfRange(headerBytes, idx, idx + RadarHeader2.length);
+            RadarHeader2 radarHeader2 = new RadarHeader2(bytes);
+
+            List<String> products = new ArrayList<>(Arrays.asList("dBZ", "V", "W"));
+            for (String product : products) {
+                RadialRecord record = new RadialRecord(product);
+                record.setRadarDataType(RadarDataType.CC);
+                record.setBinLength(2);
+                record.setDataType(DataType.SHORT);
+                setScaleOffset(record);
+                this.recordMap.put(product, record);
+            }
+
+            for (int i = 0; i < sweepN; i++) {
+                CutConfig cutConfig = cutConfigs.get(i);
+                int radialN = cutConfig.usBinNumber;
+                float azimuth = 0;
+                float aDelta = 360.f / cutConfig.usRecordNumber;
+                for (int j = 0; j < cutConfig.usRecordNumber; j++) {
+                    bytes = new byte[this.perRadialSize];
                     is.read(bytes);
-                    record.addDataBytes(bytes);
-                    if (isVelocityGroup(record)) {
-                        if (dataLength < 920) {
-                            is.read(new byte[920 - dataLength]);
+                    idx = 0;
+                    for (String product : products) {
+                        RadialRecord record = this.recordMap.get(product);
+                        if (j == 0) {
+                            record.fixedElevation.add(cutConfig.getAngle());
+                            record.elevation.add(new ArrayList<>());
+                            record.azimuth.add(new ArrayList<>());
+                            record.azimuthMinIndex.add(0);
+                            record.disResolution.add((float) cutConfig.usBindWidth);
+                            record.distance.add(ArrayUtil.arrayRange1(300,
+                                    radialN, cutConfig.usBindWidth));
+                            record.newScanData();
                         }
-                    } else {
-                        if (dataLength < 460) {
-                            is.read(new byte[460 - dataLength]);
+                        record.elevation.get(record.elevation.size() - 1).add(cutConfig.getAngle());
+                        record.addAzimuth(azimuth);
+                        byte[] data = Arrays.copyOfRange(bytes, idx, idx + 2 * radialN);
+                        idx += 2 * radialN;
+                        Array dataArray = Array.factory(record.getDataType(), new int[]{radialN});
+                        ByteBuffer byteBuffer = ByteBuffer.wrap(data);
+                        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+                        for (int k = 0; k < radialN; k++) {
+                            dataArray.setShort(k, byteBuffer.getShort());
                         }
+                        record.addDataArray(dataArray);
                     }
+                    azimuth += aDelta;
                 }
-                if (!radialHeader.hasDopplerData()) {
-                    is.read(new byte[920 + 920]);
-                }
-                is.read(new byte[4]);
-                index += 1;
             }
             is.close();
 
+            this.addAttribute(new Attribute("Country", radarHeader.cCountry));
+            this.addAttribute(new Attribute("Province", radarHeader.cProvince));
+            this.addAttribute(new Attribute("StationName", radarHeader.cStation));
+            this.addAttribute(new Attribute("StationCode", radarHeader.cStationNumber));
+            this.addAttribute(new Attribute("StationLongitude", radarHeader.getLongitude()));
+            this.addAttribute(new Attribute("StationLatitude", radarHeader.getLatitude()));
+            this.addAttribute(new Attribute("AntennaHeight", radarHeader.getHeight()));
             this.addAttribute(new Attribute("featureType", "RADIAL"));
             this.addAttribute(new Attribute("DataType", "Radial"));
+            this.addAttribute(new Attribute("RadarDataType", "CC"));
 
             //Add dimensions and variables
             RadialRecord refRadialRecord = this.recordMap.get("dBZ");
@@ -165,111 +160,287 @@ public class CCRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInfo
         return RadarDataType.CC;
     }
 
-    static class RadialHeader {
-        public static int length = 128;
-        public int mSecond;    // collection time for this radial, msecs since midnight
-        public short julianDate;    // prob "collection time"
-        public short uRange;    // unambiguous range
-        public int azimuth;    // azimuth angle
-        public short radialNumber;    // radial number within the elevation
-        public short radialStatus;
-        public short elevation;
-        public short elNumber;    // elevation number
-        public int rangeToFirstGateOfRef;    // range to first gate of reflectivity (m) may be negative
-        public int rangeToFirstGateOfDop;    // range to first gate of doppler (m) may be negative
-        public int gateSizeOfReflectivity;    // reflectivity data gate size (m)
-        public int gateSizeOfDoppler;    // doppler data gate size (m)
-        public int gatesNumberOfReflectivity;    // number of reflectivity gates
-        public int gatesNumberOfDoppler;    // number of velocity or spectrum width gates
-        public short cutSectorNumber;
-        public int calibrationConst;
-        public short ptrOfReflectivity;
-        public short ptrOfVelocity;
-        public short ptrOfSpectrumWidth;
-        public int resolutionOfVelocity;
-        public short vcpNumber;
-        public short nyquist;
+    /**
+     * Radar header inner class
+     */
+    static class RadarHeader {
+        public static int length = 218;
+        public String cFileType;    //16 bytes CINRADC
+        public String cCountry;    //30 bytes, country name
+        public String cProvince;    //20 bytes, province name
+        public String cStation;    //40 bytes, station name
+        public String cStationNumber;    //10 bytes, station ID
+        public String cRadarType;    //20 bytes, radar type
+        public String cLongitude;    //16 bytes, longitude string
+        public String cLatitude;    //16 bytes, latitude string
+        public int lLongitudeValue;    //longitude
+        public int lLatitudeValue;    //latitude
+        public int lHeight;    //height
+        public short sMaxAngle;
+        public short sOptAngle;
+        public short ucSYear1;
+        public short ucSYear2;
+        public short ucSMonth;
+        public short ucSDay;
+        public short ucSHour;
+        public short ucSMinute;
+        public short ucSSecond;
+        public short ucTimeFrom;
+        public short ucEYear1;
+        public short ucEYear2;
+        public short ucEMonth;
+        public short ucEDay;
+        public short ucEHour;
+        public short ucEMinute;
+        public short ucESecond;
+        public short ucScanMode;
+        public int ulSmilliSecond;
+        public short usRHIA;
+        public short sRHIL;
+        public short sRHIH;
+        public int usEchoType;
+        public int usProdCode;
+        public short ucCalibration;
+        public byte[] remain1;    //3 bytes
 
         /**
          * Constructor
-         * @param is InputStream
+         * @param bytes The byte array
+         * @throws IOException
          */
-        public RadialHeader(byte[] inBytes) throws IOException {
-            ByteBuffer byteBuffer = ByteBuffer.wrap(inBytes);
+        public RadarHeader(byte[] bytes) throws IOException {
+            ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
             byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
-            byteBuffer.position(28);
-            mSecond = byteBuffer.getInt();
-            julianDate = byteBuffer.getShort();
-            uRange = byteBuffer.getShort();
-            azimuth = DataType.unsignedShortToInt(byteBuffer.getShort());
-            radialNumber = byteBuffer.getShort();
-            radialStatus = byteBuffer.getShort();
-            elevation = byteBuffer.getShort();
-            elNumber = byteBuffer.getShort();
-            rangeToFirstGateOfRef = byteBuffer.getShort();
-            rangeToFirstGateOfDop = byteBuffer.getShort();
-            gateSizeOfReflectivity = byteBuffer.getShort();
-            gateSizeOfDoppler = byteBuffer.getShort();
-            gatesNumberOfReflectivity = byteBuffer.getShort();
-            gatesNumberOfDoppler = byteBuffer.getShort();
-            cutSectorNumber = byteBuffer.getShort();
-            calibrationConst = byteBuffer.getShort();
-            ptrOfReflectivity = byteBuffer.getShort();
-            ptrOfVelocity = byteBuffer.getShort();
-            ptrOfSpectrumWidth = byteBuffer.getShort();
-            resolutionOfVelocity = byteBuffer.getShort();
-            vcpNumber = byteBuffer.getShort();
-            byteBuffer.position(byteBuffer.position() + 14);
-            nyquist = byteBuffer.getShort();
-        }
-
-        /**
-         * Has reflectivity data or not
-         * @return Has reflectivity data
-         */
-        public boolean hasReflectivityData() {
-            return gatesNumberOfReflectivity > 0;
-        }
-
-        /**
-         * Has doppler data or not
-         * @return Has doppler data
-         */
-        public boolean hasDopplerData() {
-            return gatesNumberOfDoppler > 0;
-        }
-
-        /**
-         * Get product names
-         * @return Product names
-         */
-        public List<String> getProducts() {
-            List<String> products = new ArrayList<>();
-            if (hasReflectivityData()) {
-                products.add("dBZ");
-            }
-            if (hasDopplerData()) {
-                products.add("V");
-                products.add("W");
+            bytes = new byte[16];
+            byteBuffer.get(bytes);
+            cFileType = new String(bytes);
+            bytes = new byte[30];
+            byteBuffer.get(bytes);
+            cCountry = new String(bytes, "GB2312");
+            bytes = new byte[20];
+            byteBuffer.get(bytes);
+            cProvince = new String(bytes, "GB2312");
+            bytes = new byte[40];
+            byteBuffer.get(bytes);
+            cStation = new String(bytes, "GB2312");
+            bytes = new byte[10];
+            byteBuffer.get(bytes);
+            cStationNumber = new String(bytes, "GB2312");
+            bytes = new byte[20];
+            byteBuffer.get(bytes);
+            cRadarType = new String(bytes, "GB2312");
+            bytes = new byte[16];
+            byteBuffer.get(bytes);
+            cLongitude = new String(bytes, "GB2312");
+            bytes = new byte[16];
+            byteBuffer.get(bytes);
+            cLatitude = new String(bytes, "GB2312");
+            lLongitudeValue = byteBuffer.getInt();
+            lLatitudeValue = byteBuffer.getInt();
+            lHeight = byteBuffer.getInt();
+            sMaxAngle = byteBuffer.getShort();
+            sOptAngle = byteBuffer.getShort();
+            ucSYear1 = DataType.unsignedByteToShort(byteBuffer.get());
+            ucSYear2 = DataType.unsignedByteToShort(byteBuffer.get());
+            ucSMonth = DataType.unsignedByteToShort(byteBuffer.get());
+            ucSDay = DataType.unsignedByteToShort(byteBuffer.get());
+            ucSHour = DataType.unsignedByteToShort(byteBuffer.get());
+            ucSMinute = DataType.unsignedByteToShort(byteBuffer.get());
+            ucSSecond = DataType.unsignedByteToShort(byteBuffer.get());
+            ucTimeFrom = DataType.unsignedByteToShort(byteBuffer.get());
+            ucEYear1 = DataType.unsignedByteToShort(byteBuffer.get());
+            ucEYear2 = DataType.unsignedByteToShort(byteBuffer.get());
+            ucEMonth = DataType.unsignedByteToShort(byteBuffer.get());
+            ucEDay = DataType.unsignedByteToShort(byteBuffer.get());
+            ucEHour = DataType.unsignedByteToShort(byteBuffer.get());
+            ucEMinute = DataType.unsignedByteToShort(byteBuffer.get());
+            ucESecond = DataType.unsignedByteToShort(byteBuffer.get());
+            ucScanMode = DataType.unsignedByteToShort(byteBuffer.get());
+            if (ucScanMode < 100 && ucScanMode != 10) {
+                throw new IOException("Error reading CINRAD CC data: Unsupported product: RHI/FFT");
             }
 
-            return products;
+            ulSmilliSecond = byteBuffer.getInt();
+            usRHIA = byteBuffer.getShort();
+            sRHIL = byteBuffer.getShort();
+            sRHIH = byteBuffer.getShort();
+            usEchoType = DataType.unsignedShortToInt(byteBuffer.getShort());
+            if (usEchoType != 0x408a) // only support vppi at this moment
+                throw new IOException("Error reading CINRAD CC data: Unsupported level 2 data");
+
+            usProdCode = DataType.unsignedShortToInt(byteBuffer.getShort());
+            if (usProdCode != 0x8003) // only support vppi at this moment
+                throw new IOException("Error reading CINRAD CC data: Unsupported product: RHI/FFT");
+
+            ucCalibration = DataType.unsignedByteToShort(byteBuffer.get());
         }
 
         /**
-         * Get azimuth
-         * @return Azimuth
+         * Get longitude
+         * @return Longitude
          */
-        public float getAzimuth() {
-            return azimuth / 8.f * 180.f / 4096.f;
+        public float getLongitude() {
+            return lLongitudeValue / 3600000.f;
         }
 
         /**
-         * Get elevation
-         * @return Elevation
+         * Get latitude
+         * @return Latitude
          */
-        public float getElevation() {
-            return elevation / 8.f * 180.f / 4096.f;
+        public float getLatitude() {
+            return lLatitudeValue / 3600000.f;
+        }
+
+        /**
+         * Get height
+         * @return Height
+         */
+        public float getHeight() {
+            return lHeight / 1000.f;
+        }
+
+        /**
+         * Get start time
+         * @return Start time
+         */
+        public LocalDateTime getStartTime() {
+            int sYear = ucSYear1 * 100 + ucSYear2;
+            return LocalDateTime.of(sYear, ucSMonth, ucSDay, ucSHour, ucSMinute, ucSSecond);
+        }
+
+        /**
+         * Get end time
+         * @return end time
+         */
+        public LocalDateTime getEndTime() {
+            int eYear = ucEYear1 * 100 + ucEYear2;
+            return LocalDateTime.of(eYear, ucEMonth, ucEDay, ucEHour, ucEMinute, ucESecond);
+        }
+
+        /**
+         * Get sweep number
+         * @return Sweep number
+         */
+        public int getSweepNumber() {
+            int sweepN = 0;
+            if (ucScanMode == 10) {
+                sweepN = 1;
+            } else if (ucScanMode >= 100) {
+                sweepN = ucScanMode - 100;
+            }
+
+            return sweepN;
+        }
+    }
+
+    /**
+     * Cut configure inner class
+     */
+    static class CutConfig {
+        public static int length = 22;
+        public int usMaxV;
+        public int usMaxL;
+        public int usBindWidth;
+        public int usBinNumber;
+        public int usRecordNumber;
+        public int usArotate;
+        public int usPrf1;
+        public int usPrf2;
+        public int usSpulseW;
+        public short usAngle;
+        public short cSweepStatus;
+        public short cAmbiguousp;
+
+        /**
+         * Constructor
+         * @param bytes The byte array
+         */
+        public CutConfig(byte[] bytes) throws IOException {
+            ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+            byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            usMaxV = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usMaxL = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usBindWidth = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usBinNumber = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usRecordNumber = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usArotate = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usPrf1 = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usPrf2 = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usSpulseW = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usAngle = byteBuffer.getShort();
+            cSweepStatus = DataType.unsignedByteToShort(byteBuffer.get());
+            cAmbiguousp = DataType.unsignedByteToShort(byteBuffer.get());
+        }
+
+        /**
+         * Get angle
+         * @return Angle
+         */
+        public float getAngle() {
+            return usAngle / 100.f;
+        }
+    }
+
+    /**
+     * Radar header 2 inner class
+     */
+    static class RadarHeader2 {
+        public static int length = 146;
+        public byte[] remain2;    //2 bytes
+        public int lAntennaG;
+        public int lPower;
+        public int lWavelength;
+
+        public int usBeamH;
+        public int usBeamL;
+        public int usPolarization;
+        public int usLogA;
+        public int usLineA;
+        public int usAGCP;
+        public int usFreqMode;
+        public int usFreqRepeat;
+        public int usPPPPulse;
+        public int usFFTPoint;
+        public int usProcessType;
+
+        public short ucClutterT;
+        public short cSidelobe;
+        public short ucVelocityT;
+        public short ucFilderP;
+        public short ucNoiseT;
+        public short ucSQIT;
+        public short ucIntensityC;
+        public short ucIntensityR;
+        public short ucCalNoise;
+        public short ucCalPower;
+        public short ucCalPulseWidth;
+        public short ucCalWorkFreq;
+        public short ucCalLog;
+
+        public byte[] remain3;    //92 bytes
+        public int liDataOffset;
+        public byte[] remain4;     //1 byte
+
+        /**
+         * Constructor
+         * @param bytes The byte array
+         */
+        public RadarHeader2(byte[] bytes) throws IOException {
+            ByteBuffer byteBuffer = ByteBuffer.wrap(bytes);
+            byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            byteBuffer.position(2);
+            lAntennaG = byteBuffer.getInt();
+            lPower = byteBuffer.getInt();
+            lWavelength = byteBuffer.getInt();
+
+            usBeamH = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usBeamL = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usPolarization = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usLogA = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usLineA = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usAGCP = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usFreqMode = DataType.unsignedShortToInt(byteBuffer.getShort());
+            usFreqRepeat = DataType.unsignedShortToInt(byteBuffer.getShort());
         }
     }
 }

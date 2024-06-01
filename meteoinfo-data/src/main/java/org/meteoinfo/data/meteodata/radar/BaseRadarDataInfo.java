@@ -8,6 +8,8 @@ import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,8 +29,8 @@ public abstract class BaseRadarDataInfo extends DataInfo {
     protected Dimension radialDim, scanDim, gateRDim, gateVDim;
     protected float antennaHeight = 0;
     protected float beamWidthVert = 1.f;
-    protected int logResolution = 1000;
-    protected int dopplerResolution = 1000;
+    protected float logResolution = 1000;
+    protected float dopplerResolution = 1000;
 
     /**
      * Get record map
@@ -55,6 +57,23 @@ public abstract class BaseRadarDataInfo extends DataInfo {
     public boolean isVelocityGroup(String product) {
         return velocityGroup.contains(product);
     }
+
+    @Override
+    public void readDataInfo(String fileName) {
+        this.fileName = fileName;
+        try {
+            InputStream inputStream = RadarDataUtil.getInputStream(fileName);
+            readDataInfo(inputStream);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Read data info
+     * @param is The InputStream
+     */
+    abstract void readDataInfo(InputStream is);
 
     protected void makeRefVariables(RadialRecord refRadialRecord) {
         Dimension[] dimensions = new Dimension[]{scanDim, radialDim, gateRDim};
@@ -291,6 +310,12 @@ public abstract class BaseRadarDataInfo extends DataInfo {
                         }
                     }
                 }
+            }
+
+            Attribute mvAttr = variable.findAttribute("missing_value");
+            if (mvAttr != null) {
+                Number missingValue = mvAttr.getNumericValue();
+                ArrayMath.missingToNaN(dataArray, missingValue);
             }
 
             Attribute aoAttr = variable.findAttribute("add_offset");

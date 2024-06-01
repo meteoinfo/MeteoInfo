@@ -44,25 +44,6 @@ public class SCRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInfo
     }
 
     @Override
-    public void readDataInfo(String fileName) {
-        this.fileName = fileName;
-        if (fileName.endsWith(".bz2")) {
-            try {
-                BZip2CompressorInputStream inputStream = new BZip2CompressorInputStream(Files.newInputStream(Paths.get(fileName)));
-                readDataInfo(inputStream);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            try {
-                BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(Paths.get(fileName)));
-                readDataInfo(inputStream);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     void readDataInfo(InputStream is) {
         try {
             byte[] bytes = new byte[SCRadarDataInfo.RadarHeader.length];
@@ -94,7 +75,7 @@ public class SCRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInfo
                             record.elevation.add(new ArrayList<>());
                             record.azimuth.add(new ArrayList<>());
                             record.azimuthMinIndex.add(0);
-                            record.disResolution.add(layerParam.binWidth / 10);
+                            record.disResolution.add(layerParam.binWidth / 10.f);
                             record.distance.add(ArrayUtil.arrayRange1(0,
                                     gateNum, layerParam.binWidth / 10));
                             record.newScanData();
@@ -121,6 +102,7 @@ public class SCRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInfo
             this.addAttribute(new Attribute("AntennaHeight", radarHeader.getHeight()));
             this.addAttribute(new Attribute("featureType", "RADIAL"));
             this.addAttribute(new Attribute("DataType", "Radial"));
+            this.addAttribute(new Attribute("RadarDataType", "SC"));
 
             //Add dimensions and variables
             RadialRecord refRadialRecord = this.recordMap.get("dBZ");

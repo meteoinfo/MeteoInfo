@@ -221,10 +221,10 @@ public class GraphicFactory {
         PolylineShape pls;
         List<PointD> points;
         double x, y;
-        IndexIterator xIter = xdata.getIndexIterator();
-        IndexIterator yIter = ydata.getIndexIterator();
         ColorBreak cb;
         if (xdata.getRank() == 1) {
+            IndexIterator xIter = xdata.getIndexIterator();
+            IndexIterator yIter = ydata.getIndexIterator();
             points = new ArrayList<>();
             int i = 0;
             while (xIter.hasNext()) {
@@ -265,14 +265,16 @@ public class GraphicFactory {
             int[] shape = xdata.getShape();
             int yn = shape[0];
             int xn = shape[1];
-            for (int j = 0; j < yn; j++) {
+            Index2D xIndex = (Index2D) xdata.getIndex();
+            Index2D yIndex = (Index2D) ydata.getIndex();
+            for (int i = 0; i < xn; i++) {
                 points = new ArrayList<>();
-                cb = cbs.get(j);
-                for (int i = 0; i < xn; i++) {
-                    x = xIter.getDoubleNext();
-                    y = yIter.getDoubleNext();
-                    //x = xdata.getDouble(j * xn + i);
-                    //y = ydata.getDouble(j * xn + i);
+                cb = cbs.get(i);
+                for (int j = 0; j < yn; j++) {
+                    xIndex.set(j, i);
+                    yIndex.set(j, i);
+                    x = xdata.getDouble(xIndex);
+                    y = ydata.getDouble(yIndex);
                     if (Double.isNaN(y) || Double.isNaN(x)) {
                         if (points.isEmpty()) {
                             continue;

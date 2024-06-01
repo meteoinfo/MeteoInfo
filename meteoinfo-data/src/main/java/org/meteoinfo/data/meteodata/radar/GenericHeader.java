@@ -1,11 +1,14 @@
 package org.meteoinfo.data.meteodata.radar;
 
 import org.meteoinfo.common.DataConvert;
+import org.meteoinfo.ndarray.DataType;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.Arrays;
 
 public class GenericHeader {
     public static int length = 32;
@@ -58,5 +61,19 @@ public class GenericHeader {
         productType = DataConvert.bytes2Int(bytes, ByteOrder.LITTLE_ENDIAN);
         reserved = new byte[16];
         in.read(reserved);
+    }
+
+    /**
+     * Constructor
+     * @param inBytes The input bytes
+     */
+    public GenericHeader(byte[] inBytes) throws IOException {
+        ByteBuffer byteBuffer = ByteBuffer.wrap(inBytes);
+        byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+        magicNumber = byteBuffer.getInt();
+        majorVersion = DataType.unsignedShortToInt(byteBuffer.getShort());
+        minorVersion = DataType.unsignedShortToInt(byteBuffer.getShort());
+        genericType = byteBuffer.getInt();
+        productType = byteBuffer.getInt();
     }
 }

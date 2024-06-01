@@ -17,6 +17,9 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -51,25 +54,6 @@ public class SABRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInf
     }
 
     @Override
-    public void readDataInfo(String fileName) {
-        this.fileName = fileName;
-        if (fileName.endsWith(".bz2")) {
-            try {
-                BZip2CompressorInputStream inputStream = new BZip2CompressorInputStream(Files.newInputStream(Paths.get(fileName)));
-                readDataInfo(inputStream);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            try {
-                BufferedInputStream inputStream = new BufferedInputStream(Files.newInputStream(Paths.get(fileName)));
-                readDataInfo(inputStream);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
     void readDataInfo(InputStream is) {
         try {
             int index = 0;
@@ -99,11 +83,11 @@ public class SABRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInf
                         record.azimuth.add(new ArrayList<>());
                         record.azimuthMinIndex.add(0);
                         if (isVelocityGroup(record)) {
-                            record.disResolution.add(radialHeader.gateSizeOfDoppler);
+                            record.disResolution.add((float) radialHeader.gateSizeOfDoppler);
                             record.distance.add(ArrayUtil.arrayRange1(radialHeader.rangeToFirstGateOfDop,
                                     radialHeader.gatesNumberOfDoppler, radialHeader.gateSizeOfDoppler));
                         } else {
-                            record.disResolution.add(radialHeader.gateSizeOfReflectivity);
+                            record.disResolution.add((float) radialHeader.gateSizeOfReflectivity);
                             record.distance.add(ArrayUtil.arrayRange1(radialHeader.rangeToFirstGateOfRef,
                                     radialHeader.gatesNumberOfReflectivity, radialHeader.gateSizeOfReflectivity));
                         }
@@ -135,6 +119,7 @@ public class SABRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInf
 
             this.addAttribute(new Attribute("featureType", "RADIAL"));
             this.addAttribute(new Attribute("DataType", "Radial"));
+            this.addAttribute(new Attribute("RadarDataType", "SA/SB"));
 
             //Add dimensions and variables
             RadialRecord refRadialRecord = this.recordMap.get("dBZ");
@@ -172,6 +157,7 @@ public class SABRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInf
 
     static class RadialHeader {
         public static int length = 128;
+        public short messageType;
         public int mSecond;    // collection time for this radial, msecs since midnight
         public short julianDate;    // prob "collection time"
         public short uRange;    // unambiguous range
@@ -202,6 +188,8 @@ public class SABRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInf
         public RadialHeader(byte[] inBytes) throws IOException {
             ByteBuffer byteBuffer = ByteBuffer.wrap(inBytes);
             byteBuffer.order(ByteOrder.LITTLE_ENDIAN);
+            byteBuffer.position(14);
+            messageType = byteBuffer.getShort();
             byteBuffer.position(28);
             mSecond = byteBuffer.getInt();
             julianDate = byteBuffer.getShort();
@@ -226,6 +214,15 @@ public class SABRadarDataInfo extends BaseRadarDataInfo implements IRadarDataInf
             vcpNumber = byteBuffer.getShort();
             byteBuffer.position(byteBuffer.position() + 14);
             nyquist = byteBuffer.getShort();
+        }
+
+        /**
+         * Get date time
+         * @return Date time
+         */
+        public LocalDateTime getDateTime() {
+            long total = ((long) (julianDate - 1)) * 24 * 3600 * 1000 + mSecond;
+            return LocalDateTime.ofInstant(Instant.ofEpochMilli(total), ZoneId.systemDefault());
         }
 
         /**

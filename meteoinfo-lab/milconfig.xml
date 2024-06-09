@@ -19,16 +19,16 @@
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\stream_function_3.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\stream_function_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\velocity_potential_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\velocity_potential_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\stream_function_3.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\stream_function_3.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\stream_function_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\velocity_potential_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\velocity_potential_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\stream_function_3.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1398,806"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1493,844"/>
 </MeteoInfo>

@@ -55,20 +55,26 @@ def _grad_atmos(longitude, latitude, H):
     grad_y = grad_y / dy
     return grad_x, grad_y
 
-def velocity_potential(longitude, latitude, u, v, loop_max=1e10, epsilon=1e-10):
+def velocity_potential(longitude, latitude, u, v, loop_max=1e6, epsilon=1e-7, sor_index=0.2):
     """
     Calculate velocity potential using Richardson iterative method.
 
     Parameters
     ----------
     lon : (M, N) `array`
-        longitude array
+        longitude array.
     lat : (M, N) `array`
-        latitude array
+        latitude array.
     u : (M, N) `array`
-        x component of the wind
+        x component of the wind.
     v : (M, N) `array`
-        y component of the wind
+        y component of the wind.
+    loop_max : `int`
+        Maximum iteration loop number. Default is `1e6`.
+    epsilon : `float`
+        Minimum error value. Default is `1e-7`
+    sor_index : `float`
+        Super relaxation coefficient [0.2 - 0.5]. Default is `0.2`.
 
     Returns
     -------
@@ -81,8 +87,8 @@ def velocity_potential(longitude, latitude, u, v, loop_max=1e10, epsilon=1e-10):
     divh = _divh_atmos(longitude, latitude, u, v)  # vertical divergence
     dx2 = _dx_atmos(longitude, latitude)**2        # square of latitude gradient
     dy2 = _dy_atmos(latitude)**2                   # square of longitude gradient
-    phi = np.NDArray(MeteoMath.richardsonIteration(divh._array, dx2._array, dy2._array,
-                                                   loop_max, epsilon))
+    phi = np.NDArray(MeteoMath.liebermanIteration(divh._array, dx2._array, dy2._array,
+                                                   loop_max, epsilon, sor_index))
     phi = -phi
 
     # divergence wind
@@ -98,7 +104,7 @@ def velocity_potential(longitude, latitude, u, v, loop_max=1e10, epsilon=1e-10):
 
     return phi, Uphi, Vphi
 
-def stream_function(longitude, latitude, u, v, loop_max=int(1e10), epsilon=1e-10):
+def stream_function(longitude, latitude, u, v, loop_max=int(1e10), epsilon=1e-10, sor_index=0.2):
     """
     Calculate stream function using Richardson iterative method.
 
@@ -112,6 +118,12 @@ def stream_function(longitude, latitude, u, v, loop_max=int(1e10), epsilon=1e-10
         x component of the wind
     v : (M, N) `array`
         y component of the wind
+    loop_max : `int`
+        Maximum iteration loop number. Default is `1e6`.
+    epsilon : `float`
+        Minimum error value. Default is `1e-7`
+    sor_index : `float`
+        Super relaxation coefficient [0.2 - 0.5]. Default is `0.2`.
 
     Returns
     -------
@@ -124,8 +136,8 @@ def stream_function(longitude, latitude, u, v, loop_max=int(1e10), epsilon=1e-10
     curlz = _curlz_atmos(longitude, latitude, u, v)  # vorticity
     dx2 = _dx_atmos(longitude, latitude)**2        # square of latitude gradient
     dy2 = _dy_atmos(latitude)**2                   # square of longitude gradient
-    psi = np.NDArray(MeteoMath.richardsonIteration(curlz._array, dx2._array, dy2._array,
-                                                   loop_max, epsilon))
+    psi = np.NDArray(MeteoMath.liebermanIteration(curlz._array, dx2._array, dy2._array,
+                                                   loop_max, epsilon, sor_index))
     psi = -psi
 
     # vorticity wind

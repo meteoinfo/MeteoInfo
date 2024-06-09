@@ -11,6 +11,7 @@ import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.IndexIterator;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 
 import java.util.Arrays;
 
@@ -1130,4 +1131,44 @@ public class MeteoMath {
 
         return r;
     }
+
+    /**
+     * Richardson's iteration method for calculating Poisson equation
+     *
+     * @param array Input array - 2D
+     * @param dx2 X gradient square
+     * @param dy2 Y gradient square
+     * @param loopMax Maximum loop number
+     * @param epsilon Minimum error value
+     * @return Poisson equation output
+     */
+    public static Array richardsonIteration(Array array, Array dx2, Array dy2, long loopMax, double epsilon) {
+        int[] shape = array.getShape();
+        int m = shape[0];
+        int n = shape[1];
+        Array phi = ArrayUtil.zeros(shape, DataType.DOUBLE);
+        Array res = ArrayUtil.full(shape, -9999., DataType.DOUBLE);
+        for (int k=0; k < loopMax; k++) {
+            for (int i = 1; i < m - 1; i++) {
+                for (int j = 1; j < n - 1; j++) {
+                    // calculate residual
+                    res.setDouble(i * n + j, (phi.getDouble((i + 1) * n + j) +
+                            phi.getDouble((i - 1) * n + j) - 2 * phi.getDouble(i * n + j)) /
+                            dx2.getDouble(i * n + j) + (phi.getDouble(i * n + j + 1) +
+                            phi.getDouble(i * n + j - 1) - 2 * phi.getDouble(i * n + j)) /
+                            dy2.getDouble(i * n + j) + array.getDouble(i * n + j));
+                    // iterator
+                    phi.setDouble(i * n + j, phi.getDouble(i * n + j) + res.getDouble(i * n + j) /
+                            (2 / dx2.getDouble(i * n + j) + 2 / dy2.getDouble(i * n + j)));
+                }
+            }
+
+            if (ArrayMath.max(res).doubleValue() < epsilon) {
+                break;
+            }
+        }
+
+        return phi;
+    }
+
 }

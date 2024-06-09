@@ -8,6 +8,7 @@ Cp_d = 1005         #Specific heat at constant pressure for dry air (J kg^-1)
 epsilon = Mw / Md
 kappa = 0.286
 degCtoK = 273.15    # Temperature offset between K and C (deg C)
+Re = earth_avg_radius = 6371008.7714    # Earth average radius with meters
 g = 9.8             # Gravitational acceleration (m / s^2)
 sat_pressure_0c = 6.112  #Saturation pressure at 0 degree (hPa)
 T_BASE = 300.

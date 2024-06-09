@@ -3166,7 +3166,7 @@ public class DataFrame implements Iterable {
                 if (formats.get(i) == null) {
                     vstr = this.getValue(j, i).toString();
                 } else {
-                    vstr = String.format(formats.get(i), this.getValue(j, i));
+                    vstr = String.format(Locale.US, formats.get(i), this.getValue(j, i));
                 }
                 if (line.isEmpty()) {
                     line = vstr;

@@ -14,10 +14,132 @@ from .. import constants
 __all__ = [
     'cdiff', 'divergence', 'vorticity', 'advection', 'absolute_vorticity', 'potential_vorticity_barotropic',
     'ageostrophic_wind', 'frontogenesis', 'geostrophic_wind', 'montgomery_streamfunction',
-    'potential_vorticity_baroclinic', 'shearing_deformation', 'storm_relative_helicity',
-    'stretching_deformation', 'total_deformation', 'inertial_advective_wind', 'q_vector'
+    'potential_vorticity_baroclinic', 'shearing_deformation', 'stream_function', 'storm_relative_helicity',
+    'stretching_deformation', 'total_deformation', 'inertial_advective_wind', 'q_vector', 'velocity_potential'
 ]
 
+
+def _dx_atmos(longitude, latitude):
+    dx = np.gradient(longitude, axis=1)
+    dx = dx * (np.pi / 180) * constants.Re * np.cos(latitude * np.pi / 180)
+    return dx
+
+def _dy_atmos(latitude):
+    dy = np.gradient(latitude, axis=0)
+    dy = dy * (np.pi / 180) * constants.Re
+    return dy
+
+def _divh_atmos(longitude, latitude, u, v):
+    dx = _dx_atmos(longitude, latitude)
+    dy = _dy_atmos(latitude)
+    du = np.gradient(u, axis=1)
+    dv = np.gradient(v, axis=0)
+    divh = du / dx + dv / dy - v * np.tan(latitude * np.pi / 180) / constants.Re
+    divh[np.abs(latitude)==90] = np.nan
+    return divh
+
+def _curlz_atmos(longitude, latitude, u, v):
+    dx = _dx_atmos(longitude, latitude)
+    dy = _dy_atmos(latitude)
+    du = np.gradient(u, axis=0)
+    dv = np.gradient(v, axis=1)
+    curlz = dv / dx - du / dy + u * np.tan(latitude * np.pi / 180) / constants.Re
+    curlz[np.abs(latitude)==90] = np.nan
+    return curlz
+
+def _grad_atmos(longitude, latitude, H):
+    dx = _dx_atmos(longitude, latitude)
+    dy = _dy_atmos(latitude)
+    grad_y, grad_x = np.gradient(H)
+    grad_x = grad_x / dx
+    grad_y = grad_y / dy
+    return grad_x, grad_y
+
+def velocity_potential(longitude, latitude, u, v, loop_max=1e10, epsilon=1e-10):
+    """
+    Calculate velocity potential using Richardson iterative method.
+
+    Parameters
+    ----------
+    lon : (M, N) `array`
+        longitude array
+    lat : (M, N) `array`
+        latitude array
+    u : (M, N) `array`
+        x component of the wind
+    v : (M, N) `array`
+        y component of the wind
+
+    Returns
+    -------
+    A 3-item tuple of arrays
+        velocity potential and divergence wind component
+    """
+    if isinstance(loop_max, float):
+        loop_max = int(loop_max)
+
+    divh = _divh_atmos(longitude, latitude, u, v)  # vertical divergence
+    dx2 = _dx_atmos(longitude, latitude)**2        # square of latitude gradient
+    dy2 = _dy_atmos(latitude)**2                   # square of longitude gradient
+    phi = np.NDArray(MeteoMath.richardsonIteration(divh._array, dx2._array, dy2._array,
+                                                   loop_max, epsilon))
+    phi = -phi
+
+    # divergence wind
+    DphiDx, DphiDy = _grad_atmos(longitude, latitude, phi)
+    Uphi = DphiDx
+    Vphi = DphiDy
+
+    # make boundary NaN
+    phi[0,:] = np.nan; Uphi[0,:] = np.nan; Vphi[0,:] = np.nan;
+    phi[-1,:] = np.nan; Uphi[-1,:] = np.nan; Vphi[-1,:] = np.nan;
+    phi[:,0] = np.nan; Uphi[:,0] = np.nan; Vphi[:,0] = np.nan;
+    phi[:,-1] = np.nan; Uphi[:,-1] = np.nan; Vphi[:,-1] = np.nan;
+
+    return phi, Uphi, Vphi
+
+def stream_function(longitude, latitude, u, v, loop_max=int(1e10), epsilon=1e-10):
+    """
+    Calculate stream function using Richardson iterative method.
+
+    Parameters
+    ----------
+    lon : (M, N) `array`
+        longitude array
+    lat : (M, N) `array`
+        latitude array
+    u : (M, N) `array`
+        x component of the wind
+    v : (M, N) `array`
+        y component of the wind
+
+    Returns
+    -------
+    A 3-item tuple of arrays
+        stream function and vorticity wind component
+    """
+    if isinstance(loop_max, float):
+        loop_max = int(loop_max)
+
+    curlz = _curlz_atmos(longitude, latitude, u, v)  # vorticity
+    dx2 = _dx_atmos(longitude, latitude)**2        # square of latitude gradient
+    dy2 = _dy_atmos(latitude)**2                   # square of longitude gradient
+    psi = np.NDArray(MeteoMath.richardsonIteration(curlz._array, dx2._array, dy2._array,
+                                                   loop_max, epsilon))
+    psi = -psi
+
+    # vorticity wind
+    DpsiDx, DpsiDy = _grad_atmos(longitude, latitude, psi)
+    Upsi = -DpsiDy
+    Vpsi = DpsiDx
+
+    # make boundary NaN
+    psi[0,:] = np.nan; Upsi[0,:] = np.nan; Vpsi[0,:] = np.nan;
+    psi[-1,:] = np.nan; Upsi[-1,:] = np.nan; Vpsi[-1,:] = np.nan;
+    psi[:,0] = np.nan; Upsi[:,0] = np.nan; Vpsi[:,0] = np.nan;
+    psi[:,-1] = np.nan; Upsi[:,-1] = np.nan; Vpsi[:,-1] = np.nan;
+
+    return psi, Upsi, Vpsi
 
 def cdiff(a, dimidx):
     """

@@ -438,6 +438,7 @@ def first_derivative(f, axis=None, x=None, delta=None):
     This uses 3 points to calculate the derivative, using forward or backward at the edges of
     the grid as appropriate, and centered elsewhere. The irregular spacing is handled
     explicitly, using the formulation as specified by [Bowen2005]_.
+
     Parameters
     ----------
     f : array-like
@@ -454,10 +455,12 @@ def first_derivative(f, axis=None, x=None, delta=None):
     delta : array-like, optional
         Spacing between the grid points in `f`. Should be one item less than the size
         of `f` along `axis`.
+
     Returns
     -------
     array-like
         The first derivative calculated along the selected axis`
+
     See Also
     --------
     second_derivative

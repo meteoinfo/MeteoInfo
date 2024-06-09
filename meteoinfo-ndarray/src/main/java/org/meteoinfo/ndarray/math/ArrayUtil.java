@@ -1062,21 +1062,33 @@ public class ArrayUtil {
      * @param dtype Data type
      * @return Array Result array
      */
-    public static Array full(List<Integer> shape, Object fillValue, DataType dtype) {
-        int[] ashape = new int[shape.size()];
-        for (int i = 0; i < shape.size(); i++) {
-            ashape[i] = shape.get(i);
-        }
+    public static Array full(int[] shape, Object fillValue, DataType dtype) {
         if (dtype == null) {
             dtype = ArrayMath.getDataType(fillValue);
         }
-        Array a = Array.factory(dtype, ashape);
+        Array a = Array.factory(dtype, shape);
 
         for (int i = 0; i < a.getSize(); i++) {
             a.setObject(i, fillValue);
         }
 
         return a;
+    }
+
+    /**
+     * Return a new array of given shape and type, filled with fill value.
+     *
+     * @param shape Shape
+     * @param fillValue Fill value
+     * @param dtype Data type
+     * @return Array Result array
+     */
+    public static Array full(List<Integer> shape, Object fillValue, DataType dtype) {
+        int[] ashape = new int[shape.size()];
+        for (int i = 0; i < shape.size(); i++) {
+            ashape[i] = shape.get(i);
+        }
+        return full(ashape, fillValue, dtype);
     }
 
     /**

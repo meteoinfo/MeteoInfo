@@ -13,6 +13,8 @@ import org.meteoinfo.ndarray.util.DataTypeUtil;
 
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
+import java.util.Formatter;
+import java.util.Locale;
 
 /**
  *
@@ -149,10 +151,17 @@ public class Column {
      */
     public static Column factory(String name, Array array){
         DataType dtype = array.getDataType();
-        if (dtype == DataType.OBJECT && (array.getObject(0) instanceof LocalDateTime)){
-            DateTimeColumn col = new DateTimeColumn(name);
-            col.updateFormat(array);
-            return col;
+        switch (dtype) {
+            case DATE:
+                DateTimeColumn col = new DateTimeColumn(name);
+                col.updateFormat(array);
+                return col;
+            case OBJECT:
+                if (array.getObject(0) instanceof LocalDateTime) {
+                    col = new DateTimeColumn(name);
+                    col.updateFormat(array);
+                    return col;
+                }
         }
         return new Column(name, dtype);
     }
@@ -261,7 +270,7 @@ public class Column {
                 }
                 return ((LocalDateTime) o).format(this.dateTimeFormatter);
             } else
-                return String.format(format, o);
+                return String.format(Locale.US, format, o);
         }
     }
     

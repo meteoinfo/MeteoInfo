@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo\calc">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\imshow"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\interpolate">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\gridshow"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
@@ -12,20 +10,20 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\arrow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\matlab"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\stream_function_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\velocity_potential_1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\velocity_potential_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\stream_function_3.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\stream_function_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\velocity_potential_1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\velocity_potential_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\stream_function_3.py"/>
@@ -36,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1493,844"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,765"/>
 </MeteoInfo>

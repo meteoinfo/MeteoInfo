@@ -104,7 +104,7 @@ def velocity_potential(longitude, latitude, u, v, loop_max=1e6, epsilon=1e-7, so
 
     return phi, Uphi, Vphi
 
-def stream_function(longitude, latitude, u, v, loop_max=int(1e10), epsilon=1e-10, sor_index=0.2):
+def stream_function(longitude, latitude, u, v, loop_max=1e6, epsilon=1e-7, sor_index=0.2):
     """
     Calculate stream function using Richardson iterative method.
 

@@ -1579,6 +1579,7 @@ class Axes(object):
                         ls.getLegendBreaks()[i].setSize(s[i])
             # Create graphics
             graphics = GraphicFactory.createPoints(xdata, ydata, c.asarray(), ls)
+
         else:
             alpha = kwargs.pop('alpha', None)
             colors = plotutil.getcolors(c, alpha)
@@ -1614,6 +1615,7 @@ class Axes(object):
                     pbs.append(npb)
             # Create graphics
             graphics = GraphicFactory.createPoints(xdata, ydata, pbs)
+            graphics = Point2DCollection(x._array, y._array, legend=ls.getLegendBreak(0))
 
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:

@@ -82,3 +82,84 @@ class Point2DCollection(Collection, Point2DGraphicCollection):
             Point2DGraphicCollection.__init__(self, self._x._array, self._y._array, legend)
         else:
             Point2DGraphicCollection.__init__(self, self._x._array, self._y._array, self._cdata._array, legend)
+
+    @property
+    def visible(self):
+        """
+        The artist is visible or not.
+        """
+        return self.isVisible()
+
+    @visible.setter
+    def visible(self, val):
+        self.setVisible(val)
+        self.stale = True
+
+    @property
+    def xdata(self):
+        """
+        Return the xdata.
+
+        :return: (*array*) xdata.
+        """
+        return self._x
+
+    @xdata.setter
+    def xdata(self, xdata):
+        """
+        Set the xdata.
+
+        :param xdata: (*array*) The xdata.
+        """
+        self._x = xdata
+        self.setXData(xdata._array)
+        self.stale = True
+
+    @property
+    def ydata(self):
+        """
+        Return the ydata.
+
+        :return: (*array*) ydata.
+        """
+        return self._y
+
+    @ydata.setter
+    def ydata(self, ydata):
+        """
+        Set the ydata.
+
+        :param ydata: (*array*) The ydata.
+        """
+        self._y = ydata
+        self.setYData(ydata._array)
+        self.stale = True
+
+    @property
+    def data(self):
+        """
+        Get x, y data.
+
+        :return: x, y data.
+        """
+        return (self._x, self._y)
+
+    @data.setter
+    def data(self, *args):
+        """
+        Set x, y data.
+
+        :param xdata: (*array*) X data.
+        :param ydata: (*array*) Y data.
+        """
+        if len(args) == 1:
+            xdata = args[0][0]
+            ydata = args[0][1]
+        else:
+            xdata = args[0]
+            ydata = args[1]
+
+        self._x = xdata
+        self._y = ydata
+        self.setData(xdata._array, ydata._array)
+        self.stale = True

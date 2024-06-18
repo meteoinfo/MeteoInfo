@@ -1,4 +1,5 @@
 from abc import ABCMeta, abstractmethod
+from org.meteoinfo.geometry.graphic import Graphic
 
 
 __all__ = ['Artist']
@@ -21,6 +22,7 @@ class Artist(object):
         self._stale = True
         self.stale_callback = None
         self._animated = False
+        self._transform = None
 
     @property
     def axes(self):
@@ -58,3 +60,13 @@ class Artist(object):
 
         if val and self.stale_callback is not None:
             self.stale_callback(self, val)
+
+    @property
+    def transform(self):
+        return self._transform
+
+    @transform.setter
+    def transform(self, val):
+        self._transform = val
+        if isinstance(self, Graphic):
+            self.setTransform(val)

@@ -8,6 +8,7 @@ import org.meteoinfo.geometry.legend.PointBreak;
 import org.meteoinfo.geometry.shape.PointShape;
 import org.meteoinfo.geometry.shape.PolylineShape;
 import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.IndexIterator;
 
@@ -47,12 +48,25 @@ public class Point2DGraphicCollection extends GraphicCollection {
         this();
         this.xData = xData;
         this.yData = yData;
-        this.legend = pointBreak;
         this.updateGraphics(pointBreak);
     }
 
     /**
      * Constructor
+     * @param xData X data
+     * @param yData Y data
+     * @param pointBreak Point break
+     */
+    public Point2DGraphicCollection(Array xData, Array yData, List<ColorBreak> cbs) {
+        this();
+        this.xData = xData;
+        this.yData = yData;
+        this.updateGraphics(cbs);
+    }
+
+    /**
+     * Constructor
+     *
      * @param xData X data
      * @param yData Y data
      * @param cData Color data
@@ -63,8 +77,16 @@ public class Point2DGraphicCollection extends GraphicCollection {
         this.xData = xData;
         this.yData = yData;
         this.cData = cData;
-        this.legendScheme = ls;
         this.updateGraphics(ls);
+    }
+
+    /**
+     * Return has color data array or not
+     *
+     * @return Has color data array of not
+     */
+    public boolean hasColorData() {
+        return this.cData != null;
     }
 
     /**
@@ -76,6 +98,15 @@ public class Point2DGraphicCollection extends GraphicCollection {
     }
 
     /**
+     * Set x data
+     * @param xData X data
+     */
+    public void setXData(Array xData) {
+        this.xData = xData;
+        updateShape();
+    }
+
+    /**
      * Get y data
      * @return Y data
      */
@@ -84,11 +115,28 @@ public class Point2DGraphicCollection extends GraphicCollection {
     }
 
     /**
-     * Set data
-     * @return Data
+     * Set y data
+     * @param yData Y data
      */
-    public Array getData() {
+    public void setYData(Array yData) {
+        this.yData = yData;
+        updateShape();
+    }
+
+    /**
+     * Get color data
+     * @return Color data
+     */
+    public Array getColorData() {
         return this.cData;
+    }
+
+    protected void updateShape() {
+        if (this.hasColorData()) {
+            updateGraphics(this.legendScheme);
+        } else {
+            updateGraphics((PointBreak) this.legend);
+        }
     }
 
     protected void updateGraphics() {
@@ -96,6 +144,7 @@ public class Point2DGraphicCollection extends GraphicCollection {
     }
 
     protected void updateGraphics(PointBreak pointBreak) {
+        this.legend = pointBreak;
         this.graphics = new ArrayList<>();
         List<PointD> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
@@ -109,6 +158,35 @@ public class Point2DGraphicCollection extends GraphicCollection {
             }
             PointShape shape = new PointShape(new PointD(x, y));
             this.add(new Point2DGraphic(shape, pointBreak));
+        }
+    }
+
+    protected void updateGraphics(List<ColorBreak> cbs) {
+        this.graphics = new ArrayList<>();
+        List<PointD> points = new ArrayList<>();
+        IndexIterator xIter = this.xData.getIndexIterator();
+        IndexIterator yIter = this.yData.getIndexIterator();
+        double x, y;
+        if (cbs.size() == this.xData.getSize()) {
+            int i = 0;
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                if (Double.isNaN(x) || Double.isNaN(y)) {
+                    continue;
+                }
+                PointShape shape = new PointShape(new PointD(x, y));
+                this.add(new Point2DGraphic(shape, (PointBreak) cbs.get(i)));
+                i += 1;
+            }
+            LegendScheme ls = new LegendScheme();
+            ls.setLegendBreaks(cbs);
+            ls.setLegendType(LegendType.UNIQUE_VALUE);
+            ls.setShapeType(ShapeTypes.POINT);
+            this.singleLegend = false;
+            this.legendScheme = ls;
+        } else {
+            updateGraphics((PointBreak) cbs.get(0));
         }
     }
 
@@ -143,7 +221,7 @@ public class Point2DGraphicCollection extends GraphicCollection {
                 }
             }
         }
-        this.setSingleLegend(false);
-        this.setLegendScheme(ls);
+        this.singleLegend = false;
+        this.legendScheme = ls;
     }
 }

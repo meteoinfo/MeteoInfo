@@ -18,6 +18,8 @@ import org.meteoinfo.data.mapdata.webmap.GeoPosition;
 import org.meteoinfo.data.mapdata.webmap.GeoUtil;
 import org.meteoinfo.data.mapdata.webmap.IWebMapPanel;
 import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
+import org.meteoinfo.geometry.graphic.Transform;
+import org.meteoinfo.projection.*;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.chart.graphic.GeoGraphicCollection;
 import org.meteoinfo.geometry.graphic.Graphic;
@@ -25,10 +27,6 @@ import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.chart.graphic.GraphicProjectionUtil;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.*;
-import org.meteoinfo.projection.KnownCoordinateSystems;
-import org.meteoinfo.projection.ProjectionInfo;
-import org.meteoinfo.projection.ProjectionUtil;
-import org.meteoinfo.projection.Reproject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -649,6 +647,41 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     /**
      * Add a graphic
      *
+     * @param g Graphic
+     */
+    @Override
+    public Graphic addGraphic(Graphic graphic) {
+        Transform transform = graphic.getTransform();
+        if (transform != null && transform.isValid()) {
+            GeoTransform geoTransform = (GeoTransform) transform;
+            graphic = GraphicProjectionUtil.projectClipGraphic(graphic, geoTransform.getSourceProj(),
+                    geoTransform.getTargetProj());
+        }
+
+        return super.addGraphic(graphic);
+    }
+
+    /**
+     * Add a graphic by index
+     *
+     * @param idx Index
+     * @param g Graphic
+     */
+    @Override
+    public Graphic addGraphic(int idx, Graphic graphic) {
+        Transform transform = graphic.getTransform();
+        if (transform != null && transform.isValid()) {
+            GeoTransform geoTransform = (GeoTransform) transform;
+            GraphicProjectionUtil.projectClipGraphic(graphic, geoTransform.getSourceProj(),
+                    geoTransform.getTargetProj());
+        }
+
+        return super.addGraphic(idx, graphic);
+    }
+
+    /**
+     * Add a graphic
+     *
      * @param graphic The graphic
      * @param proj The graphic projection
      * @return Added graphic
@@ -656,12 +689,12 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     public Graphic addGraphic(Graphic graphic, ProjectionInfo proj) {
         ProjectionInfo toProj = this.getProjInfo();
         if (proj.equals(toProj)) {
-            this.addGraphic(graphic);
+            super.addGraphic(graphic);
             return graphic;
         } else {
             Graphic nGraphic = GraphicProjectionUtil.projectClipGraphic(graphic, proj, toProj);
             if (nGraphic != null) {
-                this.addGraphic(nGraphic);
+                super.addGraphic(nGraphic);
             }
             return nGraphic;
         }

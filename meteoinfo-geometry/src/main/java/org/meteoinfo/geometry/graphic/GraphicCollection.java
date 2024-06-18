@@ -100,6 +100,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      */
     public void setGraphics(List<Graphic> value) {
         this.graphics = value;
+        this.updateExtent();
     }
 
     /**

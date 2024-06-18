@@ -39,6 +39,7 @@ package org.meteoinfo.geometry.graphic;
      protected ColorBreak legend;
      protected GeneralPath clipPath;
      protected Graphic clipGraphic;
+     protected Transform transform;
      private ResizeAbility _resizeAbility = ResizeAbility.RESIZE_ALL;
      protected int handle;
      // </editor-fold>
@@ -99,6 +100,22 @@ package org.meteoinfo.geometry.graphic;
      public void setLegend(ColorBreak legend) {
          this.legend = legend;
          updateResizeAbility();
+     }
+
+     /**
+      * Get transform
+      * @return Transform
+      */
+     public Transform getTransform() {
+         return this.transform;
+     }
+
+     /**
+      * Set transform
+      * @param value Transform
+      */
+     public void setTransform(Transform value) {
+         this.transform = value;
      }
 
      /**

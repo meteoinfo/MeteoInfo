@@ -948,6 +948,43 @@ public class ProjectionUtil {
     public static Graphic projectClipGraphic(Graphic graphic, ProjectionInfo fromProj, ProjectionInfo toProj) {
         if (graphic instanceof GraphicCollection) {
             try {
+                List<Graphic> graphics = new ArrayList<>();
+                for (Graphic aGraphic : ((GraphicCollection) graphic).getGraphics()) {
+                    List<? extends Shape> shapes = projectClipShape(aGraphic.getShape(), fromProj, toProj);
+                    if (shapes != null && shapes.size() > 0) {
+                        aGraphic.setShape(shapes.get(0));
+                        graphics.add(aGraphic);
+                    }
+                }
+                ((GraphicCollection) graphic).setGraphics(graphics);
+
+                return graphic;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return null;
+            }
+        } else {
+            List<? extends Shape> shapes = projectClipShape(graphic.getShape(), fromProj, toProj);
+            if (shapes != null && shapes.size() > 0) {
+                graphic.setShape(shapes.get(0));
+                return graphic;
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * Project graphic
+     *
+     * @param graphic The graphic
+     * @param fromProj From projection
+     * @param toProj To projection
+     * @return Projected graphic
+     */
+    public static Graphic projectClipGraphic_old(Graphic graphic, ProjectionInfo fromProj, ProjectionInfo toProj) {
+        if (graphic instanceof GraphicCollection) {
+            try {
                 Graphic newGCollection = graphic.getClass().getDeclaredConstructor().newInstance();
                 for (Graphic aGraphic : ((GraphicCollection) graphic).getGraphics()) {
                     List<? extends Shape> shapes = projectClipShape(aGraphic.getShape(), fromProj, toProj);

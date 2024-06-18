@@ -7,10 +7,7 @@ import org.meteoinfo.chart.graphic.GeoGraphicCollection;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.shape.Shape;
-import org.meteoinfo.projection.ProjectionInfo;
-import org.meteoinfo.projection.ProjectionNames;
-import org.meteoinfo.projection.ProjectionUtil;
-import org.meteoinfo.projection.Reproject;
+import org.meteoinfo.projection.*;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
 import org.meteoinfo.table.DataTable;
@@ -21,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class GraphicProjectionUtil extends ProjectionUtil {
+
     /**
      * Project graphic
      *

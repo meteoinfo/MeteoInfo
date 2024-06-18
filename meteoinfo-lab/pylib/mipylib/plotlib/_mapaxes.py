@@ -8,6 +8,7 @@
 
 import os
 import numbers
+import functools
 
 from org.meteoinfo.chart import ChartScaleBar, ChartNorthArrow
 from org.meteoinfo.chart.plot import GridLabelPosition
@@ -19,7 +20,7 @@ from org.meteoinfo.geo.io import GraphicUtil
 from org.meteoinfo.geometry.legend import BreakTypes, LegendScheme, LegendType, LegendManage
 from org.meteoinfo.geometry.shape import Shape, PolylineShape, PolygonShape, ShapeTypes
 from org.meteoinfo.geometry.graphic import Graphic
-from org.meteoinfo.projection import ProjectionInfo
+from org.meteoinfo.projection import ProjectionInfo, GeoTransform
 from org.meteoinfo.common import Extent
 from org.meteoinfo.geo.layer import LayerTypes, WebMapLayer
 from org.meteoinfo.data.mapdata.webmap import WebMapProvider, DefaultTileFactory, TileFactoryInfo
@@ -39,6 +40,20 @@ import mipylib.migl as migl
 import mipylib.miutil as miutil
 
 __all__ = ['MapAxes','WebMapProvider']
+
+
+def _add_transform(func):
+    """A decorator that adds and validates the transform keyword argument."""
+    @functools.wraps(func)
+    def wrapper(self, *args, **kwargs):
+        data_proj = kwargs.get('transform', None)
+        if data_proj is None:
+            data_proj = kwargs.pop('proj', None)
+        if data_proj is not None:
+            transform = GeoTransform(data_proj, self.projection)
+            kwargs['transform'] = transform
+        return func(self, *args, **kwargs)
+    return wrapper
 
 ##############################################        
 class MapAxes(Axes):
@@ -93,7 +108,7 @@ class MapAxes(Axes):
         if not cutoff is None:
             projinfo.setCutoff(cutoff)        
         self._axes.setProjInfo(projinfo)
-        self.proj = self._axes.getProjInfo()
+        self.projection = self._axes.getProjInfo()
 
         xyscale = kwargs.pop('xyscale', 1)
         self._axes.setAspect(xyscale)
@@ -123,7 +138,7 @@ class MapAxes(Axes):
         
         :returns: (*boolean*) Is lonlat projection or not.
         """
-        return self.proj.isLonLat()
+        return self.projection.isLonLat()
             
     def add_layer(self, layer, zorder=None, select=None):
         """
@@ -386,7 +401,7 @@ class MapAxes(Axes):
         :param z: (*float*) Z coordinate - only used for 3-D axes.
         """
         if not self._axes.isLonLatMap():
-            x, y = migeo.project(x, y, toproj=self.proj)  
+            x, y = migeo.project(x, y, toproj=self.projection)
             
         rect = self._axes.getPositionArea()
         r = self._axes.projToScreen(x, y, rect)
@@ -530,7 +545,9 @@ class MapAxes(Axes):
             if antialias is not None:
                 graphics.setAntiAlias(antialias)
 
-            graphics = self.add_graphic(graphics, projection=layer.proj, zorder=zorder)
+            transform = GeoTransform(layer.proj, self.projection)
+            graphics.setTransform(transform)
+            graphics = self.add_graphic(graphics, zorder=zorder)
             graphics.setVisible(visible)
             return GeoGraphicCollection(graphics)
         else:
@@ -587,21 +604,15 @@ class MapAxes(Axes):
                 if graphic.getNumGraphics() == 1:
                     graphic = graphic.getGraphicN(0)
 
-                if graphic.isCollection():
-                    if self.islonlat():
-                        self._axes.addGraphics(graphic)
-                    else:
-                        graphic = self._axes.addGraphics(graphic, migeo.projinfo())
-                else:
-                    if self.islonlat():
-                        self._axes.addGraphic(graphic)
-                    else:
-                        graphic = self._axes.addGraphic(graphic, migeo.projinfo())
+                transform = GeoTransform(migeo.projinfo(), self.projection)
+                graphic.setTransform(transform)
+                graphic = self._axes.addGraphic(graphic)
 
                 graphic.setVisible(visible)
 
             return graphic
-            
+
+    @_add_transform
     def plot(self, *args, **kwargs):
         """
         Plot lines and/or markers to the map.
@@ -615,7 +626,7 @@ class MapAxes(Axes):
         :returns: (*VectorLayer*) Line VectorLayer.
         """
         fill_value = kwargs.pop('fill_value', -9999.0)
-        proj = kwargs.pop('proj', migeo.projinfo())
+        transform = kwargs.pop('transform', None)
         is_lonlat = proj.isLonLat()
         n = len(args) 
         xdatalist = []
@@ -735,7 +746,8 @@ class MapAxes(Axes):
                         graphic = GraphicFactory.createLineString(xdata, ydata, lines[0], iscurve)
                 else:    #>1
                     graphic = GraphicFactory.createLineString(xdata, ydata, lines, iscurve)
-                graphic = self.add_graphic(graphic, proj)
+                graphic.transform = transform
+                graphic = self.add_graphic(graphic)
                 graphics.append(graphic)
             else:
                 for i in range(0, snum):
@@ -743,14 +755,16 @@ class MapAxes(Axes):
                     xdata = plotutil.getplotdata(xdatalist[i])
                     ydata = plotutil.getplotdata(ydatalist[i])
                     graphic = GraphicFactory.createLineString(xdata, ydata, lines[i], iscurve)
-                    graphic = self.add_graphic(graphic, proj)
+                    graphic.transform = transform
+                    graphic = self.add_graphic(graphic)
                     graphics.append(graphic)
         else:
             xdata = plotutil.getplotdata(xdatalist[0])
             ydata = plotutil.getplotdata(ydatalist[0])
             zdata = plotutil.getplotdata(cdata)
             graphic = GraphicFactory.createLineString(xdata, ydata, zdata, ls, iscurve)
-            graphic = self.add_graphic(graphic, proj)
+            graphic.transform = transform
+            graphic = self.add_graphic(graphic)
             graphics.append(graphic)
 
         antialias = kwargs.pop('antialias', None)
@@ -764,6 +778,7 @@ class MapAxes(Axes):
             return graphics[0]
 
 
+    @_add_transform
     def scatter(self, *args, **kwargs):
         """
         Make a scatter plot on a map.
@@ -783,10 +798,10 @@ class MapAxes(Axes):
         :param edge: (*boolean*) Draw edge of markers or not. Default is True.
         :param facecolor: (*Color*) Fill color of markers. Default is black.
         :param edgecolor: (*Color*) Edge color of markers. Default is black.
-        :param proj: (*ProjectionInfo*) Map projection of the data. Default is None.
+        :param transform: (*ProjectionInfo*) Map projection transform of the data. Default is same with the axes.
         :param zorder: (*int*) Z-order of created layer for display.
         
-        :returns: (*VectoryLayer*) Point VectoryLayer.
+        :returns: (*graphic collection*) Graphic collection.
         """
         n = len(args) 
         if n == 1:
@@ -836,14 +851,16 @@ class MapAxes(Axes):
                 ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
             ls = plotutil.setlegendscheme_point(ls, **kwargs)
 
-        proj = kwargs.pop('proj', migeo.projinfo())
         # Create graphics
         if a.ndim == 0:
-            graphics = GraphicFactory.createPoints(x._array, y._array, ls.getLegendBreak(0))
-            #graphics = Point2DCollection(x._array, y._array, legend=ls.getLegendBreak(0))
+            #graphics = GraphicFactory.createPoints(x._array, y._array, ls.getLegendBreak(0))
+            graphics = Point2DCollection(x._array, y._array, legend=ls.getLegendBreak(0))
         else:
-            graphics = GraphicFactory.createPoints(x._array, y._array, a._array, ls)
-            #graphics = Point2DCollection(x._array, y._array, a._array, ls)
+            #graphics = GraphicFactory.createPoints(x._array, y._array, a._array, ls)
+            graphics = Point2DCollection(x._array, y._array, a._array, ls)
+
+        transform = kwargs.pop('transform', None)
+        graphics.transform = transform
 
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:
@@ -851,7 +868,7 @@ class MapAxes(Axes):
 
         visible = kwargs.pop('visible', True)
         zorder = kwargs.pop('zorder', None)
-        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        graphics = self.add_graphic(graphics, zorder=zorder)
         self.set_draw_extent(graphics.getExtent())
         graphics.setVisible(visible)
 
@@ -872,13 +889,14 @@ class MapAxes(Axes):
         :param coordinates=['axes'|'figure'|'data'|'inches']: (*string*) Coordinate system and units for
             *X, Y*. 'axes' and 'figure' are normalized coordinate system with 0,0 in the lower left and
             1,1 in the upper right, 'data' are the axes data coordinates (Default value); 'inches' is
-            position in the figure in inches, with 0,0 at the lower left corner.
+            position in the figure in inches, with 0,0 in the lower left corner.
         """
         ctext = plotutil.text(x, y, s, **kwargs)
         islonlat = kwargs.pop('islonlat', True)
         self._axes.addText(ctext, islonlat)
         return ctext
-        
+
+    @_add_transform
     def contour(self, *args, **kwargs):  
         """
         Plot contours on the map.
@@ -922,7 +940,8 @@ class MapAxes(Axes):
 
         graphics = GraphicFactory.createContourLines(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
 
-        proj = kwargs.pop('proj', migeo.projinfo())
+        transform = kwargs.pop('transform', None)
+        graphics.transform = transform
         
         # Add graphics
         antialias = kwargs.pop('antialias', None)
@@ -931,12 +950,13 @@ class MapAxes(Axes):
 
         visible = kwargs.pop('visible', True)
         zorder = kwargs.pop('zorder', None)
-        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        graphics = self.add_graphic(graphics, zorder=zorder)
         self.set_draw_extent(graphics.getExtent())
         graphics.setVisible(visible)
                 
         return graphics
-        
+
+    @_add_transform
     def contourf(self, *args, **kwargs):  
         """
         Plot filled contours on the map.
@@ -984,7 +1004,8 @@ class MapAxes(Axes):
             a, x, y = np.griddata((x,y), a, **griddata_props)
 
         graphics = GraphicFactory.createContourPolygons(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
-        proj = kwargs.pop('proj', migeo.projinfo())
+        transform = kwargs.pop('transform', None)
+        graphics.transform = transform
         
         # Add graphics
         antialias = kwargs.pop('antialias', None)
@@ -995,12 +1016,13 @@ class MapAxes(Axes):
         zorder = kwargs.pop('zorder', None)
         if zorder is None:
             zorder = 0
-        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        graphics = self.add_graphic(graphics, zorder=zorder)
         self.set_draw_extent(graphics.getExtent())
         graphics.setVisible(visible)
                 
         return graphics
-        
+
+    @_add_transform
     def imshow(self, *args, **kwargs):
         """
         Display an image on the map.
@@ -1066,7 +1088,7 @@ class MapAxes(Axes):
         
         visible = kwargs.pop('visible', True)
         interpolation = kwargs.pop('interpolation', None)
-        proj = kwargs.pop('proj', migeo.projinfo())
+        transform = kwargs.pop('transform', None)
         if isrgb:
             if isinstance(rgbdata, (list, tuple)):
                 rgbd = []
@@ -1120,8 +1142,8 @@ class MapAxes(Axes):
                 if cb.isNoData():
                     cb.setColor(plotutil.getcolor(fill_color))
 
-            if not proj.equals(self.proj):
-                arr, x, y = migeo.reproject(arr, x, y, fromproj=proj, toproj=self.proj)
+            if not transform.equals(self.projection):
+                arr, x, y = migeo.reproject(arr, x, y, fromproj=transform, toproj=self.projection)
                 extent = [x[0],x[-1],y[0],y[-1]]
             igraphic = GraphicFactory.createImage(arr._array, x._array, y._array, ls, extent)
 
@@ -1142,7 +1164,8 @@ class MapAxes(Axes):
         gridline.setTop(True)
 
         return igraphic
-        
+
+    @_add_transform
     def pcolor(self, *args, **kwargs):
         """
         Create a pseudocolor plot of a 2-D array in a MapAxes.
@@ -1165,7 +1188,6 @@ class MapAxes(Axes):
         
         :returns: (*VectoryLayer*) Polygon VectoryLayer created from array data.
         """
-        proj = kwargs.pop('proj', migeo.projinfo())
         n = len(args) 
         if n <= 2:
             a = args[0]
@@ -1186,26 +1208,29 @@ class MapAxes(Axes):
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
-            
-        if proj is None or proj.isLonLat():
+
+        transform = kwargs.pop('transform', None)
+        if transform is None or transform.isLonLat():
             lonlim = 90
         else:
             lonlim = 0
             #x, y = np.project(x, y, toproj=proj)
 
         graphics = GraphicFactory.createPColorPolygons(x.asarray(), y.asarray(), a.asarray(), ls)
+        graphics.transform = transform
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:
             graphics.setAntiAlias(antialias)
 
         visible = kwargs.pop('visible', True)
         zorder = kwargs.pop('zorder', None)
-        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        graphics = self.add_graphic(graphics, zorder=zorder)
         self.set_draw_extent(graphics.getExtent())
         graphics.setVisible(visible)
 
         return graphics
-        
+
+    @_add_transform
     def gridshow(self, *args, **kwargs):
         """
         Create a grid plot of a 2-D array in a MapAxes.
@@ -1251,17 +1276,20 @@ class MapAxes(Axes):
         if antialias is not None:
             graphics.setAntiAlias(antialias)
 
-        proj = kwargs.pop('proj', migeo.projinfo())
+        transform = kwargs.pop('transform', None)
+        graphics.transform = transform
+
         visible = kwargs.pop('visible', True)
         zorder = kwargs.pop('zorder', None)
         if zorder is None:
             zorder = 0
-        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        graphics = self.add_graphic(graphics, zorder=zorder)
         self.set_draw_extent(graphics.getExtent())
         graphics.setVisible(visible)
 
         return graphics
-    
+
+    @_add_transform
     def quiver(self, *args, **kwargs):
         """
         Plot a 2-D field of quiver in a map.
@@ -1285,7 +1313,7 @@ class MapAxes(Axes):
         """
         cmap = plotutil.getcolormap(**kwargs)
         fill_value = kwargs.pop('fill_value', -9999.0)
-        proj = kwargs.pop('proj', migeo.projinfo())
+        transform = kwargs.pop('transform', None)
         order = kwargs.pop('order', None)
         isuv = kwargs.pop('isuv', True)
         n = len(args) 
@@ -1342,7 +1370,8 @@ class MapAxes(Axes):
             x, y = np.meshgrid(x, y)
 
         graphics = GraphicFactory.createArrows(x._array, y._array, u._array, v._array, cdata, ls, isuv)
-            
+        graphics.transform = transform
+
         # Add graphics
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:
@@ -1354,12 +1383,13 @@ class MapAxes(Axes):
 
         visible = kwargs.pop('visible', True)
         zorder = kwargs.pop('zorder', None)
-        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        graphics = self.add_graphic(graphics, zorder=zorder)
         self.set_draw_extent(graphics.getExtent())
         graphics.setVisible(visible)
 
         return graphics
-    
+
+    @_add_transform
     def barbs(self, *args, **kwargs):
         """
         Plot a 2-D field of barbs in a map.
@@ -1447,15 +1477,18 @@ class MapAxes(Axes):
         if avoidcoll is not None:
             graphics.setAvoidCollision(avoidcoll)
 
-        proj = kwargs.pop('proj', migeo.projinfo())
+        transform = kwargs.pop('transform', None)
+        graphics.transform = transform
+
         visible = kwargs.pop('visible', True)
         zorder = kwargs.pop('zorder', None)
-        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        graphics = self.add_graphic(graphics, zorder=zorder)
         self.set_draw_extent(graphics.getExtent())
         graphics.setVisible(visible)
 
         return graphics
-        
+
+    @_add_transform
     def streamplot(self, *args, **kwargs):
         """
         Plot streamline in a map.
@@ -1475,7 +1508,6 @@ class MapAxes(Axes):
         
         :returns: (*VectoryLayer*) Created streamline VectoryLayer.
         """
-        proj = kwargs.pop('proj', migeo.projinfo())
         isuv = kwargs.pop('isuv', True)
         density = kwargs.pop('density', 4)
         n = len(args)
@@ -1528,12 +1560,15 @@ class MapAxes(Axes):
 
         visible = kwargs.pop('visible', True)
         zorder = kwargs.pop('zorder', None)
-        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        transform = kwargs.pop('transform', None)
+        graphics.transform = transform
+        graphics = self.add_graphic(graphics, zorder=zorder)
         self.set_draw_extent(graphics.getExtent())
         graphics.setVisible(visible)
             
         return graphics
-        
+
+    @_add_transform
     def stationmodel(self, smdata, **kwargs):
         """
         Plot station model data on the map.
@@ -1547,13 +1582,14 @@ class MapAxes(Axes):
         
         :returns: (*graphics*) Station model graphics.
         """
-        proj = kwargs.pop('proj', migeo.projinfo())
+        transform = kwargs.pop('transform', None)
         size = kwargs.pop('size', 12)
         surface = kwargs.pop('surface', True)
         color = kwargs.pop('color', 'b')
         color = plotutil.getcolor(color)
         ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, color, size)
         graphics = GraphicFactory.createStationModel(smdata, ls, surface)
+        graphics.transform = transform
      
         # Add graphics
         antialias = kwargs.pop('antialias', None)
@@ -1566,7 +1602,7 @@ class MapAxes(Axes):
 
         visible = kwargs.pop('visible', True)
         zorder = kwargs.pop('zorder', None)
-        graphics = self.add_graphic(graphics, projection=proj, zorder=zorder)
+        graphics = self.add_graphic(graphics, zorder=zorder)
         self.set_draw_extent(graphics.getExtent())
         graphics.setVisible(visible)
             

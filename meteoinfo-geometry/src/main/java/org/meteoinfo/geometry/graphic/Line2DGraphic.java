@@ -167,10 +167,10 @@ public class Line2DGraphic extends Graphic {
     }
 
     /**
-     * Get data
-     * @return Data
+     * Get color data array
+     * @return Color data array
      */
-    public Array getData() {
+    public Array getColorData() {
         return this.cData;
     }
 

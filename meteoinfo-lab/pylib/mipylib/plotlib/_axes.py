@@ -34,7 +34,7 @@ from mipylib.geolib.milayer import MILayer, MIXYListData
 import plotutil
 import colors
 import mipylib.miutil as miutil
-from .graphic import Line2D, Artist
+from .graphic import Line2D, Artist, Point2DCollection
 
 __all__ = ['Axes', 'PolarAxes']
 
@@ -1087,12 +1087,12 @@ class Axes(object):
         #self._axes.setAutoExtent()
         self.stale = True
 
-    def add_graphic(self, graphic, projection=None, zorder=None):
+    def add_graphic(self, graphic, transform=None, zorder=None):
         """
         Add a graphic
         
         :param graphic: (*Graphic*) The graphic to be added.
-        :param projection: (*Projection*) The projection.
+        :param transform: (*Transform*) The transform. Default is `None`.
         :param zorder: (*int*) Z order of the graphic. Default is `None` that the graphic added
             to the end.
         """
@@ -1103,16 +1103,16 @@ class Axes(object):
             if zorder > self.num_graphics():
                 zorder = self.num_graphics()
 
-        if projection is None:
+        if transform is None:
             if zorder is None:
                 rGraphic = self._axes.addGraphic(graphic)
             else:
                 rGraphic = self._axes.addGraphic(zorder, graphic)
         else:
             if zorder is None:
-                rGraphic = self._axes.addGraphic(graphic, projection)
+                rGraphic = self._axes.addGraphic(graphic, transform)
             else:
-                rGraphic = self._axes.addGraphic(zorder, graphic, projection)
+                rGraphic = self._axes.addGraphic(zorder, graphic, transform)
 
         #self._axes.setAutoExtent()
         self.stale = True
@@ -1578,8 +1578,8 @@ class Axes(object):
                     for i in range(0, n):
                         ls.getLegendBreaks()[i].setSize(s[i])
             # Create graphics
-            graphics = GraphicFactory.createPoints(xdata, ydata, c.asarray(), ls)
-
+            #graphics = GraphicFactory.createPoints(xdata, ydata, c.asarray(), ls)
+            graphics = Point2DCollection(xdata, ydata, c._array, legend=ls)
         else:
             alpha = kwargs.pop('alpha', None)
             colors = plotutil.getcolors(c, alpha)
@@ -1614,8 +1614,8 @@ class Axes(object):
                     plotutil.setpointlegendbreak(npb, **kwargs)
                     pbs.append(npb)
             # Create graphics
-            graphics = GraphicFactory.createPoints(xdata, ydata, pbs)
-            graphics = Point2DCollection(x._array, y._array, legend=ls.getLegendBreak(0))
+            #graphics = GraphicFactory.createPoints(xdata, ydata, pbs)
+            graphics = Point2DCollection(xdata, ydata, legend=pbs)
 
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:

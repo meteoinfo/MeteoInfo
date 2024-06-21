@@ -278,6 +278,9 @@ public class ArrayMath {
             case UINT:
             case BOOLEAN:
                 return ArrayMath.addInt(a, b);
+            case LONG:
+            case ULONG:
+                return ArrayMath.addLong(a, b);
             case FLOAT:
                 return ArrayMath.addFloat(a, b);
             case DOUBLE:
@@ -305,6 +308,9 @@ public class ArrayMath {
             case UINT:
             case BOOLEAN:
                 return ArrayMath.addInt(a, b.intValue());
+            case LONG:
+            case ULONG:
+                return ArrayMath.addLong(a, b.longValue());
             case FLOAT:
                 return ArrayMath.addFloat(a, b.floatValue());
             case DOUBLE:
@@ -405,6 +411,87 @@ public class ArrayMath {
                     iterR.setIntNext(Integer.MIN_VALUE);
                 } else {
                     iterR.setIntNext(v + b);
+                }
+            }
+        }
+
+        return r;
+    }
+
+    private static Array addLong(Array a, Array b) {
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.LONG, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    long va, vb;
+                    for (int i = 0; i < r.getSize(); i++) {
+                        va = a.getLong(i);
+                        vb = b.getLong(i);
+                        if (va  == Long.MIN_VALUE || vb == Long.MIN_VALUE) {
+                            r.setLong(i, Long.MIN_VALUE);
+                        } else {
+                            r.setLong(i, va  + vb);
+                        }
+                    }
+                } else {
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    long va, vb;
+                    while (iterA.hasNext()) {
+                        va = iterA.getLongNext();
+                        vb = iterB.getLongNext();
+                        if (va  == Long.MIN_VALUE || vb == Long.MIN_VALUE) {
+                            iterR.setLongNext(Long.MIN_VALUE);
+                        } else {
+                            iterR.setLongNext(va  + vb);
+                        }
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.LONG, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    if (a.getLong(aindex) == Long.MIN_VALUE || b.getLong(bindex) == Long.MIN_VALUE) {
+                        r.setLong(i, Long.MIN_VALUE);
+                    } else {
+                        r.setLong(i, a.getLong(aindex) + b.getLong(bindex));
+                    }
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    private static Array addLong(Array a, long b) {
+        Array r = Array.factory(DataType.LONG, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setLong(i, a.getInt(i) + b);
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            long v;
+            while (iterA.hasNext()) {
+                v = iterA.getLongNext();
+                if (v == Long.MIN_VALUE) {
+                    iterR.setLongNext(Long.MIN_VALUE);
+                } else {
+                    iterR.setLongNext(v + b);
                 }
             }
         }
@@ -668,6 +755,9 @@ public class ArrayMath {
             case UINT:
             case BOOLEAN:
                 return ArrayMath.subInt(a, b);
+            case LONG:
+            case ULONG:
+                return ArrayMath.subLong(a, b);
             case FLOAT:
                 return ArrayMath.subFloat(a, b);
             case DOUBLE:
@@ -698,6 +788,9 @@ public class ArrayMath {
             case UINT:
             case BOOLEAN:
                 return ArrayMath.subInt(a, b.intValue());
+            case LONG:
+            case ULONG:
+                return ArrayMath.subLong(a, b.longValue());
             case FLOAT:
                 return ArrayMath.subFloat(a, b.floatValue());
             case DOUBLE:
@@ -739,6 +832,9 @@ public class ArrayMath {
             case UINT:
             case BOOLEAN:
                 return ArrayMath.subInt(b.intValue(), a);
+            case LONG:
+            case ULONG:
+                return ArrayMath.subLong(b.longValue(), a);
             case FLOAT:
                 return ArrayMath.subFloat(b.floatValue(), a);
             case DOUBLE:
@@ -831,6 +927,80 @@ public class ArrayMath {
             IndexIterator iterR = r.getIndexIterator();
             while (iterA.hasNext()) {
                 iterR.setIntNext(b - iterA.getIntNext());
+            }
+        }
+
+        return r;
+    }
+
+    private static Array subLong(Array a, Array b) {
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.LONG, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < a.getSize(); i++) {
+                        r.setLong(i, a.getLong(i) - b.getLong(i));
+                    }
+                } else {
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    while (iterA.hasNext()) {
+                        iterR.setLongNext(iterA.getLongNext() - iterB.getLongNext());
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.LONG, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    r.setLong(i, a.getLong(aindex) - b.getLong(bindex));
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    private static Array subLong(Array a, long b) {
+        Array r = Array.factory(DataType.INT, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                r.setLong(i, a.getLong(i) - b);
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                iterR.setLongNext(iterA.getLongNext() - b);
+            }
+        }
+
+        return r;
+    }
+
+    private static Array subLong(long b, Array a) {
+        Array r = Array.factory(DataType.LONG, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                r.setLong(i, b - a.getLong(i));
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                iterR.setLongNext(b - iterA.getLongNext());
             }
         }
 
@@ -1175,6 +1345,9 @@ public class ArrayMath {
             case UINT:
             case BOOLEAN:
                 return ArrayMath.mulInt(a, b);
+            case LONG:
+            case ULONG:
+                return ArrayMath.mulLong(a, b);
             case FLOAT:
                 return ArrayMath.mulFloat(a, b);
             case DOUBLE:
@@ -1202,6 +1375,9 @@ public class ArrayMath {
             case UINT:
             case BOOLEAN:
                 return ArrayMath.mulInt(a, b.intValue());
+            case LONG:
+            case ULONG:
+                return ArrayMath.mulLong(a, b.longValue());
             case FLOAT:
                 return ArrayMath.mulFloat(a, b.floatValue());
             case DOUBLE:
@@ -1299,6 +1475,87 @@ public class ArrayMath {
                     iterR.setIntNext(Integer.MIN_VALUE);
                 } else {
                     iterR.setIntNext(v * b);
+                }
+            }
+        }
+
+        return r;
+    }
+
+    private static Array mulLong(Array a, Array b) {
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.LONG, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    long va, vb;
+                    for (int i = 0; i < r.getSize(); i++) {
+                        va  = a.getLong(i);
+                        vb = b.getLong(i);
+                        if (va  == Long.MIN_VALUE || vb == Long.MIN_VALUE) {
+                            r.setLong(i, Long.MIN_VALUE);
+                        } else {
+                            r.setLong(i, va  * vb);
+                        }
+                    }
+                } else {
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    long va, vb;
+                    while (iterA.hasNext()) {
+                        va  = iterA.getLongNext();
+                        vb = iterB.getLongNext();
+                        if (va  == Long.MIN_VALUE || vb == Long.MIN_VALUE) {
+                            iterR.setLongNext(Long.MIN_VALUE);
+                        } else {
+                            iterR.setLongNext(va  * vb);
+                        }
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.LONG, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    if (a.getLong(aindex) == Long.MIN_VALUE || b.getLong(bindex) == Long.MIN_VALUE) {
+                        r.setLong(i, Long.MIN_VALUE);
+                    } else {
+                        r.setLong(i, a.getLong(aindex) * b.getLong(bindex));
+                    }
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    private static Array mulLong(Array a, long b) {
+        Array r = Array.factory(DataType.LONG, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setLong(i, a.getLong(i) * b);
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            long v;
+            while (iterA.hasNext()) {
+                v = iterA.getIntNext();
+                if (v == Long.MIN_VALUE) {
+                    iterR.setLongNext(Long.MIN_VALUE);
+                } else {
+                    iterR.setLongNext(v * b);
                 }
             }
         }
@@ -1615,6 +1872,8 @@ public class ArrayMath {
             case INT:
             case UINT:
             case BOOLEAN:
+            case LONG:
+            case ULONG:
                 return ArrayMath.divInt(a, b);
             case FLOAT:
                 return ArrayMath.divFloat(a, b);
@@ -1642,6 +1901,8 @@ public class ArrayMath {
             case INT:
             case UINT:
             case BOOLEAN:
+            case LONG:
+            case ULONG:
                 return ArrayMath.divInt(a, b.intValue());
             case FLOAT:
                 return ArrayMath.divFloat(a, b.floatValue());
@@ -1680,6 +1941,8 @@ public class ArrayMath {
             case INT:
             case UINT:
             case BOOLEAN:
+            case LONG:
+            case ULONG:
                 return ArrayMath.divInt(b.intValue(), a);
             case FLOAT:
                 return ArrayMath.divFloat(b.floatValue(), a);
@@ -2178,6 +2441,9 @@ public class ArrayMath {
             case UINT:
             case BOOLEAN:
                 return ArrayMath.modInt(a, b);
+            case LONG:
+            case ULONG:
+                return ArrayMath.modLong(a, b);
             case FLOAT:
                 return ArrayMath.modFloat(a, b);
             case DOUBLE:
@@ -2203,6 +2469,9 @@ public class ArrayMath {
             case UINT:
             case BOOLEAN:
                 return ArrayMath.modInt(a, b.intValue());
+            case LONG:
+            case ULONG:
+                return ArrayMath.modLong(a, b.longValue());
             case FLOAT:
                 return ArrayMath.modFloat(a, b.floatValue());
             case DOUBLE:
@@ -2237,6 +2506,10 @@ public class ArrayMath {
     }
 
     private static int mod(int a, int b) {
+        return a - Math.floorDiv(a, b) * b;
+    }
+
+    private static long mod(long a, long b) {
         return a - Math.floorDiv(a, b) * b;
     }
 
@@ -2350,6 +2623,115 @@ public class ArrayMath {
                     iterR.setIntNext(Integer.MIN_VALUE);
                 } else {
                     iterR.setIntNext(mod(b, v));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    private static Array modLong(Array a, Array b) {
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.LONG, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    long va, vb;
+                    for (int i = 0; i < r.getSize(); i++) {
+                        va  = a.getLong(i);
+                        vb = b.getLong(i);
+                        if (va  == Long.MIN_VALUE || vb == Long.MIN_VALUE) {
+                            r.setLong(i, Long.MIN_VALUE);
+                        } else {
+                            r.setLong(i, mod(va, vb));
+                        }
+                    }
+                } else {
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    long va, vb;
+                    while (iterA.hasNext()) {
+                        va = iterA.getLongNext();
+                        vb = iterB.getLongNext();
+                        if (va  == Long.MIN_VALUE || vb == Long.MIN_VALUE) {
+                            iterR.setLongNext(Long.MIN_VALUE);
+                        } else {
+                            iterR.setLongNext(mod(va, vb));
+                        }
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.INT, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                long va, vb;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    va = a.getLong(aindex);
+                    vb = b.getLong(bindex);
+                    if (va == Long.MIN_VALUE || vb == Long.MIN_VALUE) {
+                        r.setLong(i, Long.MIN_VALUE);
+                    } else {
+                        r.setLong(i, mod(va, vb));
+                    }
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    private static Array modLong(Array a, long b) {
+        Array r = Array.factory(DataType.LONG, a.getShape());
+        long v;
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                v = a.getLong(i);
+                r.setLong(i, mod(v, b));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            while (iterA.hasNext()) {
+                v = iterA.getLongNext();
+                if (v == Long.MIN_VALUE) {
+                    iterR.setLongNext(Long.MIN_VALUE);
+                } else {
+                    iterR.setLongNext(mod(v, b));
+                }
+            }
+        }
+
+        return r;
+    }
+
+    private static Array modLong(long b, Array a) {
+        Array r = Array.factory(DataType.LONG, a.getShape());
+        long v;
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                v = a.getLong(i);
+                r.setLong(i, mod(b, v));
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            while (iterA.hasNext()) {
+                v = iterA.getLongNext();
+                if (v == Long.MIN_VALUE) {
+                    iterR.setLongNext(Long.MIN_VALUE);
+                } else {
+                    iterR.setLongNext(mod(b, v));
                 }
             }
         }
@@ -2606,6 +2988,8 @@ public class ArrayMath {
             case INT:
             case UINT:
             case BOOLEAN:
+            case LONG:
+            case ULONG:
                 return ArrayMath.floorDivInt(a, b.intValue());
             case FLOAT:
                 return ArrayMath.floorDivFloat(a, b.floatValue());
@@ -2972,6 +3356,9 @@ public class ArrayMath {
             case UINT:
             case BOOLEAN:
                 return ArrayMath.powInt(a, b.intValue());
+            case LONG:
+            case ULONG:
+                return ArrayMath.powLong(a, b.longValue());
             case FLOAT:
             case DOUBLE:
                 return ArrayMath.powDouble(a, b.doubleValue());
@@ -3009,6 +3396,9 @@ public class ArrayMath {
             case UINT:
             case BOOLEAN:
                 return ArrayMath.powInt(a.intValue(), b);
+            case LONG:
+            case ULONG:
+                return ArrayMath.powLong(a.longValue(), b);
             case FLOAT:
             case DOUBLE:
                 return ArrayMath.powDouble(a.doubleValue(), b);
@@ -3044,6 +3434,9 @@ public class ArrayMath {
             case INT:
             case UINT:
                 return ArrayMath.powInt(a, b);
+            case LONG:
+            case ULONG:
+                return ArrayMath.powLong(a, b);
             case FLOAT:
             case DOUBLE:
                 return ArrayMath.powDouble(a, b);
@@ -3094,6 +3487,55 @@ public class ArrayMath {
                     current = index.getCurrentCounter();
                     setIndex(aindex, bindex, current, n, na, nb);
                     r.setInt(i, (int) Math.pow(a.getInt(aindex), b.getInt(bindex)));
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    private static Array powLong(Array a, long b) {
+        Array r = Array.factory(DataType.LONG, a.getShape());
+        for (int i = 0; i < a.getSize(); i++) {
+            r.setLong(i, (long) Math.pow(a.getLong(i), b));
+        }
+
+        return r;
+    }
+
+    private static Array powLong(long a, Array b) {
+        Array r = Array.factory(DataType.LONG, b.getShape());
+        for (int i = 0; i < b.getSize(); i++) {
+            r.setLong(i, (long) Math.pow(a, b.getLong(i)));
+        }
+
+        return r;
+    }
+
+    private static Array powLong(Array a, Array b) {
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.LONG, a.getShape());
+                for (int i = 0; i < a.getSize(); i++) {
+                    r.setLong(i, (long) Math.pow(a.getLong(i), b.getLong(i)));
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.LONG, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    r.setLong(i, (long) Math.pow(a.getLong(aindex), b.getLong(bindex)));
                     index.incr();
                 }
                 return r;

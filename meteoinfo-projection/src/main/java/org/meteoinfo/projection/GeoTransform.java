@@ -4,6 +4,7 @@ import org.locationtech.proj4j.BasicCoordinateTransform;
 import org.locationtech.proj4j.CoordinateTransform;
 import org.locationtech.proj4j.ProjCoordinate;
 import org.meteoinfo.common.PointD;
+import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.graphic.Transform;
 
 public class GeoTransform extends Transform {
@@ -51,6 +52,11 @@ public class GeoTransform extends Transform {
         ProjCoordinate t = new ProjCoordinate();
         this.coordinateTransform.transform(s, t);
         return new PointD(t.x, t.y);
+    }
+
+    @Override
+    public Graphic transform(Graphic graphic) {
+        return ProjectionUtil.projectClipGraphic(graphic, this.sourceProj, this.targetProj);
     }
 
     @Override

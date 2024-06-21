@@ -17,6 +17,7 @@ from org.meteoinfo.chart.jogl import GLPlot, GLForm, JOGLUtil, EarthGLPlot, MapG
 from org.meteoinfo.math.interpolate import InterpolationMethod
 from org.meteoinfo.image import ImageUtil
 from org.meteoinfo.common import Extent3D
+from org.meteoinfo.projection import GeoTransform
 from javax.swing import WindowConstants
 from java.awt import Font, Color
 from java.awt.image import BufferedImage
@@ -960,8 +961,11 @@ class Axes3DGL(Axes3D):
 
         visible = kwargs.pop('visible', True)
         if visible:
-            projection = kwargs.pop('projection', layer.getProjInfo())
-            self.add_graphic(graphics, projection)
+            data_proj = kwargs.pop('transform', layer.getProjInfo())
+            transform = GeoTransform(data_proj, self.projection)
+            graphics.transform = transform
+            self.add_graphic(graphics)
+
         return graphics
 
     def plot_layer(self, layer, **kwargs):

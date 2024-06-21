@@ -25,6 +25,7 @@ import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.data.Dataset;
+import org.meteoinfo.projection.GeoTransform;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.render.java2d.StringType;
 import org.meteoinfo.geometry.colors.BoundaryNorm;
@@ -1126,6 +1127,12 @@ public class GLPlot extends Plot {
      * @param graphic Graphic
      */
     public void addGraphic(Graphic graphic) {
+        org.meteoinfo.geometry.graphic.Transform transform = graphic.getTransform();
+        if (transform != null && transform.isValid()) {
+            GeoTransform geoTransform = (GeoTransform) transform;
+            GraphicProjectionUtil.projectClipGraphic(graphic, geoTransform.getSourceProj(),
+                    geoTransform.getTargetProj());
+        }
         this.graphics.add(graphic);
         Extent ex = this.graphics.getExtent();
         if (!ex.is3D()) {
@@ -1146,6 +1153,12 @@ public class GLPlot extends Plot {
      * @param graphic Graphic
      */
     public void addGraphic(int index, Graphic graphic) {
+        org.meteoinfo.geometry.graphic.Transform transform = graphic.getTransform();
+        if (transform != null && transform.isValid()) {
+            GeoTransform geoTransform = (GeoTransform) transform;
+            GraphicProjectionUtil.projectClipGraphic(graphic, geoTransform.getSourceProj(),
+                    geoTransform.getTargetProj());
+        }
         this.graphics.add(index, graphic);
         Extent ex = this.graphics.getExtent();
         if (!ex.is3D()) {

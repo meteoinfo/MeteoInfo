@@ -9,4 +9,6 @@ public abstract class Transform {
     public abstract PointD transform(double x, double y);
 
     public abstract Transform inverted();
+
+    public abstract Graphic transform(Graphic graphic);
 }

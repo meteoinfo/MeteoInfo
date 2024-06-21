@@ -289,14 +289,13 @@ package org.meteoinfo.geometry.graphic;
      }
 
      /**
-      * Get graphic list
-      * @return Graphic list
-      *//*
-     public List<Graphic> getGraphics() {
-         List<Graphic> gs = new ArrayList<>();
-         gs.add(this);
-         return gs;
-     }*/
+      * Transform the graphic
+      */
+     public void doTransform() {
+         if (this.transform != null && this.transform.isValid()) {
+             this.transform.transform(this);
+         }
+     }
 
      private void updateResizeAbility() {
          if (shape != null && legend != null) {

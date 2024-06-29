@@ -7,6 +7,7 @@ import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.geometry.colors.TransferFunction;
 import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.geometry.legend.LegendScheme;
+import org.meteoinfo.projection.GeoTransform;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -429,5 +430,19 @@ public class MeshGraphic extends GraphicCollection3D {
 
     public Color getColor() {
         return Color.red;
+    }
+
+    /**
+     * Transform the graphic
+     */
+    @Override
+    public void doTransform() {
+        if (this.transform != null && this.transform.isValid()) {
+            if (this.transform instanceof GeoTransform) {
+                GeoTransform geoTransform = (GeoTransform) this.transform;
+                GraphicProjectionUtil.projectClipGraphic(this, geoTransform.getSourceProj(),
+                        geoTransform.getTargetProj());
+            }
+        }
     }
 }

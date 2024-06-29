@@ -116,6 +116,33 @@ public class Line2DGraphic extends Graphic {
         this.legend = cbc;
     }
 
+    protected void updateShapeLegend(List<ColorBreak> cbs) {
+        List<PointD> points = new ArrayList<>();
+        IndexIterator xIter = this.xData.getIndexIterator();
+        IndexIterator yIter = this.yData.getIndexIterator();
+        ColorBreakCollection cbc = new ColorBreakCollection();
+        ColorBreak cb;
+        double x, y, c;
+        int i = 0;
+        while (xIter.hasNext()) {
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
+            cb = cbs.get(i);
+            if (Double.isNaN(x) || Double.isNaN(y)) {
+                continue;
+            }
+            points.add(new PointD(x, y));
+            cbc.add(cb);
+            i += 1;
+        }
+        if (this.shape == null) {
+            this.shape = new PolylineShape();
+        }
+        this.shape.setPoints(points);
+
+        this.legend = cbc;
+    }
+
     /**
      * Return plot as curve line or not
      * @return Curve line or not

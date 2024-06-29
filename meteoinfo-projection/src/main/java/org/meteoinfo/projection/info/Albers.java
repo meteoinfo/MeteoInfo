@@ -36,10 +36,10 @@ public class Albers extends ProjectionInfo {
     /**
      * Construction
      *
-     * @param crs Coorinate reference system
+     * @param crs Coordinate reference system
      */
     public Albers(CoordinateReferenceSystem crs) {
-        this.crs = crs;
+        super(crs);
     }
 
     // </editor-fold>

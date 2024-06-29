@@ -40,10 +40,10 @@ public class Robinson extends ProjectionInfo {
     /**
      * Construction
      *
-     * @param crs Coorinate reference system
+     * @param crs Coordinate reference system
      */
     public Robinson(CoordinateReferenceSystem crs) {
-        this.crs = crs;
+        super(crs);
     }
 
     // </editor-fold>

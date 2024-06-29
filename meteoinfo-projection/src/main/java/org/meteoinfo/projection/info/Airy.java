@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @author Yaqiang Wang
  */
-public class LambertEqualAreaConic extends ProjectionInfo {
+public class Airy extends ProjectionInfo {
 
     // <editor-fold desc="Variables">
     // </editor-fold>
@@ -38,7 +38,7 @@ public class LambertEqualAreaConic extends ProjectionInfo {
      *
      * @param crs Coordinate reference system
      */
-    public LambertEqualAreaConic(CoordinateReferenceSystem crs) {
+    public Airy(CoordinateReferenceSystem crs) {
         super(crs);
     }
 
@@ -51,46 +51,11 @@ public class LambertEqualAreaConic extends ProjectionInfo {
      */
     @Override
     public ProjectionNames getProjectionName() {
-        return ProjectionNames.Lambert_Equal_Area_Conic;
+        return ProjectionNames.Airy;
     }
 
     // </editor-fold>
     // <editor-fold desc="Methods">
-    @Override
-    public void updateBoundary() {
-        double epsilon = 1e-10;
-        double cenLon = this.getCenterLon();
-        double minLon = cenLon - 180 + epsilon;
-        double maxLon = cenLon + 180 - epsilon;
-        double minLat = -90;
-        double maxLat = 90;
-        List<PointD> points = new ArrayList<>();
-        double lon = minLon;
-        double lat = minLat;
-        while (lon < maxLon) {
-            points.add(new PointD(lon, lat));
-            lon += 1;
-        }
-        lon = maxLon;
-        while (lat < maxLat) {
-            points.add(new PointD(lon, lat));
-            lat += 1;
-        }
-        lat = maxLat;
-        while (lon > minLon) {
-            points.add(new PointD(lon, lat));
-            lon -= 1;
-        }
-        lon = minLon;
-        while (lat > minLat) {
-            points.add(new PointD(lon, lat));
-            lat -= 1;
-        }
-        lat = minLat;
-        points.add(new PointD(lon, lat));
-        PolygonShape ps = new PolygonShape();
-        ps.setPoints(points);
-        this.boundary = ProjectionUtil.projectPolygonShape(ps, KnownCoordinateSystems.geographic.world.WGS1984, this);
-    }
+
     // </editor-fold>
 }

@@ -14,11 +14,7 @@
 package org.meteoinfo.projection.info;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
-import org.meteoinfo.common.XAlign;
-import org.meteoinfo.common.YAlign;
-import org.meteoinfo.common.Direction;
-import org.meteoinfo.common.GridLabel;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
@@ -32,7 +28,7 @@ import java.util.List;
  *
  * @author Yaqiang Wang
  */
-public class Molleweide extends ProjectionInfo {
+public class August extends ProjectionInfo {
 
     // <editor-fold desc="Variables">
     // </editor-fold>
@@ -40,10 +36,10 @@ public class Molleweide extends ProjectionInfo {
     /**
      * Construction
      *
-     * @param crs Coorinate reference system
+     * @param crs Coordinate reference system
      */
-    public Molleweide(CoordinateReferenceSystem crs) {
-        this.crs = crs;
+    public August(CoordinateReferenceSystem crs) {
+        super(crs);
     }
 
     // </editor-fold>
@@ -55,7 +51,7 @@ public class Molleweide extends ProjectionInfo {
      */
     @Override
     public ProjectionNames getProjectionName() {
-        return ProjectionNames.Molleweide;
+        return ProjectionNames.August;
     }
 
     // </editor-fold>

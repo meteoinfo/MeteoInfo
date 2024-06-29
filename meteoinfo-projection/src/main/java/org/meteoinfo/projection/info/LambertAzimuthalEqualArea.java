@@ -35,10 +35,10 @@ public class LambertAzimuthalEqualArea extends ProjectionInfo {
     /**
      * Construction
      *
-     * @param crs Coorinate reference system
+     * @param crs Coordinate reference system
      */
     public LambertAzimuthalEqualArea(CoordinateReferenceSystem crs) {
-        this.crs = crs;
+        super(crs);
     }
 
     // </editor-fold>

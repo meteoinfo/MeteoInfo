@@ -1127,12 +1127,7 @@ public class GLPlot extends Plot {
      * @param graphic Graphic
      */
     public void addGraphic(Graphic graphic) {
-        org.meteoinfo.geometry.graphic.Transform transform = graphic.getTransform();
-        if (transform != null && transform.isValid()) {
-            GeoTransform geoTransform = (GeoTransform) transform;
-            GraphicProjectionUtil.projectClipGraphic(graphic, geoTransform.getSourceProj(),
-                    geoTransform.getTargetProj());
-        }
+        graphic.doTransform();
         this.graphics.add(graphic);
         Extent ex = this.graphics.getExtent();
         if (!ex.is3D()) {
@@ -1153,12 +1148,7 @@ public class GLPlot extends Plot {
      * @param graphic Graphic
      */
     public void addGraphic(int index, Graphic graphic) {
-        org.meteoinfo.geometry.graphic.Transform transform = graphic.getTransform();
-        if (transform != null && transform.isValid()) {
-            GeoTransform geoTransform = (GeoTransform) transform;
-            GraphicProjectionUtil.projectClipGraphic(graphic, geoTransform.getSourceProj(),
-                    geoTransform.getTargetProj());
-        }
+        graphic.doTransform();
         this.graphics.add(index, graphic);
         Extent ex = this.graphics.getExtent();
         if (!ex.is3D()) {

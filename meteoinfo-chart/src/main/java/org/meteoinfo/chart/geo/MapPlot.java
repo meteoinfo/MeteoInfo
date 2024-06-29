@@ -651,12 +651,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      */
     @Override
     public Graphic addGraphic(Graphic graphic) {
-        Transform transform = graphic.getTransform();
-        if (transform != null && transform.isValid()) {
-            GeoTransform geoTransform = (GeoTransform) transform;
-            graphic = GraphicProjectionUtil.projectClipGraphic(graphic, geoTransform.getSourceProj(),
-                    geoTransform.getTargetProj());
-        }
+        graphic.doTransform();
 
         return super.addGraphic(graphic);
     }
@@ -669,12 +664,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      */
     @Override
     public Graphic addGraphic(int idx, Graphic graphic) {
-        Transform transform = graphic.getTransform();
-        if (transform != null && transform.isValid()) {
-            GeoTransform geoTransform = (GeoTransform) transform;
-            GraphicProjectionUtil.projectClipGraphic(graphic, geoTransform.getSourceProj(),
-                    geoTransform.getTargetProj());
-        }
+        graphic.doTransform();
 
         return super.addGraphic(idx, graphic);
     }
@@ -745,7 +735,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     public Extent getFullExtent() {
         Extent ext = this.getExtent();
         if (this.boundary != null) {
-            ext = ext.union(this.boundary.getExtent().extend(0.01));
+            ext = ext.union(this.boundary.getExtent().extend(0.015));
         }
 
         return ext;

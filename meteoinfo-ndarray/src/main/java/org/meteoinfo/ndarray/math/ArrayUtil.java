@@ -1781,7 +1781,7 @@ public class ArrayUtil {
                 sbuff.append(", ");
             }
             n += 1;
-            if (n > 200) {
+            if (n > 200 && ii.hasNext()) {
                 sbuff.append("...]");
                 break;
             }

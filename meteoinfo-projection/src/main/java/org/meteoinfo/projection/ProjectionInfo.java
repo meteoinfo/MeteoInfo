@@ -46,6 +46,34 @@ package org.meteoinfo.projection;
      protected float cutoff = Float.NaN;    //Latitude cutoff - valiad for some speciafic projections
      // </editor-fold>
      // <editor-fold desc="Constructor">
+
+     /**
+      * Constructor
+      */
+     public ProjectionInfo() {
+
+     }
+
+     /**
+      * Constructor
+      * @param crs The coordinate reference system
+      */
+     public ProjectionInfo(CoordinateReferenceSystem crs) {
+         this.crs = crs;
+         updateBoundary();
+     }
+
+     /**
+      * Constructor
+      * @param crs The coordinate reference system
+      * @param cutoff The cutoff latitude
+      */
+     public ProjectionInfo(CoordinateReferenceSystem crs, float cutoff) {
+         this.crs = crs;
+         this.cutoff = cutoff;
+         updateBoundary();
+     }
+
      /**
       * Create new ProjectionInfo with crs
       * @param crs Coordinate reference system
@@ -60,6 +88,22 @@ package org.meteoinfo.projection;
                  break;
              case "Albers Equal Area":
                  projInfo = new Albers(crs);
+                 break;
+             case "Airy":
+                 projInfo = new Airy(crs);
+                 break;
+             case "Aitoff":
+             case "Winkel Tripel":
+                 projInfo = new Aitoff(crs);
+                 break;
+             case "August Epicycloidal":
+                 projInfo = new August(crs);
+                 break;
+             case "Equidistant Azimuthal":
+                 projInfo = new AzimuthEquidistant(crs);
+                 break;
+             case "Equidistant Conic":
+                 projInfo = new EquidistantConic(crs);
                  break;
              case "Lambert Conformal Conic":
                  projInfo = new LambertConformalConic(crs);
@@ -80,7 +124,7 @@ package org.meteoinfo.projection;
                  projInfo = new Robinson(crs);
                  break;
              case "Molleweide":
-                 projInfo = new Molleweide(crs);
+                 projInfo = new Mollweide(crs);
                  break;
              case "Geostationary Satellite":
                  projInfo = new GeostationarySatellite(crs);
@@ -106,7 +150,7 @@ package org.meteoinfo.projection;
                  break;
          }
 
-         projInfo.updateBoundary();
+         //projInfo.updateBoundary();
 
          return projInfo;
      }

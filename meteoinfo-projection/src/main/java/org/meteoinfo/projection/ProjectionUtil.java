@@ -195,6 +195,12 @@ public class ProjectionUtil {
                 }
             }
         }
+        if (minY < -90) {
+            minY = -90;
+        }
+        if (maxY > 90) {
+            maxY = 90;
+        }
 
         Extent aExtent = new Extent();
         aExtent.minX = minX;

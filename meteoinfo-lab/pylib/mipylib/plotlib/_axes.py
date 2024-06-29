@@ -2316,10 +2316,6 @@ class Axes(object):
         :returns: (*contour graphics*) Contour graphics created from array data.
         """
         n = len(args)
-        ls = kwargs.pop('symbolspec', None)
-        cmap = plotutil.getcolormap(**kwargs)
-        fill_value = kwargs.pop('fill_value', -9999.0)
-        xaxistype = None
         if n <= 2:
             a = args[0]
             if isinstance(a, DimArray):
@@ -2337,20 +2333,9 @@ class Axes(object):
 
         vmin = kwargs.pop('vmin', a.min())
         vmax = kwargs.pop('vmax', a.max())
-        if ls is None:
-            if len(args) > 0:
-                level_arg = args[0]
-                if isinstance(level_arg, int):
-                    cn = level_arg
-                    ls = LegendManage.createLegendScheme(vmin, vmax, cn, cmap)
-                else:
-                    if isinstance(level_arg, NDArray):
-                        level_arg = level_arg.aslist()
-                    ls = LegendManage.createLegendScheme(vmin, vmax, level_arg, cmap)
-            else:
-                ls = LegendManage.createLegendScheme(vmin, vmax, cmap)
-            ls = ls.convertTo(ShapeTypes.POLYLINE)
-            plotutil.setlegendscheme(ls, **kwargs)
+        ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
+        ls = ls.convertTo(ShapeTypes.POLYLINE)
+        plotutil.setlegendscheme(ls, **kwargs)
 
         # norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
         # ls.setNormalize(norm._norm)
@@ -2360,10 +2345,6 @@ class Axes(object):
             griddata_props = kwargs.pop('griddata_props', dict(method='idw', pointnum=5, convexhull=True))
             a, x, y = np.griddata((x, y), a, **griddata_props)
         graphics = GraphicFactory.createContourLines(x.asarray(), y.asarray(), a.asarray(), ls, smooth)
-
-        if not xaxistype is None:
-            self.set_xaxis_type(xaxistype)
-            self._axes.updateDrawExtent()
 
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:
@@ -2483,31 +2464,13 @@ class Axes(object):
 
         vmin = kwargs.pop('vmin', a.min())
         vmax = kwargs.pop('vmax', a.max())
-        extend = ExtendType.valueOf(kwargs.pop('extend', 'neither').upper())
-        if ls is None:
-            if len(args) > 0:
-                level_arg = args[0]
-                if isinstance(level_arg, int):
-                    cn = level_arg
-                    ls = LegendManage.createLegendScheme(vmin, vmax, cn, cmap, extend)
-                else:
-                    if isinstance(level_arg, NDArray):
-                        level_arg = level_arg.aslist()
-                    ls = LegendManage.createLegendScheme(level_arg, cmap, extend)
-            else:
-                ls = LegendManage.createLegendScheme(vmin, vmax, cmap, extend)
+        if not kwargs.has_key('extend'):
+            kwargs['extend'] = 'neither'
+        ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
         ls = ls.convertTo(ShapeTypes.POLYGON)
-        if 'edgecolor' not in kwargs.keys():
+        if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
-        extendfrac = kwargs.pop('extendfrac', None)
-        if extendfrac is not None:
-            if extendfrac == 'auto':
-                efrac = ExtendFraction.AUTO
-            else:
-                efrac = ExtendFraction.LENGTH
-                efrac.fraction = extendfrac
-            ls.setExtendFraction(efrac)
         # norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
         # ls.setNormalize(norm._norm)
         # ls.setColorMap(cmap)

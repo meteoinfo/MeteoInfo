@@ -961,9 +961,10 @@ class Axes3DGL(Axes3D):
 
         visible = kwargs.pop('visible', True)
         if visible:
-            data_proj = kwargs.pop('transform', layer.getProjInfo())
-            transform = GeoTransform(data_proj, self.projection)
-            graphics.transform = transform
+            if hasattr(self, 'projection'):
+                data_proj = kwargs.pop('transform', layer.getProjInfo())
+                transform = GeoTransform(data_proj, self.projection)
+                graphics.transform = transform
             self.add_graphic(graphics)
 
         return graphics

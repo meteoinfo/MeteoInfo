@@ -40,7 +40,7 @@ public class GeostationarySatellite extends ProjectionInfo {
      * @param crs Coordinate reference system
      */
     public GeostationarySatellite(CoordinateReferenceSystem crs) {
-        this.crs = crs;
+        super(crs);
     }
 
     // </editor-fold>

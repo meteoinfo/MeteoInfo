@@ -36,10 +36,10 @@ public class Hammer extends ProjectionInfo {
     /**
      * Construction
      *
-     * @param crs Coorinate reference system
+     * @param crs Coordinate reference system
      */
     public Hammer(CoordinateReferenceSystem crs) {
-        this.crs = crs;
+        super(crs);
     }
 
     // </editor-fold>

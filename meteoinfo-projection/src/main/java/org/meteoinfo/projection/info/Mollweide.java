@@ -14,6 +14,10 @@
 package org.meteoinfo.projection.info;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
+import org.meteoinfo.common.XAlign;
+import org.meteoinfo.common.YAlign;
+import org.meteoinfo.common.Direction;
+import org.meteoinfo.common.GridLabel;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.projection.KnownCoordinateSystems;
@@ -28,7 +32,7 @@ import java.util.List;
  *
  * @author Yaqiang Wang
  */
-public class LambertEqualAreaConic extends ProjectionInfo {
+public class Mollweide extends ProjectionInfo {
 
     // <editor-fold desc="Variables">
     // </editor-fold>
@@ -38,7 +42,7 @@ public class LambertEqualAreaConic extends ProjectionInfo {
      *
      * @param crs Coordinate reference system
      */
-    public LambertEqualAreaConic(CoordinateReferenceSystem crs) {
+    public Mollweide(CoordinateReferenceSystem crs) {
         super(crs);
     }
 
@@ -51,7 +55,7 @@ public class LambertEqualAreaConic extends ProjectionInfo {
      */
     @Override
     public ProjectionNames getProjectionName() {
-        return ProjectionNames.Lambert_Equal_Area_Conic;
+        return ProjectionNames.Molleweide;
     }
 
     // </editor-fold>
@@ -66,21 +70,13 @@ public class LambertEqualAreaConic extends ProjectionInfo {
         double maxLat = 90;
         List<PointD> points = new ArrayList<>();
         double lon = minLon;
-        double lat = minLat;
-        while (lon < maxLon) {
-            points.add(new PointD(lon, lat));
-            lon += 1;
-        }
+        double lat = minLat;        
         lon = maxLon;
         while (lat < maxLat) {
             points.add(new PointD(lon, lat));
             lat += 1;
         }
         lat = maxLat;
-        while (lon > minLon) {
-            points.add(new PointD(lon, lat));
-            lon -= 1;
-        }
         lon = minLon;
         while (lat > minLat) {
             points.add(new PointD(lon, lat));
@@ -91,6 +87,63 @@ public class LambertEqualAreaConic extends ProjectionInfo {
         PolygonShape ps = new PolygonShape();
         ps.setPoints(points);
         this.boundary = ProjectionUtil.projectPolygonShape(ps, KnownCoordinateSystems.geographic.world.WGS1984, this);
+    }
+
+    @Override
+    public Object[] checkGridLabel(GridLabel gl, float shift) {
+        float angle = gl.getAngle();
+        double v = gl.getValue();
+        float xShift = 0.f;
+        float yShift = 0.f;
+        XAlign xAlign = XAlign.CENTER;
+        YAlign yAlign = YAlign.CENTER;
+        if (v == 0) {
+            if (angle == 90) {
+                xShift = shift;
+                xAlign = XAlign.LEFT;
+            } else if (angle == 270) {
+                xShift = -shift;
+                xAlign = XAlign.RIGHT;
+            } else if (angle < 90) {
+                xShift = shift;
+                xAlign = XAlign.LEFT;
+                yAlign = YAlign.BOTTOM;
+            } else if (angle > 90 && angle <= 180) {
+                xShift = shift;
+                xAlign = XAlign.LEFT;
+                yAlign = YAlign.TOP;
+            } else if (angle > 180 && angle < 270) {
+                xShift = -shift;
+                xAlign = XAlign.RIGHT;
+                yAlign = YAlign.TOP;
+            } else if (angle > 270 && angle <= 360) {
+                xShift = -shift;
+                xAlign = XAlign.RIGHT;
+                yAlign = YAlign.BOTTOM;
+            }
+        } else if (v > 0) {
+            if (gl.getLabDirection() == Direction.East) {
+                xShift = shift;
+                xAlign = XAlign.LEFT;
+                yAlign = YAlign.BOTTOM;
+            } else {
+                xShift = -shift;
+                xAlign = XAlign.RIGHT;
+                yAlign = YAlign.BOTTOM;
+            }
+        } else {
+            if (gl.getLabDirection() == Direction.East) {
+                xShift = shift;
+                xAlign = XAlign.LEFT;
+                yAlign = YAlign.TOP;
+            } else {
+                xShift = -shift;
+                xAlign = XAlign.RIGHT;
+                yAlign = YAlign.TOP;
+            }
+        }
+
+        return new Object[]{xShift, yShift, xAlign, yAlign};
     }
     // </editor-fold>
 }

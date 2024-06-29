@@ -287,7 +287,7 @@ public class MapGridLine extends GridLine {
                 points.add(new PointD(lon, lat));
                 lat += delta;
             }
-            points.add((new PointD(lon, lat)));
+            points.add((new PointD(lon, latMax)));
             PolylineShape line = new PolylineShape();
             line.setPoints(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
@@ -320,6 +320,7 @@ public class MapGridLine extends GridLine {
                 points.add(new PointD(lon, lat));
                 lon += delta;
             }
+            //points.add(new PointD(lonMax, lat));
             PolylineShape line = new PolylineShape();
             line.setPoints(points);
             Graphic graphic = new Graphic(line, this.lineBreak);

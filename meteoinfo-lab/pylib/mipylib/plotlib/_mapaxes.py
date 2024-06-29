@@ -625,9 +625,7 @@ class MapAxes(Axes):
         
         :returns: (*VectorLayer*) Line VectorLayer.
         """
-        fill_value = kwargs.pop('fill_value', -9999.0)
         transform = kwargs.pop('transform', None)
-        is_lonlat = proj.isLonLat()
         n = len(args) 
         xdatalist = []
         ydatalist = []    
@@ -904,7 +902,7 @@ class MapAxes(Axes):
         :param x: (*array_like*) Optional. X coordinate array.
         :param y: (*array_like*) Optional. Y coordinate array.
         :param z: (*array_like*) 2-D z value array.
-        :param levs: (*array_like*) Optional. A list of floating point numbers indicating the level curves 
+        :param levels: (*array_like*) Optional. A list of floating point numbers indicating the level curves
             to draw, in increasing order.
         :param cmap: (*string*) Color map string.
         :param colors: (*list*) If None (default), the colormap specified by cmap will be used. If a 
@@ -930,7 +928,10 @@ class MapAxes(Axes):
             y = args[1]
             a = args[2]
             args = args[3:]
-        ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
+
+        vmin = kwargs.pop('vmin', a.min())
+        vmax = kwargs.pop('vmax', a.max())
+        ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
         ls = ls.convertTo(ShapeTypes.POLYLINE)
         plotutil.setlegendscheme(ls, **kwargs)
         smooth = kwargs.pop('smooth', True)
@@ -991,9 +992,11 @@ class MapAxes(Axes):
             a = args[2]
             args = args[3:]
 
+        vmin = kwargs.pop('vmin', a.min())
+        vmax = kwargs.pop('vmax', a.max())
         if not kwargs.has_key('extend'):
             kwargs['extend'] = 'neither'
-        ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
+        ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
@@ -1022,7 +1025,7 @@ class MapAxes(Axes):
                 
         return graphics
 
-    @_add_transform
+    #@_add_transform
     def imshow(self, *args, **kwargs):
         """
         Display an image on the map.
@@ -1210,7 +1213,7 @@ class MapAxes(Axes):
         plotutil.setlegendscheme(ls, **kwargs)
 
         transform = kwargs.pop('transform', None)
-        if transform is None or transform.isLonLat():
+        if transform is None or transform.getSourceProj().isLonLat():
             lonlim = 90
         else:
             lonlim = 0

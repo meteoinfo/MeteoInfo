@@ -36,11 +36,12 @@ public class Mercator extends ProjectionInfo {
     /**
      * Construction
      *
-     * @param crs Coorinate reference system
+     * @param crs Coordinate reference system
      */
     public Mercator(CoordinateReferenceSystem crs) {
         this.crs = crs;
         this.cutoff = 85.0511f;
+        updateBoundary();
     }
 
     // </editor-fold>

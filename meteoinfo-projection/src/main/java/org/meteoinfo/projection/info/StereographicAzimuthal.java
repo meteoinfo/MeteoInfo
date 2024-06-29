@@ -36,11 +36,24 @@ public class StereographicAzimuthal extends ProjectionInfo {
     /**
      * Construction
      *
-     * @param crs Coorinate reference system
+     * @param crs Coordinate reference system
      */
     public StereographicAzimuthal(CoordinateReferenceSystem crs) {
         this.crs = crs;
         this.cutoff = 0.f;
+        updateBoundary();
+    }
+
+    /**
+     * Construction
+     *
+     * @param crs Coordinate reference system
+     * @param cutoff Cutoff latitude
+     */
+    public StereographicAzimuthal(CoordinateReferenceSystem crs, float cutoff) {
+        this.crs = crs;
+        this.cutoff = cutoff;
+        updateBoundary();
     }
 
     // </editor-fold>

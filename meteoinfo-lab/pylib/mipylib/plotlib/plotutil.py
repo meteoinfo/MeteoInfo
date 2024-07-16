@@ -120,10 +120,14 @@ def getcolor(style, alpha=None):
             c = Color.magenta
         elif style == 'pink' or style == 'p':
             c = Color.pink
+        elif style == 'orange' or style == 'o':
+            c = Color.orange
         elif style == 'tan':
             c = Color(210, 180, 140)
         elif style == 'lime':
             c = Color(124, 252, 0)
+        elif style == 'indigo':
+            c = Color(75, 0, 130)
         else:
             try:
                 c = ColorUtil.parseToColor(style)
@@ -475,6 +479,41 @@ def getplotstyle(style, caption, **kwargs):
         if not lineStyle is None:
             plb.setStyle(lineStyle)
         return plb
+
+
+def getlegendbreaks(lb, **kwargs):
+    """
+    Get legend break list form a legend break.
+
+    Parameters
+    __________
+    lb : The base legend break
+    colors : list of colors
+
+    Returns
+    _______
+    List of legend breaks.
+    """
+    lbs = []
+    colors = kwargs.pop('colors', None)
+    if colors is None:
+        cmap = kwargs.pop('cmap', None)
+        ncolors = kwargs.pop('ncolors', 10)
+        if cmap is not None:
+            colors = makecolors(ncolors, cmap=cmap)
+
+    if colors is not None:
+        n = len(colors)
+        colors = getcolors(colors)
+        for cc in colors:
+            nlb = lb.clone()
+            nlb.setColor(cc)
+            lbs.append(nlb)
+
+    if len(lbs) == 0:
+        return lb
+    else:
+        return lbs
 
 
 def getlegendbreak(geometry, **kwargs):

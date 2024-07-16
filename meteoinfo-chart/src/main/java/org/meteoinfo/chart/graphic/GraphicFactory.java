@@ -315,29 +315,29 @@ public class GraphicFactory {
      *
      * @param xdata X data array
      * @param ydata Y data array
-     * @param zdata Z data array
+     * @param cdata Color data array
      * @param ls Legend scheme
      * @param iscurve Is curve line or not
      * @return LineString graphic
      */
-    public static GraphicCollection createLineString(Array xdata, Array ydata, Array zdata, LegendScheme ls, boolean iscurve) {
+    public static GraphicCollection createLineString(Array xdata, Array ydata, Array cdata, LegendScheme ls, boolean iscurve) {
         GraphicCollection gc = new GraphicCollection();
         PolylineShape pls;
         List<PointD> points;
         ColorBreakCollection cbc;
-        double x, y, z;
-        IndexIterator xIter = xdata.getIndexIterator();
-        IndexIterator yIter = ydata.getIndexIterator();
-        IndexIterator zIter = zdata.getIndexIterator();
+        double x, y, c;
         ColorBreak cb;
         if (xdata.getRank() == 1) {
+            IndexIterator xIter = xdata.getIndexIterator();
+            IndexIterator yIter = ydata.getIndexIterator();
+            IndexIterator cIter = cdata.getIndexIterator();
             points = new ArrayList<>();
             cbc = new ColorBreakCollection();
             while (xIter.hasNext()){
                 x = xIter.getDoubleNext();
                 y = yIter.getDoubleNext();
-                z = zIter.getDoubleNext();
-                cb = ls.findLegendBreak(z);
+                c = cIter.getDoubleNext();
+                cb = ls.findLegendBreak(c);
                 if (Double.isNaN(y) || Double.isNaN(x)) {
                     if (points.isEmpty()) {
                         continue;
@@ -373,34 +373,22 @@ public class GraphicFactory {
             int[] shape = xdata.getShape();
             int yn = shape[0];
             int xn = shape[1];
-            for (int j = 0; j < yn; j++) {
+            Index2D xIndex = (Index2D) xdata.getIndex();
+            Index2D yIndex = (Index2D) ydata.getIndex();
+            Index2D cIndex = (Index2D) cdata.getIndex();
+            for (int i = 0; i < xn; i++) {
                 points = new ArrayList<>();
                 cbc = new ColorBreakCollection();
-                for (int i = 0; i < xn; i++) {
-                    x = xIter.getDoubleNext();
-                    y = yIter.getDoubleNext();
-                    z = zIter.getDoubleNext();
-                    cb = ls.findLegendBreak(z);
-                    if (Double.isNaN(y) || Double.isNaN(x)) {
-                        if (points.isEmpty()) {
-                            continue;
-                        }
-                        if (points.size() == 1) {
-                            points.add((PointD) points.get(0).clone());
-                        }
-                        if (iscurve) {
-                            pls = new CurveLineShape();
-                        } else {
-                            pls = new PolylineShape();
-                        }
-                        pls.setPoints(points);
-                        gc.add(new Graphic(pls, cbc));
-                        points = new ArrayList<>();
-                        cbc = new ColorBreakCollection();
-                    } else {
-                        points.add(new PointD(x, y));
-                        cbc.add(cb);
-                    }
+                for (int j = 0; j < yn; j++) {
+                    xIndex.set(j, i);
+                    yIndex.set(j, i);
+                    cIndex.set(j, i);
+                    x = xdata.getDouble(xIndex);
+                    y = ydata.getDouble(yIndex);
+                    c = cdata.getDouble(cIndex);
+                    cb = ls.findLegendBreak(c);
+                    points.add(new PointD(x, y));
+                    cbc.add(cb);
                 }
                 if (points.size() > 1) {
                     if (iscurve) {

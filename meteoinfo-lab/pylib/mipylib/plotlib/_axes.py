@@ -34,7 +34,7 @@ from mipylib.geolib.milayer import MILayer, MIXYListData
 import plotutil
 import colors
 import mipylib.miutil as miutil
-from .graphic import Line2D, Artist, Point2DCollection
+from .graphic import Line2D, Artist, Point2DCollection, LineCollection
 
 __all__ = ['Axes', 'PolarAxes']
 
@@ -1336,10 +1336,11 @@ class Axes(object):
                         xdatalist.append(arg)
                         c = 'y'
 
+        snum = len(xdatalist)
         if len(styles) == 0:
             styles = None
         else:
-            while len(styles) < len(xdatalist):
+            while len(styles) < snum:
                 styles.append(None)
 
         # Set plot data styles
@@ -1366,17 +1367,17 @@ class Axes(object):
                             line = plotutil.getplotstyle(styles[i], label, **kwargs)
                         lines.append(line)
                 else:
-                    snum = len(xdatalist)
-                    colors = kwargs.pop('colors', None)
-                    if colors is None:
+                    if kwargs.has_key('colors'):
+                        colors = kwargs['colors']
+                        snum = len(colors) if len(colors) > snum else snum
+                    else:
                         if kwargs.has_key('color'):
                             color = kwargs['color']
                             color = plotutil.getcolor(color)
                             colors = [color] * snum
                         else:
                             colors = plotutil.makecolors(snum)
-                    else:
-                        snum = len(colors) if len(colors) > snum else snum
+
                     for i in range(0, snum):
                         label = kwargs.pop('label', 'S_' + str(i + 1))
                         line = plotutil.getlegendbreak('line', **kwargs)[0]
@@ -1401,72 +1402,53 @@ class Axes(object):
                     ls = plotutil.getlegendscheme([levels], cdata.min(), cdata.max(), **kwargs)
                 ls = plotutil.setlegendscheme_line(ls, **kwargs)
 
-        if not xaxistype is None:
-            self.set_xaxis_type(xaxistype)
-        timetickformat = kwargs.pop('timetickformat', None)
-        if not timetickformat is None:
-            if not xaxistype == 'time':
-                self._axes.setXAxis(TimeAxis('Time', True))
-            self._axes.getAxis(Location.BOTTOM).setTimeFormat(timetickformat)
-            self._axes.getAxis(Location.TOP).setTimeFormat(timetickformat)
-
         # Add graphics
-        zorder = kwargs.pop('zorder', None)
         iscurve = kwargs.pop('curve', False)
-        graphics = []
         if cdata is None:
             # Add data series
             snum = len(xdatalist)
             if snum == 1:
                 xdata = np.asarray(xdatalist[0])
                 ydata = np.asarray(ydatalist[0])
-                if len(lines) == 1:
-                    colors = kwargs.pop('colors', None)
-                    if not colors is None:
-                        colors = plotutil.getcolors(colors)
-                        cb = lines[0]
-                        lines = []
-                        for cc in colors:
-                            ncb = cb.clone()
-                            ncb.setColor(cc)
-                            lines.append(ncb)
-                        graphic = GraphicFactory.createLineString(xdata._array, ydata._array, lines, iscurve)
-                    else:
-                        if ydata.ndim == 1:
-                            graphic = Line2D(xdata, ydata, legend=lines[0], curve=iscurve)
-                        else:
-                            if xdata.ndim == 1:
-                                xdata = xdata[:,np.newaxis].repeat(ydata.shape[1], axis=1)
-                            graphic = GraphicFactory.createLineString(xdata._array, ydata._array, lines[0], iscurve)
-                else:  # >1
-                    graphic = GraphicFactory.createLineString(xdata._array, ydata._array, lines, iscurve)
-                self.add_graphic(graphic, zorder=zorder)
-                graphics.append(graphic)
+                if ydata.ndim == 1:
+                    graphics = Line2D(xdata, ydata, legend=lines[0], curve=iscurve)
+                else:
+                    if not kwargs.has_key('cmap'):
+                        kwargs['cmap'] = 'matlab_jet'
+                    graphics = LineCollection(None, xydata=[xdata, ydata], **kwargs)
             else:
+                graphics = []
                 for i in range(0, snum):
                     label = kwargs.pop('label', 'S_' + str(i + 1))
                     xdata = np.asarray(xdatalist[i])
                     ydata = np.asarray(ydatalist[i])
                     graphic = Line2D(xdata, ydata, legend=lines[i], curve=iscurve)
-                    self.add_graphic(graphic)
                     graphics.append(graphic)
         else:
             xdata = np.asarray(xdatalist[0])
             ydata = np.asarray(ydatalist[0])
             cdata = np.asarray(cdata)
-            graphic = Line2D(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
-            self.add_graphic(graphic, zorder=zorder)
-            graphics.append(graphic)
+            if ydata.ndim == 1:
+                graphics = Line2D(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
+            else:
+                graphics = LineCollection(None, xydata=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
 
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:
-            for graphic in graphics:
-                graphic.setAntiAlias(antialias)
+            if isinstance(graphics, list):
+                for graphic in graphics:
+                    graphic.setAntiAlias(antialias)
+            else:
+                graphics.setAntiAlias(antialias)
 
-        if len(graphics) > 1:
-            return graphics
+        zorder = kwargs.pop('zorder', None)
+        if isinstance(graphics, list):
+            for graphic in graphics:
+                self.add_graphic(graphic, zorder=zorder)
         else:
-            return graphics[0]
+            self.add_graphic(graphics, zorder=zorder)
+
+        return graphics
 
     def step(self, x, y, *args, **kwargs):
         """
@@ -2465,7 +2447,7 @@ class Axes(object):
         vmin = kwargs.pop('vmin', a.min())
         vmax = kwargs.pop('vmax', a.max())
         if not kwargs.has_key('extend'):
-            kwargs['extend'] = 'neither'
+            kwargs['extend'] = 'both'
         ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         if not kwargs.has_key('edgecolor'):
@@ -4055,6 +4037,8 @@ class Axes(object):
             elif isinstance(mappable, ImageGraphic):
                 ls = mappable.getLegendScheme()
             elif isinstance(mappable, GraphicCollection):
+                ls = mappable.getLegendScheme()
+            elif isinstance(mappable, Graphic):
                 ls = mappable.getLegendScheme()
             else:
                 ls = plotutil.makelegend(mappable, **kwargs)

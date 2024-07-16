@@ -960,7 +960,7 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, proj=None, la
     for dimvar, dim in zip(dimvars, wdims):
         if dim.getDimType() == DimensionType.T:
             sst = datetime.datetime(1900,1,1)
-            tt = miutil.nums2dates(dim.getDimValue())
+            tt = miutil.nums2dates(np.array(dim.getDimValue()))
             hours = []
             for t in tt:
                 hours.append((int)((t - sst).total_seconds() // 3600))

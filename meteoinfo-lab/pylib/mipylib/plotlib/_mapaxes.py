@@ -28,12 +28,13 @@ from org.meteoinfo.data.mapdata.webmap import WebMapProvider, DefaultTileFactory
 from java.awt import Font, Color
 
 from ._axes import Axes
-from .graphic import Point2DCollection
+from .graphic import Point2DCollection, Line2D, LineCollection
 import mipylib.numeric as np
 from mipylib.numeric.core import NDArray, DimArray
 from mipylib.geolib.milayer import MILayer
 from mipylib.geolib._graphic import GeoGraphicCollection
 import mipylib.geolib.migeo as migeo
+from mipylib.geolib import crs
 import plotutil
 import colors
 import mipylib.migl as migl
@@ -723,57 +724,50 @@ class MapAxes(Axes):
             ls.setFieldName('Geometry_Z')
 
         iscurve = kwargs.pop('curve', False)
-        graphics = []
         if cdata is None:
             #Add data series
             if snum == 1:
-                xdata = plotutil.getplotdata(xdatalist[0])
-                ydata = plotutil.getplotdata(ydatalist[0])
-                if len(lines) == 1:
-                    colors = kwargs.pop('colors', None)
-                    if not colors is None:
-                        colors = plotutil.getcolors(colors)
-                        cb = lines[0]
-                        lines = []
-                        for cc in colors:
-                            ncb = cb.clone()
-                            ncb.setColor(cc)
-                            lines.append(ncb)
-                        graphic = GraphicFactory.createLineString(xdata, ydata, lines, iscurve)
-                    else:
-                        graphic = GraphicFactory.createLineString(xdata, ydata, lines[0], iscurve)
-                else:    #>1
-                    graphic = GraphicFactory.createLineString(xdata, ydata, lines, iscurve)
-                graphic.transform = transform
-                graphic = self.add_graphic(graphic)
-                graphics.append(graphic)
+                xdata = np.asarray(xdatalist[0])
+                ydata = np.asarray(ydatalist[0])
+                if ydata.ndim == 1:
+                    graphics = Line2D(xdata, ydata, legend=lines[0], curve=iscurve)
+                else:
+                    if not kwargs.has_key('cmap'):
+                        kwargs['cmap'] = 'matlab_jet'
+                    graphics = LineCollection(None, xydata=[xdata, ydata], **kwargs)
+                graphics.transform = transform
+                graphics = self.add_graphic(graphics)
             else:
+                graphics = []
                 for i in range(0, snum):
                     label = kwargs.pop('label', 'S_' + str(i + 1))
-                    xdata = plotutil.getplotdata(xdatalist[i])
-                    ydata = plotutil.getplotdata(ydatalist[i])
-                    graphic = GraphicFactory.createLineString(xdata, ydata, lines[i], iscurve)
+                    xdata = np.asarray(xdatalist[i])
+                    ydata = np.asarray(ydatalist[i])
+                    graphic = Line2D(xdata, ydata, legend=lines[i], curve=iscurve)
                     graphic.transform = transform
                     graphic = self.add_graphic(graphic)
                     graphics.append(graphic)
         else:
-            xdata = plotutil.getplotdata(xdatalist[0])
-            ydata = plotutil.getplotdata(ydatalist[0])
-            zdata = plotutil.getplotdata(cdata)
-            graphic = GraphicFactory.createLineString(xdata, ydata, zdata, ls, iscurve)
-            graphic.transform = transform
-            graphic = self.add_graphic(graphic)
-            graphics.append(graphic)
+            xdata = np.asarray(xdatalist[0])
+            ydata = np.asarray(ydatalist[0])
+            cdata = np.asarray(cdata)
+            if ydata.ndim == 1:
+                graphics = Line2D(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
+            else:
+                graphics = LineCollection(None, xydata=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
+            graphic = GraphicFactory.createLineString(xdata._array, ydata._array, cdata._array, ls, iscurve)
+            graphics.transform = transform
+            graphics = self.add_graphic(graphics)
 
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:
-            for graphic in graphics:
-                graphic.setAntiAlias(antialias)
+            if isinstance(graphics, list):
+                for graphic in graphics:
+                    graphic.setAntiAlias(antialias)
+            else:
+                graphics.setAntiAlias(antialias)
 
-        if len(graphics) > 1:
-            return graphics
-        else:
-            return graphics[0]
+        return graphics
 
 
     @_add_transform
@@ -995,7 +989,7 @@ class MapAxes(Axes):
         vmin = kwargs.pop('vmin', a.min())
         vmax = kwargs.pop('vmax', a.max())
         if not kwargs.has_key('extend'):
-            kwargs['extend'] = 'neither'
+            kwargs['extend'] = 'both'
         ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         if not kwargs.has_key('edgecolor'):
@@ -1091,7 +1085,10 @@ class MapAxes(Axes):
         
         visible = kwargs.pop('visible', True)
         interpolation = kwargs.pop('interpolation', None)
-        transform = kwargs.pop('transform', None)
+        transform = kwargs.pop('proj', None)
+        if transform is None:
+            transform = kwargs.pop('transform', crs.PlateCarree())
+
         if isrgb:
             if isinstance(rgbdata, (list, tuple)):
                 rgbd = []

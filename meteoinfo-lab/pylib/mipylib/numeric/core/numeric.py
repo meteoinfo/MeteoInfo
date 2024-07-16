@@ -2907,7 +2907,7 @@ def cdiff(a, dimidx):
     return a.array_wrap(r)
 
 # Calculates the vertical component of the curl (ie, vorticity)    
-def hcurl(x, y, u, v):
+def hcurl(*args):
     """
     Calculates the vertical component of the curl (ie, vorticity). The data should be lon/lat projection.
 
@@ -2918,11 +2918,24 @@ def hcurl(x, y, u, v):
     
     :returns: Array of the vertical component of the curl.
     """
+    if len(args) == 2:
+        u = args[0]
+        v = args[1]
+        x = u.dimvalue(-1)
+        y = v.dimvalue(-2)
+    elif len(args) == 4:
+        x = args[0]
+        y = args[1]
+        u = args[2]
+        v = args[3]
+    else:
+        raise ValueError("Parameter number is not correct!")
+
     r = ArrayMath.hcurl(u._array, v._array, x._array, y._array)
     return u.array_wrap(r)
 
 #  Calculates the horizontal divergence using finite differencing        
-def hdivg(u, v):
+def hdivg(*args):
     """
     Calculates the horizontal divergence using finite differencing. The data should be lon/lat projection.
 
@@ -2933,6 +2946,19 @@ def hdivg(u, v):
     
     :returns: Array of the horizontal divergence.
     """
+    if len(args) == 2:
+        u = args[0]
+        v = args[1]
+        x = u.dimvalue(-1)
+        y = v.dimvalue(-2)
+    elif len(args) == 4:
+        x = args[0]
+        y = args[1]
+        u = args[2]
+        v = args[3]
+    else:
+        raise ValueError("Parameter number is not correct!")
+
     r = ArrayMath.hdivg(u._array, v._array, x._array, y._array)
     return u.array_wrap(r)
               

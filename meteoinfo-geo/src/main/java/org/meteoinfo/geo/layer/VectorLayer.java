@@ -19,15 +19,12 @@ import org.meteoinfo.geo.mapdata.ShapeFileManage;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.common.colors.ColorUtil;
+import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.table.*;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.shape.PointShape;
-import org.meteoinfo.geometry.shape.PolygonShape;
-import org.meteoinfo.geometry.shape.PolylineShape;
-import org.meteoinfo.geometry.shape.Shape;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+
 import java.awt.Color;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -59,10 +56,6 @@ import org.meteoinfo.geo.legend.LegendManage;
 import org.meteoinfo.geometry.graphic.ChartGraphic;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
-import org.meteoinfo.geometry.shape.PointZShape;
-import org.meteoinfo.geometry.shape.Polygon;
-import org.meteoinfo.geometry.shape.Polyline;
-import org.meteoinfo.geometry.shape.PolylineZShape;
 
 /**
  * Vector layer class
@@ -2845,25 +2838,34 @@ public class VectorLayer extends MapLayer {
         graphics.setAttributeTable(this._attributeTable);
         graphics.setProjInfo(this._projInfo);
         ColorBreak cb;
-        if (xShift == 0) {
+
+        if (xShift != 0) {
+            for (Shape shape : shapes) {
+                for (PointD p : shape.getPoints()) {
+                    p.X += xShift;
+                }
+                shape.updateExtent();
+            }
+        }
+
+        if (this.legendScheme.isGeometry()) {
+            for (Shape shape : this.shapes) {
+                ColorBreakCollection cbs = new ColorBreakCollection();
+                for (PointZ p : (List<PointZ>) shape.getPoints()) {
+                    cb = legendScheme.findLegendBreak(p.Z);
+                    cbs.add(cb);
+                }
+                graphics.add(new Graphic(shape, cbs));
+            }
+        } else {
             for (Shape shape : this.shapes) {
                 if (shape.getLegendIndex() >= 0) {
                     cb = legendScheme.getLegendBreak(shape.getLegendIndex());
                     graphics.add(new Graphic(shape, cb));
                 }
             }
-        } else {
-            for (Shape shape : shapes) {
-                if (shape.getLegendIndex() >= 0) {
-                    for (PointD p : shape.getPoints()) {
-                        p.X += xShift;
-                    }
-                    shape.updateExtent();
-                    cb = legendScheme.getLegendBreak(shape.getLegendIndex());
-                    graphics.add(new Graphic(shape, cb));
-                }
-            }
         }
+
         graphics.setLegendScheme(legendScheme);
         graphics.setSingleLegend(false);
 

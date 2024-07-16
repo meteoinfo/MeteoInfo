@@ -17,6 +17,7 @@ public class Line2DGraphic extends Graphic {
     private Array yData;
     private Array cData;
     private boolean curve = false;
+    private LegendScheme legendScheme;
 
     /**
      * Constructor
@@ -90,6 +91,7 @@ public class Line2DGraphic extends Graphic {
     }
 
     protected void updateShapeLegend(LegendScheme legendScheme) {
+        this.legendScheme = legendScheme;
         List<PointD> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
@@ -111,12 +113,14 @@ public class Line2DGraphic extends Graphic {
         if (this.shape == null) {
             this.shape = new PolylineShape();
         }
-        this.shape.setPoints(points);
+        if (points.size() >= 2)
+            this.shape.setPoints(points);
 
         this.legend = cbc;
     }
 
     protected void updateShapeLegend(List<ColorBreak> cbs) {
+        this.legendScheme = new LegendScheme(cbs);
         List<PointD> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
@@ -210,5 +214,13 @@ public class Line2DGraphic extends Graphic {
         this.xData = xData;
         this.yData = yData;
         updateShape();
+    }
+
+    /**
+     * Get legend scheme
+     * @return Legend scheme
+     */
+    public LegendScheme getLegendScheme() {
+        return this.legendScheme;
     }
 }

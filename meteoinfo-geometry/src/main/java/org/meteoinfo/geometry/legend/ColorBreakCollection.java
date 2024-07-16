@@ -59,6 +59,9 @@ public class ColorBreakCollection extends ColorBreak implements Iterator{
      * @return Color break
      */
     public ColorBreak get(int idx){
+        if (idx >= this.colorBreaks.size()) {
+            idx = this.colorBreaks.size() - 1;
+        }
         return this.colorBreaks.get(idx);
     }
     

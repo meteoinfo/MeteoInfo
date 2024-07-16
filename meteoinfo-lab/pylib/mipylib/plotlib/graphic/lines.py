@@ -93,6 +93,15 @@ class Line2D(Line2DGraphic, Artist):
         self.stale = True
 
     @property
+    def cdata(self):
+        """
+        Return the cdata.
+
+        :return: (*array*) The cdata.
+        """
+        return self._cdata
+
+    @property
     def data(self):
         """
         Get x, y data.

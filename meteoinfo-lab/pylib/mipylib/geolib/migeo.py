@@ -399,8 +399,15 @@ def rmaskout(data, x, y, mask):
     
     :returns: (*list*) Maskouted data, x and y array list.
     """
-    if not isinstance(mask, (list, ArrayList)):
+    if not isinstance(mask, (list, tuple, ArrayList)):
+        if isinstance(mask, Graphic):
+            mask = mask.getShape()
         mask = [mask]
+    else:
+        for i in range(len(mask)):
+            if isinstance(mask[i], Graphic):
+                mask[i] = mask[i].getShape()
+
     r = GeometryUtil.maskout_Remove(data.asarray(), x.asarray(), y.asarray(), mask)
     return NDArray(r[0]), NDArray(r[1]), NDArray(r[2])
 

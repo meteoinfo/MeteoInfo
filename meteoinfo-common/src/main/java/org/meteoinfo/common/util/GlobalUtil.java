@@ -64,10 +64,10 @@ import java.util.zip.ZipInputStream;
       * Get software version
       * @return Software version
       */
-     public static String getVersion(){
+     public static String getVersion() {
          String version = GlobalUtil.class.getPackage().getImplementationVersion();
          if (version == null || version.equals("")) {
-             version = "3.8.11";
+             version = "3.9";
          }
          return version;
      }

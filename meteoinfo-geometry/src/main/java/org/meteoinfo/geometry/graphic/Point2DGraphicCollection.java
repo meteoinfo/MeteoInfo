@@ -224,4 +224,15 @@ public class Point2DGraphicCollection extends GraphicCollection {
         this.singleLegend = false;
         this.legendScheme = ls;
     }
+
+    /**
+     * Set x and y data
+     * @param xData X data array
+     * @param yData Y data array
+     */
+    public void setData(Array xData, Array yData) {
+        this.xData = xData;
+        this.yData = yData;
+        updateShape();
+    }
 }

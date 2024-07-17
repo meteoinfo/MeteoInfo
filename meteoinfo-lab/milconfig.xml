@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\contour">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\satellite\modis">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\animation"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\annotate"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\arrow"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\boxplot"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\error"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_cdata_3.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter\scatterm_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourf_extend_both.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourf_map_cols.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_traj_color_animation-1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\modis\MOD13A2_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_cdata_3.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter\scatterm_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourf_extend_both.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contourf_map_cols.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_traj_color_animation-1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\modis\MOD13A2_1.py"/>
     </RecentFiles>
   </File>
   <Font>

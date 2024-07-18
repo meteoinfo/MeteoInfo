@@ -44,7 +44,7 @@ __all__ = [
     'errorbar', 'figure', 'glfigure', 'figsize', 'patch', 'rectangle', 'fill', 'fill3', 'fill_between',
     'fill_betweenx', 'fimplicit3', 'webmap', 'gca', 'gcf', 'gc_collect', 'geoshow', 'get_figure',
     'gifaddframe', 'gifanimation', 'giffinish', 'grid', 'gridshow', 'gridshowm', 'hist', 'imshow',
-    'imshowm', 'isosurface', 'legend', 'left_title', 'lighting', 'loglog', 'makecolors', 'makelegend',
+    'imshowm', 'isosurface', 'legend', 'left_title', 'lighting', 'loglog', 'makecolors', 'makelegend','makemarkers',
     'makesymbolspec', 'masklayer', 'material', 'mesh', 'meshc', 'model', 'particles', 'pcolor', 'pcolorm',
     'pie', 'plot', 'plot3', 'plotm', 'quiver', 'quiver3', 'quiverkey', 'quiverm', 'readlegend',
     'right_title', 'refresh', 'savefig', 'savefig_jpeg', 'scatter', 'scatter3', 'scatterm', 'semilogx',
@@ -2213,6 +2213,11 @@ def volumeplot(*args, **kwargs):
 @_copy_docstring_and_deprecators(plotutil.makecolors)
 def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None, start=None, stop=None):
     return plotutil.makecolors(n, cmap, reverse, alpha, start, stop)
+
+
+@_copy_docstring_and_deprecators(plotutil.makemarkers)
+def makemarkers(n):
+    return plotutil.makemarkers(n)
 
 
 @_copy_docstring_and_deprecators(plotutil.makelegend)

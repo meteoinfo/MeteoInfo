@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\gui">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\error"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\traj">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grads"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
@@ -14,15 +12,21 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\modis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\gui"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_cdata_3.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\plot_traj.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\plot_traj_bd.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_cdata_3.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\plot_traj.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\plot_traj_bd.py"/>
     </RecentFiles>
   </File>
   <Font>

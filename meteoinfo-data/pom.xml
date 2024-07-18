@@ -52,43 +52,46 @@
             <groupId>edu.ucar</groupId>
             <artifactId>cdm-core</artifactId>
             <version>${netcdf.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>bufr</artifactId>
             <version>${netcdf.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>cdm-image</artifactId>
             <version>${netcdf.version}</version>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>cdm-misc</artifactId>
+            <version>${netcdf.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>cdm-radial</artifactId>
+            <version>${netcdf.version}</version>
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>grib</artifactId>
             <version>${netcdf.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdf4</artifactId>
             <version>${netcdf.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>opendap</artifactId>
             <version>${netcdf.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>cdm-mcidas</artifactId>
             <version>${netcdf.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.github.albfernandez</groupId>

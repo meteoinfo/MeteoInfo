@@ -1954,9 +1954,9 @@ public class FrmMain extends JFrame implements IApplication {
         double projX = pXY[0];
         double projY = pXY[1];
         if (_mapDocument.getActiveMapFrame().getMapView().getProjection().isLonLatMap()) {
-            this.jLabel_Coordinate.setText("Lon: " + String.format("%1$.2f", projX) + "; Lat: " + String.format("%1$.2f", projY));
+            this.jLabel_Coordinate.setText("Lon: " + String.format("%.2f", projX) + "; Lat: " + String.format("%.2f", projY));
         } else {
-            this.jLabel_Coordinate.setText("X: " + String.format("%1$.1f", projX) + "; Y: " + String.format("%1$.1f", projY));
+            this.jLabel_Coordinate.setText("X: " + String.format("%.1f", projX) + "; Y: " + String.format("%.1f", projY));
             String theText = this.jLabel_Coordinate.getText();
             if (_mapDocument.getActiveMapFrame().getMapView().getProjection().getProjInfo().getProjectionName() == ProjectionNames.Robinson) {
                 return;
@@ -1968,8 +1968,8 @@ public class FrmMain extends JFrame implements IApplication {
             points[0] = new double[]{projX, projY};
             try {
                 Reproject.reprojectPoints(points, fromProj, toProj, 0, 1);
-                this.jLabel_Coordinate.setText(theText + " (Lon: " + String.format("%1$.2f", points[0][0]) + "; Lat: "
-                        + String.format("%1$.2f", points[0][1]) + ")");
+                this.jLabel_Coordinate.setText(theText + " (Lon: " + String.format("%.2f", points[0][0]) + "; Lat: "
+                        + String.format("%.2f", points[0][1]) + ")");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

@@ -283,6 +283,8 @@ def makecolors(n, cmap='matlab_jet', reverse=False, alpha=None, start=None, stop
 def getpointstyle(style):
     if style is None:
         return None
+    elif isinstance(style, PointStyle):
+        return style
 
     pointStyle = None
     if 'do' in style:
@@ -365,6 +367,24 @@ def gethatch(h):
         return h
     else:
         return HatchStyle.getStyle(h)
+
+
+def makemarkers(n):
+    """
+    Make markers.
+
+    :param n: (*int*) The number of markers.
+
+    :return: (*list of markers*) The markers.
+    """
+    markers = []
+    i = 0
+    for _ in range(n):
+        if i == len(PointStyle.values()):
+            i = 0
+        markers.append(PointStyle.values()[i])
+        i += 1
+    return markers
 
 
 def getmarkerplotstyle(style, caption, **kwargs):
@@ -502,13 +522,35 @@ def getlegendbreaks(lb, **kwargs):
         if cmap is not None:
             colors = makecolors(ncolors, cmap=cmap)
 
-    if colors is not None:
-        n = len(colors)
-        colors = getcolors(colors)
-        for cc in colors:
-            nlb = lb.clone()
-            nlb.setColor(cc)
-            lbs.append(nlb)
+    if isinstance(lb, PolylineBreak):
+        if colors is not None:
+            n = len(colors)
+            colors = getcolors(colors)
+            markers = kwargs.pop('markers', None)
+            if markers is None:
+                for cc in colors:
+                    nlb = lb.clone()
+                    nlb.setColor(cc)
+                    nlb.setSymbolColor(cc)
+                    nlb.setSymbolFillColor(cc)
+                    lbs.append(nlb)
+            else:
+                for cc, marker in zip(colors, markers):
+                    nlb = lb.clone()
+                    nlb.setColor(cc)
+                    nlb.setDrawSymbol(True)
+                    nlb.setSymbolStyle(getpointstyle(marker))
+                    nlb.setSymbolColor(cc)
+                    nlb.setSymbolFillColor(cc)
+                    lbs.append(nlb)
+    else:
+        if colors is not None:
+            n = len(colors)
+            colors = getcolors(colors)
+            for cc in colors:
+                nlb = lb.clone()
+                nlb.setColor(cc)
+                lbs.append(nlb)
 
     if len(lbs) == 0:
         return lb
@@ -587,20 +629,20 @@ def getlegendbreak(geometry, **kwargs):
             pstyle = getpointstyle(marker)
             lb.setDrawSymbol(True)
             lb.setSymbolStyle(pstyle)
-            markersize = kwargs.pop('markersize', None)
-            if not markersize is None:
-                lb.setSymbolSize(markersize)
-            markercolor = kwargs.pop('markeredgecolor', lb.getColor())
-            markercolor = getcolor(markercolor)
-            lb.setSymbolColor(markercolor)
-            fillcolor = kwargs.pop('markerfacecolor', lb.getColor())
-            if not fillcolor is None:
-                lb.setFillSymbol(True)
-                lb.setSymbolFillColor(getcolor(fillcolor))
-            else:
-                lb.setSymbolFillColor(markercolor)
-            interval = kwargs.pop('markerinterval', 1)
-            lb.setSymbolInterval(interval)
+        markersize = kwargs.pop('markersize', None)
+        if not markersize is None:
+            lb.setSymbolSize(markersize)
+        markercolor = kwargs.pop('markeredgecolor', lb.getColor())
+        markercolor = getcolor(markercolor)
+        lb.setSymbolColor(markercolor)
+        fillcolor = kwargs.pop('markerfacecolor', lb.getColor())
+        if not fillcolor is None:
+            lb.setFillSymbol(True)
+            lb.setSymbolFillColor(getcolor(fillcolor))
+        else:
+            lb.setSymbolFillColor(markercolor)
+        interval = kwargs.pop('markerinterval', 1)
+        lb.setSymbolInterval(interval)
     elif geometry == 'polygon':
         lb = PolygonBreak()
         edge = True

@@ -14,7 +14,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <netcdf.version>5.5.4-SNAPSHOT</netcdf.version>
+        <netcdf.version>5.6.0</netcdf.version>
     </properties>
 
     <repositories>
@@ -41,12 +41,54 @@
             <artifactId>meteoinfo-dataframe</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
+        <!--<dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>netcdfAll</artifactId>
             <version>${netcdf.version}</version>
-            <!--<scope>system</scope>
-            <systemPath>${project.basedir}/lib/netcdfAll-5.5.3-SNAPSHOT.jar</systemPath>-->
+            &lt;!&ndash;<scope>system</scope>
+            <systemPath>${project.basedir}/lib/netcdfAll-5.5.3-SNAPSHOT.jar</systemPath>&ndash;&gt;
+        </dependency>-->
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>cdm-core</artifactId>
+            <version>${netcdf.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>bufr</artifactId>
+            <version>${netcdf.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>cdm-image</artifactId>
+            <version>${netcdf.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>grib</artifactId>
+            <version>${netcdf.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>netcdf4</artifactId>
+            <version>${netcdf.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>opendap</artifactId>
+            <version>${netcdf.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
+            <artifactId>cdm-mcidas</artifactId>
+            <version>${netcdf.version}</version>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.github.albfernandez</groupId>

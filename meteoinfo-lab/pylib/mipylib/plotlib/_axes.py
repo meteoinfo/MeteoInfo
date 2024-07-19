@@ -93,8 +93,8 @@ class Axes(object):
             leftaxis = False
             topaxis = False
             rightaxis = False
-        xreverse = kwargs.pop('xreverse', False)
-        yreverse = kwargs.pop('yreverse', False)
+        xinvert = kwargs.pop('xinvert', False)
+        yinvert = kwargs.pop('yinvert', False)
         xaxistype = kwargs.pop('xaxistype', None)
         facecolor = kwargs.pop('bgcolor', None)
         facecolor = kwargs.pop('facecolor', facecolor)
@@ -113,10 +113,10 @@ class Axes(object):
             t_axis.setVisible(False)
         if not rightaxis:
             r_axis.setVisible(False)
-        if xreverse:
+        if xinvert:
             b_axis.setInverse(True)
             t_axis.setInverse(True)
-        if yreverse:
+        if yinvert:
             l_axis.setInverse(True)
             r_axis.setInverse(True)
         if not xaxistype is None:
@@ -1073,6 +1073,26 @@ class Axes(object):
         Reverse y axis.
         """
         self._axes.getYAxis().setInverse(True)
+
+    def invert_xaxis(self):
+        """
+        Invert x axis.
+        """
+        b_axis = self.get_axis(Location.BOTTOM)
+        t_axis = self.get_axis(Location.TOP)
+        b_axis.setInverse(not b_axis.isInverse())
+        t_axis.setInverse(not t_axis.isInverse())
+        self.stale = True
+
+    def invert_yaxis(self):
+        """
+        Invert y axis.
+        """
+        l_axis = self.get_axis(Location.LEFT)
+        r_axis = self.get_axis(Location.RIGHT)
+        l_axis.setInverse(not l_axis.isInverse())
+        r_axis.setInverse(not r_axis.isInverse())
+        self.stale = True
 
     def add_patch(self, patch):
         """

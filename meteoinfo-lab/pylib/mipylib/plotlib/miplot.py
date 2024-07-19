@@ -44,7 +44,8 @@ __all__ = [
     'errorbar', 'figure', 'glfigure', 'figsize', 'patch', 'rectangle', 'fill', 'fill3', 'fill_between',
     'fill_betweenx', 'fimplicit3', 'webmap', 'gca', 'gcf', 'gc_collect', 'geoshow', 'get_figure',
     'gifaddframe', 'gifanimation', 'giffinish', 'grid', 'gridshow', 'gridshowm', 'hist', 'imshow',
-    'imshowm', 'isosurface', 'legend', 'left_title', 'lighting', 'loglog', 'makecolors', 'makelegend','makemarkers',
+    'imshowm', 'invert_xaxis', 'invert_yaxis', 'isosurface', 'legend', 'left_title', 'lighting', 'loglog',
+    'makecolors', 'makelegend','makemarkers',
     'makesymbolspec', 'masklayer', 'material', 'mesh', 'meshc', 'model', 'particles', 'pcolor', 'pcolorm',
     'pie', 'plot', 'plot3', 'plotm', 'quiver', 'quiver3', 'quiverkey', 'quiverm', 'readlegend',
     'right_title', 'refresh', 'savefig', 'savefig_jpeg', 'scatter', 'scatter3', 'scatterm', 'semilogx',
@@ -819,8 +820,8 @@ def axes(*args, **kwargs):
     :param topaxis: (*boolean*) Optional, set top axis visible or not. Default is ``True`` .
     :param rightaxis: (*boolean*) Optional, set right axis visible or not. Default is ``True`` .
     :param xaxistype: (*string*) Optional, set x axis type as 'normal', 'lon', 'lat' or 'time'.
-    :param xreverse: (*boolean*) Optional, set x axis reverse or not. Default is ``False`` .
-    :param yreverse: (*boolean*) Optional, set y axis reverse or not. Default is ``False`` .
+    :param xinvert: (*boolean*) Optional, set x axis inverted or not. Default is ``False`` .
+    :param yinvert: (*boolean*) Optional, set y axis inverted or not. Default is ``False`` .
     
     :returns: The axes.
     """
@@ -1499,6 +1500,18 @@ def xreverse():
 def yreverse():
     g_axes.yreverse()
     draw_if_interactive()
+
+
+@_copy_docstring_and_deprecators(Axes.invert_xaxis)
+def invert_xaxis():
+    g_axes.invert_xaxis()
+    #draw_if_interactive()
+
+
+@_copy_docstring_and_deprecators(Axes.invert_yaxis)
+def invert_yaxis():
+    g_axes.invert_yaxis()
+    #draw_if_interactive()
 
 
 @_copy_docstring_and_deprecators(Axes.legend)

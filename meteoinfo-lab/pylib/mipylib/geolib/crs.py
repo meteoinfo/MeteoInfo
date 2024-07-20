@@ -14,6 +14,7 @@ from org.meteoinfo.projection.info import Wagner3 as JWagner3
 from org.meteoinfo.projection.info import Airy as JAiry
 from org.meteoinfo.projection.info import Aitoff as JAitoff
 from org.meteoinfo.projection.info import August as JAugust
+from org.meteoinfo.projection.info import UTM as JUTM
 from org.locationtech.proj4j import CRSFactory
 
 
@@ -21,7 +22,7 @@ __all__ = ['AlbersEqualArea','Airy','Aitoff','August','AzimuthalEquidistant','Eq
            'Geostationary','Hammer','LambertAzimuthalEqualArea','LambertConformal','LambertEqualArea',
            'Mercator','Mollweide','NorthPolarStereo','Orthographic',
            'PlateCarree','Robinson','Sinusoidal','SouthPolarStereo','Stereographic',
-           'TransverseMercator','Wagner3']
+           'TransverseMercator','UTM','Wagner3']
 
 
 crs_factory = CRSFactory()
@@ -108,6 +109,33 @@ class Mercator(JMercator):
 
         crs = crs_factory.createFromParameters('custom', proj4_params)
         JMercator.__init__(self, crs)
+
+
+class UTM(JUTM):
+    """
+    Universal Transverse Mercator projection.
+
+    """
+
+    def __init__(self, zone, southern_hemisphere=False):
+        """
+        Parameters
+        ----------
+        zone
+            The numeric zone of the UTM required.
+        southern_hemisphere: optional
+            Set to True if the zone is in the southern hemisphere. Defaults to
+            False.
+
+        """
+        proj4_params = ['+proj=utm',
+                        '+units=m',
+                        '+zone=' + str(zone)]
+        if southern_hemisphere:
+            proj4_params.append('+south')
+
+        crs = crs_factory.createFromParameters('custom', proj4_params)
+        JUTM.__init__(self, crs)
 
 
 class AlbersEqualArea(Albers):

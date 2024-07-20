@@ -329,9 +329,10 @@ public class MapGridLine extends GridLine {
                 continue;
             }
 
-            if (graphic.getNumGraphics() > 1) {
-                points = (List<PointD>) graphic.getGraphicN(0).getShape().getPoints();
-                List<PointD> points1 = (List<PointD>) graphic.getGraphicN(1).getShape().getPoints();
+            PolylineShape polylineShape = (PolylineShape) graphic.getShape();
+            if (polylineShape.getPartNum() > 1) {
+                points = (List<PointD>) polylineShape.getPolylines().get(0).getPointList();
+                List<PointD> points1 = (List<PointD>) polylineShape.getPolylines().get(1).getPointList();
                 Collections.reverse(points1);
                 points.addAll(points1);
                 line = new PolylineZShape();
@@ -417,6 +418,10 @@ public class MapGridLine extends GridLine {
                         if (!aGL.isLongitude()) {
                             aGL.setLabDirection(Direction.North);
                         } else {
+                            if (aGL.getLabDirection() == Direction.North) {
+                                continue;
+                            }
+
                             if (aGL.getCoord().Y > 0 && Math.abs(aGL.getCoord().X) < 1000) {
                                 continue;
                             }

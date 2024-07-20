@@ -212,7 +212,7 @@ def inpolygon(x, y, polygon):
         r = NDArray(GeometryUtil.inPolygon(x._array, y._array, x_p._array, y_p._array))
     else:
         if isinstance(polygon, MILayer):
-            polygon = polygon.shapes()
+            polygon = polygon.shapes
         elif isinstance(polygon, PolygonShape):
             polygon = [polygon]
         r = NDArray(GeometryUtil.inPolygon(x._array, y._array, polygon))

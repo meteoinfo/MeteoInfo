@@ -940,7 +940,7 @@ public class MIMath {
      * @return Values
      */
     public static double[] getIntervalValues(double min, double max, int n) {
-        return getIntervalValues(min, max, n, false);
+        return getIntervalValues(min, max, n, true);
     }
 
     /**

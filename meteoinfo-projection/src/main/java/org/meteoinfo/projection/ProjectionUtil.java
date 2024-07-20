@@ -176,7 +176,12 @@ public class ProjectionUtil {
         PointD p;
         for (int i = 0; i < Y.length; i++) {
             for (int j = 0; j < X.length; j++) {
-                p = Reproject.reprojectPoint(X[j], Y[i], fromProj, toProj);
+                try {
+                    p = Reproject.reprojectPoint(X[j], Y[i], fromProj, toProj);
+                } catch (Exception e) {
+                    continue;
+                }
+
                 if (Double.isNaN(p.X) || Double.isNaN(p.Y)) {
                     continue;
                 }
@@ -744,6 +749,8 @@ public class ProjectionUtil {
                     }
                     break;
                 case Mercator:
+                case Transverse_Mercator:
+                case UTM:
                     if (pointShape.getPoint().Y > cutoff || pointShape.getPoint().Y < -cutoff) {
                         return null;
                     }
@@ -792,6 +799,8 @@ public class ProjectionUtil {
                     }
                     break;
                 case Mercator:
+                case Transverse_Mercator:
+                case UTM:
                     if (lineShape.getExtent().maxY > cutoff) {
                         lineShape = GeoComputation.clipPolylineShape_Lat(lineShape, cutoff, false);
                     }
@@ -872,6 +881,8 @@ public class ProjectionUtil {
                     }
                     break;
                 case Mercator:
+                case Transverse_Mercator:
+                case UTM:
                     if (aPGS.getExtent().maxY > cutoff) {
                         aPGS = GeoComputation.clipPolygonShape_Lat(aPGS, cutoff, false);
                     }

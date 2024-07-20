@@ -1333,7 +1333,7 @@ def mean(x, axis=None, keepdims=False):
             for xx in x:
                 a.append(xx.asarray())
             r = ArrayMath.mean(a)
-            return x0.array_wrap(r)
+            return x[0].array_wrap(r)
         elif isinstance(x[0], PyStationData):
             a = []
             for xx in x:

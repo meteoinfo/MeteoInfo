@@ -852,10 +852,6 @@ def axesm(*args, **kwargs):
     :param rightaxis: (*boolean*) Optional, set right axis visible or not. Default is ``True`` .
     :param xyscale: (*int*) Optional, set scale of x and y axis, default is 1. It is only
         valid in longlat projection.
-    :param gridlabel: (*boolean*) Optional, set axis tick labels visible or not. Default is ``True`` .
-    :param gridline: (*boolean*) Optional, set grid line visible or not. Default is ``False`` .
-    :param griddx: (*float*) Optional, set x grid line interval. Default is 10 degree.
-    :param griddy: (*float*) Optional, set y grid line interval. Default is 10 degree.
     :param frameon: (*boolean*) Optional, set frame visible or not. Default is ``False`` for lon/lat
         projection, ortherwise is ``True``.
     :param tickfontname: (*string*) Optional, set axis tick labels font name. Default is ``Arial`` .

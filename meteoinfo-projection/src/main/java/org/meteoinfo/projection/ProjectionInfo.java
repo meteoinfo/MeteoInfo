@@ -142,6 +142,9 @@ package org.meteoinfo.projection;
              case "Transverse Mercator":
                  projInfo = new TransverseMercator(crs);
                  break;
+             case "Extended Transverse Mercator":
+                 projInfo = new UTM(crs);
+                 break;
              case "Wagner III":
                  projInfo = new Wagner3(crs);
                  break;

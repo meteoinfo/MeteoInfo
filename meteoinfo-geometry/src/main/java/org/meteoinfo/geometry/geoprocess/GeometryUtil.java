@@ -64,14 +64,15 @@ public class GeometryUtil {
 
             return cET;
         } else {
-            Extent cET = new Extent();
+            Extent cET = null;
             for (int i = 0; i < PList.size(); i++) {
                 PointD aP = PList.get(i);
-                if (i == 0) {
-                    cET.minX = aP.X;
-                    cET.maxX = aP.X;
-                    cET.minY = aP.Y;
-                    cET.maxY = aP.Y;
+                if (Double.isInfinite(aP.X) || Double.isInfinite(aP.Y)) {
+                    continue;
+                }
+
+                if (cET == null) {
+                    cET = new Extent(aP.X, aP.X, aP.Y, aP.Y);
                 } else {
                     if (cET.minX > aP.X) {
                         cET.minX = aP.X;

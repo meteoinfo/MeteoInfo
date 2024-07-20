@@ -38,6 +38,7 @@ public enum ProjectionNames {
     Geostationary_Satellite("geos"),       
     Oblique_Stereographic_Alternative("sterea"),
     Transverse_Mercator("tmerc"),
+    UTM("utm"),
     Sinusoidal("sinu"),
     Cylindrical_Equal_Area("cea"),
     Hammer_Eckert("hammer"),

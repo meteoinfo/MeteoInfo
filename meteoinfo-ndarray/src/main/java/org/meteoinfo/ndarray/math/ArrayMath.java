@@ -8,10 +8,7 @@ package org.meteoinfo.ndarray.math;
 import org.meteoinfo.ndarray.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  *
@@ -46,7 +43,44 @@ public class ArrayMath {
         }
     }
 
-    private static DataType commonType(DataType aType, DataType bType) {
+    /**
+     * Get common data type
+     * @param dataTypes Data type list
+     * @return Common data type
+     */
+    public static DataType commonType(List<DataType> dataTypes) {
+        DataType cDataType = dataTypes.get(0);
+        if (dataTypes.size() > 1) {
+            for (int i = 1; i < dataTypes.size(); i++) {
+                DataType dataType = dataTypes.get(i);
+                cDataType = commonType(cDataType, dataType);
+            }
+        }
+
+        return cDataType;
+    }
+
+    /**
+     * Get common data type
+     * @param arrays Array list
+     * @return Common data type
+     */
+    public static DataType commonTypeArrays(List<Array> arrays) {
+        List<DataType> dataTypes = new ArrayList<>();
+        for (Array array : arrays) {
+            dataTypes.add(array.getDataType());
+        }
+
+        return commonType(dataTypes);
+    }
+
+    /**
+     * Get common data type
+     * @param aType Data type a
+     * @param bType Data type b
+     * @return Common data type
+     */
+    public static DataType commonType(DataType aType, DataType bType) {
         if (aType == bType) {
             return aType;
         }

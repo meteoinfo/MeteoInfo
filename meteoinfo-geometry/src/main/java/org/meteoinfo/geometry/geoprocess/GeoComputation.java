@@ -1013,6 +1013,9 @@ public class GeoComputation {
                             }
                             q1 = q2;
                         }
+                        if (j == borderList.size()) {
+                            j = j - 1;
+                        }
                         GridLabel aGL = new GridLabel();
                         aGL.setLongitude(isVertical);
                         aGL.setBorder(true);
@@ -1062,6 +1065,9 @@ public class GeoComputation {
                                 break;
                             }
                             q1 = q2;
+                        }
+                        if (j == borderList.size()) {
+                            j = j - 1;
                         }
                         GridLabel aGL = new GridLabel();
                         aGL.setBorder(true);

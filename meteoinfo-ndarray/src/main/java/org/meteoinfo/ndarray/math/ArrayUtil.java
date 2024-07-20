@@ -2083,7 +2083,8 @@ public class ArrayUtil {
         }
         int[] shape = arrays.get(0).getShape();
         shape[axis] = len;
-        Array r = Array.factory(arrays.get(0).getDataType(), shape);
+        DataType dataType = ArrayMath.commonTypeArrays(arrays);
+        Array r = Array.factory(dataType, shape);
         int[] current;
         IndexIterator ii = r.getIndexIterator();
         Index index;
@@ -2133,7 +2134,9 @@ public class ArrayUtil {
                 nshape[i] = shape[i];
             }
         }
-        Array r = Array.factory(a.getDataType(), nshape);
+
+        DataType dataType = ArrayMath.commonType(a.getDataType(), b.getDataType());
+        Array r = Array.factory(dataType, nshape);
         Index indexr = r.getIndex();
         Index indexa = a.getIndex();
         Index indexb = b.getIndex();
@@ -6016,7 +6019,5 @@ public class ArrayUtil {
         return iValue;
     }
 
-    // </editor-fold>
-    // <editor-fold desc="Time average">
     // </editor-fold>
 }

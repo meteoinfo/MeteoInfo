@@ -2196,6 +2196,7 @@ public class VectorLayer extends MapLayer {
                 aLP.setText(text);
                 aLP.setFont(_labelSet.getLabelFont());
                 aLP.setAlignType(_labelSet.getLabelAlignType());
+                aLP.setXShift(_labelSet.getXOffset());
                 aLP.setYShift(_labelSet.getYOffset());
 
                 String vStr;

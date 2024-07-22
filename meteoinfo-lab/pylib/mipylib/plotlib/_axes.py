@@ -2368,6 +2368,7 @@ class Axes(object):
             same as color of the line.
         :param dynamic: (*boolean*) Draw labels dynamic or not. Default is ``True``.
         :param drawshadow: (*boolean*) Draw shadow under labels or not.
+        :param shadowcolor: (*color*) Shadow color.
         :param fieldname: (*string*) The field name used for label.
         :param xoffset: (*int*) X offset of the labels.
         :param yoffset: (int*) Y offset of the labels.
@@ -2377,10 +2378,7 @@ class Axes(object):
         gc = layer
         if isinstance(layer, MILayer):
             gc = layer._layer
-        dynamic = kwargs.pop('dynamic', True)
-        if gc.getShapeType() != ShapeTypes.POLYLINE:
-            dynamic = False
-        drawshadow = kwargs.pop('drawshadow', dynamic)
+
         labelset = gc.getLabelSet()
         if isinstance(gc, MapLayer):
             fieldname = kwargs.pop('fieldname', labelset.getFieldName())
@@ -2400,6 +2398,13 @@ class Axes(object):
             labelset.setColorByLegend(False)
             color = plotutil.getcolor(color)
             labelset.setLabelColor(color)
+
+        dynamic = kwargs.pop('dynamic', gc.getShapeType() == ShapeTypes.POLYLINE)
+        drawshadow = kwargs.pop('drawshadow', dynamic)
+        shadowcolor= kwargs.pop('shadowcolor', Color.white if drawshadow else None)
+        if shadowcolor is not None:
+            labelset.setShadowColor(plotutil.getcolor(shadowcolor))
+            drawshadow = True
         labelset.setDrawShadow(drawshadow)
         xoffset = kwargs.pop('xoffset', 0)
         labelset.setXOffset(xoffset)

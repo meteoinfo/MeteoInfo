@@ -924,6 +924,7 @@ public class Plot2D extends AbstractPlot2D {
                                 aX = aX - labSize.width;
                                 break;
                         }
+                        aX += aLB.getXShift();
                         aY -= aLB.getYShift();
                         aY -= labSize.height / 3;
                         rect.x = (int) aX;

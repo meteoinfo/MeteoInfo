@@ -1901,6 +1901,76 @@ public class ArrayUtil {
     }
 
     /**
+     * Convert array to another data type
+     * @param a The input array
+     * @param dataType The data type to be converted
+     * @return Converted array
+     */
+    public static Array convertToDataType(Array a, DataType dataType) {
+        if (a.getDataType() == dataType) {
+            return a;
+        } else {
+            Array r = Array.factory(dataType, a.getShape());
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            switch (dataType) {
+                case BYTE:
+                    while (iterR.hasNext()) {
+                        iterR.setByteNext(iterA.getByteNext());
+                    }
+                    break;
+                case BOOLEAN:
+                    while (iterR.hasNext()) {
+                        iterR.setBooleanNext(iterA.getBooleanNext());
+                    }
+                    break;
+                case SHORT:
+                    while (iterR.hasNext()) {
+                        iterR.setShortNext(iterA.getShortNext());
+                    }
+                    break;
+                case INT:
+                    while (iterR.hasNext()) {
+                        iterR.setIntNext(iterA.getIntNext());
+                    }
+                    break;
+                case LONG:
+                    while (iterR.hasNext()) {
+                        iterR.setLongNext(iterA.getLongNext());
+                    }
+                    break;
+                case FLOAT:
+                    while (iterR.hasNext()) {
+                        iterR.setFloatNext(iterA.getFloatNext());
+                    }
+                    break;
+                case DOUBLE:
+                    while (iterR.hasNext()) {
+                        iterR.setDoubleNext(iterA.getDoubleNext());
+                    }
+                    break;
+                case COMPLEX:
+                    while (iterR.hasNext()) {
+                        iterR.setComplexNext(iterA.getComplexNext());
+                    }
+                    break;
+                case STRING:
+                    while (iterR.hasNext()) {
+                        iterR.setStringNext(iterA.getStringNext());
+                    }
+                    break;
+                case DATE:
+                    while (iterR.hasNext()) {
+                        iterR.setDateNext(iterA.getDateNext());
+                    }
+                    break;
+            }
+
+            return r;
+        }
+    }
+
+    /**
      * Convert array to integer type
      *
      * @param a Array a

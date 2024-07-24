@@ -717,17 +717,18 @@ class NDArray(object):
         if self.dtype == dtype:
             return self.copy()
 
-        if dtype.kind == 'i':
-            r = NDArray(ArrayUtil.toInteger(self._array))
-        elif dtype.kind == 'f':
-            if dtype.name == 'float':
-                r = NDArray(ArrayUtil.toFloat(self._array))
-            else:
-                r = NDArray(ArrayUtil.toDouble(self._array))
-        elif dtype.kind == 'b':
-            r = NDArray(ArrayUtil.toBoolean(self._array))
-        else:
-            r = self
+        # if dtype.kind == 'i':
+        #     r = NDArray(ArrayUtil.toInteger(self._array))
+        # elif dtype.kind == 'f':
+        #     if dtype.name == 'float':
+        #         r = NDArray(ArrayUtil.toFloat(self._array))
+        #     else:
+        #         r = NDArray(ArrayUtil.toDouble(self._array))
+        # elif dtype.kind == 'b':
+        #     r = NDArray(ArrayUtil.toBoolean(self._array))
+        # else:
+        #     r = self
+        r = NDArray(ArrayUtil.convertToDataType(self._array, dtype._dtype))
         return r
 
     @property

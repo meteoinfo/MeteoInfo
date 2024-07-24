@@ -32,6 +32,8 @@
  */
 package org.meteoinfo.ndarray;
 
+import org.meteoinfo.common.util.JDateUtil;
+
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.time.LocalDateTime;
@@ -266,9 +268,13 @@ public class ArrayDouble extends Array {
         throw new ForbiddenConversionException();
     }
 
-    public LocalDateTime getDate(Index i) { throw new ForbiddenConversionException(); }
+    public LocalDateTime getDate(Index i) {
+        return JDateUtil.fromOADate(storageD[i.currentElement()]);
+    }
 
-    public void setDate(Index i, LocalDateTime value) { throw new ForbiddenConversionException(); }
+    public void setDate(Index i, LocalDateTime value) {
+        storageD[i.currentElement()] = JDateUtil.toOADate(value);
+    }
 
     public Object getObject(Index i) {
         return storageD[i.currentElement()];
@@ -363,9 +369,13 @@ public class ArrayDouble extends Array {
         throw new ForbiddenConversionException();
     }
 
-    public LocalDateTime getDate(int index) { throw new ForbiddenConversionException(); }
+    public LocalDateTime getDate(int index) {
+        return JDateUtil.fromOADate(storageD[index]);
+    }
 
-    public void setDate(int index, LocalDateTime value) { throw new ForbiddenConversionException(); }
+    public void setDate(int index, LocalDateTime value) {
+        storageD[index] = JDateUtil.toOADate(value);
+    }
 
     public Object getObject(int index) {
         return getDouble(index);

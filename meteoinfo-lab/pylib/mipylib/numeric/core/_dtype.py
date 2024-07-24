@@ -7,16 +7,25 @@ __all__ = [
 
 _dtype_dict = dict(byte = JDataType.BYTE,
     char = JDataType.CHAR,
+    bool = JDataType.BOOLEAN,
     boolean = JDataType.BOOLEAN,
     int = JDataType.INT,
+    int32 = JDataType.INT,
+    integer = JDataType.INT,
     uint = JDataType.UINT,
     short = JDataType.SHORT,
+    int16 = JDataType.SHORT,
     long = JDataType.LONG,
+    int64 = JDataType.LONG,
     float = JDataType.FLOAT,
+    float32 = JDataType.FLOAT,
     double = JDataType.DOUBLE,
+    float64 = JDataType.DOUBLE,
+    str = JDataType.STRING,
     string = JDataType.STRING,
     complex = JDataType.COMPLEX,
     date = JDataType.DATE,
+    datetime = JDataType.DATE,
     object = JDataType.OBJECT)
 
 class DataType(object):

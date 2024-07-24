@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\contour">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\topology"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\traj">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\eof"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\subplot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
@@ -16,17 +13,20 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_cdata_3.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\conout_negtive_value.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\conoutm_clabel_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\astype_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\plot_traj_bd.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_cdata_3.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\conout_negtive_value.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\conoutm_clabel_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\array\astype_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\traj\plot_traj_bd.py"/>
     </RecentFiles>
   </File>
   <Font>

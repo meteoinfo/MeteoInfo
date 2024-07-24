@@ -191,122 +191,122 @@ public class ArrayString extends Array {
     }
 
     /**
-     * set the value at the sepcified index.
+     * set the value at the specified index.
      */
     public void set(Index i, String value) {
         storage[i.currentElement()] = value;
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * get the double value at the specified index.
      */
     public double getDouble(Index i) {
-        throw new ForbiddenConversionException();
+        return Double.parseDouble(storage[i.currentElement()]);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * set the value at the specified index.
      */
     public void setDouble(Index i, double value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = String.valueOf(value);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * get the float value at the specified index.
      */
     public float getFloat(Index i) {
-        throw new ForbiddenConversionException();
+        return Float.parseFloat(storage[i.currentElement()]);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * set the value at the specified index.
      */
     public void setFloat(Index i, float value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = String.valueOf(value);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * get the long value at the specified index.
      */
     public long getLong(Index i) {
-        throw new ForbiddenConversionException();
+        return Long.parseLong(storage[i.currentElement()]);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * set the value at the specified index.
      */
     public void setLong(Index i, long value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = String.valueOf(value);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * get the integer value at the specified index.
      */
     public int getInt(Index i) {
-        throw new ForbiddenConversionException();
+        return Integer.parseInt(storage[i.currentElement()]);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * set the value at the specified index.
      */
     public void setInt(Index i, int value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = String.valueOf(value);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * get the short value at the specified index.
      */
     public short getShort(Index i) {
-        throw new ForbiddenConversionException();
+        return Short.parseShort(storage[i.currentElement()]);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * set the value at the specified index.
      */
     public void setShort(Index i, short value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = String.valueOf(value);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * get the byte value at the specified index.
      */
     public byte getByte(Index i) {
-        throw new ForbiddenConversionException();
+        return Byte.parseByte(storage[i.currentElement()]);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * set the value at the specified index.
      */
     public void setByte(Index i, byte value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = String.valueOf(value);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * get the boolean value at the specified index.
      */
     public boolean getBoolean(Index i) {
-        throw new ForbiddenConversionException();
+        return Boolean.parseBoolean(storage[i.currentElement()]);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * set the value at the specified index.
      */
     public void setBoolean(Index i, boolean value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = String.valueOf(value);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * get the char value at the specified index.
      */
     public char getChar(Index i) {
-        throw new ForbiddenConversionException();
+        return storage[i.currentElement()].charAt(0);
     }
 
     /**
-     * not legal, throw ForbiddenConversionException
+     * set the value at the specified index.
      */
     public void setChar(Index i, char value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = String.valueOf(value);
     }
     
     public String getString(Index i) {
@@ -339,67 +339,67 @@ public class ArrayString extends Array {
 
     // package private : mostly for iterators
     public double getDouble(int index) {
-        throw new ForbiddenConversionException();
+        return Double.parseDouble(storage[index]);
     }
 
     public void setDouble(int index, double value) {
-        throw new ForbiddenConversionException();
+        storage[index] = String.valueOf(value);
     }
 
     public float getFloat(int index) {
-        throw new ForbiddenConversionException();
+        return Float.parseFloat(storage[index]);
     }
 
     public void setFloat(int index, float value) {
-        throw new ForbiddenConversionException();
+        storage[index] = String.valueOf(value);
     }
 
     public long getLong(int index) {
-        throw new ForbiddenConversionException();
+        return Long.parseLong(storage[index]);
     }
 
     public void setLong(int index, long value) {
-        throw new ForbiddenConversionException();
+        storage[index] = String.valueOf(value);
     }
 
     public int getInt(int index) {
-        throw new ForbiddenConversionException();
+        return Integer.parseInt(storage[index]);
     }
 
     public void setInt(int index, int value) {
-        throw new ForbiddenConversionException();
+        storage[index] = String.valueOf(value);
     }
 
     public short getShort(int index) {
-        throw new ForbiddenConversionException();
+        return Short.parseShort(storage[index]);
     }
 
     public void setShort(int index, short value) {
-        throw new ForbiddenConversionException();
+        storage[index] = String.valueOf(value);;
     }
 
     public byte getByte(int index) {
-        throw new ForbiddenConversionException();
+        return Byte.parseByte(storage[index]);
     }
 
     public void setByte(int index, byte value) {
-        throw new ForbiddenConversionException();
+        storage[index] = String.valueOf(value);
     }
 
     public char getChar(int index) {
-        throw new ForbiddenConversionException();
+        return storage[index].charAt(0);
     }
 
     public void setChar(int index, char value) {
-        throw new ForbiddenConversionException();
+        storage[index] = String.valueOf(value);
     }
 
     public boolean getBoolean(int index) {
-        throw new ForbiddenConversionException();
+        return Boolean.parseBoolean(storage[index]);
     }
 
     public void setBoolean(int index, boolean value) {
-        throw new ForbiddenConversionException();
+        storage[index] = String.valueOf(value);
     }
     
     public String getString(int index) {
@@ -411,11 +411,11 @@ public class ArrayString extends Array {
     }
     
     public Complex getComplex(int index) {
-        throw new ForbiddenConversionException();
+        return Complex.parse(storage[index]);
     }
     
     public void setComplex(int index, Complex value) {
-        throw new ForbiddenConversionException();
+        storage[index] = value.toString();
     }
 
     public LocalDateTime getDate(int index) { throw new ForbiddenConversionException(); }

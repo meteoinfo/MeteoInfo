@@ -1624,31 +1624,27 @@ public class Axis extends Artist implements Cloneable {
             }
             //Time label - left
             if (this.drawTickLabel) {
-                DateTimeFormatter format;
                 if (this instanceof TimeAxis) {
                     TimeAxis tAxis = (TimeAxis) this;
                     if (tAxis.isVarFormat()) {
-                        drawStr = null;
+                        int idx = this.inverse ? this.getTickValues().length - 1 : 0;
+                        LocalDateTime cDate = JDateUtil.fromOADate(this.getTickValues()[idx]);
+                        DateTimeFormatter format = null;
                         switch (tAxis.getTimeUnit()) {
                             case MONTH:
                                 format = DateTimeFormatter.ofPattern("yyyy");
-                                LocalDateTime cdate = JDateUtil.fromOADate(this.getTickValues()[0]);
-                                drawStr = format.format(cdate);
                                 break;
                             case DAY:
                                 format = DateTimeFormatter.ofPattern("yyyy-MM");
-                                cdate = JDateUtil.fromOADate(this.getTickValues()[0]);
-                                drawStr = format.format(cdate);
                                 break;
                             case HOUR:
                             case MINUTE:
                             case SECOND:
                                 format = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                                cdate = JDateUtil.fromOADate(this.getTickValues()[0]);
-                                drawStr = format.format(cdate);
                                 break;
                         }
-                        if (drawStr != null) {
+                        if (format != null) {
+                            drawStr = format.format(cDate);
                             labx = (float) minx;
                             laby = laby + this.tickSpace;
                             Draw.drawString(g, labx, laby, drawStr, XAlign.LEFT, YAlign.TOP, true);

@@ -464,7 +464,7 @@ class MapAxes(Axes):
             Axes.set_xticks(self, locs)
         else:
             gridline = self._axes.getGridLine()
-            if isinstance(locs, (NDArray, DimArray)):
+            if isinstance(locs, NDArray):
                 locs = locs.aslist()
             gridline.setLongitudeLocations(locs)
 
@@ -476,7 +476,7 @@ class MapAxes(Axes):
             Axes.set_yticks(self, locs)
         else:
             gridline = self._axes.getGridLine()
-            if isinstance(locs, (NDArray, DimArray)):
+            if isinstance(locs, NDArray):
                 locs = locs.aslist()
             gridline.setLatitudeLocations(locs)
         

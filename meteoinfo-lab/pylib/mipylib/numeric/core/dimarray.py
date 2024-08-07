@@ -311,120 +311,6 @@ class DimArray(NDArray):
         if onlyrange:
             data.base = self.get_base()
         return data
-        
-    def __add__(self, other):
-        r = super(DimArray, self).__add__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __radd__(self, other):
-        return DimArray.__add__(self, other)
-        
-    def __sub__(self, other):
-        r = super(DimArray, self).__sub__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __rsub__(self, other):
-        r = super(DimArray, self).__rsub__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __mul__(self, other):
-        r = super(DimArray, self).__mul__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __rmul__(self, other):
-        return DimArray.__mul__(self, other)
-        
-    def __div__(self, other):
-        r = super(DimArray, self).__div__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __rdiv__(self, other):
-        r = super(DimArray, self).__rdiv__(other)
-        return DimArray(r, self.dims, self.proj)
-
-    def __floordiv__(self, other):
-        r = super(DimArray, self).__floordiv__(other)
-        return DimArray(r, self.dims, self.proj)
-
-    def __rfloordiv__(self, other):
-        r = super(DimArray, self).__rfloordiv__(other)
-        return DimArray(r, self.dims, self.proj)
-
-    def __mod__(self, other):
-        r = super(DimArray, self).__mod__(other)
-        return DimArray(r, self.dims, self.proj)
-
-    def __rmod__(self, other):
-        r = super(DimArray, self).__rmod__(other)
-        return DimArray(r, self.dims, self.proj)
-
-    def __divmod__(self, other):
-        r = super(DimArray, self).__divmod__(other)
-        return DimArray(r, self.dims, self.proj)
-
-    def __rdivmod__(self, other):
-        r = super(DimArray, self).__rdivmod__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __pow__(self, other):
-        r = super(DimArray, self).__pow__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __rpow__(self, other):
-        r = super(DimArray, self).__rpow__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __neg__(self):
-        r = super(DimArray, self).__neg__()
-        return DimArray(r, self.dims, self.proj)
-        
-    def __lt__(self, other):
-        r = super(DimArray, self).__lt__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __le__(self, other):
-        r = super(DimArray, self).__le__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __eq__(self, other):
-        r = super(DimArray, self).__eq__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __ne__(self, other):
-        r = super(DimArray, self).__ne__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __gt__(self, other):
-        r = super(DimArray, self).__gt__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __ge__(self, other):
-        r = super(DimArray, self).__ge__(other)
-        return DimArray(r, self.dims, self.proj)
-
-    def __and__(self, other):
-        r = super(DimArray, self).__and__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __or__(self, other):
-        r = super(DimArray, self).__or__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __xor__(self, other):
-        r = super(DimArray, self).__xor__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __invert__(self, other):
-        r = super(DimArray, self).__invert__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __lshift__(self, other):
-        r = super(DimArray, self).__lshift__(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def __rshift__(self, other):
-        r = super(DimArray, self).__rshift__(other)
-        return DimArray(r, self.dims, self.proj)
 
     @property
     def array(self):
@@ -449,7 +335,7 @@ class DimArray(NDArray):
         :returns: (*list*) Member names
         """
         if self._array.getDataType() != DataType.STRUCTURE:
-            print 'This method is only valid for structure array!'
+            print('This method is only valid for structure array!')
             return None
             
         ms = self._array.getStructureMemberNames()
@@ -465,7 +351,7 @@ class DimArray(NDArray):
         :returns: (*array*) Extracted member array.
         """
         if self._array.getDataType() != DataType.STRUCTURE:
-            print 'This method is only valid for structure array!'
+            print('This method is only valid for structure array!')
             return None
 
         a = self._array.getArrayObject()
@@ -480,29 +366,6 @@ class DimArray(NDArray):
             
         return r
     
-    def in_values(self, other):
-        """
-        The returned array element set 1 when the input array element is in other, otherwise the
-        element set 0.
-        
-        :param other: (*array_like*) The array or list value.
-        
-        :returns: (*array*) The array with element value of 1 or 0.
-        """
-        r = super(DimArray, self).in_values(other)
-        return DimArray(r, self.dims, self.proj)
-        
-    def astype(self, dtype):
-        """
-        Convert to another data type.
-        
-        :param dtype: (*string*) Data type.
-        
-        :returns: (*array*) Converted array.
-        """
-        r = super(DimArray, self).astype(dtype)
-        return DimArray(r, self.dims, self.proj)
-    
     def value(self, indices):
         #print type(indices)
         if not isinstance(indices, tuple):
@@ -511,7 +374,7 @@ class DimArray(NDArray):
             indices = inds
         
         if len(indices) != self.ndim:
-            print 'indices must be ' + str(self.ndim) + ' dimensions!'
+            print('indices must be ' + str(self.ndim) + ' dimensions!')
             return None
             
         #origin = []
@@ -543,7 +406,7 @@ class DimArray(NDArray):
                     else:
                         step = int(k[2] / dim.getDeltaValue)
             else:
-                print k
+                print(k)
                 return None
                 
             if step < 0:
@@ -568,12 +431,6 @@ class DimArray(NDArray):
         array = NDArray(rr)
         data = DimArray(array, dims, self.proj)
         return data
-        
-    def copy(self):
-        """
-        Copy array vlaues to a new array.
-        """
-        return DimArray(self._array.copy(), self.dims, self.proj)
 
     def _ufunc_finalize(self, obj, axis=None):
         """
@@ -611,8 +468,12 @@ class DimArray(NDArray):
             else:
                 dims = []
                 for i in range(0, self.ndim):
-                    if i != axis:
-                        dims.append(self.dims[i])
+                    if isinstance(axis, (list, tuple)):
+                        if not i in axis:
+                            dims.append(self.dims[i])
+                    else:
+                        if i != axis:
+                            dims.append(self.dims[i])
                 return DimArray(arr, dims, self.proj)
         else:
             return arr
@@ -858,72 +719,7 @@ class DimArray(NDArray):
             if dim.getLength() > 1:
                 dims.append(dim)
         return DimArray(r, dims, self.proj)
-        
-    def sum(self, axis=None):
-        """
-        Sum of array elements over a given axis.
 
-        :param axis: (*int*) Axis along which the standard deviation is computed. 
-            The default is to compute the standard deviation of the flattened array.
-        
-        returns: (*array_like*) Sum result
-        """
-        r = super(DimArray, self).sum(axis)
-        if axis is None:
-            return r
-        else:
-            dims = []
-            for i in range(0, self.ndim):
-                if i != axis:
-                    dims.append(self.dims[i])
-            return DimArray(r, dims, self.proj)
-
-    def max(self, axis=None):
-        """
-        Compute tha arithmetic maximum along the specified axis.
-
-        :param axis: (*int*) Axis along which the value is computed.
-            The default is to compute the value of the flattened array.
-
-        returns: (*array_like*) Maximum result
-        """
-        r = super(DimArray, self).max(axis)
-        if isinstance(r, numbers.Number):
-            return r
-        else:
-            dims = []
-            for i in range(0, self.ndim):
-                if isinstance(axis, (list, tuple)):
-                    if not i in axis:
-                        dims.append(self.dims[i])
-                else:
-                    if i != axis:
-                        dims.append(self.dims[i])
-            return DimArray(r, dims, self.proj)
-
-    def min(self, axis=None):
-        """
-        Compute tha arithmetic minimum along the specified axis.
-
-        :param axis: (*int*) Axis along which the value is computed.
-            The default is to compute the value of the flattened array.
-
-        returns: (*array_like*) Minimum result
-        """
-        r = super(DimArray, self).min(axis)
-        if isinstance(r, numbers.Number):
-            return r
-        else:
-            dims = []
-            for i in range(0, self.ndim):
-                if isinstance(axis, (list, tuple)):
-                    if not i in axis:
-                        dims.append(self.dims[i])
-                else:
-                    if i != axis:
-                        dims.append(self.dims[i])
-            return DimArray(r, dims, self.proj)
-        
     def mean(self, axis=None, keepdims=False):
         """
         Compute tha arithmetic mean along the specified axis.
@@ -948,177 +744,6 @@ class DimArray(NDArray):
                     if i != axis:
                         dims.append(self.dims[i])
             return DimArray(r, dims, self.proj)
-            
-    def median(self, axis=None):
-        """
-        Compute tha median along the specified axis.
-
-        :param axis: (*int*) Axis along which the value is computed.
-            The default is to compute the value of the flattened array.
-        
-        returns: (*array_like*) Median result
-        """
-        r = super(DimArray, self).median(axis)
-        if isinstance(r, numbers.Number):
-            return r
-        else:
-            dims = []
-            for i in range(0, self.ndim):
-                if i != axis:
-                    dims.append(self.dims[i])
-            return DimArray(r, dims, self.proj)
-            
-    def std(self, axis=None, ddof=0):
-        """
-        Compute the standard deviation along the specified axis.
-
-        :param axis: (*int*) Axis along which the standard deviation is computed. 
-            The default is to compute the standard deviation of the flattened array.
-        :param ddof: (*int*) Delta Degrees of Freedom: the divisor used in the calculation is
-            N - ddof, where N represents the number of elements. By default ddof is zero.
-        
-        returns: (*array_like*) Standart deviation result.
-        """
-        r = super(DimArray, self).std(axis, ddof)
-        if isinstance(r, numbers.Number):
-            return r
-        else:
-            dims = []
-            for i in range(0, self.ndim):
-                if i != axis:
-                    dims.append(self.dims[i])
-            return DimArray(r, dims, self.proj)
-
-    def var(self, axis=None, ddof=0):
-        """
-        Compute the variance along the specified axis.
-
-        :param axis: (*int*) Axis along which the standard deviation is computed.
-            The default is to compute the standard deviation of the flattened array.
-        :param ddof: (*int*) Delta Degrees of Freedom: the divisor used in the calculation is
-            N - ddof, where N represents the number of elements. By default ddof is zero.
-
-        returns: (*array_like*) Variance result.
-        """
-        r = super(DimArray, self).std(axis, ddof)
-        if isinstance(r, numbers.Number):
-            return r
-        else:
-            dims = []
-            for i in range(0, self.ndim):
-                if i != axis:
-                    dims.append(self.dims[i])
-            return DimArray(r, dims, self.proj)
-        
-    def abs(self):
-        """
-        Calculate the absolute value element-wise.
-        
-        :returns: An array containing the absolute value of each element in x. 
-            For complex input, a + ib, the absolute value is \sqrt{ a^2 + b^2 }.
-        """
-        r = super(DimArray, self).abs()
-        return DimArray(r, self.dims, self.proj)
-
-    def ceil(self):
-        """
-        Return the ceiling of the input, element-wise.
-
-        :return: The ceiling of each element.
-        """
-        r = super(DimArray, self).ceil()
-        return DimArray(r, self.dims, self.proj)
-
-    def floor(self):
-        """
-        Return the floor of the input, element-wise.
-
-        :return: The floor of each element.
-        """
-        r = super(DimArray, self).floor()
-        return DimArray(r, self.dims, self.proj)
-        
-    def sqrt(self):
-        """
-        Calculate sqrt value.
-        
-        :returns: (*DimArray*) Sqrt value array.
-        """
-        r = super(DimArray, self).sqrt()
-        return DimArray(r, self.dims, self.proj)
-    
-    def sin(self):
-        """
-        Calculate sin value.
-        
-        :returns: (*DimArray*) Sin value array.
-        """
-        r = super(DimArray, self).sin()
-        return DimArray(r, self.dims, self.proj)
-
-    def sinh(self):
-        """
-        Calculate hyperbolic sin value.
-
-        :returns: (*DimArray*) Hyperbolic sin value array.
-        """
-        r = super(DimArray, self).sinh()
-        return DimArray(r, self.dims, self.proj)
-        
-    def cos(self):
-        r = super(DimArray, self).cos()
-        return DimArray(r, self.dims, self.proj)
-
-    def cosh(self):
-        """
-        Calculate hyperbolic cos value.
-
-        :returns: (*DimArray*) Hyperbolic cos value array.
-        """
-        r = super(DimArray, self).cosh()
-        return DimArray(r, self.dims, self.proj)
-        
-    def tan(self):
-        r = super(DimArray, self).tan()
-        return DimArray(r, self.dims, self.proj)
-
-    def tanh(self):
-        """
-        Calculate hyperbolic tan value.
-
-        :returns: (*DimArray*) Hyperbolic tan value array.
-        """
-        r = super(DimArray, self).tanh()
-        return DimArray(r, self.dims, self.proj)
-        
-    def asin(self):
-        r = super(DimArray, self).asin()
-        return DimArray(r, self.dims, self.proj)
-        
-    def acos(self):
-        """
-        Calculate acos value.
-        
-        :returns: (*DimArray*) Acos value array.
-        """
-        r = super(DimArray, self).acos()
-        return DimArray(r, self.dims, self.proj)
-        
-    def atan(self):
-        r = super(DimArray, self).atan()
-        return DimArray(r, self.dims, self.proj)
-        
-    def exp(self):
-        r = super(DimArray, self).exp()
-        return DimArray(r, self.dims, self.proj)
-        
-    def log(self):
-        r = super(DimArray, self).log()
-        return DimArray(r, self.dims, self.proj)
-        
-    def log10(self):
-        r = super(DimArray, self).log10()
-        return DimArray(r, self.dims, self.proj)
 
     def rot90(self, k=1):
         """
@@ -1466,7 +1091,7 @@ class DimArray(NDArray):
         :param float_format: (*string*) Float number format, such as '%.2f'.
         """
         if self.ndim != 2:
-            print 'The array must be 2 dimensional!'
+            print('The array must be 2 dimensional!')
             return
             
         gdata = self.asgridarray()

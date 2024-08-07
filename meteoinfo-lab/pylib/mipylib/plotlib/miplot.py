@@ -21,7 +21,7 @@ import os
 import functools
 import mipylib.migl as migl
 import mipylib.miutil as miutil
-from mipylib.numeric.core import NDArray, DimArray
+from mipylib.numeric.core import NDArray
 import plotutil
 from ._axes import Axes, PolarAxes
 from ._axes3d import Axes3D
@@ -1325,7 +1325,7 @@ def xticks(*args, **kwargs):
         args = args[1:]
     if len(args) > 0:
         labels = args[0]
-        if isinstance(labels, (NDArray, DimArray)):
+        if isinstance(labels, NDArray):
             labels = labels.aslist()
     else:
         labels = None
@@ -1349,7 +1349,7 @@ def yticks(*args, **kwargs):
     if len(args) > 0:
         locs = args[0]
         if len(locs) > 0:
-            if isinstance(locs, (NDArray, DimArray)):
+            if isinstance(locs, NDArray):
                 locs = locs.aslist()
             if isinstance(locs[0], datetime.datetime):
                 for i in range(len(locs)):
@@ -1358,7 +1358,7 @@ def yticks(*args, **kwargs):
         args = args[1:]
     if len(args) > 0:
         labels = args[0]
-        if isinstance(labels, (NDArray, DimArray)):
+        if isinstance(labels, NDArray):
             labels = labels.aslist()
     else:
         labels = None
@@ -1385,7 +1385,7 @@ def zticks(*args, **kwargs):
     if len(args) > 0:
         locs = args[0]
         if len(locs) > 0:
-            if isinstance(locs, (NDArray, DimArray)):
+            if isinstance(locs, NDArray):
                 locs = locs.aslist()
             if isinstance(locs[0], datetime.datetime):
                 for i in range(len(locs)):
@@ -1394,7 +1394,7 @@ def zticks(*args, **kwargs):
         args = args[1:]
     if len(args) > 0:
         labels = args[0]
-        if isinstance(labels, (NDArray, DimArray)):
+        if isinstance(labels, NDArray):
             labels = labels.aslist()
     else:
         labels = None

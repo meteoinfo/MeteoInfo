@@ -153,7 +153,7 @@ class MILayer(object):
         :returns: (*PyTableData') Attribute table.
         """
         r = self._layer.getAttributeTable().getTable()
-        return np.datatable(r)
+        return np.PyTableData(r)
 
     def cellvalue(self, fieldname, shapeindex):
         """

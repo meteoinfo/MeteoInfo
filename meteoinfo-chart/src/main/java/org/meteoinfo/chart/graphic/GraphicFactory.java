@@ -6207,14 +6207,15 @@ public class GraphicFactory {
         int rowNum = shape[0];
         double x1, x2, x3, x4, v;
         PolygonBreak pb;
-        if (!x_s.getIndexPrivate().isFastIterator())
-            x_s = x_s.copy();
-        if (!y_s.getIndexPrivate().isFastIterator())
-            y_s = y_s.copy();
-        if (!a.getIndexPrivate().isFastIterator())
-            a = a.copy();
+        x_s = x_s.copyIfView();
+        y_s = y_s.copyIfView();
+        a = a.copyIfView();
         for (int i = 0; i < rowNum - 1; i++) {
             for (int j = 0; j < colNum - 1; j++) {
+                v = a.getDouble(i * colNum + j);
+                if (Double.isNaN(v)) {
+                    continue;
+                }
                 x1 = x_s.getDouble(i * colNum + j);
                 x2 = x_s.getDouble(i * colNum + j + 1);
                 x3 = x_s.getDouble((i + 1) * colNum + j);
@@ -6227,7 +6228,6 @@ public class GraphicFactory {
                 points.add(new PointD(x2, y_s.getDouble(i * colNum + j + 1)));
                 points.add((PointD) points.get(0).clone());
                 ps.setPoints(points);
-                v = a.getDouble(i * colNum + j);
                 pb = (PolygonBreak) ls.findLegendBreak(v);
                 Graphic graphic = new Graphic(ps, pb);
                 gc.add(graphic);

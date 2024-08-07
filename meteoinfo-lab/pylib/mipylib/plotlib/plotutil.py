@@ -19,7 +19,7 @@ from org.meteoinfo.chart import ChartText
 
 from java.awt import Color, Font
 
-from mipylib.numeric.core import NDArray, DimArray
+from mipylib.numeric.core import NDArray
 import mipylib.numeric as np
 import mipylib.miutil as miutil
 import mipylib.migl as migl

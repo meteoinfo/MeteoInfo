@@ -24,7 +24,6 @@ from org.meteoinfo.math.linalg import LinalgUtil
 from org.python.core import PyComplex
 
 import _dtype
-from dimarray import DimArray
 from ._ndarray import NDArray
 from org.meteoinfo.console.jython import JythonUtil
 
@@ -41,7 +40,7 @@ __all__ = [
     'arcsin','asin','asmiarray','atleast_1d','atleast_2d','arctan','atan',
     'arctan2','atan2','average','histogram','broadcast_to','cdiff','ceil',
     'concatenate','conj','conjugate','convolve','corrcoef','cos','cosh','cylinder','degrees','delnan','diag','diff',
-    'datatable','dot','empty','empty_like','exp','eye','flatnonzero','floor',
+    'dot','empty','empty_like','exp','eye','flatnonzero','floor',
     'fmax','fmin','full','hcurl','hdivg','hstack','hypot','identity','indices','interp2d','interpn','isarray',
     'isclose','isfinite','isinf','isnan','isscalar','linspace','log','log10','logical_not','logspace',
     'magic','magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',

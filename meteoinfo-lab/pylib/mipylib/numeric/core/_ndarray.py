@@ -346,14 +346,14 @@ class NDArray(object):
         return other
 
     def __abs__(self):
-        return NDArray(ArrayMath.abs(self._array))
+        return self.array_wrap(ArrayMath.abs(self._array))
 
     def __add__(self, other):
         other = NDArray.__value_other(self, other)
         r = ArrayMath.add(self._array, other)
         if r is None:
             raise ValueError('Dimension mismatch, can not broadcast!')
-        return NDArray(r)
+        return self.array_wrap(r)
 
     def __radd__(self, other):
         return NDArray.__add__(self, other)
@@ -362,22 +362,22 @@ class NDArray(object):
         other = NDArray.__value_other(self, other)
         r = ArrayMath.sub(self._array, other)
         if r is None:
-            raise ValueError('Dimension missmatch, can not broadcast!')
-        return NDArray(r)
+            raise ValueError('Dimension mismatch, can not broadcast!')
+        return self.array_wrap(r)
 
     def __rsub__(self, other):
         other = NDArray.__value_other(self, other)
         r = ArrayMath.sub(other, self._array)
         if r is None:
-            raise ValueError('Dimension missmatch, can not broadcast!')
-        return NDArray(r)
+            raise ValueError('Dimension mismatch, can not broadcast!')
+        return self.array_wrap(r)
 
     def __mul__(self, other):
         other = NDArray.__value_other(self, other)
         r = ArrayMath.mul(self._array, other)
         if r is None:
-            raise ValueError('Dimension missmatch, can not broadcast!')
-        return NDArray(r)
+            raise ValueError('Dimension mismatch, can not broadcast!')
+        return self.array_wrap(r)
 
     def __rmul__(self, other):
         return NDArray.__mul__(self, other)
@@ -386,43 +386,43 @@ class NDArray(object):
         other = NDArray.__value_other(self, other)
         r = ArrayMath.div(self._array, other)
         if r is None:
-            raise ValueError('Dimension missmatch, can not broadcast!')
-        return NDArray(r)
+            raise ValueError('Dimension mismatch, can not broadcast!')
+        return self.array_wrap(r)
 
     def __rdiv__(self, other):
         other = NDArray.__value_other(self, other)
         r = ArrayMath.div(other, self._array)
         if r is None:
-            raise ValueError('Dimension missmatch, can not broadcast!')
-        return NDArray(r)
+            raise ValueError('Dimension mismatch, can not broadcast!')
+        return self.array_wrap(r)
 
     def __floordiv__(self, other):
         other = NDArray.__value_other(self, other)
         r = ArrayMath.floorDiv(self._array, other)
         if r is None:
-            raise ValueError('Dimension missmatch, can not broadcast!')
-        return NDArray(r)
+            raise ValueError('Dimension mismatch, can not broadcast!')
+        return self.array_wrap(r)
 
     def __rfloordiv__(self, other):
         other = NDArray.__value_other(self, other)
         r = ArrayMath.floorDiv(other, self._array)
         if r is None:
-            raise ValueError('Dimension missmatch, can not broadcast!')
-        return NDArray(r)
+            raise ValueError('Dimension mismatch, can not broadcast!')
+        return self.array_wrap(r)
 
     def __mod__(self, other):
         other = NDArray.__value_other(self, other)
         r = ArrayMath.mod(self._array, other)
         if r is None:
-            raise ValueError('Dimension missmatch, can not broadcast!')
-        return NDArray(r)
+            raise ValueError('Dimension mismatch, can not broadcast!')
+        return self.array_wrap(r)
 
     def __rmod__(self, other):
         other = NDArray.__value_other(self, other)
         r = ArrayMath.mod(other, self._array)
         if r is None:
-            raise ValueError('Dimension missmatch, can not broadcast!')
-        return NDArray(r)
+            raise ValueError('Dimension mismatch, can not broadcast!')
+        return self.array_wrap(r)
 
     def __divmod__(self, other):
         return self.__floordiv__(other), self.__mod__(other)
@@ -434,80 +434,67 @@ class NDArray(object):
         other = NDArray.__value_other(self, other)
         r = ArrayMath.pow(self._array, other)
         if r is None:
-            raise ValueError('Dimension missmatch, can not broadcast!')
-        return NDArray(r)
+            raise ValueError('Dimension mismatch, can not broadcast!')
+        return self.array_wrap(r)
 
     def __rpow__(self, other):
         other = NDArray.__value_other(self, other)
         r = ArrayMath.pow(other, self._array)
         if r is None:
-            raise ValueError('Dimension missmatch, can not broadcast!')
-        return NDArray(r)
+            raise ValueError('Dimension mismatch, can not broadcast!')
+        return self.array_wrap(r)
 
     def __neg__(self):
-        r = NDArray(ArrayMath.sub(0, self._array))
-        return r
+        return self.array_wrap(ArrayMath.sub(0, self._array))
 
     def __lt__(self, other):
         other = NDArray.__value_other(self, other)
-        r = NDArray(ArrayMath.lessThan(self._array, other))
-        return r
+        return self.array_wrap(ArrayMath.lessThan(self._array, other))
 
     def __le__(self, other):
         other = NDArray.__value_other(self, other)
-        r = NDArray(ArrayMath.lessThanOrEqual(self._array, other))
-        return r
+        return self.array_wrap(ArrayMath.lessThanOrEqual(self._array, other))
 
     def __eq__(self, other):
         if other is Ellipsis:
             return False
         other = NDArray.__value_other(self, other)
-        r = NDArray(ArrayMath.equal(self._array, other))
-        return r
+        return self.array_wrap(ArrayMath.equal(self._array, other))
 
     def __ne__(self, other):
         other = NDArray.__value_other(self, other)
-        r = NDArray(ArrayMath.notEqual(self._array, other))
-        return r
+        return self.array_wrap(ArrayMath.notEqual(self._array, other))
 
     def __gt__(self, other):
         other = NDArray.__value_other(self, other)
-        r = NDArray(ArrayMath.greaterThan(self._array, other))
-        return r
+        return self.array_wrap(ArrayMath.greaterThan(self._array, other))
 
     def __ge__(self, other):
         other = NDArray.__value_other(self, other)
-        r = NDArray(ArrayMath.greaterThanOrEqual(self._array, other))
-        return r
+        return self.array_wrap(ArrayMath.greaterThanOrEqual(self._array, other))
 
     def __and__(self, other):
         other = NDArray.__value_other(self, other)
-        r = NDArray(ArrayMath.bitAnd(self._array, other))
-        return r
+        return self.array_wrap(ArrayMath.bitAnd(self._array, other))
 
     def __or__(self, other):
         other = NDArray.__value_other(self, other)
-        r = NDArray(ArrayMath.bitOr(self._array, other))
-        return r
+        return self.array_wrap(ArrayMath.bitOr(self._array, other))
 
     def __xor__(self, other):
         other = NDArray.__value_other(self, other)
-        r = NDArray(ArrayMath.bitXor(self._array, other))
-        return r
+        return self.array_wrap(ArrayMath.bitXor(self._array, other))
 
     def __invert__(self):
-        r = NDArray(ArrayMath.bitInvert(self._array))
-        return r
+        return self.array_wrap(ArrayMath.bitInvert(self._array))
 
     def __lshift__(self, other):
         other = NDArray.__value_other(self, other)
-        r = NDArray(ArrayMath.leftShift(self._array, other))
-        return r
+        return self.array_wrap(ArrayMath.leftShift(self._array, other))
 
     def __rshift__(self, other):
         other = NDArray.__value_other(self, other)
-        r = NDArray(ArrayMath.rightShift(self._array, other))
-        return r
+        return self.array_wrap(ArrayMath.rightShift(self._array, other))
 
     def __iter__(self):
         """
@@ -554,7 +541,7 @@ class NDArray(object):
         """
         Copy array values to a new array.
         """
-        return NDArray(self._array.copy())
+        return self.array_wrap(self._array.copy())
 
     def view(self):
         """
@@ -562,7 +549,7 @@ class NDArray(object):
 
         :return: New view of array with the same data.
         """
-        return NDArray(ArrayUtil.view(self._array))
+        return self.array_wrap(ArrayUtil.view(self._array))
 
     def _ufunc_finalize(self, obj, axis=None):
         """
@@ -640,8 +627,7 @@ class NDArray(object):
         """
         if not isinstance(other, (list, tuple)):
             other = other.aslist()
-        r = NDArray(ArrayMath.inValues(self._array, other))
-        return r
+        return self.array_wrap(ArrayMath.inValues(self._array, other))
 
     def squeeze(self):
         """
@@ -650,7 +636,7 @@ class NDArray(object):
         :returns: (*array_like*) The self array, but with all or a subset of the dimensions of length 1
             removed.
         """
-        return NDArray(self._array.reduce())
+        return self.array_wrap(self._array.reduce())
 
     def all(self, axis=None):
         """
@@ -668,7 +654,7 @@ class NDArray(object):
         else:
             if axis < 0:
                 axis += self.ndim
-            return NDArray(ArrayMath.all(self._array, axis))
+            return self.array_wrap(ArrayMath.all(self._array, axis), axis=axis)
 
     def any(self, axis=None):
         """
@@ -685,7 +671,7 @@ class NDArray(object):
         else:
             if axis < 0:
                 axis += self.ndim
-            return NDArray(ArrayMath.any(self._array, axis))
+            return self.array_wrap(ArrayMath.any(self._array, axis), axis=axis)
 
     def contains_nan(self):
         """
@@ -717,19 +703,7 @@ class NDArray(object):
         if self.dtype == dtype:
             return self.copy()
 
-        # if dtype.kind == 'i':
-        #     r = NDArray(ArrayUtil.toInteger(self._array))
-        # elif dtype.kind == 'f':
-        #     if dtype.name == 'float':
-        #         r = NDArray(ArrayUtil.toFloat(self._array))
-        #     else:
-        #         r = NDArray(ArrayUtil.toDouble(self._array))
-        # elif dtype.kind == 'b':
-        #     r = NDArray(ArrayUtil.toBoolean(self._array))
-        # else:
-        #     r = self
-        r = NDArray(ArrayUtil.convertToDataType(self._array, dtype._dtype))
-        return r
+        return self.array_wrap(ArrayUtil.convertToDataType(self._array, dtype._dtype))
 
     @property
     def real(self):
@@ -739,7 +713,7 @@ class NDArray(object):
         :return: (*array*) The real component of the complex argument.
         """
         if self.dtype == _dtype.complex:
-            return NDArray(ArrayMath.getReal(self._array))
+            return self.array_wrap(ArrayMath.getReal(self._array))
         else:
             return self
 
@@ -767,7 +741,7 @@ class NDArray(object):
         :return: (*array*) The image component of the complex argument.
         """
         if self.dtype == _dtype.complex:
-            return NDArray(ArrayMath.getImage(self._array))
+            return self.array_wrap(ArrayMath.getImage(self._array))
         else:
             return self
 
@@ -795,7 +769,7 @@ class NDArray(object):
 
         :return: (*array*) Complex conjugate array.
         """
-        return NDArray(ArrayMath.conj(self._array))
+        return self.array_wrap(ArrayMath.conj(self._array))
 
     def min(self, axis=None):
         """
@@ -819,7 +793,7 @@ class NDArray(object):
             return r
         else:
             r = ArrayMath.min(self._array, axis)
-            return NDArray(r)
+            return self.array_wrap(r, axis=axis)
 
     def argmin(self, axis=None):
         """
@@ -836,7 +810,7 @@ class NDArray(object):
             return r
         else:
             r = ArrayMath.argMin(self._array, axis)
-            return NDArray(r)
+            return self.array_wrap(r, axis=axis)
 
     def argmax(self, axis=None):
         """
@@ -853,7 +827,7 @@ class NDArray(object):
             return r
         else:
             r = ArrayMath.argMax(self._array, axis)
-            return NDArray(r)
+            return self.array_wrap(r, axis=axis)
 
     def sort(self, axis=-1):
         """
@@ -885,7 +859,7 @@ class NDArray(object):
             return r
         else:
             r = ArrayMath.max(self._array, axis)
-            return NDArray(r)
+            return self.array_wrap(r, axis=axis)
 
     def sum(self, axis=None):
         """
@@ -918,7 +892,7 @@ class NDArray(object):
                 if axis < 0:
                     axis = self.ndim + axis
             r = ArrayMath.sum(self._array, axis)
-            return NDArray(r)
+            return self.array_wrap(r, axis=axis)
 
     def cumsum(self, axis=None):
         """
@@ -951,7 +925,7 @@ class NDArray(object):
         :returns: An array containing the absolute value of each element in x.
             For complex input, a + ib, the absolute value is \sqrt{ a^2 + b^2 }.
         """
-        return NDArray(ArrayMath.abs(self._array))
+        return self.array_wrap(ArrayMath.abs(self._array))
 
     def ceil(self):
         """
@@ -959,7 +933,7 @@ class NDArray(object):
 
         :return: The ceiling of each element.
         """
-        return NDArray(ArrayMath.ceil(self._array))
+        return self.array_wrap(ArrayMath.ceil(self._array))
 
     def floor(self):
         """
@@ -967,7 +941,7 @@ class NDArray(object):
 
         :return: The floor of each element.
         """
-        return NDArray(ArrayMath.floor(self._array))
+        return self.array_wrap(ArrayMath.floor(self._array))
 
     def round(self, decimals=0):
         """
@@ -981,7 +955,7 @@ class NDArray(object):
             r = ArrayMath.round(self._array)
         else:
             r = ArrayMath.round(self._array, decimals)
-        return NDArray(r)
+        return self.array_wrap(r)
 
     def clip(self, min=None, max=None):
         """
@@ -1068,7 +1042,7 @@ class NDArray(object):
         if self.ndim == 1 or axis is None:
             return ArrayMath.median(self._array)
         else:
-            return NDArray(ArrayMath.median(self._array, axis))
+            return self.array_wrap(ArrayMath.median(self._array, axis), axis=axis)
 
     def std(self, axis=None, ddof=0):
         """
@@ -1086,7 +1060,7 @@ class NDArray(object):
             return r
         else:
             r = ArrayMath.std(self._array, axis, ddof)
-            return NDArray(r)
+            return self.array_wrap(r, axis=axis)
 
     def var(self, axis=None, ddof=0):
         """
@@ -1095,7 +1069,7 @@ class NDArray(object):
         :param axis: (*int*) Axis along which the variance is computed.
             The default is to compute the variance of the flattened array.
         :param ddof: (*int*) Delta Degrees of Freedom: the divisor used in the calculation is
-            N - ddof, where N represents the number of elements. By default ddof is zero.
+            N - ddof, where N represents the number of elements. By default, ddof is zero.
 
         returns: (*array_like*) Variance result.
         """
@@ -1104,49 +1078,49 @@ class NDArray(object):
             return r
         else:
             r = ArrayMath.var(self._array, axis, ddof)
-            return NDArray(r)
+            return self.array_wrap(r, axis=axis)
 
     def square(self):
         return self.__mul__(self)
 
     def sqrt(self):
-        return NDArray(ArrayMath.sqrt(self._array))
+        return self.array_wrap(ArrayMath.sqrt(self._array))
 
     def sin(self):
-        return NDArray(ArrayMath.sin(self._array))
+        return self.array_wrap(ArrayMath.sin(self._array))
 
     def sinh(self):
-        return NDArray(ArrayMath.sinh(self._array))
+        return self.array_wrap(ArrayMath.sinh(self._array))
 
     def cos(self):
-        return NDArray(ArrayMath.cos(self._array))
+        return self.array_wrap(ArrayMath.cos(self._array))
 
     def cosh(self):
-        return NDArray(ArrayMath.cosh(self._array))
+        return self.array_wrap(ArrayMath.cosh(self._array))
 
     def tan(self):
-        return NDArray(ArrayMath.tan(self._array))
+        return self.array_wrap(ArrayMath.tan(self._array))
 
     def tanh(self):
-        return NDArray(ArrayMath.tanh(self._array))
+        return self.array_wrap(ArrayMath.tanh(self._array))
 
     def asin(self):
-        return NDArray(ArrayMath.asin(self._array))
+        return self.array_wrap(ArrayMath.asin(self._array))
 
     def acos(self):
-        return NDArray(ArrayMath.acos(self._array))
+        return self.array_wrap(ArrayMath.acos(self._array))
 
     def atan(self):
-        return NDArray(ArrayMath.atan(self._array))
+        return self.array_wrap(ArrayMath.atan(self._array))
 
     def exp(self):
-        return NDArray(ArrayMath.exp(self._array))
+        return self.array_wrap(ArrayMath.exp(self._array))
 
     def log(self):
-        return NDArray(ArrayMath.log(self._array))
+        return self.array_wrap(ArrayMath.log(self._array))
 
     def log10(self):
-        return NDArray(ArrayMath.log10(self._array))
+        return self.array_wrap(ArrayMath.log10(self._array))
 
     def sign(self):
         """
@@ -1154,7 +1128,7 @@ class NDArray(object):
 
         The sign function returns -1 if x < 0, 0 if x==0, 1 if x > 0. nan is returned for nan inputs.
         """
-        return NDArray(ArrayMath.sign(self._array))
+        return self.array_wrap(ArrayMath.sign(self._array))
 
     def dot(self, other):
         """

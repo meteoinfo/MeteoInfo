@@ -4,6 +4,7 @@ import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.Index3D;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 
 import java.util.Arrays;
 
@@ -46,45 +47,6 @@ public abstract class RectInterpolator3D {
     }
 
     /**
-     * Get value index in a dimension array
-     *
-     * @param dim Dimension array
-     * @param v The value
-     * @return value index
-     */
-    public static int getDimIndex(Array dim, Number v) {
-        dim = dim.copyIfView();
-        switch (dim.getDataType()) {
-            case BYTE:
-                return Arrays.binarySearch((byte[]) dim.getStorage(), v.byteValue());
-            case INT:
-                return Arrays.binarySearch((int[]) dim.getStorage(), v.intValue());
-            case SHORT:
-                return Arrays.binarySearch((short[]) dim.getStorage(), v.shortValue());
-            case LONG:
-                return Arrays.binarySearch((long[]) dim.getStorage(), v.longValue());
-            case FLOAT:
-                return Arrays.binarySearch((float[]) dim.getStorage(), v.floatValue());
-            case DOUBLE:
-                return Arrays.binarySearch((double[]) dim.getStorage(), v.doubleValue());
-        }
-
-        int n = (int) dim.getSize();
-        if (v.doubleValue() < dim.getDouble(0) || v.doubleValue() > dim.getDouble(n - 1)) {
-            return -1;
-        }
-
-        int idx = n - 1;
-        for (int i = 1; i < n; i++) {
-            if (v.doubleValue() < dim.getDouble(i)) {
-                idx = i - 1;
-                break;
-            }
-        }
-        return idx;
-    }
-
-    /**
      * Get grid array x/y value index
      * @param xdim X coordinate array
      * @param ydim Y coordinate array
@@ -100,21 +62,21 @@ public abstract class RectInterpolator3D {
             int xn = (int) xdim.getSize();
             int yn = (int) ydim.getSize();
             int zn = (int) zdim.getSize();
-            int xIdx = getDimIndex(xdim, x);
+            int xIdx = ArrayUtil.getDimIndex(xdim, x);
             if (xIdx == -1 || xIdx == -(xn + 1)) {
                 return null;
             } else if (xIdx < 0) {
                 xIdx = -xIdx - 2;
             }
 
-            int yIdx = getDimIndex(ydim, y);
+            int yIdx = ArrayUtil.getDimIndex(ydim, y);
             if (yIdx == -1 || yIdx == -(yn + 1)) {
                 return null;
             } else if (yIdx < 0) {
                 yIdx = -yIdx - 2;
             }
 
-            int zIdx = getDimIndex(zdim, z);
+            int zIdx = ArrayUtil.getDimIndex(zdim, z);
             if (zIdx == -1 || zIdx == -(zn + 1)) {
                 return null;
             } else if (zIdx < 0) {

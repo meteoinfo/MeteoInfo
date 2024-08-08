@@ -507,7 +507,7 @@ class MapAxes(Axes):
             encoding = kwargs.pop('encoding', None)
             layer = migeo.georead(fn, encoding)
             islayer = True
-        elif isinstance(args[0], MILayer):
+        elif isinstance(args[0], (MILayer, GeoGraphicCollection)):
             layer = args[0]
             islayer = True
 
@@ -516,7 +516,7 @@ class MapAxes(Axes):
             layer.visible = visible
             xshift = kwargs.pop('xshift', 0)
             zorder = kwargs.pop('zorder', None)
-            if layer.layer_type == LayerTypes.IMAGE_LAYER:
+            if isinstance(layer, MILayer) and layer.layer_type == LayerTypes.IMAGE_LAYER:
                 interpolation = kwargs.pop('interpolation', None)
                 graphics = layer.get_graphics(xshift, interpolation)
             else:
@@ -1186,7 +1186,7 @@ class MapAxes(Axes):
         :param zorder: (*int*) Z-order of created layer for display.
         :param select: (*boolean*) Set the return layer as selected layer or not.
         
-        :returns: (*VectoryLayer*) Polygon VectoryLayer created from array data.
+        :returns: (*Graphics*) Polygon graphics created from array data.
         """
         n = len(args) 
         if n <= 2:
@@ -1202,8 +1202,10 @@ class MapAxes(Axes):
             
         if a.ndim == 2 and x.ndim == 1:            
             x, y = np.meshgrid(x, y)  
-            
-        ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)   
+
+        vmin = kwargs.pop('vmin', a.min())
+        vmax = kwargs.pop('vmax', a.max())
+        ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
         ls = ls.convertTo(ShapeTypes.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None

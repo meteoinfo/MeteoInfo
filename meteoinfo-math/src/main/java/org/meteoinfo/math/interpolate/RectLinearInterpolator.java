@@ -24,7 +24,7 @@ public class RectLinearInterpolator extends RectInterpolator{
     @Override
     double cellValue(Index dindex, double x, double y) {
         double iValue = Double.NaN;
-        int[] xyIdx = gridIndex(xa, ya, x, y);
+        int[] xyIdx = ArrayUtil.gridIndex(xa, ya, x, y);
         if (xyIdx == null) {
             return iValue;
         }

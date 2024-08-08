@@ -6216,6 +6216,10 @@ public class GraphicFactory {
                 if (Double.isNaN(v)) {
                     continue;
                 }
+                pb = (PolygonBreak) ls.findLegendBreak(v);
+                if (pb == null) {
+                    continue;
+                }
                 x1 = x_s.getDouble(i * colNum + j);
                 x2 = x_s.getDouble(i * colNum + j + 1);
                 x3 = x_s.getDouble((i + 1) * colNum + j);
@@ -6228,7 +6232,6 @@ public class GraphicFactory {
                 points.add(new PointD(x2, y_s.getDouble(i * colNum + j + 1)));
                 points.add((PointD) points.get(0).clone());
                 ps.setPoints(points);
-                pb = (PolygonBreak) ls.findLegendBreak(v);
                 Graphic graphic = new Graphic(ps, pb);
                 gc.add(graphic);
             }

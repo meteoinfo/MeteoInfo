@@ -5053,20 +5053,17 @@ public class ArrayUtil {
         if (idx < n - 1) {
             index.setDim(idx, indices[idx]);
             iterIndex(ii, index, indices, idx + 1);
-            if (indices[idx] < index.getShape(idx) - 1)
+            if (indices[idx] < index.getShape(idx) - 1) {
                 index.setDim(idx, indices[idx] + 1);
-            else
-                index.setDim(idx, indices[idx]);
-            iterIndex(ii, index, indices, idx + 1);
+                iterIndex(ii, index, indices, idx + 1);
+            }
         } else {
             index.setDim(idx, indices[idx]);
             ii.add((Index) index.clone());
             //System.out.println(index);
             if (indices[idx] < index.getShape(idx) - 1)
                 index.setDim(idx, indices[idx] + 1);
-            else
-                index.setDim(idx, indices[idx]);
-            ii.add((Index) index.clone());
+                ii.add((Index) index.clone());
             //System.out.println(index);
         }
     }

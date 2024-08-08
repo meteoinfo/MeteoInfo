@@ -2186,147 +2186,12 @@ public class InterpUtil {
         return r;
     }
 
-    /**
-     * Get value index in a dimension array
-     *
-     * @param dim Dimension array
-     * @param v The value
-     * @return value index
-     */
-    public static int getDimIndex(Array dim, Number v) {
-        dim = dim.copyIfView();
-        switch (dim.getDataType()) {
-            case BYTE:
-                return Arrays.binarySearch((byte[]) dim.getStorage(), v.byteValue());
-            case INT:
-                return Arrays.binarySearch((int[]) dim.getStorage(), v.intValue());
-            case SHORT:
-                return Arrays.binarySearch((short[]) dim.getStorage(), v.shortValue());
-            case LONG:
-                return Arrays.binarySearch((long[]) dim.getStorage(), v.longValue());
-            case FLOAT:
-                return Arrays.binarySearch((float[]) dim.getStorage(), v.floatValue());
-            case DOUBLE:
-                return Arrays.binarySearch((double[]) dim.getStorage(), v.doubleValue());
-        }
-
-        int n = (int) dim.getSize();
-        if (v.doubleValue() < dim.getDouble(0) || v.doubleValue() > dim.getDouble(n - 1)) {
-            return -1;
-        }
-
-        int idx = n - 1;
-        for (int i = 1; i < n; i++) {
-            if (v.doubleValue() < dim.getDouble(i)) {
-                idx = i - 1;
-                break;
-            }
-        }
-        return idx;
-    }
-
-    /**
-     * Get grid array x/y value index
-     * @param xdim X coordinate array
-     * @param ydim Y coordinate array
-     * @param x X value
-     * @param y Y value
-     * @return X/Y index
-     */
-    public static int[] gridIndex(Array xdim, Array ydim, double x, double y) {
-        if (xdim.getRank() == 1) {
-            int xn = (int) xdim.getSize();
-            int yn = (int) ydim.getSize();
-            int xIdx = getDimIndex(xdim, x);
-            if (xIdx == -1 || xIdx == -(xn + 1)) {
-                return null;
-            } else if (xIdx < 0) {
-                xIdx = -xIdx - 2;
-            }
-
-            int yIdx = getDimIndex(ydim, y);
-            if (yIdx == -1 || yIdx == -(yn + 1)) {
-                return null;
-            } else if (yIdx < 0) {
-                yIdx = -yIdx - 2;
-            }
-
-            if (xIdx == xn - 1) {
-                xIdx = xn - 2;
-            }
-            if (yIdx == yn - 1) {
-                yIdx = yn - 2;
-            }
-
-            return new int[]{yIdx, xIdx};
-        } else {
-            int xIdx = -1, yIdx = -1;
-            int[] shape = xdim.getShape();
-            int yn = shape[0];
-            int xn = shape[1];
-            Index index = new Index2D(shape);
-            double x1, x2, y1, y2;
-            for (int i = 0; i < yn - 1; i++) {
-                for (int j = 0; j < xn - 1; j++) {
-                    index = index.set(i, j);
-                    y1 = ydim.getDouble(index);
-                    index = index.set(i+1, j);
-                    y2 = ydim.getDouble(index);
-                    if (y >= y1 && y < y2) {
-                        index = index.set(i, j);
-                        x1 = xdim.getDouble(index);
-                        index = index.set(i, j+1);
-                        x2 = xdim.getDouble(index);
-                        if (x >= x1 && x < x2) {
-                            yIdx = i;
-                            xIdx = j;
-                        }
-                    }
-                }
-            }
-
-            if (yIdx >= 0 && xIdx >= 0)
-                return new int[]{yIdx, xIdx};
-            else
-                return null;
-        }
-    }
-
-    /**
-     * Get grid array x/y value index
-     * @param xdim X coordinate array
-     * @param ydim Y coordinate array
-     * @param x X value
-     * @param y Y value
-     * @return X/Y index
-     */
-    public static int[] gridIndex(double[][] xdim, double[][] ydim, double x, double y) {
-        int xIdx = -1, yIdx = -1;
-        int yn = xdim.length;
-        int xn = xdim[0].length;
-        for (int i = 0; i < yn - 1; i++) {
-            for (int j = 0; j < xn - 1; j++) {
-                if (y >= ydim[i][j] && y < ydim[i+1][j]) {
-                    if (x >= xdim[i][j] && x < xdim[i][j+1]) {
-                        yIdx = i;
-                        xIdx = j;
-                    }
-                }
-            }
-        }
-
-        if (yIdx >= 0 && xIdx >= 0)
-            return new int[]{yIdx, xIdx};
-        else
-            return null;
-    }
-
     private static double bilinear(Array data, Index dindex, Array xdim, Array ydim, double x, double y) {
         xdim = xdim.copyIfView();
         ydim = ydim.copyIfView();
 
         double iValue = Double.NaN;
-        int[] xyIdx = gridIndex(xdim, ydim, x, y);
+        int[] xyIdx = ArrayUtil.gridIndex(xdim, ydim, x, y);
         if (xyIdx == null) {
             return iValue;
         }
@@ -2390,7 +2255,7 @@ public class InterpUtil {
         xdim = xdim.copyIfView();
         ydim = ydim.copyIfView();
 
-        int[] xyIdx = gridIndex(xdim, ydim, x, y);
+        int[] xyIdx = ArrayUtil.gridIndex(xdim, ydim, x, y);
         if (xyIdx == null) {
             return Double.NaN;
         }
@@ -2510,10 +2375,6 @@ public class InterpUtil {
                                 InterpolationMethod method) {
         xa = xa.copyIfView();
         ya = ya.copyIfView();
-        za = za.copyIfView();
-        data = data.copyIfView();
-
-        RectInterpolator3D interpolator3D = RectInterpolator3D.factory(xa, ya, za, data, method);
 
         double x1 = xySlice.get(0).doubleValue();
         double y1 = xySlice.get(1).doubleValue();
@@ -2532,14 +2393,87 @@ public class InterpUtil {
         int xn = dx == 0 ? 1 : (int) Math.ceil((x2 - x1) / dx);
         int yn = dy == 0 ? 1 : (int) Math.ceil(Math.abs(y2 - y1) / dy);
         int rn = Math.max(xn, yn);
-        Array xs = ArrayUtil.lineSpace(x1, x2, rn, true);
-        Array ys = ArrayUtil.lineSpace(y1, y2, rn, true);
-        int zn = (int)za.getSize();
-        Array xs2d = ArrayUtil.repeat(xs.reshape(new int[]{1, rn}), Arrays.asList(zn), 0);
-        Array ys2d = ArrayUtil.repeat(ys.reshape(new int[]{1, rn}), Arrays.asList(zn), 0);
-        Array zs2d = ArrayUtil.repeat(za.reshape(new int[]{zn, 1}), Arrays.asList(rn), 1);
+
+        return sliceXY(xa, ya, za, data, xySlice, rn, method);
+    }
+
+    /**
+     * Slice 3D array data by x/y cross-section
+     * @param xa X coordinate array - 1D
+     * @param ya Y coordinate array - 1D
+     * @param za Z coordinate array - 1D
+     * @param data Data array - 3D
+     * @param xySlice X/Y slice points - [x1, y1, x2, y2]
+     * @param steps Number of points
+     * @param method Interpolation method - nearest or linear
+     * @return x/y cross-section slice data array
+     */
+    public static Array[] sliceXY(Array xa, Array ya, Array za, Array data, List<Number> xySlice,
+                                  int steps, InterpolationMethod method) {
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        za = za.copyIfView();
+        data = data.copyIfView();
+
+        RectInterpolator3D interpolator3D = RectInterpolator3D.factory(xa, ya, za, data, method);
+
+        double x1 = xySlice.get(0).doubleValue();
+        double y1 = xySlice.get(1).doubleValue();
+        double x2 = xySlice.get(2).doubleValue();
+        double y2 = xySlice.get(3).doubleValue();
+        if (x1 > x2) {
+            double temp = x2;
+            x2 = x1;
+            x1 = temp;
+            temp = y2;
+            y2 = y1;
+            y1 = temp;
+        }
+        Array xs = ArrayUtil.lineSpace(x1, x2, steps, true);
+        Array ys = ArrayUtil.lineSpace(y1, y2, steps, true);
+        int zn = (int) za.getSize();
+        Array xs2d = ArrayUtil.repeat(xs.reshape(new int[]{1, steps}), Arrays.asList(zn), 0);
+        Array ys2d = ArrayUtil.repeat(ys.reshape(new int[]{1, steps}), Arrays.asList(zn), 0);
+        Array zs2d = ArrayUtil.repeat(za.reshape(new int[]{zn, 1}), Arrays.asList(steps), 1);
 
         Array r = interpolator3D.interpolate(xs2d, ys2d, zs2d);
         return new Array[]{r, xs, ys, za, xs2d, ys2d, zs2d};
+    }
+
+    /**
+     * Slice 2D array data by x/y cross-section
+     * @param xa X coordinate array - 1D
+     * @param ya Y coordinate array - 1D
+     * @param data Data array - 2D
+     * @param xySlice X/Y slice points - [x1, y1, x2, y2]
+     * @param steps Number of points
+     * @param method Interpolation method - nearest or linear
+     * @return x/y cross-section slice data array
+     */
+    public static Array[] sliceXY(Array xa, Array ya, Array data, List<Number> xySlice,
+                                  int steps, InterpolationMethod method) {
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        data = data.copyIfView();
+
+        RectInterpolator interpolator = RectInterpolator.factory(xa, ya, data, method);
+
+        double x1 = xySlice.get(0).doubleValue();
+        double y1 = xySlice.get(1).doubleValue();
+        double x2 = xySlice.get(2).doubleValue();
+        double y2 = xySlice.get(3).doubleValue();
+        if (x1 > x2) {
+            double temp = x2;
+            x2 = x1;
+            x1 = temp;
+            temp = y2;
+            y2 = y1;
+            y1 = temp;
+        }
+        Array xs = ArrayUtil.lineSpace(x1, x2, steps, true);
+        Array ys = ArrayUtil.lineSpace(y1, y2, steps, true);
+
+        Array r = interpolator.interpolate(xs, ys);
+        return new Array[]{r, xs, ys};
     }
 }

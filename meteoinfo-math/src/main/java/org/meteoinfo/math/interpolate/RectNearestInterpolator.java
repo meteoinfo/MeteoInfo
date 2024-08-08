@@ -2,6 +2,7 @@ package org.meteoinfo.math.interpolate;
 
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Index;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 
 public class RectNearestInterpolator extends RectInterpolator{
     /**
@@ -17,7 +18,7 @@ public class RectNearestInterpolator extends RectInterpolator{
 
     @Override
     double cellValue(Index dindex, double x, double y) {
-        int[] xyIdx = gridIndex(xa, ya, x, y);
+        int[] xyIdx = ArrayUtil.gridIndex(xa, ya, x, y);
         if (xyIdx == null) {
             return Double.NaN;
         }
@@ -49,7 +50,7 @@ public class RectNearestInterpolator extends RectInterpolator{
 
     @Override
     double interpolate(double x, double y) {
-        int[] xyIdx = gridIndex(xa, ya, x, y);
+        int[] xyIdx = ArrayUtil.gridIndex(xa, ya, x, y);
         if (xyIdx == null) {
             return Double.NaN;
         }

@@ -254,9 +254,9 @@ public class Dimension {
     }
 
     /**
-     * Get dimension identifer
+     * Get dimension identifier
      *
-     * @return Dimension identifer
+     * @return Dimension identifier
      */
     public int getDimId() {
         return dimId;
@@ -481,6 +481,13 @@ public class Dimension {
         }
 
         return BigDecimalUtil.sub(dimValue.getDouble(1), dimValue.getDouble(0));
+    }
+
+    /**
+     * Flip the dimension data array
+     */
+    public void flip() {
+        this.dimValue = this.dimValue.flip(0).copy();
     }
     
     /**

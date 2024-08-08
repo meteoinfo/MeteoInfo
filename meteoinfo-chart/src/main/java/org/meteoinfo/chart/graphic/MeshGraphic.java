@@ -3,6 +3,7 @@ package org.meteoinfo.chart.graphic;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.geometry.colors.TransferFunction;
 import org.meteoinfo.geometry.graphic.GraphicCollection3D;
@@ -329,7 +330,7 @@ public class MeshGraphic extends GraphicCollection3D {
                 if (Float.isNaN(vertexValue[i])) {
                     color = legendScheme.getLegendBreak(0).getColor().getRGBComponents(null);
                 } else {
-                    color = legendScheme.findLegendBreak(vertexValue[i]).getColor().getRGBComponents(null);
+                    color = legendScheme.findLegendBreakAlways(vertexValue[i]).getColor().getRGBComponents(null);
                 }
                 System.arraycopy(color, 0, vertexColor, i * 4, 4);
             }

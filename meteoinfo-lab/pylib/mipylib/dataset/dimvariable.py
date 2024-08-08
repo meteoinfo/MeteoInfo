@@ -112,7 +112,7 @@ class DimVariable(object):
             indices = tuple(indices)
         
         if len(indices) != self.ndim:
-            print 'indices must be ' + str(self.ndim) + ' dimensions!'
+            print('indices must be ' + str(self.ndim) + ' dimensions!')
             return None
             
         if not self.proj is None and not self.proj.isLonLat():
@@ -253,8 +253,9 @@ class DimVariable(object):
                 if sidx > eidx and step > 0:
                     step = -step
             else:
-                print k
+                print(k)
                 return None
+
             if isrange:
                 if sidx >= dimlen or eidx >= dimlen:
                     print('Index out of range!')

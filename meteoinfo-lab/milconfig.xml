@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\projection">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\maskout"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\hdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grads"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\interpolation"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_cdata_3.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_colorbar.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\projection\aeqd_proj_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\interpolation\cross_section_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice\slice_2d.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\griddata_kriging_lcc.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_cdata_3.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_cma_base_colorbar.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\projection\aeqd_proj_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\interpolation\cross_section_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice\slice_2d.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\interpolate\griddata_kriging_lcc.py"/>
     </RecentFiles>
   </File>
   <Font>

@@ -12,13 +12,20 @@ class GeoGraphicCollection(object):
         :param geographic: (*JGeoGraphicCollection*) Java GeoGraphicCollection object.
         """
         self._geographic = geographic
+        self.shapetype = geographic.getShapeType()
+        self.proj = geographic.getProjInfo()
 
-    def get_graphics(self):
+    def get_graphics(self, xshift=0):
         """
         Get graphics.
+
+        :param xshift: (*float*) X shift
         :return: Graphics.
         """
-        return self._geographic
+        if xshift == 0:
+            return self._geographic
+        else:
+            return self._geographic.xshift(xshift)
 
     @property
     def shapes(self):
@@ -81,6 +88,30 @@ class GeoGraphicCollection(object):
         :param y: (*float*) Y shift for moving in pixel unit.
         """
         self._geographic.moveLabel(label, x, y)
+
+    @property
+    def visible(self):
+        return self._geographic.isVisible()
+
+    @visible.setter
+    def visible(self, val):
+        self._geographic.setVisible(val)
+
+    @property
+    def legend(self):
+        """
+        Get legend scheme.
+        """
+        return self._geographic.getLegendScheme()
+
+    @legend.setter
+    def legend(self, legend):
+        """
+        Set legend scheme.
+
+        :param legend: (*LegendScheme*) Legend scheme.
+        """
+        self._geographic.setLegendScheme(legend)
 
     def update_legend(self, ltype, fieldname):
         """

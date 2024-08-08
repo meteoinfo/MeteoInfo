@@ -53,8 +53,8 @@ package org.meteoinfo.geometry.legend;
      private ExtendFraction extendFraction = ExtendFraction.NONE;
      private List<ColorBreak> legendBreaks;
      private boolean hasNoData;
-     private double minValue;
-     private double maxValue;
+     private double minValue = -Double.MAX_VALUE;
+     private double maxValue = Double.MAX_VALUE;
      private double undef;
      private Map<Object, ColorBreak> uniqueValueMap;
      private ColorMap colorMap;
@@ -549,7 +549,7 @@ package org.meteoinfo.geometry.legend;
       * @param v Value
       * @return Legend break
       */
-     public ColorBreak findLegendBreak(Number v){
+     public ColorBreak findLegendBreakAlways(Number v){
          switch (this.legendType) {
              case SINGLE_SYMBOL:
                  return this.legendBreaks.get(0);
@@ -584,11 +584,54 @@ package org.meteoinfo.geometry.legend;
      }
 
      /**
+      * Find legend break by value
+      * @param v Value
+      * @return Legend break
+      */
+     public ColorBreak findLegendBreak(Number v){
+         switch (this.legendType) {
+             case SINGLE_SYMBOL:
+                 return this.legendBreaks.get(0);
+             case UNIQUE_VALUE:
+                 if (this.uniqueValueMap == null || this.uniqueValueMap.size() != this.legendBreaks.size())
+                     this.updateUniqueValueMap();
+                 if (this.uniqueValueMap.containsKey(v)) {
+                     return this.uniqueValueMap.get(v);
+                 } else {
+                     return null;
+                 }
+             default:
+                 if (v.doubleValue() < this.minValue || v.doubleValue() > this.maxValue) {
+                     return null;
+                 }
+
+                 double sv, ev;
+                 for (ColorBreak cb : this.legendBreaks){
+                     sv = Double.parseDouble(cb.getStartValue().toString());
+                     ev = Double.parseDouble(cb.getEndValue().toString());
+                     if (sv == ev){
+                         if (v.doubleValue() == sv)
+                             return cb;
+                     } else {
+                         if (v.doubleValue() >= sv && v.doubleValue() < ev){
+                             return cb;
+                         }
+                     }
+                 }
+                 return this.legendBreaks.get(this.getBreakNum() - 1);
+         }
+     }
+
+     /**
       * Get legend break index by value
       * @param v Value
       * @return Legend break index
       */
      public int legendBreakIndex(double v) {
+         if (v < this.minValue || v > this.maxValue) {
+             return -1;
+         }
+
          double sv, ev;
          for (int i = 0; i < this.legendBreaks.size(); i ++){
              ColorBreak cb = this.legendBreaks.get(i);
@@ -603,11 +646,7 @@ package org.meteoinfo.geometry.legend;
                  }
              }
          }
-         if (v >= this.getMaxValue())
-             return this.getBreakNum() - 1;
-         else
-             return 0;
-
+         return this.getBreakNum() - 1;
      }
 
      /**

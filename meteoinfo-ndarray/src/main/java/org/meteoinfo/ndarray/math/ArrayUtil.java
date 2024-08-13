@@ -623,6 +623,92 @@ public class ArrayUtil {
         return r;
     }
 
+    /**
+     * Read array from a buffer byte array
+     *
+     * @param buffer Buffer data
+     * @param dataType Data type
+     * @param count Number of items to read. -1 means all items (i.e., the complete file)
+     * @param offset Offset bytes
+     * @return Result array
+     */
+    public static Array fromBuffer(byte[] buffer, DataType dataType, int count, int offset) {
+        return fromBuffer(buffer, dataType, count, offset, "little_endian");
+    }
+
+    /**
+     * Read array from a buffer byte array
+     *
+     * @param buffer Buffer data
+     * @param dataType Data type
+     * @param count Number of items to read. -1 means all items (i.e., the complete file)
+     * @param offset Offset bytes
+     * @param byteOrder Byte order
+     * @return Result array
+     */
+    public static Array fromBuffer(byte[] buffer, DataType dataType, int count, int offset,
+                                    String byteOrder) {
+        ByteOrder bOrder = ByteOrder.LITTLE_ENDIAN;
+        if (byteOrder.equalsIgnoreCase("big_endian")) {
+            bOrder = ByteOrder.BIG_ENDIAN;
+        }
+
+        if (count < 0) {
+            long size = buffer.length;
+            count = (int)((size - offset) / dataType.getSize());
+        }
+
+        Array r = Array.factory(dataType, new int[]{count});
+        IndexIterator iter = r.getIndexIterator();
+        int idx = offset;
+        byte[] bytes;
+        byte[] db;
+        int start = 0;
+        int n = (int) r.getSize() * dataType.getSize();
+        bytes = Arrays.copyOfRange(buffer, idx, idx + n);
+        switch (dataType) {
+            case BYTE:
+                for (int i = 0; i < r.getSize(); i++) {
+                    r.setByte(i, bytes[i]);
+                }
+                break;
+            case SHORT:
+                db = new byte[2];
+                while (iter.hasNext()) {
+                    System.arraycopy(bytes, start, db, 0, 2);
+                    iter.setShortNext(DataTypeUtil.bytes2Short(db, bOrder));
+                    start += 2;
+                }
+                break;
+            case INT:
+                db = new byte[4];
+                while (iter.hasNext()) {
+                    System.arraycopy(bytes, start, db, 0, 4);
+                    iter.setIntNext(DataTypeUtil.bytes2Int(db, bOrder));
+                    start += 4;
+                }
+                break;
+            case FLOAT:
+                db = new byte[4];
+                while (iter.hasNext()) {
+                    System.arraycopy(bytes, start, db, 0, 4);
+                    iter.setFloatNext(DataTypeUtil.bytes2Float(db, bOrder));
+                    start += 4;
+                }
+                break;
+            case DOUBLE:
+                db = new byte[8];
+                while (iter.hasNext()) {
+                    System.arraycopy(bytes, start, db, 0, 8);
+                    iter.setDoubleNext(DataTypeUtil.bytes2Double(db, bOrder));
+                    start += 8;
+                }
+                break;
+        }
+
+        return r;
+    }
+
     // </editor-fold>
     // <editor-fold desc="Create">
      /**

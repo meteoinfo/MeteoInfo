@@ -33,9 +33,10 @@ class DataType(object):
     Data type
 
     :param name: (*string*) Data type name
+    :param byteorder: (*str*) Byte order. Default to '<'.
     """
 
-    def __init__(self, name):
+    def __init__(self, name, byteorder='<'):
         if name is int:
             name = 'int'
         elif name is float:
@@ -47,6 +48,7 @@ class DataType(object):
             self._dtype = _dtype_dict[name]
         else:
             self._dtype = JDataType.OBJECT
+        self._byteorder=byteorder
 
     @property
     def itemsize(self):
@@ -62,7 +64,15 @@ class DataType(object):
         A character indicating the byte-order of this data-type object.
         :return: (*str*) Byte order.
         """
-        return '>'
+        return self._byteorder
+
+    @byteorder.setter
+    def byteorder(self, val):
+        """
+        Set byte order.
+        :param val: (*str*) Byte order ['<' | '>'].
+        """
+        self._byteorder = val
 
     @property
     def num(self):

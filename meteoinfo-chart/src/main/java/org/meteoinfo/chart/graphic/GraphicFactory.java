@@ -9032,6 +9032,36 @@ public class GraphicFactory {
         float x, y, z;
         int idx;
 
+        //Z slices
+        dim1 = (int) ya.getSize();
+        dim2 = (int) xa.getSize();
+        for (int s = 0; s < zSlice.size(); s++) {
+            z = zSlice.get(s).floatValue();
+            Array r = ArrayUtil.slice(data, 0, za, z);
+            if (r != null) {
+                Index index = r.getIndex();
+                MeshGraphic graphic = new MeshGraphic();
+                float[] vertexPosition = new float[dim1 * dim2 * 3];
+                float[] vertexValue = new float[dim1 * dim2];
+                for (int i = 0; i < dim1; i++) {
+                    y = ya.getFloat(i);
+                    for (int j = 0; j < dim2; j++) {
+                        x = xa.getFloat(j);
+                        idx = i * dim2 +j;
+                        vertexValue[idx] = r.getFloat(index.set(i, j));
+                        idx = idx * 3;
+                        vertexPosition[idx] = x;
+                        vertexPosition[idx+1] = y;
+                        vertexPosition[idx+2] = z;
+                    }
+                }
+                graphic.setVertexPosition(vertexPosition, dim1);
+                graphic.setVertexValue(vertexValue);
+                graphic.setLegendScheme(ls);
+                sgs.add(graphic);
+            }
+        }
+
         //X slices
         dim1 = (int) za.getSize();
         dim2 = (int) ya.getSize();
@@ -9075,36 +9105,6 @@ public class GraphicFactory {
                 float[] vertexValue = new float[dim1 * dim2];
                 for (int i = 0; i < dim1; i++) {
                     z = za.getFloat(i);
-                    for (int j = 0; j < dim2; j++) {
-                        x = xa.getFloat(j);
-                        idx = i * dim2 +j;
-                        vertexValue[idx] = r.getFloat(index.set(i, j));
-                        idx = idx * 3;
-                        vertexPosition[idx] = x;
-                        vertexPosition[idx+1] = y;
-                        vertexPosition[idx+2] = z;
-                    }
-                }
-                graphic.setVertexPosition(vertexPosition, dim1);
-                graphic.setVertexValue(vertexValue);
-                graphic.setLegendScheme(ls);
-                sgs.add(graphic);
-            }
-        }
-
-        //Z slices
-        dim1 = (int) ya.getSize();
-        dim2 = (int) xa.getSize();
-        for (int s = 0; s < zSlice.size(); s++) {
-            z = zSlice.get(s).floatValue();
-            Array r = ArrayUtil.slice(data, 0, za, z);
-            if (r != null) {
-                Index index = r.getIndex();
-                MeshGraphic graphic = new MeshGraphic();
-                float[] vertexPosition = new float[dim1 * dim2 * 3];
-                float[] vertexValue = new float[dim1 * dim2];
-                for (int i = 0; i < dim1; i++) {
-                    y = ya.getFloat(i);
                     for (int j = 0; j < dim2; j++) {
                         x = xa.getFloat(j);
                         idx = i * dim2 +j;
@@ -9151,6 +9151,36 @@ public class GraphicFactory {
         float x, y, z;
         int idx;
 
+        //Z slices
+        dim1 = (int) ya.getSize();
+        dim2 = (int) xa.getSize();
+        for (int s = 0; s < zSlice.size(); s++) {
+            z = zSlice.get(s).floatValue();
+            Array r = ArrayUtil.slice(data, 0, za, z);
+            if (r != null) {
+                Index index = r.getIndex();
+                MeshGraphic graphic = new MeshGraphic();
+                float[] vertexPosition = new float[dim1 * dim2 * 3];
+                float[] vertexValue = new float[dim1 * dim2];
+                for (int i = 0; i < dim1; i++) {
+                    y = ya.getFloat(i);
+                    for (int j = 0; j < dim2; j++) {
+                        x = xa.getFloat(j);
+                        idx = i * dim2 +j;
+                        vertexValue[idx] = r.getFloat(index.set(i, j));
+                        idx = idx * 3;
+                        vertexPosition[idx] = x;
+                        vertexPosition[idx+1] = y;
+                        vertexPosition[idx+2] = z;
+                    }
+                }
+                graphic.setVertexPosition(vertexPosition, dim1);
+                graphic.setVertexValue(vertexValue);
+                graphic.setTransferFunction(transferFunction);
+                sgs.add(graphic);
+            }
+        }
+
         //X slices
         dim1 = (int) za.getSize();
         dim2 = (int) ya.getSize();
@@ -9194,36 +9224,6 @@ public class GraphicFactory {
                 float[] vertexValue = new float[dim1 * dim2];
                 for (int i = 0; i < dim1; i++) {
                     z = za.getFloat(i);
-                    for (int j = 0; j < dim2; j++) {
-                        x = xa.getFloat(j);
-                        idx = i * dim2 +j;
-                        vertexValue[idx] = r.getFloat(index.set(i, j));
-                        idx = idx * 3;
-                        vertexPosition[idx] = x;
-                        vertexPosition[idx+1] = y;
-                        vertexPosition[idx+2] = z;
-                    }
-                }
-                graphic.setVertexPosition(vertexPosition, dim1);
-                graphic.setVertexValue(vertexValue);
-                graphic.setTransferFunction(transferFunction);
-                sgs.add(graphic);
-            }
-        }
-
-        //Z slices
-        dim1 = (int) ya.getSize();
-        dim2 = (int) xa.getSize();
-        for (int s = 0; s < zSlice.size(); s++) {
-            z = zSlice.get(s).floatValue();
-            Array r = ArrayUtil.slice(data, 0, za, z);
-            if (r != null) {
-                Index index = r.getIndex();
-                MeshGraphic graphic = new MeshGraphic();
-                float[] vertexPosition = new float[dim1 * dim2 * 3];
-                float[] vertexValue = new float[dim1 * dim2];
-                for (int i = 0; i < dim1; i++) {
-                    y = ya.getFloat(i);
                     for (int j = 0; j < dim2; j++) {
                         x = xa.getFloat(j);
                         idx = i * dim2 +j;

@@ -16,6 +16,7 @@ package org.meteoinfo.geo.layer;
 import com.l2fprod.common.beans.BaseBeanInfo;
 import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor;
+import org.meteoinfo.chart.graphic.GeoGraphicCollection;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.geometry.graphic.Graphic;
@@ -516,8 +517,9 @@ public class ImageLayer extends MapLayer {
      * @param interpolation Image interpolation
      * @return Graphics
      */
-    public GraphicCollection getGraphics(double xShift, String interpolation) {
-        GraphicCollection graphics = new GraphicCollection();
+    public GeoGraphicCollection getGraphics(double xShift, String interpolation) {
+        GeoGraphicCollection graphics = new GeoGraphicCollection();
+        graphics.setProjInfo(this._projInfo);
         ImageShape ishape = new ImageShape();
         ishape.setImage(this.getImage());
         Extent extent = this.getExtent();

@@ -168,4 +168,4 @@ class BoundaryNorm(Normalize):
             boundaries = np.array(boundaries)
 
         extend = ExtendType.valueOf(extend.upper())
-        self._norm = JBoundaryNorm(boundaries._array, ncolors, extend)
+        self._norm = JBoundaryNorm(boundaries._array, extend)

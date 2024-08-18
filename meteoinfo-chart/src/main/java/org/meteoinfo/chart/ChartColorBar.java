@@ -1025,118 +1025,115 @@ public class ChartColorBar extends ChartLegend {
         g.setFont(tickLabelFont);
         g.setColor(this.tickColor);
         idx = 0;
-        for (int i = 0; i < bNum; i++) {
-            sP.X += barWidth;
-            if (labelIdxs.contains(i)) {
-                ColorBreak cb = aLS.getLegendBreaks().get(i);
-                if (this.autoTick) {
-                    if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
-                        caption = cb.getCaption();
-                    } else {
-                        caption = DataConvert.removeTailingZeros(cb.getEndValue().toString());
-                    }
-                } else {
-                    caption = tLabels.get(idx);
-                }
-                
+        double sX = sP.X;
+        switch (extendType) {
+            case BOTH:
+            case MIN:
+                sX = sX - barWidth + extendLength;
+                break;
+        }
+        for (int i : labelIdxs) {
+            sP.X = sX + barWidth * (i + 1);
+            ColorBreak cb = aLS.getLegendBreaks().get(i);
+            if (this.autoTick) {
                 if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
-                    aP.X = sP.X - barWidth / 2;
-                    g.setColor(this.tickLabelColor);
-                    if (this.tickLabelAngle == 0) {
-                        Draw.drawString(g, aP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
-                    } else if (this.tickLabelAngle < 45) {
-                        Draw.drawString(g, aP.X, sP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
-                    } else {
-                        Draw.drawString(g, aP.X, sP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
-                    }
+                    caption = cb.getCaption();
                 } else {
-                    if (i == 0) {
-                        switch (extendType) {
-                            case BOTH:
-                            case MIN:
-                                sP.X = sP.X - barWidth + extendLength;
-                                break;
-                        }
-                    }
-                    if (this.autoTick) {
-                        if (i < bNum - 1) {
-                            g.setColor(this.tickColor);
-                            aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, true, 0);
-                            g.setColor(this.tickLabelColor);
-                            if (this.tickLabelAngle == 0) {
-                                Draw.drawString(g, aP.X, aP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
-                            } else if (this.tickLabelAngle < 45) {
-                                Draw.drawString(g, aP.X, aP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
-                            } else {
-                                Draw.drawString(g, aP.X, aP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
-                            }
-                            if (i == 0) {
-                                switch (this.extendType) {
-                                    case NEITHER:
-                                    case MAX:
-                                        if (tickGap == 1) {
-                                            g.setColor(this.tickColor);
-                                            aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, true, -this.barWidth);
-                                            caption = DataConvert.removeTailingZeros(cb.getStartValue().toString());
-                                            g.setColor(this.tickLabelColor);
-                                            //Draw.drawString(g, ssP.X - this.barWidth, ssP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
-                                            if (this.tickLabelAngle == 0) {
-                                                Draw.drawString(g, aP.X - this.barWidth, aP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
-                                            } else if (this.tickLabelAngle < 45) {
-                                                Draw.drawString(g, aP.X - this.barWidth, aP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
-                                            } else {
-                                                Draw.drawString(g, aP.X - this.barWidth, aP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
-                                            }
-                                        }
-                                        break;
-                                }
-                            }
+                    caption = DataConvert.removeTailingZeros(cb.getEndValue().toString());
+                }
+            } else {
+                caption = tLabels.get(idx);
+            }
+
+            if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
+                aP.X = sP.X - barWidth / 2;
+                g.setColor(this.tickLabelColor);
+                if (this.tickLabelAngle == 0) {
+                    Draw.drawString(g, aP.X, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                } else if (this.tickLabelAngle < 45) {
+                    Draw.drawString(g, aP.X, sP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
+                } else {
+                    Draw.drawString(g, aP.X, sP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+                }
+            } else {
+                if (this.autoTick) {
+                    if (i < bNum - 1) {
+                        g.setColor(this.tickColor);
+                        aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, true, 0);
+                        g.setColor(this.tickLabelColor);
+                        if (this.tickLabelAngle == 0) {
+                            Draw.drawString(g, aP.X, aP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                        } else if (this.tickLabelAngle < 45) {
+                            Draw.drawString(g, aP.X, aP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
                         } else {
+                            Draw.drawString(g, aP.X, aP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+                        }
+                        if (i == 0) {
                             switch (this.extendType) {
                                 case NEITHER:
-                                case MIN:
-                                    g.setColor(this.tickColor);
-                                    aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, true, 0);
-                                    g.setColor(this.tickLabelColor);
-                                    if (this.tickLabelAngle == 0) {
-                                        Draw.drawString(g, aP.X, aP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
-                                    } else if (this.tickLabelAngle < 45) {
-                                        Draw.drawString(g, aP.X, aP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
-                                    } else {
-                                        Draw.drawString(g, aP.X, aP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+                                case MAX:
+                                    if (tickGap == 1) {
+                                        g.setColor(this.tickColor);
+                                        aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, true, -this.barWidth);
+                                        caption = DataConvert.removeTailingZeros(cb.getStartValue().toString());
+                                        g.setColor(this.tickLabelColor);
+                                        //Draw.drawString(g, ssP.X - this.barWidth, ssP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                                        if (this.tickLabelAngle == 0) {
+                                            Draw.drawString(g, aP.X - this.barWidth, aP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                                        } else if (this.tickLabelAngle < 45) {
+                                            Draw.drawString(g, aP.X - this.barWidth, aP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
+                                        } else {
+                                            Draw.drawString(g, aP.X - this.barWidth, aP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+                                        }
                                     }
                                     break;
                             }
                         }
                     } else {
-                        if (i == 0 && this.tickLocations.get(idx) == Double.parseDouble(cb.getStartValue().toString())) {
-                            g.setColor(this.tickColor);
-                            aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, true, -this.barWidth);
-                            g.setColor(this.tickLabelColor);
-                            //Draw.drawString(g, sP.X - this.barWidth, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
-                            if (this.tickLabelAngle == 0) {
-                                Draw.drawString(g, aP.X - this.barWidth, aP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
-                            } else if (this.tickLabelAngle < 45) {
-                                Draw.drawString(g, aP.X - this.barWidth, aP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
-                            } else {
-                                Draw.drawString(g, aP.X - this.barWidth, aP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
-                            }
+                        switch (this.extendType) {
+                            case NEITHER:
+                            case MIN:
+                                g.setColor(this.tickColor);
+                                aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, true, 0);
+                                g.setColor(this.tickLabelColor);
+                                if (this.tickLabelAngle == 0) {
+                                    Draw.drawString(g, aP.X, aP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                                } else if (this.tickLabelAngle < 45) {
+                                    Draw.drawString(g, aP.X, aP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
+                                } else {
+                                    Draw.drawString(g, aP.X, aP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+                                }
+                                break;
+                        }
+                    }
+                } else {
+                    if (i == 0 && this.tickLocations.get(idx) == Double.parseDouble(cb.getStartValue().toString())) {
+                        g.setColor(this.tickColor);
+                        aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, true, -this.barWidth);
+                        g.setColor(this.tickLabelColor);
+                        //Draw.drawString(g, sP.X - this.barWidth, sP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                        if (this.tickLabelAngle == 0) {
+                            Draw.drawString(g, aP.X - this.barWidth, aP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                        } else if (this.tickLabelAngle < 45) {
+                            Draw.drawString(g, aP.X - this.barWidth, aP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
                         } else {
-                            g.setColor(this.tickColor);
-                            aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, true, 0);
-                            g.setColor(this.tickLabelColor);
-                            if (this.tickLabelAngle == 0) {
-                                Draw.drawString(g, aP.X, aP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
-                            } else if (this.tickLabelAngle < 45) {
-                                Draw.drawString(g, aP.X, aP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
-                            } else {
-                                Draw.drawString(g, aP.X, aP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
-                            }
+                            Draw.drawString(g, aP.X - this.barWidth, aP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
+                        }
+                    } else {
+                        g.setColor(this.tickColor);
+                        aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, true, 0);
+                        g.setColor(this.tickLabelColor);
+                        if (this.tickLabelAngle == 0) {
+                            Draw.drawString(g, aP.X, aP.Y, caption, XAlign.CENTER, YAlign.TOP, this.tickLabelAngle, true);
+                        } else if (this.tickLabelAngle < 45) {
+                            Draw.drawString(g, aP.X, aP.Y, caption, XAlign.RIGHT, YAlign.TOP, this.tickLabelAngle, true);
+                        } else {
+                            Draw.drawString(g, aP.X, aP.Y, caption, XAlign.RIGHT, YAlign.CENTER, this.tickLabelAngle, true);
                         }
                     }
                 }
-                idx += 1;
             }
+            idx += 1;
         }
 
         //Draw label
@@ -1413,7 +1410,7 @@ public class ChartColorBar extends ChartLegend {
                     if (this.tickLocations.contains(v)) {
                         labelIdxs.add(i);
                         tickIdx = this.tickLocations.indexOf(v);
-                        tLabels.add(this.tickLabels.get(tickIdx).getText());
+                        tLabels.add(0, this.tickLabels.get(tickIdx).getText());
                     }
                 }
             }
@@ -1637,79 +1634,76 @@ public class ChartColorBar extends ChartLegend {
         }
         g.setFont(tickLabelFont);
         idx = 0;
-        for (int i = 0; i < bNum; i++) {
-            sP.Y -= this.barHeight;
-            if (labelIdxs.contains(i)) {
-                ColorBreak cb = aLS.getLegendBreaks().get(i);
-                if (this.autoTick) {
-                    if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
-                        caption = cb.getCaption();
-                    } else {
-                        caption = DataConvert.removeTailingZeros(cb.getEndValue().toString());
-                    }
-                } else {
-                    caption = tLabels.get(idx);
-                }
-
+        double sY = sP.Y;
+        switch (extendType) {
+            case BOTH:
+            case MIN:
+                sY = sY + this.barHeight - extendLength;
+                break;
+        }
+        for (int i : labelIdxs) {
+            sP.Y = sY - this.barHeight * (i + 1);
+            ColorBreak cb = aLS.getLegendBreaks().get(i);
+            if (this.autoTick) {
                 if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
-                    g.setColor(this.tickLabelColor);
-                    Draw.drawString(g, sP.X, sP.Y, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
+                    caption = cb.getCaption();
                 } else {
-                    if (i == 0) {
-                        switch (extendType) {
-                            case BOTH:
-                            case MIN:
-                                sP.Y = aP.Y - extendLength;
-                                break;
-                        }
-                    }
-                    if (this.autoTick) {
-                        if (i < bNum - 1) {
-                            g.setColor(this.tickColor);
-                            aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, false, 0);
-                            g.setColor(this.tickLabelColor);
-                            Draw.drawString(g, aP.X, aP.Y, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
-                            if (i == 0) {
-                                switch (this.extendType) {
-                                    case NEITHER:
-                                    case MAX:
-                                        if (tickGap == 1) {
-                                            g.setColor(this.tickColor);
-                                            aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, false, this.barHeight);
-                                            caption = DataConvert.removeTailingZeros(cb.getStartValue().toString());
-                                            g.setColor(this.tickLabelColor);
-                                            Draw.drawString(g, aP.X, aP.Y + this.barHeight, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
-                                        }
-                                        break;
-                                }
-                            }
-                        } else {
+                    caption = DataConvert.removeTailingZeros(cb.getEndValue().toString());
+                }
+            } else {
+                caption = tLabels.get(idx);
+            }
+
+            if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
+                g.setColor(this.tickLabelColor);
+                Draw.drawString(g, sP.X, sP.Y, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
+            } else {
+                if (this.autoTick) {
+                    if (i < bNum - 1) {
+                        g.setColor(this.tickColor);
+                        aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, false, 0);
+                        g.setColor(this.tickLabelColor);
+                        Draw.drawString(g, aP.X, aP.Y, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
+                        if (i == 0) {
                             switch (this.extendType) {
                                 case NEITHER:
-                                case MIN:
-                                    g.setColor(this.tickColor);
-                                    aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, false, 0);
-                                    g.setColor(this.tickLabelColor);
-                                    Draw.drawString(g, aP.X, aP.Y, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
+                                case MAX:
+                                    if (tickGap == 1) {
+                                        g.setColor(this.tickColor);
+                                        aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, false, this.barHeight);
+                                        caption = DataConvert.removeTailingZeros(cb.getStartValue().toString());
+                                        g.setColor(this.tickLabelColor);
+                                        Draw.drawString(g, aP.X, aP.Y + this.barHeight, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
+                                    }
                                     break;
                             }
                         }
                     } else {
-                        if (i == 0 && this.tickLocations.get(idx) == Double.parseDouble(cb.getStartValue().toString())) {
-                            g.setColor(this.tickColor);
-                            aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, false, this.barHeight);
-                            g.setColor(this.tickLabelColor);
-                            Draw.drawString(g, aP.X, aP.Y + this.barHeight, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
-                        } else {
-                            g.setColor(this.tickColor);
-                            aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, false, 0);
-                            g.setColor(this.tickLabelColor);
-                            Draw.drawString(g, aP.X, aP.Y, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
+                        switch (this.extendType) {
+                            case NEITHER:
+                            case MIN:
+                                g.setColor(this.tickColor);
+                                aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, false, 0);
+                                g.setColor(this.tickLabelColor);
+                                Draw.drawString(g, aP.X, aP.Y, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
+                                break;
                         }
                     }
+                } else {
+                    if (i == 0 && this.tickLocations.get(idx) == Double.parseDouble(cb.getStartValue().toString())) {
+                        g.setColor(this.tickColor);
+                        aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, false, this.barHeight);
+                        g.setColor(this.tickLabelColor);
+                        Draw.drawString(g, aP.X, aP.Y + this.barHeight, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
+                    } else {
+                        g.setColor(this.tickColor);
+                        aP = this.drawTickLine(g, sP.X, sP.Y, tickLen, false, 0);
+                        g.setColor(this.tickLabelColor);
+                        Draw.drawString(g, aP.X, aP.Y, caption, XAlign.LEFT, YAlign.CENTER, this.tickLabelAngle, true);
+                    }
                 }
-                idx += 1;
             }
+            idx += 1;
         }
         //Draw label
         double sx, sy;

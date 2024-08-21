@@ -856,7 +856,7 @@ public class GridArray {
         if (CValues.length > 1)
             cDelt = CValues[1] - CValues[0];
         if (floatFormat == null) {
-            int dNum = MIMath.getDecimalNum(min);
+            int dNum = this.data.getDataType().getDecimalNum();
             floatFormat = "%." + String.valueOf(dNum) + "f";
         }
 
@@ -928,7 +928,7 @@ public class GridArray {
         CValues = MIMath.getIntervalValues(min, max);
         double cDelt = CValues[1] - CValues[0];
         if (floatFormat == null) {
-            int dNum = MIMath.getDecimalNum(min);
+            int dNum = this.data.getDataType().getDecimalNum();
             floatFormat = "%1$." + String.valueOf(dNum) + "f";
         }
 

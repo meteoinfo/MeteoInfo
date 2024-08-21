@@ -48,7 +48,8 @@ class DimVariable(object):
             self.dims = None
             self.ndim = 0
             self.attributes = None
-        self.proj = None if dataset is None else dataset.proj
+        self.proj = None if dataset is None else dataset.projection
+        self.projection = self.proj
             
     def __len__(self):
         len = 1

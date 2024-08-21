@@ -248,6 +248,21 @@ public enum DataType {
         }
     }
 
+    /**
+     * Get decimal number
+     * @return Decimal number
+     */
+    public int getDecimalNum() {
+        switch (this) {
+            case FLOAT:
+                return 4;
+            case DOUBLE:
+                return 6;
+            default:
+                return 0;
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////
     /**
      * Find the DataType that matches this name.

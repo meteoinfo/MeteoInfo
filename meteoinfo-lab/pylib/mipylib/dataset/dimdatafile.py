@@ -39,6 +39,7 @@ class DimDataFile(object):
             self.nvar = dataset.getDataInfo().getVariableNum()
             self.fill_value = dataset.getMissingValue()
             self.proj = dataset.getProjectionInfo()
+            self.projection = self.proj
         self.arldata = arldata
         self.bufrdata = bufrdata
         

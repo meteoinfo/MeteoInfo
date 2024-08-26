@@ -68,6 +68,7 @@ class Line2D(Line2DGraphic, Artist):
 
         :param xdata: (*array*) The xdata.
         """
+        xdata = np.asarray(xdata)
         self._x = xdata
         self.setXData(xdata._array)
         self.stale = True
@@ -88,6 +89,7 @@ class Line2D(Line2DGraphic, Artist):
 
         :param ydata: (*array*) The ydata.
         """
+        ydata = np.asarray(ydata)
         self._y = ydata
         self.setYData(ydata._array)
         self.stale = True
@@ -125,6 +127,8 @@ class Line2D(Line2DGraphic, Artist):
             xdata = args[0]
             ydata = args[1]
 
+        xdata = np.asarray(xdata)
+        ydata = np.asarray(ydata)
         self._x = xdata
         self._y = ydata
         self.setData(xdata._array, ydata._array)

@@ -1285,24 +1285,38 @@ class NDArray(object):
         """
         self.flat[:] = value
 
-    def flatten(self):
+    def flatten(self, order='C'):
         """
         Return a copy of the array collapsed into one dimension.
+
+        :param order: (*str*) Optional. ['C' | 'F'], ‘C’ means to flatten in row-major (C-style) order.
+            ‘F’ means to flatten in column-major (Fortran- style) order. The default is ‘C’.
 
         :returns: (*NDArray*) A copy of the input array, flattened to one dimension.
         """
         shape = [self.size]
-        r = NDArray(self._array.reshape(shape))
+        if order.upper() == 'C':
+            r = NDArray(self._array.reshape(shape))
+        else:
+            r = self.swapaxes(-1, -2)
+            r = NDArray(r._array.reshape(shape))
         return r
 
-    def ravel(self):
+    def ravel(self, order='C'):
         """
         Return a contiguous flattened array.
+
+        :param order: (*str*) Optional. ['C' | 'F'], ‘C’ means to flatten in row-major (C-style) order.
+            ‘F’ means to flatten in column-major (Fortran- style) order. The default is ‘C’.
 
         :returns: (*NDArray*) A contiguous flattened array.
         """
         shape = [self.size]
-        r = NDArray(self._array.reshapeNoCopy(shape))
+        if order.upper() == 'C':
+            r = NDArray(self._array.reshapeNoCopy(shape))
+        else:
+            r = self.swapaxes(-1, -2)
+            r = NDArray(r._array.reshape(shape))
         return r
 
     def repeat(self, repeats, axis=None):

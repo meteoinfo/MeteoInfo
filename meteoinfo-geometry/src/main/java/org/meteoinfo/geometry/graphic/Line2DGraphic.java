@@ -76,7 +76,7 @@ public class Line2DGraphic extends Graphic {
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
         double x, y;
-        while (xIter.hasNext()) {
+        while (xIter.hasNext() && yIter.hasNext()) {
             x = xIter.getDoubleNext();
             y = yIter.getDoubleNext();
             if (Double.isNaN(x) || Double.isNaN(y)) {

@@ -110,6 +110,21 @@ public class ProjectionUtil {
      *
      * @param fromProj From projection
      * @param toProj To projection
+     * @param fromExtent From extent
+     * @return To extent
+     */
+    public static Extent getProjectionExtent(ProjectionInfo fromProj, ProjectionInfo toProj, Extent fromExtent) {
+        PointD pll = Reproject.reprojectPoint(fromExtent.minX, fromExtent.minY, fromProj, toProj);
+        PointD pur = Reproject.reprojectPoint(fromExtent.maxX, fromExtent.maxY, fromProj, toProj);
+
+        return new Extent(pll.X, pur.X, pll.Y, pur.Y);
+    }
+
+    /**
+     * Get projected extent
+     *
+     * @param fromProj From projection
+     * @param toProj To projection
      * @param x X coordinate
      * @param y Y coordinate
      * @return Extent

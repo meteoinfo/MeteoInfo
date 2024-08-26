@@ -493,6 +493,8 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
             Graphic graphic = this.graphics.get(m);
             if (graphic.isVisible()) {
                 if (graphic instanceof WebMapImage) {
+                    this.updateXYScale(area.getWidth(), area.getHeight());
+                    this.updateWebMapScale(area.getWidth(), area.getHeight());
                     this.drawWebMapImage(g, (WebMapImage) graphic, area);
                     continue;
                 }
@@ -609,6 +611,65 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         this.drawExtent.maxX = center.X + xlen;
         this.drawExtent.minY = center.Y - ylen;
         this.drawExtent.maxY = center.Y + ylen;
+    }
+
+    private void updateXYScale(double width, double height) {
+        updateXYScale(this.drawExtent, width, height);
+        updateDrawExtent();
+    }
+
+    private void updateXYScale(Extent aExtent, double width, double height) {
+        double scaleFactor, lonRan, latRan, temp;
+
+        this.xScale = width / (aExtent.maxX - aExtent.minX);
+        this.yScale = height / (aExtent.maxY - aExtent.minY);
+
+        if (xScale > yScale) {
+            xScale = yScale;
+            temp = aExtent.minX;
+            aExtent.minX = aExtent.maxX - width / xScale;
+            lonRan = (aExtent.minX - temp) / 2;
+            aExtent.minX = aExtent.minX - lonRan;
+            aExtent.maxX = aExtent.maxX - lonRan;
+        } else if (xScale < yScale) {
+            yScale = xScale;
+            temp = aExtent.minY;
+            aExtent.minY = aExtent.maxY - height / yScale;
+            latRan = (aExtent.minY - temp) / 2;
+            aExtent.minY = aExtent.minY - latRan;
+            aExtent.maxY = aExtent.maxY - latRan;
+        }
+    }
+
+    private void updateWebMapScale(double width, double height) {
+        updateWebMapScale(this.getWebMapImage(), width, height);
+    }
+
+    private void updateWebMapScale(WebMapImage layer, double width, double height) {
+        double webMapScale = layer.getWebMapScale();
+        if (!MIMath.doubleEquals(xScale, webMapScale)) {
+            int minZoom = layer.getTileFactory().getInfo().getMinimumZoomLevel();
+            int maxZoom = layer.getTileFactory().getInfo().getMaximumZoomLevel();
+            int newZoom = minZoom;
+            double scale = webMapScale;
+            for (int i = maxZoom; i >= minZoom; i--) {
+                layer.setZoom(i);
+                scale = getWebMapScale(layer, i, width, height);
+                if (xScale < scale) {
+                    newZoom = i;
+                    if (xScale < webMapScale) {
+                        if (i < maxZoom) {
+                            newZoom = i + 1;
+                            scale = getWebMapScale(layer, newZoom, width, height);
+                        }
+                    }
+                    break;
+                }
+            }
+            this.setScale(scale, width, height);
+            layer.setWebMapScale(scale);
+            layer.setZoom(newZoom);
+        }
     }
 
     void drawWebMapImage(Graphics2D g, WebMapImage graphic, Rectangle2D area) {
@@ -748,7 +809,11 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      */
     public void zoomToExtentLonLatEx(Extent aExtent) {
         if (!this.projInfo.isLonLat()) {
-            aExtent = ProjectionUtil.getProjectionExtent(ProjectionInfo.LONG_LAT, this.projInfo, aExtent, 10);
+            if (this.projInfo.getProjectionName() == ProjectionNames.Mercator) {
+                aExtent = ProjectionUtil.getProjectionExtent(ProjectionInfo.LONG_LAT, this.projInfo, aExtent);
+            } else {
+                aExtent = ProjectionUtil.getProjectionExtent(ProjectionInfo.LONG_LAT, this.projInfo, aExtent, 10);
+            }
         }
 
         this.setDrawExtent(aExtent);
@@ -790,6 +855,14 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     public void setDrawExtent(Extent extent) {
         super.setDrawExtent(extent);
 
+        if (!this.isLonLatMap()) {
+            ((MapGridLine) this.gridLine).setExtent(extent);
+        }
+    }
+
+    @Override
+    public void updateDrawExtent() {
+        super.updateDrawExtent();
         if (!this.isLonLatMap()) {
             ((MapGridLine) this.gridLine).setExtent(extent);
         }

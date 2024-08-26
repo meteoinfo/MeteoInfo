@@ -345,6 +345,10 @@ public class MapGridLine extends GridLine {
     }
 
     protected void updateLonLatGridLabels() {
+        if (extent == null) {
+            return;
+        }
+
         //Longitude
         List<GridLabel> tLabels = new ArrayList<>();
         for (int i = 0; i < this.longitudeLines.size(); i++) {

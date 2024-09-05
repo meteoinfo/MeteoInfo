@@ -107,7 +107,7 @@ public class Line2DGraphic extends Graphic {
                 continue;
             }
             points.add(new PointD(x, y));
-            cb = legendScheme.findLegendBreak(c);
+            cb = legendScheme.findLegendBreakAlways(c);
             cbc.add(cb);
         }
         if (this.shape == null) {

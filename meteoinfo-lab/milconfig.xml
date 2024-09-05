@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\plot">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\legend"/>
+  <Path OpenPath="D:\Temp\test">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\imshow"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
@@ -16,17 +15,18 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\animation"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
+    <RecentFolder Folder="D:\Temp\test"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice\slice_2d.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\ghost_halloween.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\math_man.py"/>
+      <OpenedFile File="D:\Temp\test\test.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice\slice_2d.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\ghost_halloween.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\math_man.py"/>
+      <RecentFile File="D:\Temp\test\test.py"/>
     </RecentFiles>
   </File>
   <Font>

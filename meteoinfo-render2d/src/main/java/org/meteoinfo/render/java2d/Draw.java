@@ -3332,6 +3332,9 @@ public class Draw {
                 path.lineTo(p.X, p.Y);
 
                 aPLB = (PolylineBreak) pbc.get(i);
+                if (aPLB == null) {
+                    return;
+                }
                 Color aColor = aPLB.getColor();
                 Float size = aPLB.getWidth();
                 float[] dashPattern = getDashPattern(aPLB.getStyle());

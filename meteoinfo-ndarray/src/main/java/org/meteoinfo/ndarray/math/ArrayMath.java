@@ -6576,7 +6576,7 @@ public class ArrayMath {
                 iter.setObjectNext(v);
             }
         }
-        r = Array.factory(a.getDataType(), a.getShape(), r.getStorage());
+        r = Array.factory(a.getDataType(), a.getIndex(), r.getStorage());
         return r;
     }
 
@@ -6613,7 +6613,7 @@ public class ArrayMath {
                 iter.setObjectNext(v);
             }
         }
-        r = Array.factory(a.getDataType(), a.getShape(), r.getStorage());
+        r = Array.factory(a.getDataType(), a.getIndex(), r.getStorage());
         return r;
     }
 
@@ -6639,7 +6639,7 @@ public class ArrayMath {
             iter.setObjectNext(v.getObject(index));
             index.incr();
         }
-        r = Array.factory(a.getDataType(), a.getShape(), r.getStorage());
+        r = Array.factory(a.getDataType(), a.getIndex(), r.getStorage());
         return r;
     }
 
@@ -6665,7 +6665,7 @@ public class ArrayMath {
             iter.setObjectCurrent(v.getObject(index));
             index.incr();
         }
-        r = Array.factory(a.getDataType(), a.getShape(), r.getStorage());
+        r = Array.factory(a.getDataType(), a.getIndex(), r.getStorage());
         return r;
     }
 

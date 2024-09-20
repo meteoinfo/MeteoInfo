@@ -916,10 +916,9 @@ def axes3dgl(*args, **kwargs):
     ax = Axes3DGL(*args, **kwargs)
     g_axes = ax
 
-    if not batchmode:
-        if g_figure is None:
-            figure(**kwargs)
-        g_figure.add_axes(ax)
+    if g_figure is None:
+        figure(**kwargs)
+    g_figure.add_axes(ax)
 
     draw_if_interactive()
     return ax
@@ -936,10 +935,9 @@ def axes3d_map(*args, **kwargs):
     ax = MapAxes3D(*args, **kwargs)
     g_axes = ax
 
-    if not batchmode:
-        if g_figure is None:
-            figure(**kwargs)
-        g_figure.add_axes(ax)
+    if g_figure is None:
+        figure(**kwargs)
+    g_figure.add_axes(ax)
 
     draw_if_interactive()
     return ax
@@ -956,12 +954,11 @@ def axes3d_earth(*args, **kwargs):
     ax = EarthAxes3D(*args, **kwargs)
     g_axes = ax
 
-    if not batchmode:
-        if g_figure is None:
-            if 'facecolor' not in kwargs.keys():
-                kwargs['facecolor'] = 'k'
-            figure(**kwargs)
-        g_figure.add_axes(ax)
+    if g_figure is None:
+        if 'facecolor' not in kwargs.keys():
+            kwargs['facecolor'] = 'k'
+        figure(**kwargs)
+    g_figure.add_axes(ax)
 
     draw_if_interactive()
     return ax
@@ -1084,9 +1081,9 @@ def savefig(fname, width=None, height=None, dpi=None, sleep=None):
         if height is None:
             height = g_figure.getHeight() if not g_figure is None else 400
         if dpi is None:
-            JOGLUtil.saveImage(g_axes._axes, fname, width, height)
+            JOGLUtil.saveImage(g_figure.chart, fname, width, height)
         else:
-            JOGLUtil.saveImage(g_axes._axes, fname, width, height, dpi)
+            JOGLUtil.saveImage(g_figure.chart, fname, width, height, dpi)
     else:
         if fname.endswith('.eps') or fname.endswith('.pdf'):
             dpi = None

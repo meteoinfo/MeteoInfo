@@ -4433,8 +4433,6 @@ class PolarAxes(Axes):
             lab = '%s - %s' % (wsbins[i], wsbins[i + 1])
             bb = self.bar(theta, wdhist, width, bottom=hhist, color=colors[i], \
                           edgecolor='gray', label=lab, morepoints=True)
-            #bb.setStartValue(wsbins[i])
-            #bb.setEndValue(wsbins[i + 1])
             bars.append(bb)
             hhist = hhist + wdhist
 

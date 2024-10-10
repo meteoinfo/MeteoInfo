@@ -27,6 +27,24 @@ public class Triangle3D {
     }
 
     /**
+     * Get point by index
+     * @param index The index
+     * @return The point
+     */
+    public Vector3f getPoint(int index) {
+        switch (index) {
+            case 0:
+                return pointA;
+            case 1:
+                return pointB;
+            case 2:
+                return pointC;
+            default:
+                return null;
+        }
+    }
+
+    /**
      * Get point a
      * @return Point a
      */

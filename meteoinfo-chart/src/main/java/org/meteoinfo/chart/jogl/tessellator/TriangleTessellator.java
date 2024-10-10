@@ -4,9 +4,10 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
-import org.meteoinfo.chart.jogl.Triangle;
+import org.meteoinfo.chart.graphic.Triangle3D;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.PolygonZ;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +38,7 @@ public class TriangleTessellator {
      *             Throws {@link TesselationException} if the tessellation was
      *             unsuccessful, most commonly due to ambiguous shapes
      */
-    public List<Triangle> getTriangles(PolygonZ polygon)
+    public List<Triangle3D> getTriangles(PolygonZ polygon)
             throws TesselationException {
 
         makeTriangles(polygon);
@@ -83,7 +84,7 @@ public class TriangleTessellator {
     }
 
     public interface TessellatorListener {
-        public void onTesselationDone(List<Triangle> triangles);
+        public void onTesselationDone(List<Triangle3D> triangles);
 
         public void onTesselationError(TesselationException err);
     }
@@ -163,9 +164,9 @@ public class TriangleTessellator {
      */
     class TessellationCallback extends GLUtessellatorCallbackAdapter {
 
-        protected List<Triangle> triangles = new ArrayList<>();
+        protected List<Triangle3D> triangles = new ArrayList<>();
 
-        private PointZ p1, p2, p3;
+        private Vector3f p1, p2, p3;
 
         private int geometricPrimitiveType;
 
@@ -178,7 +179,8 @@ public class TriangleTessellator {
         }
 
         public void vertex(Object vertexData) {
-            PointZ thisPoint = new PointZ((double[]) vertexData);
+            double[] vertex = (double[]) vertexData;
+            Vector3f thisPoint = new Vector3f((float) vertex[0], (float) vertex[1], (float) vertex[2]);
             switch (geometricPrimitiveType) {
                 case GL2.GL_TRIANGLE_FAN:
 
@@ -187,7 +189,7 @@ public class TriangleTessellator {
                     } else if (p2 == null) {
                         p2 = thisPoint;
                     } else {
-                        triangles.add(new Triangle(p1, p2, thisPoint));
+                        triangles.add(new Triangle3D(p1, p2, thisPoint));
                         p2 = thisPoint;
                     }
                     break;
@@ -201,7 +203,7 @@ public class TriangleTessellator {
                         p3 = thisPoint;
 
                         if (p1 != null) {
-                            triangles.add(new Triangle(p1, p2, p3));
+                            triangles.add(new Triangle3D(p1, p2, p3));
                         }
                     }
                     break;

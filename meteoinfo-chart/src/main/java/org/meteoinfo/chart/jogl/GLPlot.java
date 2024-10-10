@@ -2676,6 +2676,18 @@ public class GLPlot extends Plot {
         }
     }
 
+    protected void drawTriMeshGraphic(GL2 gl, TriMeshGraphic graphic) {
+        if (!this.renderMap.containsKey(graphic)) {
+            renderMap.put(graphic, new TriMeshRender(gl, graphic));
+        }
+        TriMeshRender triMeshRender = (TriMeshRender) renderMap.get(graphic);
+        triMeshRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+        triMeshRender.setOrthographic(this.orthographic);
+        triMeshRender.setLighting(this.lighting);
+        triMeshRender.updateMatrix();
+        triMeshRender.draw();
+    }
+
     protected void drawGraphics(GL2 gl, Graphic graphic) {
         boolean lightEnabled = this.lighting.isEnable();
         if (graphic instanceof GraphicCollection3D) {
@@ -2718,15 +2730,7 @@ public class GLPlot extends Plot {
                 modelRender.setRotateModelView(this.modelViewMatrixR);
                 modelRender.draw();
             } else {
-                if (!this.renderMap.containsKey(graphic)) {
-                    renderMap.put(graphic, new TriMeshRender(gl, (TriMeshGraphic) graphic));
-                }
-                TriMeshRender triMeshRender = (TriMeshRender) renderMap.get(graphic);
-                triMeshRender.setTransform(this.transform, this.alwaysUpdateBuffers);
-                triMeshRender.setOrthographic(this.orthographic);
-                triMeshRender.setLighting(this.lighting);
-                triMeshRender.updateMatrix();
-                triMeshRender.draw();
+                drawTriMeshGraphic(gl, (TriMeshGraphic) graphic);
             }
         } else if (graphic instanceof VolumeGraphic) {
             try {
@@ -2762,7 +2766,7 @@ public class GLPlot extends Plot {
                 }
             }
             if (isDraw) {
-                switch (graphic.getGraphicN(0).getShape().getShapeType()) {
+                switch (graphic.getGraphicN(0).getShapeType()) {
                     case POINT_Z:
                         if (!this.renderMap.containsKey(graphic)) {
                             renderMap.put(graphic, new PointRender(gl, (GraphicCollection3D) graphic));
@@ -2815,7 +2819,11 @@ public class GLPlot extends Plot {
                     default:
                         for (int i = 0; i < graphic.getNumGraphics(); i++) {
                             Graphic gg = graphic.getGraphicN(i);
-                            this.drawGraphic(gl, gg);
+                            if (gg instanceof TriMeshGraphic) {
+                                this.drawTriMeshGraphic(gl, (TriMeshGraphic) gg);
+                            } else {
+                                this.drawGraphic(gl, gg);
+                            }
                         }
                         break;
                 }
@@ -3331,83 +3339,6 @@ public class GLPlot extends Plot {
                     for (int j = 0; j < newPList.size(); j++) {
                         p = newPList.get(j);
                         gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
-                    }
-                }
-                gl.glEnd();
-            }
-            gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
-        }
-    }
-
-    private void drawPolygon_bak(GL2 gl, PolygonZ aPG, PolygonBreak aPGB) {
-        PointZ p;
-        if (aPGB.isDrawFill() && aPGB.getColor().getAlpha() > 0) {
-            gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
-            gl.glPolygonOffset(1.0f, 1.0f);
-
-            float[] rgba = aPGB.getColor().getRGBComponents(null);
-            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-
-            try {
-                GLUtessellator tobj = glu.gluNewTess();
-                //TessCallback tessCallback = new TessCallback(gl, glu);
-
-                glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
-                glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
-                glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
-                glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
-                //glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
-
-                //gl.glNewList(startList, GL2.GL_COMPILE);
-                //gl.glShadeModel(GL2.GL_FLAT);
-                glu.gluTessBeginPolygon(tobj, null);
-                glu.gluTessBeginContour(tobj);
-                double[] v;
-                for (int i = 0; i < aPG.getOutLine().size() - 1; i++) {
-                    p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                    v = transform.transform(p);
-                    glu.gluTessVertex(tobj, v, 0, v);
-                }
-                glu.gluTessEndContour(tobj);
-                if (aPG.hasHole()) {
-                    for (int i = 0; i < aPG.getHoleLineNumber(); i++) {
-                        glu.gluTessBeginContour(tobj);
-                        for (int j = 0; j < aPG.getHoleLine(i).size() - 1; j++) {
-                            p = ((java.util.List<PointZ>) aPG.getHoleLine(i)).get(j);
-                            v = transform.transform(p);
-                            glu.gluTessVertex(tobj, v, 0, v);
-                        }
-                        glu.gluTessEndContour(tobj);
-                    }
-                }
-                glu.gluTessEndPolygon(tobj);
-                //gl.glEndList();
-                glu.gluDeleteTess(tobj);
-
-                //gl.glCallList(startList);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        if (aPGB.isDrawOutline()) {
-            float[] rgba = aPGB.getOutlineColor().getRGBComponents(null);
-            gl.glLineWidth(aPGB.getOutlineSize() * this.dpiScale);
-            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            gl.glBegin(GL2.GL_LINE_STRIP);
-            for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
-            }
-            gl.glEnd();
-
-            if (aPG.hasHole()) {
-                java.util.List<PointZ> newPList;
-                gl.glBegin(GL2.GL_LINE_STRIP);
-                for (int h = 0; h < aPG.getHoleLines().size(); h++) {
-                    newPList = (java.util.List<PointZ>) aPG.getHoleLines().get(h);
-                    for (int j = 0; j < newPList.size(); j++) {
-                        p = newPList.get(j);
-                        gl.glVertex3f(transform.transform_x((float) p.X), transform.transform_y((float) p.Y), transform.transform_z((float) p.Z));
                     }
                 }
                 gl.glEnd();

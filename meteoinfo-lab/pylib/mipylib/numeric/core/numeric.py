@@ -101,6 +101,19 @@ def array(object, dtype=None, copy=True, order='K', subok=False, ndmin=0):
                 elif isinstance(object[0], (list, tuple)):
                     if miutil.iscomplex(object[0]):
                         a = NDArray(JythonUtil.toComplexArray(object))
+                elif isinstance(object[0], NDArray):
+                    shape = [len(object)]
+                    shape.extend(object[0].shape)
+                    if dtype is None:
+                        for o in object:
+                            if dtype is None:
+                                dtype = o.dtype
+                            else:
+                                if o.dtype > dtype:
+                                    dtype = o.dtype
+                    a = zeros(shape, dtype=dtype)
+                    for i in range(len(object)):
+                        a[i] = object[i]
                 elif miutil.iscomplex(object):
                     a = NDArray(JythonUtil.toComplexArray(object))
 

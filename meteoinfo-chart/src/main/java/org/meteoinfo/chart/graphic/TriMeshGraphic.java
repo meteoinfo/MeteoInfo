@@ -2,7 +2,10 @@ package org.meteoinfo.chart.graphic;
 
 import org.joml.Vector3f;
 import org.meteoinfo.chart.jogl.Transform;
+import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.geometry.colors.TransferFunction;
 import org.meteoinfo.geometry.graphic.GraphicCollection3D;
@@ -17,7 +20,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class TriMeshGraphic extends GraphicCollection3D {
+public class TriMeshGraphic extends Graphic {
 
     protected Logger logger = LoggerFactory.getLogger("TriMeshGraphic");
     protected float[] vertexPosition;
@@ -30,6 +33,10 @@ public class TriMeshGraphic extends GraphicCollection3D {
     protected boolean edgeInterp;
     protected boolean mesh;
     protected boolean normalLoaded = false;
+    protected Extent extent;
+    protected LegendScheme legendScheme;
+    protected boolean singleLegend = true;
+    protected ColorBreak legendBreak;
 
     /**
      * Constructor
@@ -214,6 +221,46 @@ public class TriMeshGraphic extends GraphicCollection3D {
             for (int j = 0; j < 3; j++) {
                 ii = i * 9 + j * 3;
                 vector3f = new Vector3f(vertexes[ii], vertexes[ii + 1], vertexes[ii + 2]);
+                if (map.containsKey(vector3f)) {
+                    index = map.get(vector3f);
+                    vertexIndices[vertexIdx] = index;
+                } else {
+                    vertexIndices[vertexIdx] = idx;
+                    map.put(vector3f, idx++);
+                }
+
+                vertexIdx += 1;
+            }
+            triangleIdx += 1;
+        }
+
+        this.vertexPosition = new float[map.size() * 3];
+        idx = 0;
+        for (Map.Entry<Vector3f, Integer> entry : map.entrySet()) {
+            vector3f = entry.getKey();
+            vertexPosition[idx++] = vector3f.x;
+            vertexPosition[idx++] = vector3f.y;
+            vertexPosition[idx++] = vector3f.z;
+        }
+
+        updateExtent();
+    }
+
+    /**
+     * Set triangles
+     * @param vertexData The triangle vertex array
+     */
+    public void setTriangles(List<Triangle3D> triangles) {
+        LinkedHashMap<Vector3f, Integer> map = new LinkedHashMap<Vector3f, Integer>();
+        int n = triangles.size();
+        this.vertexIndices = new int[n];
+        Vector3f vector3f;
+        int idx = 0, vertexIdx = 0, triangleIdx = 0, index, ii;
+        List<Integer> idxList = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            Triangle3D triangle = triangles.get(i);
+            for (int j = 0; j < 3; j++) {
+                vector3f = new Vector3f(triangle.getPoint(j));
                 if (map.containsKey(vector3f)) {
                     index = map.get(vector3f);
                     vertexIndices[vertexIdx] = index;
@@ -430,10 +477,75 @@ public class TriMeshGraphic extends GraphicCollection3D {
         }
     }
 
+    /**
+     * Get extent
+     *
+     * @return The extent
+     */
     @Override
+    public Extent getExtent() {
+        return extent;
+    }
+
+    /**
+     * Set extent
+     *
+     * @param value Extent
+     */
+    @Override
+    public void setExtent(Extent value) {
+        this.extent = value;
+    }
+
+    /**
+     * Get legend scheme
+     * @return Legend scheme
+     */
+    public LegendScheme getLegendScheme() {
+        return this.legendScheme;
+    }
+
+    /**
+     * Set legend scheme
+     * @param ls Legend scheme
+     */
     public void setLegendScheme(LegendScheme ls) {
-        super.setLegendScheme(ls);
+        this.legendScheme = ls;
         updateVertexColor();
+    }
+
+    /**
+     * Get is single legend or not
+     * @return Boolean
+     */
+    public boolean isSingleLegend() {
+        return this.singleLegend;
+    }
+
+    /**
+     * Set single legend or not
+     * @param value Boolean
+     */
+    public void setSingleLegend(boolean value) {
+        this.singleLegend = value;
+    }
+
+    /**
+     * Get legend break
+     *
+     * @return Legend break
+     */
+    public ColorBreak getLegendBreak() {
+        return this.legendBreak;
+    }
+
+    /**
+     * Set legend break
+     *
+     * @param value Legend break
+     */
+    public void setLegendBreak(ColorBreak value) {
+        this.legendBreak = value;
     }
 
     /**

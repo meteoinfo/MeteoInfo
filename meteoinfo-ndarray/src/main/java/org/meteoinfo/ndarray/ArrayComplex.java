@@ -117,7 +117,11 @@ public class ArrayComplex extends Array {
         if (data != null) {
             storage = data;
         } else {
+            int n = (int) indexCalc.getSize();
             storage = new Complex[(int) indexCalc.getSize()];
+            for (int i = 0; i < n; i++) {
+                storage[i] = Complex.ZERO;
+            }
         }
     }
 

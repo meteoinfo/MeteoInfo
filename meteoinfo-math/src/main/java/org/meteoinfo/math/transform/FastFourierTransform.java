@@ -2,9 +2,15 @@ package org.meteoinfo.math.transform;
 
 import org.apache.commons.numbers.core.ArithmeticUtils;
 import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.ArrayComplex;
 import org.meteoinfo.ndarray.Complex;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.math.ArrayMath;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.DoubleUnaryOperator;
 
 /**
@@ -28,6 +34,9 @@ public class FastFourierTransform implements ComplexTransform {
 
     /** Number of array slots: 1 for "real" parts 1 for "imaginary" parts. */
     private static final int NUM_PARTS = 2;
+    /** The IEEE 754 machine epsilon from Cephes: {@code (2^-53)} */
+    private static final double MACH_EPS = 1.11022302462515654042e-16;
+    static final double TOL = 5.0 * MACH_EPS;
     /**
      * {@code W_SUB_N_R[i]} is the real part of
      * {@code exp(- 2 * i * pi / n)}:
@@ -318,12 +327,149 @@ public class FastFourierTransform implements ComplexTransform {
     @Override
     public Array apply(Array f) {
         if (!ArithmeticUtils.isPowerOfTwo(f.getSize())) {
-            f = pad(f);
+            //f = pad(f);
+            if (inverse) {
+                return ifftBluestein(f);
+            } else {
+                return fftBluestein(f);
+            }
         }
 
         final double[][] dataRI = TransformUtils.createRealImaginary(f);
         transformInPlace(dataRI);
+        tolTransformedData(dataRI);
         return TransformUtils.createComplexArray(dataRI);
+    }
+
+    /**
+     * Fast Fourier Transform using Bluestein method
+     * @param a Input data array
+     * @return FFT data array
+     */
+    public Array fftBluestein(Array a) {
+        // find a power of 2 convolution length m such that m >= n * 2 + 1
+        int n = (int) a.getSize();
+        if (n >= 0x20000000) {
+            throw new IllegalArgumentException("array too large: " + n);
+        }
+
+        double[] cos = new double[n];
+        double[] sin = new double[n];
+        for (int i = 0; i < n; ++i) {
+            int j = (int) ((long) i * i % (n * 2));
+            double angle = Math.PI * j / n;
+            cos[i] = Math.cos(angle);
+            sin[i] = Math.sin(angle);
+        }
+
+        int m = Integer.highestOneBit(n) * 4;
+
+        // temporary arrays
+        double[] a_re = new double[m];
+        double[] a_im = new double[m];
+        double[] b_re = new double[m];
+        double[] b_im = new double[m];
+
+        b_re[0] = cos[0];
+        b_im[0] = sin[0];
+
+        Complex c;
+        for (int i = 0; i < n; ++i) {
+            double sin_i = sin[i];
+            double cos_i = cos[i];
+            c = a.getComplex(i);
+            double re_i = c.real();
+            double im_i = c.imag();
+            a_re[i] = re_i * cos_i + im_i * sin_i;
+            a_im[i] = -re_i * sin_i + im_i * cos_i;
+            if (i != 0) {
+                b_re[i] = b_re[m - i] = cos_i;
+                b_im[i] = b_im[m - i] = sin_i;
+            }
+        }
+
+        // convolution
+        Array conv = convolve(ArrayUtil.arrayComplex(a_re, a_im), ArrayUtil.arrayComplex(b_re, b_im));
+        List<double[]> re_im = ((ArrayComplex) conv).getRealImage();
+        double[] c_re = re_im.get(0);
+        double[] c_im = re_im.get(1);
+
+        // result
+        double[] re = new double[n];
+        double[] im = new double[n];
+
+        // postprocessing
+        Array r = Array.factory(DataType.COMPLEX, new int[]{n});
+        for (int i = 0; i < n; ++i) {
+            double sin_i = sin[i];
+            double cos_i = cos[i];
+            double c_re_i = c_re[i];
+            double c_im_i = c_im[i];
+            double re_i = c_re_i * cos_i + c_im_i * sin_i;
+            double im_i = -c_re_i * sin_i + c_im_i * cos_i;
+            c = new Complex((Math.abs(re_i) <= TOL) ? 0.0 : re_i,
+                (Math.abs(im_i) <= TOL) ? 0.0 : im_i);
+            r.setComplex(i, c);
+        }
+
+        return r;
+    }
+
+    /**
+     * Fast Fourier Inverse Transform using Bluestein method
+     * @param a Input data array
+     * @return Inverse FFT data array
+     */
+    public Array ifftBluestein(Array freqs) {
+        Array inv = fftBluestein(freqs);
+
+        List<double[]> re_im = ((ArrayComplex) inv).getRealImage();
+        double[] re = re_im.get(0);
+        double[] im = re_im.get(1);
+        final int n = re.length;
+        for (int i = 0; i < n; ++i) {
+            double re_i = re[i] / n;
+            double im_i = im[i] / n;
+            re[i] = (Math.abs(re_i) <= TOL) ? 0.0 : re_i;
+            im[i] = (Math.abs(im_i) <= TOL) ? 0.0 : im_i;
+        }
+        for (int i = 1; i <= n / 2; ++i) {
+            double re_tmp = re[n - i];
+            double im_tmp = im[n - i];
+            re[n - i] = re[i];
+            re[i] = re_tmp;
+            im[n - i] = im[i];
+            im[i] = im_tmp;
+        }
+
+        //return inv;
+        return new ArrayComplex(re, im);
+    }
+
+    private Array convolve(Array x, Array y) {
+        FastFourierTransform fft = new FastFourierTransform(this.normalization, false);
+        x = fft.apply(x);
+        y = fft.apply(y);
+
+        Array x_re = ArrayMath.getReal(x);
+        Array x_im = ArrayMath.getImage(x);
+        Array y_re = ArrayMath.getReal(y);
+        Array y_im = ArrayMath.getImage(y);
+        Array temp = Array.factory(DataType.COMPLEX, x.getShape());
+
+        Complex c;
+        for (int i = 0; i < x_re.getSize(); ++i) {
+            double x_re_i = x_re.getDouble(i);
+            double y_re_i = y_re.getDouble(i);
+            double x_im_i = x_im.getDouble(i);
+            double y_im_i = y_im.getDouble(i);
+            c = new Complex(x_re_i * y_re_i - x_im_i * y_im_i,
+                    x_im_i * y_re_i + x_re_i * y_im_i);
+            temp.setComplex(i, c);
+        }
+
+        fft = new FastFourierTransform(this.normalization, true);
+        return fft.apply(temp);
     }
 
     /**
@@ -363,6 +509,21 @@ public class FastFourierTransform implements ComplexTransform {
 
             default:
                 throw new IllegalStateException(); // Should never happen.
+        }
+    }
+
+    private void tolTransformedData(final double[][] dataRI) {
+        final double[] dataR = dataRI[0];
+        final double[] dataI = dataRI[1];
+        final int n = dataR.length;
+
+        for (int i = 0; i < n; i++) {
+            if (Math.abs(dataR[i]) <= TOL) {
+                dataR[i] = 0;
+            }
+            if (Math.abs(dataI[i]) <= TOL) {
+                dataI[i] = 0;
+            }
         }
     }
 

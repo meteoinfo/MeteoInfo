@@ -21,16 +21,16 @@
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice\slice_2d.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow\layer_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\fft\fft_3.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\fft\fft_3-1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\fft\fft_5.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\fft\fft2_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\fft\ifft2_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice\slice_2d.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow\layer_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\fft\fft_3.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\fft\fft_3-1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\fft\fft_5.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\fft\fft2_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\fft\ifft2_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -38,5 +38,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1373,822"/>
+  <Startup MainFormLocation="-7,0" MainFormSize="1327,827"/>
 </MeteoInfo>

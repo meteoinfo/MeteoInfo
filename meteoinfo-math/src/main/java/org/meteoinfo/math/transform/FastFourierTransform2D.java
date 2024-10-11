@@ -14,6 +14,13 @@ public class FastFourierTransform2D extends FastFourierTransform {
 
     /**
      * Constructor
+     */
+    public FastFourierTransform2D() {
+        super();
+    }
+
+    /**
+     * Constructor
      * @param inverse Whether is inverse transform
      */
     public FastFourierTransform2D(boolean inverse) {
@@ -60,8 +67,4 @@ public class FastFourierTransform2D extends FastFourierTransform {
         return r;
     }
 
-    @Override
-    public Array apply(double[] f) {
-        return null;
-    }
 }

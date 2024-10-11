@@ -35,6 +35,8 @@ package org.meteoinfo.ndarray;
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
 import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Concrete implementation of Array specialized for complex. Data storage is
@@ -93,6 +95,19 @@ public class ArrayComplex extends Array {
     public ArrayComplex(int[] shape) {
         super(DataType.COMPLEX, shape);
         storage = new Complex[(int) indexCalc.getSize()];
+    }
+
+    /**
+     * Constructor
+     * @param real Real data array
+     * @param image Image data array
+     */
+    public ArrayComplex(double[] real, double[] image) {
+        super(DataType.COMPLEX, new int[]{real.length});
+        storage = new Complex[real.length];
+        for (int i = 0; i < real.length; i++) {
+            storage[i] = new Complex(real[i], image[1]);
+        }
     }
 
     /**
@@ -385,6 +400,62 @@ public class ArrayComplex extends Array {
 
     public void setObject(int index, Object value) {
         storage[index] = (Complex)value;
+    }
+
+    /**
+     * Get real data array
+     * @return Real data array
+     */
+    public double[] getReal() {
+        double[] real = new double[(int) this.getSize()];
+        IndexIterator iter = this.getIndexIterator();
+        int i = 0;
+        Complex c;
+        while (iter.hasNext()) {
+            c = iter.getComplexNext();
+            real[i] = c.real();
+            i += 1;
+        }
+
+        return real;
+    }
+
+    /**
+     * Get image data array
+     * @return Image data array
+     */
+    public double[] getImage() {
+        double[] image = new double[(int) this.getSize()];
+        IndexIterator iter = this.getIndexIterator();
+        int i = 0;
+        Complex c;
+        while (iter.hasNext()) {
+            c = iter.getComplexNext();
+            image[i] = c.imag();
+            i += 1;
+        }
+
+        return image;
+    }
+
+    /**
+     * Get real and image data array
+     * @return Real and image data array
+     */
+    public List<double[]> getRealImage() {
+        double[] real = new double[(int) this.getSize()];
+        double[] image = new double[(int) this.getSize()];
+        IndexIterator iter = this.getIndexIterator();
+        int i = 0;
+        Complex c;
+        while (iter.hasNext()) {
+            c = iter.getComplexNext();
+            real[i] = c.real();
+            image[i] = c.imag();
+            i += 1;
+        }
+
+        return Arrays.asList(real, image);
     }
 
     /**

@@ -753,6 +753,22 @@ public class ArrayUtil {
     }
 
     /**
+     * Create complex array from real and image data array
+     * @param real Real data array
+     * @param image Image data array
+     * @return Complex array
+     */
+    public static Array arrayComplex(double[] real, double[] image) {
+        int n = real.length;
+        Array r = Array.factory(DataType.COMPLEX, new int[]{n});
+        for (int i = 0; i < n; i++) {
+            r.setComplex(i, new Complex(real[i], image[i]));
+        }
+
+        return r;
+    }
+
+    /**
      * Create an array
      *
      * @param data Array like data

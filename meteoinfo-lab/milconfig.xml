@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\fft">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\text"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\netcdf">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\model"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\isosurface"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
@@ -13,24 +10,23 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\fft"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataset"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice\slice_2d.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow\layer_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\fft\fft_3-1.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\fft\fft_5.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\fft\fft2_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\netcdf\joinncfile_3.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice\slice_2d.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\geoshow\layer_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\fft\fft_3-1.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\fft\fft_5.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\fft\fft2_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\netcdf\joinncfile_3.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -38,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-7,0" MainFormSize="1327,827"/>
+  <Startup MainFormLocation="-7,-7" MainFormSize="1293,765"/>
 </MeteoInfo>

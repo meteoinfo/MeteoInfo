@@ -51,6 +51,7 @@ import org.meteoinfo.ndarray.IndexIterator;
 import org.meteoinfo.ndarray.MAMath;
 import org.meteoinfo.data.meteodata.Attribute;
 import org.meteoinfo.projection.Reproject;
+import ucar.ma2.DataType;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.NetcdfFileWriter;
 import ucar.nc2.NetcdfFiles;
@@ -3561,7 +3562,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 break;
         }
 
-        //Change time dimension as unlimit
+        //Change time dimension as unlimited
         for (i = 0; i < aDataInfo.getDimensions().size(); i++) {
             Dimension aDimS = aDataInfo.getDimensions().get(i);
             if (aDimS.getShortName().equals(timeDimStr)) {
@@ -3593,7 +3594,17 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
         //Define global attributes
         for (ucar.nc2.Attribute attr : aDataInfo.ncAttributes) {
-            ncfilew.addGroupAttribute(null, attr);
+            switch (attr.getDataType()) {
+                case BYTE:
+                case CHAR:
+                case STRING:
+                case SHORT:
+                case INT:
+                case FLOAT:
+                case DOUBLE:
+                    ncfilew.addGroupAttribute(null, attr);
+                    break;
+            }
         }
 
         //Define variables
@@ -3607,7 +3618,13 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                 }
             }
-            ucar.nc2.Variable nvar = ncfilew.addVariable(null, var.getShortName(), var.getDataType(), vdims);
+            DataType dataType = var.getDataType();
+            if (dataType == DataType.STRING) {
+                continue;
+            } else if (dataType == DataType.LONG) {
+                dataType = DataType.INT;
+            }
+            ucar.nc2.Variable nvar = ncfilew.addVariable(null, var.getShortName(), dataType, vdims);
             if (var.getDimensions().size() == 1 && var.getDimensions().get(0).getShortName().equals(timeDimStr)) {
                 nvar.addAttribute(new ucar.nc2.Attribute("units", "hours since 1800-1-1 00:00:00"));
                 nvar.addAttribute(new ucar.nc2.Attribute("long_name", "Time"));

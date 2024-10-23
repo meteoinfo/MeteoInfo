@@ -20,6 +20,7 @@ public class LonLatAxis extends Axis implements Cloneable {
 
     protected boolean drawDegreeSymbol;
     protected boolean degreeSpace;
+    protected boolean longitude = true;
     
     /**
      * Constructor
@@ -27,10 +28,20 @@ public class LonLatAxis extends Axis implements Cloneable {
      * @param xAxis Is longitude or not
      */
     public LonLatAxis(String label, boolean xAxis){
+        this(label, xAxis, xAxis);
+    }
+
+    /**
+     * Constructor
+     * @param label Axis label
+     * @param xAxis Is longitude or not
+     */
+    public LonLatAxis(String label, boolean xAxis, boolean longitude){
         super(label, xAxis);
-        
+
         this.drawDegreeSymbol = true;
         this.degreeSpace = false;
+        this.longitude = longitude;
     }
     
     /**
@@ -49,8 +60,7 @@ public class LonLatAxis extends Axis implements Cloneable {
         this.lineWidth = axis.lineWidth;
         this.lineStyle = axis.lineStyle;
         this.location = axis.location;
-        this.maxValue = axis.maxValue;
-        this.minValue = axis.minValue;
+        this.setMinMaxValue(axis.minValue, axis.maxValue);
         this.minorTickNum = axis.minorTickNum;
         this.minorTickVisible = axis.minorTickVisible;
         //this.setShift(axis.getShift());
@@ -115,7 +125,7 @@ public class LonLatAxis extends Axis implements Cloneable {
      * @return Longitude or not
      */
     public boolean isLongitude(){
-        return this.xAxis;
+        return this.longitude;
     }
     
     /**
@@ -123,7 +133,7 @@ public class LonLatAxis extends Axis implements Cloneable {
      * @param value Longitude or not
      */
     public void setLongitude(boolean value){
-        this.xAxis = value;
+        this.longitude = value;
     }
 
     /**

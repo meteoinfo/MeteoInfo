@@ -61,31 +61,24 @@ public class MICAPSDataInfo {
                 dataType = dataType.trim().toLowerCase();
                 if (dataType.equals("diamond 11")) {
                     mdType = MeteoDataType.MICAPS_11;
-                }
-                if (dataType.equals("diamond 13")) {
+                } else if (dataType.equals("diamond 13")) {
                     mdType = MeteoDataType.MICAPS_13;
-                }
-                if (dataType.contains("iamond 120")) {
+                } else if (dataType.equals("diamond 2")) {
+                    mdType = MeteoDataType.MICAPS_2;
+                } else if (dataType.equals("diamond 3")) {
+                    mdType = MeteoDataType.MICAPS_3;
+                } else if (dataType.equals("diamond 4")) {
+                    mdType = MeteoDataType.MICAPS_4;
+                } else if (dataType.equals("diamond 7")) {
+                    mdType = MeteoDataType.MICAPS_7;
+                } else if (dataType.contains("iamond 120")) {
                     mdType = MeteoDataType.MICAPS_120;
-                }
-                if (dataType.contains("diamond 131")) {
+                } else if (dataType.contains("diamond 131")) {
                     mdType = MeteoDataType.MICAPS_131;
-                }
-                if (dataType.contains("diamond 1")) {
+                } else if (dataType.contains("diamond 1")) {
                     mdType = MeteoDataType.MICAPS_1;
                 }
-                if (dataType.equals("diamond 2")) {
-                    mdType = MeteoDataType.MICAPS_2;
-                }
-                if (dataType.equals("diamond 3")) {
-                    mdType = MeteoDataType.MICAPS_3;
-                }
-                if (dataType.equals("diamond 4")) {
-                    mdType = MeteoDataType.MICAPS_4;
-                }
-                if (dataType.equals("diamond 7")) {
-                    mdType = MeteoDataType.MICAPS_7;
-                }
+
                 if (mdType == null) {
                     System.out.println(String.format("Unknown MICAPS data file type: %s", dataType));
                 }

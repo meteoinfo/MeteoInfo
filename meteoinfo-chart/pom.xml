@@ -44,11 +44,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>meteoinfo-projection</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>meteoinfo-image</artifactId>
             <version>${project.version}</version>
         </dependency>

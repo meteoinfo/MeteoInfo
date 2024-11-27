@@ -225,6 +225,15 @@ public enum DataType {
     }
 
     /**
+     * Is structure
+     *
+     * @return true if structure and sequence
+     */
+    public boolean isStructure() {
+        return (this == DataType.STRUCTURE || this == DataType.SEQUENCE);
+    }
+
+    /**
      * Convert a number to this data type
      * @param n The number
      * @return New data type number

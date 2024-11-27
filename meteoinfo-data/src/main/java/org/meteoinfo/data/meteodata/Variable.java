@@ -50,6 +50,7 @@ public class Variable {
     private boolean isSwath = false;
     private int varId;
     private boolean dimVar = false;
+    private boolean memberOfStructure = false;
     private List<Integer> levelIdxs = new ArrayList<>();
     private List<Integer> varInLevelIdxs = new ArrayList<>();
     private Array cachedData;
@@ -558,6 +559,24 @@ public class Variable {
      */
     public void setDimVar(boolean value) {
         dimVar = value;
+    }
+
+    /**
+     * Get if the variable is a member of a structure
+     *
+     * @return Is a member of a structure or not
+     */
+    public boolean isMemberOfStructure() {
+        return this.memberOfStructure;
+    }
+
+    /**
+     * Set if the variable is a member of a structure
+     *
+     * @param value Boolean
+     */
+    public void setMemberOfStructure(boolean value) {
+        this.memberOfStructure = value;
     }
 
     /**

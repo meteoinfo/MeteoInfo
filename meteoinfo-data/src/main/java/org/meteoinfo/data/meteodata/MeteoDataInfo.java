@@ -73,7 +73,7 @@ public class MeteoDataInfo {
     private int _lonIdx;
     private DrawType2D drawType2D;
     /// <summary>
-    /// Is Lont/Lat
+    /// Is Lon/Lat
     /// </summary>
     public boolean IsLonLat;
     /// <summary>

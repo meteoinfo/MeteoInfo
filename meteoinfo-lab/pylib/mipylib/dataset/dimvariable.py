@@ -20,41 +20,69 @@ import mipylib.numeric as np
 import mipylib.miutil as miutil
 import datetime
 import numbers
+import warnings
 
 # Dimension variable
 class DimVariable(object):
+
+    @staticmethod
+    def factory(variable=None, dataset=None, ncvariable=None):
+        """
+        Factor method.
+        """
+        if variable.getDataType().isStructure():
+            return StructureVariable(variable, dataset)
+        else:
+            return DimVariable(variable, dataset, ncvariable)
     
     # variable must be org.meteoinfo.data.meteodata.Variable
     # dataset is DimDataFile
     def __init__(self, variable=None, dataset=None, ncvariable=None):
-        self.variable = variable
+        self._variable = variable
         self.dataset = dataset
         self.ncvariable = ncvariable
         if not variable is None:
-            self.name = variable.getName()
             self.dtype = np.dtype.fromjava(variable.getDataType())
             self.dims = variable.getDimensions()
             self.ndim = variable.getDimNumber()
             self.attributes = variable.getAttributes()
         elif not ncvariable is None:
-            self.name = ncvariable.getShortName()
             self.dtype = ncvariable.getDataType()
             self.dims = ncvariable.getDimensions()
             self.ndim = len(self.dims)
             self.attributes = list(ncvariable.getAttributes())
         else:
-            self.name = None
             self.dtype = None
             self.dims = None
             self.ndim = 0
             self.attributes = None
         self.proj = None if dataset is None else dataset.projection
         self.projection = self.proj
+
+    @property
+    def name(self):
+        if self._variable is not None:
+            return self._variable.getName()
+
+        if self.ncvariable is not None:
+            return self.ncvariable.getFullName()
+
+        return None
+
+    @property
+    def short_name(self):
+        if self._variable is not None:
+            return self._variable.getShortName()
+
+        if self.ncvariable is not None:
+            return self.ncvariable.getShortName()
+
+        return None
             
     def __len__(self):
         len = 1
-        if not self.variable is None:
-            for dim in self.variable.getDimensions():
+        if not self._variable is None:
+            for dim in self._variable.getDimensions():
                 len = len * dim.getLength()            
         return len
         
@@ -78,7 +106,7 @@ class DimVariable(object):
         return self.__str__()
         
     def __getitem__(self, indices):
-        if self.variable.getDataType() in [DataType.STRUCTURE, DataType.SEQUENCE]:
+        if self._variable.getDataType() in [DataType.STRUCTURE, DataType.SEQUENCE]:
             if isinstance(indices, str):    #metadata
                 return self.member_array(indices)
             else:
@@ -105,16 +133,17 @@ class DimVariable(object):
                 else:
                     indices1.append(ii)
             indices = indices1
-            
-        if len(indices) < self.ndim:
-            indices = list(indices)
-            for _ in range(self.ndim - len(indices)):
-                indices.append(slice(None))
-            indices = tuple(indices)
-        
-        if len(indices) != self.ndim:
-            print('indices must be ' + str(self.ndim) + ' dimensions!')
-            return None
+
+        if self.ndim > 0:
+            if len(indices) < self.ndim:
+                indices = list(indices)
+                for _ in range(self.ndim - len(indices)):
+                    indices.append(slice(None))
+                indices = tuple(indices)
+
+            if len(indices) != self.ndim:
+                print('indices must be ' + str(self.ndim) + ' dimensions!')
+                return None
             
         if not self.proj is None and not self.proj.isLonLat():
             xlim = None
@@ -237,7 +266,7 @@ class DimVariable(object):
                     ranges.append(tlist)
                     k = tlist
             elif isinstance(k, basestring):
-                dim = self.variable.getDimension(i)
+                dim = self._variable.getDimension(i)
                 kvalues = k.split(':')
                 sv = float(kvalues[0])
                 sidx = dim.getValueIndex(sv)
@@ -265,7 +294,7 @@ class DimVariable(object):
                 n = abs(eidx - sidx) + 1
                 size.append(n)                   
                 if n > 1:
-                    dim = self.variable.getDimension(i)
+                    dim = self._variable.getDimension(i)
                     #if dim.isReverse():
                     #    step = -step
                     dim = dim.extract(sidx, eidx, step)
@@ -283,7 +312,7 @@ class DimVariable(object):
                 ranges.append(rr)
             else:
                 if len(k) > 1:
-                    dim = self.variable.getDimension(i)
+                    dim = self._variable.getDimension(i)
                     dim = dim.extract(k)
                     #dim.setReverse(False)
                     dims.append(dim)
@@ -316,6 +345,23 @@ class DimVariable(object):
         """
         return np.array(self.dataset.read(self.name))
 
+    def get_pack_paras(self):
+        """
+        Get pack parameters.
+        :return: missing_value, scale_factor, add_offset
+        """
+        pack_paras = NCUtil.getPackData(self._variable)
+
+        return pack_paras[2], pack_paras[1], pack_paras[0]
+
+    def is_member(self):
+        """
+        Whether the variable is a member of a structure.
+
+        :return: Is a member of a structure or not.
+        """
+        return self._variable.isMemberOfStructure()
+
     def get_members(self):
         """
         Get structure members. Only valid for Structure data type.
@@ -324,7 +370,7 @@ class DimVariable(object):
         """
         a = self.read()
         if a._array.getDataType() != DataType.STRUCTURE:
-            print 'This method is only valid for structure array!'
+            print('This method is only valid for structure array!')
             return None
         a = a._array.getArrayObject()
         return a.getMembers()
@@ -343,28 +389,32 @@ class DimVariable(object):
         a = a._array.getArrayObject()
         return a.findMember(member)
 
-    def member_array(self, member, indices=None):
+    def member_array(self, member, index=None, rec=0):
         """
         Extract member array. Only valid for Structure data type.
 
         :param member: (*string*) Member name.
-        :param indices: (*slice*) Indices.
+        :param index: (*slice*) Index.
+        :param rec: (*int*) Record index.
 
         :returns: (*array*) Extracted member array.
         """
         a = self.read()
-        if a._array.getDataType() != DataType.STRUCTURE:
-            print('This method is only valid for structure array!')
-            return None
-
         a = a._array.getArrayObject()
+        is_structure = isinstance(a, ArrayStructure)
         if isinstance(member, basestring):
-            member = a.findMember(member)
+            if is_structure:
+                member = a.findMember(member)
+            else:
+                member = a.getObject(rec).findMember(member)
+
         if member is None:
             raise KeyError('The member %s not exists!' % member)
 
-        self.dataset.reopen()
-        a = a.extractMemberArray(member)
+        if is_structure:
+            a = a.extractMemberArray(member)
+        else:
+            a = a.getObject(rec).extractMemberArray(member)
         if a.getDataType() in [NCDataType.SEQUENCE, NCDataType.STRUCTURE]:
             return StructureArray(a)
 
@@ -373,10 +423,45 @@ class DimVariable(object):
         if r.size == 1:
             return r[0]
 
-        if not indices is None:
-            r = r.__getitem__(indices)
+        if not index is None:
+            r = r.__getitem__(index)
 
         return r
+
+    # def member_array(self, member, indices=None):
+    #     """
+    #     Extract member array. Only valid for Structure data type.
+    #
+    #     :param member: (*string*) Member name.
+    #     :param indices: (*slice*) Indices.
+    #
+    #     :returns: (*array*) Extracted member array.
+    #     """
+    #     a = self.read()
+    #     if a._array.getDataType() != DataType.STRUCTURE:
+    #         print('This method is only valid for structure array!')
+    #         return None
+    #
+    #     a = a._array.getArrayObject()
+    #     if isinstance(member, basestring):
+    #         member = a.findMember(member)
+    #     if member is None:
+    #         raise KeyError('The member %s not exists!' % member)
+    #
+    #     self.dataset.reopen()
+    #     a = a.extractMemberArray(member)
+    #     if a.getDataType() in [NCDataType.SEQUENCE, NCDataType.STRUCTURE]:
+    #         return StructureArray(a)
+    #
+    #     a = NCUtil.convertArray(a)
+    #     r = np.array(a)
+    #     if r.size == 1:
+    #         return r[0]
+    #
+    #     if not indices is None:
+    #         r = r.__getitem__(indices)
+    #
+    #     return r
 
     def dimlen(self, idx):
         """
@@ -414,7 +499,7 @@ class DimVariable(object):
         :param attr: (*string or Attribute*) Attribute or Attribute name
         """
         if isinstance(attr, str):
-            attr = self.variable.findAttribute(attr)
+            attr = self._variable.findAttribute(attr)
         if attr is None:
             return None
         v = np.array(attr.getValues())
@@ -447,17 +532,17 @@ class DimVariable(object):
     def adddim(self, dimtype, dimvalue):
         if isinstance(dimvalue, np.NDArray):
             dimvalue = dimvalue.aslist()
-        self.variable.addDimension(dimtype, dimvalue)
-        self.ndim = self.variable.getDimNumber()
+        self._variable.addDimension(dimtype, dimvalue)
+        self.ndim = self._variable.getDimNumber()
         
     def setdim(self, dimtype, dimvalue, index=None, reverse=False):
         if isinstance(dimvalue, np.NDArray):
             dimvalue = dimvalue.aslist()
         if index is None:
-            self.variable.setDimension(dimtype, dimvalue, reverse)
+            self._variable.setDimension(dimtype, dimvalue, reverse)
         else:
-            self.variable.setDimension(dimtype, dimvalue, reverse, index)
-        self.ndim = self.variable.getDimNumber()
+            self._variable.setDimension(dimtype, dimvalue, reverse, index)
+        self.ndim = self._variable.getDimNumber()
         
     def setdimrev(self, idx, reverse):
         self.dims[idx].setReverse(reverse)
@@ -486,6 +571,151 @@ class DimVariable(object):
             ncattr = NCAttribute(attrname, attrvalue)
             self.ncvariable.addAttribute(ncattr)
         return attr
+
+
+class StructureVariable(DimVariable):
+
+    def __init__(self, variable=None, dataset=None, parent_variable=None):
+        """
+        Structure variable.
+
+        :param variable: (*Structure*) NC Structure object.
+        :param dataset: (*DimDataFile*) Data file.
+        :param parent_variable: (*StructureVariable*) Parent structure variable.
+        """
+        DimVariable.__init__(self, variable, dataset)
+
+        self._parent_variable = parent_variable
+
+        if dataset is not None:
+            datainfo = dataset.dataset.getDataInfo()
+            if not datainfo.isOpened():
+                datainfo.reOpen()
+
+            self._ncfile = datainfo.getFile()
+            self._ncvar = self._ncfile.findVariable(self.name)
+            self._variables = []
+            for var in self._ncvar.getVariables():
+                self._variables.append(MemberVariable.factory(NCUtil.convertVariable(var), dataset, self))
+
+    def __getitem__(self, key):
+        if isinstance(key, basestring):
+            for var in self._variables:
+                if var.name == key:
+                    return var
+
+            for var in self._variables:
+                if var.short_name == key:
+                    return var
+
+            raise ValueError(key + ' is not a variable name')
+        else:
+            return np.array(self.dataset.read(self.name))
+
+    @property
+    def variables(self):
+        """
+        Get all variables.
+        """
+        return self._variables
+
+    @property
+    def varnames(self):
+        """
+        Get all variable names.
+        """
+        names = []
+        for var in self._variables:
+            names.append(var.short_name)
+
+        return names
+
+
+class MemberVariable(DimVariable):
+
+    @staticmethod
+    def factory(variable=None, dataset=None, parent_variable=None):
+        """
+        Factor method.
+        """
+        if variable.getDataType().isStructure():
+            return StructureVariable(variable, dataset, parent_variable)
+        else:
+            return MemberVariable(variable, dataset, parent_variable)
+
+    def __init__(self, variable=None, dataset=None, parent_variable=None):
+        """
+        Structure variable.
+
+        :param variable: (*Structure*) NC Structure object.
+        :param dataset: (*DimDataFile*) Data file.
+        :param array: (*NCArray*) NC Array.
+        """
+        DimVariable.__init__(self, variable, dataset)
+
+        self._parent_variable = parent_variable
+
+        if dataset is not None:
+            datainfo = dataset.dataset.getDataInfo()
+            if not datainfo.isOpened():
+                datainfo.reOpen()
+
+            self._ncfile = datainfo.getFile()
+            self._ncvar = self._ncfile.findVariable(self.name)
+
+    def __getitem__(self, key=0, station=None):
+        if isinstance(key, int):
+            return self.read_array(record=key)
+        elif isinstance(key, slice):
+            if key == slice(None):
+                return self.read()
+            else:
+                return self.read_array(station=key.start)
+
+    def read_array(self, record=0, station=None):
+        """
+        Read data array.
+
+        :param record: (*int*) Record index. Default is 0.
+        :param station: (*int*) station index. Default is `None`, means all stations.
+        :return: (*array*) Data array.
+        """
+        a = self._parent_variable.read()
+        a = a._array.getArrayObject()
+        missing_value, scale_factor, add_offset = self.get_pack_paras()
+        is_structure = isinstance(a, ArrayStructure)
+        if is_structure:
+            r = NCUtil.readSequence(a, self.short_name)
+        else:
+            if station is None:
+                r = NCUtil.readSequenceRecord(a, self.short_name, record, missing_value)
+            else:
+                r = NCUtil.readSequenceStation(a, self.short_name, station)
+
+        if r is None:
+            return None
+
+        r = ArrayUtil.unPack(r, missing_value, scale_factor, add_offset)
+        return np.array(r)
+
+    @property
+    def variables(self):
+        """
+        Get all variables.
+        """
+        return self._variables
+
+    @property
+    def varnames(self):
+        """
+        Get all variable names.
+        """
+        names = []
+        for var in self._variables:
+            names.append(var.short_name)
+
+        return names
+
 
 class StructureArray(object):
 
@@ -540,12 +770,12 @@ class StructureArray(object):
         else:
             return self._array.getObject(rec).findMember(member)
 
-    def member_array(self, member, indices=None, rec=0):
+    def member_array(self, member, index=None, rec=0):
         """
         Extract member array. Only valid for Structure data type.
 
         :param member: (*string*) Member name.
-        :param indices: (*slice*) Indices.
+        :param index: (*slice*) Index.
         :param rec: (*int*) Record index.
 
         :returns: (*array*) Extracted member array.
@@ -572,8 +802,8 @@ class StructureArray(object):
         if r.size == 1:
             return r[0]
 
-        if not indices is None:
-            r = r.__getitem__(indices)
+        if not index is None:
+            r = r.__getitem__(index)
 
         return r
 
@@ -583,7 +813,7 @@ class TDimVariable(object):
     # variable must be org.meteoinfo.data.meteodata.Variable
     # dataset is DimDataFiles
     def __init__(self, variable, dataset):
-        self.variable = variable
+        self._variable = variable
         self.dataset = dataset
         self.name = variable.getName()
         self.dtype = np.dtype.fromjava(variable.getDataType())
@@ -599,7 +829,7 @@ class TDimVariable(object):
         self.tnum = len(times)
 
     def __str__(self):
-        if self.variable is None:
+        if self._variable is None:
             return 'None'
 
         r = str(self.dtype) + ' ' + self.name + '('
@@ -609,7 +839,7 @@ class TDimVariable(object):
                 dimname = 'null'
             r = r + dimname + ','
         r = r[:-1] + '):'
-        attrs = self.variable.getAttributes()
+        attrs = self._variable.getAttributes()
         for attr in attrs:
             r = r + '\n\t' + self.name + ': ' + attr.toString()
         return r
@@ -628,7 +858,7 @@ class TDimVariable(object):
             indices = tuple(indices)
 
         if len(indices) != self.ndim:
-            print 'indices must be ' + str(self.ndim) + ' dimensions!'
+            print('indices must be ' + str(self.ndim) + ' dimensions!')
             return None
         
         k = indices[0]

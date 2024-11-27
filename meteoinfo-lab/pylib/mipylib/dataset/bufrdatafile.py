@@ -5,15 +5,23 @@ from .dimdatafile import DimDataFile
 class BUFRDataFile(DimDataFile):
 
     def __init__(self, dataset=None, access='r', bufrdata=None):
-        super(BUFRDataFile, self).__init__(dataset, access)
+        """
+        Create a BUFR data file object.
+
+        :param dataset: (*MeteoDataInfo*) Underline dataset.
+        :param access: (*string*) File access.
+        :param bufrdata: (*object*) Bufr data.
+        """
+        DimDataFile.__init__(self, dataset, access)
         self.bufrdata = bufrdata
+
 
     def write_indicator(self, bufrlen, edition=3):
         """
         Write indicator section with arbitrary length.
 
         :param bufrlen: (*int*) The total length of the message.
-        :param edition: (*int*) Bruf edition.
+        :param edition: (*int*) Burf edition.
 
         :returns: (*int*) Indicator section length.
         """
@@ -24,7 +32,7 @@ class BUFRDataFile(DimDataFile):
         Write indicator section with correct length.
 
         :param bufrlen: (*int*) The total length of the message.
-        :param edition: (*int*) Bruf edition.
+        :param edition: (*int*) Burf edition.
         """
         self.bufrdata.reWriteIndicatorSection(bufrlen, edition)
 

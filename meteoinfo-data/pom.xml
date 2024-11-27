@@ -15,6 +15,7 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <netcdf.version>5.6.0</netcdf.version>
+        <burf.version>5.6.1-SNAPSHOT</burf.version>
     </properties>
 
     <repositories>
@@ -51,12 +52,12 @@
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>cdm-core</artifactId>
-            <version>${netcdf.version}</version>
+            <version>5.6.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>bufr</artifactId>
-            <version>${netcdf.version}</version>
+            <version>5.6.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
@@ -134,6 +135,20 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.0</version>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <encoding>UTF-8</encoding>
+                    <optimize>true</optimize>
+                    <!-- 导入\lib下的本地jar包 -->
+                    <compilerArguments>
+                        <extdirs>${project.basedir}\lib</extdirs>
+                    </compilerArguments>
+                </configuration>
             </plugin>
         </plugins>
     </build>

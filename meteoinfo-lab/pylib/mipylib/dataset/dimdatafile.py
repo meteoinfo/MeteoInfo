@@ -34,23 +34,27 @@ class DimDataFile(object):
         self._variables = []
         if not dataset is None:
             self.filename = dataset.getFileName()
-            for v in dataset.getDataInfo().getVariables():
-                self._variables.append(DimVariable(v))
             self.nvar = dataset.getDataInfo().getVariableNum()
             self.fill_value = dataset.getMissingValue()
             self.proj = dataset.getProjectionInfo()
             self.projection = self.proj
+            for v in dataset.getDataInfo().getVariables():
+                self._variables.append(DimVariable.factory(v, self))
         self.arldata = arldata
         self.bufrdata = bufrdata
         
     def __getitem__(self, key):
         if isinstance(key, basestring):
-            var = self.dataset.getDataInfo().getVariable(key)
-            if var is None:
-                print(key + ' is not a variable name')
-                raise ValueError()
-            else:
-                return DimVariable(self.dataset.getDataInfo().getVariable(key), self)
+            for var in self._variables:
+                if var.name == key:
+                    return var
+
+            for var in self._variables:
+                if var.short_name == key:
+                    return var
+
+            print(key + ' is not a variable name')
+            raise ValueError()
         else:
             print(key + ' is not a variable name')
             raise ValueError()
@@ -67,7 +71,7 @@ class DimDataFile(object):
             
     def close(self):
         """
-        Close the opended dataset
+        Close the opened dataset
         """
         if not self.dataset is None:
             self.dataset.close()

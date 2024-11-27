@@ -28,4 +28,9 @@
     </annotationProcessing>
     <bytecodeTargetLevel target="11" />
   </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="meteoinfo-data" options="-extdirs D:\MyProgram\java\MeteoInfoDev\MeteoInfo\meteoinfo-data\lib" />
+    </option>
+  </component>
 </project>

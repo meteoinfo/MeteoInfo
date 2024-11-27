@@ -2329,6 +2329,14 @@ public class ArrayUtil {
         return r;
     }
 
+    /**
+     * Split an Array
+     *
+     * @param a Input array
+     * @param sections
+     * @param axis
+     * @return
+     */
     public static List<Array> arraySplit(Array a, int sections, int axis) {
         int[] shape = a.getShape();
         if (axis == -1) {
@@ -2340,6 +2348,31 @@ public class ArrayUtil {
 
 
         return arrays;
+    }
+
+    /**
+     * Unpack array by missing value, scale factor and add offset
+     *
+     * @param a Input array
+     * @param missingValue Missing value
+     * @param scaleFactor Scale factor
+     * @param addOffset Add offset
+     * @return Output array
+     */
+    public static Array unPack(Array a, double missingValue, double scaleFactor, double addOffset) {
+        if (!Double.isNaN(missingValue)) {
+            a = ArrayUtil.convertToDataType(a, DataType.DOUBLE);
+            ArrayMath.replaceValue(a, missingValue, Double.NaN);
+        }
+
+        if (scaleFactor != 1) {
+            a = ArrayMath.mul(a, scaleFactor);
+        }
+        if (addOffset != 0) {
+            a = ArrayMath.add(a, addOffset);
+        }
+
+        return a;
     }
 
     /**

@@ -7,7 +7,12 @@ package org.meteoinfo.data.meteodata.bufr;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
+
+import ucar.nc2.Group;
+import ucar.nc2.NetcdfFile;
+import ucar.nc2.iosp.AbstractIOServiceProvider;
+import ucar.nc2.iosp.IOServiceProvider;
+import ucar.unidata.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -15,11 +20,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.common.DataConvert;
-import ucar.nc2.iosp.bufr.BufrTableLookup;
-import ucar.nc2.iosp.bufr.DataDescriptor;
-import ucar.nc2.iosp.bufr.Descriptor;
-import ucar.nc2.iosp.bufr.Message;
-import ucar.nc2.iosp.bufr.MessageScanner;
 
 /**
  *
@@ -40,6 +40,59 @@ public class BufrDataInfo {
     // <editor-fold desc="Get Set Methods">
     // </editor-fold>
     // <editor-fold desc="Methods">
+
+    public static NetcdfFile open(String location) throws IOException {
+        IOServiceProvider spi = new BufrIosp2();
+        NetcdfFile ncFile = BufrDataInfo.build(spi, location);
+        spi.buildFinish(ncFile);
+
+        return ncFile;
+    }
+
+    public static NetcdfFile build(IOServiceProvider spi, String location) throws IOException {
+        RandomAccessFile raf = new RandomAccessFile(location, "r");
+        NetcdfFile.Builder builder = NetcdfFile.builder().setIosp((AbstractIOServiceProvider) spi).setLocation(location);
+
+        try {
+            Group.Builder root = Group.builder().setName("");
+            spi.build(raf, root, null);
+            builder.setRootGroup(root);
+
+            String id = root.getAttributeContainer().findAttributeString("_Id", null);
+            if (id != null) {
+                builder.setId(id);
+            }
+            String title = root.getAttributeContainer().findAttributeString("_Title", null);
+            if (title != null) {
+                builder.setTitle(title);
+            }
+
+        } catch (IOException | RuntimeException e) {
+            try {
+                raf.close();
+            } catch (Throwable t2) {
+            }
+            try {
+                spi.close();
+            } catch (Throwable t1) {
+            }
+            throw e;
+
+        } catch (Throwable t) {
+            try {
+                spi.close();
+            } catch (Throwable t1) {
+            }
+            try {
+                raf.close();
+            } catch (Throwable t2) {
+            }
+            throw new RuntimeException(t);
+        }
+
+        return builder.build();
+    }
+
     /**
      * Read first message
      *
@@ -49,7 +102,7 @@ public class BufrDataInfo {
      * @throws IOException
      */
     public Message readFirstMessage(String fileName) throws FileNotFoundException, IOException {
-        ucar.unidata.io.RandomAccessFile br = new ucar.unidata.io.RandomAccessFile(fileName, "r");
+        RandomAccessFile br = new RandomAccessFile(fileName, "r");
         MessageScanner ms = new MessageScanner(br);
         Message m = ms.getFirstDataMessage();
         br.close();
@@ -63,7 +116,7 @@ public class BufrDataInfo {
      * @throws IOException
      */
     public List<Message> readMessages(String fileName) throws IOException {
-        ucar.unidata.io.RandomAccessFile br = new ucar.unidata.io.RandomAccessFile(fileName, "r");
+        RandomAccessFile br = new RandomAccessFile(fileName, "r");
         MessageScanner ms = new MessageScanner(br);
         List<Message> messages = new ArrayList<>();
         while(ms.hasNext()) {
@@ -83,11 +136,13 @@ public class BufrDataInfo {
             bw = new RandomAccessFile(fileName, "rw");
         } catch (FileNotFoundException ex) {
             Logger.getLogger(BufrDataInfo.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
     /**
-     * Close the data file created by previos step
+     * Close the data file created by previous step
      */
     public void closeDataFile() {
         try {

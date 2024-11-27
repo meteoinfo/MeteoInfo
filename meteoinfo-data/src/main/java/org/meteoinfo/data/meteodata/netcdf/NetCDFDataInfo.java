@@ -143,9 +143,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     }
 
     /**
-     * Get file type identifer
+     * Get file type identifier
      *
-     * @return File type identifer
+     * @return File type identifier
      */
     public String getFileTypeId() {
         return fileTypeId;
@@ -1760,6 +1760,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         dimType = DimensionType.Y;
                         break;
                     case "time":
+                    case "valid_time":
                         dimType = DimensionType.T;
                         break;
                     case "level":
@@ -3100,7 +3101,10 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 scale_factor = packData[1];
                 missingValue = packData[2];
                 if (add_offset != 0 || scale_factor != 1) {
-                    //ArrayMath.fill_value = missingValue;
+                    data = ArrayUtil.convertToDataType(data, org.meteoinfo.ndarray.DataType.DOUBLE);
+                    if (!Double.isNaN(missingValue)) {
+                        ArrayMath.replaceValue(data, missingValue, Double.NaN);
+                    }
                     data = ArrayMath.add(ArrayMath.mul(data, scale_factor), add_offset);
                 }
             }

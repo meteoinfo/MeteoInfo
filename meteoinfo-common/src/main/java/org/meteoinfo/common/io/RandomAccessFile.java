@@ -417,9 +417,8 @@ public class RandomAccessFile implements DataInput, DataOutput {
      * write will occur.
      *
      * @return the offset from the start of the file in bytes.
-     * @throws IOException if an I/O error occurrs.
      */
-    public long getFilePointer() throws IOException {
+    public long getFilePointer() {
         return filePosition;
     }
 

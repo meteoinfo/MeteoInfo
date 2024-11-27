@@ -11,7 +11,6 @@ import org.meteoinfo.geometry.shape.PolylineZShape;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.math.ArrayUtil;
-import ucar.nc2.util.IO;
 
 import java.io.*;
 import java.time.LocalDateTime;

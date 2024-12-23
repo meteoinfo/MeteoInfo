@@ -99,6 +99,23 @@ public class RadialRecord {
     }
 
     /**
+     * Add an azimuth value
+     * @param scanIdx Scan index
+     * @param a Azimuth value
+     */
+    public void addAzimuth(int scanIdx, float a) {
+        List<Float> azi = this.azimuth.get(scanIdx);
+        azi.add(a);
+        if (this.azimuthMinIndex.get(scanIdx) == 0) {
+            if (azi.size() > 1) {
+                if (a < azi.get(azi.size() - 2)) {
+                    this.azimuthMinIndex.set(scanIdx, azi.size() - 1);
+                }
+            }
+        }
+    }
+
+    /**
      * Is velocity group or not
      * @return Velocity group or not
      */
@@ -171,6 +188,29 @@ public class RadialRecord {
             }
         }
         this.data.get(this.data.size() - 1).add(array);
+    }
+
+    /**
+     * Add a data bytes
+     * @param index Scan index
+     * @param bytes Data bytes
+     */
+    public void addDataBytes(int index, byte[] bytes) {
+        if (this.data.isEmpty()) {
+            this.data.add(new ArrayList<>());
+        }
+        Array array;
+        if (this.dataType == DataType.UBYTE) {
+            array = Array.factory(this.dataType, new int[]{bytes.length}, bytes);
+        } else {
+            int n = bytes.length / 2;
+            array = Array.factory(this.dataType, new int[]{n});
+            for (int i = 0; i < n; i++) {
+                short v = DataConvert.bytes2Short(new byte[]{bytes[i*2], bytes[i*2+1]}, ByteOrder.LITTLE_ENDIAN);
+                array.setShort(i, v);
+            }
+        }
+        this.data.get(index).add(array);
     }
 
     /**

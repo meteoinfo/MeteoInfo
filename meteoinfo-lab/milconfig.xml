@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\burf">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\radar\cinrad">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataset"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\fft"/>
@@ -13,18 +11,22 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\micaps"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar\cinrad"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_gfs_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_gdas_3.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_x_phase_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\cinrad\radar_pa_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_gfs_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_gdas_3.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_x_phase_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\cinrad\radar_pa_1.py"/>
     </RecentFiles>
   </File>
   <Font>

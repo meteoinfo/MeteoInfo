@@ -180,6 +180,7 @@ public class PARadarDataInfo extends BaseRadarDataInfo implements IRadarDataInfo
             byte[] rhBytes = new byte[RadialHeader.length];
             while (raf.read(rhBytes) != -1) {
                 RadialHeader radialHeader = new RadialHeader(rhBytes);
+                int scanIdx = radialHeader.elevationNumber - 1;
                 for (int i = 0; i < radialHeader.momentNumber; i++) {
                     MomentHeader momentHeader = new MomentHeader(raf);
                     String product = this.productMap.get(momentHeader.dataType);
@@ -194,26 +195,26 @@ public class PARadarDataInfo extends BaseRadarDataInfo implements IRadarDataInfo
                         this.recordMap.put(product, record);
                     }
                     if (radialHeader.radialNumber == 1) {
-                        record.fixedElevation.add(cutConfigs.get(radialHeader.elevationNumber - 1).elevation);
+                        record.fixedElevation.add(cutConfigs.get(scanIdx).elevation);
                         record.elevation.add(new ArrayList<>());
                         record.azimuth.add(new ArrayList<>());
                         record.azimuthMinIndex.add(0);
                         if (isVelocityGroup(record)) {
-                            record.disResolution.add(cutConfigs.get(radialHeader.elevationNumber - 1).dopplerResolution);
+                            record.disResolution.add(cutConfigs.get(scanIdx).dopplerResolution);
                             record.distance.add(ArrayUtil.arrayRange1(0, momentHeader.dataLength / momentHeader.binLength,
-                                    cutConfigs.get(radialHeader.elevationNumber - 1).dopplerResolution));
+                                    cutConfigs.get(scanIdx).dopplerResolution));
                         } else {
-                            record.disResolution.add(cutConfigs.get(radialHeader.elevationNumber - 1).logResolution);
+                            record.disResolution.add(cutConfigs.get(scanIdx).logResolution);
                             record.distance.add(ArrayUtil.arrayRange1(0, momentHeader.dataLength / momentHeader.binLength,
-                                    cutConfigs.get(radialHeader.elevationNumber - 1).logResolution));
+                                    cutConfigs.get(scanIdx).logResolution));
                         }
                         record.newScanData();
                     }
-                    record.elevation.get(record.elevation.size() - 1).add(radialHeader.elevation);
-                    record.addAzimuth(radialHeader.azimuth);
+                    record.elevation.get(scanIdx).add(radialHeader.elevation);
+                    record.addAzimuth(scanIdx, radialHeader.azimuth);
                     byte[] bytes = new byte[momentHeader.dataLength];
                     raf.read(bytes);
-                    record.addDataBytes(bytes);
+                    record.addDataBytes(scanIdx, bytes);
                 }
                 radialHeaders.add(radialHeader);
             }
@@ -369,7 +370,7 @@ public class PARadarDataInfo extends BaseRadarDataInfo implements IRadarDataInfo
             taskName = new String(bytes).trim();
             bytes = new byte[128];
             raf.read(bytes);
-            taskDescription = new String(bytes).trim();
+            taskDescription = new String(bytes, "GB2312").trim();
             bytes = new byte[4];
             raf.read(bytes);
             polarizationType = DataConvert.bytes2Int(bytes, ByteOrder.LITTLE_ENDIAN);

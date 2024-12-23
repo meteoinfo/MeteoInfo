@@ -20,13 +20,13 @@ from org.meteoinfo.common.util import GlobalUtil
 __version__ = GlobalUtil.getVersion()
 pstr = 'MeteoInfoLab {}'.format(__version__)
 
-lookup_cma = os.path.join(mi_dir, 'tables', 'bufr', 'tablelookup_cma.csv')
-if os.path.isfile(lookup_cma):
-    try:
-        is_ok = dataset.add_bufr_lookup(lookup_cma)
-    except:
-        is_ok = False
-    if is_ok:
-        pstr += ' (CMA Bufr lookup file added)'
+# lookup_cma = os.path.join(mi_dir, 'tables', 'bufr', 'tablelookup_cma.csv')
+# if os.path.isfile(lookup_cma):
+#     try:
+#         is_ok = dataset.add_bufr_lookup(lookup_cma)
+#     except:
+#         is_ok = False
+#     if is_ok:
+#         pstr += ' (CMA Bufr lookup file added)'
 
 print(pstr)

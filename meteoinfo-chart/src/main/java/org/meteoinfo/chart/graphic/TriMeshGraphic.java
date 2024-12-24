@@ -20,7 +20,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class TriMeshGraphic extends Graphic {
+public class TriMeshGraphic extends GraphicCollection3D {
 
     protected Logger logger = LoggerFactory.getLogger("TriMeshGraphic");
     protected float[] vertexPosition;

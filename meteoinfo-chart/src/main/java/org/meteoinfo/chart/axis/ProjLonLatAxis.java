@@ -5,6 +5,7 @@
  */
 package org.meteoinfo.chart.axis;
 
+import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.Location;
 import org.meteoinfo.chart.plot.AbstractPlot2D;
 import org.meteoinfo.chart.geo.MapGridLine;
@@ -80,6 +81,53 @@ public class ProjLonLatAxis extends LonLatAxis{
     // </editor-fold>
     // <editor-fold desc="Methods">
 
+    /**
+     * Update label gap
+     *
+     * @param g Graphics2D
+     * @param len Length
+     * @param labels Labels
+     * @return Label gap
+     */
+    public int getLabelGap(Graphics2D g, double len, List<GridLabel> labels) {
+        int n = labels.size();
+        int labLen = this.getMaxLabelLength(g, labels);
+        int nn = (int) ((len * 0.8) / labLen);
+        if (nn == 0) {
+            nn = 1;
+        }
+        return n / nn + 1;
+    }
+
+    /**
+     * Get maximum label string length
+     *
+     * @param g Graphics2D
+     * @param labels Labels
+     * @return Maximum label string length
+     */
+    public int getMaxLabelLength(Graphics2D g, List<GridLabel> labels) {
+        int max = 0;
+        Dimension dim;
+        int width, height;
+        g.setFont(this.tickLabelFont);
+        for (int i = 0; i < labels.size(); i++) {
+            GridLabel lab = labels.get(i);
+            dim = Draw.getStringDimension(lab.getLabString(), g);
+            width = dim.width;
+            if (this.tickLabelAngle != 0) {
+                width = (int) (dim.getWidth() * Math.cos(this.tickLabelAngle * Math.PI / 180));
+                height = dim.height;
+                width = Math.max(width, height);
+            }
+            if (max < width) {
+                max = width;
+            }
+        }
+
+        return max;
+    }
+
     @Override
     void drawXAxis(Graphics2D g, Rectangle2D area, AbstractPlot2D plot) {
         double xMin = area.getX();
@@ -98,8 +146,10 @@ public class ProjLonLatAxis extends LonLatAxis{
         double[] xy;
         if (this.isDrawTickLine()) {
             List<GridLabel> lonLabels = mapGridLine.getLongitudeLabels();
+            int labelGap = this.getLabelGap(g, xMax - xMin, lonLabels);
             g.setColor(this.getTickColor());
             g.setStroke(new BasicStroke(this.getTickWidth()));
+            int i = 0, idx = 0;
             for (GridLabel gridLabel : lonLabels) {
                 PointD point = gridLabel.getCoord();
                 x = point.X;
@@ -125,25 +175,29 @@ public class ProjLonLatAxis extends LonLatAxis{
 
                 //Draw tick label
                 if (this.isDrawTickLabel()) {
-                    if (this.getLocation() == Location.BOTTOM) {
-                        if (this.isInsideTick()){
-                            y = yMax;
+                    if (i == idx) {
+                        idx += labelGap;
+                        if (this.getLocation() == Location.BOTTOM) {
+                            if (this.isInsideTick()) {
+                                y = yMax;
+                            } else {
+                                y = yMax + this.getTickLength();
+                            }
+                            y += this.getTickSpace();
                         } else {
-                            y = yMax + this.getTickLength();
+                            if (this.isInsideTick()) {
+                                y = yMin;
+                            } else {
+                                y = yMin - this.getTickLength();
+                            }
+                            y -= this.getTickSpace();
                         }
-                        y += this.getTickSpace();
-                    } else {
-                        if (this.isInsideTick()){
-                            y = yMin;
-                        } else {
-                            y = yMin - this.getTickLength();
-                        }
-                        y -= this.getTickSpace();
+                        g.setColor(this.getTickLabelColor());
+                        g.setFont(this.getTickLabelFont());
+                        Draw.drawString(g, x, y, gridLabel.getLabString(), XAlign.CENTER, YAlign.TOP, true);
                     }
-                    g.setColor(this.getTickLabelColor());
-                    g.setFont(this.getTickLabelFont());
-                    Draw.drawString(g, x, y, gridLabel.getLabString(), XAlign.CENTER, YAlign.TOP, true);
                 }
+                i += 1;
             }
         }
     }

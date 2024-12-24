@@ -1203,7 +1203,7 @@ public class Axis extends Artist implements Cloneable {
      * Get maximum label string length
      *
      * @param g Graphics2D
-     * @return Maximum lable string length
+     * @return Maximum label string length
      */
     public int getMaxLabelLength(Graphics2D g) {
         this.updateTickLabels();
@@ -1372,7 +1372,7 @@ public class Axis extends Artist implements Cloneable {
     }
 
     /**
-     * Update lable gap
+     * Update label gap
      *
      * @param g Graphics2D
      * @param len Length

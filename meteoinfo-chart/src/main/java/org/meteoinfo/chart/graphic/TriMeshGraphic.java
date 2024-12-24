@@ -340,6 +340,7 @@ public class TriMeshGraphic extends GraphicCollection3D {
      * @param x X coordinate array
      * @param y Y coordinate array
      * @param z Z coordinate array
+     * @param normal Normal array
      */
     public void setTriangles(Array faceIndices, Array x, Array y, Array z, Array normal) {
         logger.info("Start set triangles...");

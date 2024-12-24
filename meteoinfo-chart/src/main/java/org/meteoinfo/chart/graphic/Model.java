@@ -203,4 +203,52 @@ public class Model extends TriMeshGraphic {
 
         logger.info("Set triangles finished!");
     }
+
+    /**
+     * Set triangles
+     * @param faceIndices The triangle face indices
+     * @param x X coordinate array
+     * @param y Y coordinate array
+     * @param z Z coordinate array
+     * @param normal Normal array
+     */
+    public void setTriangles(Array faceIndices, Array x, Array y, Array z, Array normal) {
+        logger.info("Start set triangles...");
+
+        x = x.copyIfView();
+        y = y.copyIfView();
+        z = z.copyIfView();
+        faceIndices = faceIndices.copyIfView();
+
+        this.vertexIndices = (int[]) faceIndices.getStorage();
+        this.vertexNormal = (float[]) normal.getStorage();
+
+        float xMin = ArrayMath.min(x).floatValue();
+        float xMax = ArrayMath.max(x).floatValue();
+        float yMin = ArrayMath.min(y).floatValue();
+        float yMax = ArrayMath.max(y).floatValue();
+        float zMin = ArrayMath.min(z).floatValue();
+        float zMax = ArrayMath.max(z).floatValue();
+        float range = Math.max(xMax - xMin, yMax - yMin);
+        range = (zMax - zMin) > range ? (zMax - zMin) : range;
+        float min = -range / 2;
+        float max = range / 2;
+        Transform transform = new Transform();
+        transform.setExtent(min, max, min, max, min, max);
+
+        int n = x.getShape()[0];
+        this.vertexPosition = new float[n * 3];
+        int idx = 0;
+        for (int i = 0; i < n; i++) {
+            vertexPosition[idx] = transform.transform_x(x.getFloat(i));
+            vertexPosition[idx + 1] = transform.transform_y(y.getFloat(i));
+            vertexPosition[idx + 2] = transform.transform_z(z.getFloat(i));
+            idx += 3;
+        }
+
+        this.normalLoaded = true;
+        updateExtent();
+
+        logger.info("Set triangles finished!");
+    }
 }

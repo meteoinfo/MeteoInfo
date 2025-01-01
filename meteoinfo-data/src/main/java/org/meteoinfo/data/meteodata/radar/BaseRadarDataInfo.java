@@ -26,7 +26,7 @@ public abstract class BaseRadarDataInfo extends DataInfo {
     }).collect(Collectors.toMap(data -> (Integer) data[0], data -> (String) data[1]));
     protected final Map<String, RadialRecord> recordMap = new HashMap<>();
     protected final List<String> velocityGroup = new ArrayList<>(Arrays.asList("V", "W"));
-    protected Dimension radialDim, scanDim, gateRDim, gateVDim;
+    protected Dimension radialDim, scanDim, gateDim, gateRDim, gateVDim;
     protected float antennaHeight = 0;
     protected float beamWidthVert = 1.f;
     protected float logResolution = 1000;
@@ -74,6 +74,86 @@ public abstract class BaseRadarDataInfo extends DataInfo {
      * @param is The InputStream
      */
     abstract void readDataInfo(InputStream is);
+
+    protected void makeAllVariables(RadialRecord radialRecord) {
+        Dimension[] dimensions = new Dimension[]{scanDim, radialDim, gateDim};
+        for (RadialRecord rr : this.recordMap.values()) {
+            rr.makeVariable(this, dimensions);
+        }
+
+        //coordinate variables
+        Variable elevation = new Variable();
+        elevation.setName("elevation");
+        elevation.setDataType(DataType.FLOAT);
+        elevation.addDimension(scanDim);
+        elevation.addDimension(radialDim);
+        elevation.addAttribute(new Attribute("units", "degree"));
+        elevation.addAttribute(new Attribute("long_name", "elevation angle in degrees"));
+        this.addVariable(elevation);
+
+        Variable azimuth = new Variable();
+        azimuth.setName("azimuth");
+        azimuth.setDataType(DataType.FLOAT);
+        azimuth.addDimension(scanDim);
+        azimuth.addDimension(radialDim);
+        azimuth.addAttribute(new Attribute("units", "degree"));
+        azimuth.addAttribute(new Attribute("long_name", "azimuth angle in degrees"));
+        this.addVariable(azimuth);
+
+        Variable distance = new Variable();
+        distance.setName("distance");
+        distance.setDataType(DataType.FLOAT);
+        distance.addDimension(gateDim);
+        distance.addAttribute(new Attribute("units", "m"));
+        distance.addAttribute(new Attribute("long_name", "radial distance to start of gate"));
+        this.addVariable(distance);
+
+        Variable nRadials = new Variable();
+        nRadials.setName("numRadials");
+        nRadials.setDataType(DataType.INT);
+        nRadials.addDimension(scanDim);
+        nRadials.addAttribute(new Attribute("long_name", "number of valid radials in this scan"));
+        this.addVariable(nRadials);
+
+        Variable nGates = new Variable();
+        nGates.setName("numGates");
+        nGates.setDataType(DataType.INT);
+        nGates.addDimension(scanDim);
+        nGates.addAttribute(new Attribute("long_name", "number of valid gates in this scan"));
+        this.addVariable(nGates);
+
+        int nScan = scanDim.getLength();
+        int nRadial = radialDim.getLength();
+        int nGate = gateDim.getLength();
+        Array elevData = Array.factory(DataType.FLOAT, new int[]{nScan, nRadial});
+        Array aziData = Array.factory(DataType.FLOAT, new int[]{nScan, nRadial});
+        Array nRData = Array.factory(DataType.INT, new int[]{nScan});
+        Array nGData = Array.factory(DataType.INT, new int[]{nScan});
+        Index elevIndex = elevData.getIndex();
+        Index aziIndex = aziData.getIndex();
+        for (int i = 0; i < nScan; i++) {
+            List<Float> elevList = radialRecord.elevation.get(i);
+            List<Float> aziList = radialRecord.azimuth.get(i);
+            nRData.setInt(i, aziList.size());
+            nGData.setInt(i, (int) radialRecord.distance.get(i).getSize());
+            for (int j = 0; j < nRadial; j++) {
+                if (j < elevList.size()) {
+                    elevData.setFloat(elevIndex.set(i, j), elevList.get(j));
+                    aziData.setFloat(aziIndex.set(i, j), aziList.get(j));
+                } else {
+                    elevData.setFloat(elevIndex.set(i, j), Float.NaN);
+                    aziData.setFloat(aziIndex.set(i, j), Float.NaN);
+                }
+            }
+        }
+        Array disData = radialRecord.distance.get(0);
+
+        elevation.setCachedData(elevData);
+        azimuth.setCachedData(aziData);
+        distance.setCachedData(disData);
+        nRadials.setCachedData(nRData);
+        nGates.setCachedData(nGData);
+    }
 
     protected void makeRefVariables(RadialRecord refRadialRecord) {
         Dimension[] dimensions = new Dimension[]{scanDim, radialDim, gateRDim};
@@ -191,14 +271,14 @@ public abstract class BaseRadarDataInfo extends DataInfo {
         this.addVariable(distance);
 
         Variable nRadials = new Variable();
-        nRadials.setName("numRadialsR");
+        nRadials.setName("numRadialsV");
         nRadials.setDataType(DataType.INT);
         nRadials.addDimension(scanDim);
         nRadials.addAttribute(new Attribute("long_name", "number of valid radials in this scan"));
         this.addVariable(nRadials);
 
         Variable nGates = new Variable();
-        nGates.setName("numGatesR");
+        nGates.setName("numGatesV");
         nGates.setDataType(DataType.INT);
         nGates.addDimension(scanDim);
         nGates.addAttribute(new Attribute("long_name", "number of valid gates in this scan"));
@@ -282,11 +362,11 @@ public abstract class BaseRadarDataInfo extends DataInfo {
     public Array read(String varName, int[] origin, int[] size, int[] stride) {
         try {
             Variable variable = this.getVariable(varName);
+            Section section = new Section(origin, size, stride);
             if (variable.hasCachedData()) {
-                return variable.getCachedData().section(origin, size, stride).copy();
+                return variable.getCachedData().section(section.getRanges()).copy();
             }
 
-            Section section = new Section(origin, size, stride);
             RadialRecord record = this.recordMap.get(varName);
             Array dataArray = Array.factory(DataType.FLOAT, section.getShape());
             Range zRange = section.getRange(0);

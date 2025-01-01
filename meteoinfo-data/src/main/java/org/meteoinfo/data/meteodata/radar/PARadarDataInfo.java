@@ -221,27 +221,20 @@ public class PARadarDataInfo extends BaseRadarDataInfo implements IRadarDataInfo
             raf.close();
 
             //Add dimensions and variables
-            RadialRecord refRadialRecord = this.recordMap.get("dBZ");
+            RadialRecord radialRecord = this.recordMap.get("dBZ");
             radialDim = new Dimension();
             radialDim.setName("radial");
-            radialDim.setLength(refRadialRecord.getMaxRadials());
+            radialDim.setLength(radialRecord.getMaxRadials());
             this.addDimension(radialDim);
             scanDim = new Dimension();
             scanDim.setName("scan");
-            scanDim.setLength(refRadialRecord.getScanNumber());
+            scanDim.setLength(radialRecord.getScanNumber());
             this.addDimension(scanDim);
-            gateRDim = new Dimension();
-            gateRDim.setName("gateR");
-            gateRDim.setLength(refRadialRecord.getGateNumber(0));
-            this.addDimension(gateRDim);
-            makeRefVariables(refRadialRecord);
-
-            RadialRecord velRadialRecord = this.recordMap.get("V");
-            gateVDim = new Dimension();
-            gateVDim.setName("gateV");
-            gateVDim.setLength(velRadialRecord.getGateNumber(0));
-            this.addDimension(gateVDim);
-            makeVelVariables(velRadialRecord);
+            gateDim = new Dimension();
+            gateDim.setName("gate");
+            gateDim.setLength(radialRecord.getGateNumber(0));
+            this.addDimension(gateDim);
+            makeAllVariables(radialRecord);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         } catch (IOException e) {

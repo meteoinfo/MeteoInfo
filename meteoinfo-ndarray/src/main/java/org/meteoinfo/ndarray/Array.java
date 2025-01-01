@@ -721,11 +721,11 @@ public abstract class Array {
      * <p/>
      *
      * @param origin int array specifying the starting index. Must be same rank
-     * as original Array.
+     *      as original Array.
      * @param shape int array specifying the extents in each dimension. This
-     * becomes the shape of the returned Array. Must be same rank as original
-     * Array. If shape[dim] == 1, then the rank of the resulting Array is
-     * reduced at that dimension.
+     *      becomes the shape of the returned Array. Must be same rank as original
+     *      Array. If shape[dim] == 1, then the rank of the resulting Array is
+     *      reduced at that dimension.
      * @return the new Array
      * @throws InvalidRangeException if ranges is invalid
      */

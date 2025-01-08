@@ -107,6 +107,12 @@
             <artifactId>joml</artifactId>
             <version>1.10.5</version>
         </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.36</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
 
     <build>

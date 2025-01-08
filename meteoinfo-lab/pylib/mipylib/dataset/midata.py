@@ -879,7 +879,7 @@ def dimension(dimvalue, dimname='null', dimtype=None):
     return dim
     
 def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, proj=None, largefile=False,
-            version='netcdf3'):
+            version='netcdf3', time_units='hours', start_time=datetime.datetime(1900,1,1)):
     """
     Write a netCDF data file from an array.
     
@@ -891,7 +891,11 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, proj=None, la
     :param gattrs: (*dict*) Global attributes.
     :param proj: (*ProjectionInfo*) Projection info. Default is `None`, means long/lat projection.
     :param largefile: (*boolean*) Create netCDF as large file or not.
-    :param version: (*str*) NetCDF version [netcdf3 | netcdf4].
+    :param version: (*str*) NetCDF version [netcdf3 | netcdf4]. Default is `netcdf3`.
+    :param time_units: (*str*) The units of the time coordinate variable [days | hours | minutes | seconds]
+        . Default is `hours`.
+    :param start_time: (*datetime*) The start time in units of the time coordinate variable. Default is
+        `1900,1,1`.
     """
     if dims is None:
         if isinstance(data, DimArray):
@@ -930,8 +934,9 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, proj=None, la
         dimtype = midim.getDimType()
         dimname = dim.getShortName()
         if dimtype == DimensionType.T:
-            var = ncfile.addvar(dimname, 'int', [dim])
-            var.addattr('units', 'hours since 1900-01-01 00:00:0.0')
+            var = ncfile.addvar(dimname, 'double', [dim])
+            time_units_str = '{} since {}'.format(time_units, start_time.strftime('%Y-%m-%d %H:%M:%S'))
+            var.addattr('units', time_units_str)
             var.addattr('long_name', 'Time')
             var.addattr('standard_name', 'time')
             var.addattr('axis', 'T')
@@ -964,10 +969,20 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, proj=None, la
         if dim.getDimType() == DimensionType.T:
             sst = datetime.datetime(1900,1,1)
             tt = miutil.nums2dates(np.array(dim.getDimValue()))
-            hours = []
-            for t in tt:
-                hours.append((int)((t - sst).total_seconds() // 3600))
-            ncfile.write(dimvar, np.array(hours))
+            t_list = []
+            if time_units == 'days':
+                for t in tt:
+                    t_list.append((t - sst).days)
+            elif time_units == 'hours':
+                for t in tt:
+                    t_list.append((t - sst).total_seconds() // 3600)
+            elif time_units == 'minutes':
+                for t in tt:
+                    t_list.append((t - sst).total_seconds() // 60)
+            elif time_units == 'seconds':
+                for t in tt:
+                    t_list.append(((t - sst).total_seconds()))
+            ncfile.write(dimvar, np.array(t_list))
         else:
             ncfile.write(dimvar, np.array(dim.getDimValue()).astype('float'))
     ncfile.write(var, data)

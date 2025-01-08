@@ -1027,7 +1027,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             for (i = 0; i < values.getSize(); i++) {
                 switch (aTU) {
                     case Year:
-                        times.add(sTime.plusYears(values.getInt(i)));
+                        times.add(sTime.plusYears(values.getLong(i)));
                         break;
                     case Month:
 //                        if (unitsStr.equalsIgnoreCase("month")) {
@@ -1035,24 +1035,24 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 //                        } else {
 //                            cal.add(Calendar.MONTH, values.getInt(i));
 //                        }
-                        times.add(sTime.plusMonths(values.getInt(i)));
+                        times.add(sTime.plusMonths(values.getLong(i)));
                         break;
                     case Day:
-                        times.add(sTime.plusDays(values.getInt(i)));
+                        times.add(sTime.plusDays(values.getLong(i)));
                         break;
                     case Hour:
                         if (sTime.getYear() == 1 && sTime.getMonthValue() == 1
                                 && sTime.getDayOfMonth() == 1 && values.getInt(i) > 48) {
-                            times.add(sTime.plusHours(values.getInt(i) - 48));
+                            times.add(sTime.plusHours(values.getLong(i) - 48));
                         } else {
-                            times.add(sTime.plusHours(values.getInt(i)));
+                            times.add(sTime.plusHours(values.getLong(i)));
                         }
                         break;
                     case Minute:
-                        times.add(sTime.plusMinutes(values.getInt(i)));
+                        times.add(sTime.plusMinutes(values.getLong(i)));
                         break;
                     case Second:
-                        times.add(sTime.plusSeconds(values.getInt(i)));
+                        times.add(sTime.plusSeconds(values.getLong(i)));
                         break;
                 }
             }

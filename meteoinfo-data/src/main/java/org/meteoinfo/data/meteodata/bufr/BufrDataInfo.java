@@ -12,6 +12,7 @@ import ucar.nc2.Group;
 import ucar.nc2.NetcdfFile;
 import ucar.nc2.iosp.AbstractIOServiceProvider;
 import ucar.nc2.iosp.IOServiceProvider;
+import ucar.nc2.iosp.bufr.*;
 import ucar.unidata.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -1,9 +1,18 @@
 package org.meteoinfo.geometry.io.geojson;
 
 import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.colors.ColorUtil;
+import org.meteoinfo.geometry.legend.ColorBreak;
+import org.meteoinfo.geometry.legend.PointBreak;
+import org.meteoinfo.geometry.legend.PolygonBreak;
+import org.meteoinfo.geometry.legend.PolylineBreak;
 import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.geometry.shape.Shape;
+
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class GeoJSONUtil {
 
@@ -336,6 +345,100 @@ public class GeoJSONUtil {
             polygonZShape.setPolygons(polygons);
 
             return polygonZShape;
+        }
+    }
+
+    /**
+     * Get shape type from GeoJSON geometry
+     * @param geometry GeoJSON geometry
+     * @return Shape type
+     */
+    public static ShapeTypes getShapeType(Geometry geometry) {
+        if (geometry instanceof Point) {
+            return ShapeTypes.POINT;
+        } else if (geometry instanceof LineString) {
+            return ShapeTypes.POLYLINE;
+        } else if (geometry instanceof MultiLineString) {
+            return ShapeTypes.POLYLINE;
+        } else if (geometry instanceof Polygon) {
+            return ShapeTypes.POLYGON;
+        } else if (geometry instanceof MultiPolygon) {
+            return ShapeTypes.POLYGON;
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    /**
+     * Get shape type from GeoJSON feature
+     * @param feature GeoJSON feature
+     * @return Shape type
+     */
+    public static ShapeTypes getShapeType(Feature feature) {
+        return getShapeType(feature.getGeometry());
+    }
+
+    /**
+     * Get legend break from GeoJSON feature
+     * @param feature GeoJSON feature
+     * @return Legend break
+     */
+    public static ColorBreak getLegendBreak(Feature feature) {
+        ShapeTypes shapeType = getShapeType(feature);
+        Map<String, Object> properties = feature.getProperties();
+        switch (shapeType) {
+            case POINT:
+                PointBreak pointBreak = new PointBreak();
+                if (properties.containsKey("marker-color")) {
+                    Color color = ColorUtil.parseToColor((String) properties.get("marker-color"));
+                    pointBreak.setColor(color);
+                }
+                return pointBreak;
+            case POLYLINE:
+                PolylineBreak polylineBreak = new PolylineBreak();
+                if (properties.containsKey("stroke")) {
+                    Color color = ColorUtil.parseToColor((String) properties.get("stroke"));
+                    if (properties.containsKey("stroke-opacity")) {
+                        float alpha = Float.parseFloat(properties.get("stroke-opacity").toString());
+                        color = ColorUtil.getColor(color, alpha);
+                    }
+                    polylineBreak.setColor(color);
+                }
+                if (properties.containsKey("stroke-width")) {
+                    float lineWidth = Float.parseFloat(properties.get("stroke-width").toString());
+                    polylineBreak.setWidth(lineWidth);
+                }
+                return polylineBreak;
+            case POLYGON:
+                PolygonBreak cb = new PolygonBreak();
+                if (properties.containsKey("title")) {
+                    String titleValue = (String) properties.get("title");
+                    cb.setStartValue(titleValue);
+                    cb.setCaption(titleValue);
+                }
+                if (properties.containsKey("fill")) {
+                    Color color = ColorUtil.parseToColor((String) properties.get("fill"));
+                    if (properties.containsKey("fill-opacity")) {
+                        float alpha = Float.parseFloat(properties.get("fill-opacity").toString());
+                        color = ColorUtil.getColor(color, alpha);
+                    }
+                    cb.setColor(color);
+                }
+                if (properties.containsKey("stroke")) {
+                    Color color = ColorUtil.parseToColor((String) properties.get("stroke"));
+                    if (properties.containsKey("stroke-opacity")) {
+                        float alpha = Float.parseFloat(properties.get("stroke-opacity").toString());
+                        color = ColorUtil.getColor(color, alpha);
+                    }
+                    cb.setOutlineColor(color);
+                }
+                if (properties.containsKey("stroke-width")) {
+                    float lineWidth = Float.parseFloat(properties.get("stroke-width").toString());
+                    cb.setOutlineSize(lineWidth);
+                }
+                return cb;
+            default:
+                throw new UnsupportedOperationException();
         }
     }
 }

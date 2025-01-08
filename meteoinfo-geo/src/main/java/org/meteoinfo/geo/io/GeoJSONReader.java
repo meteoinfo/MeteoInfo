@@ -31,28 +31,18 @@ public class GeoJSONReader {
         ls.setFieldName(fieldName);
         for (int i = 0; i < features.getNumFeatures(); i++) {
             Feature feature = features.getFeature(i);
-            Map<String, Object> properties = feature.getProperties();
-            String titleValue = (String) properties.get("title");
-            PolygonBreak cb = new PolygonBreak();
-            cb.setStartValue(titleValue);
-            cb.setCaption(titleValue);
-            Color color = ColorUtil.parseToColor((String) properties.get("fill"));
-            float alpha = Float.parseFloat(properties.get("fill-opacity").toString());
-            color = ColorUtil.getColor(color, alpha);
-            cb.setColor(color);
-            color = ColorUtil.parseToColor((String) properties.get("stroke"));
-            alpha = Float.parseFloat(properties.get("stroke-opacity").toString());
-            color = ColorUtil.getColor(color, alpha);
-            cb.setOutlineColor(color);
-            float lineWidth = Float.parseFloat(properties.get("stroke-width").toString());
-            cb.setOutlineSize(lineWidth);
+            if (GeoJSONUtil.getShapeType(feature) != shape.getShapeType()) {
+                continue;
+            }
+
+            ColorBreak cb = GeoJSONUtil.getLegendBreak(feature);
             ls.addLegendBreak(cb);
             Geometry geometry = feature.getGeometry();
             if (geometry != null) {
                 try {
                     int idx = layer.getShapeNum();
                     layer.editInsertShape(GeoJSONUtil.toShape(geometry), idx);
-                    layer.editCellValue(fieldName, idx, titleValue);
+                    layer.editCellValue(fieldName, idx, cb.getCaption());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }

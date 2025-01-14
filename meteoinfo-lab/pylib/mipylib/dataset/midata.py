@@ -967,21 +967,20 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, proj=None, la
     #Write variable data
     for dimvar, dim in zip(dimvars, wdims):
         if dim.getDimType() == DimensionType.T:
-            sst = datetime.datetime(1900,1,1)
             tt = miutil.nums2dates(np.array(dim.getDimValue()))
             t_list = []
             if time_units == 'days':
                 for t in tt:
-                    t_list.append((t - sst).days)
+                    t_list.append((t - start_time).days)
             elif time_units == 'hours':
                 for t in tt:
-                    t_list.append((t - sst).total_seconds() // 3600)
+                    t_list.append((t - start_time).total_seconds() // 3600)
             elif time_units == 'minutes':
                 for t in tt:
-                    t_list.append((t - sst).total_seconds() // 60)
+                    t_list.append((t - start_time).total_seconds() // 60)
             elif time_units == 'seconds':
                 for t in tt:
-                    t_list.append(((t - sst).total_seconds()))
+                    t_list.append(((t - start_time).total_seconds()))
             ncfile.write(dimvar, np.array(t_list))
         else:
             ncfile.write(dimvar, np.array(dim.getDimValue()).astype('float'))

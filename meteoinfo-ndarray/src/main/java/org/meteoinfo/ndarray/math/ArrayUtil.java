@@ -2231,7 +2231,7 @@ public class ArrayUtil {
     }
 
     /**
-     * Concatenate arrays to one array along a axis
+     * Concatenate arrays to one array along an axis
      *
      * @param arrays Array list
      * @param axis The axis
@@ -2282,7 +2282,7 @@ public class ArrayUtil {
     }
 
     /**
-     * Concatenate two arrays to one array along a axis
+     * Concatenate two arrays to one array along an axis
      *
      * @param a Array a
      * @param b Array b
@@ -2319,7 +2319,7 @@ public class ArrayUtil {
                 indexa.set(current);
                 r.setObject(indexr, a.getObject(indexa));
             } else {
-                current[axis] = current[axis - nn];
+                current[axis] = current[axis] - nn;
                 indexb.set(current);
                 r.setObject(indexr, b.getObject(indexb));
             }

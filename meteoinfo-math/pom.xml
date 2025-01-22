@@ -14,6 +14,9 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <commons-math.version>4.0-beta1</commons-math.version>
+        <commons-numbers.version>1.1</commons-numbers.version>
+        <commons-rng.version>1.5</commons-rng.version>
         <ejml.version>0.41.1</ejml.version>
         <commons-geometry.version>1.0</commons-geometry.version>
     </properties>
@@ -28,6 +31,56 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>meteoinfo-common</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math4-legacy</artifactId>
+            <version>${commons-math.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-numbers-core</artifactId>
+            <version>${commons-numbers.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-numbers-gamma</artifactId>
+            <version>${commons-numbers.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-numbers-combinatorics</artifactId>
+            <version>${commons-numbers.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-numbers-arrays</artifactId>
+            <version>${commons-numbers.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-numbers-field</artifactId>
+            <version>${commons-numbers.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-rng-core</artifactId>
+            <version>${commons-rng.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-rng-simple</artifactId>
+            <version>${commons-rng.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-rng-client-api</artifactId>
+            <version>${commons-rng.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-statistics-distribution</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>org.ejml</groupId>

@@ -14,6 +14,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
+        <commons-math.version>4.0-beta1</commons-math.version>
     </properties>
 
     <dependencies>
@@ -21,6 +22,11 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>meteoinfo-ndarray</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math4-legacy</artifactId>
+            <version>${commons-math.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.albfernandez</groupId>

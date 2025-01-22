@@ -2334,20 +2334,23 @@ public class GLPlot extends Plot {
 
     void updateTextRender(Font font) {
         boolean newTR = false;
-        if (this.textRenderer == null) {
+        if (this.dpiScale != 1) {
             newTR = true;
         } else {
-            if (!this.textRenderer.getFont().equals(font)) {
-                //this.textRenderer.dispose();
+            if (this.textRenderer == null) {
                 newTR = true;
+            } else {
+                if (!this.textRenderer.getFont().equals(font)) {
+                    //this.textRenderer.dispose();
+                    newTR = true;
+                }
             }
         }
         if (newTR) {
             if (this.dpiScale == 1) {
                 textRenderer = new TextRenderer(font, true, true);
             } else {
-                textRenderer = new TextRenderer(new Font(font.getFontName(), font.getStyle(),
-                        (int) (font.getSize() * this.dpiScale)), true, true);
+                textRenderer = new TextRenderer(font.deriveFont(font.getSize() * this.dpiScale), true, true);
             }
         }
     }

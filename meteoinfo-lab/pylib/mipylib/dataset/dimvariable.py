@@ -42,16 +42,19 @@ class DimVariable(object):
         self.dataset = dataset
         self.ncvariable = ncvariable
         if not variable is None:
+            self._name = variable.getName()
             self.dtype = np.dtype.fromjava(variable.getDataType())
             self.dims = variable.getDimensions()
             self.ndim = variable.getDimNumber()
             self.attributes = variable.getAttributes()
         elif not ncvariable is None:
+            self._name = ncvariable.getFullName()
             self.dtype = ncvariable.getDataType()
             self.dims = ncvariable.getDimensions()
             self.ndim = len(self.dims)
             self.attributes = list(ncvariable.getAttributes())
         else:
+            self._name = None
             self.dtype = None
             self.dims = None
             self.ndim = 0
@@ -61,13 +64,15 @@ class DimVariable(object):
 
     @property
     def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, val):
+        self._name = val
         if self._variable is not None:
-            return self._variable.getName()
-
-        if self.ncvariable is not None:
-            return self.ncvariable.getFullName()
-
-        return None
+            self._variable.setName(val)
+        elif self.ncvariable is not None:
+            self.ncvariable.setFullName(val)
 
     @property
     def short_name(self):

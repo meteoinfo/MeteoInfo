@@ -652,6 +652,10 @@ public class JConsole extends JScrollPane
     }
 
     private void append(String string) {
+        if (string.length() > 10000) {
+            string = string.substring(0, 10000);
+        }
+        string = StringUtil.unicodeToString(string);
         int slen = textLength();
         if (slen > this.maxLength) {
             text.setText("");

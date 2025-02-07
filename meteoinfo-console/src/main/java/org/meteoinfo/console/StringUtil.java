@@ -29,6 +29,8 @@ package org.meteoinfo.console;
 
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class StringUtil {
 
@@ -89,6 +91,26 @@ public class StringUtil {
         }
         sb.append(")");
         return sb.toString();
+    }
+
+    /**
+     * Convert unicode string to character string
+     *
+     * @param unicodeString Unicode string
+     * @return Character string
+     */
+    public static String unicodeToString(String unicodeString) {
+        Pattern pattern = Pattern.compile("\\\\u[0-9a-fA-F]{4}");
+        Matcher matcher = pattern.matcher(unicodeString);
+        StringBuffer builder = new StringBuffer();
+        while (matcher.find()) {
+            String unicodeSequence = matcher.group();
+            char unicode = (char) Integer.parseInt(unicodeSequence.substring(2), 16);
+            matcher.appendReplacement(builder, Character.toString(unicode));
+        }
+        matcher.appendTail(builder);
+
+        return builder.toString();
     }
 
     /**

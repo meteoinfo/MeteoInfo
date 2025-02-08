@@ -376,10 +376,10 @@ public class NCUtil {
      *
      * @param parentArray The ucar ArrayObject with ArraySequence elements
      * @param memberName Member name
-     * @param index Station index
+     * @param index Sequence index
      * @return Read data array
      */
-    public static Array readSequenceStation(ucar.ma2.ArrayObject parentArray, String memberName,
+    public static Array readSequence(ucar.ma2.ArrayObject parentArray, String memberName,
                                             int index) throws IOException {
         int n = (int) parentArray.getSize();
         ucar.ma2.ArrayStructure sArray = (ucar.ma2.ArrayStructure) parentArray.getObject(index);

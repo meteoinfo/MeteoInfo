@@ -183,6 +183,15 @@ class DataType(object):
         else:
             return DataType('object')
 
+    def is_numeric(self):
+        """
+        Is numeric data type or not.
+
+        :return: (*bool*) Is numeric data type or not.
+        """
+        return self._dtype.isNumeric()
+
+
 class dtype(DataType):
     byte = DataType('byte')
     char = DataType('char')

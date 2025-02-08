@@ -21,10 +21,12 @@
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_x_phase_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_cma_rsd.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_cma_rsd_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_x_phase_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_cma_rsd.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_cma_rsd_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -32,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-6,0" MainFormSize="1357,849"/>
+  <Startup MainFormLocation="-6,-6" MainFormSize="1292,764"/>
 </MeteoInfo>

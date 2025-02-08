@@ -2360,7 +2360,7 @@ public class ArrayUtil {
      * @return Output array
      */
     public static Array unPack(Array a, double missingValue, double scaleFactor, double addOffset) {
-        if (!Double.isNaN(missingValue)) {
+        if (!Double.isNaN(missingValue) && ArrayMath.contains(a, missingValue)) {
             a = ArrayUtil.convertToDataType(a, DataType.DOUBLE);
             ArrayMath.replaceValue(a, missingValue, Double.NaN);
         }

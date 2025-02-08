@@ -94,7 +94,7 @@ public class StringUtil {
     }
 
     /**
-     * Convert unicode string to character string
+     * Convert Unicode string to character string
      *
      * @param unicodeString Unicode string
      * @return Character string

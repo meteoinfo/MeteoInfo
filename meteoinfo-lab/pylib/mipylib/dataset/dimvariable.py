@@ -668,21 +668,32 @@ class MemberVariable(DimVariable):
             self._ncfile = datainfo.getFile()
             self._ncvar = self._ncfile.findVariable(self.name)
 
-    def __getitem__(self, key=0, station=None):
+    def __getitem__(self, key):
+        """
+        Read array data from the variable.
+
+        :param key: (*int, complex or slice*) For `int`, key means record index. For `complex`, the image
+            of the complex is the sequence index. For `slice`, `:` to read all data, otherwise the start
+            of the slice is the sequence index.
+
+        :return: (*NDArray*) Data array.
+        """
         if isinstance(key, int):
             return self.read_array(record=key)
+        elif isinstance(key, complex):
+            return self.read_array(seq=int(key.imag))
         elif isinstance(key, slice):
             if key == slice(None):
                 return self.read()
             else:
-                return self.read_array(station=key.start)
+                return self.read_array(seq=key.start)
 
-    def read_array(self, record=0, station=None):
+    def read_array(self, record=0, seq=None):
         """
         Read data array.
 
         :param record: (*int*) Record index. Default is 0.
-        :param station: (*int*) station index. Default is `None`, means all stations.
+        :param seq: (*int*) Sequence index. Default is `None`, means all sequences.
         :return: (*array*) Data array.
         """
         a = self._parent_variable.read()
@@ -692,10 +703,10 @@ class MemberVariable(DimVariable):
         if is_structure:
             r = NCUtil.readSequence(a, self.short_name)
         else:
-            if station is None:
+            if seq is None:
                 r = NCUtil.readSequenceRecord(a, self.short_name, record, missing_value)
             else:
-                r = NCUtil.readSequenceStation(a, self.short_name, station)
+                r = NCUtil.readSequence(a, self.short_name, seq)
 
         if r is None:
             return None

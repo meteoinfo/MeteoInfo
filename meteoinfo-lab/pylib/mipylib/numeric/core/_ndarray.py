@@ -496,6 +496,10 @@ class NDArray(object):
         other = NDArray.__value_other(self, other)
         return self.array_wrap(ArrayMath.rightShift(self._array, other))
 
+    def __contains__(self, other):
+        other = NDArray.__value_other(self, other)
+        return self.array_wrap(ArrayMath.contains(self._array, other))
+
     def __iter__(self):
         """
         provide iteration over the values of the array

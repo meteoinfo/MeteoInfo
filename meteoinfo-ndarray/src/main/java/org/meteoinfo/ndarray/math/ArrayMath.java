@@ -4802,6 +4802,50 @@ public class ArrayMath {
     }
 
     /**
+     * Check if the array contains a given value
+     *
+     * @param a Input array
+     * @param v The give value
+     * @return Boolean
+     */
+    public static boolean contains(Array a, Object v) {
+        if (a.getDataType().isNumeric()) {
+            double dv = ((Number) v).doubleValue();
+            if (a.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    if (a.getDouble(i) == dv) {
+                        return true;
+                    }
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                while (iterA.hasNext()) {
+                    if (iterA.getDoubleNext() == dv) {
+                        return true;
+                    }
+                }
+            }
+        } else {
+            if (a.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    if (a.getObject(i) == v) {
+                        return true;
+                    }
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                while (iterA.hasNext()) {
+                    if (iterA.getObjectNext() == v) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Check if the array contains NaN value
      *
      * @param a Input array

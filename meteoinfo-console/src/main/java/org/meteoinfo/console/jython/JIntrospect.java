@@ -148,6 +148,7 @@ public class JIntrospect implements NameCompletion {
             String name;
             for (int i = 0; i < plist.__len__(); i++) {
                 name = plist.get(i).toString();
+                //list.add(name);
                 if (!name.contains("__")) {
                     list.add(name);
                 }

@@ -323,8 +323,10 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
                     jMenuItemRun.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            if (finalFile != null)
-                                FrmMain.this.consoleDock.execfile(finalFile.getAbsolutePath());
+                            if (finalFile != null) {
+                                //FrmMain.this.consoleDock.execfile(finalFile.getAbsolutePath());
+                                FrmMain.this.consoleDock.execJythonFile(finalFile.getAbsolutePath());
+                            }
                         }
                     });
                     jPopupMenu.add(jMenuItemRun);
@@ -361,10 +363,16 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
                     // Control-C
                     case (KeyEvent.VK_C):
                         if (ke.isControlDown()) {
-                            SwingWorker myWorker = consoleDock.getSwingWorker();
+                            /*SwingWorker myWorker = consoleDock.getSwingWorker();
                             if (myWorker != null && !myWorker.isCancelled() && !myWorker.isDone()) {
                                 myWorker.cancel(true);
                                 myWorker = null;
+                            }*/
+
+                            Thread myThread = consoleDock.getMyThread();
+                            if (myThread != null) {
+                                myThread.stop();
+                                myThread = null;
                             }
                         }
                         break;
@@ -976,12 +984,14 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         if (te.getFileName().isEmpty()) {
             String code = te.getTextArea().getText();
             try {
-                this.consoleDock.runPythonScript(code);
+                //this.consoleDock.runPythonScript(code);
+                this.consoleDock.runJythonScript(code);
             } catch (InterruptedException ex) {
                 Logger.getLogger(FrmMain.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-            this.consoleDock.execfile(te.getFileName());
+            //this.consoleDock.execfile(te.getFileName());
+            this.consoleDock.execJythonFile(te.getFileName());
         }
     }//GEN-LAST:event_jButton_RunScriptActionPerformed
 

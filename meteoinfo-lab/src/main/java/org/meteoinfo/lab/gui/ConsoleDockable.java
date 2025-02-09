@@ -40,6 +40,7 @@ public class ConsoleDockable extends DefaultSingleCDockable {
     private PythonInteractiveInterpreter interp;
     private JConsole console;
     private SwingWorker myWorker;
+    private Thread myThread;
     private ConsoleColors consoleColors;
 
     public ConsoleDockable(FrmMain parent, String startupPath, String id, String title, CAction... actions) {
@@ -74,12 +75,17 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                     // Control-C
                     case (KeyEvent.VK_C):
                         if (ke.isControlDown()) {
-                            if (myWorker != null && !myWorker.isCancelled() && !myWorker.isDone()) {
+                            /*if (myWorker != null && !myWorker.isCancelled() && !myWorker.isDone()) {
                                 myWorker.cancel(true);
                                 myWorker = null;
-                                //myWorker = new SmallWorker();
-                                //myWorker.execute();
-                                //enter();
+                            }*/
+
+                            if (myThread != null) {
+                                myThread.stop();
+                                myThread = null;
+                                parent.getProgressBar().setVisible(false);
+                                console.print("Running is stopped!");
+                                //ConsoleDockable.this.enter();
                             }
                         }
                         break;
@@ -220,6 +226,10 @@ public class ConsoleDockable extends DefaultSingleCDockable {
         return this.myWorker;
     }
 
+    public Thread getMyThread() {
+        return this.myThread;
+    }
+
     /**
      * Run a command line
      *
@@ -296,10 +306,10 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             protected String doInBackground() throws Exception {
                 parent.getProgressBar().setVisible(true);
 
-                interp.console.setStyle(consoleColors.getCommandColor());
-                interp.console.println("run script...");
-                interp.console.setFocusable(true);
-                interp.console.requestFocusInWindow();
+                    interp.console.setStyle(consoleColors.getCommandColor());
+                    interp.console.println("run script...");
+                    interp.console.setFocusable(true);
+                    interp.console.requestFocusInWindow();
 
                 try {
                     interp.exec("mipylib.plotlib.miplot.set_interactive(False)");
@@ -338,6 +348,57 @@ public class ConsoleDockable extends DefaultSingleCDockable {
             }
         };
         myWorker.execute();
+    }
+
+    /**
+     * Run a Jython file
+     *
+     * @param fn Jython file name
+     */
+    public void execJythonFile(final String fn) {
+        myThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                parent.getProgressBar().setVisible(true);
+
+                interp.console.setStyle(consoleColors.getCommandColor());
+                interp.console.println("run script...");
+                interp.console.setFocusable(true);
+                interp.console.requestFocusInWindow();
+
+                try {
+                    interp.exec("mipylib.plotlib.miplot.set_interactive(False)");
+                    interp.exec("mipylib.plotlib.miplot.clf()");
+                    interp.execfile(fn);
+                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException ex) {
+                        Logger.getLogger(PythonInteractiveInterpreter.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    interp.console.print(">>> ", consoleColors.getPromptColor());
+                    interp.console.setStyle(consoleColors.getCommandColor());
+                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
+                }
+
+                if (Thread.currentThread().isInterrupted()) {
+                    parent.getProgressBar().setVisible(false);
+                } else {
+                    IChartPanel cp = parent.getFigureDock().getCurrentFigure();
+                    if (cp != null) {
+                        cp.paintGraphics();
+                    /*if (cp instanceof GLChartPanel) {
+                        ((GLChartPanel) cp).display();
+                    }*/
+                    }
+                    parent.getProgressBar().setVisible(false);
+                }
+            }
+        });
+
+        myThread.start();
     }
 
     /**
@@ -417,12 +478,52 @@ public class ConsoleDockable extends DefaultSingleCDockable {
         };
         myWorker.execute();
     }
+
+    /**
+     * Run Jython script
+     *
+     * @param code
+     * @throws java.lang.InterruptedException
+     */
+    public void runJythonScript(final String code) throws InterruptedException {
+        myThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                parent.getProgressBar().setVisible(true);
+
+                interp.console.setStyle(consoleColors.getCommandColor());
+                interp.console.println("run script...");
+                interp.console.setFocusable(true);
+                interp.console.requestFocusInWindow();
+
+                String encoding = "utf-8";
+                try {
+                    interp.exec("mipylib.plotlib.miplot.set_interactive(False)");
+                    interp.exec("mipylib.plotlib.miplot.clf()");
+                    interp.execfile(new ByteArrayInputStream(code.getBytes(encoding)));
+                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
+                    interp.fireConsoleExecEvent();
+                }
+
+                IChartPanel cp = parent.getFigureDock().getCurrentFigure();
+                if (cp != null) {
+                    cp.paintGraphics();
+                }
+                parent.getProgressBar().setVisible(false);
+            }
+        });
+
+        myThread.start();
+    }
     
     class SmallWorker extends SwingWorker<String, String> {
 
         @Override
         protected String doInBackground() throws Exception {
-            interp.exec("print('Thread cancled!')");
+            interp.exec("print('Thread canceled!')");
             return "";
         }
         

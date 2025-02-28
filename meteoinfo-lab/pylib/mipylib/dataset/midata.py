@@ -660,8 +660,8 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
         ncfile.addgroupattr(attr.getName(), f.attrvalue(attr))
 
     #Add grid map variable
-    if f.proj is not None:
-        if not f.proj.isLonLat():
+    if f.projection is not None:
+        if not f.projection.isLonLat():
             var = ncfile.addvar('crs', 'int', [])
             var.addattr('proj4', proj.toProj4String())
 
@@ -701,7 +701,7 @@ def convert2nc(infn, outfn, version='netcdf3', writedimvar=False, largefile=Fals
     variables = []
     for var in f.variables:
         #print 'Variable: ' + var.name
-        if var.variable.hasNullDimension():
+        if var._variable.hasNullDimension():
             continue
         if var.dtype._dtype == DataType.STRUCTURE:
             continue

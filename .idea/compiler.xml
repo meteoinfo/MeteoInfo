@@ -30,7 +30,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="meteoinfo-data" options="-extdirs D:\MyProgram\java\MeteoInfoDev\MeteoInfo\meteoinfo-data\lib" />
+      <module name="meteoinfo-data" options="" />
     </option>
   </component>
 </project>

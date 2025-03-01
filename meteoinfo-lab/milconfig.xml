@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\dataconvert">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\grib">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot"/>
@@ -14,19 +13,22 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\dataconvert"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_x_phase_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_cma_rsd.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\dataconvert\grib2nc-5.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\grib\s2s_babj_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\grib\s2s_babj_2.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_x_phase_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_cma_rsd.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\dataconvert\grib2nc-5.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\grib\s2s_babj_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\grib\s2s_babj_2.py"/>
     </RecentFiles>
   </File>
   <Font>

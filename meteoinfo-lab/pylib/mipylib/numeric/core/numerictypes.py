@@ -35,9 +35,10 @@ typecodes = {'Character':'c',
 # U -> Unicode string
 # V -> record
 # O -> Python object
-_kind_list = ['b', 'u', 'i', 'f', 'c', 'S', 'U', 'V', 'O', 'M', 'm']
+_kind_list = ['b', 'i', 'u', 'f', 'c', 'S', 'U', 'V', 'O', 'M', 'm']
+_char_list = ['b','h','l','q','f','d','D','U','M','O']
 
-__test_types = '?'+typecodes['AllInteger'][:-2]+typecodes['AllFloat']+'O'
+__test_types = _char_list
 __len_test_types = len(__test_types)
 
 # Keep incrementing until a common type both can be coerced to
@@ -60,7 +61,7 @@ def _can_coerce_all(dtypelist, start=0):
         return dtypelist[0]
     thisind = start
     while thisind < __len_test_types:
-        newdtype = dtype(__test_types[thisind])
+        newdtype = dtype.from_char(__test_types[thisind])
         numcoerce = len([x for x in dtypelist if newdtype >= x])
         if numcoerce == N:
             return newdtype

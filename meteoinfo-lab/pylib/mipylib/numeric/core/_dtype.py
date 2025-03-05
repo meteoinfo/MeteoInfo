@@ -141,19 +141,22 @@ class DataType(object):
 
         :return: kind string
         """
-        if self.name == 'bool' or self.name == 'boolean':
+        if self._dtype == JDataType.BOOLEAN:
             return 'b'
-        elif self.name == 'int' or self.name == 'integer' or self.name == 'int32' or self.name == 'int16' or \
-            self.name == 'uint' or self.name == 'short' or self.name == 'int64' or self.name == 'long':
+        elif self._dtype in (JDataType.SHORT, JDataType.INT, JDataType.LONG):
             return 'i'
-        elif self.name == 'float' or self.name == 'float64' or self.name == 'double':
+        elif self._dtype == JDataType.UINT:
+            return 'u'
+        elif self._dtype in (JDataType.FLOAT, JDataType.DOUBLE):
             return 'f'
-        elif self.name == 'str' or self.name == 'string':
+        elif self._dtype == JDataType.STRING:
             return 'S'
-        elif self.name == 'complex':
+        elif self._dtype == JDataType.COMPLEX:
             return 'c'
-        elif self.name == 'date' or self.name == 'datetime':
+        elif self._dtype == JDataType.DATE:
             return 'M'
+        elif self._dtype == JDataType.OBJECT:
+            return 'O'
 
     @staticmethod
     def from_char(c):
@@ -163,9 +166,9 @@ class DataType(object):
         :return: The DataType
         """
         if c == 'b' or c == 'bool':
-            return DataType('boolean')
+            return dtype.bool
         elif c == 'h':
-            return DataType('short')
+            return dtype.short
         elif c == 'l' or c == 'int':
             return DataType('int')
         elif c == 'q':
@@ -182,6 +185,30 @@ class DataType(object):
             return DataType('date')
         else:
             return DataType('object')
+
+    @staticmethod
+    def from_kind(k):
+        """
+        Create DataType from kind.
+        :param k: (*str*) Kind string.
+        :return: The DataType
+        """
+        if k == 'b':
+            return dtype.bool
+        elif k == 'i':
+            return dtype.int
+        elif k == 'u':
+            return dtype.uint
+        elif k == 'f':
+            return dtype.float
+        elif k == 'S':
+            return dtype.string
+        elif k == 'c':
+            return dtype.complex
+        elif k == 'M':
+            return dtype.date
+        else:
+            return dtype.obj
 
     def is_numeric(self):
         """
@@ -217,7 +244,10 @@ class dtype(DataType):
     obj = DataType('object')
     
     def __init__(self, name):
-        super(dtype, self).__init__(name)
+        if isinstance(name, DataType):
+            DataType.__init__(self, name.name)
+        else:
+            DataType.__init__(self, name)
 
     @staticmethod
     def fromjava(dt):

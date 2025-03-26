@@ -19,8 +19,7 @@ public class OpenStreetMapQuestSatelliteInfo extends TileFactoryInfo {
     public OpenStreetMapQuestSatelliteInfo() {
         super("OpenStreetMapQuestSatellite", 1, 17, 19,
                 256, true, true, // tile size is 256 and x/y orientation is normal
-                "http://otile%1$d.mqcdn.com/tiles/1.0.0/sat/%2$d/%3$d/%4$d.jpg",//5/15/10.png",
-                "x", "y", "z");
+                "http://otile%1$d.mqcdn.com/tiles/1.0.0/sat/%2$d/%3$d/%4$d.jpg");
     }
 //    // </editor-fold>
 //    // <editor-fold desc="Get Set Methods">

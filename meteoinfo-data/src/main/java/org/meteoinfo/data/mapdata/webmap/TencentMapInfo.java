@@ -19,8 +19,7 @@ public class TencentMapInfo extends TileFactoryInfo {
     public TencentMapInfo() {
         super("TencentMap", 0, 16, 19,
                 256, true, true, // tile size is 256 and x/y orientation is normal
-                "http://rt1.map.gtimg.com/tile?z=%1$d&x=%2$d&y=%3$d&styleid=1&version=117",
-                "x", "y", "z");
+                "http://rt1.map.gtimg.com/tile?z=%1$d&x=%2$d&y=%3$d&styleid=1&version=117");
     }
 //    // </editor-fold>
 //    // <editor-fold desc="Get Set Methods">

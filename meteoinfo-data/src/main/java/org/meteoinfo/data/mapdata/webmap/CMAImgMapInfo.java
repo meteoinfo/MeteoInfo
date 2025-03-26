@@ -15,20 +15,19 @@ public class CMAImgMapInfo extends TileFactoryInfo {
     public CMAImgMapInfo() {
         super("CMA_IMG_MAP", 0, 18, 19,
                 256, true, true, // tile size is 256 and x/y orientation is normal
-                "http://10.1.64.154/DataServer?T=img_w&X=%1$d&Y=%2$d&L=%3$d",
-                "x", "y", "z");
+                "http://10.1.64.154/DataServer?T=img_w&X={x}&Y={y}&L={z}");
     }
-//    // </editor-fold>
+    // </editor-fold>
 //    // <editor-fold desc="Get Set Methods">
 
 //    // </editor-fold>
 //    // <editor-fold desc="Methods">
 
-    @Override
+    /*@Override
     public String getTileUrl(int x, int y, int zoom) {
         zoom = this.getTotalMapZoom() - zoom;
         String url = String.format(this.baseURL, x, y, zoom);
         return url;
-    }
+    }*/
     // </editor-fold>
 }

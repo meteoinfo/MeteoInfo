@@ -21,8 +21,7 @@ public class BingHybridMapInfo extends TileFactoryInfo {
     public BingHybridMapInfo() {
         super("BingHybridMap", 1, 17, 19,
                 256, true, true, // tile size is 256 and x/y orientation is normal
-                "http://ecn.t%1$d.tiles.virtualearth.net/tiles/h%2$s.jpeg?g=%3$s&mkt=%4$s&n=z%5$s",
-                "x", "y", "z");
+                "http://ecn.t%1$d.tiles.virtualearth.net/tiles/h%2$s.jpeg?g=%3$s&mkt=%4$s&n=z%5$s");
     }
 //    // </editor-fold>
 //    // <editor-fold desc="Get Set Methods">
@@ -37,7 +36,7 @@ public class BingHybridMapInfo extends TileFactoryInfo {
         String ckey = this.clientKey;
         if (ckey == null)
             ckey = "";
-        String url = String.format(this.baseURL, serverNum, key, version, this.getLanguage(), zoom, x, y);
+        String url = String.format(this.baseURL, serverNum, key, version, this.getLanguage(), zoom);
         return url;
     }
     

@@ -20,13 +20,11 @@ public class OviMapInfo extends TileFactoryInfo {
     public OviMapInfo() {
         super("OviMap", 1, 17, 19,
                 256, true, true, // tile size is 256 and x/y orientation is normal
-                "http://%1$s.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/normal.day/%2$d/%3$d/%4$d/256/png8",//5/15/10.png",
-                "x", "y", "z");
+                "http://%1$s.maptile.maps.svc.ovi.com/maptiler/v2/maptile/newest/normal.day/%2$d/%3$d/%4$d/256/png8");
     }
-//    // </editor-fold>
-//    // <editor-fold desc="Get Set Methods">
-//    // </editor-fold>
-//    // <editor-fold desc="Methods">
+    // </editor-fold>
+
+    // <editor-fold desc="Methods">
 
     @Override
     public String getTileUrl(int x, int y, int zoom) {

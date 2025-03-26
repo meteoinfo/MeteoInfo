@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -134,7 +135,8 @@ public class Index<V> implements Iterable<V>{
         } else if (data.get(0) instanceof List) {
             return new MultiIndex(data);
         } else {
-            return null;
+            List<String> dList = (List<String>) data.stream().map(String::valueOf).collect(Collectors.toList());
+            return new StringIndex(dList);
         }
     }
     

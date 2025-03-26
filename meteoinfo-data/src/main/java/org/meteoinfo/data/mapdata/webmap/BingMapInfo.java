@@ -22,12 +22,7 @@ public class BingMapInfo extends TileFactoryInfo {
     public BingMapInfo() {
         super("BingMap", 1, 17, 19,
                 256, true, true, // tile size is 256 and x/y orientation is normal
-                "http://ecn.t%1$d.tiles.virtualearth.net/tiles/r%2$s?g=%3$s&mkt=%4$s&lbl=l1&stl=h&shading=hill&n=z%5$s",
-                "x", "y", "z");
-//        super("BingMap", 1, 17, 19,
-//                256, true, true, // tile size is 256 and x/y orientation is normal
-//                "http://t%1$d.tiles.ditu.live.com/tiles/r%2$s.png?g=%3$s&mkt=%4$s&n=z%5$s",
-//                "x", "y", "z");
+                "http://ecn.t%1$d.tiles.virtualearth.net/tiles/r%2$s?g=%3$s&mkt=%4$s&lbl=l1&stl=h&shading=hill&n=z%5$s");
         if (this.getLanguage().equals("zh-cn"))
             this.baseURL = "http://t%1$d.tiles.ditu.live.com/tiles/r%2$s.png?g=%3$s&mkt=%4$s&n=z%5$s";
     }

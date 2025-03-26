@@ -19,20 +19,19 @@ public class GeoQBlueMapInfo extends TileFactoryInfo {
     public GeoQBlueMapInfo() {
         super("GeoQMap", 0, 16, 19,
                 256, true, true, // tile size is 256 and x/y orientation is normal
-                "https://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/%1$d/%2$d/%3$d",
-                "x", "y", "z");
+                "https://map.geoq.cn/ArcGIS/rest/services/ChinaOnlineStreetPurplishBlue/MapServer/tile/{z}/{y}/{x}");
     }
-//    // </editor-fold>
+    // </editor-fold>
 //    // <editor-fold desc="Get Set Methods">
     
 //    // </editor-fold>
 //    // <editor-fold desc="Methods">
     
-    @Override
+    /*@Override
     public String getTileUrl(int x, int y, int zoom) {
         zoom = this.getTotalMapZoom() - zoom;
         String url = String.format(this.baseURL, zoom, y, x);
         return url;
-    }
+    }*/
     // </editor-fold>
 }

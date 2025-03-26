@@ -21,9 +21,9 @@ import java.util.Locale;
  */
 public class TileFactoryInfo {
 
-    protected int minimumZoomLevel;
-    protected int maximumZoomLevel;
-    protected int totalMapZoom;
+    protected int minimumZoomLevel = 0;
+    protected int maximumZoomLevel = 18;
+    protected int totalMapZoom = 19;
     // the size of each tile (assumes they are square)
     private int tileSize = 256;
     /*
@@ -50,9 +50,9 @@ public class TileFactoryInfo {
      * The base url for loading tiles from.
      */
     protected String baseURL;
-    private String xparam;
-    private String yparam;
-    private String zparam;
+    private String xparam = "x";
+    private String yparam = "y";
+    private String zparam = "z";
     private boolean xr2l = true;
     private boolean yt2b = true;
     private int defaultZoomLevel = 1;
@@ -65,8 +65,71 @@ public class TileFactoryInfo {
 
     /**
      * Creates a new instance of TileFactoryInfo. Note that TileFactoryInfo
-     * should be considered invariate, meaning that subclasses should ensure all
-     * of the properties stay the same after the class is constructed. Returning
+     * should be considered invariant, meaning that subclasses should ensure all
+     * the properties stay the same after the class is constructed. Returning
+     * different values of getTileSize() for example is considered an error and
+     * may result in unexpected behavior.
+     *
+     * @param minimumZoomLevel The minimum zoom level
+     * @param maximumZoomLevel the maximum zoom level
+     * @param tileSize the size of the tiles in pixels (must be square)
+     * @param baseURL the base url for grabbing tiles
+     */
+    public TileFactoryInfo(int minimumZoomLevel, int maximumZoomLevel,
+                           int tileSize, String baseURL) {
+        this(minimumZoomLevel, maximumZoomLevel,
+                19, tileSize, true, true, baseURL, "x", "y",
+                "z");
+    }
+
+    /**
+     * Creates a new instance of TileFactoryInfo. Note that TileFactoryInfo
+     * should be considered invariant, meaning that subclasses should ensure all
+     * the properties stay the same after the class is constructed. Returning
+     * different values of getTileSize() for example is considered an error and
+     * may result in unexpected behavior.
+     *
+     * @param name The name
+     * @param minimumZoomLevel The minimum zoom level
+     * @param maximumZoomLevel the maximum zoom level
+     * @param tileSize the size of the tiles in pixels (must be square)
+     * @param baseURL the base url for grabbing tiles
+     */
+    public TileFactoryInfo(String name, int minimumZoomLevel, int maximumZoomLevel,
+                           int tileSize, String baseURL) {
+        this(name, minimumZoomLevel, maximumZoomLevel,
+                19, tileSize, true, true, baseURL, "x", "y",
+                "z");
+    }
+
+    /**
+     * Creates a new instance of TileFactoryInfo. Note that TileFactoryInfo
+     * should be considered invariant, meaning that subclasses should ensure all
+     * the properties stay the same after the class is constructed. Returning
+     * different values of getTileSize() for example is considered an error and
+     * may result in unexpected behavior.
+     *
+     * @param minimumZoomLevel The minimum zoom level
+     * @param maximumZoomLevel the maximum zoom level
+     * @param totalMapZoom the top zoom level, essentially the height of the
+     * pyramid
+     * @param tileSize the size of the tiles in pixels (must be square)
+     * @param xr2l if the x goes r to l (is this backwards?)
+     * @param yt2b if the y goes top to bottom
+     * @param baseURL the base url for grabbing tiles
+     */
+    public TileFactoryInfo(int minimumZoomLevel, int maximumZoomLevel, int totalMapZoom,
+                           int tileSize, boolean xr2l, boolean yt2b,
+                           String baseURL) {
+        this(minimumZoomLevel, maximumZoomLevel,
+                totalMapZoom, tileSize, xr2l, yt2b, baseURL, "x", "y",
+                "z");
+    }
+
+    /**
+     * Creates a new instance of TileFactoryInfo. Note that TileFactoryInfo
+     * should be considered invariant, meaning that subclasses should ensure all
+     * the properties stay the same after the class is constructed. Returning
      * different values of getTileSize() for example is considered an error and
      * may result in unexpected behavior.
      *
@@ -82,12 +145,6 @@ public class TileFactoryInfo {
      * @param yparam the y parameter for the tile url
      * @param zparam the z parameter for the tile url
      */
-    /*
-     * @param xr2l true if tile x is measured from the far left of the map to the far right, or
-     * else false if based on the center line. 
-     * @param yt2b true if tile y is measured from the top (north pole) to the bottom (south pole)
-     * or else false if based on the equator.
-     */
     public TileFactoryInfo(int minimumZoomLevel, int maximumZoomLevel, int totalMapZoom,
             int tileSize, boolean xr2l, boolean yt2b,
             String baseURL, String xparam, String yparam, String zparam) {
@@ -98,8 +155,32 @@ public class TileFactoryInfo {
 
     /**
      * Creates a new instance of TileFactoryInfo. Note that TileFactoryInfo
-     * should be considered invariate, meaning that subclasses should ensure all
-     * of the properties stay the same after the class is constructed. Returning
+     * should be considered invariant, meaning that subclasses should ensure all
+     * the properties stay the same after the class is constructed. Returning
+     * different values of getTileSize() for example is considered an error and
+     * may result in unexpected behavior.
+     *
+     * @param name A name to identify this information.
+     * @param minimumZoomLevel The minimum zoom level
+     * @param maximumZoomLevel the maximum zoom level
+     * @param totalMapZoom the top zoom level, essentially the height of the
+     * pyramid
+     * @param tileSize the size of the tiles in pixels (must be square)
+     * @param xr2l if the x goes r to l (is this backwards?)
+     * @param yt2b if the y goes top to bottom
+     * @param baseURL the base url for grabbing tiles
+     */
+    public TileFactoryInfo(String name, int minimumZoomLevel, int maximumZoomLevel, int totalMapZoom,
+                           int tileSize, boolean xr2l, boolean yt2b,
+                           String baseURL) {
+        this(name, minimumZoomLevel, maximumZoomLevel, totalMapZoom, tileSize, xr2l, yt2b, baseURL,
+                "x", "y", "z");
+    }
+
+    /**
+     * Creates a new instance of TileFactoryInfo. Note that TileFactoryInfo
+     * should be considered invariant, meaning that subclasses should ensure all
+     * the properties stay the same after the class is constructed. Returning
      * different values of getTileSize() for example is considered an error and
      * may result in unexpected behavior.
      *
@@ -115,12 +196,6 @@ public class TileFactoryInfo {
      * @param xparam the x parameter for the tile url
      * @param yparam the y parameter for the tile url
      * @param zparam the z parameter for the tile url
-     */
-    /*
-     * @param xr2l true if tile x is measured from the far left of the map to the far right, or
-     * else false if based on the center line. 
-     * @param yt2b true if tile y is measured from the top (north pole) to the bottom (south pole)
-     * or else false if based on the equator.
      */
     public TileFactoryInfo(String name, int minimumZoomLevel, int maximumZoomLevel, int totalMapZoom,
             int tileSize, boolean xr2l, boolean yt2b,
@@ -172,9 +247,15 @@ public class TileFactoryInfo {
         return minimumZoomLevel;
     }
 
-//    public void setMinimumZoomLevel(int minimumZoomLevel) {
-//        this.minimumZoomLevel = minimumZoomLevel;
-//    }
+    /**
+     * Set minimum zoom level
+     *
+     * @param minimumZoomLevel Minimum zoom level
+     */
+    public void setMinimumZoomLevel(int minimumZoomLevel) {
+        this.minimumZoomLevel = minimumZoomLevel;
+    }
+
     /**
      * Get maximum zoom level
      * 
@@ -183,24 +264,33 @@ public class TileFactoryInfo {
     public int getMaximumZoomLevel() {
         return maximumZoomLevel;
     }
-//
-//    public void setMaximumZoomLevel(int maximumZoomLevel) {
-//        this.maximumZoomLevel = maximumZoomLevel;
-//    }
 
     /**
-     * Get total map zoom
-     * 
-     * @return Total map zoom
+     * Set maximum zoom level
+     *
+     * @param maximumZoomLevel Maximum zoom level
+     */
+    public void setMaximumZoomLevel(int maximumZoomLevel) {
+        this.maximumZoomLevel = maximumZoomLevel;
+    }
+
+    /**
+     * Get total map zoom level number
+     *
+     * @return Total map zoom level number
      */
     public int getTotalMapZoom() {
         return totalMapZoom;
     }
-    /*
-     public void setTotalMapZoom(int totalMapZoom) {
-     this.totalMapZoom = totalMapZoom;
-     }
+
+    /**
+     * Set total map zoom level number
+     *
+     * @param totalMapZoom Total map zoom level number
      */
+    public void setTotalMapZoom(int totalMapZoom) {
+        this.totalMapZoom = totalMapZoom;
+    }
 
     /**
      * Get map width in tiles at zoom
@@ -224,7 +314,7 @@ public class TileFactoryInfo {
 
     /**
      * Returns the tile url for the specified tile at the specified zoom level.
-     * By default it will generate a tile url using the base url and parameters
+     * By default, it will generate a tile url using the base url and parameters
      * specified in the constructor. Thus if
      *
      * <PRE><CODE>baseURl = http://www.myserver.com/maps?version=0.1
@@ -251,8 +341,13 @@ public class TileFactoryInfo {
      */
     public String getTileUrl(int x, int y, int zoom) {
         zoom = this.getTotalMapZoom() - zoom;
-        String url = String.format(this.baseURL, zoom, x, y);
-        return url;
+        //return String.format(this.baseURL, zoom, x, y);
+
+        String tileUrl = this.baseURL.replace("{x}", String.valueOf(x));
+        tileUrl = tileUrl.replace("{y}", String.valueOf(y));
+        tileUrl = tileUrl.replace("{z}", String.valueOf(zoom));
+
+        return tileUrl;
     }
 
     /**

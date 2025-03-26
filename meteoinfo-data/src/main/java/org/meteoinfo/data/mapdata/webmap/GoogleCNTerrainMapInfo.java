@@ -22,18 +22,17 @@ public class GoogleCNTerrainMapInfo extends TileFactoryInfo {
     public GoogleCNTerrainMapInfo() {
         super("GoogleCNTerrainMap", 1, 17, 19,
                 256, true, true, // tile size is 256 and x/y orientation is normal
-                "https://gac-geo.googlecnapps.cn/maps/vt?lyrs=p&x=%1$d&y=%2$d&z=%3$d",
-                "x", "y", "z");
+                "https://gac-geo.googlecnapps.cn/maps/vt?lyrs=p&x={x}&y={y}&z={z}");
     }
     // </editor-fold>
 
     // <editor-fold desc="Methods">
-    @Override
+    /*@Override
     public String getTileUrl(int x, int y, int zoom) {
         zoom = this.getTotalMapZoom() - zoom;
         String url = String.format(this.baseURL, x, y, zoom);
 
         return url;
-    }
+    }*/
     // </editor-fold>
 }

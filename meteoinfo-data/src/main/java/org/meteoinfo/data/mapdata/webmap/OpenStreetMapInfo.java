@@ -19,8 +19,11 @@ public class OpenStreetMapInfo extends TileFactoryInfo {
     public OpenStreetMapInfo() {
         super("OpenStreetMap", 1, 17, 19,
                 256, true, true, // tile size is 256 and x/y orientation is normal
-                "https://tile.openstreetmap.de/%1$d/%2$d/%3$d.png",//5/15/10.png",
-                "x", "y", "z");
+                "https://tile.openstreetmap.de/{z}/{x}/{y}.png");
+//        super("OpenStreetMap", 1, 17, 19,
+//                256, true, true, // tile size is 256 and x/y orientation is normal
+//                "https://tile.openstreetmap.de/%1$d/%2$d/%3$d.png",//5/15/10.png",
+//                "x", "y", "z");
     }
 //    // </editor-fold>
 //    // <editor-fold desc="Get Set Methods">

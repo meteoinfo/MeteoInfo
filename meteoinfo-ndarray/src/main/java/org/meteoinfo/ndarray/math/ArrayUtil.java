@@ -1427,6 +1427,31 @@ public class ArrayUtil {
     }
 
     /**
+     * Returns a Toeplitz matrix in which each descending diagonal
+     * from left to right is constant.
+     *
+     * @param col First column of the matrix. {@code A[i, j] = kl[i - j]} for {@code i >  j}
+     * @param row First row of the matrix. {@code A[i, j] = ku[j - i]} for {@code i <= j}
+     * @return the Toeplitz matrix.
+     */
+    public static Array toeplitz(Array col, Array row) {
+        int nx = (int) row.getSize();
+        int ny = (int) col.getSize();
+        DataType dataType = ArrayMath.commonType(col.getDataType(), row.getDataType());
+        Array r = Array.factory(dataType, new int[]{ny, nx});
+        for (int i = 0; i < ny; i++) {
+            for (int j = 0; j < i; j++) {
+                r.setObject(i * nx + j, col.getObject(i - j));
+            }
+            for (int j = i; j < nx; j++) {
+                r.setObject(i * nx + j, row.getObject(j - i));
+            }
+        }
+
+        return r;
+    }
+
+    /**
      * Repeat a value n times
      *
      * @param v The value

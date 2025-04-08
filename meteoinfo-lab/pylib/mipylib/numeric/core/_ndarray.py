@@ -765,7 +765,7 @@ class NDArray(object):
             else:
                 ArrayMath.setImage(self._array, val)
 
-    def conj(self):
+    def conjugate(self):
         """
         Return the complex conjugate, element-wise.
 
@@ -774,6 +774,8 @@ class NDArray(object):
         :return: (*array*) Complex conjugate array.
         """
         return self.array_wrap(ArrayMath.conj(self._array))
+
+    conj = conjugate
 
     def min(self, axis=None):
         """

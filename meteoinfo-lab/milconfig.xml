@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\webmap">
-    <RecentFolder Folder="D:\Temp\test"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\array">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\dataconvert"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\signal"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\webmap"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_x_phase_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\grib\grib2_ecmwf_3.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\map\webmap\new_tilefactory_tianditu-1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\webmap\air_path.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\toeplitz_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_x_phase_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\grib\grib2_ecmwf_3.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\map\webmap\new_tilefactory_tianditu-1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\map\webmap\air_path.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\linalg\toeplitz_1.py"/>
     </RecentFiles>
   </File>
   <Font>

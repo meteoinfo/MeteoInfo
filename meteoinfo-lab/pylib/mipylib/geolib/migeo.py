@@ -14,7 +14,7 @@ from org.meteoinfo.geometry.graphic import Graphic
 from org.meteoinfo.geometry.legend import BreakTypes
 from org.meteoinfo.geometry.geoprocess import GeoComputation, GeometryUtil
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
-from org.meteoinfo.geo.mapdata import MapDataManage
+from org.meteoinfo.geo.mapdata import MapDataManage, ShapeFileManage
 from org.meteoinfo.geo.util import GeoIOUtil
 from org.meteoinfo.geo.io import GeoJSONWriter
 from org.meteoinfo.table import AttributeTable
@@ -35,7 +35,7 @@ from java.util import ArrayList
 __all__ = [
     'arrayinpolygon', 'bilwrite', 'circle', 'convert_encoding_dbf', 'distance', 'geojson_write', 'georead', 'geotiffread', 'gridarea',
     'maplayer', 'inpolygon', 'maskin', 'maskout', 'polyarea', 'polygon', 'rmaskin', 'rmaskout', 'shaperead',
-    'polygonindex', 'projinfo', 'project', 'projectxy', 'reproject', 'reproject_image'
+    'shapewrite', 'polygonindex', 'projinfo', 'project', 'projectxy', 'reproject', 'reproject_image'
 ]
 
 
@@ -70,6 +70,18 @@ def shaperead(fn, encoding=None):
     else:
         print('File not exists: {}'.format(fn))
         raise
+
+
+def shapewrite(fn, graphics, projection=None):
+    """
+    Save graphics as a shape file.
+
+    :param fn: (*str*) The shape file name
+    :param graphics: (*GraphicCollection*) The graphics
+    :param projection: (*ProjectionInfo*) The projection
+    """
+    geographic = GeoGraphicCollection.factory(graphics, projection=projection)
+    ShapeFileManage.saveShapeFile(fn, geographic._geographic)
 
 
 def georead(fn, encoding=None):

@@ -27,6 +27,21 @@ class GeoGraphicCollection(object):
         else:
             return self._geographic.xshift(xshift)
 
+    @classmethod
+    def factory(cls, graphics, projection=None):
+        """
+        Create GeoGraphicCollection from GraphicCollection.
+
+        :param graphics: (*GraphicCollection*) The graphics.
+        :param projection: (*ProjectionInfo*) The projection.
+        :return: (*GeoGraphicCollection*) Created GeoGraphicCollection object.
+        """
+        gg = JGeoGraphicCollection.factory(graphics)
+        if projection is not None:
+            gg.setProjInfo(projection)
+
+        return GeoGraphicCollection(geographic=gg)
+
     @property
     def shapes(self):
         return self._geographic.getShapes()

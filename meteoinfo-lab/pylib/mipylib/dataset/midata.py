@@ -572,7 +572,7 @@ def asciiread(filename, **kwargs):
     
 def asciiwrite(fn, data, colnum=80, format=None, delimiter=None):
     """
-    Write array data into a ASCII data file.
+    Write array data into an ASCII data file.
     
     :param fn: (*string*) Path needed to locate ASCII file.
     :param data: (*array_like*) A numeric array variable of any dimensionality.

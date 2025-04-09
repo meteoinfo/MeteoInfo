@@ -189,6 +189,52 @@ public class ImageUtil {
 
         return aImage;
     }
+
+    /**
+     * Create image from RGB(A) data array
+     * @param data RGB data array
+     * @param alpha Alpha value
+     * @return Image
+     */
+    public static BufferedImage createImage(Array data, float alpha) {
+        int width, height;
+        width = data.getShape()[1];
+        height = data.getShape()[0];
+        Color undefColor = Color.white;
+        BufferedImage aImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Color color;
+        Index index = data.getIndex();
+        if (data.getDataType() == DataType.FLOAT || data.getDataType() == DataType.DOUBLE){
+            float r, g, b;
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    r = data.getFloat(index.set(i, j, 0));
+                    g = data.getFloat(index.set(i, j, 1));
+                    b = data.getFloat(index.set(i, j, 2));
+                    if (Float.isNaN(r) || Float.isNaN(g) || Float.isNaN(b)) {
+                        color = undefColor;
+                    } else {
+                        color = new Color(r, g, b, alpha);
+                    }
+                    aImage.setRGB(j, height - i - 1, color.getRGB());
+                }
+            }
+        } else {
+            int r, g, b;
+            int a = (int) (alpha * 255);
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    r = data.getInt(index.set(i, j, 0));
+                    g = data.getInt(index.set(i, j, 1));
+                    b = data.getInt(index.set(i, j, 2));
+                    color = new Color(r, g, b, a);
+                    aImage.setRGB(j, height - i - 1, color.getRGB());
+                }
+            }
+        }
+
+        return aImage;
+    }
     
     /**
      * Save image into a file

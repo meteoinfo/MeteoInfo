@@ -1400,6 +1400,9 @@ class Axes3DGL(Axes3D):
             cn = len(kwargs['colors'])
         else:
             cn = None
+        alpha = None
+        if kwargs.has_key('alpha'):
+            alpha = kwargs['alpha']
         cmap = plotutil.getcolormap(**kwargs)
         level_arg = None
         C = None
@@ -1451,7 +1454,10 @@ class Axes3DGL(Axes3D):
                 if facecolor == 'texturemap':
                     if isinstance(cdata, NDArray):
                         if cdata.ndim == 3:
-                            image = ImageUtil.createImage(cdata._array)
+                            if alpha is None:
+                                image = ImageUtil.createImage(cdata._array)
+                            else:
+                                image = ImageUtil.createImage(cdata._array, alpha)
                         else:
                             image = GraphicFactory.createImage(cdata._array, ls)
                     elif isinstance(cdata, BufferedImage):

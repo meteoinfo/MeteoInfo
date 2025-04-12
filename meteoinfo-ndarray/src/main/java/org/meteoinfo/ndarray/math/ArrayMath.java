@@ -7397,7 +7397,12 @@ public class ArrayMath {
             }
             shape[idx] = dataShape[i];
         }
-        Array r = Array.factory(a.getDataType(), shape);
+
+        DataType dataType = a.getDataType();
+        if (dataType == DataType.BOOLEAN) {
+            dataType = DataType.INT;
+        }
+        Array r = Array.factory(dataType, shape);
         double s;
         Index indexr = r.getIndex();
         int[] current;

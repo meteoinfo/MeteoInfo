@@ -736,7 +736,7 @@ public class GridArray {
      * @param aFile File path
      */
     public void saveAsESRIASCIIFile(String aFile) {
-        if (this.getXDelt() != this.getYDelt()){
+        if (!MIMath.doubleEquals(this.getXDelt(), this.getYDelt())){
             JOptionPane.showMessageDialog(null, "X cell size is not equal y cell size!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }

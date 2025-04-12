@@ -28,7 +28,7 @@ class DimVariable(object):
     @staticmethod
     def factory(variable=None, dataset=None, ncvariable=None):
         """
-        Factor method.
+        Factory method.
         """
         if variable.getDataType().isStructure():
             return StructureVariable(variable, dataset)

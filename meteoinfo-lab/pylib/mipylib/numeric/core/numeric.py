@@ -39,8 +39,8 @@ __all__ = [
     'argmin','argmax','argsort','array','array_split','amax','amin','asanyarray','asarray',
     'arcsin','asin','asmiarray','atleast_1d','atleast_2d','arctan','atan',
     'arctan2','atan2','average','histogram','broadcast_to','cdiff','ceil',
-    'concatenate','conj','conjugate','convolve','corrcoef','cos','cosh','cylinder','degrees','delnan','diag','diff',
-    'dot','empty','empty_like','exp','eye','flatnonzero','floor',
+    'concatenate','conj','conjugate','convolve','corrcoef','cos','cosh','count_nonzero','cylinder',
+    'degrees','delnan','diag','diff','dot','empty','empty_like','exp','eye','flatnonzero','floor',
     'fmax','fmin','full','hcurl','hdivg','hstack','hypot','identity','indices','interp2d','interpn','isarray',
     'isclose','isfinite','isinf','isnan','isscalar','linspace','log','log10','logical_not','logspace',
     'magic','magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
@@ -445,6 +445,36 @@ def full(shape, fill_value, dtype=None):
         return NDArray(ArrayUtil.full(shapelist, fill_value.asarray(), dtype))
     else:
         return NDArray(ArrayUtil.full(shapelist, fill_value, dtype))
+
+def count_nonzero(a, axis=None):
+    """
+    Counts the number of non-zero values in the array ``a``.
+
+    Parameters
+    ----------
+    a : array_like
+        The array for which to count non-zeros.
+    axis : int or tuple, optional
+        Axis or tuple of axes along which to count non-zeros.
+        Default is None, meaning that non-zeros will be counted
+        along a flattened version of ``a``.
+
+    Returns
+    -------
+    count : int or array of int
+        Number of non-zero values in the array along a given axis.
+        Otherwise, the total number of non-zero values in the array
+        is returned.
+    """
+    a = asanyarray(a)
+    a = a.astype(_dtype.bool)
+    r = a.sum(axis=axis)
+    if isinstance(r, NDArray):
+        r = r.astype(_dtype.int)
+    else:
+        r = int(r)
+
+    return r
     
 def identity(n, dtype='float'):
     """

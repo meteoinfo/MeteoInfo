@@ -286,7 +286,7 @@ public class ArrayObject extends Array {
      * not legal, throw ForbiddenConversionException
      */
     public String getString(Index i) {
-        throw new ForbiddenConversionException();
+        return getObject(i).toString();
     }
 
     /**
@@ -403,7 +403,7 @@ public class ArrayObject extends Array {
     }
 
     public String getString(int index) {
-        throw new ForbiddenConversionException();
+        return getObject(index).toString();
     }
 
     public void setString(int index, String value) {

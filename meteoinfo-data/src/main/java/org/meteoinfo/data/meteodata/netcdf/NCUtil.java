@@ -60,6 +60,9 @@ public class NCUtil {
         if (dt == DataType.OBJECT && ncArray.getObject(0).getClass() == String.class){
             dt = DataType.STRING;
         }
+
+        //Array array = Array.factory(dt, ncArray.getShape(), ncArray.getStorage());
+
         Array array = null;
         switch (dt) {
             case STRUCTURE:
@@ -70,7 +73,7 @@ public class NCUtil {
             default:
                 array = Array.factory(dt, ncArray.getShape(), ncArray.getStorage());
                 break;
-        }        
+        }
         
         return array;
     }

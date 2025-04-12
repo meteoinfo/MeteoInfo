@@ -36,12 +36,21 @@ public class MIMath {
      * @return boolean
      */
     public static boolean doubleEquals(double a, double b) {
-        double difference = Math.abs(a * 0.00001);
-        if (Math.abs(a - b) <= difference) {
-            return true;
-        } else {
-            return false;
-        }
+        return doubleEquals(a, b, 0.0000001);
+    }
+
+    /**
+     * Determine if two double data equal
+     *
+     * @param a double a
+     * @param b double b
+     * @param epsilon Epsilon
+     * @return boolean
+     */
+    public static boolean doubleEquals(final double a, final double b, final double epsilon) {
+        final double diff = Math.abs(a - b);
+        return diff < epsilon
+                || (Double.isNaN(diff) && a == b); // Handle the case where a = b = Double.POSITIVE_INFINITY or a = b = Double.NEGATIVE_INFINITY.
     }
 
     /**

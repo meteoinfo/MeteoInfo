@@ -15,7 +15,6 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
 import org.apache.commons.imaging.ImageFormats;
-import org.apache.commons.imaging.ImageWriteException;
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.freehep.graphicsio.ps.PSGraphics2D;
@@ -1264,7 +1263,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
     public void saveImage(String aFile) {
         try {
             saveImageSleep(aFile, null);
-        } catch (PrintException | IOException | InterruptedException | ImageWriteException ex) {
+        } catch (PrintException | IOException | InterruptedException ex) {
             Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -1278,7 +1277,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
      * @throws PrintException
      * @throws InterruptedException
      */
-    public void saveImageSleep(String aFile, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException, ImageWriteException {
+    public void saveImageSleep(String aFile, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException {
         int w, h;
         if (this.chartSize == null) {
             w = this.getWidth();
@@ -1301,7 +1300,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
      * @throws PrintException
      * @throws InterruptedException
      */
-    public void saveImage(String aFile, int width, int height, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException, ImageWriteException {
+    public void saveImage(String aFile, int width, int height, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException {
         if (aFile.endsWith(".ps")) {
             DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
             String mimeType = "application/postscript";
@@ -1596,11 +1595,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
             Thread.sleep(sleep * 1000);
         }
 
-        try {
-            ImageUtil.imageSave(image, fileName, dpi);
-        } catch (ImageWriteException e) {
-            e.printStackTrace();
-        }
+        ImageUtil.imageSave(image, fileName, dpi);
 
         if (this.hasWebMap()) {
             for (Plot plot : this.chart.getPlots()) {

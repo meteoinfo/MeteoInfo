@@ -13,7 +13,6 @@
  */
 package org.meteoinfo.geo.mapdata;
 
-import org.apache.commons.imaging.ImageReadException;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointD;
@@ -327,7 +326,7 @@ public class MapDataManage {
      * @return Image layer
      * @throws IOException
      */
-    public static ImageLayer readImageFile(String aFile) throws IOException, ImageReadException {
+    public static ImageLayer readImageFile(String aFile) throws IOException {
         String oEx = aFile.substring(aFile.lastIndexOf("."));
         String last = oEx.substring(oEx.length() - 1);
         String sEx = oEx.substring(0, oEx.length() - 2) + last;

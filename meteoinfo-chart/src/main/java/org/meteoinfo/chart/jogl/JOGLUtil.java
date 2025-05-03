@@ -10,7 +10,6 @@ import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Screen;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
-import org.apache.commons.imaging.ImageWriteException;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.GLChart;
 import org.meteoinfo.chart.GLChartPanel;
@@ -519,7 +518,7 @@ public class JOGLUtil {
             try {
                 //ImageIO.write(image, extension, new File(fn));
                 ImageUtil.imageSave(image, fn);
-            } catch (IOException | ImageWriteException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(GLChartPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
@@ -539,11 +538,7 @@ public class JOGLUtil {
         BufferedImage image = paintViewImage(plot3DGL, width, height, dpi);
 
         if (image != null) {
-            try {
-                ImageUtil.imageSave(image, fn, dpi);
-            } catch (ImageWriteException e) {
-                e.printStackTrace();
-            }
+            ImageUtil.imageSave(image, fn, dpi);
         }
     }
 

@@ -19,7 +19,6 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.imaging.ImageFormats;
-import org.apache.commons.imaging.ImageWriteException;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointF;
@@ -3060,11 +3059,7 @@ import org.xml.sax.SAXException;
              paintGraphics(g);
              g.dispose();
 
-             try {
-                 ImageUtil.imageSave(image, aFile);
-             } catch (ImageWriteException e) {
-                 e.printStackTrace();
-             }
+             ImageUtil.imageSave(image, aFile);
          }
      }
 
@@ -3123,11 +3118,7 @@ import org.xml.sax.SAXException;
              }*/
              g.dispose();
 
-             try {
-                 ImageUtil.imageSave(image, fileName, dpi);
-             } catch (ImageWriteException e) {
-                 e.printStackTrace();
-             }
+             ImageUtil.imageSave(image, fileName, dpi);
          }
      }
 

@@ -67,7 +67,6 @@ import javax.swing.Timer;
 import javax.swing.event.EventListenerList;
 
 import org.apache.commons.imaging.ImageFormats;
-import org.apache.commons.imaging.ImageWriteException;
 import org.freehep.graphics2d.VectorGraphics;
 import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
@@ -1214,7 +1213,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
     public void saveImage(String aFile) {
         try {
             saveImageSleep(aFile, null);
-        } catch (PrintException | IOException | InterruptedException | ImageWriteException ex) {
+        } catch (PrintException | IOException | InterruptedException ex) {
             Logger.getLogger(ChartPanel.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -1228,7 +1227,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
      * @throws javax.print.PrintException
      * @throws java.lang.InterruptedException
      */
-    public void saveImageSleep(String aFile, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException, ImageWriteException {
+    public void saveImageSleep(String aFile, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException {
         int w, h;
         if (this.chartSize == null) {
             w = this.getWidth();
@@ -1251,7 +1250,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
      * @throws javax.print.PrintException
      * @throws java.lang.InterruptedException
      */
-    public void saveImage(String aFile, int width, int height, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException, ImageWriteException {
+    public void saveImage(String aFile, int width, int height, Integer sleep) throws FileNotFoundException, PrintException, IOException, InterruptedException {
         if (aFile.endsWith(".ps")) {
             DocFlavor flavor = DocFlavor.SERVICE_FORMATTED.PRINTABLE;
             String mimeType = "application/postscript";
@@ -1720,11 +1719,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
             Thread.sleep(sleep * 1000);
         }
 
-        try {
-            ImageUtil.imageSave(image, fileName, dpi);
-        } catch (ImageWriteException e) {
-            e.printStackTrace();
-        }
+        ImageUtil.imageSave(image, fileName, dpi);
 
         if (this.hasWebMap()) {
             for (Plot plot : this.chart.getPlots()) {

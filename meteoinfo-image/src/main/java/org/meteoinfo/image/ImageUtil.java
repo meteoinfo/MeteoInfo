@@ -50,9 +50,8 @@ public class ImageUtil {
      * @param fileName Image file name
      * @return RGB array data
      * @throws IOException
-     * @throws ImageReadException
      */
-    public static Array imageRead(String fileName) throws IOException, ImageReadException{
+    public static Array imageRead(String fileName) throws IOException {
         String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
         BufferedImage image;
         if (extension.equalsIgnoreCase("jpg") || extension.equalsIgnoreCase("jpeg")){
@@ -92,9 +91,8 @@ public class ImageUtil {
      * @param fileName Image file name
      * @return Image
      * @throws IOException
-     * @throws ImageReadException
      */
-    public static BufferedImage imageLoad(String fileName) throws IOException, ImageReadException{
+    public static BufferedImage imageLoad(String fileName) throws IOException {
         String extension = fileName.substring(fileName.lastIndexOf('.') + 1);
         BufferedImage image;
         if (extension.equalsIgnoreCase("jpg") || extension.equalsIgnoreCase("jpeg")){
@@ -240,10 +238,9 @@ public class ImageUtil {
      * Save image into a file
      * @param data RGB(A) data array
      * @param fileName Output image file name
-     * @throws IOException 
-     * @throws ImageWriteException 
+     * @throws IOException
      */
-    public static void imageSave(Array data, String fileName) throws IOException, ImageWriteException{
+    public static void imageSave(Array data, String fileName) throws IOException {
         BufferedImage image = createImage(data);
         imageSave(image, fileName);
     }
@@ -252,10 +249,9 @@ public class ImageUtil {
      * Save image into a file
      * @param image Image
      * @param fileName Output image file name
-     * @throws IOException 
-     * @throws ImageWriteException 
+     * @throws IOException
      */
-    public static void imageSave(BufferedImage image, String fileName) throws IOException, ImageWriteException{
+    public static void imageSave(BufferedImage image, String fileName) throws IOException {
         ImageFormats format = getImageFormat(fileName);
         switch (format) {
             case JPEG:
@@ -272,9 +268,8 @@ public class ImageUtil {
      * @param image Image
      * @param fileName Output image file name
      * @throws IOException
-     * @throws ImageWriteException
      */
-    public static void imageSave(BufferedImage image, String fileName, int dpi) throws IOException, ImageWriteException{
+    public static void imageSave(BufferedImage image, String fileName, int dpi) throws IOException {
         ImageFormats format = getImageFormat(fileName);
         switch (format) {
             case JPEG:

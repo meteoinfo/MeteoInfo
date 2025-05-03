@@ -19,8 +19,6 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.imaging.ImageFormats;
-import org.apache.commons.imaging.ImageReadException;
-import org.apache.commons.imaging.ImageWriteException;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.geo.mapdata.MapDataManage;
@@ -6577,36 +6575,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     break;
             }
 
-            try {
-                ImageUtil.imageSave(image, aFile);
-            } catch (ImageWriteException e) {
-                e.printStackTrace();
-            }
-
-            /*String extension = aFile.substring(aFile.lastIndexOf('.') + 1);
-            if (extension.equalsIgnoreCase("bmp") || extension.equalsIgnoreCase("jpg")) {
-                BufferedImage bi;
-                if (extension.equalsIgnoreCase("bmp")) {
-                    bi = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_RGB);
-                } else {
-                    bi = new BufferedImage(this.getWidth(), this.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                }
-                Graphics2D g = bi.createGraphics();
-                if (this.getBackground() != null) {
-                    g.setColor(this.getBackground());
-                    g.fillRect(0, 0, bi.getWidth(), bi.getHeight());
-                }
-                paintGraphics(g);
-                if (extension.equalsIgnoreCase("jpg")) {
-                    BufferedImage newImage = new BufferedImage(bi.getWidth(), bi.getHeight(), BufferedImage.TYPE_INT_RGB);
-                    newImage.createGraphics().drawImage(bi, 0, 0, Color.BLACK, null);
-                    ImageIO.write(newImage, extension, new File(aFile));
-                } else {
-                    ImageIO.write(bi, extension, new File(aFile));
-                }
-            } else {
-                ImageIO.write(this._mapBitmap, extension, new File(aFile));
-            }*/
+            ImageUtil.imageSave(image, aFile);
         }
     }
     
@@ -6628,12 +6597,6 @@ public class MapView extends JPanel implements IWebMapPanel {
             int width = this.getWidth();
             int height = this.getHeight();
             ImageFormats imageFormat = ImageUtil.getImageFormat(fileName);
-            /*String formatName = fileName.substring(fileName.lastIndexOf('.') + 1);
-            if (formatName.equals("jpg")) {
-                formatName = "jpeg";
-                saveImage_Jpeg(fileName, width, height, dpi);
-                return;
-            }*/
 
             double scaleFactor = dpi / 72.0;
             int imageType = imageFormat == ImageFormats.JPEG ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
@@ -6643,33 +6606,9 @@ public class MapView extends JPanel implements IWebMapPanel {
             at.scale(scaleFactor, scaleFactor);
             g.setTransform(at);
             paintGraphics(g);
-            /*for (Iterator<ImageWriter> iw = ImageIO.getImageWritersByFormatName(formatName); iw.hasNext();) {
-                ImageWriter writer = iw.next();
-                ImageWriteParam writeParam = writer.getDefaultWriteParam();
-                ImageTypeSpecifier typeSpecifier = ImageTypeSpecifier.createFromBufferedImageType(BufferedImage.TYPE_INT_ARGB);
-                IIOMetadata metadata = writer.getDefaultImageMetadata(typeSpecifier, writeParam);
-                if (metadata.isReadOnly() || !metadata.isStandardMetadataFormatSupported()) {
-                    continue;
-                }
-
-                ImageUtil.setDPI(metadata, dpi);
-
-                final ImageOutputStream stream = ImageIO.createImageOutputStream(output);
-                try {
-                    writer.setOutput(stream);
-                    writer.write(metadata, new IIOImage(image, null, metadata), writeParam);
-                } finally {
-                    stream.close();
-                }
-                break;
-            }*/
             g.dispose();
 
-            try {
-                ImageUtil.imageSave(image, fileName, dpi);
-            } catch (ImageWriteException e) {
-                e.printStackTrace();
-            }
+            ImageUtil.imageSave(image, fileName, dpi);
         }
     }
     
@@ -9774,7 +9713,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         if (new File(aFile).exists()) {
             try {
                 aLayer = MapDataManage.readImageFile(aFile);
-            } catch (IOException | ImageReadException ex) {
+            } catch (IOException ex) {
                 Logger.getLogger(MapView.class.getName()).log(Level.SEVERE, null, ex);
             }
             try {

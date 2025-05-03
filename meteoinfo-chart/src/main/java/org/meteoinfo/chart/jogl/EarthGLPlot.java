@@ -4,7 +4,6 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
-import org.apache.commons.imaging.ImageReadException;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.ChartColorBar;
@@ -200,9 +199,8 @@ public class EarthGLPlot extends GLPlot {
      * Set earth image
      * @param imageFile
      * @throws IOException
-     * @throws ImageReadException
      */
-    public void earthImage(String imageFile) throws IOException, ImageReadException {
+    public void earthImage(String imageFile) throws IOException {
         BufferedImage image = ImageUtil.imageLoad(imageFile);
         if (this.surface == null) {
             this.earthSurface(50);

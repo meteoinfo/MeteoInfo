@@ -966,7 +966,7 @@ public class Draw {
      * @param sP Point
      * @param aWB WindBarb
      * @param pb PointBreak
-     * @param g Grahics2D
+     * @param g Graphics2D
      */
     public static void drawWindBarb(PointF sP, WindBarb aWB, PointBreak pb, Graphics2D g) {
         PointF eP;

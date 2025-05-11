@@ -14,7 +14,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <netcdf.version>5.8.0-SNAPSHOT</netcdf.version>
+        <netcdf.version>5.8.0</netcdf.version>
     </properties>
 
     <repositories>
@@ -76,12 +76,12 @@
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>grib</artifactId>
-            <version>5.8.0-SNAPSHOT</version>
+            <version>${netcdf.version}</version>
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
             <artifactId>libaec-native</artifactId>
-            <version>5.8.0-SNAPSHOT</version>
+            <version>${netcdf.version}</version>
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>

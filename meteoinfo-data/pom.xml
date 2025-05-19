@@ -75,6 +75,13 @@
         </dependency>
         <dependency>
             <groupId>edu.ucar</groupId>
+            <artifactId>cdm-zarr</artifactId>
+            <version>5.9.0-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/cdm-zarr-5.9.0-SNAPSHOT.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>edu.ucar</groupId>
             <artifactId>grib</artifactId>
             <version>${netcdf.version}</version>
         </dependency>

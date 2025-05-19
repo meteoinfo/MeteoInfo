@@ -2018,6 +2018,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     }
 
     private Object[] packARLGridData(Array a, DataLabel aDL) {
+        a = a.copyIfView();
         int nx = a.getShape()[1];
         int ny = a.getShape()[0];
         double var1 = a.getDouble(0);

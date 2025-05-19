@@ -678,6 +678,10 @@ class MemberVariable(DimVariable):
 
         :return: (*NDArray*) Data array.
         """
+        if self._parent_variable is not None:
+            if self._parent_variable._variable.getDataType() == DataType.STRUCTURE:
+                return DimVariable.__getitem__(self, key)
+
         if isinstance(key, int):
             return self.read_array(record=key)
         elif isinstance(key, complex):

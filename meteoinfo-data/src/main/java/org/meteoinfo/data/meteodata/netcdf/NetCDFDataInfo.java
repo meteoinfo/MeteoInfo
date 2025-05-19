@@ -1922,7 +1922,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     + String.valueOf(ncDimensions.get(i).getLength()) + ";";
         }
 
-        Dimension xdim = this.getXDimension();
+        /*Dimension xdim = this.getXDimension();
         if (xdim != null) {
             dataInfo += System.getProperty("line.separator") + "X Dimension: Xmin = " + String.valueOf(xdim.getMinValue())
                     + "; Xmax = " + String.valueOf(xdim.getMaxValue()) + "; Xsize = "
@@ -1933,7 +1933,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             dataInfo += System.getProperty("line.separator") + "Y Dimension: Ymin = " + String.valueOf(ydim.getMinValue())
                     + "; Ymax = " + String.valueOf(ydim.getMaxValue()) + "; Ysize = "
                     + String.valueOf(ydim.getLength()) + "; Ydelta = " + String.valueOf(ydim.getDeltaValue());
-        }
+        }*/
 
         dataInfo += System.getProperty("line.separator") + "Global Attributes: ";
         for (i = 0; i < ncAttributes.size(); i++) {
@@ -3073,7 +3073,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     public Array read(String varName, boolean unpack) {
         try {
             if (ncfile == null) {
-                ncfile = NetcdfDataset.openFile(this.fileName, null);
+                ncfile = NetcdfDatasets.openFile(this.fileName, null);
             }
             ucar.nc2.Variable var = ncfile.findVariable(varName);
             if (var == null) {
@@ -3152,7 +3152,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     public Array read(String varName, int[] origin, int[] size, int[] stride, boolean unpack) {
         try {
             if (ncfile == null) {
-                ncfile = NetcdfDataset.openFile(this.fileName, null);
+                ncfile = NetcdfDatasets.openFile(this.fileName, null);
                 //ncfile = NetcdfFiles.open(this.fileName);
                 //ncfile = NetcdfFile.open(this.fileName);
             }
@@ -3259,7 +3259,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     public Array read(String varName, int[] origin, int[] size, boolean unpack) {
         try {
             if (ncfile == null) {
-                ncfile = NetcdfDataset.openFile(this.fileName, null);
+                ncfile = NetcdfDatasets.openFile(this.fileName, null);
             }
             ucar.nc2.Variable var = ncfile.findVariable(varName);
 
@@ -3310,7 +3310,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     public Array read_pack(String varName, int[] origin, int[] size) {
         try {
             if (ncfile == null) {
-                ncfile = NetcdfFile.open(this.getFileName());
+                ncfile = NetcdfDatasets.openFile(this.fileName, null);
             }
             ucar.nc2.Variable var = ncfile.findVariable(varName);
 
@@ -3351,7 +3351,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     public Array read(String varName, String key) {
         try {
             if (ncfile == null) {
-                ncfile = NetcdfDataset.openFile(this.fileName, null);
+                ncfile = NetcdfDatasets.openFile(this.fileName, null);
             }
             ucar.nc2.Variable var = ncfile.findVariable(varName);
 

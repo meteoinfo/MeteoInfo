@@ -515,7 +515,7 @@ public class ImageUtil {
         return r;
     }
 
-    private static Array corrlated1D(Array a, double[] weights) {
+    private static Array correlate1D(Array a, double[] weights) {
         int size = weights.length;
         int origin = size / 2;
         int n = (int)a.getSize();
@@ -597,7 +597,7 @@ public class ImageUtil {
                     }
                 }
                 Array temp = data.section(ranges);
-                temp = corrlated1D(temp, weights);
+                temp = correlate1D(temp, weights);
                 for (int j = 0; j < shape[axis]; j++) {
                     rcurrent[axis] = j;
                     rindex.set(rcurrent);

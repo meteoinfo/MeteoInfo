@@ -15,9 +15,10 @@ from . import spatial
 from . import special
 from . import integrate
 from . import fft
+from . import ndimage
 
 __all__ = ['linalg', 'fitting', 'random', 'ma', 'stats', 'interpolate', 'optimize', 'signal', 'spatial',
-           'special', 'integrate', 'fft']
+           'special', 'integrate', 'fft', 'ndimage']
 __all__.extend(['__version__'])
 __all__.extend(core.__all__)
 __all__.extend(lib.__all__)

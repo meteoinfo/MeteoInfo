@@ -13,8 +13,10 @@
  */
 package org.meteoinfo.data.meteodata.micaps;
 
+import org.apache.commons.lang3.math.NumberUtils;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.util.JDateUtil;
+import org.meteoinfo.common.util.NumberUtil;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.dimarray.DimArray;
 import org.meteoinfo.data.meteodata.DataInfo;
@@ -57,7 +59,7 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
     private double[] _yArray;
     private int _headLineNum;
     private boolean _yReverse = false;
-    private int _preHours;
+    private float _preHours;
     private int _level;
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -98,9 +100,9 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
                     dataList.add(dataArray[i]);
                 }
             }
-            if (dataList.size() < 21) {
+            if (dataList.size() < 17) {
                 for (n = 0; n <= 10; n++) {
-                    if (dataList.size() < 21) {
+                    if (dataList.size() < 17) {
                         aLine = sr.readLine().trim();
                         dataArray = aLine.split("\\s+");
                         for (i = 0; i < dataArray.length; i++) {
@@ -125,11 +127,17 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
                     year = 1900 + year;
                 }
             }
-            _preHours = Integer.parseInt(dataList.get(idx + 4));
             LocalDateTime time = LocalDateTime.of(year, Integer.parseInt(dataList.get(idx + 1)),
                     Integer.parseInt(dataList.get(idx + 2)),
                     Integer.parseInt(dataList.get(idx + 3)), 0, 0);
-            time = time.plusHours(_preHours);
+            String preHourStr = dataList.get(idx + 4);
+            if (NumberUtil.isInteger(preHourStr)) {
+                _preHours = Integer.parseInt(preHourStr);
+                time = time.plusHours((int) _preHours);
+            } else {
+                _preHours = Float.parseFloat(preHourStr);
+                time = time.plusMinutes((int) (_preHours * 60));
+            }
             
             _level = Integer.parseInt(dataList.get(idx + 5));
             float XDelt = Float.parseFloat(dataList.get(idx + 6));
@@ -140,16 +148,16 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
             float YMax = Float.parseFloat(dataList.get(idx + 11));
             int XNum = Integer.parseInt(dataList.get(idx + 12));
             int YNum = Integer.parseInt(dataList.get(idx + 13));
-            float contourDelt = Float.parseFloat(dataList.get(idx + 14));
+            /*float contourDelt = Float.parseFloat(dataList.get(idx + 14));
             float contourSValue = Float.parseFloat(dataList.get(idx + 15));
             float contourEValue = Float.parseFloat(dataList.get(idx + 16));
             float smoothCo = Float.parseFloat(dataList.get(idx + 17));
-            float boldValue = Float.parseFloat(dataList.get(idx + 18));
-            boolean isLonLat;
-            if (dataList.get(idx + 16).equals("-1") || dataList.get(idx + 16).equals("-2") || dataList.get(idx + 16).equals("-3")) {
-                isLonLat = false;
-            } else {
-                isLonLat = true;
+            float boldValue = Float.parseFloat(dataList.get(idx + 18));*/
+            boolean isLonLat = true;
+            if (dataList.size() >= 20) {
+                if (dataList.get(idx + 16).equals("-1") || dataList.get(idx + 16).equals("-2") || dataList.get(idx + 16).equals("-3")) {
+                    isLonLat = false;
+                }
             }
             _xArray = new double[XNum];
             for (i = 0; i < XNum; i++) {
@@ -218,7 +226,7 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
     public String generateInfoText() {
         String dataInfo;
         dataInfo = "Description: " + _description;
-        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
+        DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().get(0));
         dataInfo += System.getProperty("line.separator") + super.generateInfoText();
 

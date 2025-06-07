@@ -60,7 +60,7 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
     private int _headLineNum;
     private boolean _yReverse = false;
     private float _preHours;
-    private int _level;
+    private float _level;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -139,7 +139,7 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
                 time = time.plusMinutes((int) (_preHours * 60));
             }
             
-            _level = Integer.parseInt(dataList.get(idx + 5));
+            _level = Float.parseFloat(dataList.get(idx + 5));
             float XDelt = Float.parseFloat(dataList.get(idx + 6));
             float YDelt = Float.parseFloat(dataList.get(idx + 7));
             float XMin = Float.parseFloat(dataList.get(idx + 8));

@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\micaps">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\zarr"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\geotiff">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\calipso"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\ascat"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\ndimage"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\micaps"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\zarr"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\satellite\ascat\ascat_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\micaps\micaps_4_12.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\bird_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\geotiff\geotif_KX10.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\satellite\ascat\ascat_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\micaps\micaps_4_12.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\bird_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\geotiff\geotif_KX10.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -32,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-6,-6" MainFormSize="1292,764"/>
+  <Startup MainFormLocation="-6,0" MainFormSize="1339,808"/>
 </MeteoInfo>

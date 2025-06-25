@@ -728,7 +728,7 @@ public class GeoTiff {
             gData.yArray = Y;
 
             //Get missing value
-            IFDEntry noDataTag = findTag(Tag.GDALNoData);
+            IFDEntry noDataTag = findTag(Tag.GDALNoDataTag);
             if (noDataTag != null) {
                 double missingValue = Double.parseDouble(noDataTag.valueS);
                 gData.missingValue = missingValue;
@@ -1360,6 +1360,12 @@ public class GeoTiff {
         }
 
         r = ArrayMath.flip(r, 0);
+        IFDEntry noDataTag = findTag(Tag.GDALNoDataTag);
+        if (noDataTag != null) {
+            double missingValue = Double.parseDouble(noDataTag.valueS);
+            ArrayMath.replaceValue(r, missingValue, Double.NaN);
+        }
+
         return r;
     }
 
@@ -1679,6 +1685,12 @@ public class GeoTiff {
         }
 
         r = ArrayMath.flip(r, 0);
+        IFDEntry noDataTag = findTag(Tag.GDALNoDataTag);
+        if (noDataTag != null) {
+            double missingValue = Double.parseDouble(noDataTag.valueS);
+            ArrayMath.replaceValue(r, missingValue, Double.NaN);
+        }
+
         return r;
     }
 

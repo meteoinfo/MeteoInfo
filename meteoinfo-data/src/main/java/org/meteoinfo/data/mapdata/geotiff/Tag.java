@@ -58,7 +58,7 @@ import java.util.HashMap;
      public static final Tag GeoKeyDirectoryTag = new Tag("GeoKeyDirectoryTag", 34735);
      public static final Tag GeoDoubleParamsTag = new Tag("GeoDoubleParamsTag", 34736);
      public static final Tag GeoAsciiParamsTag = new Tag("GeoAsciiParamsTag", 34737);
-     public static final Tag GDALNoData = new Tag("GDALNoDataTag", 42113);
+     public static final Tag GDALNoDataTag = new Tag("GDALNoDataTag", 42113);
      private String name;
      private int code;
      // </editor-fold>

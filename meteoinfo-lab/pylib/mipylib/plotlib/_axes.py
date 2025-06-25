@@ -1433,6 +1433,8 @@ class Axes(object):
                 if ydata.ndim == 1:
                     graphics = Line2D(xdata, ydata, legend=lines[0], curve=iscurve)
                 else:
+                    if kwargs.has_key('color'):
+                        kwargs['colors'] = kwargs['color']
                     if not kwargs.has_key('cmap'):
                         kwargs['cmap'] = 'matlab_jet'
                     graphics = LineCollection(None, xydata=[xdata, ydata], **kwargs)

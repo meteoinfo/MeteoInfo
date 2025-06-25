@@ -984,6 +984,10 @@ public class ProjectionUtil {
                 for (Graphic aGraphic : ((GraphicCollection) graphic).getGraphics()) {
                     List<? extends Shape> shapes = projectClipShape(aGraphic.getShape(), fromProj, toProj);
                     if (shapes != null && shapes.size() > 0) {
+                        if (shapes.get(0).getExtent() == null) {
+                            //System.out.println(shapes.get(0).toString());
+                            continue;
+                        }
                         aGraphic.setShape(shapes.get(0));
                         graphics.add(aGraphic);
                     }

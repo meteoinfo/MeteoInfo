@@ -216,6 +216,11 @@ public class Column {
                 formatLen = Math.max(formatLen, smax.length());
                 this.format = "%" + String.valueOf(formatLen) + "d";
                 break;
+            case DATE:
+                if (dateTimeFormatter == null) {
+                    dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
+                }
+                break;
             default:                
                 String v;
                 for (int i = 0; i < data.getSize(); i++){

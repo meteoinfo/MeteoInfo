@@ -670,7 +670,7 @@ public class ProjectionUtil {
             if (polygons.size() > 0) {
                 ((PolygonZShape) aPGS).setPolygons(polygons);
 
-                return aPGS;
+                return aPGS.getExtent() == null ? null : aPGS;
             } else {
                 return null;
             }
@@ -721,7 +721,7 @@ public class ProjectionUtil {
             if (polygons.size() > 0) {
                 aPGS.setPolygons(polygons);
 
-                return aPGS;
+                return aPGS.getExtent() == null ? null : aPGS;
             } else {
                 return null;
             }

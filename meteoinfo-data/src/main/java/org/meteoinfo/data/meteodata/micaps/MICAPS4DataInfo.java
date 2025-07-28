@@ -140,12 +140,12 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
             }
             
             _level = Float.parseFloat(dataList.get(idx + 5));
-            float XDelt = Float.parseFloat(dataList.get(idx + 6));
-            float YDelt = Float.parseFloat(dataList.get(idx + 7));
-            float XMin = Float.parseFloat(dataList.get(idx + 8));
-            float XMax = Float.parseFloat(dataList.get(idx + 9));
-            float YMin = Float.parseFloat(dataList.get(idx + 10));
-            float YMax = Float.parseFloat(dataList.get(idx + 11));
+            double XDelt = Double.parseDouble(dataList.get(idx + 6));
+            double YDelt = Double.parseDouble(dataList.get(idx + 7));
+            double XMin = Double.parseDouble(dataList.get(idx + 8));
+            double XMax = Double.parseDouble(dataList.get(idx + 9));
+            double YMin = Double.parseDouble(dataList.get(idx + 10));
+            double YMax = Double.parseDouble(dataList.get(idx + 11));
             int XNum = Integer.parseInt(dataList.get(idx + 12));
             int YNum = Integer.parseInt(dataList.get(idx + 13));
             /*float contourDelt = Float.parseFloat(dataList.get(idx + 14));
@@ -171,7 +171,7 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
                 YDelt = -YDelt;
             }
             if (YMin > YMax) {
-                float temp = YMin;
+                double temp = YMin;
                 YMin = YMax;
                 YMax = temp;
             }

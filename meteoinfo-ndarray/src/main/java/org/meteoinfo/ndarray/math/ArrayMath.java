@@ -321,6 +321,8 @@ public class ArrayMath {
                 return ArrayMath.addDouble(a, b);
             case COMPLEX:
                 return ArrayMath.addComplex(a, b);
+            case STRING:
+                return ArrayMath.addString(a, b);
         }
         return null;
     }
@@ -367,6 +369,17 @@ public class ArrayMath {
      */
     public static Array add(Array a, Complex b) {
         return addComplex(a, b);
+    }
+
+    /**
+     * Array add
+     *
+     * @param a Array a
+     * @param b String b
+     * @return Added array
+     */
+    public static Array add(Array a, String b) {
+        return addString(a, b);
     }
 
     private static Array addInt(Array a, Array b) {
@@ -767,6 +780,69 @@ public class ArrayMath {
             IndexIterator iterA = a.getIndexIterator();
             while (iterA.hasNext()) {
                 iterR.setComplexNext(iterA.getComplexNext().add(b));
+            }
+        }
+
+        return r;
+    }
+
+    private static Array addString(Array a, Array b) {
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.STRING, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    String va, vb;
+                    for (int i = 0; i < r.getSize(); i++) {
+                        va  = a.getString(i);
+                        vb = b.getString(i);
+                        r.setString(i,va + vb);
+                    }
+                } else {
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    String va, vb;
+                    while (iterA.hasNext()) {
+                        va  = iterA.getStringNext();
+                        vb = iterB.getStringNext();
+                        iterR.setStringNext(va + vb);
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.STRING, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    r.setString(i, a.getString(aindex) + b.getString(bindex));
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    private static Array addString(Array a, String b) {
+        Array r = Array.factory(DataType.STRING, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < r.getSize(); i++) {
+                r.setString(i, a.getString(i) + b);
+            }
+        } else {
+            IndexIterator iterR = r.getIndexIterator();
+            IndexIterator iterA = a.getIndexIterator();
+            while (iterA.hasNext()) {
+                iterR.setStringNext(iterA.getStringNext() + b);
             }
         }
 

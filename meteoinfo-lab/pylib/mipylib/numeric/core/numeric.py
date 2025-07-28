@@ -25,7 +25,7 @@ from org.python.core import PyComplex
 
 import _dtype
 from ._ndarray import NDArray
-from org.meteoinfo.console.jython import JythonUtil
+from org.meteoinfo.jython import JythonUtil
 
 # Global variables
 pi = Math.PI
@@ -47,7 +47,7 @@ __all__ = [
     'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reciprocal','reshape',
     'repeat','roll','rolling_mean','rot90','round','sec','sign','sin','sinh','shape','smooth5','smooth9','sort',
     'spacing','sphere','squeeze','split','sqrt','square','std','swapaxes','take','tan','tanh','tile',
-    'transpose','trapz','vdot','unravel_index','var','vstack','zeros','zeros_like'
+    'transpose','trapz','to_datetime','vdot','unravel_index','var','vstack','zeros','zeros_like'
     ]
 
 
@@ -3064,7 +3064,19 @@ def asmiarray(data):
     elif isinstance(data, NDArray):
         return data
     else:
-        return array(data)       
+        return array(data)
+
+def to_datetime(a, format):
+    """
+    Convert string array to datetime array.
+
+    :param a: (*array*) The string array.
+    :param format: (*string*) Format string.
+    :return: The datetime array.
+    """
+    a = asarray(a)
+    r = ArrayUtil.stringToDateArray(a._array, format)
+    return NDArray(r)
 
 def interp2d(*args, **kwargs):
     """

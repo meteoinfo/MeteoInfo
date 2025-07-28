@@ -34,6 +34,7 @@ package org.meteoinfo.ndarray;
 
 import java.math.BigInteger;
 import java.nio.ByteBuffer;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
@@ -53,6 +54,7 @@ public enum DataType {
     DOUBLE("double", 8, double.class, false, 12),
     COMPLEX("complex", 1, Complex.class, false, 15),
     DATE("date", 1, LocalDateTime.class, false, 21),
+    DURATION("duration", 1, Duration.class, false, 17),
     
     // object types
     SEQUENCE("Sequence", 4, StructureDataIterator.class, false, 22), // 32-bit index
@@ -330,6 +332,9 @@ public enum DataType {
         if (c == LocalDateTime.class) {
             return DataType.DATE;
         }
+        if (c == Duration.class) {
+            return DataType.DURATION;
+        }
         if (c == StructureData.class) {
             return DataType.STRUCTURE;
         }
@@ -367,6 +372,12 @@ public enum DataType {
             return isUnsigned ? DataType.ULONG : DataType.LONG;
         if (c == String.class)
             return DataType.STRING;
+        if (c == Complex.class)
+            return DataType.COMPLEX;
+        if (c == LocalDateTime.class)
+            return DataType.DATE;
+        if (c == Duration.class)
+            return DataType.DURATION;
         if (c == StructureData.class)
             return DataType.STRUCTURE;
         if (c == StructureDataIterator.class)

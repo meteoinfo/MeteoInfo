@@ -2,7 +2,7 @@ from org.meteoinfo.ndarray import DataType as JDataType
 
 __all__ = [
     'byte','char','int','integer','int32','int16','short','int64','uint','long','float','float32','float64',
-    'double','str','string','complex','date','datetime'
+    'double','str','string','complex','date','datetime','timedelta'
     ]
 
 _dtype_dict = dict(byte = JDataType.BYTE,
@@ -26,6 +26,7 @@ _dtype_dict = dict(byte = JDataType.BYTE,
     complex = JDataType.COMPLEX,
     date = JDataType.DATE,
     datetime = JDataType.DATE,
+    timedelta = JDataType.DURATION,
     object = JDataType.OBJECT)
 
 class DataType(object):
@@ -155,6 +156,8 @@ class DataType(object):
             return 'c'
         elif self._dtype == JDataType.DATE:
             return 'M'
+        elif self._dtype == JDataType.DURATION:
+            return 'm'
         elif self._dtype == JDataType.OBJECT:
             return 'O'
 
@@ -183,6 +186,8 @@ class DataType(object):
             return DataType('complex')
         elif c == 'M':
             return DataType('date')
+        elif c == 'm':
+            return DataType('timedelta')
         else:
             return DataType('object')
 
@@ -207,6 +212,8 @@ class DataType(object):
             return dtype.complex
         elif k == 'M':
             return dtype.date
+        elif k == 'm':
+            return dtype.timedelta
         else:
             return dtype.obj
 
@@ -241,6 +248,7 @@ class dtype(DataType):
     complex = DataType('complex')
     date = DataType('date')
     datetime = DataType('date')
+    timedelta = DataType('timedelta')
     obj = DataType('object')
     
     def __init__(self, name):
@@ -282,6 +290,7 @@ string = DataType('string')
 complex = DataType('complex')
 date = DataType('date')
 datetime = DataType('date')
+timedelta = DataType('timedelta')
 obj = DataType('object')
 
 def fromjava(dt):

@@ -36,31 +36,32 @@ import org.meteoinfo.common.util.JDateUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.DoubleBuffer;
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 /**
- * Concrete implementation of Array specialized for LocalDateTime. Data storage is
- * with 1D java array of LocalDateTime.
+ * Concrete implementation of Array specialized for time duration. Data storage is
+ * with 1D java array of Duration.
  *
  * @see Array
  * @author Yaqiang
  */
-public class ArrayDate extends Array {
+public class ArrayDuration extends Array {
 
     /**
      * package private. use Array.factory()
      */
-    static ArrayDate factory(Index index) {
-        return ArrayDate.factory(index, null);
+    static ArrayDuration factory(Index index) {
+        return ArrayDuration.factory(index, null);
     }
 
-    /* Create new ArrayDate with given indexImpl and backing store.
+    /* Create new ArrayDuration with given indexImpl and backing store.
     * Should be private.
     * @param index use this Index
     * @param stor. use this storage. if null, allocate.
-    * @return. new ArrayDate.D<rank> or ArrayDouble object.
+    * @return. new ArrayDuration.D<rank> or ArrayDuration object.
      */
-    static ArrayDate factory(Index index, LocalDateTime[] storage) {
+    static ArrayDuration factory(Index index, Duration[] storage) {
         switch (index.getRank()) {
             case 0:
                 return new D0(index, storage);
@@ -79,22 +80,22 @@ public class ArrayDate extends Array {
             case 7:
                 return new D7(index, storage);
             default:
-                return new ArrayDate(index, storage);
+                return new ArrayDuration(index, storage);
         }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
-    protected LocalDateTime[] storage;
+    protected Duration[] storage;
 
     /**
-     * Create a new Array of type date and the given shape. dimensions.length
+     * Create a new Array of type double and the given shape. dimensions.length
      * determines the rank of the new Array.
      *
      * @param shape the shape of the Array.
      */
-    public ArrayDate(int[] shape) {
+    public ArrayDuration(int[] shape) {
         super(DataType.DATE, shape);
-        storage = new LocalDateTime[(int) indexCalc.getSize()];
+        storage = new Duration[(int) indexCalc.getSize()];
     }
 
     /**
@@ -103,7 +104,7 @@ public class ArrayDate extends Array {
      */
     @Override
     protected Array createView(Index index) {
-        return ArrayDate.factory(index, storage);
+        return ArrayDuration.factory(index, storage);
     }
 
     /**
@@ -113,13 +114,13 @@ public class ArrayDate extends Array {
      * @param ima use this IndexArray as the index
      * @param data use this as the backing store. if null, allocate
      */
-    ArrayDate(Index ima, LocalDateTime[] data) {
+    ArrayDuration(Index ima, Duration[] data) {
         super(DataType.DATE, ima);
 
         if (data != null) {
             storage = data;
         } else {
-            storage = new LocalDateTime[(int) indexCalc.getSize()];
+            storage = new Duration[(int) indexCalc.getSize()];
         }
     }
 
@@ -169,7 +170,7 @@ public class ArrayDate extends Array {
      * @param i
      * @return 
      */
-    public LocalDateTime get(Index i) {
+    public Duration get(Index i) {
         return storage[i.currentElement()];
     }
 
@@ -178,40 +179,40 @@ public class ArrayDate extends Array {
      * @param i
      * @param value
      */
-    public void set(Index i, LocalDateTime value) {
+    public void set(Index i, Duration value) {
         storage[i.currentElement()] = value;
     }
 
     public double getDouble(Index i) {
-        return JDateUtil.toOADate(storage[i.currentElement()]);
+        return storage[i.currentElement()].getSeconds();
     }
 
     public void setDouble(Index i, double value) {
-        storage[i.currentElement()] = JDateUtil.fromOADate(value);
+        storage[i.currentElement()] = Duration.ofSeconds(Math.round(value));
     }
 
     public float getFloat(Index i) {
-        throw new ForbiddenConversionException();
+        return storage[i.currentElement()].getSeconds();
     }
 
     public void setFloat(Index i, float value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = Duration.ofSeconds(Math.round(value));
     }
 
     public long getLong(Index i) {
-        throw new ForbiddenConversionException();
+        return storage[i.currentElement()].getSeconds();
     }
 
     public void setLong(Index i, long value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = Duration.ofSeconds(value);
     }
 
     public int getInt(Index i) {
-        throw new ForbiddenConversionException();
+        return (int) storage[i.currentElement()].getSeconds();
     }
 
     public void setInt(Index i, int value) {
-        throw new ForbiddenConversionException();
+        storage[i.currentElement()] = Duration.ofSeconds(value);
     }
 
     public short getShort(Index i) {
@@ -276,49 +277,57 @@ public class ArrayDate extends Array {
      */
     public void setComplex(Index i, Complex value) { throw new ForbiddenConversionException(); }
 
-    public LocalDateTime getDate(Index i) { return storage[i.currentElement()]; }
+    public LocalDateTime getDate(Index i) { throw new ForbiddenConversionException(); }
 
-    public void setDate(Index i, LocalDateTime value) { storage[i.currentElement()] = value; }
+    public void setDate(Index i, LocalDateTime value) { throw new ForbiddenConversionException(); }
+
+    public Duration getDuration(Index i) {
+        return storage[i.currentElement()];
+    }
+
+    public void setDuration(Index i, Duration value) {
+        storage[i.currentElement()] = value;
+    }
 
     public Object getObject(Index i) {
         return storage[i.currentElement()];
     }
 
     public void setObject(Index i, Object value) {
-        storage[i.currentElement()] = (LocalDateTime) value;
+        storage[i.currentElement()] = (Duration) value;
     }
 
     // trusted, assumes that individual dimension lengths have been checked
     public double getDouble(int index) {
-        return JDateUtil.toOADate(storage[index]);
+        return storage[index].getSeconds();
     }
 
     public void setDouble(int index, double value) {
-        storage[index] = JDateUtil.fromOADate(value);
+        storage[index] = Duration.ofSeconds(Math.round(value));
     }
 
     public float getFloat(int index) {
-        throw new ForbiddenConversionException();
+        return storage[index].getSeconds();
     }
 
     public void setFloat(int index, float value) {
-        throw new ForbiddenConversionException();
+        storage[index] = Duration.ofSeconds(Math.round(value));
     }
 
     public long getLong(int index) {
-        throw new ForbiddenConversionException();
+        return storage[index].getSeconds();
     }
 
     public void setLong(int index, long value) {
-        throw new ForbiddenConversionException();
+        storage[index] = Duration.ofSeconds(value);
     }
 
     public int getInt(int index) {
-        throw new ForbiddenConversionException();
+        return (int) storage[index].getSeconds();
     }
 
     public void setInt(int index, int value) {
-        throw new ForbiddenConversionException();
+        storage[index] = Duration.ofSeconds(value);
     }
 
     public short getShort(int index) {
@@ -367,22 +376,30 @@ public class ArrayDate extends Array {
 
     public void setComplex(int index, Complex value) { throw new ForbiddenConversionException(); }
 
-    public LocalDateTime getDate(int index) { return storage[index]; }
+    public LocalDateTime getDate(int index) { throw new ForbiddenConversionException(); }
 
-    public void setDate(int index, LocalDateTime value) { storage[index] = value; }
+    public void setDate(int index, LocalDateTime value) { throw new ForbiddenConversionException(); }
+
+    public Duration getDuration(int index) {
+        return storage[index];
+    }
+
+    public void setDuration(int index, Duration value) {
+        storage[index] = value;
+    }
 
     public Object getObject(int index) {
         return getDate(index);
     }
 
     public void setObject(int index, Object value) {
-        storage[index] = (LocalDateTime)value;
+        storage[index] = (Duration) value;
     }
 
     /**
      * Concrete implementation of Array specialized for doubles, rank 0.
      */
-    public static class D0 extends ArrayDate {
+    public static class D0 extends ArrayDuration {
 
         private Index0D ix;
 
@@ -394,7 +411,7 @@ public class ArrayDate extends Array {
             ix = (Index0D) indexCalc;
         }
 
-        private D0(Index i, LocalDateTime[] store) {
+        private D0(Index i, Duration[] store) {
             super(i, store);
             ix = (Index0D) indexCalc;
         }
@@ -403,7 +420,7 @@ public class ArrayDate extends Array {
          * get the value.
          * @return 
          */
-        public LocalDateTime get() {
+        public Duration get() {
             return storage[ix.currentElement()];
         }
 
@@ -411,7 +428,7 @@ public class ArrayDate extends Array {
          * set the value.
          * @param value
          */
-        public void set(LocalDateTime value) {
+        public void set(Duration value) {
             storage[ix.currentElement()] = value;
         }
     }
@@ -419,7 +436,7 @@ public class ArrayDate extends Array {
     /**
      * Concrete implementation of Array specialized for doubles, rank 1.
      */
-    public static class D1 extends ArrayDate {
+    public static class D1 extends ArrayDuration {
 
         private Index1D ix;
 
@@ -432,7 +449,7 @@ public class ArrayDate extends Array {
             ix = (Index1D) indexCalc;
         }
 
-        private D1(Index i, LocalDateTime[] store) {
+        private D1(Index i, Duration[] store) {
             super(i, store);
             ix = (Index1D) indexCalc;
         }
@@ -442,7 +459,7 @@ public class ArrayDate extends Array {
          * @param i
          * @return 
          */
-        public LocalDateTime get(int i) {
+        public Duration get(int i) {
             return storage[ix.setDirect(i)];
         }
 
@@ -451,7 +468,7 @@ public class ArrayDate extends Array {
          * @param i
          * @param value
          */
-        public void set(int i, LocalDateTime value) {
+        public void set(int i, Duration value) {
             storage[ix.setDirect(i)] = value;
         }
     }
@@ -459,7 +476,7 @@ public class ArrayDate extends Array {
     /**
      * Concrete implementation of Array specialized for doubles, rank 2.
      */
-    public static class D2 extends ArrayDate {
+    public static class D2 extends ArrayDuration {
 
         private Index2D ix;
 
@@ -471,7 +488,7 @@ public class ArrayDate extends Array {
             ix = (Index2D) indexCalc;
         }
 
-        private D2(Index i, LocalDateTime[] store) {
+        private D2(Index i, Duration[] store) {
             super(i, store);
             ix = (Index2D) indexCalc;
         }
@@ -479,14 +496,14 @@ public class ArrayDate extends Array {
         /**
          * get the value.
          */
-        public LocalDateTime get(int i, int j) {
+        public Duration get(int i, int j) {
             return storage[ix.setDirect(i, j)];
         }
 
         /**
          * set the value.
          */
-        public void set(int i, int j, LocalDateTime value) {
+        public void set(int i, int j, Duration value) {
             storage[ix.setDirect(i, j)] = value;
         }
     }
@@ -494,7 +511,7 @@ public class ArrayDate extends Array {
     /**
      * Concrete implementation of Array specialized for doubles, rank 3.
      */
-    public static class D3 extends ArrayDate {
+    public static class D3 extends ArrayDuration {
 
         private Index3D ix;
 
@@ -506,7 +523,7 @@ public class ArrayDate extends Array {
             ix = (Index3D) indexCalc;
         }
 
-        private D3(Index i, LocalDateTime[] store) {
+        private D3(Index i, Duration[] store) {
             super(i, store);
             ix = (Index3D) indexCalc;
         }
@@ -514,14 +531,14 @@ public class ArrayDate extends Array {
         /**
          * get the value.
          */
-        public LocalDateTime get(int i, int j, int k) {
+        public Duration get(int i, int j, int k) {
             return storage[ix.setDirect(i, j, k)];
         }
 
         /**
          * set the value.
          */
-        public void set(int i, int j, int k, LocalDateTime value) {
+        public void set(int i, int j, int k, Duration value) {
             storage[ix.setDirect(i, j, k)] = value;
         }
 
@@ -538,11 +555,11 @@ public class ArrayDate extends Array {
                 return currElement < size - howMany;
             }
 
-            public LocalDateTime getNext() {
+            public Duration getNext() {
                 return storage[++currElement];
             }
 
-            public void setNext(LocalDateTime val) {
+            public void setNext(Duration val) {
                 storage[++currElement] = val;
             }
         }
@@ -551,7 +568,7 @@ public class ArrayDate extends Array {
     /**
      * Concrete implementation of Array specialized for doubles, rank 4.
      */
-    public static class D4 extends ArrayDate {
+    public static class D4 extends ArrayDuration {
 
         private Index4D ix;
 
@@ -563,7 +580,7 @@ public class ArrayDate extends Array {
             ix = (Index4D) indexCalc;
         }
 
-        private D4(Index i, LocalDateTime[] store) {
+        private D4(Index i, Duration[] store) {
             super(i, store);
             ix = (Index4D) indexCalc;
         }
@@ -571,14 +588,14 @@ public class ArrayDate extends Array {
         /**
          * get the value.
          */
-        public LocalDateTime get(int i, int j, int k, int l) {
+        public Duration get(int i, int j, int k, int l) {
             return storage[ix.setDirect(i, j, k, l)];
         }
 
         /**
          * set the value.
          */
-        public void set(int i, int j, int k, int l, LocalDateTime value) {
+        public void set(int i, int j, int k, int l, Duration value) {
             storage[ix.setDirect(i, j, k, l)] = value;
         }
     }
@@ -586,7 +603,7 @@ public class ArrayDate extends Array {
     /**
      * Concrete implementation of Array specialized for doubles, rank 5.
      */
-    public static class D5 extends ArrayDate {
+    public static class D5 extends ArrayDuration {
 
         private Index5D ix;
 
@@ -598,7 +615,7 @@ public class ArrayDate extends Array {
             ix = (Index5D) indexCalc;
         }
 
-        private D5(Index i, LocalDateTime[] store) {
+        private D5(Index i, Duration[] store) {
             super(i, store);
             ix = (Index5D) indexCalc;
         }
@@ -606,14 +623,14 @@ public class ArrayDate extends Array {
         /**
          * get the value.
          */
-        public LocalDateTime get(int i, int j, int k, int l, int m) {
+        public Duration get(int i, int j, int k, int l, int m) {
             return storage[ix.setDirect(i, j, k, l, m)];
         }
 
         /**
          * set the value.
          */
-        public void set(int i, int j, int k, int l, int m, LocalDateTime value) {
+        public void set(int i, int j, int k, int l, int m, Duration value) {
             storage[ix.setDirect(i, j, k, l, m)] = value;
         }
     }
@@ -621,7 +638,7 @@ public class ArrayDate extends Array {
     /**
      * Concrete implementation of Array specialized for doubles, rank 6.
      */
-    public static class D6 extends ArrayDate {
+    public static class D6 extends ArrayDuration {
 
         private Index6D ix;
 
@@ -633,7 +650,7 @@ public class ArrayDate extends Array {
             ix = (Index6D) indexCalc;
         }
 
-        private D6(Index i, LocalDateTime[] store) {
+        private D6(Index i, Duration[] store) {
             super(i, store);
             ix = (Index6D) indexCalc;
         }
@@ -641,14 +658,14 @@ public class ArrayDate extends Array {
         /**
          * get the value.
          */
-        public LocalDateTime get(int i, int j, int k, int l, int m, int n) {
+        public Duration get(int i, int j, int k, int l, int m, int n) {
             return storage[ix.setDirect(i, j, k, l, m, n)];
         }
 
         /**
          * set the value.
          */
-        public void set(int i, int j, int k, int l, int m, int n, LocalDateTime value) {
+        public void set(int i, int j, int k, int l, int m, int n, Duration value) {
             storage[ix.setDirect(i, j, k, l, m, n)] = value;
         }
     }
@@ -656,7 +673,7 @@ public class ArrayDate extends Array {
     /**
      * Concrete implementation of Array specialized for doubles, rank 7.
      */
-    public static class D7 extends ArrayDate {
+    public static class D7 extends ArrayDuration {
 
         private Index7D ix;
 
@@ -668,7 +685,7 @@ public class ArrayDate extends Array {
             ix = (Index7D) indexCalc;
         }
 
-        private D7(Index i, LocalDateTime[] store) {
+        private D7(Index i, Duration[] store) {
             super(i, store);
             ix = (Index7D) indexCalc;
         }
@@ -676,14 +693,14 @@ public class ArrayDate extends Array {
         /**
          * get the value.
          */
-        public LocalDateTime get(int i, int j, int k, int l, int m, int n, int o) {
+        public Duration get(int i, int j, int k, int l, int m, int n, int o) {
             return storage[ix.setDirect(i, j, k, l, m, n, o)];
         }
 
         /**
          * set the value.
          */
-        public void set(int i, int j, int k, int l, int m, int n, int o, LocalDateTime value) {
+        public void set(int i, int j, int k, int l, int m, int n, int o, Duration value) {
             storage[ix.setDirect(i, j, k, l, m, n, o)] = value;
         }
     }

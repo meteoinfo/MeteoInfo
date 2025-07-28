@@ -34,6 +34,7 @@ package org.meteoinfo.ndarray;
 
 import java.math.BigInteger;
 import java.nio.*;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,7 +76,7 @@ import java.util.List;
  * The type, shape and backing storage of an Array are immutable. The data
  * itself is read or written using an Index or an IndexIterator, which stores
  * any needed state information for efficient traversal. This makes use of
- * Arrays thread-safe (as long as you dont share the Index or IndexIterator)
+ * Arrays thread-safe (as long as you don't share the Index or IndexIterator)
  * except for the possibility of non-atomic read/write on long/doubles. If this
  * is the case, you should probably synchronize your calls. Presumably 64-bit
  * CPUs will make those operations atomic also.
@@ -133,6 +134,8 @@ public abstract class Array {
             return ArrayComplex.factory(index);
         } else if (classType == LocalDateTime.class) {
             return ArrayDate.factory(index);
+        } else if (classType == Duration.class) {
+            return ArrayDuration.factory(index);
         } else {
             return ArrayObject.factory(DataType.OBJECT, classType, false, index);
         }
@@ -182,6 +185,8 @@ public abstract class Array {
                 return ArrayComplex.factory(index, (Complex[]) storage);
             case DATE:
                 return ArrayDate.factory(index, (LocalDateTime[]) storage);
+            case DURATION:
+                return ArrayDuration.factory(index, (Duration[]) storage);
             case STRUCTURE:
                 return ArrayObject.factory(dtype, StructureData.class, false, index, (Object[]) storage);
             case SEQUENCE:
@@ -255,6 +260,8 @@ public abstract class Array {
             return ArrayComplex.factory(indexCalc, (Complex[]) storage);
         } else if (classType == LocalDateTime.class) {
             return ArrayDate.factory(indexCalc, (LocalDateTime[]) storage);
+        } else if (classType == Duration.class) {
+            return ArrayDuration.factory(indexCalc, (Duration[]) storage);
         } else {
             return ArrayObject.factory(classType, indexCalc, (Object[]) storage);
         }
@@ -294,6 +301,8 @@ public abstract class Array {
             return ArrayComplex.factory(index, (Complex[]) storage);
         } else if (classType == LocalDateTime.class) {
             return ArrayDate.factory(index, (LocalDateTime[]) storage);
+        } else if (classType == Duration.class) {
+            return ArrayDuration.factory(index, (Duration[]) storage);
         } else {
             return new ArrayObject(DataType.OBJECT, classType, false, index, (Object[]) storage);
         }
@@ -545,6 +554,9 @@ public abstract class Array {
         }
         if (this instanceof ArrayDate) {
             return DataType.DATE;
+        }
+        if (this instanceof ArrayDuration) {
+            return DataType.DURATION;
         }
         if (this instanceof ArrayObject) {
             return DataType.OBJECT;
@@ -921,7 +933,7 @@ public abstract class Array {
      * @param dtype type of data
      * @param shape shape of data; if null, then use int[]{bb.limit()}
      * @param bb data is in here
-     * @return equivilent Array
+     * @return equivalent Array
      */
     public static Array factory(DataType dtype, int[] shape, ByteBuffer bb) {
         int size;

@@ -21,6 +21,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -2204,6 +2205,24 @@ public class ArrayUtil {
         IndexIterator iterR = r.getIndexIterator();
         while(iterA.hasNext()) {
             iterR.setDateNext(JDateUtil.fromOADate(iterA.getDoubleNext()));
+        }
+
+        return r;
+    }
+
+    /**
+     * Convert string array to datetime array
+     * @param s The string array
+     * @param format Datetime format string
+     * @return Datetime array
+     */
+    public static Array stringToDateArray(Array s, String format) {
+        Array r = Array.factory(DataType.DATE, s.getShape());
+        IndexIterator iterS = s.getIndexIterator();
+        IndexIterator iterR = r.getIndexIterator();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+        while(iterS.hasNext()) {
+            iterR.setDateNext(LocalDateTime.parse(iterS.getStringNext(), formatter));
         }
 
         return r;

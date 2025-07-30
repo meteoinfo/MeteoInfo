@@ -30,12 +30,13 @@
         <module>meteoinfo-projection</module>
         <module>meteoinfo-mkl</module>
         <module>meteoinfo-render2d</module>
+        <module>meteoinfo-jython</module>
     </modules>
     
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <revision>4.0.4</revision>
+        <revision>4.0.5</revision>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <maven.compiler.release>8</maven.compiler.release>

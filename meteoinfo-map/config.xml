@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="config.xml" Type="configurefile">
-  <Path OpenPath="D:\Temp\nc\2021_daily_4_VOD"/>
+  <Path OpenPath="D:\Temp\image"/>
   <Font>
     <TextFont FontName="YaHei Consolas Hybrid" FontSize="14"/>
     <LegendFont FontName="宋体" FontSize="12"/>

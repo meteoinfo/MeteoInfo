@@ -1544,7 +1544,11 @@ public class Plot2D extends AbstractPlot2D {
             ShapeTypes stype = ShapeTypes.POLYLINE;
             ls = new LegendScheme(stype);
             for (Graphic g : this.graphics.getGraphics()) {
-                ls.getLegendBreaks().add(g.getLegend());
+                if (g instanceof GraphicCollection) {
+                    ls.addLegendBreak(((GraphicCollection) g).getLegends());
+                } else {
+                    ls.addLegendBreak(g.getLegend());
+                }
                 /*if (g.getShapeType() == ShapeTypes.POLYLINE) {
                     ls.getLegendBreaks().add(g.getLegend());
                 }*/

@@ -484,6 +484,19 @@ public class GraphicCollection extends Graphic implements Iterator {
     }
 
     /**
+     * Get legend list
+     * @return Legend list
+     */
+    public List<ColorBreak> getLegends() {
+        List<ColorBreak> breaks = new ArrayList<>();
+        for (Graphic graphic : this.graphics) {
+            breaks.add(graphic.getLegend());
+        }
+
+        return breaks;
+    }
+
+    /**
      * Select graphics by an extent
      *
      * @param aExtent The extent

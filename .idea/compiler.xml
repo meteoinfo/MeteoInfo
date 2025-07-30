@@ -24,6 +24,7 @@
         <module name="meteoinfo-ui" />
         <module name="meteoinfo-math" />
         <module name="meteoinfo-common" />
+        <module name="meteoinfo-jython" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="11" />

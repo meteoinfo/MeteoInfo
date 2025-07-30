@@ -3836,6 +3836,7 @@ class Axes(object):
             clegend = ChartLegend(ols)
         else:
             clegend = self._axes.getLegend()
+
         ls = kwargs.pop('legend', None)
         if len(args) > 0:
             if isinstance(args[0], MILayer):
@@ -3848,6 +3849,7 @@ class Axes(object):
                 if not args[0].isSingleLegend():
                     ls = args[0].getLegendScheme()
                     args = args[1:]
+
         if ls is None:
             if len(args) > 0:
                 lbs = []
@@ -3858,10 +3860,12 @@ class Axes(object):
                         lbs.extend(lb.legend().getLegendBreaks())
                     else:
                         lbs.append(lb)
+
                 if len(args) == 2:
                     labels = args[1]
                     for i in range(0, len(lbs)):
                         lbs[i].setCaption(labels[i])
+
                 if isinstance(lbs[0], basestring):
                     clegend.setTickCaptions(lbs)
                 else:

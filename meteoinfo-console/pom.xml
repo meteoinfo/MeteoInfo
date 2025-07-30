@@ -32,11 +32,6 @@
             <artifactId>autocomplete</artifactId>
             <version>3.3.1</version>
         </dependency>
-        <dependency>
-            <groupId>org.meteothink</groupId>
-            <artifactId>meteoinfo-ndarray</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
     <build>

@@ -72,11 +72,11 @@ def jdate(t):
 
 def jdatetime(t):
     """
-    Convert python date to joda DateTime.
+    Convert python date to java DateTime.
     
     :param t: Python date
     
-    :returns: Joda DateTime
+    :returns: Java DateTime
     """
     if isinstance(t, (list, tuple)):
         r = []

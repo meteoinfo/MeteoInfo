@@ -15,6 +15,24 @@ import java.util.List;
 public class JythonUtil {
 
     /**
+     * Convert jython complex to java complex
+     * @param v Jython complex
+     * @return Java complex
+     */
+    public static Complex toComplex(PyComplex v) {
+        return new Complex(v.real, v.imag);
+    }
+
+    /**
+     * Convert java complex to jython complex
+     * @param v Java complex
+     * @return Jython complex
+     */
+    public static PyComplex toComplex(Complex v) {
+        return new PyComplex(v.real(), v.imag());
+    }
+
+    /**
      * Convert PyComplex value to ArrayComplex
      * @param data PyComplex value
      * @return ArrayComplex

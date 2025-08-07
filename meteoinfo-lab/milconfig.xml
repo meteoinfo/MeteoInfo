@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\integrate">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\special">
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\ndimage"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\complex"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataset"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\web"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\micaps"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\others"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
+    <RecentFolder Folder="D:\Working\MIScript\mywork\music"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\legend"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\integrate"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\special"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\integrate\odeint_lorenz.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\integrate\solve_ivp_celestial_motion.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\integrate\solve_ivp_Lotka-Volterra.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\mixing_ratio_from_relative_humidity.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\special\airy.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\special\lambertw.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\integrate\odeint_lorenz.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\integrate\solve_ivp_celestial_motion.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\integrate\solve_ivp_Lotka-Volterra.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\mixing_ratio_from_relative_humidity.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\special\airy.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\special\lambertw.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-6,-6" MainFormSize="1292,764"/>
+  <Startup MainFormLocation="-6,0" MainFormSize="1322,806"/>
 </MeteoInfo>

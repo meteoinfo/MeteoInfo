@@ -83,17 +83,38 @@ def nonzero(a):
     return tuple(r)
 
 
-def where(condition):
+def where(condition, *args):
     """
     Return elements, either from x or y, depending on condition.
 
     If only condition is given, return condition.nonzero().
 
-    :param condition: (*array_like*) Input array.
+    Parameters
+    ----------
+    condition : `array_like, bool`
+        Where True, yield x, otherwise yield y.
 
-    :returns: (*tuple*) Indices of elements that are non-zero.
+    x, y : `array_like`
+        Values from which to choose. x, y and condition need to be broadcastable to some shape.
+
+    Returns
+    -------
+    `array`
+        An array with elements from x where condition is True, and elements from y elsewhere.
     """
-    return nonzero(condition)
+    if len(args) == 0:
+        return nonzero(condition)
+
+    x = args[0]
+    y = args[1]
+    if isinstance(condition, bool):
+        return x if condition else y
+    else:
+        condition = asarray(condition)
+        x = asarray(x)
+        y = asarray(y)
+        r = ArrayUtil.where(condition._array, x._array, y._array)
+        return NDArray(r)
 
 
 def searchsorted(a, v, side='left', sorter=None):

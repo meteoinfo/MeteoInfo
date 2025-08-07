@@ -188,7 +188,7 @@ class _RichResult(dict):
             return sorted(omit_redundant(d.items()), key=key)
 
         if self.keys():
-            return _dict_formatter(self, sorter=item_sorter)
+            return list(self.keys()).__repr__()
         else:
             return self.__class__.__name__ + "()"
 

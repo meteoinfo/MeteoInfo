@@ -1292,7 +1292,10 @@ def any(x, axis=None):
     
     :returns: (*array_like*) Any result
     """
-    if isinstance(x, list):
+    if isinstance(x, bool):
+        return x
+
+    if isinstance(x, (list, tuple)):
         x = array(x)
         
     return x.any(axis)

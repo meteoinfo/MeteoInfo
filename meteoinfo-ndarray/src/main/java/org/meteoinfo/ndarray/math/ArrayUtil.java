@@ -1761,66 +1761,6 @@ public class ArrayUtil {
         }
     }
 
-    /**
-     * Return the indices of the elements that are non-zero.
-     *
-     * @param a Input array
-     * @return Indices
-     */
-    public static List<Array> nonzero(Array a) {
-        List<List<Integer>> r = new ArrayList<>();
-        int ndim = a.getRank();
-        for (int i = 0; i < ndim; i++) {
-            r.add(new ArrayList<Integer>());
-        }
-
-        IndexIterator iterA = a.getIndexIterator();
-        int[] counter;
-        double v;
-        while (iterA.hasNext()) {
-            v = iterA.getDoubleNext();
-            if (!Double.isNaN(v) && v != 0) {
-                counter = iterA.getCurrentCounter();
-                for (int j = 0; j < ndim; j++) {
-                    r.get(j).add(counter[j]);
-                }
-            }
-        }
-
-        if (r.get(0).isEmpty()) {
-            return null;
-        }
-
-        List<Array> ra = new ArrayList<>();
-        for (int i = 0; i < ndim; i++) {
-            ra.add(ArrayUtil.array(r.get(i), null));
-        }
-        return ra;
-    }
-
-    /**
-     * Return the flat indices of the elements that are non-zero.
-     *
-     * @param a Input array
-     * @return Flat indices
-     */
-    public static Array flatNonZero(Array a) {
-        List<Integer> r = new ArrayList<>();
-        IndexIterator iterA = a.getIndexIterator();
-        int[] counter;
-        double v;
-        int i = 0;
-        while (iterA.hasNext()) {
-            v = iterA.getDoubleNext();
-            if (!Double.isNaN(v) && v != 0) {
-                r.add(i);
-            }
-            i += 1;
-        }
-
-        return ArrayUtil.array(r, DataType.INT);
-    }
-
     // </editor-fold>
     // <editor-fold desc="Output">
 
@@ -3015,6 +2955,95 @@ public class ArrayUtil {
             if (!idx.contains(current[axis])) {
                 r.setObject(i, ii.getObjectCurrent());
                 i += 1;
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Return the indices of the elements that are non-zero.
+     *
+     * @param a Input array
+     * @return Indices
+     */
+    public static List<Array> nonzero(Array a) {
+        List<List<Integer>> r = new ArrayList<>();
+        int ndim = a.getRank();
+        for (int i = 0; i < ndim; i++) {
+            r.add(new ArrayList<Integer>());
+        }
+
+        IndexIterator iterA = a.getIndexIterator();
+        int[] counter;
+        double v;
+        while (iterA.hasNext()) {
+            v = iterA.getDoubleNext();
+            if (!Double.isNaN(v) && v != 0) {
+                counter = iterA.getCurrentCounter();
+                for (int j = 0; j < ndim; j++) {
+                    r.get(j).add(counter[j]);
+                }
+            }
+        }
+
+        if (r.get(0).isEmpty()) {
+            return null;
+        }
+
+        List<Array> ra = new ArrayList<>();
+        for (int i = 0; i < ndim; i++) {
+            ra.add(ArrayUtil.array(r.get(i), null));
+        }
+        return ra;
+    }
+
+    /**
+     * Return the flat indices of the elements that are non-zero.
+     *
+     * @param a Input array
+     * @return Flat indices
+     */
+    public static Array flatNonZero(Array a) {
+        List<Integer> r = new ArrayList<>();
+        IndexIterator iterA = a.getIndexIterator();
+        int[] counter;
+        double v;
+        int i = 0;
+        while (iterA.hasNext()) {
+            v = iterA.getDoubleNext();
+            if (!Double.isNaN(v) && v != 0) {
+                r.add(i);
+            }
+            i += 1;
+        }
+
+        return ArrayUtil.array(r, DataType.INT);
+    }
+
+    /**
+     * Return elements chosen from x or y depending on condition.
+     *
+     * @param a Input condition array
+     * @param x X array for true condition
+     * @param y Y array for false condition
+     * @return An array with elements from x where condition is True, and elements from y elsewhere.
+     */
+    public static Array where(Array a, Array x, Array y) {
+        DataType dataType = ArrayMath.commonType(x.getDataType(), y.getDataType());
+        Array r = Array.factory(dataType, a.getShape());
+        IndexIterator iterA = a.getIndexIterator();
+        IndexIterator iterX = x.getIndexIterator();
+        IndexIterator iterY = y.getIndexIterator();
+        IndexIterator iterR = r.getIndexIterator();
+        while (iterR.hasNext()) {
+            double v = iterA.getDoubleNext();
+            if (!Double.isNaN(v) && v != 0) {
+                iterR.setObjectNext(iterX.getObjectNext());
+                iterY.next();
+            } else {
+                iterR.setObjectNext(iterY.getObjectNext());
+                iterX.next();
             }
         }
 

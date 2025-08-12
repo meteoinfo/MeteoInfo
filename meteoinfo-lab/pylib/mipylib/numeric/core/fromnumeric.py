@@ -75,7 +75,7 @@ def nonzero(a):
         a = array(a)
     ra = ArrayUtil.nonzero(a.asarray())
     if ra is None:
-        return None
+        return tuple([NDArray([]).astype('int')])
 
     r = []
     for aa in ra:

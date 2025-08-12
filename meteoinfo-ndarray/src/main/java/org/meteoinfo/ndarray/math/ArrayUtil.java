@@ -1567,6 +1567,105 @@ public class ArrayUtil {
     }
 
     /**
+     * Repeat elements of an array.
+     *
+     * @param a The value
+     * @param repeats The number of repetitions for each element
+     * @return Repeated array
+     */
+    public static Array repeat(Array a, Array repeats) {
+        repeats = repeats.copyIfView();
+        Array r;
+        IndexIterator iterA = a.getIndexIterator();
+        Object o;
+        if (repeats.getSize() == 1) {
+            int n = repeats.getInt(0);
+            r = Array.factory(a.getDataType(), new int[]{(int) a.getSize() * n});
+            int i = 0;
+            while(iterA.hasNext()) {
+                o = iterA.getObjectNext();
+                for (int j = 0; j < n; j++) {
+                    r.setObject(i * n + j, o);
+                }
+                i += 1;
+            }
+        } else {
+            int n = 0;
+            for (int i = 0; i < repeats.getSize(); i++) {
+                n += repeats.getInt(i);
+            }
+            r = Array.factory(a.getDataType(), new int[]{n});
+            int idx = 0;
+            int i = 0;
+            while(iterA.hasNext()) {
+                o = iterA.getObjectNext();
+                for (int j = 0; j < repeats.getInt(i); j++) {
+                    r.setObject(idx, o);
+                    idx += 1;
+                }
+                i += 1;
+            }
+        }
+
+        return r;
+    }
+
+    /**
+     * Repeat elements of an array.
+     *
+     * @param a The value
+     * @param repeats The number of repetitions for each element
+     * @param axis The axis
+     * @return Repeated array
+     */
+    public static Array repeat(Array a, Array repeats, int axis) {
+        repeats = repeats.copyIfView();
+        Array r;
+        if (repeats.getSize() == 1) {
+            int n = repeats.getInt(0);
+            int[] shape = a.getShape();
+            shape[axis] = shape[axis] * n;
+            r = Array.factory(a.getDataType(), shape);
+            Index aindex = a.getIndex();
+            Index index = r.getIndex();
+            int[] current;
+            for (int i = 0; i < r.getSize(); i++) {
+                current = index.getCurrentCounter();
+                current[axis] = current[axis] / n;
+                aindex.set(current);
+                r.setObject(index, a.getObject(aindex));
+                index.incr();
+            }
+        } else {
+            int n = 0;
+            int[] rsum = new int[(int) repeats.getSize()];
+            for (int i = 0; i < repeats.getSize(); i++) {
+                rsum[i] = n;
+                n += repeats.getInt(i);
+            }
+            int[] shape = a.getShape();
+            shape[axis] = n;
+            r = Array.factory(a.getDataType(), shape);
+            Index aindex = a.getIndex();
+            Index index = r.getIndex();
+            int[] current;
+            int idx;
+            for (int i = 0; i < a.getSize(); i++) {
+                current = aindex.getCurrentCounter();
+                idx = current[axis];
+                for (int j = 0; j < repeats.getInt(idx); j++) {
+                    current[axis] = rsum[idx] + j;
+                    index.set(current);
+                    r.setObject(index, a.getObject(aindex));
+                }
+                aindex.incr();
+            }
+        }
+
+        return r;
+    }
+
+    /**
      * Repeat a value n times
      *
      * @param v The value
@@ -2580,7 +2679,7 @@ public class ArrayUtil {
      * @return  The sorted unique elements of an array
      * @throws InvalidRangeException
      */
-    public static Array unique(Array a, Integer axis) throws InvalidRangeException {
+    public static Array[] unique(Array a, Integer axis) throws InvalidRangeException {
         int n = a.getRank();
         int[] shape = a.getShape();
         if (axis == null) {
@@ -2599,7 +2698,7 @@ public class ArrayUtil {
                 r.setObject(i, tList.get(i));
             }
 
-            return r;
+            return new Array[]{r};
         } else {
             if (axis == -1) {
                 axis = n - 1;
@@ -2628,7 +2727,7 @@ public class ArrayUtil {
                 ranges.set(axis, range);
                 ArrayMath.setSection(r, ranges, tList.get(i));
             }
-            return r;
+            return new Array[]{r};
         }
     }
 
@@ -2657,82 +2756,165 @@ public class ArrayUtil {
     }
 
     /**
-     * Find the unique elements and index of an array.
+     * Find the unique elements and index/inverse/counts.
      *
      * @param a Array a
      * @param axis The axis
-     * @return  The sorted unique elements and index of an array
+     * @param returnIndex Return index or not
+     * @param returnInverse Return inverse or not
+     * @param returnCounts Return counts or not
+     * @return  The sorted unique elements and index/inverse/counts
      * @throws InvalidRangeException
      */
-    public static Array[] uniqueIndex(Array a, Integer axis) throws InvalidRangeException {
+    public static Array[] unique(Array a, Integer axis, boolean returnIndex, boolean returnInverse,
+                                 boolean returnCounts) throws InvalidRangeException {
         int n = a.getRank();
         int[] shape = a.getShape();
+        List<Array> result = new ArrayList<>();
         if (axis == null) {
-            TreeMap<Object, Integer> map = new TreeMap<>();
             List tList = new ArrayList<>();
+            List<Integer> idxList = new ArrayList<>();
+            List<Integer> countList = new ArrayList<>();
             IndexIterator ii = a.getIndexIterator();
             Object o;
             int idx = 0;
-            while (ii.hasNext()) {
-                o = ii.getObjectNext();
-                if (!tList.contains(o)) {
-                    tList.add(o);
-                    map.put(o, idx);
+            if (returnCounts) {
+                while (ii.hasNext()) {
+                    o = ii.getObjectNext();
+                    int i = tList.indexOf(o);
+                    if (i < 0) {
+                        tList.add(o);
+                        idxList.add(idx);
+                        countList.add(1);
+                    } else {
+                        countList.set(i, countList.get(i) + 1);
+                    }
+                    idx += 1;
                 }
-                idx += 1;
-            }
-            int[] nShape = new int[]{map.size()};
-            Array r = Array.factory(a.getDataType(), nShape);
-            Array index = Array.factory(DataType.INT, nShape);
-            Iterator iter = map.entrySet().iterator();
-            idx = 0;
-            while(iter.hasNext()) {
-                Map.Entry entry = (Map.Entry) iter.next();
-                r.setObject(idx, entry.getKey());
-                index.setInt(idx, (Integer) entry.getValue());
-                idx += 1;
+            } else {
+                while (ii.hasNext()) {
+                    o = ii.getObjectNext();
+                    if (!tList.contains(o)) {
+                        tList.add(o);
+                        idxList.add(idx);
+                    }
+                    idx += 1;
+                }
             }
 
-            return new Array[]{r, index};
+            List<Integer> sortIndex = MIMath.sort(tList);
+            int nv = tList.size();
+            int[] nShape = new int[]{nv};
+            Array r = Array.factory(a.getDataType(), nShape);
+            for (int i = 0; i < nv; i++) {
+                r.setObject(i, tList.get(i));
+            }
+            result.add(r);
+            if (returnIndex) {
+                Array index = Array.factory(DataType.INT, nShape);
+                for (int i = 0; i < nv; i++) {
+                    index.setInt(i, idxList.get(sortIndex.get(i)));
+                }
+                result.add(index);
+            }
+            if (returnInverse) {
+                int na = (int) a.getSize();
+                Array inverse = Array.factory(DataType.INT, new int[]{na});
+                ii = a.getIndexIterator();
+                IndexIterator iterInverse = inverse.getIndexIterator();
+                while (ii.hasNext()) {
+                    o = ii.getObjectNext();
+                    iterInverse.setObjectNext(tList.indexOf(o));
+                }
+                result.add(inverse);
+            }
+            if (returnCounts) {
+                Array counts = Array.factory(DataType.INT, nShape);
+                for (int i = 0; i < nv; i++) {
+                    counts.setInt(i, countList.get(sortIndex.get(i)));
+                }
+                result.add(counts);
+            }
         } else {
             if (axis == -1) {
                 axis = n - 1;
             }
             List<Array> tList = new ArrayList();
-            TreeMap<Array, Integer> map = new TreeMap<>();
+            List<Integer> idxList = new ArrayList<>();
+            List<Integer> countList = new ArrayList<>();
             Array ta;
             int nn = shape[axis];
             shape[axis] = 1;
             int[] origin = new int[shape.length];
-            for (int i = 0; i < nn; i++) {
-                origin[axis] = i;
-                ta = a.section(origin, shape);
-                if (!tList.contains(ta)) {
-                    tList.add(ta);
-                    map.put(ta, i);
+            if (returnCounts) {
+                for (int i = 0; i < nn; i++) {
+                    origin[axis] = i;
+                    ta = a.section(origin, shape);
+                    int idx = tList.indexOf(ta);
+                    if (idx < 0) {
+                        tList.add(ta);
+                        idxList.add(i);
+                        countList.add(1);
+                    } else {
+                        countList.set(idx, countList.get(idx) + 1);
+                    }
+                }
+            } else {
+                for (int i = 0; i < nn; i++) {
+                    origin[axis] = i;
+                    ta = a.section(origin, shape);
+                    if (!tList.contains(ta)) {
+                        tList.add(ta);
+                        idxList.add(i);
+                    }
                 }
             }
-            shape[axis] = map.size();
+
+            int nv = tList.size();
+            shape[axis] = nv;
             Array r = Array.factory(a.getDataType(), shape);
-            Array index = Array.factory(DataType.INT, shape);
+            Array index = Array.factory(DataType.INT, new int[]{nv});
             List<Range> ranges = new ArrayList<>();
             for (int i = 0; i < shape.length; i++) {
                 ranges.add(new Range(0, shape[i] - 1, 1));
             }
             Range range = ranges.get(axis);
-            Iterator iter = map.keySet().iterator();
+            Iterator iter = tList.iterator();
             int i = 0;
             while(iter.hasNext()) {
-                Map.Entry entry = (Map.Entry) iter.next();
+                Array arr = (Array) iter.next();
                 range = new Range(i, i, 1);
                 ranges.set(axis, range);
-                ArrayMath.setSection(r, ranges, entry.getKey());
-                index.setInt(i, (Integer) entry.getValue());
+                ArrayMath.setSection(r, ranges, arr);
+                index.setInt(i, idxList.get(i));
                 i += 1;
             }
+            result.add(r);
+            if (returnIndex) {
+                result.add(index);
+            }
+            if (returnInverse) {
+                int na = (int) a.getSize();
+                Array inverse = Array.factory(DataType.INT, new int[]{na});
+                IndexIterator ii = a.getIndexIterator();
+                IndexIterator iterInverse = inverse.getIndexIterator();
+                while (ii.hasNext()) {
+                    Object o = ii.getObjectNext();
+                    iterInverse.setObjectNext(tList.indexOf(o));
+                }
+                result.add(inverse);
+            }
 
-            return new Array[]{r, index};
+            if (returnCounts) {
+                Array counts = Array.factory(DataType.INT, shape);
+                for (i = 0; i < nv; i++) {
+                    counts.setInt(i, countList.get(i));
+                }
+                result.add(counts);
+            }
         }
+
+        return result.stream().toArray(Array[]::new);
     }
 
     /**

@@ -1430,7 +1430,7 @@ public class LegendManage {
         LegendScheme ls;
         if (isUnique) {
             try {
-                Array ua = ArrayUtil.unique(array, null);
+                Array ua = ArrayUtil.unique(array, null)[0];
                 List<Number> values = new ArrayList<>();
                 IndexIterator iter = ua.getIndexIterator();
                 while (iter.hasNext()) {

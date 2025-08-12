@@ -10,7 +10,42 @@ from itertools import product
 import mipylib.numeric as np
 from .. import constants
 
-__all__ = ['coriolis_parameter','smooth_window','smooth_n_point']
+__all__ = ['coriolis_parameter','height_to_pressure_std','pressure_to_height_std',
+           'smooth_window','smooth_n_point','wind_speed']
+
+
+# The following variables are constants for a standard atmosphere
+t0 = 288.    #'kelvin'
+p0 = 1013.25    #'hPa'
+gamma = 6.5    #'K/km'
+
+
+def wind_speed(u, v):
+    r"""Compute the wind speed from u and v-components.
+
+    Parameters
+    ----------
+    u : `m/s`
+        Wind component in the X (East-West) direction
+    v : `m/s`
+        Wind component in the Y (North-South) direction
+
+    Returns
+    -------
+    wind speed: `m/s`
+        Speed of the wind
+
+    See Also
+    --------
+    wind_components
+
+    Examples
+    --------
+    >>> from mipylib.meteolib.calc import wind_speed
+    >>> wind_speed(10., 10.)
+    <(14.1421356, 'meter / second')>
+    """
+    return np.hypot(u, v)
 
 def coriolis_parameter(latitude):
     r"""Calculate the Coriolis parameter at each point.
@@ -182,3 +217,51 @@ def smooth_n_point(scalar_grid, n=5, passes=1):
                          'calculation must be either 5 or 9.')
 
     return smooth_window(scalar_grid, window=weights, passes=passes, normalize_weights=False)
+
+def height_to_pressure_std(height):
+    r"""Convert height data to pressures using the U.S. standard atmosphere [NOAA1976]_.
+
+    The implementation inverts the formula outlined in [Hobbs1977]_ pg.60-61.
+
+    Parameters
+    ----------
+    height : `meters`
+        Atmospheric height
+
+    Returns
+    -------
+    `hPa`
+        Corresponding pressure value(s)
+
+    Notes
+    -----
+    .. math:: p = p_0 e^{\frac{g}{R \Gamma} \text{ln}(1-\frac{Z \Gamma}{T_0})}
+
+    """
+    gamma_1 = gamma * 1e-3    #to K/m
+    return p0 * (1 - (gamma_1 / t0) * height) ** (constants.g / (constants.Rd * gamma_1))
+
+
+def pressure_to_height_std(pressure):
+    r"""Convert pressure data to height using the U.S. standard atmosphere [NOAA1976]_.
+
+    The implementation uses the formula outlined in [Hobbs1977]_ pg.60-61.
+
+    Parameters
+    ----------
+    pressure : `hPa`
+        Atmospheric pressure
+
+    Returns
+    -------
+    `meters`
+        Corresponding height value(s)
+
+    Notes
+    -----
+    .. math:: Z = \frac{T_0}{\Gamma}[1-\frac{p}{p_0}^\frac{R\Gamma}{g}]
+
+    """
+    gamma_1 = gamma * 1e-3    #to K/m
+    return (t0 / gamma_1) * (1 - (pressure / p0)**(
+            constants.Rd * gamma_1 / constants.g))

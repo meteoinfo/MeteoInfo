@@ -840,6 +840,40 @@ class NDArray(object):
         """
         self._array = ArrayUtil.sort(self._array, axis)
 
+    def searchsorted(self, v, side='left', sorter=None):
+        """
+        Find indices where elements should be inserted to maintain order.
+
+        Find the indices into a sorted array a such that, if the corresponding elements in v were inserted
+        before the indices, the order of a would be preserved.
+
+        Parameters
+        ----------
+        v : array_like
+            Input array. If sorter is None, then it must be sorted in ascending order, otherwise sorter must
+            be an array of indices that sort it.
+
+        side : {‘left’, ‘right’}, optional
+            If ‘left’, the index of the first suitable location found is given. If ‘right’, return the last
+            such index. If there is no suitable index, return either 0 or N (where N is the length of a).
+
+        sorter : 1-D array_like, optional
+            Optional array of integer indices that sort array a into ascending order. They are typically
+            the result of argsort.
+
+        Returns
+        -------
+        indices : int or array of ints
+            Array of insertion points with the same shape as v, or an integer if v is a scalar.
+        """
+        v = NDArray(v)
+        left = True if side == 'left' else False
+        r = ArrayUtil.searchSorted(self._array, v._array, left)
+        if isinstance(r, int):
+            return r
+        else:
+            return self.array_wrap(r)
+
     def max(self, axis=None):
         """
         Get maximum value along an axis.

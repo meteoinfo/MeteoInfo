@@ -14,12 +14,12 @@ import constants as constants
 from .calc.thermo import saturation_vapor_pressure, saturation_mixing_ratio
 
 __all__ = [
-    'cumsimp','dewpoint2rh','dewpoint_rh','dry_lapse','ds2uv',
+    'cumsimp','dewpoint2rh','dewpoint_rh','ds2uv',
     'flowfun','h2p',
-    'moist_lapse','p2h','qair2rh','rh2dewpoint',
+    'p2h','qair2rh','rh2dewpoint',
     'sigma_to_pressure','tc2tf',
-    'tf2tc','uv2ds','pressure_to_height_std',
-    'height_to_pressure_std','eof','vapor_pressure'
+    'tf2tc','uv2ds',
+    'eof'
     ]
 
 def uv2ds(u, v):
@@ -67,20 +67,7 @@ def p2h(press):
         return press.array_wrap(r)
     else:
         return MeteoMath.press2Height(press)
-        
-def pressure_to_height_std(press):
-    """
-    Convert pressure data to heights using the U.S. standard atmosphere.
-    
-    :param press: (*float*) Pressure - hPa.
-    
-    :returns: (*float*) Height - meter.
-    """
-    t0 = 288.
-    gamma = 6.5
-    p0 = 1013.25
-    h = (t0 / gamma) * (1 - (press / p0)**(constants.Rd * gamma / constants.g)) * 1000
-    return h
+
         
 def h2p(height):
     """
@@ -95,21 +82,7 @@ def h2p(height):
         return height.array_wrap(r)
     else:
         return MeteoMath.height2Press(height)
-        
-def height_to_pressure_std(height):
-    """
-    Convert height data to pressures using the U.S. standard atmosphere.
-    
-    :param height: (*float*) Height - meter.
-    
-    :returns: (*float*) Height - meter.
-    """
-    t0 = 288.
-    gamma = 6.5
-    p0 = 1013.25
-    height = height * 0.001
-    p = p0 * (1 - (gamma / t0) * height) ** (constants.g / (constants.Rd * gamma))
-    return p
+
     
 def sigma_to_pressure(sigma, psfc, ptop):
     r"""Calculate pressure from sigma values.
@@ -237,6 +210,7 @@ def rh2dewpoint(rh, temp):
     else:
         return MeteoMath.rh2dewpoint(rh, temp)
 
+
 def dewpoint_rh(temperature, rh):
     r"""Calculate the ambient dewpoint given air temperature and relative humidity.
 
@@ -260,74 +234,6 @@ def dewpoint_rh(temperature, rh):
     #    warnings.warn('Relative humidity >120%, ensure proper units.')
     return dewpoint(rh * saturation_vapor_pressure(temperature))
 
-def dry_lapse(pressure, temperature):
-    """
-    Calculate the temperature at a level assuming only dry processes
-    operating from the starting point.
-    This function lifts a parcel starting at `temperature`, conserving
-    potential temperature. The starting pressure should be the first item in
-    the `pressure` array.
-    Parameters
-    ----------
-    pressure : array_like
-        The atmospheric pressure level(s) of interest
-    temperature : array_like
-        The starting temperature
-    Returns
-    -------
-    array_like
-       The resulting parcel temperature at levels given by `pressure`
-    See Also
-    --------
-    moist_lapse : Calculate parcel temperature assuming liquid saturation
-                  processes
-    parcel_profile : Calculate complete parcel profile
-    potential_temperature
-    """
-
-    return temperature * (pressure / pressure[0])**constants.kappa
-    
-def moist_lapse(pressure, temperature):
-    """
-    Calculate the temperature at a level assuming liquid saturation processes
-    operating from the starting point.
-    This function lifts a parcel starting at `temperature`. The starting
-    pressure should be the first item in the `pressure` array. Essentially,
-    this function is calculating moist pseudo-adiabats.
-    Parameters
-    ----------
-    pressure : array_like
-        The atmospheric pressure level(s) of interest
-    temperature : array_like
-        The starting temperature
-    Returns
-    -------
-    array_like
-       The temperature corresponding to the the starting temperature and
-       pressure levels.
-    See Also
-    --------
-    dry_lapse : Calculate parcel temperature assuming dry adiabatic processes
-    parcel_profile : Calculate complete parcel profile
-    Notes
-    -----
-    This function is implemented by integrating the following differential
-    equation:
-    .. math:: \frac{dT}{dP} = \frac{1}{P} \frac{R_d T + L_v r_s}
-                                {C_{pd} + \frac{L_v^2 r_s \epsilon}{R_d T^2}}
-    This equation comes from [1]_.
-    References
-    ----------
-    .. [1] Bakhshaii, A. and R. Stull, 2013: Saturated Pseudoadiabats--A
-           Noniterative Approximation. J. Appl. Meteor. Clim., 52, 5-15.
-    """
-
-    def dt(t, p):
-        rs = saturation_mixing_ratio(p, t)
-        frac = ((constants.Rd * t + constants.Lv * rs) /
-                (constants.Cp_d + (constants.Lv * constants.Lv * rs * constants.epsilon / (constants.Rd * t * t)))).to('kelvin')
-        return frac / p
-    return dt
 
 def vapor_pressure(pressure, mixing):
     r"""Calculate water vapor (partial) pressure.
@@ -354,6 +260,7 @@ def vapor_pressure(pressure, mixing):
     saturation_vapor_pressure, dewpoint
     """
     return pressure * mixing / (constants.epsilon + mixing)
+
 
 def cumsimp(y):
     """
@@ -418,6 +325,7 @@ def cumsimp(y):
 
     return f
 
+
 def flowfun(u, v):
     """
     Computes the potential PHI and the streamfunction PSI
@@ -471,7 +379,8 @@ def flowfun(u, v):
     psi = (psi+cumsimp(v.T).T - np.tile(cy, [1,lx]))/2
 
     return psi, phi
-    
+
+
 def eof(x, svd=True, transform=False, return_index=False):
     """
     Empirical Orthogonal Function (EOF) analysis to finds both time series and spatial patterns.
@@ -537,7 +446,8 @@ def eof(x, svd=True, transform=False, return_index=False):
             return EOF, E, PC, np.arange(x.shape[0])
         else:
             return EOF, E, PC
-    
+
+
 def varimax(x, norm=True, tol=1e-10, it_max=1000):
     """
     Rotate EOFs according to varimax algorithm

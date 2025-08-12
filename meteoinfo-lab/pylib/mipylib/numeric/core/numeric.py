@@ -354,25 +354,35 @@ def zeros_like(a, dtype=None):
         dtype = _dtype.fromjava(a.dtype)
     elif isinstance(dtype, basestring):
         dtype = _dtype.DataType(dtype)
+
     return NDArray(ArrayUtil.zeros(shape, dtype._dtype))
 
-def empty_like(a, dtype=None):
+
+def empty_like(a, dtype=None, shape=None):
     """
     Return a new array with the same shape and type as a given array.
 
     :param a: (*array*) The shape and data-type of a define these same attributes of the returned array.
     :param dtype: (*string*) Overrides the data type of the result. Default is ``None``, keep the data
         type of array ``a``.
+    :param shape: (*list of int*) Overrides the shape of the result. Default is ``None``.
 
     :returns: Array of uninitialized (arbitrary) data with the same shape and type as prototype.
     """
-    shape = a.shape
+    if shape is None:
+        shape = a.shape
+
+    if isinstance(shape, int):
+        shape = [shape]
+
     if dtype is None:
         dtype = a.dtype
     elif isinstance(dtype, basestring):
         dtype = _dtype.DataType(dtype)
+
     return NDArray(ArrayUtil.empty(shape, dtype._dtype))
-    
+
+
 def ones_like(a, dtype=None):
     """
     Return an array of ones with the same shape and type as a given array.
@@ -389,7 +399,8 @@ def ones_like(a, dtype=None):
     elif isinstance(dtype, basestring):
         dtype = _dtype.DataType(dtype)
     return NDArray(ArrayUtil.ones(shape, dtype._dtype))
-    
+
+
 def ones(shape, dtype='float'):
     """
     Create a new aray of given shape and type, filled with ones.
@@ -415,10 +426,13 @@ def ones(shape, dtype='float'):
         shapelist.append(shape)
     else:
         shapelist = shape
+
     if isinstance(dtype, basestring):
         dtype = _dtype.DataType(dtype)
+
     return NDArray(ArrayUtil.ones(shapelist, dtype._dtype))
-    
+
+
 def full(shape, fill_value, dtype=None):
     """
     Return a new array of given shape and type, filled with fill_value.
@@ -555,15 +569,16 @@ def repeat(a, repeats, axis=None):
     """
     if isinstance(repeats, int):
         repeats = [repeats]
-    if isinstance(a, (list, tuple)):
-        a = array(a)
-    if isinstance(a, NDArray):
-        a = a.asarray()    
+    repeats = asarray(repeats)
+
+    a = asarray(a)
     if axis is None:
-        r = ArrayUtil.repeat(a, repeats)
+        r = ArrayUtil.repeat(a._array, repeats._array)
     else:
-        r = ArrayUtil.repeat(a, repeats, axis)
+        r = ArrayUtil.repeat(a._array, repeats._array, axis)
+
     return NDArray(r)
+
     
 def tile(a, repeats):
     """
@@ -2031,7 +2046,10 @@ def concatenate(arrays, axis=0):
     """
     ars = []
     for a in arrays:
+        if isinstance(a, numbers.Number):
+            a = [a]
         ars.append(asanyarray(a).asarray())
+
     r = ArrayUtil.concatenate(ars, axis)
     return NDArray(r)
 

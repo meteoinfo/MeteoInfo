@@ -18,7 +18,7 @@ import org.meteoinfo.common.util.BigDecimalUtil;
 import java.awt.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
 
 /**
@@ -1419,5 +1419,75 @@ public class MIMath {
         double v = windSpeed * Math.cos(dir);
 
         return new double[]{u, v};
+    }
+
+    /**
+     * Sort List A, and rearrange List B according to the sorting result of List A.
+     * @param listA The list to be sorted
+     * @param listB The list to be rearranged according to the sorting result of List A
+     */
+    public static <T extends Comparable<T>, U> void sortAndRearrange(List<T> listA, List<U> listB) {
+        // Check the size of the two list
+        if (listA.size() != listB.size()) {
+            throw new IllegalArgumentException("The two lists must be of the same size");
+        }
+
+        // Create a list containing values and their original indices
+        List<Map.Entry<T, Integer>> entries = new ArrayList<>();
+        for (int i = 0; i < listA.size(); i++) {
+            entries.add(new AbstractMap.SimpleEntry<>(listA.get(i), i));
+        }
+
+        // Sort according to the natural order of values.
+        Collections.sort(entries, Map.Entry.comparingByKey());
+
+        // Save sorted A values
+        List<T> sortedA = new ArrayList<>();
+        // Save sorted B values
+        List<U> sortedB = new ArrayList<>();
+
+        for (Map.Entry<T, Integer> entry : entries) {
+            sortedA.add(entry.getKey());
+            sortedB.add(listB.get(entry.getValue()));
+        }
+
+        // Update origin lists
+        listA.clear();
+        listA.addAll(sortedA);
+
+        listB.clear();
+        listB.addAll(sortedB);
+    }
+
+    /**
+     * Sort List, and return the sorted index.
+     * @param list The list to be sorted
+     * @return Sorted index list
+     */
+    public static <T extends Comparable<T>> List<Integer> sort(List<T> list) {
+        // Create a list containing values and their original indices
+        List<Map.Entry<T, Integer>> entries = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            entries.add(new AbstractMap.SimpleEntry<>(list.get(i), i));
+        }
+
+        // Sort according to the natural order of values.
+        Collections.sort(entries, Map.Entry.comparingByKey());
+
+        // Save sorted values
+        List<T> sorted = new ArrayList<>();
+        // Save sorted index values
+        List<Integer> sortIndex = new ArrayList<>();
+
+        for (Map.Entry<T, Integer> entry : entries) {
+            sorted.add(entry.getKey());
+            sortIndex.add(entry.getValue());
+        }
+
+        // Update origin list
+        list.clear();
+        list.addAll(sorted);
+
+        return sortIndex;
     }
 }

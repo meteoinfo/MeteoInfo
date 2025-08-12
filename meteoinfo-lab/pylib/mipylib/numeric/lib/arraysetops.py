@@ -1,7 +1,10 @@
+
 from org.meteoinfo.ndarray.math import ArrayUtil
 from  .. import core as np
 
-__all__ = ['unique', 'intersect1d']
+
+__all__ = ['unique', 'ediff1d', 'intersect1d']
+
 
 def _unique1d(ar, return_index=False, return_inverse=False,
               return_counts=False):
@@ -46,28 +49,78 @@ def _unique1d(ar, return_index=False, return_inverse=False,
         ret += (np.diff(idx),)
     return ret
 
-def unique(a, return_index=False, axis=None):
+
+def unique(a, return_index=False, return_inverse=False, return_counts=False, axis=None):
     """
     Find the unique elements of an array.
 
-    Returns the sorted unique elements of an array.
+    Returns the sorted unique elements of an array. There are three optional
+    outputs in addition to the unique elements:
 
-    :param a: (*array_like*) Array to be sorted.
-    :param return_index: (*bool*) Optional, If True, also return the indices of ar (along the specified
-        axis, if provided, or in the flattened array) that result in the unique array.
-    :param axis: (*int or None*) Optional. Axis along which to operate on. If None, the array is
-        flattened.
+    * the indices of the input array that give the unique values
+    * the indices of the unique array that reconstruct the input array
+    * the number of times each unique value comes up in the input array
 
-    :returns: (*NDArray*) Sorted unique elements of input array.
+    Parameters
+    ----------
+    ar : array_like
+        Input array. Unless `axis` is specified, this will be flattened if it
+        is not already 1-D.
+    return_index : bool, optional
+        If True, also return the indices of `ar` (along the specified axis,
+        if provided, or in the flattened array) that result in the unique array.
+    return_inverse : bool, optional
+        If True, also return the indices of the unique array (for the specified
+        axis, if provided) that can be used to reconstruct `ar`.
+    return_counts : bool, optional
+        If True, also return the number of times each unique item appears
+        in `ar`.
+    axis : int or None, optional
+        The axis to operate on. If None, `ar` will be flattened. If an integer,
+        the subarrays indexed by the given axis will be flattened and treated
+        as the elements of a 1-D array with the dimension of the given axis,
+        see the notes for more details.  Object arrays or structured arrays
+        that contain objects are not supported if the `axis` kwarg is used. The
+        default is None.
+
+    Returns
+    -------
+    unique : ndarray
+        The sorted unique values.
+    unique_indices : ndarray, optional
+        The indices of the first occurrences of the unique values in the
+        original array. Only provided if `return_index` is True.
+    unique_inverse : ndarray, optional
+        The indices to reconstruct the original array from the
+        unique array. Only provided if `return_inverse` is True.
+    unique_counts : ndarray, optional
+        The number of times each of the unique values comes up in the
+        original array. Only provided if `return_counts` is True.
+
+    See Also
+    --------
+    repeat : Repeat elements of an array.
+    sort : Return a sorted copy of an array.
+
+    Notes
+    -----
+    When an axis is specified the subarrays indexed by the axis are sorted.
+    This is done by making the specified axis the first dimension of the array
+    (move the axis to the first dimension to keep the order of the other axes)
+    and then flattening the subarrays in C order. The flattened subarrays are
+    then viewed as a structured type with each element given a label, with the
+    effect that we end up with a 1-D array of structured types that can be
+    treated in the same way as any other 1-D array. The result is that the
+    flattened subarrays are sorted in lexicographic order starting with the
+    first element.
     """
-    if isinstance(a, list):
+    if isinstance(a, (tuple, list)):
         a = np.array(a)
-    if return_index:
-        r = ArrayUtil.uniqueIndex(a.asarray(), axis)
-        return np.NDArray(r[0]), np.NDArray(r[1])
-    else:
-        r = ArrayUtil.unique(a.asarray(), axis)
-        return np.NDArray(r)
+
+    r = ArrayUtil.unique(a._array, axis, return_index, return_inverse, return_counts)
+
+    return np.NDArray(r[0]) if len(r) == 1 else [np.NDArray(rr) for rr in r]
+
 
 def intersect1d(ar1, ar2, assume_unique=False, return_indices=False):
     """
@@ -156,3 +209,85 @@ def intersect1d(ar1, ar2, assume_unique=False, return_indices=False):
         return int1d, ar1_indices, ar2_indices
     else:
         return int1d
+
+
+def ediff1d(ary, to_end=None, to_begin=None):
+    """
+    The differences between consecutive elements of an array.
+
+    Parameters
+    ----------
+    ary : array_like
+        If necessary, will be flattened before the differences are taken.
+    to_end : array_like, optional
+        Number(s) to append at the end of the returned differences.
+    to_begin : array_like, optional
+        Number(s) to prepend at the beginning of the returned differences.
+
+    Returns
+    -------
+    ediff1d : ndarray
+        The differences. Loosely, this is ``ary.flat[1:] - ary.flat[:-1]``.
+
+    See Also
+    --------
+    diff, gradient
+
+    Notes
+    -----
+    When applied to masked arrays, this function drops the mask information
+    if the `to_begin` and/or `to_end` parameters are used.
+
+    Examples
+    --------
+    >>> x = np.array([1, 2, 4, 7, 0])
+    >>> np.ediff1d(x)
+    array([ 1,  2,  3, -7])
+
+    >>> np.ediff1d(x, to_begin=-99, to_end=np.array([88, 99]))
+    array([-99,   1,   2, ...,  -7,  88,  99])
+
+    The returned array is always 1D.
+
+    >>> y = [[1, 2, 4], [1, 6, 24]]
+    >>> np.ediff1d(y)
+    array([ 1,  2, -3,  5, 18])
+
+    """
+    conv = np.asanyarray(ary)
+    # Convert to (any) array and ravel:
+    ary = conv.ravel()
+
+    # enforce that the dtype of `ary` is used for the output
+    dtype_req = ary.dtype
+
+    # fast track default case
+    if to_begin is None and to_end is None:
+        return ary[1:] - ary[:-1]
+
+    if to_begin is None:
+        l_begin = 0
+    else:
+        to_begin = np.asanyarray(to_begin)
+        to_begin = to_begin.ravel()
+        l_begin = len(to_begin)
+
+    if to_end is None:
+        l_end = 0
+    else:
+        to_end = np.asanyarray(to_end)
+        to_end = to_end.ravel()
+        l_end = len(to_end)
+
+    # do the calculation in place and copy to_begin and to_end
+    l_diff = max(len(ary) - 1, 0)
+    result = np.empty_like(ary, shape=l_diff + l_begin + l_end)
+
+    if l_begin > 0:
+        result[:l_begin] = to_begin
+    if l_end > 0:
+        result[l_begin + l_diff:] = to_end
+
+    result[l_begin:l_begin+l_diff] = ary[1:] - ary[:-1]
+
+    return result

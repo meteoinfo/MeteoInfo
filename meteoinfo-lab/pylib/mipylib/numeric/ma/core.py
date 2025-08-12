@@ -4,7 +4,7 @@ from org.meteoinfo.ndarray.math import ArrayUtil
 
 nomask = False
 
-__all__ = ['MaskedArray','masked_array','masked_invalid','getdata']
+__all__ = ['MaskedArray','masked_array','masked_invalid','getdata','getmask','is_masked']
 
 class MaskedArray(NDArray):
     """
@@ -68,6 +68,92 @@ class MaskedArray(NDArray):
 
     def __repr__(self):
         return self.__str__()
+
+    def __setmask__(self, mask, copy=False):
+        """
+        Set the mask.
+
+        """
+        idtype = self.dtype
+        current_mask = self._mask
+        if mask is masked:
+            mask = True
+
+        if current_mask is nomask:
+            # Make sure the mask is set
+            # Just don't do anything if there's nothing to do.
+            if mask is nomask:
+                return
+            current_mask = self._mask = make_mask_none(self.shape, idtype)
+
+        if idtype.names is None:
+            # No named fields.
+            # Hardmask: don't unmask the data
+            if self._hardmask:
+                current_mask |= mask
+            # Softmask: set everything to False
+            # If it's obviously a compatible scalar, use a quick update
+            # method.
+            elif isinstance(mask, (int, float, np.bool, np.number)):
+                current_mask[...] = mask
+            # Otherwise fall back to the slower, general purpose way.
+            else:
+                current_mask.flat = mask
+        else:
+            # Named fields w/
+            mdtype = current_mask.dtype
+            mask = np.asarray(mask)
+            # Mask is a singleton
+            if not mask.ndim:
+                # It's a boolean : make a record
+                if mask.dtype.kind == 'b':
+                    mask = np.array(tuple([mask.item()] * len(mdtype)),
+                                    dtype=mdtype)
+                # It's a record: make sure the dtype is correct
+                else:
+                    mask = mask.astype(mdtype)
+            # Mask is a sequence
+            else:
+                # Make sure the new mask is a ndarray with the proper dtype
+                try:
+                    copy = None if not copy else True
+                    mask = np.array(mask, copy=copy, dtype=mdtype)
+                # Or assume it's a sequence of bool/int
+                except TypeError:
+                    mask = np.array([tuple([m] * len(mdtype)) for m in mask],
+                                    dtype=mdtype)
+            # Hardmask: don't unmask the data
+            if self._hardmask:
+                for n in idtype.names:
+                    current_mask[n] |= mask[n]
+            # Softmask: set everything to False
+            # If it's obviously a compatible scalar, use a quick update
+            # method.
+            elif isinstance(mask, (int, float, np.dtyp.bool, np.dtype.number)):
+                current_mask[...] = mask
+            # Otherwise fall back to the slower, general purpose way.
+            else:
+                current_mask.flat = mask
+        # Reshape if needed
+        if current_mask.shape:
+            current_mask.shape = self.shape
+        return
+
+    _set_mask = __setmask__
+
+    @property
+    def mask(self):
+        """ Current mask. """
+
+        # We could try to force a reshape, but that wouldn't work in some
+        # cases.
+        # Return a view so that the dtype and shape cannot be changed in place
+        # This still preserves nomask by identity
+        return self._mask.view()
+
+    @mask.setter
+    def mask(self, value):
+        self.__setmask__(value)
 
     def filled(self, fill_value=None):
         """
@@ -164,7 +250,9 @@ class MaskedArray(NDArray):
             cnt = self.count(axis=axis)
             return dsum * 1. / cnt
 
+
 masked_array = MaskedArray
+
 
 def getdata(a, subok=True):
     """
@@ -208,6 +296,68 @@ def getdata(a, subok=True):
 
     return data
 
+
+def getmask(a):
+    """
+    Return the mask of a masked array, or nomask.
+
+    Return the mask of `a` as an ndarray if `a` is a `MaskedArray` and the
+    mask is not `nomask`, else return `nomask`. To guarantee a full array
+    of booleans of the same shape as a, use `getmaskarray`.
+
+    Parameters
+    ----------
+    a : array_like
+        Input `MaskedArray` for which the mask is required.
+
+    See Also
+    --------
+    getdata : Return the data of a masked array as an ndarray.
+    getmaskarray : Return the mask of a masked array, or full array of False.
+
+    Examples
+    --------
+    >>> a = np.ma.masked_equal([[1,2],[3,4]], 2)
+    >>> a
+    masked_array(
+      data=[[1, --],
+            [3, 4]],
+      mask=[[False,  True],
+            [False, False]],
+      fill_value=2)
+    >>> ma.getmask(a)
+    array([[False,  True],
+           [False, False]])
+
+    Equivalently use the `MaskedArray` `mask` attribute.
+
+    >>> a.mask
+    array([[False,  True],
+           [False, False]])
+
+    Result when mask == `nomask`
+
+    >>> b = np.ma.masked_array([[1,2],[3,4]])
+    >>> b
+    masked_array(
+      data=[[1, 2],
+            [3, 4]],
+      mask=False,
+      fill_value=999999)
+    >>> np.ma.nomask
+    False
+    >>> np.ma.getmask(b) == np.ma.nomask
+    True
+    >>> b.mask == np.ma.nomask
+    True
+
+    """
+    return getattr(a, '_mask', nomask)
+
+
+get_mask = getmask
+
+
 def masked_invalid(a, copy=True):
     """
     Mask an array where invalid values occur (NaNs or infs).
@@ -245,3 +395,57 @@ def masked_invalid(a, copy=True):
         result = MaskedArray(a)
     result._mask = condition
     return result
+
+
+def is_masked(x):
+    """
+    Determine whether input has masked values.
+
+    Accepts any object as input, but always returns False unless the
+    input is a MaskedArray containing masked values.
+
+    Parameters
+    ----------
+    x : array_like
+        Array to check for masked values.
+
+    Returns
+    -------
+    result : bool
+        True if `x` is a MaskedArray with masked values, False otherwise.
+
+    Examples
+    --------
+    >>> import numpy as np
+    >>> import numpy.ma as ma
+    >>> x = ma.masked_equal([0, 1, 0, 2, 3], 0)
+    >>> x
+    masked_array(data=[--, 1, --, 2, 3],
+                 mask=[ True, False,  True, False, False],
+           fill_value=0)
+    >>> ma.is_masked(x)
+    True
+    >>> x = ma.masked_equal([0, 1, 0, 2, 3], 42)
+    >>> x
+    masked_array(data=[0, 1, 0, 2, 3],
+                 mask=False,
+           fill_value=42)
+    >>> ma.is_masked(x)
+    False
+
+    Always returns False if `x` isn't a MaskedArray.
+
+    >>> x = [False, True, False]
+    >>> ma.is_masked(x)
+    False
+    >>> x = 'a string'
+    >>> ma.is_masked(x)
+    False
+
+    """
+    m = getmask(x)
+    if m is nomask:
+        return False
+    elif m.any():
+        return True
+    return False

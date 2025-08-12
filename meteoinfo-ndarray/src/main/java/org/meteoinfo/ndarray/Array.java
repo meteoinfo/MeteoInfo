@@ -1623,4 +1623,24 @@ public abstract class Array {
     public void resetLocalIterator() {
         ii = null;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        Array o = (Array) obj;
+        if (!Arrays.equals(this.getShape(), o.getShape()))
+            return false;
+
+        if (this.getDataType() != o.getDataType())
+            return false;
+
+        IndexIterator iter = this.getIndexIterator();
+        IndexIterator iterO = o.getIndexIterator();
+        while (iter.hasNext()) {
+            if (!iter.getObjectNext().equals(iterO.getObjectNext())) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }

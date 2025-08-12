@@ -5,11 +5,12 @@ Ported from MetPy.
 """
 
 import mipylib.numeric as np
+import mipylib.numeric.ma as ma
 from mipylib.geolib import Geod
 from ..interpolate import interpolate_1d
 from ..cbook import broadcast_indices
 
-__all__ = ['resample_nn_1d', 'nearest_intersection_idx', 'first_derivative', 'gradient',
+__all__ = ['resample_nn_1d', 'nearest_intersection_idx', 'first_derivative', 'find_intersections', 'gradient',
            'lat_lon_grid_deltas', 'get_layer_heights', 'find_bounding_indices', 'geospatial_gradient']
 
 
@@ -58,6 +59,125 @@ def nearest_intersection_idx(a, b):
     return sign_change_idx
 
 
+def find_intersections(x, a, b, direction='all', log_x=False):
+    """Calculate the best estimate of intersection.
+
+    Calculates the best estimates of the intersection of two y-value
+    data sets that share a common x-value set.
+
+    Parameters
+    ----------
+    x : array-like
+        1-dimensional array of numeric x-values
+    a : array-like
+        1-dimensional array of y-values for line 1
+    b : array-like
+        1-dimensional array of y-values for line 2
+    direction : str, optional
+        specifies direction of crossing. 'all', 'increasing' (a becoming greater than b),
+        or 'decreasing' (b becoming greater than a). Defaults to 'all'.
+    log_x : bool, optional
+        Use logarithmic interpolation along the `x` axis (i.e. for finding intersections
+        in pressure coordinates). Default is False.
+
+    Returns
+    -------
+        A tuple (x, y) of array-like with the x and y coordinates of the
+        intersections of the lines.
+
+    Notes
+    -----
+    This function implicitly converts `xarray.DataArray` to `pint.Quantity`, with the results
+    given as `pint.Quantity`.
+
+    """
+    # Change x to logarithmic if log_x=True
+    if log_x is True:
+        x = np.log(x)
+
+    # Find the index of the points just before the intersection(s)
+    nearest_idx = nearest_intersection_idx(a, b)
+    next_idx = nearest_idx + 1
+
+    # Determine the sign of the change
+    sign_change = np.sign(a[next_idx] - b[next_idx])
+
+    # x-values around each intersection
+    _, x0 = _next_non_masked_element(x, nearest_idx)
+    _, x1 = _next_non_masked_element(x, next_idx)
+
+    # y-values around each intersection for the first line
+    _, a0 = _next_non_masked_element(a, nearest_idx)
+    _, a1 = _next_non_masked_element(a, next_idx)
+
+    # y-values around each intersection for the second line
+    _, b0 = _next_non_masked_element(b, nearest_idx)
+    _, b1 = _next_non_masked_element(b, next_idx)
+
+    # Calculate the x-intersection. This comes from finding the equations of the two lines,
+    # one through (x0, a0) and (x1, a1) and the other through (x0, b0) and (x1, b1),
+    # finding their intersection, and reducing with a bunch of algebra.
+    delta_y0 = a0 - b0
+    delta_y1 = a1 - b1
+    intersect_x = (delta_y1 * x0 - delta_y0 * x1) / (delta_y1 - delta_y0)
+
+    # Calculate the y-intersection of the lines. Just plug the x above into the equation
+    # for the line through the a points. One could solve for y like x above, but this
+    # causes weirder unit behavior and seems a little less good numerically.
+    intersect_y = ((intersect_x - x0) / (x1 - x0)) * (a1 - a0) + a0
+
+    # If there's no intersections, return
+    if len(intersect_x) == 0:
+        return intersect_x, intersect_y
+
+    # Return x to linear if log_x is True
+    if log_x is True:
+        intersect_x = np.exp(intersect_x)
+
+    # Check for duplicates
+    duplicate_mask = (np.ediff1d(intersect_x, to_end=1) != 0)
+
+    # Make a mask based on the direction of sign change desired
+    if direction == 'increasing':
+        mask = sign_change > 0
+    elif direction == 'decreasing':
+        mask = sign_change < 0
+    elif direction == 'all':
+        return intersect_x[duplicate_mask], intersect_y[duplicate_mask]
+    else:
+        raise ValueError('Unknown option for direction: {}'.format(direction))
+
+    return intersect_x[mask & duplicate_mask], intersect_y[mask & duplicate_mask]
+
+
+def _next_non_masked_element(a, idx):
+    """Return the next non masked element of a masked array.
+
+    If an array is masked, return the next non-masked element (if the given index is masked).
+    If no other unmasked points are after the given masked point, returns none.
+
+    Parameters
+    ----------
+    a : array-like
+        1-dimensional array of numeric values
+    idx : integer
+        Index of requested element
+
+    Returns
+    -------
+        Index of next non-masked element and next non-masked element
+
+    """
+    try:
+        next_idx = idx + a[idx:].mask.argmin()
+        if ma.is_masked(a[next_idx]):
+            return None, None
+        else:
+            return next_idx, a[next_idx]
+    except (AttributeError, TypeError, IndexError):
+        return idx, a[idx]
+
+
 def _remove_nans(*variables):
     """Remove NaNs from arrays that cause issues with calculations.
     Takes a variable number of arguments and returns masked arrays in the same
@@ -73,8 +193,118 @@ def _remove_nans(*variables):
     # Mask everyone with that joint mask
     ret = []
     for v in variables:
+        v = np.asarray(v)
         ret.append(v[~mask])
     return ret
+
+
+def _get_bound_pressure_height(pressure, bound, height=None, interpolate=True):
+    """Calculate the bounding pressure and height in a layer.
+
+    Given pressure, optional heights and a bound, return either the closest pressure/height
+    or interpolated pressure/height. If no heights are provided, a standard atmosphere
+    ([NOAA1976]_) is assumed.
+
+    Parameters
+    ----------
+    pressure : `pint.Quantity`
+        Atmospheric pressures
+    bound : `pint.Quantity`
+        Bound to retrieve (in pressure or height)
+    height : `pint.Quantity`, optional
+        Atmospheric heights associated with the pressure levels. Defaults to using
+        heights calculated from ``pressure`` assuming a standard atmosphere.
+    interpolate : boolean, optional
+        Interpolate the bound or return the nearest. Defaults to True.
+
+    Returns
+    -------
+    `pint.Quantity`
+        The bound pressure and height
+
+    """
+    # avoid circular import if basic.py ever imports something from tools.py
+    from .basic import height_to_pressure_std, pressure_to_height_std
+
+    # Make sure pressure is monotonically decreasing
+    sort_inds = np.argsort(pressure)[::-1]
+    pressure = pressure[sort_inds]
+    if height is not None:
+        height = height[sort_inds]
+
+    # Bound is given in pressure
+    if bound.check('[length]**-1 * [mass] * [time]**-2'):
+        # If the bound is in the pressure data, we know the pressure bound exactly
+        if bound in pressure:
+            # By making sure this is at least a 1D array we avoid the behavior in numpy
+            # (at least up to 1.19.4) that float32 scalar * Python float -> float64, which
+            # can wreak havok with floating point comparisons.
+            bound_pressure = np.atleast_1d(bound)
+            # If we have heights, we know the exact height value, otherwise return standard
+            # atmosphere height for the pressure
+            if height is not None:
+                bound_height = height[pressure == bound_pressure]
+            else:
+                bound_height = pressure_to_height_std(bound_pressure)
+        # If bound is not in the data, return the nearest or interpolated values
+        else:
+            if interpolate:
+                bound_pressure = bound  # Use the user specified bound
+                if height is not None:  # Interpolate heights from the height data
+                    bound_height = log_interpolate_1d(bound_pressure, pressure, height)
+                else:  # If not heights given, use the standard atmosphere
+                    bound_height = pressure_to_height_std(bound_pressure)
+            else:  # No interpolation, find the closest values
+                idx = (np.abs(pressure - bound)).argmin()
+                bound_pressure = pressure[idx]
+                if height is not None:
+                    bound_height = height[idx]
+                else:
+                    bound_height = pressure_to_height_std(bound_pressure)
+
+    # Bound is given in height
+    elif bound.check('[length]'):
+        # If there is height data, see if we have the bound or need to interpolate/find nearest
+        if height is not None:
+            if bound in height:  # Bound is in the height data
+                bound_height = bound
+                bound_pressure = pressure[height == bound]
+            else:  # Bound is not in the data
+                if interpolate:
+                    bound_height = bound
+
+                    # Need to cast back to the input type since interp (up to at least numpy
+                    # 1.13 always returns float64. This can cause upstream users problems,
+                    # resulting in something like np.append() to upcast.
+                    bound_pressure = np.interp(np.atleast_1d(bound),
+                                               height, pressure).astype(np.result_type(bound))
+                else:
+                    idx = (np.abs(height - bound)).argmin()
+                    bound_pressure = pressure[idx]
+                    bound_height = height[idx]
+        else:  # Don't have heights, so assume a standard atmosphere
+            bound_height = bound
+            bound_pressure = height_to_pressure_std(bound)
+            # If interpolation is on, this is all we need, if not, we need to go back and
+            # find the pressure closest to this and refigure the bounds
+            if not interpolate:
+                idx = (np.abs(pressure - bound_pressure)).argmin()
+                bound_pressure = pressure[idx]
+                bound_height = pressure_to_height_std(bound_pressure)
+
+    # Bound has invalid units
+    else:
+        raise ValueError('Bound must be specified in units of length or pressure.')
+
+    # If the bound is out of the range of the data, we shouldn't extrapolate
+    if not (_greater_or_close(bound_pressure, np.nanmin(pressure))
+            and _less_or_close(bound_pressure, np.nanmax(pressure))):
+        raise ValueError('Specified bound is outside pressure range.')
+    if height is not None and not (_less_or_close(bound_height, np.nanmax(height))
+                                   and _greater_or_close(bound_height, np.nanmin(height))):
+        raise ValueError('Specified bound is outside height range.')
+
+    return bound_pressure, bound_height
 
 
 def get_layer_heights(height, depth, *args, **kwargs):
@@ -164,6 +394,109 @@ def get_layer_heights(height, depth, *args, **kwargs):
             datavar = datavar[inds]
 
         ret.append(datavar)
+    return ret
+
+
+def get_layer(pressure, *args, **kwargs):
+    r"""Return an atmospheric layer from upper air data with the requested bottom and depth.
+
+    This function will subset an upper air dataset to contain only the specified layer. The
+    bottom of the layer can be specified with a pressure or height above the surface
+    pressure. The bottom defaults to the surface pressure. The depth of the layer can be
+    specified in terms of pressure or height above the bottom of the layer. If the top and
+    bottom of the layer are not in the data, they are interpolated by default.
+
+    Parameters
+    ----------
+    pressure : array-like
+        Atmospheric pressure profile
+    args : array-like
+        Atmospheric variable(s) measured at the given pressures
+    height: array-like, optional
+        Atmospheric heights corresponding to the given pressures. Defaults to using
+        heights calculated from ``pressure`` assuming a standard atmosphere [NOAA1976]_.
+    bottom : `pint.Quantity`, optional
+        Bottom of the layer as a pressure or height above the surface pressure. Defaults
+        to the highest pressure or lowest height given.
+    depth : `pint.Quantity`, optional
+        Thickness of the layer as a pressure or height above the bottom of the layer.
+        Defaults to 100 hPa.
+    interpolate : bool, optional
+        Interpolate the top and bottom points if they are not in the given data. Defaults
+        to True.
+
+    Returns
+    -------
+    `pint.Quantity, pint.Quantity`
+        The pressure and data variables of the layer
+
+    Notes
+    -----
+    Only functions on 1D profiles (not higher-dimension vertical cross sections or grids).
+    Also, this will return Pint Quantities even when given xarray DataArray profiles.
+    """
+    height = kwargs.pop('height', None)
+    bottom = kwargs.pop('bottom', None)
+    depth = kwargs.pop('depth', 100)    #'hPa'
+    interpolate = kwargs.pop('interpolate', True)
+
+    # Make sure pressure and datavars are the same length
+    for datavar in args:
+        if len(pressure) != len(datavar):
+            raise ValueError('Pressure and data variables must have the same length.')
+
+    # If the bottom is not specified, make it the surface pressure
+    if bottom is None:
+        bottom = np.max(pressure)
+
+    bottom_pressure, bottom_height = _get_bound_pressure_height(pressure, bottom,
+                                                                height=height,
+                                                                interpolate=interpolate)
+
+    # Calculate the top in whatever units depth is in
+    if depth.check('[length]**-1 * [mass] * [time]**-2'):
+        top = bottom_pressure - depth
+    elif depth.check('[length]'):
+        top = bottom_height + depth
+    else:
+        raise ValueError('Depth must be specified in units of length or pressure')
+
+    top_pressure, _ = _get_bound_pressure_height(pressure, top, height=height,
+                                                 interpolate=interpolate)
+
+    ret = []  # returned data variables in layer
+
+    # Ensure pressures are sorted in ascending order
+    sort_inds = np.argsort(pressure)
+    pressure = pressure[sort_inds]
+
+    # Mask based on top and bottom pressure
+    inds = (_less_or_close(pressure, bottom_pressure)
+            & _greater_or_close(pressure, top_pressure))
+    p_interp = pressure[inds]
+
+    # Interpolate pressures at bounds if necessary and sort
+    if interpolate:
+        # If we don't have the bottom or top requested, append them
+        if not np.any(np.isclose(top_pressure, p_interp)):
+            p_interp = np.sort(np.append(p_interp.m, top_pressure.m))
+        if not np.any(np.isclose(bottom_pressure, p_interp)):
+            p_interp = np.sort(np.append(p_interp.m, bottom_pressure.m))
+
+    ret.append(p_interp[::-1])
+
+    for datavar in args:
+        # Ensure that things are sorted in ascending order
+        datavar = datavar[sort_inds]
+
+        if interpolate:
+            # Interpolate for the possibly missing bottom/top values
+            datavar_interp = log_interpolate_1d(p_interp, pressure, datavar)
+            datavar = datavar_interp
+        else:
+            datavar = datavar[inds]
+
+        ret.append(datavar[::-1])
     return ret
 
 

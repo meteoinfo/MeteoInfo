@@ -3,7 +3,7 @@ Utilities that manipulate strides to achieve desirable effects.
 """
 
 from org.meteoinfo.ndarray.math import ArrayUtil
-from mipylib.numeric import core as np
+from . import numeric as np
 
 __all__ = ['broadcast_shapes','broadcast_arrays']
 
@@ -11,14 +11,16 @@ def _broadcast_shapes(*args):
     args = [np.array(_m).shape for _m in args]
     return ArrayUtil.broadcastShapes(args)
 
+
 def broadcast_shapes(*args):
     """
     Broadcast the input shapes into a single shape.
-    :param args: (*list of ints*) The shapes to be broadcast against each other..
+    :param args: (*list of ints*) The shapes to be broadcast against each other.
     :return: Broadcasted shape.
     """
     args = [_m for _m in args]
     return ArrayUtil.broadcastShapes(args)
+
 
 def broadcast_arrays(*args):
     """

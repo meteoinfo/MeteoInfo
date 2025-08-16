@@ -2643,7 +2643,7 @@ public class ArrayUtil {
             if (idx == -1) {
                 idx = 0;
             } else {
-                idx = -idx - 2;
+                idx = -idx - 1;
             }
 
             if (!left)

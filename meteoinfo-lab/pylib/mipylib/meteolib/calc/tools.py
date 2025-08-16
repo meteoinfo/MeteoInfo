@@ -7,7 +7,7 @@ Ported from MetPy.
 import mipylib.numeric as np
 import mipylib.numeric.ma as ma
 from mipylib.geolib import Geod
-from ..interpolate import interpolate_1d
+from ..interpolate import interpolate_1d, log_interpolate_1d
 from ..cbook import broadcast_indices
 
 __all__ = ['resample_nn_1d', 'nearest_intersection_idx', 'first_derivative', 'find_intersections', 'gradient',
@@ -198,7 +198,7 @@ def _remove_nans(*variables):
     return ret
 
 
-def _get_bound_pressure_height(pressure, bound, height=None, interpolate=True):
+def _get_bound_pressure_height(pressure, bound, height=None, interpolate=True, is_pressure=True):
     """Calculate the bounding pressure and height in a layer.
 
     Given pressure, optional heights and a bound, return either the closest pressure/height
@@ -233,7 +233,7 @@ def _get_bound_pressure_height(pressure, bound, height=None, interpolate=True):
         height = height[sort_inds]
 
     # Bound is given in pressure
-    if bound.check('[length]**-1 * [mass] * [time]**-2'):
+    if is_pressure:
         # If the bound is in the pressure data, we know the pressure bound exactly
         if bound in pressure:
             # By making sure this is at least a 1D array we avoid the behavior in numpy
@@ -263,7 +263,7 @@ def _get_bound_pressure_height(pressure, bound, height=None, interpolate=True):
                     bound_height = pressure_to_height_std(bound_pressure)
 
     # Bound is given in height
-    elif bound.check('[length]'):
+    else:
         # If there is height data, see if we have the bound or need to interpolate/find nearest
         if height is not None:
             if bound in height:  # Bound is in the height data
@@ -292,16 +292,12 @@ def _get_bound_pressure_height(pressure, bound, height=None, interpolate=True):
                 bound_pressure = pressure[idx]
                 bound_height = pressure_to_height_std(bound_pressure)
 
-    # Bound has invalid units
-    else:
-        raise ValueError('Bound must be specified in units of length or pressure.')
-
     # If the bound is out of the range of the data, we shouldn't extrapolate
-    if not (_greater_or_close(bound_pressure, np.nanmin(pressure))
-            and _less_or_close(bound_pressure, np.nanmax(pressure))):
+    if not (_greater_or_close(bound_pressure, np.min(pressure))
+            and _less_or_close(bound_pressure, np.max(pressure))):
         raise ValueError('Specified bound is outside pressure range.')
-    if height is not None and not (_less_or_close(bound_height, np.nanmax(height))
-                                   and _greater_or_close(bound_height, np.nanmin(height))):
+    if height is not None and not (_less_or_close(bound_height, np.max(height))
+                                   and _greater_or_close(bound_height, np.min(height))):
         raise ValueError('Specified bound is outside height range.')
 
     return bound_pressure, bound_height
@@ -439,6 +435,7 @@ def get_layer(pressure, *args, **kwargs):
     bottom = kwargs.pop('bottom', None)
     depth = kwargs.pop('depth', 100)    #'hPa'
     interpolate = kwargs.pop('interpolate', True)
+    is_pressure = kwargs.pop('is_pressure', True)
 
     # Make sure pressure and datavars are the same length
     for datavar in args:
@@ -454,12 +451,10 @@ def get_layer(pressure, *args, **kwargs):
                                                                 interpolate=interpolate)
 
     # Calculate the top in whatever units depth is in
-    if depth.check('[length]**-1 * [mass] * [time]**-2'):
+    if is_pressure:
         top = bottom_pressure - depth
-    elif depth.check('[length]'):
-        top = bottom_height + depth
     else:
-        raise ValueError('Depth must be specified in units of length or pressure')
+        top = bottom_height + depth
 
     top_pressure, _ = _get_bound_pressure_height(pressure, top, height=height,
                                                  interpolate=interpolate)
@@ -479,9 +474,9 @@ def get_layer(pressure, *args, **kwargs):
     if interpolate:
         # If we don't have the bottom or top requested, append them
         if not np.any(np.isclose(top_pressure, p_interp)):
-            p_interp = np.sort(np.append(p_interp.m, top_pressure.m))
+            p_interp = np.sort(np.append(p_interp, top_pressure))
         if not np.any(np.isclose(bottom_pressure, p_interp)):
-            p_interp = np.sort(np.append(p_interp.m, bottom_pressure.m))
+            p_interp = np.sort(np.append(p_interp, bottom_pressure))
 
     ret.append(p_interp[::-1])
 

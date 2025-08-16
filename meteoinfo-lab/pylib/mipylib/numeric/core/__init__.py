@@ -14,6 +14,7 @@ from _io import *
 from . import umath
 from umath import *
 from .shape_base import *
+from .stride_tricks import *
 
 __all__ = ['NDArray','DimArray','PyTableData','dtype','dimension','dim_array','nditer']
 __all__ += multiarray.__all__
@@ -22,3 +23,4 @@ __all__ += fromnumeric.__all__
 __all__ += umath.__all__
 __all__ += _io.__all__
 __all__ += shape_base.__all__
+__all__ += stride_tricks.__all__

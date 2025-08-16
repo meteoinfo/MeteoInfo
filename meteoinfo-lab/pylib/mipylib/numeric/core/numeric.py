@@ -47,7 +47,7 @@ __all__ = [
     'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reciprocal','reshape',
     'repeat','roll','rolling_mean','rot90','round','sec','sign','sin','sinh','shape','smooth5','smooth9','sort',
     'spacing','sphere','squeeze','split','sqrt','square','std','swapaxes','take','tan','tanh','tile',
-    'transpose','trapz','to_datetime','vdot','unravel_index','var','vstack','zeros','zeros_like'
+    'transpose','trapz','trapezoid','to_datetime','vdot','unravel_index','var','vstack','zeros','zeros_like'
     ]
 
 
@@ -351,7 +351,7 @@ def zeros_like(a, dtype=None):
     """
     shape = a.shape
     if dtype is None:
-        dtype = _dtype.fromjava(a.dtype)
+        dtype = a.dtype
     elif isinstance(dtype, basestring):
         dtype = _dtype.DataType(dtype)
 
@@ -2170,32 +2170,32 @@ def atleast_2d(*args):
         return res[0]
     else:
         return res
-        
+
 def vstack(tup):
     """
     Stack arrays in sequence vertically (row wise).
-    
+
     This is equivalent to concatenation along the first axis after 1-D arrays
     of shape `(N,)` have been reshaped to `(1,N)`.
-    
-    :param tup: (*tuple*) Sequence of array. The arrays must have the same shape 
+
+    :param tup: (*tuple*) Sequence of array. The arrays must have the same shape
         along all but the first axis. 1-D arrays must have the same length.
-        
-    :returns: (*array*) The array formed by stacking the given arrays, will be 
+
+    :returns: (*array*) The array formed by stacking the given arrays, will be
         at least 2-D.
     """
     return concatenate([atleast_2d(_m) for _m in tup], 0)
-    
+
 def hstack(tup):
     """
     Stack arrays in sequence horizontally (column wise).
 
     This is equivalent to concatenation along the second axis, except for 1-D
     arrays where it concatenates along the first axis.
-    
-    :param tup: (*tuple*) Sequence of array. The arrays must have the same shape 
+
+    :param tup: (*tuple*) Sequence of array. The arrays must have the same shape
         along all but the first axis. 1-D arrays must have the same length.
-        
+
     :returns: (*array*) The array formed by stacking the given arrays.
     """
     arrs = [atleast_1d(_m) for _m in tup]
@@ -2548,14 +2548,15 @@ def cylinder(r=1, n=20):
     z = z[:,newaxis]
     z = z.repeat(n + 1, axis=1)
     return x, y, z
+
     
 def broadcast_to(a, shape):
     """
     Broadcast an array to a new shape.
-    
+
     :param a: (*array_like*) The array to broadcast.
     :param shape: (*tuple*) The shape of the desired array.
-    
+
     :returns: (*NDArray*) A readonly view on the original array with the given shape.
     """
     if isinstance(a, numbers.Number):
@@ -2567,7 +2568,8 @@ def broadcast_to(a, shape):
     if r is None:
         raise ValueError('Can not broadcast to the shape!')
     return NDArray(r)
-    
+
+
 def corrcoef(x, y):
     """
     Return Pearson product-moment correlation coefficients.
@@ -2690,7 +2692,7 @@ def rot90(a, k=1):
     """
     return a.rot90(k)
         
-def trapz(y, x=None, dx=1.0, axis=-1):
+def trapezoid(y, x=None, dx=1.0, axis=-1):
     """
     Integrate along the given axis using the composite trapezoidal rule.
     
@@ -2727,6 +2729,10 @@ def trapz(y, x=None, dx=1.0, axis=-1):
             r = ArrayMath.trapz(y.asarray(), x.asarray(), axis)
 
         return y.array_wrap(r, axis)
+
+
+trapz = trapezoid
+
             
 def rolling_mean(x, window, center=False):
     """

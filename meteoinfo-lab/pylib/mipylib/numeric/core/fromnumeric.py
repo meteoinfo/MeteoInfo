@@ -2,7 +2,9 @@
 
 from .numeric import asarray, array, isscalar
 from ._ndarray import NDArray
+from .stride_tricks import broadcast_arrays
 from org.meteoinfo.ndarray.math import ArrayUtil, ArrayMath
+
 
 __all__ = ['cumprod', 'cumsum', 'ndim', 'nonzero', 'prod', 'ravel', 'searchsorted', 'sum',
            'where']
@@ -113,6 +115,7 @@ def where(condition, *args):
         condition = asarray(condition)
         x = asarray(x)
         y = asarray(y)
+        x, y = broadcast_arrays(x, y)
         r = ArrayUtil.where(condition._array, x._array, y._array)
         return NDArray(r)
 

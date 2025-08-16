@@ -18,20 +18,24 @@ from mipylib.numeric.special import lambertw
 
 
 __all__ = [
-    'ccl','density','dewpoint','dewpoint_from_relative_humidity','dry_lapse','dry_static_energy',
-    'equivalent_potential_temperature','exner_function',
-    'isentropic_interpolation','lcl','mixed_layer','mixing_ratio','mixing_ratio_from_relative_humidity',
+    'cape_cin','ccl','density','dewpoint','dewpoint_from_relative_humidity','dry_lapse','dry_static_energy',
+    'el','equivalent_potential_temperature','exner_function',
+    'isentropic_interpolation','lcl','lfc','mixed_layer','mixed_layer_cape_cin','mixed_parcel','mixing_ratio',
+    'mixing_ratio_from_relative_humidity',
     'mixing_ratio_from_specific_humidity',
     'moist_air_gas_constant','moist_air_specific_heat_pressure',
-    'moist_air_poisson_exponent','moist_lapse','parcel_profile','parcel_profile_with_lcl',
+    'moist_air_poisson_exponent','moist_lapse','most_unstable_parcel','most_unstable_cape_cin',
+    'parcel_profile','parcel_profile_with_lcl',
     'potential_temperature','psychrometric_vapor_pressure_wet',
     'relative_humidity_from_mixing_ratio','relative_humidity_from_specific_humidity',
     'relative_humidity_from_dewpoint','relative_humidity_wet_psychrometric',
+    'saturation_equivalent_potential_temperature',
     'saturation_mixing_ratio','saturation_vapor_pressure','specific_humidity_from_dewpoint',
-    'specific_humidity_from_mixing_ratio','specific_humidity_from_relative_humidity',
+    'specific_humidity_from_mixing_ratio','specific_humidity_from_relative_humidity','surface_based_cape_cin',
     'temperature_from_potential_temperature','vapor_pressure','virtual_potential_temperature',
     'virtual_temperature','virtual_temperature_from_dewpoint',
-    'water_latent_heat_vaporization','water_latent_heat_sublimation','water_latent_heat_melting'
+    'water_latent_heat_vaporization','water_latent_heat_sublimation','water_latent_heat_melting',
+    'wet_bulb_potential_temperature'
     ]
 
 
@@ -42,6 +46,7 @@ def _check_pressure(pressure):
     otherwise, returns False.
 
     """
+    pressure = np.asarray(pressure)
     return np.all(pressure[:-1] >= pressure[1:])
 
 
@@ -981,7 +986,7 @@ def moist_lapse(pressure, temperature, reference_pressure=None):
     --------
     >>> from mipylib.meteolib.calc import moist_lapse
     >>> plevs = [925, 850, 700, 500, 300, 200]
-    >>> moist_lapse(plevs, 5 + 273.16)
+    >>> moist_lapse(plevs, 5 + 273.15)
     <[  5.           0.99635104  -8.88958079 -28.38862857 -60.12003999
     -83.34321585], 'degree_Celsius'>
 
@@ -1242,6 +1247,175 @@ def ccl(pressure, temperature, dewpoint, height=None, mixed_layer_depth=None, wh
     return x, y, dry_lapse(pressure[0], y, x)
 
 
+def lfc(pressure, temperature, dewpoint, parcel_temperature_profile=None, dewpoint_start=None,
+        which='top'):
+    r"""Calculate the level of free convection (LFC).
+
+    This works by finding the first intersection of the ideal parcel path and
+    the measured parcel temperature. If this intersection occurs below the LCL,
+    the LFC is determined to be the same as the LCL, based upon the conditions
+    set forth in [USAF1990]_, pg 4-14, where a parcel must be lifted dry adiabatically
+    to saturation before it can freely rise.
+
+    Parameters
+    ----------
+    pressure : `hPa`
+        Atmospheric pressure profile. This array must be from high to low pressure.
+
+    temperature : `kelvin`
+        Temperature at the levels given by `pressure`
+
+    dewpoint : `kelvin`
+        Dewpoint at the levels given by `pressure`
+
+    parcel_temperature_profile: `kelvin`, optional
+        The parcel's temperature profile from which to calculate the LFC. Defaults to the
+        surface parcel profile.
+
+    dewpoint_start: `kelvin`, optional
+        Dewpoint of the parcel for which to calculate the LFC. Defaults to the surface
+        dewpoint.
+
+    which: str, optional
+        Pick which LFC to return. Options are 'top', 'bottom', 'wide', 'most_cape', and 'all';
+        'top' returns the lowest-pressure LFC (default),
+        'bottom' returns the highest-pressure LFC,
+        'wide' returns the LFC whose corresponding EL is farthest away,
+        'most_cape' returns the LFC that results in the most CAPE in the profile.
+
+    Returns
+    -------
+    `hPa`
+        LFC pressure, or array of same if which='all'
+
+    `kelvin`
+        LFC temperature, or array of same if which='all'
+
+    Examples
+    --------
+    >>> from mipylib.meteolib.calc import dewpoint_from_relative_humidity, lfc
+    >>> from mipylib.meteolib import constants as cons
+    >>> # pressure
+    >>> p = [1008., 1000., 950., 900., 850., 800., 750., 700., 650., 600.,
+    ...      550., 500., 450., 400., 350., 300., 250., 200.,
+    ...      175., 150., 125., 100., 80., 70., 60., 50.,
+    ...      40., 30., 25., 20.]
+    >>> # temperature
+    >>> T = array([29.3, 28.1, 23.5, 20.9, 18.4, 15.9, 13.1, 10.1, 6.7, 3.1,
+    ...      -0.5, -4.5, -9.0, -14.8, -21.5, -29.7, -40.0, -52.4,
+    ...      -59.2, -66.5, -74.1, -78.5, -76.0, -71.6, -66.7, -61.3,
+    ...      -56.3, -51.7, -50.7, -47.5]) + cons.degCtoK
+    >>> # relative humidity
+    >>> rh = [.85, .65, .36, .39, .82, .72, .75, .86, .65, .22, .52,
+    ...       .66, .64, .20, .05, .75, .76, .45, .25, .48, .76, .88,
+    ...       .56, .88, .39, .67, .15, .04, .94, .35]
+    >>> # calculate dewpoint
+    >>> Td = dewpoint_from_relative_humidity(T, rh)
+    >>> # calculate LFC
+    >>> lfc(p, T, Td)
+    (<(967.309996, 'hectopascal')>, <(25.778387, 'degree_Celsius')>)
+
+    See Also
+    --------
+    parcel_profile
+
+    Notes
+    -----
+    Only functions on 1D profiles (not higher-dimension vertical cross sections or grids).
+    Since this function returns scalar values when given a profile, this will return Pint
+    Quantities even when given xarray DataArray profiles.
+
+    """
+    # Default to surface parcel if no profile or starting pressure level is given
+    if parcel_temperature_profile is None:
+        pressure, temperature, dewpoint = _remove_nans(pressure, temperature, dewpoint)
+        new_profile = parcel_profile_with_lcl(pressure, temperature, dewpoint)
+        pressure, temperature, dewpoint, parcel_temperature_profile = new_profile
+        parcel_temperature_profile = parcel_temperature_profile
+    else:
+        new_profile = _remove_nans(pressure, temperature, dewpoint, parcel_temperature_profile)
+        pressure, temperature, dewpoint, parcel_temperature_profile = new_profile
+
+    if dewpoint_start is None:
+        dewpoint_start = dewpoint[0]
+
+    # The parcel profile and data may have the same first data point.
+    # If that is the case, ignore that point to get the real first
+    # intersection for the LFC calculation. Use logarithmic interpolation.
+    if np.isclose(parcel_temperature_profile[0], temperature[0]):
+        x, y = find_intersections(pressure[1:], parcel_temperature_profile[1:],
+                                  temperature[1:], direction='increasing', log_x=True)
+    else:
+        x, y = find_intersections(pressure, parcel_temperature_profile,
+                                  temperature, direction='increasing', log_x=True)
+
+    # Compute LCL for this parcel for future comparisons
+    this_lcl = lcl(pressure[0], parcel_temperature_profile[0], dewpoint_start)
+
+    # The LFC could:
+    # 1) Not exist
+    # 2) Exist but be equal to the LCL
+    # 3) Exist and be above the LCL
+
+    # LFC does not exist or is LCL
+    if len(x) == 0:
+        # Is there any positive area above the LCL?
+        mask = pressure < this_lcl[0]
+        if np.all(_less_or_close(parcel_temperature_profile[mask], temperature[mask])):
+            # LFC doesn't exist
+            x = np.nan
+            y = np.nan
+        else:  # LFC = LCL
+            x, y = this_lcl
+        return x, y
+
+    # LFC exists. Make sure it is no lower than the LCL
+    else:
+        idx = x < this_lcl[0]
+        # LFC height < LCL height, so set LFC = LCL
+        if not any(idx):
+            el_pressure, _ = find_intersections(pressure[1:], parcel_temperature_profile[1:],
+                                                temperature[1:], direction='decreasing',
+                                                log_x=True)
+            if el_pressure.size and np.min(el_pressure) > this_lcl[0]:
+                # EL exists and it is below the LCL
+                x = np.nan
+                y = np.nan, temperature.units
+            else:
+                # EL exists and it is above the LCL or the EL does not exist
+                x, y = this_lcl
+            return x, y
+        # Otherwise, find all LFCs that exist above the LCL
+        # What is returned depends on which flag as described in the docstring
+        else:
+            return _multiple_el_lfc_options(x, y, idx, which, pressure,
+                                            parcel_temperature_profile, temperature,
+                                            dewpoint, intersect_type='LFC')
+
+
+def _multiple_el_lfc_options(intersect_pressures, intersect_temperatures, valid_x,
+                             which, pressure, parcel_temperature_profile, temperature,
+                             dewpoint, intersect_type):
+    """Choose which ELs and LFCs to return from a sounding."""
+    p_list, t_list = intersect_pressures[valid_x], intersect_temperatures[valid_x]
+    if which == 'all':
+        x, y = p_list, t_list
+    elif which == 'bottom':
+        x, y = p_list[0], t_list[0]
+    elif which == 'top':
+        x, y = p_list[-1], t_list[-1]
+    elif which == 'wide':
+        x, y = _wide_option(intersect_type, p_list, t_list, pressure,
+                            parcel_temperature_profile, temperature)
+    elif which == 'most_cape':
+        x, y = _most_cape_option(intersect_type, p_list, t_list, pressure, temperature,
+                                 dewpoint, parcel_temperature_profile)
+    else:
+        raise ValueError('Invalid option for "which". Valid options are "top", "bottom", '
+                         '"wide", "most_cape", and "all".')
+    return x, y
+
+
 def _wide_option(intersect_type, p_list, t_list, pressure, parcel_temperature_profile,
                  temperature):
     """Calculate the LFC or EL that produces the greatest distance between these points."""
@@ -1261,6 +1435,132 @@ def _wide_option(intersect_type, p_list, t_list, pressure, parcel_temperature_pr
     diff = [lfc_p - el_p for lfc_p, el_p in zip(lfc_p_list, el_p_list, strict=False)]
     return (p_list[np.where(diff == np.max(diff))][0],
             t_list[np.where(diff == np.max(diff))][0])
+
+
+def _most_cape_option(intersect_type, p_list, t_list, pressure, temperature, dewpoint,
+                      parcel_temperature_profile):
+    """Calculate the LFC or EL that produces the most CAPE in the profile."""
+    # Need to loop through all possible combinations of cape, find greatest cape profile
+    cape_list, pair_list = [], []
+    for which_lfc in ['top', 'bottom']:
+        for which_el in ['top', 'bottom']:
+            cape, _ = cape_cin(pressure, temperature, dewpoint, parcel_temperature_profile,
+                               which_lfc=which_lfc, which_el=which_el)
+            cape_list.append(cape.m)
+            pair_list.append([which_lfc, which_el])
+    (lfc_chosen, el_chosen) = pair_list[np.where(cape_list == np.max(cape_list))[0][0]]
+    if intersect_type == 'LFC':
+        if lfc_chosen == 'top':
+            x, y = p_list[-1], t_list[-1]
+        else:  # 'bottom' is returned
+            x, y = p_list[0], t_list[0]
+    else:  # EL is returned
+        if el_chosen == 'top':
+            x, y = p_list[-1], t_list[-1]
+        else:
+            x, y = p_list[0], t_list[0]
+    return x, y
+
+
+def el(pressure, temperature, dewpoint, parcel_temperature_profile=None, which='top'):
+    r"""Calculate the equilibrium level.
+
+    This works by finding the last intersection of the ideal parcel path and
+    the measured environmental temperature. If there is one or fewer intersections, there is
+    no equilibrium level.
+
+    Parameters
+    ----------
+    pressure : `hPa`
+        Atmospheric pressure profile. This array must be from high to low pressure.
+
+    temperature : `kelvin`
+        Temperature at the levels given by `pressure`
+
+    dewpoint : `kelvin`
+        Dewpoint at the levels given by `pressure`
+
+    parcel_temperature_profile: `kelvin`, optional
+        The parcel's temperature profile from which to calculate the EL. Defaults to the
+        surface parcel profile.
+
+    which: str, optional
+        Pick which EL to return. Options are 'top', 'bottom', 'wide', 'most_cape', and 'all'.
+        'top' returns the lowest-pressure EL, default.
+        'bottom' returns the highest-pressure EL.
+        'wide' returns the EL whose corresponding LFC is farthest away.
+        'most_cape' returns the EL that results in the most CAPE in the profile.
+
+    Returns
+    -------
+    `hPa`
+        EL pressure, or array of same if which='all'
+
+    `kelvin`
+        EL temperature, or array of same if which='all'
+
+    Examples
+    --------
+    >>> from mipylib.meteolib.calc import el, dewpoint_from_relative_humidity, parcel_profile
+    >>> from mipylib.meteolib import constants as cons
+    >>> # pressure
+    >>> p = [1008., 1000., 950., 900., 850., 800., 750., 700., 650., 600.,
+    ...      550., 500., 450., 400., 350., 300., 250., 200.,
+    ...      175., 150., 125., 100., 80., 70., 60., 50.,
+    ...      40., 30., 25., 20.]
+    >>> # temperature
+    >>> T = array([29.3, 28.1, 23.5, 20.9, 18.4, 15.9, 13.1, 10.1, 6.7, 3.1,
+    ...      -0.5, -4.5, -9.0, -14.8, -21.5, -29.7, -40.0, -52.4,
+    ...      -59.2, -66.5, -74.1, -78.5, -76.0, -71.6, -66.7, -61.3,
+    ...      -56.3, -51.7, -50.7, -47.5]) + cons.degCtoK
+    >>> # relative humidity
+    >>> rh = [.85, .65, .36, .39, .82, .72, .75, .86, .65, .22, .52,
+    ...       .66, .64, .20, .05, .75, .76, .45, .25, .48, .76, .88,
+    ...       .56, .88, .39, .67, .15, .04, .94, .35]
+    >>> # calculate dewpoint
+    >>> Td = dewpoint_from_relative_humidity(T, rh)
+    >>> # compute parcel profile temperature
+    >>> prof = parcel_profile(p, T[0], Td[0]).to('degC')
+    >>> # calculate EL
+    >>> el(p, T, Td, prof)
+    (<(112.252054, 'hectopascal')>, <(-76.2210312, 'degree_Celsius')>)
+
+    See Also
+    --------
+    parcel_profile
+
+    Notes
+    -----
+    Only functions on 1D profiles (not higher-dimension vertical cross sections or grids).
+    Since this function returns scalar values when given a profile, this will return Pint
+    Quantities even when given xarray DataArray profiles.
+
+    """
+    # Default to surface parcel if no profile or starting pressure level is given
+    if parcel_temperature_profile is None:
+        pressure, temperature, dewpoint = _remove_nans(pressure, temperature, dewpoint)
+        new_profile = parcel_profile_with_lcl(pressure, temperature, dewpoint)
+        pressure, temperature, dewpoint, parcel_temperature_profile = new_profile
+    else:
+        new_profile = _remove_nans(pressure, temperature, dewpoint, parcel_temperature_profile)
+        pressure, temperature, dewpoint, parcel_temperature_profile = new_profile
+
+    # If the top of the sounding parcel is warmer than the environment, there is no EL
+    if parcel_temperature_profile[-1] > temperature[-1]:
+        return (np.nan, np.nan)
+
+    # Interpolate in log space to find the appropriate pressure - units have to be stripped
+    # and reassigned to allow np.log() to function properly.
+    x, y = find_intersections(pressure[1:], parcel_temperature_profile[1:], temperature[1:],
+                              direction='decreasing', log_x=True)
+    lcl_p, _ = lcl(pressure[0], temperature[0], dewpoint[0])
+    if len(x) > 0 and x[-1] < lcl_p:
+        idx = x < lcl_p
+        return _multiple_el_lfc_options(x, y, idx, which, pressure,
+                                        parcel_temperature_profile, temperature, dewpoint,
+                                        intersect_type='EL')
+    else:
+        return (np.nan, np.nan)
 
 
 def parcel_profile(pressure, temperature, dewpoint):
@@ -1308,7 +1608,7 @@ def parcel_profile(pressure, temperature, dewpoint):
     >>> # calculate dewpoint
     >>> Td = dewpoint_from_relative_humidity(T, rh)
     >>> # computer parcel temperature
-    >>> parcel_profile(p, T[0], Td[0]) + cons.degCtoK
+    >>> parcel_profile(p, T[0], Td[0]) - cons.degCtoK
     <([  29.3          28.61221952   25.17408111   23.41044641   21.53049669
     19.51679547   17.34763012   14.99552875   12.4250297     9.58933992
         6.4250951     2.84385238   -1.28217807   -6.14487817  -12.0437512
@@ -1331,6 +1631,7 @@ def parcel_profile(pressure, temperature, dewpoint):
     obtain a xarray Dataset instead, use `parcel_profile_with_lcl_as_dataset` instead.
 
     """
+    pressure = np.asarray(pressure)
     _, _, _, t_l, _, t_u = _parcel_profile_helper(pressure, temperature, dewpoint)
     return np.concatenate((t_l, t_u))
 
@@ -1439,17 +1740,20 @@ def equivalent_potential_temperature(pressure, temperature, dewpoint):
 
     Parameters
     ----------
-    pressure: `float`
-        Total atmospheric pressure (hPa)
-    temperature: `float`
-        Temperature of parcel (kelvin)
-    dewpoint: `float`
-        Dewpoint of parcel (kelvin)
+    pressure : `hPa`
+        Total atmospheric pressure
+
+    temperature : `kelvin`
+        Temperature of parcel
+
+    dewpoint : `kelvin`
+        Dewpoint of parcel
 
     Returns
     -------
-    `float`
-        The equivalent potential temperature of the parcel (kelvin)
+    `kelvin`
+        The equivalent potential temperature of the parcel
+
     Notes
     -----
     [Bolton1980]_ formula for Theta-e is used, since according to
@@ -1466,6 +1770,123 @@ def equivalent_potential_temperature(pressure, temperature, dewpoint):
     return th_l * np.exp(r * (1 + 0.448 * r) * (3036. / t_l - 1.78))
 
 
+def saturation_equivalent_potential_temperature(pressure, temperature):
+    r"""Calculate saturation equivalent potential temperature.
+
+    This calculation must be given an air parcel's pressure and temperature.
+    The implementation uses the formula outlined in [Bolton1980]_ for the
+    equivalent potential temperature, and assumes a saturated process.
+
+    First, because we assume a saturated process, the temperature at the LCL is
+    equivalent to the current temperature. Therefore the following equation.
+
+    .. math:: T_{L}=\frac{1}{\frac{1}{T_{D}-56}+\frac{ln(T_{K}/T_{D})}{800}}+56
+
+    reduces to:
+
+    .. math:: T_{L} = T_{K}
+
+    Then the potential temperature at the temperature/LCL is calculated:
+
+    .. math:: \theta_{DL}=T_{K}\left(\frac{1000}{p-e}\right)^k
+              \left(\frac{T_{K}}{T_{L}}\right)^{.28r}
+
+    However, because:
+
+    .. math:: T_{L} = T_{K}
+
+    it follows that:
+
+    .. math:: \theta_{DL}=T_{K}\left(\frac{1000}{p-e}\right)^k
+
+    Both of these are used to calculate the final equivalent potential temperature:
+
+    .. math:: \theta_{E}=\theta_{DL}\exp\left[\left(\frac{3036.}{T_{K}}
+                                              -1.78\right)*r(1+.448r)\right]
+
+    Parameters
+    ----------
+    pressure: `hPa`
+        Total atmospheric pressure
+
+    temperature: `kelvin`
+        Temperature of parcel
+
+    Returns
+    -------
+    `kelvin`
+        Saturation equivalent potential temperature of the parcel
+
+    Examples
+    --------
+    >>> from mipylib.meteolib.calc import saturation_equivalent_potential_temperature
+    >>> from mipylib.meteolib import constants as cons
+    >>> saturation_equivalent_potential_temperature(500, -20 + cons.degCtoK)
+    <(313.793845, 'kelvin')>
+
+    Notes
+    -----
+    [Bolton1980]_ formula for Theta-e is used (for saturated case), since according to
+    [DaviesJones2009]_ it is the most accurate non-iterative formulation
+    available.
+
+    """
+    t = temperature
+    p = pressure
+    e = saturation_vapor_pressure(temperature)
+    r = saturation_mixing_ratio(pressure, temperature)
+
+    th_l = t * (1000 / (p - e)) ** constants.kappa
+    th_es = th_l * np.exp((3036. / t - 1.78) * r * (1 + 0.448 * r))
+
+    return th_es
+
+
+def wet_bulb_potential_temperature(pressure, temperature, dewpoint):
+    r"""Calculate wet-bulb potential temperature.
+
+    This calculation must be given an air parcel's pressure, temperature, and dewpoint.
+    The implementation uses the formula outlined in [DaviesJones2008]_.
+    First, theta-e is calculated
+    then use the formula from [DaviesJones2008]_
+
+    .. math:: \theta_w = \theta_e -
+        exp(\frac{a_0 + a_1 x + a_2 x^2 + a_3 x^3 + a_4 x^4}
+            {1 + b_1 x + b_2 x^2 + b_3 x^3 + b_4 x^4})
+
+    where :math:`x = \theta_e / 273.15 K`.
+
+    When :math:`\theta_e <= -173.15 K` then :math:`\theta_w = \theta_e`.
+
+    Parameters
+    ----------
+    pressure: `hPa`
+        Total atmospheric pressure
+
+    temperature: `kelvin`
+        Temperature of parcel
+
+    dewpoint: `kelvin`
+        Dewpoint of parcel
+
+    Returns
+    -------
+    `kelvin`
+        wet-bulb potential temperature of the parcel
+
+    """
+    theta_e = equivalent_potential_temperature(pressure, temperature, dewpoint)
+    x = theta_e / 273.15
+    x2 = x * x
+    x3 = x2 * x
+    x4 = x2 * x2
+    a = 7.101574 - 20.68208 * x + 16.11182 * x2 + 2.574631 * x3 - 5.205688 * x4
+    b = 1 - 3.552497 * x + 3.781782 * x2 - 0.6899655 * x3 - 0.5929340 * x4
+
+    theta_w = theta_e - np.exp(a / b)
+    return np.where(theta_e <= 173.15, theta_e, theta_w)
+
+
 def virtual_temperature(temperature, mixing, molecular_weight_ratio=constants.epsilon):
     r"""Calculate virtual temperature.
 
@@ -1476,8 +1897,10 @@ def virtual_temperature(temperature, mixing, molecular_weight_ratio=constants.ep
     ----------
     temperature: `kelvin`
         air temperature
+
     mixing : `dimensionless`
         dimensionless mass mixing ratio
+
     molecular_weight_ratio : 'dimensionless', optional
         The ratio of the molecular weight of the constituent gas to that assumed
         for air. Defaults to the ratio for water vapor to dry air.
@@ -1803,6 +2226,291 @@ def dry_static_energy(height, temperature):
     return constants.g * height + constants.Cp_d * temperature
 
 
+def cape_cin(pressure, temperature, dewpoint, parcel_profile, which_lfc='bottom',
+             which_el='top'):
+    r"""Calculate CAPE and CIN.
+
+    Calculate the convective available potential energy (CAPE) and convective inhibition (CIN)
+    of a given upper air profile and parcel path. CIN is integrated between the surface and
+    LFC, CAPE is integrated between the LFC and EL (or top of sounding). Intersection points
+    of the measured temperature profile and parcel profile are logarithmically interpolated.
+
+    Parameters
+    ----------
+    pressure : `hPa`
+        Atmospheric pressure level(s) of interest, in order from highest to
+        lowest pressure
+
+    temperature : `kelvin`
+        Atmospheric temperature corresponding to pressure
+
+    dewpoint : `kelvin`
+        Atmospheric dewpoint corresponding to pressure
+
+    parcel_profile : `kelvin`
+        Temperature profile of the parcel
+
+    which_lfc : str
+        Choose which LFC to integrate from. Valid options are 'top', 'bottom', 'wide',
+        and 'most_cape'. Default is 'bottom'.
+
+    which_el : str
+        Choose which EL to integrate to. Valid options are 'top', 'bottom', 'wide',
+        and 'most_cape'. Default is 'top'.
+
+    Returns
+    -------
+    `J/Kg`
+        Convective Available Potential Energy (CAPE)
+
+    `J/Kg`
+        Convective Inhibition (CIN)
+
+    Examples
+    --------
+    >>> from mipylib.meteolib.calc import cape_cin, dewpoint_from_relative_humidity, parcel_profile
+    >>> from mipylib.meteolib import constants as cons
+    >>> # pressure
+    >>> p = [1008., 1000., 950., 900., 850., 800., 750., 700., 650., 600.,
+    ...      550., 500., 450., 400., 350., 300., 250., 200.,
+    ...      175., 150., 125., 100., 80., 70., 60., 50.,
+    ...      40., 30., 25., 20.]
+    >>> # temperature
+    >>> T = array([29.3, 28.1, 23.5, 20.9, 18.4, 15.9, 13.1, 10.1, 6.7, 3.1,
+    ...      -0.5, -4.5, -9.0, -14.8, -21.5, -29.7, -40.0, -52.4,
+    ...      -59.2, -66.5, -74.1, -78.5, -76.0, -71.6, -66.7, -61.3,
+    ...      -56.3, -51.7, -50.7, -47.5]) + cons.degCtoK
+    >>> # relative humidity
+    >>> rh = [.85, .65, .36, .39, .82, .72, .75, .86, .65, .22, .52,
+    ...       .66, .64, .20, .05, .75, .76, .45, .25, .48, .76, .88,
+    ...       .56, .88, .39, .67, .15, .04, .94, .35]
+    >>> # calculate dewpoint
+    >>> Td = dewpoint_from_relative_humidity(T, rh)
+    >>> # compture parcel temperature
+    >>> prof = parcel_profile(p, T[0], Td[0])
+    >>> # calculate surface based CAPE/CIN
+    >>> cape_cin(p, T, Td, prof)
+    (<(4830.74608, 'joule / kilogram')>, <(0, 'joule / kilogram')>)
+
+    See Also
+    --------
+    lfc, el
+
+    Notes
+    -----
+    Formula adopted from [Hobbs1977]_.
+
+    .. math:: \text{CAPE} = -R_d \int_{LFC}^{EL}
+            (T_{{v}_{parcel}} - T_{{v}_{env}}) d\text{ln}(p)
+
+    .. math:: \text{CIN} = -R_d \int_{SFC}^{LFC}
+            (T_{{v}_{parcel}} - T_{{v}_{env}}) d\text{ln}(p)
+
+
+    * :math:`CAPE` is convective available potential energy
+    * :math:`CIN` is convective inhibition
+    * :math:`LFC` is pressure of the level of free convection
+    * :math:`EL` is pressure of the equilibrium level
+    * :math:`SFC` is the level of the surface or beginning of parcel path
+    * :math:`R_d` is the gas constant
+    * :math:`g` is gravitational acceleration
+    * :math:`T_{{v}_{parcel}}` is the parcel virtual temperature
+    * :math:`T_{{v}_{env}}` is environment virtual temperature
+    * :math:`p` is atmospheric pressure
+
+    Only functions on 1D profiles (not higher-dimension vertical cross sections or grids).
+    Since this function returns scalar values when given a profile, this will return Pint
+    Quantities even when given xarray DataArray profiles.
+
+    """
+    pressure, temperature, dewpoint, parcel_profile = _remove_nans(pressure, temperature,
+                                                                   dewpoint, parcel_profile)
+
+    pressure_lcl, _ = lcl(pressure[0], temperature[0], dewpoint[0])
+    below_lcl = pressure > pressure_lcl
+
+    # The mixing ratio of the parcel comes from the dewpoint below the LCL, is saturated
+    # based on the temperature above the LCL
+    parcel_mixing_ratio = np.where(
+        below_lcl,
+        saturation_mixing_ratio(pressure[0], dewpoint[0]),
+        saturation_mixing_ratio(pressure, parcel_profile)
+    )
+
+    # Convert the temperature/parcel profile to virtual temperature
+    temperature = virtual_temperature_from_dewpoint(pressure, temperature, dewpoint)
+    parcel_profile = virtual_temperature(parcel_profile, parcel_mixing_ratio)
+
+    # Calculate LFC limit of integration
+    lfc_pressure, _ = lfc(pressure, temperature, dewpoint,
+                          parcel_temperature_profile=parcel_profile, which=which_lfc)
+
+    # If there is no LFC, no need to proceed.
+    if np.isnan(lfc_pressure):
+        return 0, 0
+
+    # Calculate the EL limit of integration
+    el_pressure, _ = el(pressure, temperature, dewpoint,
+                        parcel_temperature_profile=parcel_profile, which=which_el)
+
+    # No EL and we use the top reading of the sounding.
+    el_pressure = pressure[-1] if np.isnan(el_pressure) else el_pressure
+
+    # Difference between the parcel path and measured temperature profiles
+    y = parcel_profile - temperature
+
+    # Estimate zero crossings
+    x, y = _find_append_zero_crossings(pressure.copy(), y)
+
+    # CAPE
+    # Only use data between the LFC and EL for calculation
+    p_mask = _less_or_close(x, lfc_pressure) & _greater_or_close(x, el_pressure)
+    x_clipped = x[p_mask]
+    y_clipped = y[p_mask]
+    cape = (constants.Rd * np.trapezoid(y_clipped, np.log(x_clipped)))
+
+    # CIN
+    # Only use data between the surface and LFC for calculation
+    p_mask = _greater_or_close(x, lfc_pressure)
+    x_clipped = x[p_mask]
+    y_clipped = y[p_mask]
+    cin = (constants.Rd * np.trapezoid(y_clipped, np.log(x_clipped)))
+
+    # Set CIN to 0 if it's returned as a positive value (#1190)
+    if cin > 0:
+        cin = 0
+    return cape, cin
+
+
+def _find_append_zero_crossings(x, y):
+    r"""
+    Find and interpolate zero crossings.
+
+    Estimate the zero crossings of an x,y series and add estimated crossings to series,
+    returning a sorted array with no duplicate values.
+
+    Parameters
+    ----------
+    x : `array-like`
+        X values of data
+
+    y : `array-like`
+        Y values of data
+
+    Returns
+    -------
+    x : `array-like`
+        X values of data
+    y : `array-like`
+        Y values of data
+
+    """
+    crossings = find_intersections(x[1:], y[1:],
+                                   np.zeros_like(y[1:]), log_x=True)
+    x = np.concatenate((x, crossings[0]))
+    y = np.concatenate((y, crossings[1]))
+
+    # Resort so that data are in order
+    sort_idx = np.argsort(x)
+    x = x[sort_idx]
+    y = y[sort_idx]
+
+    # Remove duplicate data points if there are any
+    keep_idx = np.ediff1d(x, to_end=[1]) > 1e-6
+    x = x[keep_idx]
+    y = y[keep_idx]
+    return x, y
+
+
+def most_unstable_parcel(pressure, temperature, dewpoint, height=None, bottom=None,
+                         depth=None):
+    """
+    Determine the most unstable parcel in a layer.
+
+    Determines the most unstable parcel of air by calculating the equivalent
+    potential temperature and finding its maximum in the specified layer.
+
+    Parameters
+    ----------
+    pressure: `hPa`
+        Atmospheric pressure profile
+
+    temperature: `kelvin`
+        Atmospheric temperature profile
+
+    dewpoint: `kelvin`
+        Atmospheric dewpoint profile
+
+    height: `meter`, optional
+        Atmospheric height profile. Standard atmosphere assumed when None (the default).
+
+    bottom: `hPa or meter`, optional
+        Bottom of the layer to consider for the calculation in pressure or height.
+        Defaults to using the bottom pressure or height.
+
+    depth: `hPa or meter`, optional
+        Depth of the layer to consider for the calculation in pressure or height. Defaults
+        to 300 hPa.
+
+    Returns
+    -------
+    `hPa`
+        Pressure of the most unstable parcel in the profile
+
+    `kelvin`
+        Temperature of the most unstable parcel in the profile
+
+    `kelvin`
+        Dewpoint of the most unstable parcel in the profile
+
+    int
+        The index of the most unstable parcel within the original data
+
+    Examples
+    --------
+    >>> from mipylib.meteolib.calc import dewpoint_from_relative_humidity, most_unstable_parcel
+    >>> from mipylib.meteolib import constants as cons
+    >>> # pressure
+    >>> p = [1008., 1000., 950., 900., 850., 800., 750., 700., 650., 600.,
+    ...      550., 500., 450., 400., 350., 300., 250., 200.,
+    ...      175., 150., 125., 100., 80., 70., 60., 50.,
+    ...      40., 30., 25., 20.]
+    >>> # temperature
+    >>> T = array([29.3, 28.1, 23.5, 20.9, 18.4, 15.9, 13.1, 10.1, 6.7, 3.1,
+    ...      -0.5, -4.5, -9.0, -14.8, -21.5, -29.7, -40.0, -52.4,
+    ...      -59.2, -66.5, -74.1, -78.5, -76.0, -71.6, -66.7, -61.3,
+    ...      -56.3, -51.7, -50.7, -47.5]) + cons.degCtoK
+    >>> # relative humidity
+    >>> rh = [.85, .65, .36, .39, .82, .72, .75, .86, .65, .22, .52,
+    ...       .66, .64, .20, .05, .75, .76, .45, .25, .48, .76, .88,
+    ...       .56, .88, .39, .67, .15, .04, .94, .35]
+    >>> # calculate dewpoint
+    >>> Td = dewpoint_from_relative_humidity(T, rh)
+    >>> # find most unstable parcel of depth 50 hPa
+    >>> most_unstable_parcel(p, T, Td, depth=50)
+    (<(1008.0, 'hectopascal')>, <(29.3, 'degree_Celsius')>,
+    <(26.4766738, 'degree_Celsius')>, 0)
+
+    See Also
+    --------
+    get_layer
+
+    Notes
+    -----
+    Only functions on 1D profiles (not higher-dimension vertical cross sections or grids).
+    Since this function returns scalar values when given a profile, this will return Pint
+    Quantities even when given xarray DataArray profiles.
+
+    """
+    if depth is None:
+        depth = 300    #'hPa'
+    p_layer, t_layer, td_layer = get_layer(pressure, temperature, dewpoint, bottom=bottom,
+                                           depth=depth, height=height, interpolate=False)
+    theta_e = equivalent_potential_temperature(p_layer, t_layer, td_layer)
+    max_idx = np.argmax(theta_e)
+    return p_layer[max_idx], t_layer[max_idx], td_layer[max_idx], max_idx
+
+
 def isentropic_interpolation(levels, pressure, temperature, *args, **kwargs):
     r"""Interpolate data in isobaric coordinates to isentropic coordinates.
 
@@ -1949,6 +2657,271 @@ def isentropic_interpolation(levels, pressure, temperature, *args, **kwargs):
         ret.extend(others)
 
     return ret
+
+
+def surface_based_cape_cin(pressure, temperature, dewpoint):
+    r"""Calculate surface-based CAPE and CIN.
+
+    Calculate the convective available potential energy (CAPE) and convective inhibition (CIN)
+    of a given upper air profile for a surface-based parcel. CIN is integrated
+    between the surface and LFC, CAPE is integrated between the LFC and EL (or top of
+    sounding). Intersection points of the measured temperature profile and parcel profile are
+    logarithmically interpolated.
+
+    Parameters
+    ----------
+    pressure : `hPa`
+        Atmospheric pressure profile. The first entry should be the starting
+        (surface) observation, with the array going from high to low pressure.
+
+    temperature : `kelvin`
+        Temperature profile corresponding to the `pressure` profile
+
+    dewpoint : `kelvin`
+        Dewpoint profile corresponding to the `pressure` profile
+
+    Returns
+    -------
+    `J/Kg`
+        Surface based Convective Available Potential Energy (CAPE)
+
+    `J/kg`
+        Surface based Convective Inhibition (CIN)
+
+    See Also
+    --------
+    cape_cin, parcel_profile
+
+    Notes
+    -----
+    Only functions on 1D profiles (not higher-dimension vertical cross sections or grids).
+    Since this function returns scalar values when given a profile, this will return Pint
+    Quantities even when given xarray DataArray profiles.
+
+    """
+    pressure, temperature, dewpoint = _remove_nans(pressure, temperature, dewpoint)
+    p, t, td, profile = parcel_profile_with_lcl(pressure, temperature, dewpoint)
+    return cape_cin(p, t, td, profile)
+
+
+def most_unstable_cape_cin(pressure, temperature, dewpoint, **kwargs):
+    r"""Calculate most unstable CAPE/CIN.
+
+    Calculate the convective available potential energy (CAPE) and convective inhibition (CIN)
+    of a given upper air profile and most unstable parcel path. CIN is integrated between the
+    surface and LFC, CAPE is integrated between the LFC and EL (or top of sounding).
+    Intersection points of the measured temperature profile and parcel profile are
+    logarithmically interpolated.
+
+    Parameters
+    ----------
+    pressure : `hPa`
+        Pressure profile
+
+    temperature : `Kelvin`
+        Temperature profile
+
+    dewpoint : `Kelvin`
+        Dew point profile
+
+    kwargs
+        Additional keyword arguments to pass to `most_unstable_parcel`
+
+    Returns
+    -------
+    `J/Kg`
+        Most unstable Convective Available Potential Energy (CAPE)
+
+    `J/Kg`
+        Most unstable Convective Inhibition (CIN)
+
+    Examples
+    --------
+    >>> from mipylib.meteolib.calc import dewpoint_from_relative_humidity, most_unstable_cape_cin
+    >>> from mipylib.meteolib import constants as cons
+    >>> # pressure
+    >>> p = [1008., 1000., 950., 900., 850., 800., 750., 700., 650., 600.,
+    ...      550., 500., 450., 400., 350., 300., 250., 200.,
+    ...      175., 150., 125., 100., 80., 70., 60., 50.,
+    ...      40., 30., 25., 20.]
+    >>> # temperature
+    >>> T = array([29.3, 28.1, 23.5, 20.9, 18.4, 15.9, 13.1, 10.1, 6.7, 3.1,
+    ...      -0.5, -4.5, -9.0, -14.8, -21.5, -29.7, -40.0, -52.4,
+    ...      -59.2, -66.5, -74.1, -78.5, -76.0, -71.6, -66.7, -61.3,
+    ...      -56.3, -51.7, -50.7, -47.5]) + cons.degCtoK
+    >>> # relative humidity
+    >>> rh = [.85, .65, .36, .39, .82, .72, .75, .86, .65, .22, .52,
+    ...       .66, .64, .20, .05, .75, .76, .45, .25, .48, .76, .88,
+    ...       .56, .88, .39, .67, .15, .04, .94, .35]
+    >>> # calculate dewpoint
+    >>> Td = dewpoint_from_relative_humidity(T, rh)
+    >>> # calculate most unstbale CAPE/CIN
+    >>> most_unstable_cape_cin(p, T, Td)
+    (<(4830.74608, 'joule / kilogram')>, <(0, 'joule / kilogram')>)
+
+    See Also
+    --------
+    cape_cin, most_unstable_parcel, parcel_profile
+
+    Notes
+    -----
+    Only functions on 1D profiles (not higher-dimension vertical cross sections or grids).
+    Since this function returns scalar values when given a profile, this will return Pint
+    Quantities even when given xarray DataArray profiles.
+
+    """
+    pressure, temperature, dewpoint = _remove_nans(pressure, temperature, dewpoint)
+    _, _, _, parcel_idx = most_unstable_parcel(pressure, temperature, dewpoint, **kwargs)
+    p, t, td, mu_profile = parcel_profile_with_lcl(pressure[parcel_idx:],
+                                                   temperature[parcel_idx:],
+                                                   dewpoint[parcel_idx:])
+    return cape_cin(p, t, td, mu_profile)
+
+
+def mixed_layer_cape_cin(pressure, temperature, dewpoint, **kwargs):
+    r"""Calculate mixed-layer CAPE and CIN.
+
+    Calculate the convective available potential energy (CAPE) and convective inhibition (CIN)
+    of a given upper air profile and mixed-layer parcel path. CIN is integrated between the
+    surface and LFC, CAPE is integrated between the LFC and EL (or top of sounding).
+    Intersection points of the measured temperature profile and parcel profile are
+    logarithmically interpolated. Kwargs for `mixed_parcel` can be provided, such as `depth`.
+    Default mixed-layer depth is 100 hPa.
+
+    Parameters
+    ----------
+    pressure : `hPa`
+        Pressure profile
+
+    temperature : `kelvin`
+        Temperature profile
+
+    dewpoint : `kelvin`
+        Dewpoint profile
+
+    kwargs
+        Additional keyword arguments to pass to `mixed_parcel`
+
+    Returns
+    -------
+    `J/Kg`
+        Mixed-layer Convective Available Potential Energy (CAPE)
+    `J/Kg`
+        Mixed-layer Convective INhibition (CIN)
+
+    Examples
+    --------
+    >>> from mipylib.meteolib.calc import dewpoint_from_relative_humidity, mixed_layer_cape_cin
+    >>> from mipylib.meteolib import contants as cons
+    >>> # pressure
+    >>> p = [1008., 1000., 950., 900., 850., 800., 750., 700., 650., 600.,
+    ...      550., 500., 450., 400., 350., 300., 250., 200.,
+    ...      175., 150., 125., 100., 80., 70., 60., 50.,
+    ...      40., 30., 25., 20.]
+    >>> # temperature
+    >>> T = array([29.3, 28.1, 25.5, 20.9, 18.4, 15.9, 13.1, 10.1, 6.7, 3.1,
+    ...      -0.5, -4.5, -9.0, -14.8, -21.5, -29.7, -40.0, -52.4,
+    ...      -59.2, -66.5, -74.1, -78.5, -76.0, -71.6, -66.7, -61.3,
+    ...      -56.3, -51.7, -50.7, -47.5]) + cons.degCtoK
+    >>> # relative humidity
+    >>> rh = [.85, .75, .56, .39, .82, .72, .75, .86, .65, .22, .52,
+    ...       .66, .64, .20, .05, .75, .76, .45, .25, .48, .76, .88,
+    ...       .56, .88, .39, .67, .15, .04, .94, .35]
+    >>> # calculate dewpoint
+    >>> Td = dewpoint_from_relative_humidity(T, rh)
+    >>> mixed_layer_cape_cin(p, T, Td, depth=50)
+    (<(678.967843, 'joule / kilogram')>, <(0, 'joule / kilogram')>)
+
+    See Also
+    --------
+    cape_cin, mixed_parcel, parcel_profile
+
+    Notes
+    -----
+    Only functions on 1D profiles (not higher-dimension vertical cross sections or grids).
+    Since this function returns scalar values when given a profile, this will return Pint
+    Quantities even when given xarray DataArray profiles.
+
+    """
+    depth = kwargs.get('depth', 100)
+    start_p = kwargs.get('parcel_start_pressure', pressure[0])
+    parcel_pressure, parcel_temp, parcel_dewpoint = mixed_parcel(pressure, temperature,
+                                                                 dewpoint, **kwargs)
+
+    # Remove values below top of mixed layer and add in the mixed layer values
+    pressure_prof = pressure[pressure < (start_p - depth)]
+    temp_prof = temperature[pressure < (start_p - depth)]
+    dew_prof = dewpoint[pressure < (start_p - depth)]
+    pressure_prof = np.concatenate([parcel_pressure, pressure_prof])
+    temp_prof = np.concatenate([parcel_temp, temp_prof])
+    dew_prof = np.concatenate([parcel_dewpoint, dew_prof])
+
+    p, t, td, ml_profile = parcel_profile_with_lcl(pressure_prof, temp_prof, dew_prof)
+    return cape_cin(p, t, td, ml_profile)
+
+
+def wet_bulb_temperature(pressure, temperature, dewpoint):
+    """Calculate the wet-bulb temperature using Normand's rule.
+
+    This function calculates the wet-bulb temperature using the Normand method. The LCL is
+    computed, and that parcel brought down to the starting pressure along a moist adiabat.
+    The Normand method (and others) are described and compared by [Knox2017]_.
+
+    Parameters
+    ----------
+    pressure : `pint.Quantity`
+        Initial atmospheric pressure
+
+    temperature : `pint.Quantity`
+        Initial atmospheric temperature
+
+    dewpoint : `pint.Quantity`
+        Initial atmospheric dewpoint
+
+    Returns
+    -------
+    `pint.Quantity`
+        Wet-bulb temperature
+
+    Examples
+    --------
+    >>> from metpy.calc import wet_bulb_temperature
+    >>> from metpy.units import units
+    >>> wet_bulb_temperature(993 * units.hPa, 32 * units.degC, 15 * units.degC)
+    <Quantity(20.3937601, 'degree_Celsius')>
+
+    See Also
+    --------
+    lcl, moist_lapse
+
+    Notes
+    -----
+    Since this function iteratively applies a parcel calculation, it should be used with
+    caution on large arrays.
+
+    """
+    if not getattr(pressure, 'shape', False):
+        pressure = np.atleast_1d(pressure)
+        temperature = np.atleast_1d(temperature)
+        dewpoint = np.atleast_1d(dewpoint)
+
+    lcl_press, lcl_temp = lcl(pressure, temperature, dewpoint)
+
+    it = np.nditer([pressure.magnitude, lcl_press.magnitude, lcl_temp.magnitude, None],
+                   op_dtypes=['float', 'float', 'float', 'float'],
+                   flags=['buffered'])
+
+    for press, lpress, ltemp, ret in it:
+        moist_adiabat_temperatures = moist_lapse(units.Quantity(press, pressure.units),
+                                                 units.Quantity(ltemp, lcl_temp.units),
+                                                 units.Quantity(lpress, lcl_press.units))
+        ret[...] = moist_adiabat_temperatures.m_as(temperature.units)
+
+    # If we started with a scalar, return a scalar
+    ret = it.operands[3]
+    if ret.size == 1:
+        ret = ret[0]
+    return units.Quantity(ret, temperature.units)
 
 
 def dewpoint_from_relative_humidity(temperature, relative_humidity):
@@ -2100,6 +3073,112 @@ def specific_humidity_from_relative_humidity(pressure, temperature, rh):
     return specific_humidity_from_dewpoint(pressure, dp)
 
 
+def mixed_parcel(pressure, temperature, dewpoint, parcel_start_pressure=None,
+                 height=None, bottom=None, depth=None, interpolate=True):
+    r"""Calculate the properties of a parcel mixed from a layer.
+
+    Determines the properties of an air parcel that is the result of complete mixing of a
+    given atmospheric layer.
+
+    Parameters
+    ----------
+    pressure : `hPa`
+        Atmospheric pressure profile
+
+    temperature : `kelvin`
+        Atmospheric temperature profile
+
+    dewpoint : `kelvin`
+        Atmospheric dewpoint profile
+
+    parcel_start_pressure : `hPa`, optional
+        Pressure at which the mixed parcel should begin (default None)
+
+    height: `meter`, optional
+        Atmospheric heights corresponding to the given pressures (default None)
+
+    bottom : `hPa`, optional
+        The bottom of the layer as a pressure or height above the surface pressure
+        (default None)
+
+    depth : `hPa`, optional
+        The thickness of the layer as a pressure or height above the bottom of the layer
+        (default 100 hPa)
+
+    interpolate : bool, optional
+        Interpolate the top and bottom points if they are not in the given data
+
+    Returns
+    -------
+    `hPa`
+        Pressure of the mixed parcel
+    `kelvin`
+        Temperature of the mixed parcel
+    `kelvin`
+        Dewpoint of the mixed parcel
+
+    Examples
+    --------
+    >>> from mipylib.meteolib.calc import dewpoint_from_relative_humidity, mixed_parcel
+    >>> from mipylib.meteolib import contants as cons
+    >>> # pressure
+    >>> p = [1008., 1000., 950., 900., 850., 800., 750., 700., 650., 600.,
+    ...      550., 500., 450., 400., 350., 300., 250., 200.,
+    ...      175., 150., 125., 100., 80., 70., 60., 50.,
+    ...      40., 30., 25., 20.]
+    >>> # temperature
+    >>> T = array([29.3, 28.1, 23.5, 20.9, 18.4, 15.9, 13.1, 10.1, 6.7, 3.1,
+    ...      -0.5, -4.5, -9.0, -14.8, -21.5, -29.7, -40.0, -52.4,
+    ...      -59.2, -66.5, -74.1, -78.5, -76.0, -71.6, -66.7, -61.3,
+    ...      -56.3, -51.7, -50.7, -47.5]) + cons.degCtoK
+    >>> # relative humidity
+    >>> rh = [.85, .65, .36, .39, .82, .72, .75, .86, .65, .22, .52,
+    ...       .66, .64, .20, .05, .75, .76, .45, .25, .48, .76, .88,
+    ...       .56, .88, .39, .67, .15, .04, .94, .35]
+    >>> # calculate dewpoint
+    >>> Td = dewpoint_from_relative_humidity(T, rh)
+    >>> # find the mixed parcel of depth 50 hPa
+    >>> mixed_parcel(p, T, Td, depth=50)
+    (<(1008.0, 'hectopascal')>, <(28.750033, 'degree_Celsius')>,
+    <(18.1504239, 'degree_Celsius')>)
+
+    Notes
+    -----
+    Only functions on 1D profiles (not higher-dimension vertical cross sections or grids).
+    Since this function returns scalar values when given a profile, this will return Pint
+    Quantities even when given xarray DataArray profiles.
+
+    """
+    # If a parcel starting pressure is not provided, use the surface
+    if not parcel_start_pressure:
+        parcel_start_pressure = pressure[0]
+
+    if depth is None:
+        depth = 100    #'hPa'
+
+    # Calculate the potential temperature and mixing ratio over the layer
+    theta = potential_temperature(pressure, temperature)
+    mixing_ratio = saturation_mixing_ratio(pressure, dewpoint)
+
+    # Mix the variables over the layer
+    mean_theta, mean_mixing_ratio = mixed_layer(pressure, theta, mixing_ratio, bottom=bottom,
+                                                height=height, depth=depth,
+                                                interpolate=interpolate)
+
+    # Convert back to temperature
+    mean_temperature = mean_theta * exner_function(parcel_start_pressure)
+
+    # Convert back to dewpoint
+    mean_vapor_pressure = vapor_pressure(parcel_start_pressure, mean_mixing_ratio)
+
+    # Using globals() here allows us to keep the dewpoint parameter but still call the
+    # function of the same name.
+    mean_dewpoint = globals()['dewpoint'](mean_vapor_pressure)
+
+    return (parcel_start_pressure, mean_temperature,
+            mean_dewpoint)
+
+
 def mixed_layer(pressure, *args, **kwargs):
     r"""Mix variable(s) over a layer, yielding a mass-weighted average.
 
@@ -2108,20 +3187,20 @@ def mixed_layer(pressure, *args, **kwargs):
 
     Parameters
     ----------
-    pressure : array-like
+    pressure : `hPa`
         Atmospheric pressure profile
 
     datavar : array-like
         Atmospheric variable measured at the given pressures
 
-    height: array-like, optional
+    height: `meter`, optional
         Atmospheric heights corresponding to the given pressures (default None)
 
-    bottom : `pint.Quantity`, optional
+    bottom : `hPa`, optional
         The bottom of the layer as a pressure or height above the surface pressure
         (default None)
 
-    depth : `pint.Quantity`, optional
+    depth : `hPa`, optional
         The thickness of the layer as a pressure or height above the bottom of the layer
         (default 100 hPa)
 
@@ -2130,41 +3209,38 @@ def mixed_layer(pressure, *args, **kwargs):
 
     Returns
     -------
-    `pint.Quantity`
+    `array-like`
         The mixed value of the data variable
 
     Examples
     --------
-    >>> from metpy.calc import dewpoint_from_relative_humidity, mixed_layer
-    >>> from metpy.units import units
+    >>> from mipylib.meteolib.calc import dewpoint_from_relative_humidity, mixed_layer
+    >>> from mipylib.meteolib import constants as cons
     >>> # pressure
     >>> p = [1008., 1000., 950., 900., 850., 800., 750., 700., 650., 600.,
     ...      550., 500., 450., 400., 350., 300., 250., 200.,
     ...      175., 150., 125., 100., 80., 70., 60., 50.,
-    ...      40., 30., 25., 20.] * units.hPa
+    ...      40., 30., 25., 20.]
     >>> # temperature
-    >>> T = [29.3, 28.1, 23.5, 20.9, 18.4, 15.9, 13.1, 10.1, 6.7, 3.1,
+    >>> T = array([29.3, 28.1, 23.5, 20.9, 18.4, 15.9, 13.1, 10.1, 6.7, 3.1,
     ...      -0.5, -4.5, -9.0, -14.8, -21.5, -29.7, -40.0, -52.4,
     ...      -59.2, -66.5, -74.1, -78.5, -76.0, -71.6, -66.7, -61.3,
-    ...      -56.3, -51.7, -50.7, -47.5] * units.degC
+    ...      -56.3, -51.7, -50.7, -47.5]) + cons.degCtoK
     >>> # relative humidity
     >>> rh = [.85, .65, .36, .39, .82, .72, .75, .86, .65, .22, .52,
     ...       .66, .64, .20, .05, .75, .76, .45, .25, .48, .76, .88,
-    ...       .56, .88, .39, .67, .15, .04, .94, .35] * units.dimensionless
+    ...       .56, .88, .39, .67, .15, .04, .94, .35]
     >>> # calculate dewpoint
     >>> Td = dewpoint_from_relative_humidity(T, rh)
     >>> # find mixed layer T and Td of depth 50 hPa
     >>> mixed_layer(p, T, Td, depth=50 * units.hPa)
-    [<Quantity(26.5798571, 'degree_Celsius')>, <Quantity(16.6455209, 'degree_Celsius')>]
+    [<(26.5798571, 'degree_Celsius')>, <(16.6455209, 'degree_Celsius')>]
 
     Notes
     -----
     Only functions on 1D profiles (not higher-dimension vertical cross sections or grids).
     Since this function returns scalar values when given a profile, this will return Pint
     Quantities even when given xarray DataArray profiles.
-
-    .. versionchanged:: 1.0
-       Renamed ``p``, ``heights`` parameters to ``pressure``, ``height``
 
     """
     height = kwargs.pop('height', None)
@@ -2183,5 +3259,5 @@ def mixed_layer(pressure, *args, **kwargs):
     ret = []
     for datavar_layer in datavars_layer:
         actual_depth = abs(p_layer[0] - p_layer[-1])
-        ret.append(trapezoid(datavar_layer.m, p_layer.m) / -actual_depth.m)
+        ret.append(np.trapezoid(datavar_layer, p_layer) / -actual_depth)
     return ret

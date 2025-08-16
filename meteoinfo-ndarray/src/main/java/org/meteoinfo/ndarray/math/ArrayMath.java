@@ -4237,21 +4237,43 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array equal(Array a, Array b) {
-        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        if (a.getIndexPrivate().isFastIterator()) {
-            for (int i = 0; i < r.getSize(); i++) {
-                r.setBoolean(i, a.getDouble(i) == b.getDouble(i));
-            }
-        } else {
-            IndexIterator iterA = a.getIndexIterator();
-            IndexIterator iterB = b.getIndexIterator();
-            IndexIterator iterR = r.getIndexIterator();
-            while (iterA.hasNext()) {
-                iterR.setBooleanNext(iterA.getDoubleNext() == iterB.getDoubleNext());
-            }
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < a.getSize(); i++) {
+                        r.setBoolean(i, a.getDouble(i) == b.getDouble(i));
+                    }
+                } else {
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    while (iterA.hasNext()) {
+                        iterR.setBooleanNext(iterA.getDoubleNext() == iterB.getDoubleNext());
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.BOOLEAN, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    r.setBoolean(i, a.getDouble(aindex) == b.getDouble(bindex));
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
         }
-
-        return r;
     }
 
     /**
@@ -4369,18 +4391,43 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array isClose(Array a, Array b, double rTol, double aTol, boolean equalNaN) {
-        a = a.copyIfView();
-        b = b.copyIfView();
-        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        for (int i = 0; i < a.getSize(); i++) {
-            if (isClose(a.getDouble(i), b.getDouble(i), rTol, aTol, equalNaN)) {
-                r.setBoolean(i, true);
-            } else {
-                r.setBoolean(i, false);
-            }
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < a.getSize(); i++) {
+                        r.setBoolean(i, isClose(a.getDouble(i), b.getDouble(i), rTol, aTol, equalNaN));
+                    }
+                } else {
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    while (iterA.hasNext()) {
+                        iterR.setBooleanNext(isClose(iterA.getDoubleNext(), iterB.getDoubleNext(), rTol, aTol, equalNaN));
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.BOOLEAN, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    r.setBoolean(i, isClose(a.getDouble(aindex), b.getDouble(bindex), rTol, aTol, equalNaN));
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
         }
-
-        return r;
     }
 
     /**
@@ -4460,21 +4507,43 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array lessThan(Array a, Array b) {
-        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
-            for (int i = 0; i < a.getSize(); i++) {
-                r.setBoolean(i, a.getDouble(i) < b.getDouble(i));
-            }
-        } else {
-            IndexIterator iterA = a.getIndexIterator();
-            IndexIterator iterR = r.getIndexIterator();
-            IndexIterator iterB = b.getIndexIterator();
-            while (iterA.hasNext()) {
-                iterR.setBooleanNext(iterA.getDoubleNext() < iterB.getDoubleNext());
-            }
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < a.getSize(); i++) {
+                        r.setBoolean(i, a.getDouble(i) < b.getDouble(i));
+                    }
+                } else {
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    while (iterA.hasNext()) {
+                        iterR.setBooleanNext(iterA.getDoubleNext() < iterB.getDoubleNext());
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.BOOLEAN, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    r.setBoolean(i, a.getDouble(aindex) < b.getDouble(bindex));
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
         }
-
-        return r;
     }
 
     /**
@@ -4509,21 +4578,43 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array lessThanOrEqual(Array a, Array b) {
-        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
-            for (int i = 0; i < a.getSize(); i++) {
-                r.setBoolean(i, a.getDouble(i) <= b.getDouble(i));
-            }
-        } else {
-            IndexIterator iterA = a.getIndexIterator();
-            IndexIterator iterR = r.getIndexIterator();
-            IndexIterator iterB = b.getIndexIterator();
-            while (iterA.hasNext()) {
-                iterR.setBooleanNext(iterA.getDoubleNext() <= iterB.getDoubleNext());
-            }
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < a.getSize(); i++) {
+                        r.setBoolean(i, a.getDouble(i) <= b.getDouble(i));
+                    }
+                } else {
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    while (iterA.hasNext()) {
+                        iterR.setBooleanNext(iterA.getDoubleNext() <= iterB.getDoubleNext());
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.BOOLEAN, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    r.setBoolean(i, a.getDouble(aindex) <= b.getDouble(bindex));
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
         }
-
-        return r;
     }
 
     /**
@@ -4558,21 +4649,43 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array greaterThan(Array a, Array b) {
-        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
-            for (int i = 0; i < a.getSize(); i++) {
-                r.setBoolean(i, a.getDouble(i) > b.getDouble(i));
-            }
-        } else {
-            IndexIterator iterA = a.getIndexIterator();
-            IndexIterator iterR = r.getIndexIterator();
-            IndexIterator iterB = b.getIndexIterator();
-            while (iterA.hasNext()) {
-                iterR.setBooleanNext(iterA.getDoubleNext() > iterB.getDoubleNext());
-            }
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < a.getSize(); i++) {
+                        r.setBoolean(i, a.getDouble(i) > b.getDouble(i));
+                    }
+                } else {
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    while (iterA.hasNext()) {
+                        iterR.setBooleanNext(iterA.getDoubleNext() > iterB.getDoubleNext());
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.BOOLEAN, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    r.setBoolean(i, a.getDouble(aindex) > b.getDouble(bindex));
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
         }
-
-        return r;
     }
 
     /**
@@ -4607,21 +4720,43 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array greaterThanOrEqual(Array a, Array b) {
-        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
-            for (int i = 0; i < a.getSize(); i++) {
-                r.setBoolean(i, a.getDouble(i) >= b.getDouble(i));
-            }
-        } else {
-            IndexIterator iterA = a.getIndexIterator();
-            IndexIterator iterR = r.getIndexIterator();
-            IndexIterator iterB = b.getIndexIterator();
-            while (iterA.hasNext()) {
-                iterR.setBooleanNext(iterA.getDoubleNext() >= iterB.getDoubleNext());
-            }
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < a.getSize(); i++) {
+                        r.setBoolean(i, a.getDouble(i) >= b.getDouble(i));
+                    }
+                } else {
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    while (iterA.hasNext()) {
+                        iterR.setBooleanNext(iterA.getDoubleNext() >= iterB.getDoubleNext());
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.BOOLEAN, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    r.setBoolean(i, a.getDouble(aindex) >= b.getDouble(bindex));
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
         }
-
-        return r;
     }
 
     /**
@@ -4656,21 +4791,43 @@ public class ArrayMath {
      * @return Result array
      */
     public static Array notEqual(Array a, Array b) {
-        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
-        if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
-            for (int i = 0; i < a.getSize(); i++) {
-                r.setBoolean(i, a.getDouble(i) != b.getDouble(i));
-            }
-        } else {
-            IndexIterator iterA = a.getIndexIterator();
-            IndexIterator iterR = r.getIndexIterator();
-            IndexIterator iterB = b.getIndexIterator();
-            while (iterA.hasNext()) {
-                iterR.setBooleanNext(iterA.getDoubleNext() != iterB.getDoubleNext());
-            }
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < a.getSize(); i++) {
+                        r.setBoolean(i, a.getDouble(i) != b.getDouble(i));
+                    }
+                } else {
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    while (iterA.hasNext()) {
+                        iterR.setBooleanNext(iterA.getDoubleNext() != iterB.getDoubleNext());
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.BOOLEAN, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    r.setBoolean(i, a.getDouble(aindex) != b.getDouble(bindex));
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
         }
-
-        return r;
     }
 
     /**
@@ -4885,6 +5042,13 @@ public class ArrayMath {
      * @return Boolean
      */
     public static boolean contains(Array a, Object v) {
+        if (v instanceof Array) {
+            Array va = (Array) v;
+            if (va.getSize() == 1) {
+                v = va.getObject(0);
+            }
+        }
+
         if (a.getDataType().isNumeric()) {
             double dv = ((Number) v).doubleValue();
             if (a.getIndexPrivate().isFastIterator()) {

@@ -170,9 +170,11 @@ public class ODESolver {
                 integrator.integrate(equations, t0, y0v, tf, yDot);
 
                 for (int i = 0; i < tEval.getSize(); i++) {
-                    tlist.add(tEval.getDouble(i));
-                    denseOutputModel.setInterpolatedTime(tEval.getDouble(i));
-                    ylist.add(denseOutputModel.getInterpolatedState());
+                    double t = tEval.getDouble(i);
+                    tlist.add(t);
+                    denseOutputModel.setInterpolatedTime(t);
+                    double[] v = denseOutputModel.getInterpolatedState();
+                    ylist.add(v.clone());
                 }
             }
 

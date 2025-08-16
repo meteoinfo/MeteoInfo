@@ -7,7 +7,9 @@ from org.meteoinfo.ndarray.math import ArrayMath
 from ._ndarray import NDArray
 from ._exceptions import AxisError
 
+
 __all__ = ['normalize_axis_index','bincount']
+
 
 def normalize_axis_index(axis, ndim, msg_prefix=None):
     """
@@ -31,6 +33,7 @@ def normalize_axis_index(axis, ndim, msg_prefix=None):
             raise AxisError(axis, ndim, msg_prefix)
     else:
         raise AxisError(axis, ndim, msg_prefix)
+
 
 def bincount(x, weights=None, minlength=0):
     """

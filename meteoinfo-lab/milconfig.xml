@@ -1,32 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
   <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo\calc">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataset"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\web"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\others"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
     <RecentFolder Folder="D:\Working\MIScript\mywork\music"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\special"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\slice"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\integrate"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\slice"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\mixed_layer_cape_cin_test.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\parcel_profile_with_lcl_test.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\searchsorted.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\mixed_layer_cape_cin.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\mixed_layer_cape_cin_test.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\parcel_profile_with_lcl_test.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\array\searchsorted.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\mixed_layer_cape_cin.py"/>
     </RecentFiles>
   </File>
   <Font>

@@ -35,7 +35,7 @@ __all__ = [
     'temperature_from_potential_temperature','vapor_pressure','virtual_potential_temperature',
     'virtual_temperature','virtual_temperature_from_dewpoint',
     'water_latent_heat_vaporization','water_latent_heat_sublimation','water_latent_heat_melting',
-    'wet_bulb_potential_temperature'
+    'wet_bulb_temperature','wet_bulb_potential_temperature'
     ]
 
 
@@ -2869,26 +2869,26 @@ def wet_bulb_temperature(pressure, temperature, dewpoint):
 
     Parameters
     ----------
-    pressure : `pint.Quantity`
+    pressure : `hPa`
         Initial atmospheric pressure
 
-    temperature : `pint.Quantity`
+    temperature : `kelvin`
         Initial atmospheric temperature
 
-    dewpoint : `pint.Quantity`
+    dewpoint : `kelvin`
         Initial atmospheric dewpoint
 
     Returns
     -------
-    `pint.Quantity`
+    `kelvin`
         Wet-bulb temperature
 
     Examples
     --------
-    >>> from metpy.calc import wet_bulb_temperature
-    >>> from metpy.units import units
-    >>> wet_bulb_temperature(993 * units.hPa, 32 * units.degC, 15 * units.degC)
-    <Quantity(20.3937601, 'degree_Celsius')>
+    >>> from mipylib.meteolib.calc import wet_bulb_temperature
+    >>> from mipylib.meteolib import constants as cons
+    >>> wet_bulb_temperature(993, 32 + cons.degCtoK, 15 + cons.degCtoK)
+    <(20.3937601, 'degree_Celsius')>
 
     See Also
     --------
@@ -2907,21 +2907,18 @@ def wet_bulb_temperature(pressure, temperature, dewpoint):
 
     lcl_press, lcl_temp = lcl(pressure, temperature, dewpoint)
 
-    it = np.nditer([pressure.magnitude, lcl_press.magnitude, lcl_temp.magnitude, None],
-                   op_dtypes=['float', 'float', 'float', 'float'],
-                   flags=['buffered'])
-
-    for press, lpress, ltemp, ret in it:
-        moist_adiabat_temperatures = moist_lapse(units.Quantity(press, pressure.units),
-                                                 units.Quantity(ltemp, lcl_temp.units),
-                                                 units.Quantity(lpress, lcl_press.units))
-        ret[...] = moist_adiabat_temperatures.m_as(temperature.units)
+    ret = np.zeros_like(pressure)
+    ret_flat = ret.flat
+    i = 0
+    for press, lpress, ltemp in zip(pressure.flat, lcl_press.flat, lcl_temp.flat):
+        ml = moist_lapse(press, ltemp, lpress)
+        ret_flat[i] = ml.item()
+        i += 1
 
     # If we started with a scalar, return a scalar
-    ret = it.operands[3]
     if ret.size == 1:
         ret = ret[0]
-    return units.Quantity(ret, temperature.units)
+    return ret
 
 
 def dewpoint_from_relative_humidity(temperature, relative_humidity):

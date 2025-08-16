@@ -61,7 +61,7 @@ class flatiter(object):
             value = ArrayUtil.array(value, None)
 
         if isinstance(key, int):
-            return self.flat_index.setSection(key, value)
+            return self.flat_index.setObject(key, value)
         elif isinstance(key, slice):
             sidx = 0 if key.start is None else key.start
             if sidx < 0:

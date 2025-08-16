@@ -151,5 +151,5 @@ def lambertw(z, k=0, tol=1e-8):
         r = LambertW.Wk(JythonUtil.toComplex(z), k)
         return JythonUtil.toComplex(r)
     else:
-        r = LambertW.Wk(z, k)
+        r = LambertW.Wk(z._array, k)
         return np.array(r)

@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>meteoinfo-console</artifactId>
+    <name>meteoinfo-console</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

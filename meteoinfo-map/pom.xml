@@ -6,8 +6,11 @@
         <artifactId>MeteoInfo</artifactId>
         <version>${revision}</version>
     </parent>
+
     <artifactId>meteoinfo-map</artifactId>
+    <name>meteoinfo-map</name>
     <packaging>jar</packaging>
+
     <dependencies>
         <!--<dependency>
             <groupId>com.sun.woodstock.dependlibs</groupId>

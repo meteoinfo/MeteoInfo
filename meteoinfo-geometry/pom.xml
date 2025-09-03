@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>meteoinfo-geometry</artifactId>
+    <name>meteoinfo-geometry</name>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

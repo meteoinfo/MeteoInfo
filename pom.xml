@@ -5,6 +5,8 @@
     <artifactId>MeteoInfo</artifactId>
     <name>MeteoInfo</name>
     <version>${revision}</version>
+    <description>GIS, Scientific computation and visualization platform</description>
+    <url>https://github.com/meteoinfo/MeteoInfo</url>
     <packaging>pom</packaging>
     
     <parent>

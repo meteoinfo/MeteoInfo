@@ -6,12 +6,16 @@
         <artifactId>MeteoInfo</artifactId>
         <version>${revision}</version>
     </parent>
+
     <artifactId>meteoinfo-lab</artifactId>
+    <name>meteoinfo-lab</name>
     <packaging>jar</packaging>
+
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>

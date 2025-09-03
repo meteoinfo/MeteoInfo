@@ -7378,13 +7378,23 @@ public class GraphicFactory {
             udata = uvData[0];
             vdata = uvData[1];
         }
-        
-        double[][] u = (double[][])ArrayUtil.copyToNDJavaArray_Double(udata);
-        double[][] v = (double[][])ArrayUtil.copyToNDJavaArray_Double(vdata);
+
         double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xdata);
         double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
-        List<PolyLine> streamlines = Contour.tracingStreamline(u, v,
-                x, y, density);
+        if (x[1] - x[0] < 0) {
+            ArrayUtils.reverse(x);
+            udata = udata.flip(1);
+            vdata = vdata.flip(1);
+        }
+        if (y[1] - y[0] < 0) {
+            ArrayUtils.reverse(y);
+            udata = udata.flip(0);
+            vdata = vdata.flip(0);
+        }
+        double[][] u = (double[][])ArrayUtil.copyToNDJavaArray_Double(udata);
+        double[][] v = (double[][])ArrayUtil.copyToNDJavaArray_Double(vdata);
+
+        List<PolyLine> streamlines = Contour.tracingStreamline(u, v, x, y, density);
 
         int ny = u.length;
         int nx = u[0].length;
@@ -7508,12 +7518,22 @@ public class GraphicFactory {
             vdata = uvData[1];
         }
 
-        double[][] u = (double[][])ArrayUtil.copyToNDJavaArray_Double(udata);
-        double[][] v = (double[][])ArrayUtil.copyToNDJavaArray_Double(vdata);
         double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xdata);
         double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
-        List<PolyLine> streamlines = Contour.tracingStreamline(u, v,
-                x, y, density);
+        if (x[1] - x[0] < 0) {
+            ArrayUtils.reverse(x);
+            udata = udata.flip(1);
+            vdata = vdata.flip(1);
+        }
+        if (y[1] - y[0] < 0) {
+            ArrayUtils.reverse(y);
+            udata = udata.flip(0);
+            vdata = vdata.flip(0);
+        }
+        double[][] u = (double[][])ArrayUtil.copyToNDJavaArray_Double(udata);
+        double[][] v = (double[][])ArrayUtil.copyToNDJavaArray_Double(vdata);
+
+        List<PolyLine> streamlines = Contour.tracingStreamline(u, v, x, y, density);
         PolyLine line;
         for (int i = 0; i < streamlines.size(); i++) {
             line = streamlines.get(i);
@@ -7556,12 +7576,22 @@ public class GraphicFactory {
             vdata = uvData[1];
         }
 
-        double[][] u = (double[][])ArrayUtil.copyToNDJavaArray_Double(udata);
-        double[][] v = (double[][])ArrayUtil.copyToNDJavaArray_Double(vdata);
         double[] x = (double[]) ArrayUtil.copyToNDJavaArray_Double(xdata);
         double[] y = (double[]) ArrayUtil.copyToNDJavaArray_Double(ydata);
-        List<PolyLine> streamlines = Contour.tracingStreamline(u, v,
-                x, y, density);
+        if (x[1] - x[0] < 0) {
+            ArrayUtils.reverse(x);
+            udata = udata.flip(1);
+            vdata = vdata.flip(1);
+        }
+        if (y[1] - y[0] < 0) {
+            ArrayUtils.reverse(y);
+            udata = udata.flip(0);
+            vdata = vdata.flip(0);
+        }
+        double[][] u = (double[][])ArrayUtil.copyToNDJavaArray_Double(udata);
+        double[][] v = (double[][])ArrayUtil.copyToNDJavaArray_Double(vdata);
+
+        List<PolyLine> streamlines = Contour.tracingStreamline(u, v, x, y, density);
         PolyLine line;
         ColorBreakCollection cbc;
         int ny = u.length;

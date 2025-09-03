@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo\calc">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\web"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\others"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\wind">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
     <RecentFolder Folder="D:\Working\MIScript\mywork\music"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\special"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\integrate"/>
@@ -16,15 +13,20 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\mixed_layer_cape_cin.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\isentropic_analysis.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\lifted_index.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\precipitable_water.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\mixed_layer_cape_cin.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\isentropic_analysis.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\lifted_index.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\precipitable_water.py"/>
     </RecentFiles>
   </File>
   <Font>

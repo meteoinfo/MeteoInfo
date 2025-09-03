@@ -54,11 +54,20 @@ class DimArray(NDArray):
         if isinstance(array, NDArray):
             array = array._array
         super(DimArray, self).__init__(array)
+
         self.dims = None
-        if not dims is None:
-            for dim in dims:
-                self.adddim(dim)
+        if dims is None or len(dims) == 0:
+            dims = []
+            for i in range(self.ndim):
+                dim = Dimension()
+                dim.setDimValues(range(self.shape[i]))
+                dims.append(dim)
+
+        for dim in dims:
+            self.adddim(dim)
+
         self.proj = proj
+
         
     def __getitem__(self, indices):
         if not isinstance(indices, tuple):
@@ -1130,10 +1139,12 @@ def dim_array(a, dims=None):
     """
     if not isinstance(a, NDArray):
         a = array(a)
+
     if dims is None:
         dims = []
         for i in range(a.ndim):
             dim = Dimension()
             dim.setDimValues(range(a.shape[i]))
             dims.append(dim)
+
     return DimArray(a, dims)

@@ -10,8 +10,9 @@ from mipylib.geolib import Geod
 from ..interpolate import interpolate_1d, log_interpolate_1d
 from ..cbook import broadcast_indices
 
-__all__ = ['resample_nn_1d', 'nearest_intersection_idx', 'first_derivative', 'find_intersections', 'gradient',
-           'lat_lon_grid_deltas', 'get_layer_heights', 'find_bounding_indices', 'geospatial_gradient']
+__all__ = ['resample_nn_1d', 'nearest_intersection_idx', 'first_derivative', 'find_intersections', 'get_layer',
+           'gradient', 'lat_lon_grid_deltas', 'get_layer_heights', 'find_bounding_indices',
+           'geospatial_gradient']
 
 
 def resample_nn_1d(a, centers):
@@ -276,8 +277,8 @@ def _get_bound_pressure_height(pressure, bound, height=None, interpolate=True, i
                     # Need to cast back to the input type since interp (up to at least numpy
                     # 1.13 always returns float64. This can cause upstream users problems,
                     # resulting in something like np.append() to upcast.
-                    bound_pressure = np.interp(np.atleast_1d(bound),
-                                               height, pressure).astype(np.result_type(bound))
+                    bound_pressure = interpolate_1d(np.atleast_1d(bound),
+                                               height, pressure).astype(bound.dtype)
                 else:
                     idx = (np.abs(height - bound)).argmin()
                     bound_pressure = pressure[idx]
@@ -435,7 +436,7 @@ def get_layer(pressure, *args, **kwargs):
     bottom = kwargs.pop('bottom', None)
     depth = kwargs.pop('depth', 100)    #'hPa'
     interpolate = kwargs.pop('interpolate', True)
-    is_pressure = kwargs.pop('is_pressure', True)
+    is_pressure = height is None
 
     # Make sure pressure and datavars are the same length
     for datavar in args:
@@ -457,7 +458,7 @@ def get_layer(pressure, *args, **kwargs):
         top = bottom_height + depth
 
     top_pressure, _ = _get_bound_pressure_height(pressure, top, height=height,
-                                                 interpolate=interpolate)
+                                                 interpolate=interpolate, is_pressure=is_pressure)
 
     ret = []  # returned data variables in layer
 

@@ -20,8 +20,8 @@ from mipylib.numeric.special import lambertw
 __all__ = [
     'cape_cin','ccl','density','dewpoint','dewpoint_from_relative_humidity','dry_lapse','dry_static_energy',
     'el','equivalent_potential_temperature','exner_function',
-    'isentropic_interpolation','lcl','lfc','mixed_layer','mixed_layer_cape_cin','mixed_parcel','mixing_ratio',
-    'mixing_ratio_from_relative_humidity',
+    'isentropic_interpolation','lcl','lfc','lifted_index','mixed_layer','mixed_layer_cape_cin',
+    'mixed_parcel','mixing_ratio','mixing_ratio_from_relative_humidity',
     'mixing_ratio_from_specific_humidity',
     'moist_air_gas_constant','moist_air_specific_heat_pressure',
     'moist_air_poisson_exponent','moist_lapse','most_unstable_parcel','most_unstable_cape_cin',
@@ -838,6 +838,8 @@ def exner_function(pressure, reference_pressure=constants.P0):
     potential_temperature
     temperature_from_potential_temperature
     """
+    if isinstance(pressure, (list, tuple)):
+        pressure = np.asarray(pressure)
     return (pressure / reference_pressure)**constants.kappa
 
 
@@ -3070,6 +3072,87 @@ def specific_humidity_from_relative_humidity(pressure, temperature, rh):
     return specific_humidity_from_dewpoint(pressure, dp)
 
 
+def lifted_index(pressure, temperature, parcel_profile, vertical_dim=0):
+    """Calculate Lifted Index from the pressure temperature and parcel profile.
+
+    Lifted index formula derived from [Galway1956]_ and referenced by [DoswellSchultz2006]_:
+
+    .. math:: LI = T500 - Tp500
+
+    where:
+
+    * :math:`T500` is the measured temperature at 500 hPa
+    * :math:`Tp500` is the temperature of the lifted parcel at 500 hPa
+
+    Calculation of the lifted index is defined as the temperature difference between the
+    observed 500 hPa temperature and the temperature of a parcel lifted from the
+    surface to 500 hPa. As noted in [Galway1956]_, a low-level mixed parcel is often used
+    as the surface parcel.
+
+    Parameters
+    ----------
+    pressure : `hPa`
+        Atmospheric pressure level(s) of interest, in order from highest to
+        lowest pressure
+
+    temperature : `kelvin`
+        Atmospheric temperature corresponding to pressure
+
+    parcel_profile : `kelvin`
+        Temperature profile of the parcel
+
+    vertical_dim : int, optional
+        The axis corresponding to vertical, defaults to 0. Automatically determined from
+        xarray DataArray arguments.
+
+    Returns
+    -------
+    `delta temperature`
+        Lifted Index
+
+    Examples
+    --------
+    >>> from mipylib.meteolib.calc import lifted_index, mixed_parcel, parcel_profile
+    >>> from mipylib.meteolib import constants as cons
+    >>>
+    >>> # Define pressure, temperature, dewpoint temperature, and height
+    >>> p = [1002., 1000., 993., 925., 850., 846., 723., 632., 479., 284.,
+    ...      239., 200., 131., 91., 72.7, 54.6, 41., 30., 22.8]
+    >>> T = array([28.2, 27., 25.4, 19.4, 12.8, 12.3, 4.2, 0.8, -12.7, -41.7, -52.3,
+    ...      -57.5, -54.9, -57.8, -58.5, -52.3, -53.4, -50.3, -49.9]) + cons.degCtoK
+    >>> Td = array([14.2, 14., 12.4, 11.4, 10.2, 10.1, -7.8, -16.2, -37.7, -55.7,
+    ...       -58.3, -69.5, -85.5, -88., -89.5, -88.3, -88.4, -87.3, -87.9]) + cons.degCtoK
+    >>> h = [139, 159, 221, 839, 1559, 1599, 2895, 3982, 6150, 9933, 11072,
+    ...      12200, 14906, 17231, 18650, 20474, 22323, 24350, 26149]
+    >>>
+    >>> # Calculate 500m mixed parcel
+    >>> parcel_p, parcel_t, parcel_td = mixed_parcel(p, T, Td, depth=500, height=h)
+    >>>
+    >>> # Replace sounding temp/pressure in lowest 500m with mixed values
+    >>> above = h > 500
+    >>> press = np.concatenate([[parcel_p], p[above]])
+    >>> temp = np.concatenate([[parcel_t], T[above]])
+    >>>
+    >>> # Calculate parcel profile from our new mixed parcel
+    >>> mixed_prof = parcel_profile(press, parcel_t, parcel_td)
+    >>>
+    >>> # Calculate lifted index using our mixed profile
+    >>> lifted_index(press, temp, mixed_prof)
+    <([2.54198585], 'delta_degree_Celsius')>
+
+    See Also
+    --------
+    mixed_parcel, parcel_profile
+
+    """
+    # find the measured temperature and parcel profile temperature at 500 hPa.
+    t500, tp500 = interpolate_1d(500,
+                                 pressure, temperature, parcel_profile, axis=vertical_dim)
+
+    # calculate the lifted index.
+    return t500 - tp500
+
+
 def mixed_parcel(pressure, temperature, dewpoint, parcel_start_pressure=None,
                  height=None, bottom=None, depth=None, interpolate=True):
     r"""Calculate the properties of a parcel mixed from a layer.
@@ -3146,6 +3229,10 @@ def mixed_parcel(pressure, temperature, dewpoint, parcel_start_pressure=None,
     Quantities even when given xarray DataArray profiles.
 
     """
+    pressure = np.asarray(pressure)
+    temperature = np.asarray(temperature)
+    dewpoint = np.asarray(dewpoint)
+
     # If a parcel starting pressure is not provided, use the surface
     if not parcel_start_pressure:
         parcel_start_pressure = pressure[0]
@@ -3230,7 +3317,7 @@ def mixed_layer(pressure, *args, **kwargs):
     >>> # calculate dewpoint
     >>> Td = dewpoint_from_relative_humidity(T, rh)
     >>> # find mixed layer T and Td of depth 50 hPa
-    >>> mixed_layer(p, T, Td, depth=50 * units.hPa)
+    >>> mixed_layer(p, T, Td, depth=50)
     [<(26.5798571, 'degree_Celsius')>, <(16.6455209, 'degree_Celsius')>]
 
     Notes

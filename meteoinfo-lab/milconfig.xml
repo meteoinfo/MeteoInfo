@@ -1,28 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\burf">
-    <RecentFolder Folder="D:\Working\MIScript\mywork\music"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\special"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\integrate"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\ascii">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\interpolate"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\slice"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\micaps"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\ascii"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\mixed_layer_cape_cin.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\micaps\mdfs_10.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\ascii\asciiread_160.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\mixed_layer_cape_cin.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\micaps\mdfs_10.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\ascii\asciiread_160.py"/>
     </RecentFiles>
   </File>
   <Font>

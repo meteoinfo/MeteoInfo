@@ -3,6 +3,10 @@ from java.awt import Font
 
 import mipylib.miutil as miutil
 
+
+__all__ = ['GeoGraphicCollection']
+
+
 class GeoGraphicCollection(object):
 
     def __init__(self, geographic=None):

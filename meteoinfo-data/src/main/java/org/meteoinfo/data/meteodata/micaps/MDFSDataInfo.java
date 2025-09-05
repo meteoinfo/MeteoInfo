@@ -87,6 +87,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                 case 2:
                 case 3:
                 case 12:
+                case 125:
                     bytes = new byte[100];
                     br.read(bytes);
                     description = new String(bytes, "GBK").trim();
@@ -531,6 +532,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                 case 2:
                 case 3:
                 case 12:
+                case 125:
                     Range stRange = section.getRange(rangeIdx);
                     Array array = this.dataFrame.getColumnData(varName);
                     for (int i = stRange.first(); i <= stRange.last(); i += stRange.stride()) {
@@ -914,6 +916,96 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
         varMap.put(1805, "Hail_Diameter_Max");
         varMap.put(1807, "Thunderstorm");
         varMap.put(1809, "Lighting_Intensity");
+        //Surface temperature
+        varMap.put(2001, "Surface_Temperature");
+        varMap.put(2003, "Surface_Temperature_Max");
+        varMap.put(2005, "Surface_Temperature_Min");
+        varMap.put(2007, "Surface_Temperature_Min_12H");
+        varMap.put(2009, "Soil_Temperature_5cm");
+        varMap.put(2011, "Soil_Temperature_10cm");
+        varMap.put(2013, "Soil_Temperature_15cm");
+        varMap.put(2015, "Soil_Temperature_20cm");
+        varMap.put(2017, "Soil_Temperature_40cm");
+        varMap.put(2019, "Soil_Temperature_80cm");
+        varMap.put(2021, "Soil_Temperature_160cm");
+        varMap.put(2023, "Soil_Temperature_320cm");
+        varMap.put(2025, "Grass_Temperature");
+        varMap.put(2027, "Grass_Temperature_Max");
+        varMap.put(2029, "Grass_Temperature_Min");
+        varMap.put(2031, "Surface_Temperature_DayAve");
+        varMap.put(2033, "Soil_Temperature_DayAve_5cm");
+        varMap.put(2035, "Soil_Temperature_DayAve_10cm");
+        varMap.put(2037, "Soil_Temperature_DayAve_15cm");
+        varMap.put(2039, "Soil_Temperature_DayAve_20cm");
+        varMap.put(2041, "Soil_Temperature_DayAve_40cm");
+        varMap.put(2043, "Soil_Temperature_DayAve_80cm");
+        varMap.put(2045, "Soil_Temperature_DayAve_160cm");
+        varMap.put(2047, "Soil_Temperature_DayAve_320cm");
+        varMap.put(2049, "Grass_Temperature_DayAve");
+        //Snow and ice
+        varMap.put(2201, "Surface_Condition");
+        varMap.put(2203, "Snow_Depth");
+        varMap.put(2205, "Snow_Pressure");
+        varMap.put(2207, "Power_Line_Icing_Diameter");
+        varMap.put(2209, "Power_Line_Icing_Phenomenon");
+        varMap.put(2211, "Power_Line_Icing_Diameter_North_South");
+        varMap.put(2213, "Power_Line_Icing_Depth_North_South");
+        varMap.put(2215, "Power_Line_Icing_Weight_North_South");
+        varMap.put(2217, "Power_Line_Icing_Diameter_East_West");
+        varMap.put(2219, "Power_Line_Icing_Depth_East_West");
+        varMap.put(2221, "Power_Line_Icing_Weight_East_West");
+        varMap.put(2223, "Ship_Icing_Causes");
+        varMap.put(2225, "Ship_Icing_Depth");
+        varMap.put(2227, "Ship_Icing_Speed");
+        varMap.put(2229, "Sea_Ice_Concentration");
+        varMap.put(2231, "Ice_Condition_Development");
+        varMap.put(2233, "Ice_Amount_Type");
+        varMap.put(2235, "Ice_Edge_Orientation");
+        varMap.put(2237, "Ice_Condition");
+        //Methods
+        varMap.put(2401, "Anemometer_Type");
+        varMap.put(2403, "Wet-bulb_Temperature_Measurement_Method");
+        varMap.put(2405, "Sea_Surface_Temperature_Measurement_Method");
+        varMap.put(2407, "Ocean_Current_Measurement_Method");
+        varMap.put(2409, "Barometric_Tendency_Characteristics");
+        //Sea temperature and salinity
+        varMap.put(2601, "Sea_Surface_Temperature");
+        varMap.put(2603, "Wet-bulb_Temperature");
+        varMap.put(2605, "Sea_Surface_Salinity");
+        varMap.put(2607, "Sea_Surface_Temperature_Max");
+        varMap.put(2609, "Sea_Surface_Temperature_Min");
+        varMap.put(2611, "Sea_Water_Temperature");
+        varMap.put(2613, "Sea_Water_Salinity");
+        //Ocean current
+        varMap.put(2801, "Sea_Surface_Current_Direction");
+        varMap.put(2803, "Sea_Surface_Current_Speed");
+        varMap.put(2805, "Ocean_Current_Direction_Speed_Ave_Period");
+        varMap.put(2807, "Surface_Ocean_Current_Speed");
+        varMap.put(2809, "Surface_Ocean_Wave_Direction");
+        varMap.put(2811, "Ocean_Current_Direction");
+        varMap.put(2813, "Ocean_Current_Speed");
+        //Ocean wave
+        varMap.put(3001, "Wave_Direction");
+        varMap.put(3003, "Wave_Period");
+        varMap.put(3005, "Wave_Height");
+        varMap.put(3007, "Wind_Wave_Direction");
+        varMap.put(3009, "Wind_Wave_Period");
+        varMap.put(3011, "Wind_Wave_Height");
+        varMap.put(3013, "Primary_Swell_Direction");
+        varMap.put(3015, "Primary_Swell_Period");
+        varMap.put(3017, "Primary_Swell_Height");
+        varMap.put(3019, "Secondary_Swell_Direction");
+        varMap.put(3021, "Secondary_Swell_Period");
+        varMap.put(3023, "Secondary_Swell_Height");
+        varMap.put(3025, "Significant_Wave_Height");
+        varMap.put(3027, "Significant_Wave_Period");
+        varMap.put(3029, "Average_Wave_Height");
+        varMap.put(3031, "Average_Wave_Period");
+        varMap.put(3033, "Maximum_Wave_Height");
+        varMap.put(3035, "Maximum_Wave_Period");
+        varMap.put(3037, "Manual_Wave_Height");
+        varMap.put(3039, "Instrument_Wave_Height");
+        varMap.put(3041, "Wave_Scale_Code");
     }
     // </editor-fold>
 }

@@ -20,10 +20,11 @@ class Collection(Artist):
         """
         Artist.__init__(self)
 
-    def addlabels(self, **kwargs):
+    def addlabels(self, texts=None, **kwargs):
         """
         Add labels
 
+        :param texts: (*array of string*) Label texts. Default is ``None``, means using value of the graphics.
         :param fontname: (*string*) Font name. Default is ``Arial``.
         :param fontsize: (*string*) Font size. Default is ``14``.
         :param bold: (*boolean*) Font bold or not. Default is ``False``.
@@ -56,7 +57,12 @@ class Collection(Artist):
         if not decimals is None:
             labelset.setAutoDecimal(False)
             labelset.setDecimalDigits(decimals)
-        self.addLabels()
+
+        if texts is None:
+            self.addLabels()
+        else:
+            texts = np.asarray(texts)
+            self.addLabels(texts._array)
 
 
 class Point2DCollection(Collection, Point2DGraphicCollection):

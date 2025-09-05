@@ -21,6 +21,8 @@ import org.meteoinfo.common.PointD;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.IndexIterator;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -581,7 +583,16 @@ public class GraphicCollection extends Graphic implements Iterator {
      */
     public void addLabels() {
         addLabelsByColor();
+        labelSet.setDrawLabels(true);
+    }
 
+    /**
+     * Add labels by texts array
+     *
+     * @param texts Texts array
+     */
+    public void addLabels(Array texts) {
+        addLabelsByColor(texts);
         labelSet.setDrawLabels(true);
     }
 
@@ -677,6 +688,67 @@ public class GraphicCollection extends Graphic implements Iterator {
     }
 
     /**
+     * Add labels
+     *
+     * @param texts Texts array
+     */
+    protected void addLabelsByColor(Array texts) {
+        texts = texts.copyIfView();
+
+        if (labelSet.isAutoDecimal()) {
+            double min = getMinValue();
+            labelSet.setDecimalDigits(MIMath.getDecimalNum(min));
+        }
+        String dFormat = "%1$." + String.valueOf(labelSet.getDecimalDigits()) + "f";
+        PointD aPoint;
+        IndexIterator iter = texts.getIndexIterator();
+        for (Graphic graphic : this.graphics) {
+            if (!iter.hasNext()) {
+                break;
+            }
+
+            ColorBreak cb = graphic.getLegend();
+            Shape shape = graphic.getShape();
+            PointShape aPS = new PointShape();
+            switch (shape.getShapeType()) {
+                case POINT:
+                case POINT_M:
+                case POINT_Z:
+                    aPS.setPoint((PointD) ((PointShape) shape).getPoint().clone());
+                    break;
+                case POLYLINE:
+                case POLYLINE_M:
+                case POLYLINE_Z:
+                    int pIdx = ((PolylineShape) shape).getPoints().size() / 2;
+                    aPS.setPoint((PointD) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
+                    break;
+                case POLYGON:
+                case POLYGON_M:
+                    Extent aExtent = shape.getExtent();
+                    aPoint = new PointD();
+                    aPoint.X = ((aExtent.minX + aExtent.maxX) / 2);
+                    aPoint.Y = ((aExtent.minY + aExtent.maxY) / 2);
+                    aPS.setPoint(aPoint);
+                    break;
+            }
+
+            LabelBreak aLP = new LabelBreak();
+            aLP.setText(iter.getStringNext());
+            if (labelSet.isColorByLegend()) {
+                aLP.setColor(cb.getColor());
+            } else {
+                aLP.setColor(labelSet.getLabelColor());
+            }
+            aLP.setFont(labelSet.getLabelFont());
+            aLP.setAlignType(labelSet.getLabelAlignType());
+            aLP.setYShift(labelSet.getYOffset());
+            aLP.setXShift(labelSet.getXOffset());
+            Graphic aGraphic = new Graphic(aPS, aLP);
+            addLabel(aGraphic);
+        }
+    }
+
+    /**
      * Add label point
      *
      * @param aLP Label point
@@ -686,7 +758,7 @@ public class GraphicCollection extends Graphic implements Iterator {
     }
 
     /**
-     * Add labels of contour layer dynamicly
+     * Add labels of contour layer dynamically
      *
      * @param sExtent View extent of MapView
      */

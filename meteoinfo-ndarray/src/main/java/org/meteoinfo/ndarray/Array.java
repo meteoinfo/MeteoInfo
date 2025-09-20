@@ -909,7 +909,7 @@ public abstract class Array {
      * if possible. Only for numeric types (byte, short, int, long, double,
      * float)
      *
-     * @return equivilent data in a ByteBuffer
+     * @return equivalent data in a ByteBuffer
      */
     public ByteBuffer getDataAsByteBuffer() {
         throw new UnsupportedOperationException();

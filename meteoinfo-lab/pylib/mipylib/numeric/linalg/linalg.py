@@ -12,7 +12,7 @@ from org.meteoinfo.math.stats import StatsUtil
 
 from .. import core as np
 
-__all__ = ['solve', 'cholesky', 'cond', 'det', 'lu', 'qr', 'svd', 'eig', 'eigvals', 'inv',
+__all__ = ['cross', 'solve', 'cholesky', 'cond', 'det', 'lu', 'qr', 'svd', 'eig', 'eigvals', 'inv',
            'lstsq', 'slogdet', 'solve_triangular', 'norm', 'pinv', 'LinAlgError']
 
 
@@ -32,6 +32,76 @@ def _assert_2d(*arrays):
         if a.ndim != 2:
             raise LinAlgError('%d-dimensional array given. Array must be '
                               'two-dimensional' % a.ndim)
+
+
+def cross(x1, x2, axis=-1):
+    """
+    Returns the cross product of 3-element vectors.
+
+    If ``x1`` and/or ``x2`` are multi-dimensional arrays, then
+    the cross-product of each pair of corresponding 3-element vectors
+    is independently computed.
+
+    Parameters
+    ----------
+    x1 : array_like
+        The first input array.
+    x2 : array_like
+        The second input array. Must be compatible with ``x1`` for all
+        non-compute axes. The size of the axis over which to compute
+        the cross-product must be the same size as the respective axis
+        in ``x1``.
+    axis : int, optional
+        The axis (dimension) of ``x1`` and ``x2`` containing the vectors for
+        which to compute the cross-product. Default: ``-1``.
+
+    Returns
+    -------
+    out : ndarray
+        An array containing the cross products.
+
+    Examples
+    --------
+    Vector cross-product.
+
+    >>> x = np.array([1, 2, 3])
+    >>> y = np.array([4, 5, 6])
+    >>> np.linalg.cross(x, y)
+    array([-3,  6, -3])
+
+    Multiple vector cross-products. Note that the direction of the cross
+    product vector is defined by the *right-hand rule*.
+
+    >>> x = np.array([[1,2,3], [4,5,6]])
+    >>> y = np.array([[4,5,6], [1,2,3]])
+    >>> np.linalg.cross(x, y)
+    array([[-3,  6, -3],
+           [ 3, -6,  3]])
+
+    >>> x = np.array([[1, 2], [3, 4], [5, 6]])
+    >>> y = np.array([[4, 5], [6, 1], [2, 3]])
+    >>> np.linalg.cross(x, y, axis=0)
+    array([[-24,  6],
+           [ 18, 24],
+           [-6,  -18]])
+
+    """
+    x1 = np.asanyarray(x1)
+    x2 = np.asanyarray(x2)
+
+    if x1.shape[axis] != 3 or x2.shape[axis] != 3:
+        raise ValueError(
+            "Both input arrays must be (arrays of) 3-dimensional vectors, "
+            "but they are {} and {} "
+            "dimensional instead.".format(x1.shape[axis], x2.shape[axis])
+        )
+
+    if x1.ndim == 1:
+        r = LinalgUtil.cross(x1._array, x2._array)
+    else:
+        r = LinalgUtil.cross(x1._array, x2._array, axis)
+
+    return np.NDArray(r)
 
 
 def solve(a, b):

@@ -2764,7 +2764,7 @@ public class DataFrame implements Iterable {
                 }
             } else {
                 for (String s : indexValues) {
-                    indexData.add(DataTypeUtil.convertStringTo(s, idxDT, null));
+                    indexData.add(DataTypeUtil.convertFromString(s, idxDT, null));
                 }
                 index = Index.factory(indexData);
                 index.updateFormat();
@@ -2784,7 +2784,7 @@ public class DataFrame implements Iterable {
                 String v;
                 for (int j = 0; j < vv.size(); j++) {
                     v = (String) vv.get(j);
-                    data.setObject(j * colNum + i, col.convertStringTo(v));
+                    data.setObject(j * colNum + i, col.convertFromString(v));
                 }
             }
             df = new DataFrame(data, index, cols);
@@ -2800,7 +2800,7 @@ public class DataFrame implements Iterable {
                 String v;
                 for (int j = 0; j < vv.size(); j++) {
                     v = (String) vv.get(j);
-                    a.setObject(j, col.convertStringTo(v));
+                    a.setObject(j, col.convertFromString(v));
                 }
                 data.add(a);
             }
@@ -3051,7 +3051,7 @@ public class DataFrame implements Iterable {
                 }
             } else {
                 for (String s : indexValues) {
-                    indexData.add(DataTypeUtil.convertStringTo(s, idxDT, null));
+                    indexData.add(DataTypeUtil.convertFromString(s, idxDT, null));
                 }
                 index = Index.factory(indexData);
                 index.updateFormat();
@@ -3071,7 +3071,7 @@ public class DataFrame implements Iterable {
                 String v;
                 for (int j = 0; j < vv.size(); j++) {
                     v = (String) vv.get(j);
-                    data.setObject(j * colNum + i, col.convertStringTo(v));
+                    data.setObject(j * colNum + i, col.convertFromString(v));
                 }
             }
             df = new DataFrame(data, index, cols);
@@ -3087,7 +3087,7 @@ public class DataFrame implements Iterable {
                 String v;
                 for (int j = 0; j < vv.size(); j++) {
                     v = (String) vv.get(j);
-                    a.setObject(j, col.convertStringTo(v));
+                    a.setObject(j, col.convertFromString(v));
                 }
                 data.add(a);
             }

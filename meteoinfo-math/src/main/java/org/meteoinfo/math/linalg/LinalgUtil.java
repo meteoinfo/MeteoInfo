@@ -13,12 +13,14 @@ import org.meteoinfo.math.blas.LinearAlgebra;
 import org.meteoinfo.math.blas.SVDJob;
 import org.meteoinfo.math.matrix.Matrix;
 import org.meteoinfo.math.matrix.MatrixUtil;
+import org.meteoinfo.ndarray.*;
+import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.math.blas.UPLO;
 
 import java.nio.DoubleBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -28,6 +30,108 @@ import java.util.logging.Logger;
 public class LinalgUtil {
 
     static Logger logger = Logger.getLogger("LinalgUtil class");
+
+    /**
+     * Returns the cross product of 3-element vectors.
+     * @param aa The first input array
+     * @param ba The second input array
+     * @return An array containing the cross products
+     */
+    public static Array cross(Array aa, Array ba) {
+        DataType dataType = ArrayMath.commonType(aa.getDataType(), ba.getDataType());
+        Array r = Array.factory(dataType, aa.getShape());
+        double[] a = (double[]) aa.get1DJavaArray(double.class);
+        double[] b = (double[]) ba.get1DJavaArray(double.class);
+        r.setObject(0, a[1] * b[2] - a[2] * b[1]);  // i component
+        r.setObject(1,a[2] * b[0] - a[0] * b[2]);  // j component
+        r.setObject(2, a[0] * b[1] - a[1] * b[0]);  // k component
+
+        return r;
+    }
+
+    /**
+     * Returns the cross product of 3-element vectors.
+     * @param aa The first input array
+     * @param ba The second input array
+     * @return An array containing the cross products
+     */
+    private static Array cross(Array aa, Array ba, DataType dataType) {
+        Array r = Array.factory(dataType, aa.getShape());
+        double[] a = (double[]) aa.get1DJavaArray(double.class);
+        double[] b = (double[]) ba.get1DJavaArray(double.class);
+        r.setObject(0, a[1] * b[2] - a[2] * b[1]);  // i component
+        r.setObject(1,a[2] * b[0] - a[0] * b[2]);  // j component
+        r.setObject(2, a[0] * b[1] - a[1] * b[0]);  // k component
+
+        return r;
+    }
+
+    /**
+     * Returns the cross product of 3-element vectors.
+     * @param a The first input array
+     * @param b The second input array
+     * @param axis The axis to calculate cross products
+     * @return An array containing the cross products
+     */
+    public static Array cross(Array a, Array b, int axis) throws InvalidRangeException {
+        a = a.copyIfView();
+        b = b.copyIfView();
+
+        DataType dataType = ArrayMath.commonType(a.getDataType(), b.getDataType());
+        int[] shape = a.getShape();
+        Array r = Array.factory(dataType, shape);
+        int n = 1;
+        if (axis == -1) {
+            axis = shape.length - 1;
+        }
+        for (int i = 0; i < shape.length; i++) {
+            if (i != axis) {
+                n += n * shape[i];
+            }
+        }
+
+        Index indexR = r.getIndex();
+        Index index = a.getIndex();
+        int[] current;
+        for (int i = 0; i < r.getSize(); i++) {
+            current = indexR.getCurrentCounter();
+            if (current[axis] == 0) {
+                List<Range> ranges = new ArrayList<>();
+                for (int j = 0; j < shape.length; j++) {
+                    if (j == axis) {
+                        ranges.add(new Range(0, shape[j] - 1, 1));
+                    } else {
+                        ranges.add(new Range(current[j], current[j], 1));
+                    }
+                }
+                Array rr = cross(a.section(ranges), b.section(ranges), dataType);
+                index.set(current);
+                r.setObject(index, rr.getObject(0));
+                index.setDim(axis, 1);
+                r.setObject(index, rr.getObject(1));
+                index.setDim(axis, 2);
+                r.setObject(index, rr.getObject(2));
+            }
+            indexR.incr();
+        }
+
+        return r;
+    }
+
+    /**
+     * Returns the cross product of 2-element vectors.
+     * @param a The first input array
+     * @param b The second input array
+     * @return The cross products
+     */
+    public static double cross2D(Array a, Array b) {
+        a = a.copyIfView();
+        b = b.copyIfView();
+
+        double r = a.getDouble(0) * b.getDouble(1) - a.getDouble(1) * b.getDouble(0);
+
+        return r;
+    }
 
     /**
      * Matrix dot operator

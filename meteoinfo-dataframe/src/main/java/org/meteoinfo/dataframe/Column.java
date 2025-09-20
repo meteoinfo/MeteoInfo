@@ -13,7 +13,6 @@ import org.meteoinfo.ndarray.util.DataTypeUtil;
 
 import java.text.DecimalFormat;
 import java.time.format.DateTimeFormatter;
-import java.util.Formatter;
 import java.util.Locale;
 
 /**
@@ -251,8 +250,8 @@ public class Column {
      * @param s Input string
      * @return Result object
      */
-    public Object convertStringTo(String s) {
-        return DataTypeUtil.convertStringTo(s, dataType, format);
+    public Object convertFromString(String s) {
+        return DataTypeUtil.convertFromString(s, dataType, format);
     }
     
     @Override

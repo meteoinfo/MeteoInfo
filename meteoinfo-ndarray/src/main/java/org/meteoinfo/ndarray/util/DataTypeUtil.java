@@ -525,7 +525,7 @@ public class DataTypeUtil {
      * @param dateFormat Date format
      * @return Converted data
      */
-    public static Object convertStringTo(String vStr, DataType dataType, String dateFormat) {
+    public static Object convertFromString(String vStr, DataType dataType, String dateFormat) {
         if (vStr == null) {
             switch (dataType) {
                 case INT:

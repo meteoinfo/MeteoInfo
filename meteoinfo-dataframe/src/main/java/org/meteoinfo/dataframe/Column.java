@@ -24,7 +24,7 @@ public class Column {
     protected String name;
     protected DataType dataType;
     protected String format;
-    protected DateTimeFormatter dateTimeFormatter;
+    protected String printFormat;
     protected int formatLen;
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -109,11 +109,24 @@ public class Column {
      */
     public void setFormat(String value){
         this.format = value;
-        if (this.dataType == DataType.DATE) {
-            this.dateTimeFormatter = DateTimeFormatter.ofPattern(value);
-        }
     }
-    
+
+    /**
+     * Get print format
+     * @return Print format string
+     */
+    public String getPrintFormat() {
+        return this.printFormat;
+    }
+
+    /**
+     * Set print format
+     * @param value Print format string
+     */
+    public void setPrintFormat(String value) {
+        this.printFormat = value;
+    }
+
     /**
      * Get format length
      * @return Format length
@@ -132,16 +145,22 @@ public class Column {
 
     // </editor-fold>
     // <editor-fold desc="Methods">
+
     /**
      * Factory method
      * @param name Name
-     * @param dtype Data type
+     * @param dataType Data type
      * @return Column
      */
-    public static Column factory(String name, DataType dtype){
-        return new Column(name, dtype);
+    public static Column factory(String name, DataType dataType) {
+        switch (dataType) {
+            case DATE:
+                return new DateTimeColumn(name);
+            default:
+                return new Column(name, dataType);
+        }
     }
-    
+
     /**
      * Factory method
      * @param name Name
@@ -162,7 +181,11 @@ public class Column {
                     return col;
                 }
         }
-        return new Column(name, dtype);
+
+        Column column = new Column(name, dtype);
+        column.updateFormat(array);
+
+        return column;
     }
     
     /**
@@ -170,10 +193,12 @@ public class Column {
      */
     public void updateFormat(){
         this.format = null;
+        this.printFormat = null;
         switch (this.dataType){
             case FLOAT:
             case DOUBLE:
-                this.format = "%f";                
+                this.format = "%f";
+                this.printFormat = "%f";
                 break;
         }
         this.formatLen = this.name.length();
@@ -199,7 +224,7 @@ public class Column {
                     nn = str.length() - ci - 1;
                     if (nf < nn) {
                         nf = nn;
-                        if (nf == 6)
+                        if (nf >= 6)
                             break;
                     }
                 }
@@ -207,18 +232,15 @@ public class Column {
                 ci = smax.indexOf(".");
                 int len = ci + nf + 2;
                 formatLen = Math.max(formatLen, len);
-                this.format = "%" + String.valueOf(formatLen) + "." + String.valueOf(nf) + "f";
+                this.format = "%f";
+                this.printFormat = "%" + String.valueOf(formatLen) + "." + String.valueOf(nf) + "f";
                 break;
             case INT:
                 int imax = (int)ArrayMath.max(data);
                 smax = Integer.toString(imax);
                 formatLen = Math.max(formatLen, smax.length());
-                this.format = "%" + String.valueOf(formatLen) + "d";
-                break;
-            case DATE:
-                if (dateTimeFormatter == null) {
-                    dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
-                }
+                this.format = "%d";
+                this.printFormat = "%" + String.valueOf(formatLen) + "d";
                 break;
             default:                
                 String v;
@@ -230,7 +252,8 @@ public class Column {
                     if (formatLen < v.length())
                         formatLen = v.length();
                 }
-                this.format = "%" + String.valueOf(formatLen) + "s";
+                this.format = "%s";
+                this.printFormat = "%" + String.valueOf(formatLen) + "s";
                 break;
         }
     }        
@@ -268,13 +291,20 @@ public class Column {
         if (format == null)
             return o.toString();
         else {
-            if (this.dataType == DataType.DATE) {
-                if (this.dateTimeFormatter == null) {
-                    this.dateTimeFormatter = DateTimeFormatter.ofPattern(this.format);
-                }
-                return ((LocalDateTime) o).format(this.dateTimeFormatter);
-            } else
-                return String.format(Locale.US, format, o);
+            return String.format(Locale.US, format, o);
+        }
+    }
+
+    /**
+     * Print an object (same datatype with this column) to string
+     * @param o
+     * @return String
+     */
+    public String print(Object o){
+        if (this.printFormat == null)
+            return o.toString();
+        else {
+            return String.format(Locale.US, this.printFormat, o);
         }
     }
     
@@ -286,6 +316,7 @@ public class Column {
     public Object clone() {
         Column col = new Column(this.name, this.dataType);
         col.setFormat(this.format);
+        col.setPrintFormat(this.printFormat);
         col.setFormatLen(this.formatLen);
         return col;
     }

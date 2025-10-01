@@ -24,8 +24,10 @@ public class Mat {
             MatFile mat = Mat5.newReader(source).readMat();
             Map<String, Array> map = new HashMap<>();
             for (MatFile.Entry entry : mat.getEntries()) {
-                Array array = MatLabUtil.fromMatLabArray((Matrix) entry.getValue());
-                map.put(entry.getName(), array);
+                if (entry.getValue() instanceof Matrix) {
+                    Array array = MatLabUtil.fromMatLabArray((Matrix) entry.getValue());
+                    map.put(entry.getName(), array);
+                }
             }
 
             return map;

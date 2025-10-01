@@ -113,18 +113,34 @@ public class DataFrame implements Iterable {
                 if (columns.size() == 1) {
                     this.data = new ArrayList<>();
                     ((List) this.data).add(data);
+                    columns.get(0).updateFormat((Array) data);
                 } else {
                     if (((Array) data).getSize() == columns.size()) {
                         this.data = ((Array) data).reshape(new int[]{1, columns.size()});
                         this.array2D = true;
+                        for (Column col : columns) {
+                            col.updateFormat((Array) data);
+                        }
                     }
                 }
             } else {   //Two dimension array
                 this.data = data;
                 this.array2D = true;
+                Column column = columns.get(0);
+                column.updateFormat((Array) data);
+                for (int i = 1; i < columns.size(); i++) {
+                    Column col = columns.get(i);
+                    col.setFormat(column.format);
+                    col.setPrintFormat(column.printFormat);
+                    col.setFormatLen(column.formatLen);
+                }
             }
         } else {
             this.data = data;
+            int n = ((List) data).size();
+            for (int i = 0; i < n; i++) {
+                columns.get(i).updateFormat(((List<Array>) data).get(i));
+            }
         }
 
         this.columns = columns;
@@ -141,7 +157,6 @@ public class DataFrame implements Iterable {
     public DataFrame(Index index, List<String> columns, Object data) {
         this.columns = new ColumnIndex();
         if (data instanceof Array) {
-            List<DataType> dtypes = new ArrayList<>();
             if (((Array) data).getRank() == 1) {    //One dimension array
                 this.data = new ArrayList<>();
                 ((List) this.data).add(data);
@@ -162,9 +177,13 @@ public class DataFrame implements Iterable {
                         columns.add("C_" + String.valueOf(i));
                     }
                 }
-                for (int i = 0; i < n; i++) {
-                    dtypes.add(((Array) data).getDataType());
-                    this.columns.add(new Column(columns.get(i), dtypes.get(i)));
+                DataType dataType = ((Array) data).getDataType();
+                Column column = Column.factory(columns.get(0), (Array) data);
+                this.columns.add(column);
+                for (int i = 1; i < n; i++) {
+                    Column col = (Column) column.clone();
+                    col.setName(columns.get(i));
+                    this.columns.add(col);
                 }
             }
         } else {
@@ -177,7 +196,7 @@ public class DataFrame implements Iterable {
                 }
             }
             for (int i = 0; i < n; i++) {
-                this.columns.add(new Column(columns.get(i), ((List<Array>) data).get(i).getDataType()));
+                this.columns.add(Column.factory(columns.get(i), ((List<Array>) data).get(i)));
             }
         }
 
@@ -2480,7 +2499,7 @@ public class DataFrame implements Iterable {
             sb.append(this.index.toString(r));
             for (int i = 0; i < this.size(); i++) {
                 sb.append(" ");
-                sb.append(this.columns.get(i).toString(this.getValue(r, i)));
+                sb.append(this.columns.get(i).print(this.getValue(r, i)));
             }
             sb.append("\n");
         }
@@ -2641,26 +2660,26 @@ public class DataFrame implements Iterable {
                 String colName = titleArray.get(idx).trim();
                 if (colFormat.equals("C") || colFormat.equals("s")) //String
                 {
-                    col = new Column(colName, DataType.STRING);
+                    col = Column.factory(colName, DataType.STRING);
                 } else if (colFormat.equals("i")) //Integer
                 {
-                    col = new Column(colName, DataType.INT);
+                    col = Column.factory(colName, DataType.INT);
                 } else if (colFormat.equals("f")) //Float
                 {
-                    col = new Column(colName, DataType.FLOAT);
+                    col = Column.factory(colName, DataType.FLOAT);
                 } else if (colFormat.equals("d")) //Double
                 {
-                    col = new Column(colName, DataType.DOUBLE);
+                    col = Column.factory(colName, DataType.DOUBLE);
                 } else if (colFormat.equals("B")) //Boolean
                 {
-                    col = new Column(colName, DataType.BOOLEAN);
+                    col = Column.factory(colName, DataType.BOOLEAN);
                 } else if (colFormat.substring(0, 1).equals("{")) {    //Date
                     int eidx = colFormat.indexOf("}");
                     String formatStr = colFormat.substring(1, eidx);
-                    col = new Column(colName, DataType.DATE);
+                    col = Column.factory(colName, DataType.DATE);
                     col.setFormat(formatStr);
                 } else {
-                    col = new Column(colName, DataType.STRING);
+                    col = Column.factory(colName, DataType.STRING);
                 }
                 cols.add(col);
                 values.add(new ArrayList<>());
@@ -2928,26 +2947,26 @@ public class DataFrame implements Iterable {
                 String colName = titleArray.get(idx).trim();
                 if (colFormat.equals("C") || colFormat.equals("s")) //String
                 {
-                    col = new Column(colName, DataType.STRING);
+                    col = Column.factory(colName, DataType.STRING);
                 } else if (colFormat.equals("i")) //Integer
                 {
-                    col = new Column(colName, DataType.INT);
+                    col = Column.factory(colName, DataType.INT);
                 } else if (colFormat.equals("f")) //Float
                 {
-                    col = new Column(colName, DataType.FLOAT);
+                    col = Column.factory(colName, DataType.FLOAT);
                 } else if (colFormat.equals("d")) //Double
                 {
-                    col = new Column(colName, DataType.DOUBLE);
+                    col = Column.factory(colName, DataType.DOUBLE);
                 } else if (colFormat.equals("B")) //Boolean
                 {
-                    col = new Column(colName, DataType.BOOLEAN);
+                    col = Column.factory(colName, DataType.BOOLEAN);
                 } else if (colFormat.substring(0, 1).equals("{")) {    //Date
                     int eidx = colFormat.indexOf("}");
                     String formatStr = colFormat.substring(1, eidx);
-                    col = new Column(colName, DataType.DATE);
+                    col = Column.factory(colName, DataType.DATE);
                     col.setFormat(formatStr);
                 } else {
-                    col = new Column(colName, DataType.STRING);
+                    col = Column.factory(colName, DataType.STRING);
                 }
                 cols.add(col);
                 values.add(new ArrayList<>());
@@ -3133,25 +3152,26 @@ public class DataFrame implements Iterable {
         sw.write(str);
 
         String line, vstr;
-        List<String> formats = new ArrayList<>();
+        List<Column> columns = new ArrayList<>();
         if (formatSpec == null) {
             for (Column col : this.columns) {
+                Column column = (Column) col.clone();
                 if (col.getDataType() == DataType.FLOAT || col.getDataType() == DataType.DOUBLE) {
-                    formats.add(floatFormat == null ? col.getFormat() : floatFormat);
-                } else {
-                    formats.add(col.getFormat());
+                    column.setFormat(floatFormat == null ? col.getFormat() : floatFormat);
                 }
+                columns.add(column);
             }
         } else {
             String[] formatStrs = formatSpec.split("%");
             int i = 1;
             for (Column col : this.columns) {
+                Column column = (Column) col.clone();
                 if (i < formatStrs.length) {
                     if (formatStrs[i].equals("i"))
                         formatStrs[i] = "d";
-                    formats.add("%" + formatStrs[i]);
+                    column.setFormat("%" + formatStrs[i]);
                 } else {
-                    formats.add(col.getFormat());
+                    column.setFormat(col.getFormat());
                 }
                 i += 1;
             }
@@ -3163,11 +3183,7 @@ public class DataFrame implements Iterable {
                 line = this.index.toString(j, idxFormat).trim();
             }
             for (int i = 0; i < this.size(); i++) {
-                if (formats.get(i) == null) {
-                    vstr = this.getValue(j, i).toString();
-                } else {
-                    vstr = String.format(Locale.US, formats.get(i), this.getValue(j, i));
-                }
+                vstr = columns.get(i).toString(this.getValue(j, i));
                 if (line.isEmpty()) {
                     line = vstr;
                 } else {

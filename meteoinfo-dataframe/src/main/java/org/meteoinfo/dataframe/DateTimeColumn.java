@@ -44,7 +44,7 @@ public class DateTimeColumn extends Column {
      */
     public DateTimeColumn(String name, String format) {
         this.name = name;
-        this.dataType = DataType.OBJECT;
+        this.dataType = DataType.DATE;
         this.format = format;
         this.formatLen = Math.max(this.name.length(), this.format.length());
         this.dateTimeFormatter = DateTimeFormatter.ofPattern(this.format);
@@ -62,8 +62,29 @@ public class DateTimeColumn extends Column {
         this.formatLen = Math.max(this.name.length(), this.format.length());
     }
 
+    /**
+     * Get DateTimeFormatter
+     * @return DataTimeFormatter
+     */
+    public DateTimeFormatter getDateTimeFormatter() {
+        return this.dateTimeFormatter;
+    }
+
+    /**
+     * Set DateTimeFormatter
+     * @param value DateTimeFormatter
+     */
+    public void setDateTimeFormatter(DateTimeFormatter value) {
+        this.dateTimeFormatter = value;
+    }
+
     @Override
     public String toString(Object o) {
+        return toString((LocalDateTime) o);
+    }
+
+    @Override
+    public String print(Object o) {
         return toString((LocalDateTime) o);
     }
 
@@ -112,5 +133,19 @@ public class DateTimeColumn extends Column {
                 break;
         }
         this.setFormat(ff);
+    }
+
+    /**
+     *
+     * @return Column
+     */
+    @Override
+    public Object clone() {
+        DateTimeColumn col = new DateTimeColumn(this.name);
+        col.setFormat(this.format);
+        col.setPrintFormat(this.printFormat);
+        col.setFormatLen(this.formatLen);
+        col.setDateTimeFormatter(this.dateTimeFormatter);
+        return col;
     }
 }

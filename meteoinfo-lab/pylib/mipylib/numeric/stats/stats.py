@@ -319,10 +319,9 @@ def pearsonr(x, y, axis=None):
     
     :returns: Pearson’s correlation coefficient and 2-tailed p-value.
     """
-    if isinstance(x, list):
-        x = np.array(x)
-    if isinstance(y, list):
-        y = np.array(y)
+    x = np.asanyarray(x)
+    y = np.asanyarray(y)
+
     if axis is None:
         r = StatsUtil.pearsonr(x.asarray(), y.asarray())
         return r[0], r[1]
@@ -514,63 +513,108 @@ def percentile(a, q, axis=None):
     return r
 
 
-def ttest_1samp(a, popmean):
+def ttest_1samp(a, popmean, axis=0):
     """
     Calculate the T-test for the mean of ONE group of scores.
 
     This is a two-sided test for the null hypothesis that the expected value (mean) of 
     a sample of independent observations a is equal to the given population mean, popmean.
-    
-    :param a: (*array_like*) Sample observation.
-    :param popmean: (*float*) Expected value in null hypothesis.
-    
-    :returns: t-statistic and p-value
+
+    Parameters
+    ----------
+    a : array_like
+        Sample observation.
+    popmean : float or array_like
+        Expected value in null hypothesis.
+
+    Returns
+    -------
+    result : t-statistic and p-value
     """
-    if isinstance(a, list):
-        a = np.array(x)
-    r = StatsUtil.tTest(a.asarray(), popmean)
-    return r[0], r[1]
+    a = np.asanyarray(a)
+    if a.ndim == 1:
+        r = StatsUtil.tTestOneSample(a.asarray(), popmean)
+        return r[0], r[1]
+    else:
+        if isinstance(popmean, (list, tuple)):
+            popmean = np.array(popmean)
+        if isinstance(popmean, np.NDArray):
+            popmean = popmean._array
+
+        r = StatsUtil.tTestOneSample(a._array, popmean, axis)
+        return np.array(r[0]), np.array(r[1])
 
 
-def ttest_rel(a, b):
+def ttest_rel(a, b, axis=0):
     """
     Calculates the T-test on TWO RELATED samples of scores, a and b.
 
     This is a two-sided test for the null hypothesis that 2 related or repeated samples 
     have identical average (expected) values.
     
-    :param a: (*array_like*) Sample data a.
-    :param b: (*array_like*) Sample data b.
-    
-    :returns: t-statistic and p-value
+    Parameters
+    ----------
+    a, b : array_like
+        The arrays must have the same shape, except in the dimension
+        corresponding to `axis` (the first, by default).
+    axis : int or None, optional
+        Axis along which to compute test. If None, compute over the whole
+        arrays, `a`, and `b`.
+
+    Returns
+    -------
+    result : t-statistic and p-value
     """
-    if isinstance(a, list):
-        a = np.array(a)
-    if isinstance(b, list):
-        b = np.array(b)
-    r = StatsUtil.pairedTTest(a.asarray(), b.asarray())
-    return r[0], r[1]
+    a = np.asanyarray(a)
+    b = np.asanyarray(b)
+    if a.ndim == 1:
+        r = StatsUtil.pairedTTest(a.asarray(), b.asarray())
+        return r[0], r[1]
+    else:
+        r = StatsUtil.pairedTTest(a._array, b._array, axis)
+        return np.array(r[0]), np.array(r[1])
 
 
-def ttest_ind(a, b):
+def ttest_ind(a, b, axis=0, equal_var=True):
     """
-    Calculates the T-test for the means of TWO INDEPENDENT samples of scores.
+    Calculate the T-test for the means of *two independent* samples of scores.
 
-    This is a two-sided test for the null hypothesis that 2 independent samples have 
-    identical average (expected) values. This test assumes that the populations have 
-    identical variances.
+    This is a test for the null hypothesis that 2 independent samples
+    have identical average (expected) values. This test assumes that the
+    populations have identical variances by default.
     
-    :param a: (*array_like*) Sample data a.
-    :param b: (*array_like*) Sample data b.
-    
-    :returns: t-statistic and p-value
+    Parameters
+    ----------
+    a, b : array_like
+        The arrays must have the same shape, except in the dimension
+        corresponding to `axis` (the first, by default).
+    axis : int or None, optional
+        Axis along which to compute test. If None, compute over the whole
+        arrays, `a`, and `b`.
+    equal_var : bool, optional
+        If True (default), perform a standard independent 2 sample test
+        that assumes equal population variances [1]_.
+        If False, perform Welch's t-test, which does not assume equal
+        population variance [2]_.
+
+    Returns
+    -------
+    result : t-statistic and p-value
+
+     References
+    ----------
+    .. [1] https://en.wikipedia.org/wiki/T-test#Independent_two-sample_t-test
+
+    .. [2] https://en.wikipedia.org/wiki/Welch%27s_t-test
     """
-    if isinstance(a, list):
-        a = np.array(a)
-    if isinstance(b, list):
-        b = np.array(b)
-    r = StatsUtil.tTest(a.asarray(), b.asarray())
-    return r[0], r[1]
+    a = np.asanyarray(a)
+    b = np.asanyarray(b)
+    if a.ndim == 1 or axis is None:
+        r = StatsUtil.tTest(a._array, b._array, equal_var)
+        return r[0], r[1]
+    else:
+        r = StatsUtil.tTest(a._array, b._array, axis, equal_var)
+        return np.array(r[0]), np.array(r[1])
 
 
 def chisquare(f_obs, f_exp=None):

@@ -15,6 +15,7 @@ import org.apache.commons.math4.legacy.stat.correlation.KendallsCorrelation;
 import org.apache.commons.math4.legacy.stat.correlation.PearsonsCorrelation;
 import org.apache.commons.math4.legacy.stat.correlation.SpearmansCorrelation;
 import org.apache.commons.math4.legacy.stat.inference.InferenceTestUtils;
+import org.apache.commons.math4.legacy.stat.inference.TTest;
 import org.apache.commons.math4.legacy.stat.regression.OLSMultipleLinearRegression;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayMath;
@@ -453,28 +454,207 @@ public class StatsUtil {
      * @param mu Expected value in null hypothesis
      * @return t_statistic and p_value
      */
-    public static double[] tTest(Array a, double mu){
-        double[] ad = (double[]) ArrayUtil.copyToNDJavaArray_Double(a);
+    public static double[] tTestOneSample(Array a, double mu){
+        double[] ad = (double[]) a.get1DJavaArray(double.class);
         double s = InferenceTestUtils.t(mu, ad);
         double p = InferenceTestUtils.tTest(mu, ad);
         
         return new double[]{s, p};
     }
+
+    /**
+     * One sample t test
+     *
+     * @param a Sample a
+     * @param mu Expected value in null hypothesis
+     * @param axis Axis
+     * @return t_statistic and p_value
+     */
+    public static Array[] tTestOneSample(Array a, double mu, int axis) throws InvalidRangeException {
+        int[] aShape = a.getShape();
+        int[] shape = new int[aShape.length - 1];
+        int idx;
+        for (int i = 0; i < aShape.length; i++) {
+            idx = i;
+            if (idx == axis) {
+                continue;
+            } else if (idx > axis) {
+                idx -= 1;
+            }
+            shape[idx] = aShape[i];
+        }
+        Array tStatistic = Array.factory(DataType.DOUBLE, shape);
+        Array pValue = Array.factory(DataType.DOUBLE, shape);
+        Index indexr = tStatistic.getIndex();
+        int[] current;
+        for (int i = 0; i < tStatistic.getSize(); i++) {
+            current = indexr.getCurrentCounter();
+            List<Range> aRanges = new ArrayList<>();
+            for (int j = 0; j < aShape.length; j++) {
+                if (j == axis) {
+                    aRanges.add(new Range(0, aShape[j] - 1, 1));
+                } else {
+                    idx = j;
+                    if (idx > axis) {
+                        idx -= 1;
+                    }
+                    aRanges.add(new Range(current[idx], current[idx], 1));
+                }
+            }
+            Array xx = ArrayMath.section(a, aRanges);
+            double[] rp = tTestOneSample(xx, mu);
+            tStatistic.setDouble(i, rp[0]);
+            pValue.setDouble(i, rp[1]);
+            indexr.incr();
+        }
+
+        return new Array[]{tStatistic, pValue};
+    }
+
+    /**
+     * One sample t test
+     *
+     * @param a Sample a
+     * @param mu Expected value in null hypothesis
+     * @param axis Axis
+     * @return t_statistic and p_value
+     */
+    public static Array[] tTestOneSample(Array a, Array mu, int axis) throws InvalidRangeException {
+        mu = mu.copyIfView();
+        int[] aShape = a.getShape();
+        int[] shape = new int[aShape.length - 1];
+        int idx;
+        for (int i = 0; i < aShape.length; i++) {
+            idx = i;
+            if (idx == axis) {
+                continue;
+            } else if (idx > axis) {
+                idx -= 1;
+            }
+            shape[idx] = aShape[i];
+        }
+        Array tStatistic = Array.factory(DataType.DOUBLE, shape);
+        Array pValue = Array.factory(DataType.DOUBLE, shape);
+        Index indexr = tStatistic.getIndex();
+        int[] current;
+        for (int i = 0; i < tStatistic.getSize(); i++) {
+            current = indexr.getCurrentCounter();
+            List<Range> aRanges = new ArrayList<>();
+            for (int j = 0; j < aShape.length; j++) {
+                if (j == axis) {
+                    aRanges.add(new Range(0, aShape[j] - 1, 1));
+                } else {
+                    idx = j;
+                    if (idx > axis) {
+                        idx -= 1;
+                    }
+                    aRanges.add(new Range(current[idx], current[idx], 1));
+                }
+            }
+            Array xx = ArrayMath.section(a, aRanges);
+            double[] rp = tTestOneSample(xx, mu.getDouble(i));
+            tStatistic.setDouble(i, rp[0]);
+            pValue.setDouble(i, rp[1]);
+            indexr.incr();
+        }
+
+        return new Array[]{tStatistic, pValue};
+    }
     
     /**
      * unpaired, two-sided, two-sample t-test.
      * 
-     * @param a Sample a.
-     * @param b Sample b.
+     * @param a Sample a
+     * @param b Sample b
      * @return t_statistic and p_value
      */
     public static double[] tTest(Array a, Array b) {
-        double[] ad = (double[]) ArrayUtil.copyToNDJavaArray_Double(a);
-        double[] bd = (double[]) ArrayUtil.copyToNDJavaArray_Double(b);
+        double[] ad = (double[]) a.get1DJavaArray(double.class);
+        double[] bd = (double[]) b.get1DJavaArray(double.class);
         double s = InferenceTestUtils.t(ad, bd);
         double p = InferenceTestUtils.tTest(ad, bd);
         
         return new double[]{s, p};
+    }
+
+    /**
+     * unpaired, two-sided, two-sample t-test.
+     *
+     * @param a Sample a
+     * @param b Sample b
+     * @param equalVariance Equal variance or not
+     * @return t_statistic and p_value
+     */
+    public static double[] tTest(Array a, Array b, boolean equalVariance) {
+        double[] ad = (double[]) a.get1DJavaArray(double.class);
+        double[] bd = (double[]) b.get1DJavaArray(double.class);
+        TTest tTest = new TTest();
+        double tStatistic, pValue;
+        if (equalVariance) {
+            tStatistic = tTest.homoscedasticT(ad, bd);
+            pValue = tTest.homoscedasticTTest(ad, bd);
+        } else {
+            // （Welch's t-test）
+            tStatistic = tTest.t(ad, bd);
+            pValue = tTest.tTest(ad, bd);
+        }
+
+        return new double[]{tStatistic, pValue};
+    }
+
+    /**
+     * unpaired, two-sided, two-sample t-test.
+     *
+     * @param a Sample a
+     * @param b Sample b
+     * @param axis Axis
+     * @param equalVariance Equal variance or not
+     * @return t_statistic and p_value
+     */
+    public static Array[] tTest(Array a, Array b, int axis, boolean equalVariance) throws InvalidRangeException {
+        int[] aShape = a.getShape();
+        int[] bShape = b.getShape();
+        int[] shape = new int[aShape.length - 1];
+        int idx;
+        for (int i = 0; i < aShape.length; i++) {
+            idx = i;
+            if (idx == axis) {
+                continue;
+            } else if (idx > axis) {
+                idx -= 1;
+            }
+            shape[idx] = aShape[i];
+        }
+        Array tStatistic = Array.factory(DataType.DOUBLE, shape);
+        Array pValue = Array.factory(DataType.DOUBLE, shape);
+        Index indexr = tStatistic.getIndex();
+        int[] current;
+        for (int i = 0; i < tStatistic.getSize(); i++) {
+            current = indexr.getCurrentCounter();
+            List<Range> aRanges = new ArrayList<>();
+            List<Range> bRanges = new ArrayList<>();
+            for (int j = 0; j < aShape.length; j++) {
+                if (j == axis) {
+                    aRanges.add(new Range(0, aShape[j] - 1, 1));
+                    bRanges.add(new Range(0, bShape[j] - 1, 1));
+                } else {
+                    idx = j;
+                    if (idx > axis) {
+                        idx -= 1;
+                    }
+                    aRanges.add(new Range(current[idx], current[idx], 1));
+                    bRanges.add(new Range(current[idx], current[idx], 1));
+                }
+            }
+            Array xx = ArrayMath.section(a, aRanges);
+            Array yy = ArrayMath.section(b, bRanges);
+            double[] rp = tTest(xx, yy, equalVariance);
+            tStatistic.setDouble(i, rp[0]);
+            pValue.setDouble(i, rp[1]);
+            indexr.incr();
+        }
+
+        return new Array[]{tStatistic, pValue};
     }
     
     /**
@@ -482,17 +662,73 @@ public class StatsUtil {
      * between corresponding (paired) elements of the double[] arrays sample1 
      * and sample2 is zero.
      * 
-     * @param a Sample a.
-     * @param b Sample b.
+     * @param a Sample a
+     * @param b Sample b
      * @return t_statistic and p_value
      */
     public static double[] pairedTTest(Array a, Array b) {
-        double[] ad = (double[]) ArrayUtil.copyToNDJavaArray_Double(a);
-        double[] bd = (double[]) ArrayUtil.copyToNDJavaArray_Double(b);
+        double[] ad = (double[]) a.get1DJavaArray(double.class);
+        double[] bd = (double[]) b.get1DJavaArray(double.class);
         double s = InferenceTestUtils.pairedT(ad, bd);
         double p = InferenceTestUtils.pairedTTest(ad, bd);
         
         return new double[]{s, p};
+    }
+
+    /**
+     * Paired test evaluating the null hypothesis that the mean difference
+     * between corresponding (paired) elements of the double[] arrays sample1
+     * and sample2 is zero.
+     *
+     * @param a Sample a
+     * @param b Sample b
+     * @param axis Axis
+     * @return t_statistic and p_value
+     */
+    public static Array[] pairedTTest(Array a, Array b, int axis) throws InvalidRangeException {
+        int[] aShape = a.getShape();
+        int[] bShape = b.getShape();
+        int[] shape = new int[aShape.length - 1];
+        int idx;
+        for (int i = 0; i < aShape.length; i++) {
+            idx = i;
+            if (idx == axis) {
+                continue;
+            } else if (idx > axis) {
+                idx -= 1;
+            }
+            shape[idx] = aShape[i];
+        }
+        Array tStatistic = Array.factory(DataType.DOUBLE, shape);
+        Array pValue = Array.factory(DataType.DOUBLE, shape);
+        Index indexr = tStatistic.getIndex();
+        int[] current;
+        for (int i = 0; i < tStatistic.getSize(); i++) {
+            current = indexr.getCurrentCounter();
+            List<Range> aRanges = new ArrayList<>();
+            List<Range> bRanges = new ArrayList<>();
+            for (int j = 0; j < aShape.length; j++) {
+                if (j == axis) {
+                    aRanges.add(new Range(0, aShape[j] - 1, 1));
+                    bRanges.add(new Range(0, bShape[j] - 1, 1));
+                } else {
+                    idx = j;
+                    if (idx > axis) {
+                        idx -= 1;
+                    }
+                    aRanges.add(new Range(current[idx], current[idx], 1));
+                    bRanges.add(new Range(current[idx], current[idx], 1));
+                }
+            }
+            Array xx = ArrayMath.section(a, aRanges);
+            Array yy = ArrayMath.section(b, bRanges);
+            double[] rp = pairedTTest(xx, yy);
+            tStatistic.setDouble(i, rp[0]);
+            pValue.setDouble(i, rp[1]);
+            indexr.incr();
+        }
+
+        return new Array[]{tStatistic, pValue};
     }
     
     /**
@@ -503,8 +739,8 @@ public class StatsUtil {
      * @return Chi-square_statistic and p_value
      */
     public static double[] chiSquareTest(Array e, Array o) {
-        double[] ed = (double[]) ArrayUtil.copyToNDJavaArray_Double(e);
-        long[] od = (long[]) ArrayUtil.copyToNDJavaArray_Long(o);
+        double[] ed = (double[]) e.get1DJavaArray(double.class);
+        long[] od = (long[]) o.get1DJavaArray(double.class);
         double s = InferenceTestUtils.chiSquare(ed, od);
         double p = InferenceTestUtils.chiSquareTest(ed, od);
         

@@ -39,7 +39,10 @@ class DimDataFile(object):
             self.proj = dataset.getProjectionInfo()
             self.projection = self.proj
             for v in dataset.getDataInfo().getVariables():
-                self._variables.append(DimVariable.factory(v, self))
+                dim_var = DimVariable.factory(v, self)
+                self._variables.append(dim_var)
+                setattr(self, dim_var.name, dim_var)
+
         self.arldata = arldata
         self.bufrdata = bufrdata
         

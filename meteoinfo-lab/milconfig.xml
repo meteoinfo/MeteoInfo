@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\stats">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\topology"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\ascii"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\linalg"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\matlab"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\text"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\city"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\shitshape_ice_cream_cone.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\stats\ttest_ind_precipitation_anomaly_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\plot_cuace_earth_isosurface_streamline_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\shitshape_ice_cream_cone.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\stats\ttest_ind_precipitation_anomaly_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\plot_cuace_earth_isosurface_streamline_1.py"/>
     </RecentFiles>
   </File>
   <Font>

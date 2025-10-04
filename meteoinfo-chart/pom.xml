@@ -16,15 +16,15 @@
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
         <freehep.version>2.4</freehep.version>
-        <jogl.version>2.5.0</jogl.version>
+        <jogl.version>2.6.0</jogl.version>
     </properties>
 
     <repositories>
-        <repository>
+        <!--<repository>
             <id>jogamp-remote</id>
             <name>jogamp mirror</name>
             <url>https://www.jogamp.org/deployment/maven/</url>
-        </repository>
+        </repository>-->
         <repository>
             <id>freehep</id>
             <name>freehep</name>

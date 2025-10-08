@@ -58,6 +58,27 @@ public class DistributionUtil {
     /**
      * Random variates of given type.
      * @param dis Distribution.
+     * @param size Size.
+     * @return Result array.
+     */
+    public static Array rvs(ContinuousDistribution dis, List<Integer> size){
+        ContinuousDistribution.Sampler sampler = dis.createSampler(RandomSource.MT.create());
+        int n = 1;
+        for (int s : size) {
+            n = n * s;
+        }
+        double[] samples = new double[n];
+        for (int i = 0; i < n; i++) {
+            samples[i] = sampler.sample();
+        }
+        int[] shape = size.stream().mapToInt(Integer::intValue).toArray();
+        Array r = Array.factory(DataType.DOUBLE, shape, samples);
+        return r;
+    }
+
+    /**
+     * Random variates of given type.
+     * @param dis Distribution.
      * @param n Size.
      * @return Result array.
      */

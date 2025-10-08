@@ -1,10 +1,7 @@
 package org.meteoinfo.math.transform;
 
 import org.apache.commons.numbers.core.ArithmeticUtils;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.ArrayComplex;
-import org.meteoinfo.ndarray.Complex;
-import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 
@@ -84,7 +81,7 @@ public class FastFourierTransform implements ComplexTransform {
             -0x1.921fb54442d18p-58, -0x1.921fb54442d18p-59, -0x1.921fb54442d18p-60 };
 
     /** Type of DFT. */
-    protected final Norm normalization;
+    protected Norm normalization;
     /** Inverse or forward. */
     protected final boolean inverse;
 
@@ -113,14 +110,38 @@ public class FastFourierTransform implements ComplexTransform {
      * @param inverse Whether to perform the inverse transform.
      */
     public FastFourierTransform(final boolean inverse) {
-        this(Norm.STD, inverse);
+        this(Norm.BACKWARD, inverse);
     }
 
     /**
      * Constructor
      */
     public FastFourierTransform() {
-        this(Norm.STD, false);
+        this(Norm.BACKWARD, false);
+    }
+
+    /**
+     * Get normalization
+     * @return Normalization
+     */
+    public Norm getNormalization() {
+        return this.normalization;
+    }
+
+    /**
+     * Set normalization
+     * @param normalization Normalization
+     */
+    public void setNormalization(Norm normalization) {
+        this.normalization = normalization;
+    }
+
+    /**
+     * Set normalization
+     * @param norm Normalization string
+     */
+    public void setNormalization(String norm) {
+        this.normalization = Norm.valueOf(norm.toUpperCase());
     }
 
     /**
@@ -319,10 +340,49 @@ public class FastFourierTransform implements ComplexTransform {
     }
 
     /**
+     * Returns the transform of the specified data set.
+     *
+     * @param f Input data array
+     * @param axis The axis over which to compute the FFT
+     * @return Result array after FFT transformation
+     */
+    public Array apply(Array f, int axis) throws InvalidRangeException {
+        if (f.getRank() == 1) {
+            return apply(f);
+        }
+
+        if (axis < 0) {
+            axis = f.getRank() + axis;
+        }
+        int[] shape = f.getShape();
+        Array r = Array.factory(DataType.COMPLEX, shape);
+        Index indexr = r.getIndex();
+        int[] current;
+        for (int i = 0; i < r.getSize(); i++) {
+            current = indexr.getCurrentCounter();
+            if (current[axis] == 0) {
+                List<Range> ranges = new ArrayList<>();
+                for (int j = 0; j < shape.length; j++) {
+                    if (j == axis) {
+                        ranges.add(new Range(0, shape[j] - 1, 1));
+                    } else {
+                        ranges.add(new Range(current[j], current[j], 1));
+                    }
+                }
+                Array data;
+                data = ArrayMath.section(f, ranges).copy();
+                data = apply(data);
+                ArrayMath.setSection(r, ranges, data);
+            }
+            indexr.incr();
+        }
+
+        return r;
+    }
+
+    /**
      * {@inheritDoc}
      *
-     * @throws IllegalArgumentException if the length of the data array is
-     * not a power of two.
      */
     @Override
     public Array apply(Array f) {
@@ -487,7 +547,7 @@ public class FastFourierTransform implements ComplexTransform {
         final int n = dataR.length;
 
         switch (normalization) {
-            case STD:
+            case BACKWARD:
                 if (inverse) {
                     final double scaleFactor = 1d / n;
                     for (int i = 0; i < n; i++) {
@@ -495,18 +555,23 @@ public class FastFourierTransform implements ComplexTransform {
                         dataI[i] *= scaleFactor;
                     }
                 }
-
                 break;
-
-            case UNIT:
+            case FORWARD:
+                if (!inverse) {
+                    final double scaleFactor = 1d / n;
+                    for (int i = 0; i < n; i++) {
+                        dataR[i] *= scaleFactor;
+                        dataI[i] *= scaleFactor;
+                    }
+                }
+                break;
+            case ORTHO:
                 final double scaleFactor = 1d / Math.sqrt(n);
                 for (int i = 0; i < n; i++) {
                     dataR[i] *= scaleFactor;
                     dataI[i] *= scaleFactor;
                 }
-
                 break;
-
             default:
                 throw new IllegalStateException(); // Should never happen.
         }
@@ -592,16 +657,14 @@ public class FastFourierTransform implements ComplexTransform {
      */
     public enum Norm {
         /**
-         * Should be passed to the constructor of {@link FastFourierTransform}
-         * to use the <em>standard</em> normalization convention. This normalization
-         * convention is defined as follows
-         * <ul>
-         * <li>forward transform: \( y_n = \sum_{k = 0}^{N - 1} x_k e^{-2 \pi i n k / N} \),</li>
-         * <li>inverse transform: \( x_k = \frac{1}{N} \sum_{n = 0}^{N - 1} y_n e^{2 \pi i n k / N} \),</li>
-         * </ul>
-         * where \( N \) is the size of the data sample.
+         * meaning no normalization on the forward transforms and scaling by 1/n on the inverse
          */
-        STD,
+        BACKWARD,
+
+        /**
+         * meaning normalization on the forward transforms scaling by 1/n
+         */
+        FORWARD,
 
         /**
          * Should be passed to the constructor of {@link FastFourierTransform}
@@ -613,7 +676,7 @@ public class FastFourierTransform implements ComplexTransform {
          * </ul>
          * where \( N \) is the size of the data sample.
          */
-        UNIT,
+        ORTHO,
 
         /**
          * Not do normalization

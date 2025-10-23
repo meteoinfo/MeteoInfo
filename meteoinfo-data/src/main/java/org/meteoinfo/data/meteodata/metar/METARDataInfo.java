@@ -37,6 +37,7 @@ import java.util.logging.Logger;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.data.meteodata.Attribute;
+import org.meteoinfo.ndarray.DataType;
 
 /**
  *
@@ -169,9 +170,9 @@ public class METARDataInfo extends DataInfo implements IStationDataInfo {
             DataList = disDataList;
 
             Dimension tdim = new Dimension(DimensionType.T);
-            double[] values = new double[1];
-            values[0] = JDateUtil.toOADate(date);
-            tdim.setValues(values);
+            Array tArray = Array.factory(DataType.DATE, new int[]{1});
+            tArray.setDate(0, date);
+            tdim.setDimValue(tArray);
             this.setTimeDimension(tdim);
             List<Variable> vars = new ArrayList<>();
             for (String vName : varList) {
@@ -211,7 +212,7 @@ public class METARDataInfo extends DataInfo implements IStationDataInfo {
         String dataInfo;
         dataInfo = "File Name: " + this.getFileName();
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
-        dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().get(0));
+        dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().getDate(0));
         dataInfo += System.getProperty("line.separator") + "Station Number: " + String.valueOf(this.stationNum);
         dataInfo += System.getProperty("line.separator") + "Number of Variables = " + String.valueOf(this.getVariableNum());
         for (int i = 0; i < this.getVariableNum(); i++) {

@@ -19,7 +19,8 @@ from org.meteoinfo.geo.layer import LayerTypes
 from org.meteoinfo.common import Extent3D
 
 from ._axes import Axes
-from mipylib.numeric.core import NDArray, DimArray
+from mipylib.numeric.core import NDArray
+from mipylib.dataset import DimArray
 import mipylib.numeric as np
 import plotutil
 import mipylib.miutil as miutil

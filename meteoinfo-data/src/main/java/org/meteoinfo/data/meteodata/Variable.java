@@ -32,9 +32,9 @@ public class Variable {
     // <editor-fold desc="Variables">
 
     public int Number;
-    private  String name;
-    private String shortName;
-    private DataType dataType;
+    protected   String name;
+    protected String shortName;
+    protected DataType dataType;
     protected int[] shape = new int[0];
     protected List<Dimension> dimensions = new ArrayList<>();
     protected List<Attribute> attributes = new ArrayList<>();
@@ -43,8 +43,8 @@ public class Variable {
     protected double fillValue = Double.NaN;
     private int levelType;
     private List<Double> levels;
-    private String units;
-    private String description;
+    protected String units;
+    protected String description;
     private String hdfPath;
     private boolean isStation = false;
     private boolean isSwath = false;
@@ -53,7 +53,7 @@ public class Variable {
     private boolean memberOfStructure = false;
     private List<Integer> levelIdxs = new ArrayList<>();
     private List<Integer> varInLevelIdxs = new ArrayList<>();
-    private Array cachedData;
+    protected Array cachedData;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -153,7 +153,7 @@ public class Variable {
     /**
      * Get dimensions by section
      * @param section The section
-     * @return Result dimesions
+     * @return Result dimensions
      */
     public List<Dimension> getDimensions(Section section) {
         List<Dimension> dims = new ArrayList<>();

@@ -7,9 +7,11 @@
 from org.meteoinfo.data.meteodata import MeteoDataType
 from org.meteoinfo.data.meteodata.netcdf import NCUtil
 from org.meteoinfo.data.dimarray import DimensionType, Dimension
+from org.meteoinfo.jython import JythonUtil
 from ucar.ma2 import DataType as NCDataType
 from ucar.nc2 import Attribute as NCAttribute
 from ucar.nc2 import Variable as NCVariable
+
 from dimvariable import DimVariable, TDimVariable
 from mipylib.geolib.milayer import MILayer, MIXYListData
 from mipylib.dataframe.dataframe import DataFrame
@@ -316,12 +318,13 @@ class DimDataFile(object):
         
         :returns: (*datetime*) The time
         """
-        t = self.dataset.getDataInfo().getTimes().get(idx)
+        t = self.dataset.getDataInfo().getTimes().getDate(idx)
         if t is None:
             return None
 
         t = miutil.pydate(t)
         return t
+
         
     def gettimes(self):
         """
@@ -331,10 +334,10 @@ class DimDataFile(object):
         if tt is None:
             return None
 
-        times = []
-        for t in tt:
-            times.append(miutil.pydate(t))
-        return times
+        #tt = JythonUtil.toDateTime(tt)
+
+        return np.NDArray(tt)
+
         
     def bigendian(self, big_endian):
         """

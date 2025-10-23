@@ -982,17 +982,18 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         return attStr;
     }
 
-    private List<LocalDateTime> getTimes(ucar.nc2.Variable aVar, Array values) {
+    private Array getTimes(ucar.nc2.Variable aVar, Array values) {
         //Get start time
         String unitsStr;
         int i;
-        List<LocalDateTime> times = new ArrayList<>();
+        Array times = Array.factory(org.meteoinfo.ndarray.DataType.DATE, values.getShape());
+        IndexIterator iterT = times.getIndexIterator();
         ucar.nc2.Attribute unitAtt = aVar.findAttribute("units");
         if (unitAtt == null) {
             LocalDateTime sTime = LocalDateTime.of(1985, 1, 1, 0, 0);
             IndexIterator ii = values.getIndexIterator();
             while (ii.hasNext()) {
-                times.add(sTime.plusHours(ii.getIntNext()));
+                iterT.setDateNext(sTime.plusHours(ii.getIntNext()));
             }
             return times;
         }
@@ -1009,7 +1010,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 if (md.length() <= 3) {
                     md = "0" + md;
                 }
-                times.add(LocalDateTime.parse(md, format));
+                iterT.setDateNext(LocalDateTime.parse(md, format));
             }
         } else {
             TimeUnit aTU;
@@ -1027,7 +1028,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             for (i = 0; i < values.getSize(); i++) {
                 switch (aTU) {
                     case Year:
-                        times.add(sTime.plusYears(values.getLong(i)));
+                        iterT.setDateNext(sTime.plusYears(values.getLong(i)));
                         break;
                     case Month:
 //                        if (unitsStr.equalsIgnoreCase("month")) {
@@ -1035,24 +1036,24 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 //                        } else {
 //                            cal.add(Calendar.MONTH, values.getInt(i));
 //                        }
-                        times.add(sTime.plusMonths(values.getLong(i)));
+                        iterT.setDateNext(sTime.plusMonths(values.getLong(i)));
                         break;
                     case Day:
-                        times.add(sTime.plusDays(values.getLong(i)));
+                        iterT.setDateNext(sTime.plusDays(values.getLong(i)));
                         break;
                     case Hour:
                         if (sTime.getYear() == 1 && sTime.getMonthValue() == 1
                                 && sTime.getDayOfMonth() == 1 && values.getInt(i) > 48) {
-                            times.add(sTime.plusHours(values.getLong(i) - 48));
+                            iterT.setDateNext(sTime.plusHours(values.getLong(i) - 48));
                         } else {
-                            times.add(sTime.plusHours(values.getLong(i)));
+                            iterT.setDateNext(sTime.plusHours(values.getLong(i)));
                         }
                         break;
                     case Minute:
-                        times.add(sTime.plusMinutes(values.getLong(i)));
+                        iterT.setDateNext(sTime.plusMinutes(values.getLong(i)));
                         break;
                     case Second:
-                        times.add(sTime.plusSeconds(values.getLong(i)));
+                        iterT.setDateNext(sTime.plusSeconds(values.getLong(i)));
                         break;
                 }
             }
@@ -1109,16 +1110,11 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             var = this.findNCVariable("Time");
             if (var != null && var.getDimensions().size() == 1) {
                 Array darray = NCUtil.convertArray(var.read());
-                List<LocalDateTime> times = this.getTimes(var, darray);
-                List<Double> ts = new ArrayList<>();
-                for (LocalDateTime t : times) {
-                    ts.add(JDateUtil.toOADate(t));
-                }
-
+                Array times = this.getTimes(var, darray);
                 Dimension tDim = this.findDimension(var.getDimension(0).getShortName());
                 if (tDim != null) {
                     tDim.setDimType(DimensionType.T);
-                    tDim.setValues(ts);
+                    tDim.setDimValue(times);
                     this.setTimeDimension(tDim);
                 }
             }
@@ -1213,13 +1209,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         this.setZDimension(dim);
                         break;
                     case T:
-                        List<LocalDateTime> times = this.getTimes(var, values);
+                        Array times = this.getTimes(var, values);
                         if (times != null) {
-                            List<Double> ts = new ArrayList<>();
-                            for (LocalDateTime t : times) {
-                                ts.add(JDateUtil.toOADate(t));
-                            }
-                            dim.setValues(ts);
+                            dim.setDimValue(times);
                         }
                         this.setTimeDimension(dim);
                         break;
@@ -1260,8 +1252,8 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         int tNum = getDimensionLength("TSTEP");
         sTimeStr = getGlobalAttStr("TSTEP");
         len = sTimeStr.length();
-        List<LocalDateTime> times = new ArrayList<>();
-        times.add(tt);
+        Array times = Array.factory(org.meteoinfo.ndarray.DataType.DATE, new int[]{tNum});
+        times.setDate(0, tt);
         for (i = 1; i < tNum; i++) {
             if (sTimeStr.length() <= 2) {
                 tt = tt.plusSeconds(Integer.parseInt(sTimeStr));
@@ -1273,16 +1265,13 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 tt = tt.plusMinutes(Integer.parseInt(sTimeStr.substring(len - 4, len - 2)));
                 tt = tt.plusSeconds(Integer.parseInt(sTimeStr.substring(len - 2)));
             }
-            times.add(tt);
+            times.setDate(i, tt);
         }
-        List<Double> values = new ArrayList<>();
-        for (LocalDateTime t : times) {
-            values.add(JDateUtil.toOADate(t));
-        }
+
         Dimension tDim = this.findDimension("TSTEP");
         if (tDim != null) {
             tDim.setDimType(DimensionType.T);
-            tDim.setValues(values);
+            tDim.setDimValue(times);
             this.setTimeDimension(tDim);
         }
 
@@ -1575,13 +1564,14 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                         times.add(LocalDateTime.parse(tStr, format));
                     }
                 }
-                List<Double> values = new ArrayList<>();
+                Array ta = Array.factory(org.meteoinfo.ndarray.DataType.DATE, new int[]{times.size()});
+                IndexIterator iter = ta.getIndexIterator();
                 for (LocalDateTime t : times) {
-                    values.add(JDateUtil.toOADate(t));
+                    iter.setDateNext(t);
                 }
                 tDim.setDimType(DimensionType.T);
                 //tDim.setDimName("times");
-                tDim.setValues(values);
+                tDim.setDimValue(ta);
                 this.setTimeDimension(tDim);
                 break;
             }
@@ -1922,7 +1912,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     + String.valueOf(ncDimensions.get(i).getLength()) + ";";
         }
 
-        /*Dimension xdim = this.getXDimension();
+        Dimension xdim = this.getXDimension();
         if (xdim != null) {
             dataInfo += System.getProperty("line.separator") + "X Dimension: Xmin = " + String.valueOf(xdim.getMinValue())
                     + "; Xmax = " + String.valueOf(xdim.getMaxValue()) + "; Xsize = "
@@ -1933,7 +1923,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             dataInfo += System.getProperty("line.separator") + "Y Dimension: Ymin = " + String.valueOf(ydim.getMinValue())
                     + "; Ymax = " + String.valueOf(ydim.getMaxValue()) + "; Ysize = "
                     + String.valueOf(ydim.getLength()) + "; Ydelta = " + String.valueOf(ydim.getDeltaValue());
-        }*/
+        }
 
         dataInfo += System.getProperty("line.separator") + "Global Attributes: ";
         for (i = 0; i < ncAttributes.size(); i++) {

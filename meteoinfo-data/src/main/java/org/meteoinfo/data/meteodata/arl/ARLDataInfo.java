@@ -470,12 +470,13 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             }*/
 
             //Set dimensions
-            List<Double> values = new ArrayList<>();
+            Array values = Array.factory(DataType.DATE, new int[]{times.size()});
+            IndexIterator iter = values.getIndexIterator();
             for (LocalDateTime t : times) {
-                values.add(JDateUtil.toOADate(t));
+                iter.setDateNext(t);
             }
             Dimension tDim = new Dimension(DimensionType.T);
-            tDim.setValues(values);
+            tDim.setDimValue(values);
             this.setTimeDimension(tDim);
             this.addDimension(tDim);
 
@@ -954,7 +955,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 
             double[] yArray = new double[tNum];
             for (int i = 0; i < tNum; i++) {
-                yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                yArray[i] = JDateUtil.toOADate(this.getTimes().getDate(i));
             }
 
             return new GridData(newGridData, Y, yArray, this.missingValue);
@@ -1009,7 +1010,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 
             double[] yArray = new double[tNum];
             for (int i = 0; i < tNum; i++) {
-                yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                yArray[i] = JDateUtil.toOADate(this.getTimes().getDate(i));
             }
 
             return new GridData(newGridData, X, yArray, this.missingValue);
@@ -1175,7 +1176,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 
             double[] xArray = new double[tNum];
             for (int i = 0; i < tNum; i++) {
-                xArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                xArray[i] = JDateUtil.toOADate(this.getTimes().getDate(i));
             }
             double[] yArray = new double[lNum];
             for (int i = 0; i < lNum; i++) {
@@ -1232,7 +1233,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                 gridData = unpackARLGridData(dataBytes, xNum, yNum, aDL);
 
                 aValue = gridData[latIdx][lonIdx];
-                xArray[t] = JDateUtil.toOADate(this.getTimes().get(t));
+                xArray[t] = JDateUtil.toOADate(this.getTimes().getDate(t));
                 data[0][t] = aValue;
             }
 

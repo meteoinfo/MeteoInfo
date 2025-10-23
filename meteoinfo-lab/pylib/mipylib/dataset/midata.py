@@ -22,7 +22,8 @@ from ucar.nc2.iosp.bufr.tables import BufrTables
 
 import mipylib.numeric as np
 import mipylib.miutil as miutil
-from mipylib.numeric.core import NDArray, DimArray, PyTableData
+from mipylib.numeric.core import NDArray, PyTableData
+from .dataarray import DimArray
 
 from dimdatafile import DimDataFile, DimDataFiles
 from arldatafile import ARLDataFile
@@ -852,6 +853,7 @@ def grads2nc(infn, outfn, big_endian=None, largefile=False):
     #Close netCDF file
     ncfile.close()
     print('Convert finished!')
+
     
 def dimension(dimvalue, dimname='null', dimtype=None):
     """
@@ -861,10 +863,11 @@ def dimension(dimvalue, dimname='null', dimtype=None):
     :param dimname: (*string*) Dimension name.
     :param dimtype: (*DimensionType*) Dimension type ['X' | 'Y' | 'Z' | 'T'].
     """
-    if isinstance(dimvalue, (NDArray, DimArray)):
-        dimvalue = dimvalue.aslist()
-    dtype = DimensionType.Other
-    if not dimtype is None:
+    dimvalue = np.asarray(dimvalue)
+
+    if dimtype is None:
+        dtype = DimensionType.Other
+    else:
         if dimtype.upper() == 'X':
             dtype = DimensionType.X
         elif dimtype.upper() == 'Y':
@@ -873,10 +876,12 @@ def dimension(dimvalue, dimname='null', dimtype=None):
             dtype = DimensionType.Z
         elif dimtype.upper() == 'T':
             dtype = DimensionType.T
+
     dim = Dimension(dtype)
-    dim.setDimValues(dimvalue)
+    dim.setDimValue(dimvalue)
     dim.setShortName(dimname)
     return dim
+
     
 def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, proj=None, largefile=False,
             version='netcdf3', time_units='hours', start_time=datetime.datetime(1900,1,1)):

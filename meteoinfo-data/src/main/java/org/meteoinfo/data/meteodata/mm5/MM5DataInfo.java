@@ -285,13 +285,14 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
                 }
             }
 
-            List<Double> values = new ArrayList<>();
+            Array tArray = Array.factory(DataType.DATE, new int[]{times.size()});
+            IndexIterator iter = tArray.getIndexIterator();
             for (LocalDateTime t : times) {
-                values.add(JDateUtil.toOADate(t));
+                iter.setDateNext(t);
             }
             Dimension tDim = new Dimension(DimensionType.T);
             tDim.setShortName("time");
-            tDim.setValues(values);
+            tDim.setDimValue(tArray);
             this.setTimeDimension(tDim);
             this.addDimension(tDim);
 
@@ -907,7 +908,7 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
 
             double[] yArray = new double[tNum];
             for (i = 0; i < tNum; i++) {
-                yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                yArray[i] = JDateUtil.toOADate(this.getTimes().getDate(i));
             }
 
             return new GridData(theData, ydim.getValues(), yArray, this.missingValue);
@@ -959,7 +960,7 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
 
             double[] yArray = new double[tNum];
             for (i = 0; i < tNum; i++) {
-                yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                yArray[i] = JDateUtil.toOADate(this.getTimes().getDate(i));
             }
 
             return new GridData(theData, xdim.getValues(), yArray, this.missingValue);

@@ -343,13 +343,14 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
                 }
             } while (true);
 
-            List<Double> values = new ArrayList<>();
+            Array tArray = Array.factory(DataType.DATE, new int[]{sample_start.size()});
+            IndexIterator iter = tArray.getIndexIterator();
             for (LocalDateTime t : sample_start) {
-                values.add(JDateUtil.toOADate(t));
+                iter.setDateNext(t);
             }
             Dimension tDim = new Dimension(DimensionType.T);
             tDim.setShortName("time");
-            tDim.setValues(values);
+            tDim.setDimValue(tArray);
             this.setTimeDimension(tDim);
             this.addDimension(tDim);
 

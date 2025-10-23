@@ -6,7 +6,8 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.math.meteo import MeteoMath
-from mipylib.numeric.core import NDArray, DimArray
+from mipylib.numeric.core import NDArray
+from mipylib.dataset import DimArray
 import constants as constants
 from pylib.mipylib.meteolib.calc.thermo import relative_humidity_from_specific_humidity, temperature_from_potential_temperature
 

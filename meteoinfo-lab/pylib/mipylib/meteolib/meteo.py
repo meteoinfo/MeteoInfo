@@ -8,7 +8,8 @@
 from org.meteoinfo.math.meteo import MeteoMath
 
 import mipylib.numeric as np
-from mipylib.numeric.core import NDArray, DimArray
+from mipylib.numeric.core import NDArray
+from mipylib.dataset import DimArray
 
 import constants as constants
 from .calc.thermo import saturation_vapor_pressure, saturation_mixing_ratio

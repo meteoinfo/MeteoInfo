@@ -26,7 +26,8 @@ from org.meteoinfo.common import ResampleMethods
 
 from .milayer import MILayer
 from ._graphic import GeoGraphicCollection
-from mipylib.numeric.core import NDArray, DimArray
+from mipylib.numeric.core import NDArray
+from mipylib.dataset import DimArray
 import mipylib.migl as migl
 import mipylib.numeric as np
 

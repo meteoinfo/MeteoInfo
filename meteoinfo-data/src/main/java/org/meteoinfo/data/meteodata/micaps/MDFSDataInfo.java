@@ -127,7 +127,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     LocalDateTime dt = LocalDateTime.of(year, month, day, hour, 0);
                     Dimension tDim = new Dimension(DimensionType.T);
                     tDim.setName("time");
-                    tDim.setValue(JDateUtil.toOADate(dt));
+                    tDim.setValue(dt);
                     this.setTimeDimension(tDim);
                     this.addDimension(tDim);
                     Dimension zDim = new Dimension(DimensionType.Z);
@@ -258,7 +258,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     dt = LocalDateTime.of(year, month, day, hour, 0);
                     tDim = new Dimension(DimensionType.T);
                     tDim.setName("time");
-                    tDim.setValue(JDateUtil.toOADate(dt));
+                    tDim.setValue(dt);
                     this.setTimeDimension(tDim);
                     this.addDimension(tDim);
                     zDim = new Dimension(DimensionType.Z);

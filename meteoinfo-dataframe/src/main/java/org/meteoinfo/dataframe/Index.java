@@ -9,6 +9,7 @@ import org.meteoinfo.common.MIMath;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.math.ArrayUtil;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,7 +21,6 @@ import java.util.stream.Collectors;
 /**
  *
  * @author Yaqiang Wang
- * @param <V> Index data type
  */
 public class Index<V> implements Iterable<V>{
     // <editor-fold desc="Variables">

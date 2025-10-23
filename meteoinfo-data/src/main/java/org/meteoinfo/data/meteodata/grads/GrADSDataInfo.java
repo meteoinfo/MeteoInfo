@@ -244,8 +244,13 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
      * @return Times
      */
     @Override
-    public List<LocalDateTime> getTimes() {
-        return TDEF.times;
+    public Array getTimes() {
+        Array times = Array.factory(DataType.DATE, new int[]{TDEF.times.size()});
+        IndexIterator iter = times.getIndexIterator();
+        for (LocalDateTime dt : TDEF.times) {
+            iter.setDateNext(dt);
+        }
+        return times;
     }
 
     /**
@@ -808,13 +813,14 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             default:
                                 break;
                         }
-                        values = new ArrayList<>();
+                        Array tArray = Array.factory(DataType.DATE, new int[]{TDEF.times.size()});
+                        IndexIterator iter = tArray.getIndexIterator();
                         for (LocalDateTime t : TDEF.times) {
-                            values.add(JDateUtil.toOADate(t));
+                            iter.setDateNext(t);
                         }
                         Dimension tDim = new Dimension(DimensionType.T);
                         tDim.setShortName("T");
-                        tDim.setValues(values);
+                        tDim.setDimValue(tArray);
                         this.setTimeDimension(tDim);
                         this.addDimension(tDim);
                     } else {
@@ -835,17 +841,17 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             //goto ERROR;
                         }
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm ddMMMyyyy", Locale.ENGLISH);
-                        values = new ArrayList<>();
+                        Array tArray = Array.factory(DataType.DATE, new int[]{tnum});
                         for (i = 0; i < tnum; i++) {
                             String dStr = dataArray[3 + i];
                             dStr = dStr.replace("Z", " ");
                             LocalDateTime t = LocalDateTime.parse(dStr, formatter);
                             TDEF.times.add(t);
-                            values.add(JDateUtil.toOADate(t));
+                            tArray.setDate(i, t);
                         }
                         Dimension tDim = new Dimension(DimensionType.T);
                         tDim.setShortName("T");
-                        tDim.setValues(values);
+                        tDim.setDimValue(tArray);
                         this.setTimeDimension(tDim);
                         this.addDimension(tDim);
                     }
@@ -1232,7 +1238,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             return new Object[] {filePath, 0};
         }
 
-        LocalDateTime time = this.getTimes().get(timeIdx);
+        LocalDateTime time = this.getTimes().getDate(timeIdx);
         DateTimeFormatter format;
         String tStr = "year";
         if (fn.contains("%y4")) {
@@ -1732,7 +1738,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
 
             double[] yArray = new double[this.getTimeNum()];
             for (i = 0; i < this.getTimeNum(); i++) {
-                yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                yArray[i] = JDateUtil.toOADate(this.getTimes().getDate(i));
             }
 
             return new GridData(gridData, Y, yArray, this.missingValue);
@@ -1822,7 +1828,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
 
             double[] yArray = new double[this.getTimeNum()];
             for (i = 0; i < this.getTimeNum(); i++) {
-                yArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                yArray[i] = JDateUtil.toOADate(this.getTimes().getDate(i));
             }
 
             return new GridData(gridData, X, yArray, this.missingValue);
@@ -2041,7 +2047,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
 
             double[] xArray = new double[this.getTimeNum()];
             for (i = 0; i < this.getTimeNum(); i++) {
-                xArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                xArray[i] = JDateUtil.toOADate(this.getTimes().getDate(i));
             }
             double[] levels = new double[VARDEF.getVars().get(varIdx).getLevelNum()];
             for (i = 0; i < levels.length; i++) {
@@ -2325,7 +2331,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
 
             double[] xArray = new double[this.getTimeNum()];
             for (i = 0; i < this.getTimeNum(); i++) {
-                xArray[i] = JDateUtil.toOADate(this.getTimes().get(i));
+                xArray[i] = JDateUtil.toOADate(this.getTimes().getDate(i));
             }
 
             double[] yArray = new double[aVar.getLevelNum()];
@@ -2391,7 +2397,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                 } else //End of time seriel
                 {
                     stNum = 0;
-                    if (tNum == getTimes().size() - 1) {
+                    if (tNum == getTimes().getSize() - 1) {
                         break;
                     }
                     tNum += 1;

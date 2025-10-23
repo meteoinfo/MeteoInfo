@@ -3537,13 +3537,13 @@ public class DataFrame implements Iterable {
      */
     public DataFrame isIn(List values) {
         if (this.array2D) {
-            Array a = ArrayMath.inValues((Array) this.data, values);
+            Array a = ArrayMath.isIn((Array) this.data, values);
             return new DataFrame(a, (Index) this.index.clone(), this.columns.copyAsBoolean());
         } else {
             List<Array> arrays = (List<Array>) this.data;
             List<Array> r = new ArrayList<>();
             for (Array arr : arrays) {
-                Array a = ArrayMath.inValues(arr, values);
+                Array a = ArrayMath.isIn(arr, values);
                 r.add(a);
             }
             return new DataFrame(r, (Index) this.index.clone(), this.columns.copyAsBoolean());

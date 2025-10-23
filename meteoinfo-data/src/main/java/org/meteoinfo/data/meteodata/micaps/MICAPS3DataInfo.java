@@ -155,9 +155,7 @@ public class MICAPS3DataInfo extends DataInfo implements IStationDataInfo {
             stdim.setValues(values);
             this.addDimension(stdim);
             Dimension tdim = new Dimension(DimensionType.T);
-            values = new double[1];
-            values[0] = JDateUtil.toOADate(time);
-            tdim.setValues(values);
+            tdim.setValue(time);
             this.setTimeDimension(tdim);
             Dimension zdim = new Dimension(DimensionType.Z);
             zdim.setValues(new double[]{level});
@@ -204,7 +202,7 @@ public class MICAPS3DataInfo extends DataInfo implements IStationDataInfo {
         String dataInfo;
         dataInfo = "Description: " + _description;
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
-        dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().get(0));
+        dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().getDate(0));
         dataInfo += System.getProperty("line.separator") + super.generateInfoText();
 
         return dataInfo;

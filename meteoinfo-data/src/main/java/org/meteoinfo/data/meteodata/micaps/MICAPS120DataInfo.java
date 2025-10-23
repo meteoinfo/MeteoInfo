@@ -96,9 +96,7 @@ public class MICAPS120DataInfo extends DataInfo implements IStationDataInfo {
 
             //Set dimension and variables
             Dimension tdim = new Dimension(DimensionType.T);
-            double[] values = new double[1];
-            values[0] = JDateUtil.toOADate(time);
-            tdim.setValues(values);
+            tdim.setValue(time);
             this.setTimeDimension(tdim);
             
             String[] dataArray;
@@ -124,7 +122,7 @@ public class MICAPS120DataInfo extends DataInfo implements IStationDataInfo {
             
             Dimension stdim = new Dimension(DimensionType.OTHER);
             stdim.setShortName("station");
-            values = new double[stNum];
+            double[] values = new double[stNum];
             for (int i = 0; i < stNum; i++){
                 values[i] = i;
             }
@@ -174,7 +172,7 @@ public class MICAPS120DataInfo extends DataInfo implements IStationDataInfo {
         String dataInfo;
         dataInfo = "Description: " + _description;
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
-        dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().get(0));
+        dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().getDate(0));
         dataInfo += System.getProperty("line.separator") + super.generateInfoText();
 
         return dataInfo;

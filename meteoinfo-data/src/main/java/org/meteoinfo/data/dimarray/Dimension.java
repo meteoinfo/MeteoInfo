@@ -18,6 +18,7 @@ import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -99,6 +100,17 @@ public class Dimension {
      */
     public Dimension(String name, Array dimValue) {
         this(name, dimValue, DimensionType.OTHER);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param name Name
+     * @param dimType Dimension type
+     */
+    public Dimension(String name, DimensionType dimType) {
+        this.name = name;
+        this.dimType = dimType;
     }
 
     /**
@@ -419,6 +431,15 @@ public class Dimension {
      * Set dimension value
      * @param v Dimension value
      */
+    public void setValue(LocalDateTime v) {
+        dimValue = Array.factory(DataType.DATE, new int[]{1});
+        dimValue.setDate(0, v);
+    }
+
+    /**
+     * Set dimension value
+     * @param v Dimension value
+     */
     public void setValue(double v) {
         dimValue = Array.factory(DataType.DOUBLE, new int[]{1});
         dimValue.setDouble(0, v);
@@ -527,29 +548,33 @@ public class Dimension {
         dim.setStagger(this.stagger);
         //dim.setReverse(this.reverse);
         if (this.dimValue.getSize() > last) {
-            List<Double> values = new ArrayList<>();
+            List values = new ArrayList<>();
             if (first <= last) {
                 if (stride > 0) {
                     for (int i = first; i <= last; i += stride) {
-                        values.add(this.dimValue.getDouble(i));
+                        values.add(this.dimValue.getObject(i));
                     }
                 } else {
                     for (int i = last; i >= first; i += stride) {
-                        values.add(this.dimValue.getDouble(i));
+                        values.add(this.dimValue.getObject(i));
                     }
                 }
             } else {
                 if (stride > 0) {
                     for (int i = last; i <= first; i += stride) {
-                        values.add(this.dimValue.getDouble(i));
+                        values.add(this.dimValue.getObject(i));
                     }
                 } else {
                     for (int i = first; i >= last; i += stride) {
-                        values.add(this.dimValue.getDouble(i));
+                        values.add(this.dimValue.getObject(i));
                     }
                 }
             }
-            dim.setValues(values);
+            Array array = Array.factory(this.dimValue.getDataType(), new int[]{values.size()});
+            for (int i = 0; i < values.size(); i++) {
+                array.setObject(i, values.get(i));
+            }
+            dim.setDimValue(array);
         }
 
         return dim;
@@ -568,13 +593,17 @@ public class Dimension {
         dim.setDimId(this.dimId);
         dim.setUnit(this.unit);
         dim.setStagger(this.stagger);
-        List<Double> values = new ArrayList<>();
+        List values = new ArrayList<>();
         int idx;
         for (double v = first; v <= last; v += stride) {
             idx = this.getValueIndex(v);
-            values.add(this.dimValue.getDouble(idx));
+            values.add(this.dimValue.getObject(idx));
         }
-        dim.setValues(values);
+        Array array = Array.factory(this.dimValue.getDataType(), new int[]{values.size()});
+        for (int i = 0; i < values.size(); i++) {
+            array.setObject(i, values.get(i));
+        }
+        dim.setDimValue(array);
 
         return dim;
     }
@@ -590,12 +619,11 @@ public class Dimension {
         dim.setDimId(this.dimId);
         dim.setUnit(this.unit);
         dim.setStagger(this.stagger);
-        //dim.setReverse(this.reverse);
-        List<Double> values = new ArrayList<>();
+        Array array = Array.factory(this.dimValue.getDataType(), new int[]{index.size()});
         for (int i = 0; i < index.size(); i++) {
-            values.add(this.dimValue.getDouble(index.get(i)));
+            array.setObject(i, this.dimValue.getObject(index.get(i)));
         }
-        dim.setValues(values);
+        dim.setDimValue(array);
 
         return dim;
     }
@@ -611,12 +639,13 @@ public class Dimension {
         dim.setDimId(this.dimId);
         dim.setUnit(this.unit);
         dim.setStagger(this.stagger);
-        List<Double> values = new ArrayList<>();
+        Array values = Array.factory(this.dimValue.getDataType(), new int[]{(int) index.getSize()});
         IndexIterator iter = index.getIndexIterator();
+        IndexIterator iterV = values.getIndexIterator();
         while (iter.hasNext()) {
-            values.add(this.dimValue.getDouble(iter.getIntNext()));
+            iterV.setObjectNext(this.dimValue.getObject(iter.getIntNext()));
         }
-        dim.setValues(values);
+        dim.setDimValue(values);
 
         return dim;
     }

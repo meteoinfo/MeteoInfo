@@ -1,5 +1,5 @@
 from org.meteoinfo.math.meteo import MeteoMath
-from mipylib.numeric.core import DimArray
+from mipylib.dataset import DimArray
 from .. import constants
 from ..calc.thermo import temperature_from_potential_temperature
 from destag import destagger

@@ -5010,6 +5010,35 @@ public class ArrayMath {
     }
 
     /**
+     * Return the index of the object in the array.
+     *
+     * @param a Array a
+     * @param o The object
+     * @return Object index
+     */
+    public static int indexOf(Array a, Object o) {
+        Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                if (a.getObject(i) == o) {
+                    return i;
+                }
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            int i = 0;
+            while (iterA.hasNext()) {
+                if (iterA.getObjectNext() == o) {
+                    return i;
+                }
+                i += 1;
+            }
+        }
+
+        return -1;
+    }
+
+    /**
      * Return the array with the value of 1 when the input array element value
      * in the list b, otherwise set value as 0.
      *
@@ -5017,7 +5046,7 @@ public class ArrayMath {
      * @param b List b
      * @return Result array
      */
-    public static Array inValues(Array a, List b) {
+    public static Array isIn(Array a, List b) {
         Array r = Array.factory(DataType.BOOLEAN, a.getShape());
         if (a.getIndexPrivate().isFastIterator()) {
             for (int i = 0; i < a.getSize(); i++) {

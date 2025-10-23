@@ -29,7 +29,8 @@ import warnings
 import plotutil
 import colors
 from ._axes3d import Axes3D
-from mipylib.numeric.core import NDArray, DimArray
+from mipylib.numeric.core import NDArray
+from mipylib.dataset import DimArray
 import mipylib.numeric as np
 from mipylib import migl
 from mipylib.geolib import migeo

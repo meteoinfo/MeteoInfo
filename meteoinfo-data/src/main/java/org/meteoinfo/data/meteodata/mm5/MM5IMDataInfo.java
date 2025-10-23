@@ -31,6 +31,8 @@ import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.data.meteodata.Attribute;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.IndexIterator;
 
 /**
  * MM5 regrid intermediate data info
@@ -118,13 +120,14 @@ public class MM5IMDataInfo extends DataInfo implements IGridDataInfo {
                     }
                 }
             }
-            
-            List<Double> values = new ArrayList<>();
+
+            Array tArray = Array.factory(DataType.DATE, new int[]{times.size()});
+            IndexIterator iter = tArray.getIndexIterator();
             for (LocalDateTime t : times) {
-                values.add(JDateUtil.toOADate(t));
+                iter.setDateNext(t);
             }
             Dimension tDim = new Dimension(DimensionType.T);
-            tDim.setValues(values);
+            tDim.setDimValue(tArray);
             this.setTimeDimension(tDim);
             for (Variable var : variables){
                 var.updateZDimension();

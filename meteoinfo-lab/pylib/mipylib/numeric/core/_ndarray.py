@@ -7,11 +7,13 @@ from org.meteoinfo.data import GridArray
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.math.linalg import LinalgUtil
 from org.meteoinfo.ndarray import Array, Range, MAMath, Complex, DataType
+from java.time import LocalDateTime
 
 import datetime
 
 import _dtype
 from ._base import flatiter
+from ... import miutil
 
 # The encapsulate class of Array
 class NDArray(object):
@@ -132,6 +134,8 @@ class NDArray(object):
                     r = self._array.getObject(aindex)
                     if isinstance(r, Complex):
                         return complex(r.getReal(), r.getImaginary())
+                    elif isinstance(r, LocalDateTime):
+                        return miutil.pydate(r)
                     else:
                         return r
 
@@ -617,7 +621,17 @@ class NDArray(object):
         else:
             return None
 
-    def in_values(self, other):
+    def index(self, other):
+        """
+        Return index of the other in this array.
+
+        :param other: (*object*) The value to be indexed.
+        :return: (*int*) The index
+        """
+        return ArrayMath.isIn(self._array, other)
+
+
+    def isin(self, other):
         """
         Return the array with the value of 1 when the element value
         in the list other, otherwise set value as 0.
@@ -628,7 +642,7 @@ class NDArray(object):
         """
         if not isinstance(other, (list, tuple)):
             other = other.aslist()
-        return self.array_wrap(ArrayMath.inValues(self._array, other))
+        return self.array_wrap(ArrayMath.isIn(self._array, other))
 
     def squeeze(self):
         """

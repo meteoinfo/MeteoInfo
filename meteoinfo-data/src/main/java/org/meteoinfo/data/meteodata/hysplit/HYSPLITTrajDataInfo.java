@@ -29,15 +29,10 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.meteoinfo.data.XYListDataset;
+import org.meteoinfo.ndarray.*;
 import org.meteoinfo.table.ColumnData;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataTable;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.ndarray.Index;
-import org.meteoinfo.ndarray.InvalidRangeException;
-import org.meteoinfo.ndarray.Range;
-import org.meteoinfo.ndarray.Section;
 
 /**
  *
@@ -145,7 +140,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
             String[] dataArray;
             int i;
             initVariables();
-            List<Double> times = new ArrayList<>();
+            List<LocalDateTime> times = new ArrayList<>();
             sr = new BufferedReader(new FileReader(new File(fileName)));
             //Record #1
             aLine = sr.readLine().trim();
@@ -178,7 +173,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
                         Integer.parseInt(dataArray[2]), Integer.parseInt(dataArray[3]), 0, 0);
 
                 if (times.isEmpty()) {
-                    times.add(JDateUtil.toOADate(tt));
+                    times.add(tt);
                 }
                 aTrajInfo = new TrajectoryInfo();
                 aTrajInfo.startTime = tt;
@@ -187,8 +182,13 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
                 aTrajInfo.startHeight = Float.parseFloat(dataArray[6]);
                 trajInfoList.add(aTrajInfo);
             }
+            Array tArray = Array.factory(DataType.DATE, new int[]{times.size()});
+            IndexIterator iter = tArray.getIndexIterator();
+            for (LocalDateTime t : times) {
+                iter.setDateNext(t);
+            }
             Dimension tdim = new Dimension(DimensionType.T);
-            tdim.setValues(times);
+            tdim.setDimValue(tArray);
             //Record #5
             aLine = sr.readLine().trim();
             dataArray = aLine.split("\\s+");

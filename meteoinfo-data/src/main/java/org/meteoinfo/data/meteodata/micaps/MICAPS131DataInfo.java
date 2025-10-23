@@ -213,7 +213,7 @@ public class MICAPS131DataInfo extends DataInfo implements IGridDataInfo {
             br.close();
 
             Dimension tdim = new Dimension(DimensionType.T);
-            tdim.setValue(JDateUtil.toOADate(time));
+            tdim.setValue(time);
             this.setTimeDimension(tdim);
             this.addDimension(tdim);
             Dimension zdim = new Dimension(DimensionType.Z);

@@ -39,6 +39,7 @@ import java.util.logging.Logger;
 import org.meteoinfo.data.meteodata.MeteoDataType;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.data.meteodata.Attribute;
+import org.meteoinfo.ndarray.IndexIterator;
 
 /**
  *
@@ -169,12 +170,13 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
 
             br.close();
 
-            List<Double> values = new ArrayList<Double>();
+            Array tArray = Array.factory(DataType.DATE, new int[]{times.size()});
+            IndexIterator iter = tArray.getIndexIterator();
             for (LocalDateTime t : times) {
-                values.add(JDateUtil.toOADate(t));
+                iter.setDateNext(t);
             }
             Dimension tDim = new Dimension(DimensionType.T);
-            tDim.setValues(values);
+            tDim.setDimValue(tArray);
             this.setTimeDimension(tDim);
             this.addDimension(tDim);
 

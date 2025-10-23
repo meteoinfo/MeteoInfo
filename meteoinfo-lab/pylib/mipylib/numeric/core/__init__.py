@@ -1,7 +1,6 @@
 from ._ndarray import NDArray
 from . import multiarray
 from .multiarray import *
-from .dimarray import DimArray, dimension, dim_array
 from ._base import nditer
 from .mitable import PyTableData
 from ._dtype import dtype
@@ -16,7 +15,7 @@ from umath import *
 from .shape_base import *
 from .stride_tricks import *
 
-__all__ = ['NDArray','DimArray','PyTableData','dtype','dimension','dim_array','nditer']
+__all__ = ['NDArray','PyTableData','dtype','nditer']
 __all__ += multiarray.__all__
 __all__ += numeric.__all__
 __all__ += fromnumeric.__all__

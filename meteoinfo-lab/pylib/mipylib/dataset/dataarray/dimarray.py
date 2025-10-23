@@ -12,7 +12,7 @@ from org.meteoinfo.common import ResampleMethods
 from org.meteoinfo.common import PointD
 from org.meteoinfo.ndarray import Array, Range, MAMath, DataType
 from org.meteoinfo.data.dimarray import Dimension, DimensionType
-from ._ndarray import NDArray
+from mipylib.numeric.core._ndarray import NDArray
 import math
 import datetime
 import numbers

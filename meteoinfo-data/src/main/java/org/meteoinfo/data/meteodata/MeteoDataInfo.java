@@ -1264,7 +1264,7 @@ public class MeteoDataInfo {
         tData = tData.setValue(tData.getDoubleMissingValue());
         int xnum = gData.getXNum();
         int ynum = gData.getYNum();
-        LocalDateTime date = this.getDataInfo().getTimes().get(0);
+        LocalDateTime date = this.getDataInfo().getTimes().getDate(0);
         List<Integer> hours = this.getDataInfo().getTimeValues(date, "hours");
         for (int t = 0; t < tnum; t++) {
             int hour = hours.get(t);
@@ -1297,24 +1297,24 @@ public class MeteoDataInfo {
      * @return Interpolated value
      */
     public double toStation(String varName, double x, double y, double z, LocalDateTime t) {
-        List<LocalDateTime> times = this.getDataInfo().getTimes();
-        int tnum = times.size();
-        if (t.isBefore(times.get(0)) || t.isAfter(times.get(tnum - 1))) {
+        Array times = this.getDataInfo().getTimes();
+        int tnum = (int) times.getSize();
+        if (t.isBefore(times.getDate(0)) || t.isAfter(times.getDate(tnum - 1))) {
             return this.getDataInfo().getMissingValue();
         }
 
         double ivalue = this.getDataInfo().getMissingValue();
         double v_t1, v_t2;
         for (int i = 0; i < tnum; i++) {
-            if (t.equals(times.get(i))) {
+            if (t.equals(times.getDate(i))) {
                 ivalue = this.toStation(varName, x, y, z, i);
                 break;
             }
-            if (t.isBefore(times.get(i))) {
+            if (t.isBefore(times.getDate(i))) {
                 v_t1 = this.toStation(varName, x, y, z, i - 1);
                 v_t2 = this.toStation(varName, x, y, z, i);
-                int h = (int)Duration.between(times.get(i - 1), t).toHours();
-                int th = (int)Duration.between(times.get(i - 1), times.get(i)).toHours();
+                int h = (int)Duration.between(times.getDate(i - 1), t).toHours();
+                int th = (int)Duration.between(times.getDate(i - 1), times.getDate(i)).toHours();
                 ivalue = (v_t2 - v_t1) * h / th + v_t1;
                 break;
             }
@@ -1333,24 +1333,24 @@ public class MeteoDataInfo {
      * @return Interpolated value
      */
     public double toStation(String varName, double x, double y, LocalDateTime t) {
-        List<LocalDateTime> times = this.getDataInfo().getTimes();
-        int tnum = times.size();
-        if (t.isBefore(times.get(0)) || t.isAfter(times.get(tnum - 1))) {
+        Array times = this.getDataInfo().getTimes();
+        int tnum = (int) times.getSize();
+        if (t.isBefore(times.getDate(0)) || t.isAfter(times.getDate(tnum - 1))) {
             return this.getDataInfo().getMissingValue();
         }
 
         double ivalue = this.getDataInfo().getMissingValue();
         double v_t1, v_t2;
         for (int i = 0; i < tnum; i++) {
-            if (t.equals(times.get(i))) {
+            if (t.equals(times.getDate(i))) {
                 ivalue = this.toStation(varName, x, y, i);
                 break;
             }
-            if (t.isBefore(times.get(i))) {
+            if (t.isBefore(times.getDate(i))) {
                 v_t1 = this.toStation(varName, x, y, i - 1);
                 v_t2 = this.toStation(varName, x, y, i);
-                int h = (int)Duration.between(times.get(i - 1), t).toHours();
-                int th = (int)Duration.between(times.get(i - 1), times.get(i)).toHours();
+                int h = (int)Duration.between(times.getDate(i - 1), t).toHours();
+                int th = (int)Duration.between(times.getDate(i - 1), times.getDate(i)).toHours();
                 ivalue = (v_t2 - v_t1) * h / th + v_t1;
                 break;
             }
@@ -1370,7 +1370,7 @@ public class MeteoDataInfo {
      * @return Interpolated values
      */
     public List<Double> toStation(List<String> varNames, double x, double y, double z, LocalDateTime t) {
-        List<LocalDateTime> times = this.getDataInfo().getTimes();
+        List<LocalDateTime> times = this.getDataInfo().getTimeList();
         int tnum = times.size();
         if (t.isBefore(times.get(0)) || t.isAfter(times.get(tnum - 1))) {
             return null;

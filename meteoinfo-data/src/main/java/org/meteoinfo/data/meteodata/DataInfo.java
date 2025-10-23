@@ -23,10 +23,8 @@ import java.util.List;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.dimarray.DimArray;
 import org.meteoinfo.data.dimarray.DimensionType;
-import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.*;
 import org.meteoinfo.data.dimarray.Dimension;
-import org.meteoinfo.ndarray.InvalidRangeException;
-import org.meteoinfo.ndarray.Range;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
@@ -158,17 +156,29 @@ import org.meteoinfo.projection.ProjectionInfo;
       *
       * @return Times
       */
-     public List<LocalDateTime> getTimes() {
+     public Array getTimes() {
          if (tDim == null) {
              return null;
          }
 
-         Array values = tDim.getDimValue();
-         List<LocalDateTime> times = new ArrayList<>();
-         for (int i = 0; i < values.getSize(); i++) {
-             times.add(JDateUtil.fromOADate(values.getDouble(i)));
+         return tDim.getDimValue();
+     }
+
+     /**
+      * Get times
+      *
+      * @return Times
+      */
+     public List<LocalDateTime> getTimeList() {
+         if (tDim == null) {
+             return null;
          }
 
+         List<LocalDateTime> times = new ArrayList<>();
+         IndexIterator iter = tDim.getDimValue().getIndexIterator();
+         while (iter.hasNext()) {
+             times.add(iter.getDateNext());
+         }
          return times;
      }
 
@@ -182,7 +192,7 @@ import org.meteoinfo.projection.ProjectionInfo;
          if (tDim == null)
              return null;
 
-         return JDateUtil.fromOADate(tDim.getDimValue().getDouble(timeIdx));
+         return tDim.getDimValue().getDate(timeIdx);
      }
 
      /**
@@ -194,7 +204,7 @@ import org.meteoinfo.projection.ProjectionInfo;
          if (tDim == null)
              return Double.NaN;
 
-         return tDim.getDimValue().getDouble(timeIdx);
+         return JDateUtil.toOADate(tDim.getDimValue().getDate(timeIdx));
      }
 
      /**
@@ -232,9 +242,11 @@ import org.meteoinfo.projection.ProjectionInfo;
       * @return Time values
       */
      public List<Integer> getTimeValues(LocalDateTime baseDate, String tDelta) {
-         List<LocalDateTime> times = this.getTimes();
+         Array times = this.getTimes();
          List<Integer> values = new ArrayList<>();
-         for (LocalDateTime time : times) {
+         IndexIterator iter = times.getIndexIterator();
+         while (iter.hasNext()){
+             LocalDateTime time = iter.getDateNext();
              if (tDelta.equalsIgnoreCase("hours")) {
                  values.add((int)Duration.between(baseDate, time).toHours());
              } else if (tDelta.equalsIgnoreCase("days")) {
@@ -251,16 +263,25 @@ import org.meteoinfo.projection.ProjectionInfo;
       * @param value Times
       */
      public void setTimes(List<LocalDateTime> value) {
-         List<Double> values = new ArrayList<>();
+         Array times = Array.factory(DataType.DATE, new int[]{value.size()});
+         IndexIterator iter = times.getIndexIterator();
          for (LocalDateTime t : value) {
-             values.add(JDateUtil.toOADate(t));
+             iter.setDateNext(t);
          }
 
          if (tDim == null) {
              tDim = new Dimension(DimensionType.T);
          }
 
-         tDim.setValues(values);
+         tDim.setDimValue(times);
+     }
+
+     /**
+      * Set times array
+      * @param value Times array
+      */
+     public void setTimes(Array value) {
+         tDim.setDimValue(value);
      }
 
      /**

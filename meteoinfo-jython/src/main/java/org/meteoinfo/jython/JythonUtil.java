@@ -4,12 +4,17 @@ import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Complex;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
+import org.python.core.Py;
 import org.python.core.PyComplex;
 import org.python.core.PyObject;
 import org.python.modules.time.PyTimeTuple;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class JythonUtil {
@@ -81,5 +86,58 @@ public class JythonUtil {
             return a;
         }
     }
+
+    /**
+     * Convert Jython datetime to Java LocalDateTime
+     *
+     * @param dt Jython datetime object
+     * @return Java LocalDateTime object
+     */
+    public static LocalDateTime toDateTime(PyObject dt) {
+        Calendar calendar = (Calendar) dt.__tojava__(Calendar.class);
+        LocalDateTime localDateTime = LocalDateTime.ofInstant(calendar.toInstant(), calendar.getTimeZone().toZoneId());
+
+        return localDateTime;
+    }
+
+    /**
+     * Convert Java LocalDateTime object to Jython datetime object
+     *
+     * @param dt Java LocalDatetime object
+     * @return Jython datetime object
+     */
+    public static PyObject toDateTime(LocalDateTime dt) {
+        Timestamp timestamp = Timestamp.valueOf(dt);
+
+        return Py.newDatetime(timestamp);
+    }
+
+    /**
+     * Convert Java LocalDateTime array to Jython datetime array or verse vise
+     *
+     * @param a Java LocalDateTime array or Jython datetime array
+     * @return Jython datatime array or Java LocalDateTime array
+     */
+    public static Array toDateTime(Array a) {
+        IndexIterator iterA = a.getIndexIterator();
+        if (a.getDataType() == DataType.DATE) {
+            Array r = Array.factory(DataType.OBJECT, a.getShape());
+            IndexIterator interR = r.getIndexIterator();
+            while (interR.hasNext()) {
+                interR.setObjectNext(toDateTime(iterA.getDateNext()));
+            }
+
+            return r;
+        } else {
+            Array r = Array.factory(DataType.DATE, a.getShape());
+            IndexIterator interR = r.getIndexIterator();
+            while (interR.hasNext()) {
+                interR.setDateNext(toDateTime((PyObject) iterA.getObjectNext()));
+            }
+
+            return r;
+        }
+    }
+
 
 }

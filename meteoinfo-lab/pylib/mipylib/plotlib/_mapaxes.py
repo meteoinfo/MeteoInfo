@@ -30,7 +30,8 @@ from java.awt import Font, Color
 from ._axes import Axes
 from .graphic import Point2DCollection, Line2D, LineCollection
 import mipylib.numeric as np
-from mipylib.numeric.core import NDArray, DimArray
+from mipylib.numeric.core import NDArray
+from mipylib.dataset import DimArray
 from mipylib.geolib.milayer import MILayer
 from mipylib.geolib._graphic import GeoGraphicCollection
 import mipylib.geolib.migeo as migeo

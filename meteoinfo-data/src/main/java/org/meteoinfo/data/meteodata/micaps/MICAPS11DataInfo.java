@@ -166,9 +166,7 @@ public class MICAPS11DataInfo extends DataInfo implements IGridDataInfo {
             this.addAttribute(new Attribute("data_format", "MICAPS 11"));
             Dimension tdim = new Dimension(DimensionType.T);
             tdim.setShortName("time");
-            double[] values = new double[1];
-            values[0] = JDateUtil.toOADate(time);
-            tdim.setValues(values);
+            tdim.setValue(time);
             this.setTimeDimension(tdim);
             this.addDimension(tdim);
             Dimension zdim = new Dimension(DimensionType.Z);
@@ -220,7 +218,7 @@ public class MICAPS11DataInfo extends DataInfo implements IGridDataInfo {
         String dataInfo;
         dataInfo = "Description: " + _description;
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
-        dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().get(0));
+        dataInfo += System.getProperty("line.separator") + "Time: " + format.format(this.getTimes().getDate(0));
         dataInfo += System.getProperty("line.separator") + super.generateInfoText();
 
         return dataInfo;

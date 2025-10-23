@@ -17,6 +17,7 @@ from org.meteoinfo.data.meteodata.netcdf import NCUtil
 from org.meteoinfo.ndarray import DataType
 
 import mipylib.numeric as np
+from .dataarray import DimArray
 import mipylib.miutil as miutil
 import datetime
 import numbers
@@ -340,7 +341,7 @@ class DimVariable(object):
                 array = np.array(rrr)
             else:
                 array = np.array(rr)
-            data = np.DimArray(array, dims, self.dataset.proj)
+            data = DimArray(array, dims, self.dataset.proj)
             return data
     
     def read(self):
@@ -935,11 +936,11 @@ class TDimVariable(object):
                     nindices = tuple(nindices)
                     aa = var.__getitem__(nindices)
                     if si == ei:
-                        if isinstance(aa, np.DimArray):
+                        if isinstance(aa, DimArray):
                             aa.addtdim(self.dataset.gettime(si))
                         else:
                             aa = np.array([aa])
-                            aa = np.DimArray(aa)
+                            aa = DimArray(aa)
                             aa.addtdim(self.dataset.gettime(si))
                     if data is None:
                         data = aa
@@ -960,11 +961,11 @@ class TDimVariable(object):
                 nindices = tuple(nindices)
                 aa = var.__getitem__(nindices)
                 if si == ei and eidx != sidx:
-                    if isinstance(aa, np.DimArray):
+                    if isinstance(aa, DimArray):
                         aa.addtdim(self.dataset.gettime(si))
                     else:
                         aa = np.array([aa])
-                        aa = np.DimArray(aa)
+                        aa = DimArray(aa)
                         aa.addtdim(self.dataset.gettime(si))
                 if data is None:
                     data = aa
@@ -997,7 +998,7 @@ class TDimVariable(object):
                 else:
                     data = np.concatenate([data, aa])
                 
-        if isinstance(data, np.DimArray):
+        if isinstance(data, DimArray):
             return data
         else:
             if isinstance(aa, numbers.Number):
@@ -1005,5 +1006,5 @@ class TDimVariable(object):
 
             dims = aa.dims
             dims[0].setDimValues(times)
-            r = np.DimArray(data, dims, aa.proj)
+            r = DimArray(data, dims, aa.proj)
             return r

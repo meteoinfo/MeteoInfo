@@ -1,5 +1,6 @@
 from org.meteoinfo.math.meteo import WRF
 import mipylib.numeric as np
+from mipylib.dataset import DimArray
 from .. import constants
 from ..calc.thermo import temperature_from_potential_temperature
 
@@ -63,4 +64,4 @@ def get_dbz(wrfin, timeidx=0, use_varint=False, use_liqskin=False):
 
     dbz = WRF.calcDBZ(full_p._array, tk._array, qv._array, qr._array, qs._array, qg._array,
                        sn0, ivarint, iliqskin)
-    return np.DimArray(dbz, dims=t.dims)
+    return DimArray(dbz, dims=t.dims)

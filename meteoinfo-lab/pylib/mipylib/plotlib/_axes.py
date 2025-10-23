@@ -29,7 +29,8 @@ import datetime
 import math
 
 import mipylib.numeric as np
-from mipylib.numeric.core import DimArray, NDArray
+from mipylib.numeric.core import NDArray
+from mipylib.dataset import DimArray
 from mipylib.geolib.milayer import MILayer, MIXYListData
 import plotutil
 import colors

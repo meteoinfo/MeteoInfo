@@ -556,7 +556,7 @@ public class Series implements Iterable {
      * @return Series of booleans indicating if each element is in values
      */
     public Series isIn(List values) {
-        Array rdata = ArrayMath.inValues(data, values);
+        Array rdata = ArrayMath.isIn(data, values);
         Series r = new Series(rdata, index, name);
         return r;
     }

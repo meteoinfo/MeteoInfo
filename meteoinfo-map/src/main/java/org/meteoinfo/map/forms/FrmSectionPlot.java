@@ -1531,7 +1531,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
         this.jComboBox_Time1.removeAllItems();
         DateTimeFormatter sdf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
         for (i = 0; i < _meteoDataInfo.getDataInfo().getTimeNum(); i++) {
-            this.jComboBox_Time1.addItem(sdf.format(_meteoDataInfo.getDataInfo().getTimes().get(i)));
+            this.jComboBox_Time1.addItem(sdf.format(_meteoDataInfo.getDataInfo().getTimes().getDate(i)));
         }
         this.jComboBox_Time1.setSelectedIndex(0);
 

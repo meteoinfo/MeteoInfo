@@ -8,10 +8,11 @@ import math
 from org.meteoinfo.ndarray.math import ArrayMath
 
 from ._ndarray import NDArray
-from .numeric import array, sign
+from .numeric import array, sign, asanyarray
 
 __all__ = [
-    'absolute','add','deg2rad','divmod','floor_divide','fmod','mod','rad2deg','remainder'
+    'absolute','add','bitwise_and','bitwise_or','bitwise_xor','deg2rad','divmod','floor_divide','fmod',
+    'mod','rad2deg','remainder'
     ]
 
 def absolute(x):
@@ -138,6 +139,91 @@ def fmod(x1, x2):
     """
     s = sign(x1)
     return mod(x1, x2) * s
+
+
+def bitwise_and(x1, x2):
+    """
+    Compute the bit-wise AND of two arrays element-wise.
+
+    Parameters:
+    -----------
+    x1, x2 : array_like
+        Only integer and boolean types are handled.
+
+    Returns:
+    --------
+    out : NDArray or scalar
+        Result. This is a scalar if both x1 and x2 are scalars.
+    """
+    if isinstance(x1, (list, tuple)):
+        x1 = NDArray(x1)
+
+    if isinstance(x2, (list, tuple)):
+        x2 = NDArray(x2)
+
+    if isinstance(x1, NDArray):
+        return x1.__and__(x2)
+    elif isinstance(x2, NDArray):
+        return x2.__and__(x1)
+    else:
+        return x1 & x2
+
+
+def bitwise_or(x1, x2):
+    """
+    Compute the bit-wise OR of two arrays element-wise.
+
+    Parameters:
+    -----------
+    x1, x2 : array_like
+        Only integer and boolean types are handled.
+
+    Returns:
+    --------
+    out : NDArray or scalar
+        Result. This is a scalar if both x1 and x2 are scalars.
+    """
+    if isinstance(x1, (list, tuple)):
+        x1 = NDArray(x1)
+
+    if isinstance(x2, (list, tuple)):
+        x2 = NDArray(x2)
+
+    if isinstance(x1, NDArray):
+        return x1.__or__(x2)
+    elif isinstance(x2, NDArray):
+        return x2.__or__(x1)
+    else:
+        return x1 | x2
+
+
+def bitwise_xor(x1, x2):
+    """
+    Compute the bit-wise XOR of two arrays element-wise.
+
+    Parameters:
+    -----------
+    x1, x2 : array_like
+        Only integer and boolean types are handled.
+
+    Returns:
+    --------
+    out : NDArray or scalar
+        Result. This is a scalar if both x1 and x2 are scalars.
+    """
+    if isinstance(x1, (list, tuple)):
+        x1 = NDArray(x1)
+
+    if isinstance(x2, (list, tuple)):
+        x2 = NDArray(x2)
+
+    if isinstance(x1, NDArray):
+        return x1.__xor__(x2)
+    elif isinstance(x2, NDArray):
+        return x2.__xor__(x1)
+    else:
+        return x1 ^ x2
+
 
 def rad2deg(x):
     """

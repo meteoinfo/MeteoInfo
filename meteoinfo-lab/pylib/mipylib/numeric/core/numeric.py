@@ -22,10 +22,11 @@ from org.meteoinfo.ndarray import Array
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.math.linalg import LinalgUtil
 from org.python.core import PyComplex
+from org.meteoinfo.jython import JythonUtil
 
 import _dtype
 from ._ndarray import NDArray
-from org.meteoinfo.jython import JythonUtil
+from .numerictypes import ScalarType
 
 # Global variables
 pi = Math.PI
@@ -1950,7 +1951,8 @@ def isscalar(element):
 
     :return: (*bool*) True if `element` is a scalar type, False if it is not.
     """
-    return isinstance(element, (numbers.Number, basestring, bool))
+    return (type(element) in ScalarType
+        or isinstance(element, numbers.Number))
 
 def delnan(a):
     """

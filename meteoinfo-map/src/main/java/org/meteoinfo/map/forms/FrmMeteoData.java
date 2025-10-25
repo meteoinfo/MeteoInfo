@@ -1109,7 +1109,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
             case MICAPS_7:
             case MICAPS_11:
             case MICAPS_13:
-                LocalDateTime tt = _meteoDataInfo.getDataInfo().getTimes().get(0);
+                LocalDateTime tt = _meteoDataInfo.getDataInfo().getTimes().getDate(0);
                 tt = tt.minusHours(3);
                 String aFile = _meteoDataInfo.getFileName();
                 String path = new File(aFile).getParent();
@@ -1132,7 +1132,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                 break;
             case MICAPS_1:
             case MICAPS_120:
-                tt = _meteoDataInfo.getDataInfo().getTimes().get(0);
+                tt = _meteoDataInfo.getDataInfo().getTimes().getDate(0);
                 tt = tt.minusHours(1);
                 aFile = _meteoDataInfo.getFileName();
                 path = new File(aFile).getParent();
@@ -1205,7 +1205,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
             case MICAPS_7:
             case MICAPS_11:
             case MICAPS_13:
-                LocalDateTime tt = _meteoDataInfo.getDataInfo().getTimes().get(0);
+                LocalDateTime tt = _meteoDataInfo.getDataInfo().getTimes().getDate(0);
                 tt = tt.plusHours(3);
                 String aFile = _meteoDataInfo.getFileName();
                 String path = new File(aFile).getParent();
@@ -1228,7 +1228,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                 break;
             case MICAPS_1:
             case MICAPS_120:
-                tt = _meteoDataInfo.getDataInfo().getTimes().get(0);
+                tt = _meteoDataInfo.getDataInfo().getTimes().getDate(0);
                 tt = tt.plusHours(1);
                 aFile = _meteoDataInfo.getFileName();
                 path = new File(aFile).getParent();

@@ -5390,7 +5390,11 @@ public class GraphicFactory {
                         }
                     }
                     max = v;
-                    min = cValues[valueIdx - 1];
+                    if (cValues.length > 1) {
+                        min = cValues[valueIdx - 1];
+                    } else {
+                        min = ls.getMinValue();
+                    }
                 }
             } else if (valueIdx == 0){
                 if (poly.IsHighCenter) {
@@ -5402,7 +5406,11 @@ public class GraphicFactory {
                         }
                     }
                     min = v;
-                    max = cValues[valueIdx + 1];
+                    if (cValues.length > 1) {
+                        max = cValues[valueIdx + 1];
+                    } else {
+                        max = ls.getMaxValue();
+                    }
                 } else {
                     if (minData < ls.getMinValue()) {
                         switch (extendType) {

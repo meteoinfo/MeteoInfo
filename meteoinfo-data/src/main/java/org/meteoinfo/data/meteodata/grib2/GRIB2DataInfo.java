@@ -446,7 +446,7 @@ public class GRIB2DataInfo extends DataInfo implements IGridDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName){
+    public Array realRead(String varName){
         return null;
     }
     
@@ -460,7 +460,7 @@ public class GRIB2DataInfo extends DataInfo implements IGridDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         return null;
     }
     

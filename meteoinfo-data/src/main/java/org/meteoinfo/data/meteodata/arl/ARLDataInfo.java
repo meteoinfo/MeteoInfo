@@ -54,25 +54,14 @@ import java.util.logging.Logger;
 public class ARLDataInfo extends DataInfo implements IGridDataInfo {
 
     // <editor-fold desc="Variables">
-    //private FileStream _fs = null;
-    //private BinaryWriter _bw = null;    
     /// <summary>
     /// Is Lat/Lon
     /// </summary>
     public Boolean isLatLon;
     /// <summary>
-    /// Projection info
-    /// </summary>
-    //public ProjectionInfo projInfo;
-    /// <summary>
     /// Data head
     /// </summary>
     public DataHead dataHead;
-//    /// <summary>
-//    /// Time list
-//    /// </summary>
-//    public List<Date> times;
-    /// <summary>
     /// Record length
     /// </summary>
     public long recLen;
@@ -85,11 +74,6 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     /// Variable list
     /// </summary>
     public List<List<String>> LevelVarList;
-//    /// <summary>
-//    /// Variables
-//    /// </summary>
-//    public List<Variable> Variables = new ArrayList<Variable>();
-    /// <summary>
     /// Level number
     /// </summary>
     public int levelNum;
@@ -98,10 +82,6 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     /// </summary>
     public List<Double> levels;
     ///// <summary>
-    ///// Variable-levle list
-    ///// </summary>
-    //public List<ARLVAR> varLevList;
-    /// <summary>
     /// Undefine data
     /// </summary>
     public double missingValue;
@@ -117,7 +97,6 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
     /// Is global
     /// </summary>
     public boolean isGlobal;
-    //private DataOutputStream _bw = null;
     private RandomAccessFile _bw = null;
     private long indexRecPos = 0;
     // </editor-fold>
@@ -399,10 +378,12 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             }
 
             Dimension xDim = new Dimension(DimensionType.X);
+            xDim.setName(this.getXCoordVariableName());
             xDim.setValues(X);
             this.setXDimension(xDim);
             this.addDimension(xDim);
             Dimension yDim = new Dimension(DimensionType.Y);
+            yDim.setName(this.getYCoordVariableName());
             yDim.setValues(Y);
             this.setYDimension(yDim);
             this.addDimension(yDim);
@@ -440,34 +421,11 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                 br.seek(br.getFilePointer() - 50 - 108);
 
                 aTime = LocalDateTime.of(year, aDL.getMonth(), aDL.getDay(), aDL.getHour(), dh.MN, 0);
-                /*if (aTime.equals(oldTime)) {
-                    sameTimeNum += 1;
-                }*/
                 times.add(aTime);
                 timeNum += 1;
             } while (true);
 
             br.close();
-
-            /*//Update times
-            if (sameTimeNum > 1) {
-                int minutes = 60 / sameTimeNum;
-                int idx = 0;
-                List<LocalDateTime> newTimes = new ArrayList<>();
-                LocalDateTime baseTime = times.get(0);
-                for (LocalDateTime time : times) {
-                    if (time.equals(baseTime)) {
-                        if (idx > 0)
-                            time = baseTime.plusMinutes(minutes * idx);
-                        idx += 1;
-                    } else {
-                        baseTime = time;
-                        idx = 1;
-                    }
-                    newTimes.add(time);
-                }
-                times = newTimes;
-            }*/
 
             //Set dimensions
             Array values = Array.factory(DataType.DATE, new int[]{times.size()});
@@ -476,6 +434,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                 iter.setDateNext(t);
             }
             Dimension tDim = new Dimension(DimensionType.T);
+            tDim.setName("time");
             tDim.setDimValue(values);
             this.setTimeDimension(tDim);
             this.addDimension(tDim);
@@ -524,7 +483,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                     }
                     if (zDim == null){
                         zDim = new Dimension(DimensionType.Z);
-                        zDim.setName("Z_" + String.valueOf(len));
+                        zDim.setName("z_" + String.valueOf(len));
                         zDim.setValues(var.getLevels());
                         zdims.add(zDim);
                         this.addDimension(zDim);
@@ -534,8 +493,24 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
                 var.setDimension(this.getYDimension());
                 var.setDimension(this.getXDimension());
             }
-            this.setTimes(times);
             this.setVariables(variables);
+
+            //Add coordinate variables
+            Variable var;
+            for (Dimension dim : this.dimensions) {
+                switch (dim.getDimType()) {
+                    case T:
+                    case X:
+                    case Y:
+                    case Z:
+                        var = new Variable(dim.getName());
+                        var.setDimVar(true);
+                        var.setCachedData(dim.getDimValue());
+                        var.addDimension(dim);
+                        this.addCoordinate(var);
+                        break;
+                }
+            }
         } catch (IOException ex) {
             Logger.getLogger(ARLDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -749,7 +724,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName) {
+    public Array realRead(String varName) {
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -761,7 +736,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
             stride[i] = 1;
         }
 
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
 
         return r;
     }
@@ -776,7 +751,7 @@ public class ARLDataInfo extends DataInfo implements IGridDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         try {
             Variable var = this.getVariable(varName);
             Section section = new Section(origin, size, stride);

@@ -395,6 +395,16 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
                     FieldList.addAll(VarList);
                     break;
             }
+
+            //Add coordinate variables
+            Variable variable;
+            for (Dimension dim : this.dimensions) {
+                variable = new Variable(dim.getName());
+                variable.setDimVar(true);
+                variable.setCachedData(dim.getDimValue());
+                variable.addDimension(dim);
+                this.addCoordinate(variable);
+            }
         } catch (IOException ex) {
             Logger.getLogger(AWXDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -538,12 +548,12 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
         }
 
         Dimension xdim = new Dimension(DimensionType.X);
-        xdim.setShortName("X");
+        xdim.setShortName(this.getXCoordVariableName());
         xdim.setValues(x);
         this.setXDimension(xdim);
         this.addDimension(xdim);
         Dimension ydim = new Dimension(DimensionType.Y);
-        ydim.setShortName("Y");
+        ydim.setShortName(this.getYCoordVariableName());
         ydim.setValues(y);
         this.setYDimension(ydim);
         this.addDimension(ydim);
@@ -571,12 +581,12 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
             y[i] = _lrLatitude + yDelt * i;
         }
         Dimension xdim = new Dimension(DimensionType.X);
-        xdim.setShortName("X");
+        xdim.setShortName(this.getXCoordVariableName());
         xdim.setValues(x);
         this.setXDimension(xdim);
         this.addDimension(xdim);
         Dimension ydim = new Dimension(DimensionType.Y);
-        ydim.setShortName("Y");
+        ydim.setShortName(this.getYCoordVariableName());
         ydim.setValues(y);
         this.setYDimension(ydim);
         this.addDimension(ydim);
@@ -599,7 +609,7 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
      * @return Array data
      */
     @Override
-    public Array read(String varName) {
+    public Array realRead(String varName) {
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -611,13 +621,13 @@ public class AWXDataInfo extends DataInfo implements IGridDataInfo, IStationData
             stride[i] = 1;
         }
 
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
 
         return r;
     }
 
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         try {                    
             if (this._productType == 4){
                 Array dataArray = this.read_4(varName);

@@ -125,16 +125,15 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     this.numVariation = DataConvert.bytes2Short(bytes, ByteOrder.LITTLE_ENDIAN);
 
                     LocalDateTime dt = LocalDateTime.of(year, month, day, hour, 0);
+
+                    this.addAttribute(new Attribute("time", dt));
+                    this.addAttribute(new Attribute("level", level));
+
                     Dimension tDim = new Dimension(DimensionType.T);
                     tDim.setName("time");
                     tDim.setValue(dt);
                     this.setTimeDimension(tDim);
-                    this.addDimension(tDim);
-                    Dimension zDim = new Dimension(DimensionType.Z);
-                    zDim.setName("level");
-                    zDim.setValues(new float[]{level});
-                    this.setZDimension(zDim);
-                    this.addDimension(zDim);
+                    //this.addDimension(tDim);
                     Dimension stDim = new Dimension(DimensionType.OTHER);
                     stDim.setName("station");
                     float[] values = new float[numStation];
@@ -154,8 +153,6 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     var.setName(varName);
                     var.setStation(false);
                     var.setDataType(DataType.STRING);
-                    var.setDimension(tDim);
-                    var.setDimension(zDim);
                     var.setDimension(stDim);
                     var.addAttribute("name", varName);
                     this.addVariable(var);
@@ -165,8 +162,6 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     var.setName(varName);
                     var.setStation(true);
                     var.setDataType(DataType.FLOAT);
-                    var.setDimension(tDim);
-                    var.setDimension(zDim);
                     var.setDimension(stDim);
                     var.addAttribute("name", varName);
                     this.addVariable(var);
@@ -176,8 +171,6 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     var.setName(varName);
                     var.setStation(true);
                     var.setDataType(DataType.FLOAT);
-                    var.setDimension(tDim);
-                    var.setDimension(zDim);
                     var.setDimension(stDim);
                     var.addAttribute("name", varName);
                     this.variableNames.add(varName);
@@ -192,8 +185,6 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                         var.setName(varName);
                         var.setStation(true);
                         var.setDataType(this.dataTypeMap.get(dataTypeId));
-                        var.setDimension(tDim);
-                        var.setDimension(zDim);
                         var.setDimension(stDim);
                         var.addAttribute("name", varName);
                         this.addVariable(var);
@@ -256,16 +247,14 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     br.skipBytes(97);
 
                     dt = LocalDateTime.of(year, month, day, hour, 0);
+
+                    this.addAttribute(new Attribute("time", dt));
+                    this.addAttribute(new Attribute("level", level));
+
                     tDim = new Dimension(DimensionType.T);
                     tDim.setName("time");
                     tDim.setValue(dt);
                     this.setTimeDimension(tDim);
-                    this.addDimension(tDim);
-                    zDim = new Dimension(DimensionType.Z);
-                    zDim.setName("level");
-                    zDim.setValues(new float[]{level});
-                    this.setZDimension(zDim);
-                    this.addDimension(zDim);
                     Dimension yDim = new Dimension(DimensionType.Y);
                     if (deltaLat < 0) {
                         this.yReverse = true;
@@ -296,8 +285,6 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                                 var = new Variable();
                                 var.setName(this.element);
                                 var.setDataType(DataType.FLOAT);
-                                var.setDimension(tDim);
-                                var.setDimension(zDim);
                                 var.setDimension(yDim);
                                 var.setDimension(xDim);
                                 this.addVariable(var);
@@ -308,8 +295,6 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                                     var = new Variable();
                                     var.setName(vName);
                                     var.setDataType(DataType.FLOAT);
-                                    var.setDimension(tDim);
-                                    var.setDimension(zDim);
                                     var.setDimension(yDim);
                                     var.setDimension(xDim);
                                     this.addVariable(var);
@@ -322,8 +307,6 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                             var.setName("WindSpeed");
                             var.setDataType(DataType.FLOAT);
                             var.setUnits("m/s");
-                            var.setDimension(tDim);
-                            var.setDimension(zDim);
                             var.setDimension(yDim);
                             var.setDimension(xDim);
                             this.addVariable(var);
@@ -332,8 +315,6 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                             var.setName("WindDirection");
                             var.setDataType(DataType.FLOAT);
                             var.setUnits("degree");
-                            var.setDimension(tDim);
-                            var.setDimension(zDim);
                             var.setDimension(yDim);
                             var.setDimension(xDim);
                             this.addVariable(var);
@@ -344,8 +325,17 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
                     this.addAttribute(new Attribute("model_name", modelName));
                     break;
             }
-            this.addAttribute(new Attribute("level", level));
             this.addAttribute(new Attribute("description", description));
+
+            //Add coordinate variables
+            Variable variable;
+            for (Dimension dim : this.dimensions) {
+                variable = new Variable(dim.getName());
+                variable.setDimVar(true);
+                variable.setCachedData(dim.getDimValue());
+                variable.addDimension(dim);
+                this.addCoordinate(variable);
+            }
 
             br.close();
         } catch (IOException ex) {
@@ -472,7 +462,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
     }
 
     @Override
-    public Array read(String varName) {
+    public Array realRead(String varName) {
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -484,7 +474,7 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
             stride[i] = 1;
         }
 
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
 
         return r;
     }
@@ -520,13 +510,13 @@ public class MDFSDataInfo extends DataInfo implements IGridDataInfo, IStationDat
     }
 
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         try {
             Section section = new Section(origin, size, stride);
             Variable variable = this.getVariable(varName);
             Array dataArray = Array.factory(variable.getDataType(), section.getShape());
             IndexIterator ii = dataArray.getIndexIterator();
-            int rangeIdx = 2;
+            int rangeIdx = 0;
             switch (this.type) {
                 case 1:
                 case 2:

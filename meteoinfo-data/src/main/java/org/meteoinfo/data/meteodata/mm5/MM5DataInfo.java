@@ -352,6 +352,23 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
 
             this.setVariables(variables);
 
+            //Add coordinate variables
+            Variable variable;
+            for (Dimension dim : this.dimensions) {
+                switch (dim.getDimType()) {
+                    case X:
+                    case Y:
+                    case Z:
+                    case T:
+                        variable = new Variable(dim.getName());
+                        variable.setDimVar(true);
+                        variable.setCachedData(dim.getDimValue());
+                        variable.addDimension(dim);
+                        this.addCoordinate(variable);
+                        break;
+                }
+            }
+
             br.close();
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MM5DataInfo.class.getName()).log(Level.SEVERE, null, ex);
@@ -675,7 +692,7 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName) {
+    public Array realRead(String varName) {
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -687,7 +704,7 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
             stride[i] = 1;
         }
 
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
 
         return r;
     }
@@ -702,7 +719,7 @@ public class MM5DataInfo extends DataInfo implements IGridDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         try {
             Variable var = this.getVariable(varName);
             Section section = new Section(origin, size, stride);

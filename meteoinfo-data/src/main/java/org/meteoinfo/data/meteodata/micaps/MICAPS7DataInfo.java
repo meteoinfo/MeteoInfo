@@ -262,12 +262,12 @@
       * @return Array data
       */
      @Override
-     public Array read(String varName) {
+     public Array realRead(String varName) {
          int[] origin = new int[]{0, 0};
          int[] size = new int[]{this.trajNum, this.pointNum};
          int[] stride = new int[]{1, 1};
 
-         Array r = read(varName, origin, size, stride);
+         Array r = realRead(varName, origin, size, stride);
 
          return r;
      }
@@ -282,7 +282,7 @@
       * @return Array data
       */
      @Override
-     public Array read(String varName, int[] origin, int[] size, int[] stride) {
+     public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
          try {
              DataColumn col = this.dataTables.get(0).findColumn(varName);
              DataType dtype = col.getDataType();

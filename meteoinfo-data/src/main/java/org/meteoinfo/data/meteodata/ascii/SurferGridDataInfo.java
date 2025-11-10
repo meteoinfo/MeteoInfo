@@ -121,6 +121,21 @@ import org.meteoinfo.data.meteodata.Attribute;
              variables.add(aVar);
              this.setVariables(variables);
 
+             //Add coordinate variables
+             Variable var;
+             for (Dimension dim : this.dimensions) {
+                 switch (dim.getDimType()) {
+                     case X:
+                     case Y:
+                         var = new Variable(dim.getName());
+                         var.setDimVar(true);
+                         var.setCachedData(dim.getDimValue());
+                         var.addDimension(dim);
+                         this.addCoordinate(var);
+                         break;
+                 }
+             }
+
              sr.close();
          } catch (IOException ex) {
              Logger.getLogger(SurferGridDataInfo.class.getName()).log(Level.SEVERE, null, ex);
@@ -161,7 +176,7 @@ import org.meteoinfo.data.meteodata.Attribute;
       * @return Array data
       */
      @Override
-     public Array read(String varName){
+     public Array realRead(String varName){
          Variable var = this.getVariable(varName);
          int n = var.getDimNumber();
          int[] origin = new int[n];
@@ -173,7 +188,7 @@ import org.meteoinfo.data.meteodata.Attribute;
              stride[i] = 1;
          }
 
-         Array r = read(varName, origin, size, stride);
+         Array r = realRead(varName, origin, size, stride);
 
          return r;
      }
@@ -188,7 +203,7 @@ import org.meteoinfo.data.meteodata.Attribute;
       * @return Array data
       */
      @Override
-     public Array read(String varName, int[] origin, int[] size, int[] stride) {
+     public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
          try {
              Section section = new Section(origin, size, stride);
              Array dataArray = Array.factory(DataType.FLOAT, section.getShape());

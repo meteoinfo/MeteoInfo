@@ -590,7 +590,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             isGlobal = true;
                         }
                         Dimension xDim = new Dimension(DimensionType.X);
-                        xDim.setShortName("X");
+                        xDim.setName(this.getXCoordVariableName());
                         xDim.setUnit("degree east");
                         xDim.setValues(values);
                         this.setXDimension(xDim);
@@ -637,7 +637,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             Collections.reverse(values);
 
                         Dimension yDim = new Dimension(DimensionType.Y);
-                        yDim.setShortName("Y");
+                        yDim.setShortName(this.getYCoordVariableName());
                         yDim.setUnit("degree north");
                         yDim.setValues(values);
                         this.setYDimension(yDim);
@@ -702,7 +702,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             unit = "m";
                     }
                     zDim = new Dimension(DimensionType.Z);
-                    zDim.setShortName("Z");
+                    zDim.setShortName("z");
                     zDim.setUnit(unit);
                     zDim.setValues(values);
                     this.setZDimension(zDim);
@@ -819,7 +819,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             iter.setDateNext(t);
                         }
                         Dimension tDim = new Dimension(DimensionType.T);
-                        tDim.setShortName("T");
+                        tDim.setShortName("time");
                         tDim.setDimValue(tArray);
                         this.setTimeDimension(tDim);
                         this.addDimension(tDim);
@@ -850,7 +850,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                             tArray.setDate(i, t);
                         }
                         Dimension tDim = new Dimension(DimensionType.T);
-                        tDim.setShortName("T");
+                        tDim.setShortName("time");
                         tDim.setDimValue(tArray);
                         this.setTimeDimension(tDim);
                         this.addDimension(tDim);
@@ -877,6 +877,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                         this.ensNames.add(dataArray[3 + i]);
                     }
                     eDim = new Dimension(DimensionType.E);
+                    eDim.setName("ensemble");
                     eDim.setLength(eNum);
                     this.addDimension(eDim);
                     Variable evar = new Variable();
@@ -900,10 +901,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                         aVar.setName(dataArray[0]);
                         aVar.setDataType(DataType.FLOAT);
                         int lNum = Integer.parseInt(dataArray[1]);
-                        //aVar.setLevelNum(Integer.parseInt(dataArray[1]));
                         aVar.setUnits(dataArray[2]);
-                        //attr = new Attribute("units", dataArray[2]);
-                        //aVar.addAttribute(attr);
                         if (dataArray.length > 3) {
                             int idx = aLine.indexOf(dataArray[3]);
                             String desc = aLine.substring(idx);
@@ -935,7 +933,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
                                     }
                                 }
                                 Dimension dim = new Dimension(DimensionType.Z);
-                                dim.setShortName("Z_" + String.valueOf(lNum));
+                                dim.setName("z_" + String.valueOf(lNum));
                                 dim.setUnit(zDim.getUnit());
                                 dim.setValues(levs);
                                 aVar.setDimension(dim);
@@ -964,8 +962,24 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             }
 
         } while (aLine != null);
-
         sr.close();
+
+        //Add coordinate variables
+        Variable var;
+        for (Dimension dim : this.dimensions) {
+            switch (dim.getDimType()) {
+                case T:
+                case X:
+                case Y:
+                case Z:
+                    var = new Variable(dim.getName());
+                    var.setDimVar(true);
+                    var.setCachedData(dim.getDimValue());
+                    var.addDimension(dim);
+                    this.addCoordinate(var);
+                    break;
+            }
+        }
 
         if (isNotPath && !this.OPTIONS.template) {
             errorStr = "The data file is not exist!" + System.getProperty("line.separator") + DSET;
@@ -1343,7 +1357,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
      * @return Array data
      */
     @Override
-    public Array read(String varName) {
+    public Array realRead(String varName) {
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -1355,7 +1369,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
             stride[i] = 1;
         }
 
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
 
         return r;
     }
@@ -1370,7 +1384,7 @@ public class GrADSDataInfo extends DataInfo implements IGridDataInfo, IStationDa
      * @return Array data
      */
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         try {
             Variable var = this.getVariable(varName);
             Section section = new Section(origin, size, stride);

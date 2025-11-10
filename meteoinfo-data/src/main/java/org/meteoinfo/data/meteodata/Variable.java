@@ -71,6 +71,19 @@ public class Variable {
 
     /**
      * Constructor
+     * @param name Variable name
+     */
+    public Variable(String name) {
+        this.name = name;
+        this.shortName = name;
+        this.dataType = DataType.FLOAT;
+        levels = new ArrayList<>();
+        units = "null";
+        description = "null";
+    }
+
+    /**
+     * Constructor
      *
      * @param aNum Parameter number
      * @param aName The name
@@ -629,6 +642,7 @@ public class Variable {
      */
     public void setCachedData(Array value) {
         this.cachedData = value;
+        this.dataType = value.getDataType();
     }
 
     /**

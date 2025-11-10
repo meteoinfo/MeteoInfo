@@ -76,7 +76,7 @@ public class Dimension {
      * @param dimType Dimension type
      */
     public Dimension(DimensionType dimType) {
-        this(dimType.toString(), 1, dimType);
+        this(dimType.toString().toLowerCase(), 1, dimType);
     }
 
     /**
@@ -639,13 +639,28 @@ public class Dimension {
         dim.setDimId(this.dimId);
         dim.setUnit(this.unit);
         dim.setStagger(this.stagger);
-        Array values = Array.factory(this.dimValue.getDataType(), new int[]{(int) index.getSize()});
-        IndexIterator iter = index.getIndexIterator();
-        IndexIterator iterV = values.getIndexIterator();
-        while (iter.hasNext()) {
-            iterV.setObjectNext(this.dimValue.getObject(iter.getIntNext()));
+        if (index.getDataType() == DataType.BOOLEAN) {
+            int n = ArrayMath.sum(index).intValue();
+            Array values = Array.factory(this.dimValue.getDataType(), new int[]{n});
+            IndexIterator iter = index.getIndexIterator();
+            IndexIterator iterV = values.getIndexIterator();
+            int i = 0;
+            while (iter.hasNext()) {
+                if (iter.getBooleanNext()) {
+                    iterV.setObjectNext(this.dimValue.getObject(i));
+                }
+                i += 1;
+            }
+            dim.setDimValue(values);
+        } else {
+            Array values = Array.factory(this.dimValue.getDataType(), new int[]{(int) index.getSize()});
+            IndexIterator iter = index.getIndexIterator();
+            IndexIterator iterV = values.getIndexIterator();
+            while (iter.hasNext()) {
+                iterV.setObjectNext(this.dimValue.getObject(iter.getIntNext()));
+            }
+            dim.setDimValue(values);
         }
-        dim.setDimValue(values);
 
         return dim;
     }

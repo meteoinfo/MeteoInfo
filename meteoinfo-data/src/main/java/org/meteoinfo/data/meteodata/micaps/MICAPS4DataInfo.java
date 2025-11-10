@@ -180,17 +180,19 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
             }
 
             this.addAttribute(new Attribute("data_format", "MICAPS 4"));
+            this.addAttribute(new Attribute("time", time));
+            this.addAttribute(new Attribute("level", _level));
+
             Dimension tdim = new Dimension(DimensionType.T);
+            tdim.setName("time");
             tdim.setValue(time);
             this.setTimeDimension(tdim);
-            this.addDimension(tdim);
-            Dimension zdim = new Dimension(DimensionType.Z);
-            zdim.setValues(new double[]{_level});
-            this.addDimension(zdim);
             Dimension xdim = new Dimension(DimensionType.X);
+            xdim.setName(this.getXCoordVariableName());
             xdim.setValues(_xArray);
             this.setXDimension(xdim);            
             Dimension ydim = new Dimension(DimensionType.Y);
+            ydim.setName(this.getYCoordVariableName());
             ydim.setValues(_yArray);
             this.setYDimension(ydim);
             this.addDimension(ydim);
@@ -200,12 +202,20 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
             Variable var = new Variable();
             var.setName("var");
             var.setDataType(DataType.FLOAT);
-            var.setDimension(tdim);
-            var.setDimension(zdim);
             var.setDimension(ydim);
             var.setDimension(xdim);
             variables.add(var);
             this.setVariables(variables);
+
+            //Add coordinate variables
+            Variable variable;
+            for (Dimension dim : this.dimensions) {
+                variable = new Variable(dim.getName());
+                variable.setDimVar(true);
+                variable.setCachedData(dim.getDimValue());
+                variable.addDimension(dim);
+                this.addCoordinate(variable);
+            }
         } catch (IOException ex) {
             Logger.getLogger(MICAPS4DataInfo.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -238,7 +248,7 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName){
+    public Array realRead(String varName){
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -250,7 +260,7 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
             stride[i] = 1;
         }
         
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
         
         return r;
     }
@@ -265,11 +275,11 @@ public class MICAPS4DataInfo extends DataInfo implements IGridDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         try {
             Section section = new Section(origin, size, stride);
             Array dataArray = Array.factory(DataType.FLOAT, section.getShape());
-            int rangeIdx = 2;
+            int rangeIdx = 0;
             Range yRange = section.getRange(rangeIdx++);
             Range xRange = section.getRange(rangeIdx);
             IndexIterator ii = dataArray.getIndexIterator();

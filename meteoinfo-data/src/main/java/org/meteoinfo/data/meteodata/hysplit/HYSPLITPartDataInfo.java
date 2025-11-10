@@ -133,26 +133,32 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
                     var.addAttribute(new Attribute("time_index", i));
                     switch (varName.toLowerCase()) {
                         case "lon":
+                            var.setDimVar(true);
                             var.addAttribute("long_name", "longitude");
                             var.addAttribute("units", "degrees_east");
                             break;
                         case "lat":
+                            var.setDimVar(true);
                             var.addAttribute("long_name", "latitude");
                             var.addAttribute("units", "degrees_north");
                             break;
                         case "height":
+                            var.setDimVar(true);
                             var.addAttribute("long_name", "height above ground");
                             var.addAttribute("units", "meter");
                             break;
                         case "sigma_h":
+                            var.setDimVar(true);
                             var.addAttribute("long_name", "horizontal puff size");
                             var.addAttribute("units", "meter");
                             break;
                         case "vel_w":
+                            var.setDimVar(true);
                             var.addAttribute("long_name", "current value for the turbulent velocity in the vertical");
                             var.addAttribute("units", "m/s");
                             break;
                         case "vel_v":
+                            var.setDimVar(true);
                             var.addAttribute("long_name", "current value for the turbulent velocity in the horizontal");
                             var.addAttribute("units", "m/s");
                             break;
@@ -218,7 +224,7 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName){
+    public Array realRead(String varName){
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -230,7 +236,7 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
             stride[i] = 1;
         }
 
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
 
         return r;
     }
@@ -245,7 +251,7 @@ public class HYSPLITPartDataInfo extends DataInfo implements IStationDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         try {
             Variable var = this.getVariable(varName);
             int timeIdx = (int)var.findAttribute("time_index").getNumericValue();

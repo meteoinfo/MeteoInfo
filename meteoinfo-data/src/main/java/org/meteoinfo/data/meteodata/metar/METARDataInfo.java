@@ -229,7 +229,7 @@ public class METARDataInfo extends DataInfo implements IStationDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName) {
+    public Array realRead(String varName) {
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -241,7 +241,7 @@ public class METARDataInfo extends DataInfo implements IStationDataInfo {
             stride[i] = 1;
         }
 
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
 
         return r;
     }
@@ -256,7 +256,7 @@ public class METARDataInfo extends DataInfo implements IStationDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         return null;
     }
 

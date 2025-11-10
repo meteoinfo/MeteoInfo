@@ -18,6 +18,7 @@ from org.meteoinfo.ndarray import DataType
 
 import mipylib.numeric as np
 from .dataarray import DimArray
+from .dataarray import DateTimeAccessor
 import mipylib.miutil as miutil
 import datetime
 import numbers
@@ -42,18 +43,21 @@ class DimVariable(object):
         self._variable = variable
         self.dataset = dataset
         self.ncvariable = ncvariable
+        self._coordinate = False
         if not variable is None:
             self._name = variable.getName()
             self.dtype = np.dtype.fromjava(variable.getDataType())
             self.dims = variable.getDimensions()
             self.ndim = variable.getDimNumber()
             self.attributes = variable.getAttributes()
+            self._coordinate = variable.isDimVar()
         elif not ncvariable is None:
             self._name = ncvariable.getFullName()
             self.dtype = ncvariable.getDataType()
             self.dims = ncvariable.getDimensions()
             self.ndim = len(self.dims)
             self.attributes = list(ncvariable.getAttributes())
+            self._coordinate = ncvariable.isCoordinateVariable()
         else:
             self._name = None
             self.dtype = None
@@ -271,6 +275,10 @@ class DimVariable(object):
                         tlist.append(idx)
                     ranges.append(tlist)
                     k = tlist
+            elif isinstance(k, np.NDArray):
+                onlyrange = False
+                isrange = False
+                ranges.append(k._array)
             elif isinstance(k, basestring):
                 dim = self._variable.getDimension(i)
                 kvalues = k.split(':')
@@ -317,7 +325,12 @@ class DimVariable(object):
                 rr = Range(sidx, eidx, abs(step))
                 ranges.append(rr)
             else:
-                if len(k) > 1:
+                if isinstance(k, np.NDArray):
+                    dim = self._variable.getDimension(i)
+                    dim = dim.extract(k._array)
+                    #dim.setReverse(False)
+                    dims.append(dim)
+                elif len(k) > 1:
                     dim = self._variable.getDimension(i)
                     dim = dim.extract(k)
                     #dim.setReverse(False)
@@ -350,6 +363,19 @@ class DimVariable(object):
         :return: (*array*) Data array.
         """
         return np.array(self.dataset.read(self.name))
+
+    @property
+    def values(self):
+        """Read data array"""
+        return np.array(self.dataset.read(self.name))
+
+    @property
+    def dt(self):
+        """date time accessor"""
+        if self._variable.hasCachedData() and self.dtype == np.dtype.datetime:
+            return DateTimeAccessor(self._variable.getCachedData())
+        else:
+            return None
 
     def get_pack_paras(self):
         """
@@ -602,7 +628,9 @@ class StructureVariable(DimVariable):
             self._ncvar = self._ncfile.findVariable(self.name)
             self._variables = []
             for var in self._ncvar.getVariables():
-                self._variables.append(MemberVariable.factory(NCUtil.convertVariable(var), dataset, self))
+                mvar = MemberVariable.factory(NCUtil.convertVariable(var), dataset, self)
+                self._variables.append(mvar)
+                setattr(self, mvar.short_name, mvar)
 
     def __getitem__(self, key):
         if isinstance(key, basestring):

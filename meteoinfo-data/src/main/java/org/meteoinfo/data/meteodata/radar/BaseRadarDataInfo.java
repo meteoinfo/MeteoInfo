@@ -341,7 +341,7 @@ public abstract class BaseRadarDataInfo extends DataInfo {
     }
 
     @Override
-    public Array read(String varName) {
+    public Array realRead(String varName) {
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -353,20 +353,16 @@ public abstract class BaseRadarDataInfo extends DataInfo {
             stride[i] = 1;
         }
 
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
 
         return r;
     }
 
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         try {
             Variable variable = this.getVariable(varName);
             Section section = new Section(origin, size, stride);
-            if (variable.hasCachedData()) {
-                return variable.getCachedData().section(section.getRanges()).copy();
-            }
-
             RadialRecord record = this.recordMap.get(varName);
             Array dataArray = Array.factory(DataType.FLOAT, section.getShape());
             Range zRange = section.getRange(0);

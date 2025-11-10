@@ -158,7 +158,7 @@ public class NCUtil {
      * @param ncVar Netcdf variable
      * @return MeteoThink variable
      */
-    public static Variable convertVariable(ucar.nc2.Variable ncVar) {
+    public static Variable convertVariable(ucar.nc2.Variable ncVar) throws IOException {
         Variable var = new Variable();
         var.setName(ncVar.getFullName());
         var.setShortName(ncVar.getShortName());
@@ -170,6 +170,10 @@ public class NCUtil {
             var.addAttribute(convertAttribute(ncAttr));
         }
         var.setUnits(ncVar.getUnitsString());
+        var.setDimVar(ncVar.isCoordinateVariable());
+        if (ncVar.hasCachedData()) {
+            var.setCachedData(convertArray(ncVar.read()));
+        }
         
         return var;
     }

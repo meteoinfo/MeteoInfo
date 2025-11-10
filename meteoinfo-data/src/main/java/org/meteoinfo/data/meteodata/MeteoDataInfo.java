@@ -40,6 +40,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 
 import org.meteoinfo.data.meteodata.radar.RadarDataUtil;
+import org.meteoinfo.ndarray.IndexIterator;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.projection.ProjectionInfo;
 import java.util.List;
@@ -802,7 +803,7 @@ public class MeteoDataInfo {
     }
     
     /**
-     * Open GRIB data by predifined version - for mixed GRIB-1 and GRIB-2 data file.
+     * Open GRIB data by predefined version - for mixed GRIB-1 and GRIB-2 data file.
      *
      * @param fileName File path
      * @param version GRIB data version: 1 or 2.
@@ -1067,7 +1068,26 @@ public class MeteoDataInfo {
                 nranges.add((Range)ranges.get(i));
                 branges.add(new Range(0, ((Range)ranges.get(i)).length() - 1, 1));
             } else {
-                List<Integer> list = (List<Integer>)ranges.get(i);
+                List<Integer> list;
+                if (ranges.get(i) instanceof Array) {
+                    list = new ArrayList<>();
+                    Array array = ((Array) ranges.get(i));
+                    IndexIterator iter = array.getIndexIterator();
+                    if (array.getDataType().isBoolean()) {
+                        int idx = 0;
+                        while (iter.hasNext()) {
+                            if (iter.getBooleanNext())
+                                list.add(idx);
+                            idx += 1;
+                        }
+                    } else {
+                        while (iter.hasNext()) {
+                            list.add(iter.getIntNext());
+                        }
+                    }
+                } else {
+                    list = (List<Integer>) ranges.get(i);
+                }
                 int min = list.get(0);
                 int max = min;
                 if (list.size() > 1){

@@ -135,25 +135,38 @@ public class MICAPS13DataInfo extends DataInfo implements IGridDataInfo {
             Object[] coords = this.calCoordinate(_lon_LB, _lat_LB, _lon_Center, _lat_Center, _xNum, _yNum);
             br.close();
 
+            this.addAttribute(new Attribute("data_format", "MICAPS 13"));
+            this.addAttribute(new Attribute("time", _time));
+
             Dimension tdim = new Dimension(DimensionType.T);
             tdim.setValue(_time);
             this.setTimeDimension(tdim);
-            this.addDimension(tdim);
             Dimension ydim = new Dimension(DimensionType.Y);
+            ydim.setName(this.getYCoordVariableName());
             ydim.setValues((double[]) coords[1]);
             this.addDimension(ydim);
             this.setYDimension(ydim);
             Dimension xdim = new Dimension(DimensionType.X);
+            xdim.setName(this.getXCoordVariableName());
             xdim.setValues((double[]) coords[0]);
             this.addDimension(xdim);
             this.setXDimension(xdim);
 
             Variable var = new Variable();
             var.setName("var");
-            var.setDimension(tdim);
             var.setDimension(ydim);
             var.setDimension(xdim);
             this.addVariable(var);
+
+            //Add coordinate variables
+            Variable variable;
+            for (Dimension dim : this.dimensions) {
+                variable = new Variable(dim.getName());
+                variable.setDimVar(true);
+                variable.setCachedData(dim.getDimValue());
+                variable.addDimension(dim);
+                this.addCoordinate(variable);
+            }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MICAPS13DataInfo.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
@@ -315,7 +328,7 @@ public class MICAPS13DataInfo extends DataInfo implements IGridDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName){
+    public Array realRead(String varName){
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -327,7 +340,7 @@ public class MICAPS13DataInfo extends DataInfo implements IGridDataInfo {
             stride[i] = 1;
         }
         
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
         
         return r;
     }
@@ -342,11 +355,11 @@ public class MICAPS13DataInfo extends DataInfo implements IGridDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         try {
             Section section = new Section(origin, size, stride);
             Array dataArray = Array.factory(DataType.INT, section.getShape());
-            int rangeIdx = 1;
+            int rangeIdx = 0;
             Range yRange = section.getRange(rangeIdx++);
             Range xRange = section.getRange(rangeIdx);
             IndexIterator ii = dataArray.getIndexIterator();

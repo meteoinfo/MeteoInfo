@@ -121,13 +121,14 @@ public class MICAPS2DataInfo extends DataInfo implements IStationDataInfo {
                 }
                 _dataList.add(dataList);
             }
-            
+
+            this.addAttribute(new Attribute("data_format", "MICAPS 2"));
+            this.addAttribute(new Attribute("time", time));
+            this.addAttribute(new Attribute("level", level));
+
             Dimension tdim = new Dimension(DimensionType.T);
             tdim.setValue(time);
             this.setTimeDimension(tdim);
-            Dimension zdim = new Dimension(DimensionType.Z);
-            zdim.setValues(new double[]{level});
-            this.setZDimension(zdim);
             Dimension stdim = new Dimension(DimensionType.OTHER);
             stdim.setShortName("station");
             double[] values = new double[stNum];
@@ -141,12 +142,20 @@ public class MICAPS2DataInfo extends DataInfo implements IStationDataInfo {
                 Variable var = new Variable();
                 var.setName(vName);
                 var.setStation(true);
-                //var.setDimension(tdim);
-                //var.setDimension(zdim);
                 var.setDimension(stdim);
                 variables.add(var);
             }
             this.setVariables(variables);
+
+            //Add coordinate variables
+            Variable variable;
+            for (Dimension dim : this.dimensions) {
+                variable = new Variable(dim.getName());
+                variable.setDimVar(true);
+                variable.setCachedData(dim.getDimValue());
+                variable.addDimension(dim);
+                this.addCoordinate(variable);
+            }
         } catch (FileNotFoundException ex) {
             Logger.getLogger(MICAPS3DataInfo.class.getName()).log(Level.SEVERE, null, ex);
         } catch (UnsupportedEncodingException ex) {
@@ -189,7 +198,7 @@ public class MICAPS2DataInfo extends DataInfo implements IStationDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName){
+    public Array realRead(String varName){
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -201,7 +210,7 @@ public class MICAPS2DataInfo extends DataInfo implements IStationDataInfo {
             stride[i] = 1;
         }
         
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
         
         return r;
     }
@@ -216,7 +225,7 @@ public class MICAPS2DataInfo extends DataInfo implements IStationDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         int varIdx = this._fieldList.indexOf(varName);
         if (varIdx < 0) {
             return null;

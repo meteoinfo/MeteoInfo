@@ -34,6 +34,7 @@ class DimDataFile(object):
         self.access = access
         self.ncfile = ncfile
         self._variables = []
+        self._coordinates = []
         if not dataset is None:
             self.filename = dataset.getFileName()
             self.nvar = dataset.getDataInfo().getVariableNum()
@@ -44,9 +45,12 @@ class DimDataFile(object):
                 dim_var = DimVariable.factory(v, self)
                 self._variables.append(dim_var)
                 setattr(self, dim_var.name, dim_var)
+                if dim_var._coordinate:
+                    self._coordinates.append(dim_var)
 
         self.arldata = arldata
         self.bufrdata = bufrdata
+
         
     def __getitem__(self, key):
         if isinstance(key, basestring):
@@ -186,6 +190,25 @@ class DimDataFile(object):
         Get all variable names.
         """
         return self.dataset.getDataInfo().getVariableNames()
+
+    @property
+    def data_vars(self):
+        """Get data variables"""
+        vars = []
+        for var in self._variables:
+            if not var._coordinate:
+                vars.append(var)
+        return vars
+
+    @property
+    def coordinates(self):
+        """Get all coordinates"""
+        return self._coordinates
+
+    @property
+    def coordnames(self):
+        """Get all coordinate names"""
+        return self.dataset.getDataInfo().getCoordinateNames()
         
     def read(self, varname, origin=None, size=None, stride=None):
         """

@@ -12,40 +12,19 @@ from org.meteoinfo.common import ResampleMethods
 from org.meteoinfo.common import PointD
 from org.meteoinfo.ndarray import Array, Range, MAMath, DataType
 from org.meteoinfo.data.dimarray import Dimension, DimensionType
-from mipylib.numeric.core._ndarray import NDArray
+from java.lang import Double
+from java.util import ArrayList
+
 import math
 import datetime
 import numbers
 import mipylib.miutil as miutil
-from java.lang import Double
-from java.util import ArrayList
+import mipylib.numeric as np
+from mipylib.numeric.core._ndarray import NDArray
+from .accessor_dt import DateTimeAccessor
 
 nan = Double.NaN
 
-def dimension(value, name='null', type=None):
-    """
-    Create a new Dimension.
-
-    :param value: (*array_like*) Dimension value.
-    :param name: (*string*) Dimension name.
-    :param type: (*string*) Dimension type ['X' | 'Y' | 'Z' | 'T'].
-    """
-    if isinstance(value, NDArray):
-        value = value.aslist()
-    dtype = DimensionType.OTHER
-    if not type is None:
-        if type.upper() == 'X':
-            dtype = DimensionType.X
-        elif type.upper() == 'Y':
-            dtype = DimensionType.Y
-        elif type.upper() == 'Z':
-            dtype = DimensionType.Z
-        elif type.upper() == 'T':
-            dtype = DimensionType.T
-    dim = Dimension(dtype)
-    dim.setDimValues(value)
-    dim.setShortName(name)
-    return dim
 
 # Dimension array
 class DimArray(NDArray):
@@ -68,7 +47,6 @@ class DimArray(NDArray):
 
         self.proj = proj
 
-        
     def __getitem__(self, indices):
         if not isinstance(indices, tuple):
             indices = [indices]
@@ -336,6 +314,14 @@ class DimArray(NDArray):
         :param value: NDArray object
         """
         self._array = value._array
+
+    @property
+    def dt(self):
+        a = self.array
+        if a.dtype == np.dtype.datetime:
+            return DateTimeAccessor(a)
+        else:
+            return None
     
     def member_names(self):
         """

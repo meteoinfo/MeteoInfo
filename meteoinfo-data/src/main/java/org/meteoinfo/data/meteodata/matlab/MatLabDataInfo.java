@@ -96,7 +96,7 @@ public class MatLabDataInfo extends DataInfo implements IGridDataInfo {
     }
 
     @Override
-    public Array read(String varName) {
+    public Array realRead(String varName) {
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -108,13 +108,13 @@ public class MatLabDataInfo extends DataInfo implements IGridDataInfo {
             stride[i] = 1;
         }
 
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
 
         return r;
     }
 
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         try {
             Variable variable = this.getVariable(varName);
             return variable.getCachedData().section(origin, size, stride).copy();

@@ -174,6 +174,96 @@ public class ArrayDate extends Array {
     }
 
     /**
+     * Get ArrayInt for years of all data
+     * @return Years array
+     */
+    public Array getYears() {
+        Array r = Array.factory(DataType.INT, this.getShape());
+        IndexIterator iter = this.getIndexIterator();
+        IndexIterator rIter = r.getIndexIterator();
+        while (iter.hasNext()) {
+            rIter.setIntNext(iter.getDateNext().getYear());
+        }
+
+        return r;
+    }
+
+    /**
+     * Get ArrayInt for months of all data
+     * @return Months array
+     */
+    public Array getMonths() {
+        Array r = Array.factory(DataType.INT, this.getShape());
+        IndexIterator iter = this.getIndexIterator();
+        IndexIterator rIter = r.getIndexIterator();
+        while (iter.hasNext()) {
+            rIter.setIntNext(iter.getDateNext().getMonthValue());
+        }
+
+        return r;
+    }
+
+    /**
+     * Get ArrayInt for days of all data
+     * @return Days array
+     */
+    public Array getDays() {
+        Array r = Array.factory(DataType.INT, this.getShape());
+        IndexIterator iter = this.getIndexIterator();
+        IndexIterator rIter = r.getIndexIterator();
+        while (iter.hasNext()) {
+            rIter.setIntNext(iter.getDateNext().getDayOfMonth());
+        }
+
+        return r;
+    }
+
+    /**
+     * Get ArrayInt for hours of all data
+     * @return Hours array
+     */
+    public Array getHours() {
+        Array r = Array.factory(DataType.INT, this.getShape());
+        IndexIterator iter = this.getIndexIterator();
+        IndexIterator rIter = r.getIndexIterator();
+        while (iter.hasNext()) {
+            rIter.setIntNext(iter.getDateNext().getHour());
+        }
+
+        return r;
+    }
+
+    /**
+     * Get ArrayInt for minutes of all data
+     * @return Minutes array
+     */
+    public Array getMinutes() {
+        Array r = Array.factory(DataType.INT, this.getShape());
+        IndexIterator iter = this.getIndexIterator();
+        IndexIterator rIter = r.getIndexIterator();
+        while (iter.hasNext()) {
+            rIter.setIntNext(iter.getDateNext().getMinute());
+        }
+
+        return r;
+    }
+
+    /**
+     * Get ArrayInt for seconds of all data
+     * @return Seconds array
+     */
+    public Array getSeconds() {
+        Array r = Array.factory(DataType.INT, this.getShape());
+        IndexIterator iter = this.getIndexIterator();
+        IndexIterator rIter = r.getIndexIterator();
+        while (iter.hasNext()) {
+            rIter.setIntNext(iter.getDateNext().getSecond());
+        }
+
+        return r;
+    }
+
+    /**
      * set the value at the specified index.
      * @param i
      * @param value

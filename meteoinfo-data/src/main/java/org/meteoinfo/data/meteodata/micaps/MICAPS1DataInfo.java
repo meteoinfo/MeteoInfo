@@ -19,6 +19,7 @@ import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.dimarray.DimArray;
 import org.meteoinfo.data.meteodata.DataInfo;
+import org.meteoinfo.ndarray.IndexIterator;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.data.dimarray.DimensionType;
@@ -122,11 +123,12 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
             }
             LocalDateTime time = LocalDateTime.of(year, Integer.parseInt(dataArray[1]),
                     Integer.parseInt(dataArray[2]), Integer.parseInt(dataArray[3]), 0, 0);
+            this.addAttribute(new Attribute("time", time));
             Dimension tdim = new Dimension(DimensionType.T);
             tdim.setName("time");
             tdim.setValue(time);
             this.setTimeDimension(tdim);
-            this.addDimension(tdim);
+            //this.addDimension(tdim);
 
             if (dataArray.length >= 5)
                 _stNum = Integer.parseInt(dataArray[4]);
@@ -143,10 +145,8 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
             Dimension stdim = new Dimension(DimensionType.OTHER);
             stdim.setShortName("station");
             double[] values = new double[_stNum];
-            for (int i = 0; i < _stNum; i++) {
-                values[i] = i;
-            }
-            stdim.setValues(values);
+            Array stations = this.readStid();
+            stdim.setDimValue(stations);
             this.addDimension(stdim);
             List<Variable> variables = new ArrayList<>();
             for (String vName : _fieldList) {
@@ -169,11 +169,21 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
                 }
                 var.setDataType(dt);
                 var.setStation(true);
-                var.setDimension(tdim);
+                //var.setDimension(tdim);
                 var.setDimension(stdim);
                 variables.add(var);
             }
             this.setVariables(variables);
+
+            //Add coordinate variables
+            Variable variable;
+            for (Dimension dim : this.dimensions) {
+                variable = new Variable(dim.getName());
+                variable.setDimVar(true);
+                variable.setCachedData(dim.getDimValue());
+                variable.addDimension(dim);
+                this.addCoordinate(variable);
+            }
 
             //Read data
             dataNum = 0;
@@ -322,6 +332,69 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
         }
     }
 
+    private Array readStid() {
+        BufferedReader sr = null;
+        try {
+            sr = new BufferedReader(new InputStreamReader(new FileInputStream(this.getFileName()), "gbk"));
+            String aLine;
+            String[] dataArray;
+            Array data = Array.factory(DataType.STRING, new int[]{this._stNum});
+            IndexIterator iter = data.getIndexIterator();
+
+            //Read file head
+            sr.readLine();
+            aLine = sr.readLine().trim();
+            if (aLine.isEmpty()) {
+                sr.readLine();
+            }
+
+            //Read data
+            do {
+                aLine = sr.readLine();
+                if (aLine == null) {
+                    break;
+                }
+                aLine = aLine.trim();
+                if (aLine.isEmpty()) {
+                    continue;
+                }
+
+                dataArray = aLine.split("\\s+");
+                if (iter.hasNext()) {
+                    iter.setStringNext(dataArray[0]);
+                } else {
+                    break;
+                }
+                for (int n = 0; n <= 10; n++) {
+                    if (dataArray.length < 24) {
+                        aLine = sr.readLine();
+                        if (aLine == null) {
+                            break;
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            } while (aLine != null);
+
+            return data;
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(MICAPS1DataInfo.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        } catch (IOException ex) {
+            Logger.getLogger(MICAPS1DataInfo.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        } finally {
+            try {
+                if (sr != null) {
+                    sr.close();
+                }
+            } catch (IOException ex) {
+                Logger.getLogger(MICAPS1DataInfo.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
     /**
      * Get global attributes
      *
@@ -350,7 +423,7 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName) {
+    public Array realRead(String varName) {
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -362,7 +435,7 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
             stride[i] = 1;
         }
 
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
 
         return r;
     }
@@ -377,7 +450,7 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         int varIdx = this._fieldList.indexOf(varName);
         if (varIdx < 0) {
             return null;
@@ -398,7 +471,7 @@ public class MICAPS1DataInfo extends DataInfo implements IStationDataInfo {
                 dt = DataType.INT;
                 break;
         }
-        int[] shape = new int[]{1, this._stNum};
+        int[] shape = new int[]{this._stNum};
         Array r = Array.factory(dt, shape);
         int i;
         float v;

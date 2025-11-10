@@ -75,7 +75,6 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
     private boolean keepOpen = false;
     private List<ucar.nc2.Variable> ncVariables = new ArrayList<>();
     private List<ucar.nc2.Dimension> ncDimensions = new ArrayList<>();
-    private List<Dimension> dimensions = new ArrayList<>();
     private List<ucar.nc2.Attribute> ncAttributes = new ArrayList<>();
     private ucar.nc2.Variable xVar = null;
     private ucar.nc2.Variable yVar = null;
@@ -334,17 +333,9 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             //Get projection
             this.getProjection();
 
-            //Get dimensions values
-            getDimensionValues(ncfile);
-
             //Get variables
-            List<Variable> vars = new ArrayList<>();
-            //List<Dimension> coorDims = new ArrayList<Dimension>();
             for (ucar.nc2.Variable var : ncVariables) {
                 Variable nvar = NCUtil.convertVariable(var);
-                //nvar.setName(var.getShortName());
-                //nvar.setCoorVar(var.isCoordinateVariable());
-                nvar.setDimVar(var.getRank() <= 1);
                 if (isSWATH || isPROFILE) {
                     nvar.setStation(true);
                 }
@@ -363,18 +354,16 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     }
                 }
 
-                //nvar.setAttributes(var.getAttributes());
-                /*double[] packData = this.getPackData(var);
-                nvar.setAddOffset(packData[0]);
-                nvar.setScaleFactor(packData[1]);
-                nvar.setFillValue(packData[2]);*/
-
-                vars.add(nvar);
+                if (nvar.isDimVar()) {
+                    this.addCoordinate(nvar);
+                } else {
+                    this.addVariable(nvar);
+                }
             }
-            this.setVariables(vars);
 
-            //
-            //getVariableLevels();
+            //Get dimensions values
+            getDimensionValues(ncfile);
+
         } catch (IOException | ParseException ex) {
             Logger.getLogger(NetCDFDataInfo.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
@@ -1094,15 +1083,15 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             ucar.nc2.Variable var = this.findNCVariable("Pressure");
             if (var != null) {
                 Array darray = NCUtil.convertArray(var.read());
-                int n = (int) darray.getSize();
-                double[] values = new double[n];
-                for (int i = 0; i < n; i++) {
-                    values[i] = darray.getDouble(i);
-                }
                 Dimension zDim = this.findDimension(var.getDimension(0).getShortName());
                 zDim.setDimType(DimensionType.Z);
-                zDim.setValues(values);
+                zDim.setDimValue(darray);
                 this.setZDimension(zDim);
+
+                Variable variable = this.getVariable("Pressure");
+                if (variable != null) {
+                    variable.setCachedData(darray);
+                }
             } else {
                 //var = this.getNCVariable("")
             }
@@ -1116,6 +1105,11 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     tDim.setDimType(DimensionType.T);
                     tDim.setDimValue(times);
                     this.setTimeDimension(tDim);
+
+                    Variable variable = this.getVariable("Time");
+                    if (variable != null) {
+                        variable.setCachedData(darray);
+                    }
                 }
             }
         }
@@ -1140,6 +1134,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 DimensionType dimType = getDimType(var);
                 dim.setDimType(dimType);
                 Array values = NCUtil.convertArray(var.read());
+                Variable miVar = this.getVariable(var.getFullName());
                 if (values.getSize() > 1) {
                     if (values.getDouble(0) > values.getDouble(1)) {
                         switch (dimType) {
@@ -1218,6 +1213,10 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                     default:
                         dim.setValues((double[]) ArrayUtil.copyToNDJavaArray_Double(values));
                         break;
+                }
+
+                if (miVar != null) {
+                    miVar.setCachedData(dim.getDimValue());
                 }
             }
         }
@@ -1322,6 +1321,16 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             yDim.setDimType(DimensionType.Y);
             yDim.setValues(Y);
             this.setYDimension(yDim);
+        }
+
+        //Add coordinate variables
+        Variable variable;
+        for (Dimension dim : this.dimensions) {
+            variable = new Variable(dim.getName());
+            variable.setDimVar(true);
+            variable.setCachedData(dim.getDimValue());
+            variable.addDimension(dim);
+            this.addCoordinate(variable);
         }
     }
 
@@ -1575,6 +1584,16 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 this.setTimeDimension(tDim);
                 break;
             }
+        }
+
+        //Add coordinate variables
+        Variable variable;
+        for (Dimension dim : this.dimensions) {
+            variable = new Variable(dim.getName());
+            variable.setDimVar(true);
+            variable.setCachedData(dim.getDimValue());
+            variable.addDimension(dim);
+            this.addCoordinate(variable);
         }
     }
 
@@ -1899,7 +1918,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         return sTime;
     }
 
-    @Override
+    /*@Override
     public String generateInfoText() {
         String dataInfo;
         int i, j;
@@ -1957,7 +1976,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         }
 
         return dataInfo;
-    }
+    }*/
 
     private int getTrueVarIndex(int varIdx) {
         int tVarIdx = varIdx;
@@ -3049,7 +3068,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @return Array data
      */
     @Override
-    public Array read(String varName) {
+    public Array realRead(String varName) {
         return read(varName, true);
     }
 
@@ -3125,7 +3144,7 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @return Array data
      */
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         return read(varName, origin, size, stride, true);
     }
 

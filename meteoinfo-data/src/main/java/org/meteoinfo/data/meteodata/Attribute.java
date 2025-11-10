@@ -6,6 +6,7 @@
 package org.meteoinfo.data.meteodata;
 
 import java.nio.ByteBuffer;
+import java.time.LocalDateTime;
 import java.util.Formatter;
 import java.util.List;
 import org.meteoinfo.ndarray.Array;
@@ -139,6 +140,20 @@ public class Attribute {
         vala.setObject(ima.set0(0), val);
         setValues(vala);
         this.isUnsigned = isUnsigned;
+    }
+
+    /**
+     * Create a scalar datetime-valued Attribute.
+     *
+     * @param name name of Attribute
+     * @param val value of Attribute
+     */
+    public Attribute(String name, LocalDateTime val) {
+        this(name);
+
+        Array vala = Array.factory(DataType.DATE, new int[]{1});
+        vala.setDate(0, val);
+        setValues(vala);
     }
 
     /**
@@ -473,8 +488,13 @@ public class Attribute {
 
     @Override
     public String toString() {
-        Formatter f = new Formatter();
-        writeCDL(f);
-        return f.toString();
+        switch (this.dataType) {
+            case DATE:
+                return this.name + " = " + this.values.toString();
+            default:
+                Formatter f = new Formatter();
+                writeCDL(f);
+                return f.toString();
+        }
     }
 }

@@ -67,14 +67,19 @@ import org.meteoinfo.data.meteodata.Attribute;
 
              geoTiff = new GeoTiff(fileName);
              geoTiff.read();
+
+             this.setProjectionInfo(geoTiff.readProj());
+
              List<double[]> xy = geoTiff.readXY();
              double[] X = xy.get(0);
              double[] Y = xy.get(1);
              Dimension xDim = new Dimension(DimensionType.X);
+             xDim.setName(this.getXCoordVariableName());
              xDim.setValues(X);
              this.setXDimension(xDim);
              this.addDimension(xDim);
              Dimension yDim = new Dimension(DimensionType.Y);
+             yDim.setName(this.getYCoordVariableName());
              yDim.setValues(Y);
              yDim.setReverse(true);
              this.setYDimension(yDim);
@@ -83,6 +88,7 @@ import org.meteoinfo.data.meteodata.Attribute;
              Dimension bDim = null;
              if (this.bandNum > 1){
                  bDim = new Dimension(DimensionType.OTHER);
+                 bDim.setName("band");
                  bDim.setValues(new double[this.bandNum]);
                  this.addDimension(bDim);
              }
@@ -98,7 +104,15 @@ import org.meteoinfo.data.meteodata.Attribute;
              variables.add(aVar);
              this.setVariables(variables);
 
-             this.setProjectionInfo(geoTiff.readProj());
+             //Add coordinate variables
+             Variable variable;
+             for (Dimension dim : this.dimensions) {
+                 variable = new Variable(dim.getName());
+                 variable.setDimVar(true);
+                 variable.setCachedData(dim.getDimValue());
+                 variable.addDimension(dim);
+                 this.addCoordinate(variable);
+             }
          } catch (IOException ex) {
              Logger.getLogger(GeoTiffDataInfo.class.getName()).log(Level.SEVERE, null, ex);
          }
@@ -128,7 +142,7 @@ import org.meteoinfo.data.meteodata.Attribute;
       * @return Array data
       */
      @Override
-     public Array read(String varName){
+     public Array realRead(String varName){
          Array r = null;
          try {
              r = this.geoTiff.readArray();
@@ -149,7 +163,7 @@ import org.meteoinfo.data.meteodata.Attribute;
       * @return Array data
       */
      @Override
-     public Array read(String varName, int[] origin, int[] size, int[] stride) {
+     public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
          try {
              Section section = new Section(origin, size, stride);
              int rangeIdx = 0;

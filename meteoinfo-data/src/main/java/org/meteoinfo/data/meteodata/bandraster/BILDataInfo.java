@@ -220,6 +220,16 @@ import org.meteoinfo.ndarray.math.ArrayMath;
                      variables.add(aVar);
                  }
                  this.setVariables(variables);
+
+                 //Add coordinate variables
+                 Variable variable;
+                 for (Dimension dim : this.dimensions) {
+                     variable = new Variable(dim.getName());
+                     variable.setDimVar(true);
+                     variable.setCachedData(dim.getDimValue());
+                     variable.addDimension(dim);
+                     this.addCoordinate(variable);
+                 }
              } catch (FileNotFoundException ex) {
                  Logger.getLogger(BILDataInfo.class.getName()).log(Level.SEVERE, null, ex);
              } catch (IOException ex) {
@@ -263,7 +273,7 @@ import org.meteoinfo.ndarray.math.ArrayMath;
       * @return Array data
       */
      @Override
-     public Array read(String varName){
+     public Array realRead(String varName){
          return readArray_bil(varName);
      }
 
@@ -277,7 +287,7 @@ import org.meteoinfo.ndarray.math.ArrayMath;
       * @return Array data
       */
      @Override
-     public Array read(String varName, int[] origin, int[] size, int[] stride) {
+     public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
          try {
              Section section = new Section(origin, size, stride);
              Variable var = this.getVariable(varName);

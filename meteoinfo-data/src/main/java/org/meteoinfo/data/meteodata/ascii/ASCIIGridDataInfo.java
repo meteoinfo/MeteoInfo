@@ -129,12 +129,12 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
             this.addAttribute(new Attribute("data_format", "ASCII grid data"));
 
             Dimension xDim = new Dimension(DimensionType.X);
-            xDim.setShortName("X");
+            xDim.setShortName("x");
             xDim.setValues(X);
             this.setXDimension(xDim);
             this.addDimension(xDim);
             Dimension yDim = new Dimension(DimensionType.Y);
-            yDim.setShortName("Y");
+            yDim.setShortName("y");
             yDim.setValues(Y);
             this.setYDimension(yDim);
             this.addDimension(yDim);
@@ -154,6 +154,21 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
             aVar.addAttribute(new Attribute("fill_value", this.missingValue));
             variables.add(aVar);
             this.setVariables(variables);
+
+            //Add coordinate variables
+            Variable var;
+            for (Dimension dim : this.dimensions) {
+                switch (dim.getDimType()) {
+                    case X:
+                    case Y:
+                        var = new Variable(dim.getName());
+                        var.setDimVar(true);
+                        var.setCachedData(dim.getDimValue());
+                        var.addDimension(dim);
+                        this.addCoordinate(var);
+                        break;
+                }
+            }
 
             sr.close();
         } catch (IOException ex) {
@@ -178,7 +193,7 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName) {
+    public Array realRead(String varName) {
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -190,7 +205,7 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
             stride[i] = 1;
         }
 
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
 
         return r;
     }
@@ -205,7 +220,7 @@ public class ASCIIGridDataInfo extends DataInfo implements IGridDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         try {
             Section section = new Section(origin, size, stride);
             Array dataArray = Array.factory(this.dataType, section.getShape());

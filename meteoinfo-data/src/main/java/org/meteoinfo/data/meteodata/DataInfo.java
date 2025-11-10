@@ -20,9 +20,11 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.errorprone.annotations.Var;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.dimarray.DimArray;
 import org.meteoinfo.data.dimarray.DimensionType;
+import org.meteoinfo.data.meteodata.netcdf.NCUtil;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.ndarray.math.ArrayMath;
@@ -40,6 +42,7 @@ import org.meteoinfo.projection.ProjectionInfo;
 
      protected String fileName;
      protected List<Variable> variables = new ArrayList<>();
+     protected List<Variable> coordinates = new ArrayList<>();
      protected List<Dimension> dimensions = new ArrayList<>();
      protected List<Attribute> attributes = new ArrayList<>();
      protected Dimension tDim = null;
@@ -111,6 +114,37 @@ import org.meteoinfo.projection.ProjectionInfo;
      }
 
      /**
+      * Get data variables - excluding coordinate variables
+      * @return Data variables
+      */
+     public List<Variable> getDataVariables() {
+         List<Variable> dataVariables = new ArrayList<>();
+         for (Variable variable : this.variables) {
+             if (!variable.isDimVar()) {
+                 dataVariables.add(variable);
+             }
+         }
+
+         return dataVariables;
+     }
+
+     /**
+      * Get coordinate variables
+      * @return Coordinate variables
+      */
+     public List<Variable> getCoordinates() {
+         return this.coordinates;
+     }
+
+     /**
+      * Set coordinate variables
+      * @param value Coordinate variables
+      */
+     public void setCoordinates(List<Variable> value) {
+         this.coordinates = value;
+     }
+
+     /**
       * Get dimensions
       *
       * @return Dimensions
@@ -138,6 +172,29 @@ import org.meteoinfo.projection.ProjectionInfo;
      }
 
      /**
+      * Get data variable number
+      * @return Data variable number
+      */
+     public int getDataVariableNum() {
+         int i = 0;
+         for (Variable var : variables) {
+             if (!var.isDimVar()) {
+                 i += 1;
+             }
+         }
+
+         return i;
+     }
+
+     /**
+      * Get coordinate variable number
+      * @return Coordinate variable number
+      */
+     public int getCoordinateNum() {
+         return this.coordinates.size();
+     }
+
+     /**
       * Get variable names
       *
       * @return Variable names
@@ -145,6 +202,20 @@ import org.meteoinfo.projection.ProjectionInfo;
      public List<String> getVariableNames() {
          List<String> names = new ArrayList<>();
          for (Variable var : variables) {
+             names.add(var.getName());
+         }
+
+         return names;
+     }
+
+     /**
+      * Get coordinate names
+      *
+      * @return Coordinate names
+      */
+     public List<String> getCoordinateNames() {
+         List<String> names = new ArrayList<>();
+         for (Variable var : coordinates) {
              names.add(var.getName());
          }
 
@@ -405,6 +476,30 @@ import org.meteoinfo.projection.ProjectionInfo;
      }
 
      /**
+      * Get x coordinate variable name
+      * @return X coordinate variable name
+      */
+     public String getXCoordVariableName() {
+         if (this.projInfo.isLonLat()) {
+             return "lon";
+         } else {
+             return "x";
+         }
+     }
+
+     /**
+      * Get y coordinate variable name
+      * @return Y coordinate variable name
+      */
+     public String getYCoordVariableName() {
+         if (this.projInfo.isLonLat()) {
+             return "lat";
+         } else {
+             return "y";
+         }
+     }
+
+     /**
       * Get if is global data
       *
       * @return Boolean
@@ -503,14 +598,13 @@ import org.meteoinfo.projection.ProjectionInfo;
       */
      public String generateInfoText() {
          String dataInfo;
-         int i, j;
          Attribute aAttS;
          dataInfo = "File Name: " + this.getFileName();
          //dataInfo += System.getProperty("line.separator") + "File type: " + _fileTypeStr + " (" + _fileTypeId + ")";
          dataInfo += System.getProperty("line.separator") + "Dimensions: " + dimensions.size();
-         for (i = 0; i < dimensions.size(); i++) {
-             dataInfo += System.getProperty("line.separator") + "\t" + dimensions.get(i).getShortName() + " = "
-                     + String.valueOf(dimensions.get(i).getLength()) + ";";
+         for (Dimension dimension : dimensions) {
+             dataInfo += System.getProperty("line.separator") + "\t" + dimension.getShortName() + " = "
+                     + String.valueOf(dimension.getLength()) + ";";
          }
 
          Dimension xdim = this.getXDimension();
@@ -527,26 +621,40 @@ import org.meteoinfo.projection.ProjectionInfo;
          }
 
          dataInfo += System.getProperty("line.separator") + "Global Attributes: ";
-         for (i = 0; i < this.attributes.size(); i++) {
-             aAttS = this.attributes.get(i);
-             dataInfo += System.getProperty("line.separator") + "\t: " + aAttS.toString();
+         for (Attribute attribute : attributes) {
+             dataInfo += System.getProperty("line.separator") + "\t: " + attribute.toString();
          }
 
-         dataInfo += System.getProperty("line.separator") + "Variations: " + variables.size();
-         for (i = 0; i < variables.size(); i++) {
-             dataInfo += System.getProperty("line.separator") + "\t" + variables.get(i).getDataType().toString()
-                     + " " + variables.get(i).getShortName() + "(";
-             List<Dimension> dims = variables.get(i).getDimensions();
-             for (j = 0; j < dims.size(); j++) {
-                 dataInfo += dims.get(j).getShortName() + ",";
+         List<Variable> dataVariables = this.getDataVariables();
+         dataInfo += System.getProperty("line.separator") + "Data Variables: " + dataVariables.size();
+         for (Variable variable : dataVariables) {
+             dataInfo += System.getProperty("line.separator") + "\t" + variable.getDataType().toString()
+                     + " " + variable.getShortName() + "(";
+             for (Dimension dim : variable.getDimensions()) {
+                 dataInfo += dim.getShortName() + ",";
              }
              dataInfo = dataInfo.substring(0, dataInfo.length() - 1);
              dataInfo += ");";
-             List<Attribute> atts = variables.get(i).getAttributes();
-             for (j = 0; j < atts.size(); j++) {
+             List<Attribute> atts = variable.getAttributes();
+             for (int j = 0; j < atts.size(); j++) {
                  aAttS = atts.get(j);
-                 dataInfo += System.getProperty("line.separator") + "\t" + "\t" + variables.get(i).getShortName()
+                 dataInfo += System.getProperty("line.separator") + "\t" + "\t" + variable.getShortName()
                          + ": " + aAttS.toString();
+             }
+         }
+
+         dataInfo += System.getProperty("line.separator") + "Coordinates: " + coordinates.size();
+         for (Variable coord : coordinates) {
+             dataInfo += System.getProperty("line.separator") + "\t" + coord.getDataType().toString()
+                     + " " + coord.getShortName() + "(";
+             for (Dimension dim : coord.getDimensions()) {
+                 dataInfo += dim.getShortName() + ",";
+             }
+             dataInfo = dataInfo.substring(0, dataInfo.length() - 1);
+             dataInfo += ");";
+             for (Attribute attr : coord.getAttributes()) {
+                 dataInfo += System.getProperty("line.separator") + "\t" + "\t" + coord.getShortName()
+                         + ": " + attr.toString();
              }
          }
 
@@ -565,7 +673,23 @@ import org.meteoinfo.projection.ProjectionInfo;
       * @param varName Variable name
       * @return Array
       */
-     public abstract Array read(String varName);
+     public Array read(String varName) {
+         Variable var = this.getVariable(varName);
+         if (var != null) {
+             if (var.hasCachedData()) {
+                 return var.cachedData.copy();
+             }
+         }
+
+         return realRead(varName);
+     }
+
+     /**
+      * Read array data
+      * @param varName Variable name
+      * @return Array
+      */
+     public abstract Array realRead(String varName);
 
      /**
       * Read dimension array data
@@ -593,7 +717,63 @@ import org.meteoinfo.projection.ProjectionInfo;
       * @param stride Stride array
       * @return Array
       */
-     public abstract Array read(String varName, int[] origin, int[] size, int[] stride);
+     public Array read(String varName, int[] origin, int[] size, int[] stride) {
+         Variable var = this.getVariable(varName);
+         if (var == null) {
+             System.out.println("The variable is not exist: " + varName);
+             return null;
+         }
+
+         if (var.hasCachedData()) {
+             boolean negStride = false;
+             for (int s : stride) {
+                 if (s < 0) {
+                     negStride = true;
+                     break;
+                 }
+             }
+             List<Integer> flips = new ArrayList<>();
+             if (negStride) {
+                 int[] pStride = new int[stride.length];
+                 for (int i = 0; i < stride.length; i++) {
+                     pStride[i] = Math.abs(stride[i]);
+                     if (stride[i] < 0) {
+                         flips.add(i);
+                     }
+                 }
+                 stride = pStride;
+             }
+             Section section = null;
+             try {
+                 section = new Section(origin, size, stride);
+                 Array r = var.getCachedData().section(section.getRanges()).copy();
+                 if (negStride) {
+                     for (int i : flips) {
+                         r = r.flip(i);
+                     }
+                     Array data = Array.factory(r.getDataType(), r.getShape());
+                     MAMath.copy(data, r);
+                     return data;
+                 }
+                 return r;
+             } catch (InvalidRangeException e) {
+                 throw new RuntimeException(e);
+             }
+         } else {
+             return realRead(varName, origin, size, stride);
+         }
+     }
+
+     /**
+      * Read array data
+      *
+      * @param varName Variable name
+      * @param origin Origin array
+      * @param size Size array
+      * @param stride Stride array
+      * @return Array
+      */
+     public abstract Array realRead(String varName, int[] origin, int[] size, int[] stride);
 
      /**
       * Read dimension array data
@@ -652,24 +832,19 @@ import org.meteoinfo.projection.ProjectionInfo;
       * @return The variable
       */
      public Variable getVariable(String varName) {
-         Variable v = null;
          for (Variable var : variables) {
              if (var.getName().equalsIgnoreCase(varName)) {
-                 v = var;
-                 break;
+                 return var;
              }
          }
 
-         if (v == null) {
-             for (Variable var : variables) {
-                 if (var.getShortName().equalsIgnoreCase(varName)) {
-                     v = var;
-                     break;
-                 }
+         for (Variable var : variables) {
+             if (var.getShortName().equalsIgnoreCase(varName)) {
+                 return var;
              }
          }
 
-         return v;
+         return null;
      }
 
      /**
@@ -708,6 +883,15 @@ import org.meteoinfo.projection.ProjectionInfo;
       * @param var Variable
       */
      public void addVariable(Variable var) {
+         this.variables.add(var);
+     }
+
+     /**
+      * Add a coordinate variable
+      * @param var Coordinate variable
+      */
+     public void addCoordinate(Variable var) {
+         this.coordinates.add(var);
          this.variables.add(var);
      }
 

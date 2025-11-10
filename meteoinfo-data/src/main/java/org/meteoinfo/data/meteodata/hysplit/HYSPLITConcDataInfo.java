@@ -228,7 +228,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
                 start += 4;
             }
             Dimension zDim = new Dimension(DimensionType.Z);
-            zDim.setShortName("level");
+            zDim.setName("z");
             zDim.setValues(heights);
             this.setZDimension(zDim);
             this.addDimension(zDim);
@@ -349,7 +349,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
                 iter.setDateNext(t);
             }
             Dimension tDim = new Dimension(DimensionType.T);
-            tDim.setShortName("time");
+            tDim.setName("time");
             tDim.setDimValue(tArray);
             this.setTimeDimension(tDim);
             this.addDimension(tDim);
@@ -361,6 +361,23 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
                 v.setDimension(xDim);
             }
             this.setVariables(variables);
+
+            //Add coordinate variables
+            Variable variable;
+            for (Dimension dim : this.dimensions) {
+                switch (dim.getDimType()) {
+                    case X:
+                    case Y:
+                    case Z:
+                    case T:
+                        variable = new Variable(dim.getName());
+                        variable.setDimVar(true);
+                        variable.setCachedData(dim.getDimValue());
+                        variable.addDimension(dim);
+                        this.addCoordinate(variable);
+                        break;
+                }
+            }
 
             br.close();
         } catch (IOException ex) {
@@ -384,7 +401,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName){
+    public Array realRead(String varName){
         Variable var = this.getVariable(varName);
         int n = var.getDimNumber();
         int[] origin = new int[n];
@@ -396,7 +413,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
             stride[i] = 1;
         }
         
-        Array r = read(varName, origin, size, stride);
+        Array r = realRead(varName, origin, size, stride);
         
         return r;
     }
@@ -411,7 +428,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
      * @return Array data
      */
     @Override
-    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+    public Array realRead(String varName, int[] origin, int[] size, int[] stride) {
         try {
             Variable var = this.getVariable(varName);
             Section section = new Section(origin, size, stride);
@@ -478,7 +495,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
             br.skipBytes(nBytes);
 
             //Record #5
-            nBytes = 12 + this.getVariableNum() * 4;
+            nBytes = 12 + this.getDataVariableNum() * 4;
             br.skipBytes(nBytes);
 
             //Record Data
@@ -492,7 +509,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
             for (t = 0; t < this.getTimeNum(); t++) {
                 br.skipBytes(64);
 
-                for (i = 0; i < this.getVariableNum(); i++) {
+                for (i = 0; i < this.getDataVariableNum(); i++) {
                     for (j = 0; j < this.getZDimension().getLength(); j++) {
                         if (t == timeIdx && i == varIdx && j == levelIdx) {
                             if (br.getFilePointer() + 28 > br.length()) {
@@ -637,7 +654,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
             br.skipBytes(nBytes);
 
             //Record #5
-            nBytes = 12 + this.getVariableNum() * 4;
+            nBytes = 12 + this.getDataVariableNum() * 4;
             br.skipBytes(nBytes);
 
             //Record Data
@@ -648,7 +665,7 @@ public class HYSPLITConcDataInfo extends DataInfo implements IGridDataInfo {
             for (t = 0; t < this.getTimeNum(); t++) {
                 br.skipBytes(64);
 
-                for (i = 0; i < this.getVariableNum(); i++) {
+                for (i = 0; i < this.getDataVariableNum(); i++) {
                     for (j = 0; j < this.getZDimension().getLength(); j++) {
                         if (t == timeIdx && i == varIdx && j == levelIdx) {
                             if (br.getFilePointer() + 28 > br.length()) {

@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\common_math\stats">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\burf">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\hdf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\json"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\matlab"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\micaps"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grads"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
@@ -16,17 +14,21 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\stats\ttest_ind_precipitation_anomaly_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\netcdf\sht_coords.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\stats\ttest_ind_precipitation_anomaly_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\add_cma_lookup.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_cma_t_upar_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_gdas_8.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\stats\ttest_ind_precipitation_anomaly_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\netcdf\sht_coords.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\stats\ttest_ind_precipitation_anomaly_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\add_cma_lookup.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_cma_t_upar_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_gdas_8.py"/>
     </RecentFiles>
   </File>
   <Font>

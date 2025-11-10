@@ -23,6 +23,7 @@ import mipylib.miutil as miutil
 import datetime
 import numbers
 import warnings
+import re
 
 # Dimension variable
 class DimVariable(object):
@@ -45,20 +46,23 @@ class DimVariable(object):
         self.ncvariable = ncvariable
         self._coordinate = False
         if not variable is None:
-            self._name = variable.getName()
+            self._real_name = variable.getName()
+            self._name = re.sub('[-_]+', '_', self._real_name)
             self.dtype = np.dtype.fromjava(variable.getDataType())
             self.dims = variable.getDimensions()
             self.ndim = variable.getDimNumber()
             self.attributes = variable.getAttributes()
             self._coordinate = variable.isDimVar()
         elif not ncvariable is None:
-            self._name = ncvariable.getFullName()
+            self._real_name = ncvariable.getFullName()
+            self._name = re.sub('[-_]+', '_', self._real_name)
             self.dtype = ncvariable.getDataType()
             self.dims = ncvariable.getDimensions()
             self.ndim = len(self.dims)
             self.attributes = list(ncvariable.getAttributes())
             self._coordinate = ncvariable.isCoordinateVariable()
         else:
+            self._real_name = None
             self._name = None
             self.dtype = None
             self.dims = None
@@ -81,13 +85,24 @@ class DimVariable(object):
 
     @property
     def short_name(self):
+        s_name = None
         if self._variable is not None:
-            return self._variable.getShortName()
+            s_name = self._variable.getShortName()
+        elif self.ncvariable is not None:
+            s_name = self.ncvariable.getShortName()
 
-        if self.ncvariable is not None:
-            return self.ncvariable.getShortName()
+        s_name = re.sub('[-_]+', '_', s_name)
+        return s_name
 
-        return None
+    @property
+    def real_short_name(self):
+        s_name = None
+        if self._variable is not None:
+            s_name = self._variable.getShortName()
+        elif self.ncvariable is not None:
+            s_name = self.ncvariable.getShortName()
+
+        return s_name
             
     def __len__(self):
         len = 1
@@ -337,9 +352,9 @@ class DimVariable(object):
                     dims.append(dim)
 
         if onlyrange:
-            rr = self.dataset.dataset.read(self.name, ranges)
+            rr = self.dataset.dataset.read(self._real_name, ranges)
         else:
-            rr = self.dataset.dataset.take(self.name, ranges)
+            rr = self.dataset.dataset.take(self._real_name, ranges)
         if rr.getSize() == 1:
             iter = rr.getIndexIterator()
             return iter.getObjectNext()
@@ -362,12 +377,12 @@ class DimVariable(object):
         Read data array.
         :return: (*array*) Data array.
         """
-        return np.array(self.dataset.read(self.name))
+        return np.array(self.dataset.read(self._real_name))
 
     @property
     def values(self):
         """Read data array"""
-        return np.array(self.dataset.read(self.name))
+        return np.array(self.dataset.read(self._real_name))
 
     @property
     def dt(self):
@@ -625,7 +640,7 @@ class StructureVariable(DimVariable):
                 datainfo.reOpen()
 
             self._ncfile = datainfo.getFile()
-            self._ncvar = self._ncfile.findVariable(self.name)
+            self._ncvar = self._ncfile.findVariable(self._real_name)
             self._variables = []
             for var in self._ncvar.getVariables():
                 mvar = MemberVariable.factory(NCUtil.convertVariable(var), dataset, self)
@@ -644,7 +659,7 @@ class StructureVariable(DimVariable):
 
             raise ValueError(key + ' is not a variable name')
         else:
-            return np.array(self.dataset.read(self.name))
+            return np.array(self.dataset.read(self._real_name))
 
     @property
     def variables(self):
@@ -695,7 +710,7 @@ class MemberVariable(DimVariable):
                 datainfo.reOpen()
 
             self._ncfile = datainfo.getFile()
-            self._ncvar = self._ncfile.findVariable(self.name)
+            self._ncvar = self._ncfile.findVariable(self._real_name)
 
     def __getitem__(self, key):
         """
@@ -734,12 +749,12 @@ class MemberVariable(DimVariable):
         missing_value, scale_factor, add_offset = self.get_pack_paras()
         is_structure = isinstance(a, ArrayStructure)
         if is_structure:
-            r = NCUtil.readSequence(a, self.short_name)
+            r = NCUtil.readSequence(a, self.real_short_name)
         else:
             if seq is None:
-                r = NCUtil.readSequenceRecord(a, self.short_name, record, missing_value)
+                r = NCUtil.readSequenceRecord(a, self.real_short_name, record, missing_value)
             else:
-                r = NCUtil.readSequence(a, self.short_name, seq)
+                r = NCUtil.readSequence(a, self.real_short_name, seq)
 
         if r is None:
             return None

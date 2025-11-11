@@ -24,6 +24,43 @@ import datetime
 import numbers
 import warnings
 import re
+import keyword
+
+
+def to_valid_variable_name(name):
+    """
+    Rename variable name to a valid python variable name
+
+    Parameters
+    ----------
+    name : str
+        Input variable name
+
+    Returns
+    -------
+    str
+        Valid python variable name
+    """
+    if not name:
+        return "_"
+
+    if bool(re.search(ur'[\u4e00-\u9fff]', name)):
+        return name
+
+    # Replace invalid chars with underscore
+    name = re.sub(r"[^a-zA-Z0-9_]", "_", name)
+    name = re.sub(r"_+", "_", name).strip("_")
+    if not name:
+        return "_"
+
+    if name[0].isdigit():
+        name = "_" + name
+
+    if keyword.iskeyword(name):
+        name += "_"
+
+    return name
+
 
 # Dimension variable
 class DimVariable(object):
@@ -47,7 +84,7 @@ class DimVariable(object):
         self._coordinate = False
         if not variable is None:
             self._real_name = variable.getName()
-            self._name = re.sub('[-_]+', '_', self._real_name)
+            self._name = to_valid_variable_name(self._real_name)
             self.dtype = np.dtype.fromjava(variable.getDataType())
             self.dims = variable.getDimensions()
             self.ndim = variable.getDimNumber()
@@ -55,7 +92,7 @@ class DimVariable(object):
             self._coordinate = variable.isDimVar()
         elif not ncvariable is None:
             self._real_name = ncvariable.getFullName()
-            self._name = re.sub('[-_]+', '_', self._real_name)
+            self._name = to_valid_variable_name(self._real_name)
             self.dtype = ncvariable.getDataType()
             self.dims = ncvariable.getDimensions()
             self.ndim = len(self.dims)
@@ -91,7 +128,7 @@ class DimVariable(object):
         elif self.ncvariable is not None:
             s_name = self.ncvariable.getShortName()
 
-        s_name = re.sub('[-_]+', '_', s_name)
+        s_name = to_valid_variable_name(s_name)
         return s_name
 
     @property

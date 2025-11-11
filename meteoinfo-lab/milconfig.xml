@@ -22,13 +22,13 @@
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\netcdf\sht_coords.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\add_cma_lookup.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_cma_t_upar_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_gdas_8.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_gdas_adpsfc.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\netcdf\sht_coords.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\add_cma_lookup.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_cma_t_upar_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_gdas_8.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_gdas_adpsfc.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-6,0" MainFormSize="1312,794"/>
+  <Startup MainFormLocation="-6,-6" MainFormSize="1292,764"/>
 </MeteoInfo>

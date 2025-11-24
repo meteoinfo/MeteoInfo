@@ -32,6 +32,7 @@ import org.meteoinfo.data.meteodata.Variable;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -1014,37 +1015,55 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             //getPSDTimeInfo(unitsStr, sTime, aTU);                        
 
             //Get data time
-            for (i = 0; i < values.getSize(); i++) {
-                switch (aTU) {
-                    case Year:
-                        iterT.setDateNext(sTime.plusYears(values.getLong(i)));
-                        break;
-                    case Month:
-//                        if (unitsStr.equalsIgnoreCase("month")) {
-//                            cal.add(Calendar.MONTH, values.getInt(i) - 1);
-//                        } else {
-//                            cal.add(Calendar.MONTH, values.getInt(i));
-//                        }
-                        iterT.setDateNext(sTime.plusMonths(values.getLong(i)));
-                        break;
-                    case Day:
-                        iterT.setDateNext(sTime.plusDays(values.getLong(i)));
-                        break;
-                    case Hour:
-                        if (sTime.getYear() == 1 && sTime.getMonthValue() == 1
-                                && sTime.getDayOfMonth() == 1 && values.getInt(i) > 48) {
-                            iterT.setDateNext(sTime.plusHours(values.getLong(i) - 48));
-                        } else {
-                            iterT.setDateNext(sTime.plusHours(values.getLong(i)));
+            switch (values.getDataType()) {
+                case FLOAT:
+                case DOUBLE:
+                    for (i = 0; i < values.getSize(); i++) {
+                        switch (aTU) {
+                            case Day:
+                                iterT.setDateNext(sTime.plusSeconds(Math.round(values.getDouble(i) * 86400)));
+                                break;
+                            case Hour:
+                                iterT.setDateNext(sTime.plusSeconds(Math.round(values.getDouble(i) * 3600)));
+                                break;
+                            case Minute:
+                                iterT.setDateNext(sTime.plusSeconds(Math.round(values.getDouble(i) * 60)));
+                                break;
+                            case Second:
+                                iterT.setDateNext(sTime.plus(Duration.ofMillis(Math.round(values.getDouble(i) * 1000))));
+                                break;
                         }
-                        break;
-                    case Minute:
-                        iterT.setDateNext(sTime.plusMinutes(values.getLong(i)));
-                        break;
-                    case Second:
-                        iterT.setDateNext(sTime.plusSeconds(values.getLong(i)));
-                        break;
-                }
+                    }
+                    break;
+                default:
+                    for (i = 0; i < values.getSize(); i++) {
+                        switch (aTU) {
+                            case Year:
+                                iterT.setDateNext(sTime.plusYears(values.getLong(i)));
+                                break;
+                            case Month:
+                                iterT.setDateNext(sTime.plusMonths(values.getLong(i)));
+                                break;
+                            case Day:
+                                iterT.setDateNext(sTime.plusDays(values.getLong(i)));
+                                break;
+                            case Hour:
+                                if (sTime.getYear() == 1 && sTime.getMonthValue() == 1
+                                        && sTime.getDayOfMonth() == 1 && values.getInt(i) > 48) {
+                                    iterT.setDateNext(sTime.plusHours(values.getLong(i) - 48));
+                                } else {
+                                    iterT.setDateNext(sTime.plusHours(values.getLong(i)));
+                                }
+                                break;
+                            case Minute:
+                                iterT.setDateNext(sTime.plusMinutes(values.getLong(i)));
+                                break;
+                            case Second:
+                                iterT.setDateNext(sTime.plusSeconds(values.getLong(i)));
+                                break;
+                        }
+                    }
+                    break;
             }
         }
 

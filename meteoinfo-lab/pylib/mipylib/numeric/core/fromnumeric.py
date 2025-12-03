@@ -117,7 +117,7 @@ def where(condition, *args):
         y = asarray(y)
         x, y = broadcast_arrays(x, y)
         r = ArrayUtil.where(condition._array, x._array, y._array)
-        return NDArray(r)
+        return condition.array_wrap(r)
 
 
 def searchsorted(a, v, side='left', sorter=None):

@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\burf">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\hdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\json"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\matlab"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\micaps"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grads"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\himawari"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\netcdf\sht_coords.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_cma_rsd.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\water_vapor_flux_digv_3.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\netcdf\sht_coords.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_cma_rsd.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\water_vapor_flux_digv_3.py"/>
     </RecentFiles>
   </File>
   <Font>

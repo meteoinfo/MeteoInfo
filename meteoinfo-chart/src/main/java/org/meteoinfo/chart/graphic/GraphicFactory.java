@@ -3443,6 +3443,15 @@ public class GraphicFactory {
         xa = xa.copyIfView();
         ya = ya.copyIfView();
 
+        if (xa.getDouble(1) - xa.getDouble(0) < 0) {
+            xa = xa.flip(0);
+            data = data.flip(1);
+        }
+        if (ya.getDouble(1) - ya.getDouble(0) < 0) {
+            ya = ya.flip(0);
+            data = data.flip(0);
+        }
+
         int width, height, breakNum;
         width = (int) xa.getSize();
         height = (int) ya.getSize();
@@ -5356,7 +5365,7 @@ public class GraphicFactory {
         List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(data, contourLines, borders, cValues);
 
         double v, min, max;
-        ColorBreak cbb = ls.findLegendBreak(0);
+        ColorBreak cbb = ls.getLegendBreak(0);
         ExtendType extendType = ls.getExtendType();
         GraphicCollection graphics = new GraphicCollection();
         for (int i = 0; i < contourPolygons.size(); i++) {
@@ -5467,6 +5476,7 @@ public class GraphicFactory {
             }
 
             v = aPolygonShape.lowValue;
+            cbb = ls.getLegendBreak(0);
             switch (ls.getLegendType()) {
                 case UNIQUE_VALUE:
                     for (int j = 0; j < ls.getBreakNum(); j++) {
@@ -5482,10 +5492,10 @@ public class GraphicFactory {
                     for (int j = 0; j < ls.getBreakNum(); j++) {
                         ColorBreak cb = ls.getLegendBreaks().get(j);
                         blNum += 1;
-                        if (MIMath.doubleEquals(v, Double.parseDouble(cb.getStartValue().toString()))
-                                || (v > Double.parseDouble(cb.getStartValue().toString())
-                                && v < Double.parseDouble(cb.getEndValue().toString()))
-                                || (blNum == ls.getBreakNum() && v == Double.parseDouble(cb.getEndValue().toString()))) {
+                        if ((blNum == 1 && v <= cb.getStartDoubleValue())
+                                || (v >= cb.getStartDoubleValue()
+                                && v < cb.getEndDoubleValue())
+                                || (blNum == ls.getBreakNum() && v >= cb.getEndDoubleValue())) {
                             cbb = cb;
                             break;
                         }

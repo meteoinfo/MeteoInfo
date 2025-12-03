@@ -69,7 +69,7 @@ import java.util.zip.ZipInputStream;
      public static String getVersion() {
          String version = GlobalUtil.class.getPackage().getImplementationVersion();
          if (version == null || version.equals("")) {
-             version = "4.1.4";
+             version = "4.1.5";
          }
          return version;
      }

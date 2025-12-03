@@ -84,6 +84,18 @@ package org.meteoinfo.geometry.legend;
      }
 
      /**
+      * Get start double value
+      * @return Start double value
+      */
+     public double getStartDoubleValue() {
+         if (startValue instanceof Double) {
+             return (double) startValue;
+         } else {
+             return Double.valueOf(startValue.toString());
+         }
+     }
+
+     /**
       * Set start value
       *
       * @param value  Start value
@@ -99,6 +111,18 @@ package org.meteoinfo.geometry.legend;
       */
      public Object getEndValue() {
          return endValue;
+     }
+
+     /**
+      * Get end double value
+      * @return end double value
+      */
+     public double getEndDoubleValue() {
+         if (endValue instanceof Double) {
+             return (double) endValue;
+         } else {
+             return Double.valueOf(endValue.toString());
+         }
      }
 
      /**

@@ -3022,6 +3022,8 @@ public class ArrayUtil {
         if (!cType.isArray()) {
             if (cType == long.class) {
                 copyTo1DJavaArray_Long(aaIter, jArray);
+            } else if (cType == double.class) {
+                copyTo1DJavaArray_Double(aaIter, jArray);
             } else {
                 copyTo1DJavaArray(aaIter, jArray);
             }
@@ -3039,6 +3041,8 @@ public class ArrayUtil {
         if (!cType.isArray()) {
             if (cType == long.class) {
                 copyTo1DJavaArray_Long(aaIter, jArray);
+            } else if (cType == double.class){
+                copyTo1DJavaArray_Double(aaIter, jArray, missingValue);
             } else {
                 copyTo1DJavaArray(aaIter, jArray, missingValue);
             }
@@ -3070,6 +3074,25 @@ public class ArrayUtil {
         long[] ja = (long[]) javaArray;
         for (int i = 0; i < ja.length; i++) {
             ja[i] = iter.getLongNext();
+        }
+    }
+
+    protected static void copyTo1DJavaArray_Double(IndexIterator iter, Object javaArray) {
+        double[] ja = (double[]) javaArray;
+        for (int i = 0; i < ja.length; i++) {
+            ja[i] = iter.getDoubleNext();
+        }
+    }
+
+    protected static void copyTo1DJavaArray_Double(IndexIterator iter, Object javaArray, double missingValue) {
+        double[] ja = (double[]) javaArray;
+        double v;
+        for (int i = 0; i < ja.length; i++) {
+            v = iter.getDoubleNext();
+            if (Double.isNaN(v)) {
+                v = missingValue;
+            }
+            ja[i] = v;
         }
     }
 

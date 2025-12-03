@@ -36,7 +36,14 @@ public class MIMath {
      * @return boolean
      */
     public static boolean doubleEquals(double a, double b) {
-        return doubleEquals(a, b, 0.0000001);
+        double epsilon = 1.0e-6;
+        if (epsilon >= Math.abs(a)) {
+            epsilon = Math.abs(a) * 1e-2;
+        }
+        if (epsilon >= Math.abs(b)) {
+            epsilon = Math.abs(b) * 1e-2;
+        }
+        return doubleEquals(a, b, epsilon);
     }
 
     /**

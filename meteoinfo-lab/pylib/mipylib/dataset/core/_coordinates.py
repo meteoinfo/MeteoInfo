@@ -1,15 +1,6 @@
 
 from collections import OrderedDict
 
-from pylib.mipylib import DimArray
-
-
-class Coordinate(DimArray):
-
-    @property
-    def dim(self):
-        return self.dims[0]
-
 
 class Coordinates(OrderedDict):
 

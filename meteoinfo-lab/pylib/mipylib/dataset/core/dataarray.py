@@ -1,5 +1,7 @@
+
 import mipylib.numeric as np
 from .variable import Variable
+from ._coordinates import Coordinates
 
 
 class DataArray(np.NDArray):
@@ -78,6 +80,37 @@ class DataArray(np.NDArray):
         self._dims = dims
         self._name = name
         self._attrs = attrs
+
+    def array_wrap(self, arr, axis=None):
+        """
+        Return a new array wrapped as self class object.
+
+        :param arr: The array to be wrapped.
+        :param axis: (*int*) The axis for ufunc compute along. Default is `None`, means not consider.
+
+        :return: New array object.
+        """
+        if isinstance(arr, (Array, NDArray)):
+            if axis is None:
+                return DataArray(arr, self._coords, self._dims, self._name, self._attrs)
+            else:
+                dims = []
+                coords = Coordinates()
+                for i in range(0, self.ndim):
+                    dim = self._dims[i]
+                    if isinstance(axis, (list, tuple)):
+                        if not i in axis:
+                            dims.append(dim)
+                            if dim in self._coords:
+                                coords[dim] = self._coords[dim]
+                    else:
+                        if i != axis:
+                            dims.append(dim)
+                            if dim in self._coords:
+                                coords[dim] = self._coords[dim]
+                return DataArray(arr, coords, dims, self._name, self._attrs)
+        else:
+            return arr
 
     @property
     def name(self):

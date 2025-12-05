@@ -270,7 +270,7 @@ class DimArray(NDArray):
             return NDArray(r)
         
         if onlyrange:
-            r = ArrayMath.section(self._array, ranges, squeeze)
+            r = ArrayMath.section(self._array, ranges, False)
         else:
             if alllist:
                 r = ArrayMath.takeValues(self._array, ranges)
@@ -294,6 +294,7 @@ class DimArray(NDArray):
 
         for i in flips:
             r = r.flip(i)
+        r = r.reduce()
         data = DimArray(r, ndims, self.proj)
         if onlyrange:
             data.base = self.get_base()

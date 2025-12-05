@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataframe"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\traj"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\dataset">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\test"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\stats"/>
@@ -12,19 +8,25 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\satellite\himawari"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\slice"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataset"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\io\netcdf\sht_coords.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\water_vapor_flux_digv_3.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataset\dimarray_slice.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\io\netcdf\sht_coords.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\water_vapor_flux_digv_3.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\dataset\dimarray_slice.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -32,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-6,0" MainFormSize="1375,835"/>
+  <Startup MainFormLocation="-6,0" MainFormSize="1377,854"/>
 </MeteoInfo>

@@ -221,7 +221,7 @@ class NDArray(object):
             return NDArray(r)
 
         if onlyrange:
-            r = ArrayMath.section(self._array, ranges, squeeze)
+            r = ArrayMath.section(self._array, ranges, False)
         else:
             if alllist:
                 r = ArrayMath.takeValues(self._array, ranges)
@@ -244,6 +244,7 @@ class NDArray(object):
 
         for i in flips:
             r = r.flip(i)
+        r = r.reduce()
         r = NDArray(r)
         if onlyrange:
             r.base = self.get_base()

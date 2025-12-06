@@ -24,17 +24,17 @@ import java.util.HashMap;
 public class PolylineBreak extends ColorBreak {
     // <editor-fold desc="Variables">
 
-    protected float width;
-    protected LineStyles style;
-    protected boolean drawPolyline;
-    protected boolean drawSymbol;
-    protected float symbolSize;
-    protected PointStyle symbolStyle;
-    protected Color symbolColor;
-    protected Color symbolFillColor;
-    protected boolean fillSymbol;
-    protected int symbolInterval;
-    protected float capSize;
+    protected float width = 1.0f;
+    protected LineStyles style = LineStyles.SOLID;
+    protected boolean drawPolyline = true;
+    protected boolean drawSymbol = false;
+    protected float symbolSize = 8.0f;
+    protected PointStyle symbolStyle = PointStyle.UP_TRIANGLE;
+    protected Color symbolColor = Color.BLACK;
+    protected Color symbolFillColor = Color.BLACK;
+    protected boolean fillSymbol = false;
+    protected int symbolInterval = 1;
+    protected float capSize = 0;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -43,18 +43,8 @@ public class PolylineBreak extends ColorBreak {
      */
     public PolylineBreak() {
         super();
+
         this.breakType = BreakTypes.POLYLINE_BREAK;
-        width = 1.0f;
-        style = LineStyles.SOLID;
-        drawPolyline = true;
-        drawSymbol = false;
-        symbolSize = 8.0f;
-        symbolStyle = PointStyle.UP_TRIANGLE;
-        symbolColor = this.color;
-        symbolFillColor = symbolColor;
-        fillSymbol = false;
-        symbolInterval = 1;
-        capSize = 0;
     }
 
     /**

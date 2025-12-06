@@ -294,7 +294,8 @@ class DimArray(NDArray):
 
         for i in flips:
             r = r.flip(i)
-        r = r.reduce()
+        if squeeze:
+            r = r.reduce()
         data = DimArray(r, ndims, self.proj)
         if onlyrange:
             data.base = self.get_base()

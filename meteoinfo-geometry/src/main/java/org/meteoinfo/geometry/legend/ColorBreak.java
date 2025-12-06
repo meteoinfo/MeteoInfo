@@ -30,13 +30,13 @@ package org.meteoinfo.geometry.legend;
  public class ColorBreak {
      // <editor-fold desc="Variables">
 
-     protected BreakTypes breakType;
-     protected Object startValue;
-     protected Object endValue;
-     protected Color color;
-     protected String caption;
-     protected boolean isNoData;
-     protected boolean drawShape;
+     protected BreakTypes breakType = BreakTypes.COLOR_BREAK;
+     protected Object startValue = 0;
+     protected Object endValue = 0;
+     protected Color color = Color.BLACK;
+     protected String caption = "";
+     protected boolean isNoData = false;
+     protected boolean drawShape = true;
      protected String tag;
      // </editor-fold>
      // <editor-fold desc="Constructor">
@@ -45,13 +45,6 @@ package org.meteoinfo.geometry.legend;
       * Constructor
       */
      public ColorBreak() {
-         breakType = BreakTypes.COLOR_BREAK;
-         color = Color.BLACK;
-         isNoData = false;
-         drawShape = true;
-         startValue = 0;
-         endValue = 0;
-         caption = "";
      }
      // </editor-fold>
      // <editor-fold desc="Get Set Methods">

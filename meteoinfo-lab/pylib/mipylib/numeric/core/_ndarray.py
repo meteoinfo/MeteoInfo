@@ -244,7 +244,8 @@ class NDArray(object):
 
         for i in flips:
             r = r.flip(i)
-        r = r.reduce()
+        if squeeze:
+            r = r.reduce()
         r = NDArray(r)
         if onlyrange:
             r.base = self.get_base()

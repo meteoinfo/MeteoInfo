@@ -24,17 +24,17 @@ package org.meteoinfo.geometry.legend;
  public class PolygonBreak extends ColorBreak {
      // <editor-fold desc="Variables">
 
-     protected Color outlineColor;
-     protected float outlineSize;
-     protected boolean drawOutline;
-     protected boolean drawFill;
+     protected Color outlineColor = Color.BLACK;
+     protected float outlineSize = 1.0f;
+     protected boolean drawOutline = true;
+     protected boolean drawFill = false;
      //private boolean usingHatchStyle;
-     protected HatchStyle style;
-     protected int styleSize;
-     protected float styleLineWidth;
-     protected Color backColor;
+     protected HatchStyle style = HatchStyle.NONE;
+     protected int styleSize = 8;
+     protected float styleLineWidth = 1;
+     protected Color backColor = new Color(1.0f, 1.0f, 1.0f, 0.0f);
      //private int _transparencyPerc;
-     protected boolean isMaskout;
+     protected boolean isMaskout = false;
      // </editor-fold>
      // <editor-fold desc="Constructor">
 
@@ -45,17 +45,6 @@ package org.meteoinfo.geometry.legend;
          super();
          this.color = Color.cyan;
          this.breakType = BreakTypes.POLYGON_BREAK;
-         outlineColor = Color.black;
-         outlineSize = 1.0f;
-         drawOutline = true;
-         drawFill = true;
-         //usingHatchStyle = false;
-         style = HatchStyle.NONE;
-         styleSize = 8;
-         styleLineWidth = 1;
-         backColor = new Color(1.0f, 1.0f, 1.0f, 0.0f);
-         //_transparencyPerc = 0;
-         isMaskout = false;
      }
      // </editor-fold>
      // <editor-fold desc="Get Set Methods">

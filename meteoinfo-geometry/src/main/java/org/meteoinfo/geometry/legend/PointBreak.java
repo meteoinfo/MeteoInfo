@@ -28,17 +28,17 @@ package org.meteoinfo.geometry.legend;
  public class PointBreak extends ColorBreak {
      // <editor-fold desc="Variables">
 
-     protected MarkerType markerType;
-     protected Color outlineColor;
-     protected float outlineSize;
-     protected float size;
-     protected PointStyle style;
-     protected boolean drawOutline;
-     protected boolean drawFill;
-     protected String fontName;
-     protected int charIndex;
+     protected MarkerType markerType = MarkerType.SIMPLE;
+     protected Color outlineColor = Color.BLACK;
+     protected float outlineSize = 1.0f;
+     protected float size = 6.0f;
+     protected PointStyle style = PointStyle.CIRCLE;
+     protected boolean drawOutline = true;
+     protected boolean drawFill = true;
+     protected String fontName = "Arial";
+     protected int charIndex = 0;
      protected String imagePath;
-     protected float angle;
+     protected float angle = 0;
      // </editor-fold>
      // <editor-fold desc="Constructor">
 

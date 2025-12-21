@@ -189,7 +189,11 @@ class DimDataFile(object):
         """
         Get all variable names.
         """
-        return self.dataset.getDataInfo().getVariableNames()
+        var_names = []
+        for var in self._variables:
+            var_names.append(var.name)
+
+        return var_names
 
     @property
     def data_vars(self):

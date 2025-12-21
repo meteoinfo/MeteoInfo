@@ -415,6 +415,10 @@ public class GeoJSONUtil {
                     String titleValue = (String) properties.get("title");
                     cb.setStartValue(titleValue);
                     cb.setCaption(titleValue);
+                } else if (properties.containsKey("name")) {
+                    String titleValue = (String) properties.get("name");
+                    cb.setStartValue(titleValue);
+                    cb.setCaption(titleValue);
                 }
                 if (properties.containsKey("fill")) {
                     Color color = ColorUtil.parseToColor((String) properties.get("fill"));

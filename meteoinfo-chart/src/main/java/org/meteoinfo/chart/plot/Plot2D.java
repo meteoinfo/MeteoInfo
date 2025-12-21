@@ -1426,6 +1426,10 @@ public class Plot2D extends AbstractPlot2D {
 
     @Override
     protected Extent getAutoExtent() {
+        if (this.graphics.isEmpty()) {
+            return new Extent();
+        }
+
         this.graphics.updateExtent();
         Extent extent = (Extent)this.graphics.getExtent().clone();
         if (extent.minX == extent.maxX) {

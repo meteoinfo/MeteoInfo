@@ -37,7 +37,7 @@ public class Statistics {
     }
 
     /**
-     * Sum funtion
+     * Sum function
      *
      * @param aDataList The data list
      * @return Sum
@@ -53,7 +53,7 @@ public class Statistics {
     }
 
     /**
-     * Mean funtion
+     * Mean function
      *
      * @param aDataList The data list
      * @return Mean
@@ -103,7 +103,7 @@ public class Statistics {
     }
 
     /**
-     * Median funtion
+     * Median function
      *
      * @param aDataList The data list
      * @return Median

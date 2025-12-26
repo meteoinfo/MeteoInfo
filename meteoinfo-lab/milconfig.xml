@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\burf">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\slice"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataset"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo\calc">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\test"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\numpy"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\json"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\slice"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataset"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\netcdf\sht_coords.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\contour.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_gdas_ASCATW.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\array\split_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\frontogenesis.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\netcdf\sht_coords.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\contour.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\burf\bufr_gdas_ASCATW.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\array\split_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\frontogenesis.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-6,0" MainFormSize="1353,839"/>
+  <Startup MainFormLocation="-6,0" MainFormSize="1324,791"/>
 </MeteoInfo>

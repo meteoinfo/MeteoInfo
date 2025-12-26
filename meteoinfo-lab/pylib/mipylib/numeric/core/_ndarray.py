@@ -122,6 +122,9 @@ class NDArray(object):
                 if isinstance(ii, int):
                     if ii < 0:
                         ii = self.shape[i] + ii
+                    if ii >= self._shape[i]:
+                        raise IndexError("index {} is out of bounds for axis {} with size {}".
+                                         format(ii, i, self._shape[i]))
                     aindex.setDim(i, ii)
                 else:
                     allint = False
@@ -176,19 +179,38 @@ class NDArray(object):
                 if k < 0:
                     k = self._shape[i] + k
                 sidx = k
+                if sidx >= self._shape[i]:
+                    raise IndexError("index {} is out of bounds for axis {} with size {}".
+                                     format(sidx, i, self._shape[i]))
                 eidx = k
                 step = 1
                 alllist = False
                 squeeze = True
             elif isinstance(k, slice):
-                sidx = 0 if k.start is None else k.start
-                if sidx < 0:
-                    sidx = self._shape[i] + sidx
-                eidx = self._shape[i] if k.stop is None else k.stop
-                if eidx < 0:
-                    eidx = self._shape[i] + eidx
-                eidx -= 1
                 step = 1 if k.step is None else k.step
+                if step > 0:
+                    sidx = 0 if k.start is None else k.start
+                    if sidx < 0:
+                        sidx = self._shape[i] + sidx
+                    eidx = self._shape[i] if k.stop is None else k.stop
+                    if eidx < 0:
+                        eidx = self._shape[i] + eidx
+                    eidx -= 1
+                else:
+                    if k.stop is None:
+                        sidx = -1
+                    else:
+                        sidx = k.stop
+                        if sidx < 0:
+                            sidx = self._shape[i] + sidx
+                    sidx += 1
+                    eidx = self._shape[i] - 1 if k.start is None else k.start
+                    if eidx < 0:
+                        eidx = self._shape[i] + eidx
+                    step = -step
+                    flips.append(i)
+                if eidx >= self._shape[i]:
+                    eidx = self._shape[i] - 1
                 alllist = False
             elif isinstance(k, (list, tuple, NDArray)):
                 if isinstance(k, (list, tuple)):
@@ -200,24 +222,16 @@ class NDArray(object):
                 print(k)
                 return None
 
-            if step < 0:
-                step = abs(step)
-                flips.append(i)
-                if eidx < sidx:
-                    tempidx = sidx
-                    sidx = eidx + 2
-                    eidx = tempidx
-            if sidx >= self.shape[i]:
+            if sidx >= self.shape[i] or eidx < sidx:
                 isempty = True
-            if eidx < sidx:
-                isempty = True
+                nshape.append(0)
             else:
                 rr = Range(sidx, eidx, step)
                 ranges.append(rr)
-            nshape.append(eidx - sidx + 1 if eidx - sidx >= 0 else 0)
+                nshape.append(eidx - sidx + 1 if eidx - sidx >= 0 else 0)
 
         if isempty:
-            r = ArrayUtil.empty([0], self.dtype._dtype)
+            r = ArrayUtil.zeros(nshape, self.dtype._dtype)
             return NDArray(r)
 
         if onlyrange:

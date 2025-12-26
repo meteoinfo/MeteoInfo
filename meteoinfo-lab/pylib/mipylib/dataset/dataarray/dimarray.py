@@ -71,7 +71,10 @@ class DimArray(NDArray):
             for ii in indices:
                 if isinstance(ii, int):
                     if ii < 0:
-                        ii = self.shape[i] + ii
+                        ii = self._shape[i] + ii
+                    if ii >= self._shape[i]:
+                        raise IndexError("index {} is out of bounds for axis {} with size {}".
+                                         format(ii, i, self._shape[i]))
                     aindex.setDim(i, ii)
                 else:
                     allint = False
@@ -113,14 +116,12 @@ class DimArray(NDArray):
                 dim = self.dims[i]
                 if dim.getDimType() == DimensionType.X:                    
                     k = indices[i]
-                    #if isinstance(k, (tuple, list)):
                     if isinstance(k, basestring):
                         xlims = k.split(':')
                         xlim = [float(xlims[0]), float(xlims[1])]
                         xidx = i
                 elif dim.getDimType() == DimensionType.Y:
                     k = indices[i]
-                    #if isinstance(k, (tuple, list)):
                     if isinstance(k, basestring):
                         ylims = k.split(':')
                         ylim = [float(ylims[0]), float(ylims[1])]
@@ -136,10 +137,8 @@ class DimArray(NDArray):
                 indices1 = []
                 for i in range(0, self.ndim):
                     if i == xidx:
-                        #indices1.append(xlim
                         indices1.append(str(xlim[0]) + ':' + str(xlim[1]))
                     elif i == yidx:
-                        #indices1.append(ylim)
                         indices1.append(str(ylim[0]) + ':' + str(ylim[1]))
                     else:
                         indices1.append(indices[i])
@@ -161,34 +160,14 @@ class DimArray(NDArray):
                 if k < 0:
                     k = self.dims[i].getLength() + k
                 sidx = k
+                if sidx >= self._shape[i]:
+                    raise IndexError("index {} is out of bounds for axis {} with size {}".
+                                     format(sidx, i, self._shape[i]))
                 eidx = k
                 step = 1       
                 alllist = False
                 squeeze = True
             elif isinstance(k, slice):
-                if isinstance(k.start, basestring):
-                    sv = float(k.start)
-                    sidx = self.dims[i].getValueIndex(sv)
-                elif isinstance(k.start, datetime.datetime):
-                    sv = miutil.date2num(k.start)
-                    sidx = self.dims[i].getValueIndex(sv)
-                else:
-                    sidx = 0 if k.start is None else k.start
-                if sidx < 0:
-                    sidx = self.dims[i].getLength() + sidx
-                    
-                if isinstance(k.stop, basestring):
-                    ev = float(k.stop)
-                    eidx = self.dims[i].getValueIndex(ev)
-                elif isinstance(k.stop, datetime.datetime):
-                    ev = miutil.date2num(k.stop)
-                    eidx = self.dims[i].getValueIndex(ev)
-                else:
-                    eidx = self.dims[i].getLength() if k.stop is None else k.stop
-                    if eidx < 0:
-                        eidx = self.dims[i].getLength() + eidx
-                    eidx -= 1
-                    
                 if isinstance(k.step, basestring):
                     nv = float(k.step) + self.dims[i].getDimValue()[0]
                     nidx = self.dims[i].getValueIndex(nv)
@@ -199,6 +178,45 @@ class DimArray(NDArray):
                     step = nidx - sidx
                 else:
                     step = 1 if k.step is None else k.step
+
+                if isinstance(k.start, basestring):
+                    sv = float(k.start)
+                    sidx = self.dims[i].getValueIndex(sv)
+                elif isinstance(k.start, datetime.datetime):
+                    sv = miutil.date2num(k.start)
+                    sidx = self.dims[i].getValueIndex(sv)
+                else:
+                    if step > 0:
+                        sidx = 0 if k.start is None else k.start
+                        if sidx < 0:
+                            sidx = self._shape[i] + sidx
+                    else:
+                        eidx = self._shape[i] - 1 if k.start is None else k.start
+                        if eidx < 0:
+                            eidx = self._shape[i] + eidx
+                    
+                if isinstance(k.stop, basestring):
+                    ev = float(k.stop)
+                    eidx = self.dims[i].getValueIndex(ev)
+                elif isinstance(k.stop, datetime.datetime):
+                    ev = miutil.date2num(k.stop)
+                    eidx = self.dims[i].getValueIndex(ev)
+                else:
+                    if step > 0:
+                        eidx = self._shape[i] if k.stop is None else k.stop
+                        if eidx < 0:
+                            eidx = self._shape[i] + eidx
+                        eidx -= 1
+                    else:
+                        if k.stop is None:
+                            sidx = -1
+                        else:
+                            sidx = k.stop
+                            if sidx < 0:
+                                sidx = self._shape[i] + sidx
+                        sidx += 1
+                if eidx >= self._shape[i]:
+                    eidx = self._shape[i] - 1
                 alllist = False
             elif isinstance(k, (list, tuple, NDArray)):
                 onlyrange = False
@@ -206,16 +224,12 @@ class DimArray(NDArray):
                 if not isinstance(k[0], datetime.datetime):
                     if isinstance(k, (list, tuple)):
                         k = NDArray(k)
-                    # if isinstance(k, NDArray):
-                    #     k = k.aslist()
-                    # ranges.append(k)
                 else:
                     tlist = []
                     for tt in k:
                         sv = miutil.date2num(tt)
                         idx = self.dims[i].getValueIndex(sv)
                         tlist.append(idx)
-                    # ranges.append(tlist)
                     k = NDArray(tlist)
                 ranges.append(k.asarray())
             elif isinstance(k, basestring):
@@ -249,12 +263,7 @@ class DimArray(NDArray):
                     ndims.append(dim.extract(sidx, eidx, step))
 
                 if step < 0:
-                    #step = abs(step)
                     flips.append(i)
-                if sidx > eidx:
-                    iidx = eidx
-                    eidx = sidx
-                    sidx = iidx
                 rr = Range(sidx, eidx, abs(step))
                 ranges.append(rr)
                 nshape.append(eidx - sidx + 1 if eidx - sidx >= 0 else 0)
@@ -266,7 +275,7 @@ class DimArray(NDArray):
                     ndims.append(dim.extract(k))
 
         if isempty:
-            r = ArrayUtil.zeros(nshape, 'int')
+            r = ArrayUtil.zeros(nshape, self.dtype._dtype)
             return NDArray(r)
         
         if onlyrange:

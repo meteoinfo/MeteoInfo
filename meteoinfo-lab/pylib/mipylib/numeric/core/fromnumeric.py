@@ -6,7 +6,7 @@ from .stride_tricks import broadcast_arrays
 from org.meteoinfo.ndarray.math import ArrayUtil, ArrayMath
 
 
-__all__ = ['cumprod', 'cumsum', 'ndim', 'nonzero', 'prod', 'ravel', 'searchsorted', 'sum',
+__all__ = ['clip','cumprod', 'cumsum', 'ndim', 'nonzero', 'prod', 'ravel', 'searchsorted', 'sum',
            'where']
 
 
@@ -248,3 +248,90 @@ def cumprod(a, axis=None):
         r = ArrayMath.cumprod(a._array, axis)
 
     return a.array_wrap(r, axis)
+
+
+def clip(a, a_min=None, a_max=None, **kwargs):
+    """
+    Clip (limit) the values in an array.
+
+    Given an interval, values outside the interval are clipped to
+    the interval edges.  For example, if an interval of ``[0, 1]``
+    is specified, values smaller than 0 become 0, and values larger
+    than 1 become 1.
+
+    Equivalent to but faster than ``np.minimum(a_max, np.maximum(a, a_min))``.
+
+    No check is performed to ensure ``a_min < a_max``.
+
+    Parameters
+    ----------
+    a : array_like
+        Array containing elements to clip.
+    a_min, a_max : array_like or None
+        Minimum and maximum value. If ``None``, clipping is not performed on
+        the corresponding edge. If both ``a_min`` and ``a_max`` are ``None``,
+        the elements of the returned array stay the same. Both are broadcasted
+        against ``a``.
+    **kwargs
+        For other keyword-only arguments, see the
+        :ref:`ufunc docs <ufuncs.kwargs>`.
+
+    Returns
+    -------
+    clipped_array : ndarray
+        An array with the elements of `a`, but where values
+        < `a_min` are replaced with `a_min`, and those > `a_max`
+        with `a_max`.
+
+    See Also
+    --------
+    :ref:`ufuncs-output-type`
+
+    Notes
+    -----
+    When `a_min` is greater than `a_max`, `clip` returns an
+    array in which all values are equal to `a_max`,
+    as shown in the second example.
+
+    Examples
+    --------
+    >>> a = np.arange(10)
+    >>> a
+    array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    >>> np.clip(a, 1, 8)
+    array([1, 1, 2, 3, 4, 5, 6, 7, 8, 8])
+    >>> np.clip(a, 8, 1)
+    array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+    >>> np.clip(a, 3, 6, out=a)
+    array([3, 3, 3, 3, 4, 5, 6, 6, 6, 6])
+    >>> a
+    array([3, 3, 3, 3, 4, 5, 6, 6, 6, 6])
+    >>> a = np.arange(10)
+    >>> a
+    array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])
+    >>> np.clip(a, [3, 4, 1, 1, 1, 4, 4, 4, 4, 4], 8)
+    array([3, 4, 2, 3, 4, 5, 6, 7, 8, 8])
+
+    """
+    if isinstance(a_min, (list, tuple)):
+        a_min = array(a_min)
+
+    if isinstance(a_max, (list, tuple)):
+        a_max = array(a_max)
+
+    if isinstance(a_min, NDArray):
+        a_min = a_min._array
+
+    if isinstance(a_max, NDArray):
+        a_max = a_max._array
+
+    if a_min is None and a_max is None:
+        return a
+    elif a_min is None:
+        r = ArrayUtil.clipMax(a._array, a_max)
+    elif a_max is None:
+        r = ArrayUtil.clipMin(a._array, a_min)
+    else:
+        r = ArrayUtil.clip(a._array, a_min, a_max)
+
+    return a.array_wrap(r)

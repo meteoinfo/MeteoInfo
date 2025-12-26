@@ -3227,6 +3227,226 @@ public class ArrayUtil {
     }
 
     /**
+     * Clip (limit) the values in an array. Given an interval, values outside the interval are clipped to the
+     * interval edges.
+     *
+     * @param a Input array
+     * @param min Minimum value
+     * @param max Maximum value
+     * @return Clipped array
+     */
+    public static Array clip(Array a, double min, double max) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        IndexIterator iterA = a.getIndexIterator();
+        IndexIterator iterR = r.getIndexIterator();
+        double v;
+        while (iterR.hasNext()) {
+            v = iterA.getDoubleNext();
+            if (v < min) {
+                v = min;
+            }
+            if (v > max) {
+                v = max;
+            }
+            iterR.setObjectNext(v);
+        }
+
+        return r;
+    }
+
+    /**
+     * Clip (limit) the values in an array. Given an interval, values outside the interval are clipped to the
+     * interval edges.
+     *
+     * @param a Input array
+     * @param min Minimum array
+     * @param max Maximum value
+     * @return Clipped array
+     */
+    public static Array clip(Array a, Array min, double max) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        IndexIterator iterA = a.getIndexIterator();
+        IndexIterator iterM = min.getIndexIterator();
+        IndexIterator iterR = r.getIndexIterator();
+        double v, m;
+        while (iterR.hasNext()) {
+            v = iterA.getDoubleNext();
+            m = iterM.getDoubleNext();
+            if (v < m) {
+                v = m;
+            }
+            if (v > max) {
+                v = max;
+            }
+            iterR.setObjectNext(v);
+        }
+
+        return r;
+    }
+
+    /**
+     * Clip (limit) the values in an array. Given an interval, values outside the interval are clipped to the
+     * interval edges.
+     *
+     * @param a Input array
+     * @param min Minimum value
+     * @param max Maximum array
+     * @return Clipped array
+     */
+    public static Array clip(Array a, double min, Array max) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        IndexIterator iterA = a.getIndexIterator();
+        IndexIterator iterM = max.getIndexIterator();
+        IndexIterator iterR = r.getIndexIterator();
+        double v, m;
+        while (iterR.hasNext()) {
+            v = iterA.getDoubleNext();
+            m = iterM.getDoubleNext();
+            if (v < min) {
+                v = min;
+            }
+            if (v > m) {
+                v = m;
+            }
+            iterR.setObjectNext(v);
+        }
+
+        return r;
+    }
+
+    /**
+     * Clip (limit) the values in an array. Given an interval, values outside the interval are clipped to the
+     * interval edges.
+     *
+     * @param a Input array
+     * @param min Minimum array
+     * @param max Maximum array
+     * @return Clipped array
+     */
+    public static Array clip(Array a, Array min, Array max) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        IndexIterator iterA = a.getIndexIterator();
+        IndexIterator iterMin = min.getIndexIterator();
+        IndexIterator iterMax = max.getIndexIterator();
+        IndexIterator iterR = r.getIndexIterator();
+        double v, m1, m2;
+        while (iterR.hasNext()) {
+            v = iterA.getDoubleNext();
+            m1 = iterMin.getDoubleNext();
+            m2 = iterMax.getDoubleNext();
+            if (v < m1) {
+                v = m1;
+            }
+            if (v > m2) {
+                v = m2;
+            }
+            iterR.setObjectNext(v);
+        }
+
+        return r;
+    }
+
+    /**
+     * Clip (limit) the values in an array. Given an interval, values outside the interval are clipped to the
+     * interval edges.
+     *
+     * @param a Input array
+     * @param min Minimum value
+     * @return Clipped array
+     */
+    public static Array clipMin(Array a, double min) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        IndexIterator iterA = a.getIndexIterator();
+        IndexIterator iterR = r.getIndexIterator();
+        double v;
+        while (iterR.hasNext()) {
+            v = iterA.getDoubleNext();
+            if (v < min) {
+                v = min;
+            }
+            iterR.setObjectNext(v);
+        }
+
+        return r;
+    }
+
+    /**
+     * Clip (limit) the values in an array. Given an interval, values outside the interval are clipped to the
+     * interval edges.
+     *
+     * @param a Input array
+     * @param min Minimum array
+     * @return Clipped array
+     */
+    public static Array clipMin(Array a, Array min) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        IndexIterator iterA = a.getIndexIterator();
+        IndexIterator iterM = min.getIndexIterator();
+        IndexIterator iterR = r.getIndexIterator();
+        double v, m;
+        while (iterR.hasNext()) {
+            v = iterA.getDoubleNext();
+            m = iterM.getDoubleNext();
+            if (v < m) {
+                v = m;
+            }
+            iterR.setObjectNext(v);
+        }
+
+        return r;
+    }
+
+    /**
+     * Clip (limit) the values in an array. Given an interval, values outside the interval are clipped to the
+     * interval edges.
+     *
+     * @param a Input array
+     * @param max Maximum value
+     * @return Clipped array
+     */
+    public static Array clipMax(Array a, double max) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        IndexIterator iterA = a.getIndexIterator();
+        IndexIterator iterR = r.getIndexIterator();
+        double v;
+        while (iterR.hasNext()) {
+            v = iterA.getDoubleNext();
+            if (v > max) {
+                v = max;
+            }
+            iterR.setObjectNext(v);
+        }
+
+        return r;
+    }
+
+    /**
+     * Clip (limit) the values in an array. Given an interval, values outside the interval are clipped to the
+     * interval edges.
+     *
+     * @param a Input array
+     * @param max Maximum array
+     * @return Clipped array
+     */
+    public static Array clipMax(Array a, Array max) {
+        Array r = Array.factory(a.getDataType(), a.getShape());
+        IndexIterator iterA = a.getIndexIterator();
+        IndexIterator iterM = max.getIndexIterator();
+        IndexIterator iterR = r.getIndexIterator();
+        double v, m;
+        while (iterR.hasNext()) {
+            v = iterA.getDoubleNext();
+            m = iterM.getDoubleNext();
+            if (v > m) {
+                v = m;
+            }
+            iterR.setObjectNext(v);
+        }
+
+        return r;
+    }
+
+    /**
      * Return elements chosen from x or y depending on condition.
      *
      * @param a Input condition array

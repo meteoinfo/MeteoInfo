@@ -211,14 +211,25 @@ class LineCollection(Collection, Line2DGraphicCollection):
                     xdata = xydata[0]
                     ydata = xydata[1]
 
-                nseg, nline = ydata.shape
-                if xdata is None:
-                    xdata = np.arange(nseg)
-
-                if xdata.ndim == 1:
-                    segments = [np.column_stack([xdata, ydata[:,i]]) for i in range(nline)]
+                if isinstance(ydata, (list, tuple)):
+                    segments = []
+                    nline = len(ydata)
+                    if xdata is None:
+                        segments = [np.column_stack([np.arange(ydata[i].size), ydata[i]]) for i in range(nline)]
+                    else:
+                        if isinstance(xdata, (list, tuple)):
+                            segments = [np.column_stack([xdata[i], ydata[i]]) for i in range(nline)]
+                        else:
+                            segments = [np.column_stack([xdata, ydata[i]]) for i in range(nline)]
                 else:
-                    segments = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
+                    nseg, nline = ydata.shape
+                    if xdata is None:
+                        xdata = np.arange(nseg)
+
+                    if xdata.ndim == 1:
+                        segments = [np.column_stack([xdata, ydata[:,i]]) for i in range(nline)]
+                    else:
+                        segments = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
 
         if isinstance(segments, np.NDArray):
             self._segments = []
@@ -251,7 +262,10 @@ class LineCollection(Collection, Line2DGraphicCollection):
                 if legend is None:
                     legend = plotutil.getlegendscheme([], self._cdata.min(), self._cdata.max(), **kwargs)
                     legend = plotutil.setlegendscheme_line(legend, **kwargs)
-                Line2DGraphicCollection.__init__(self, data, self._cdata._array, legend)
+                if isinstance(self._cdata, np.NDArray):
+                    Line2DGraphicCollection.__init__(self, data, self._cdata._array, legend)
+                else:
+                    Line2DGraphicCollection.__init__(self, data, [arr._array for arr in self._cdata], legend)
 
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:

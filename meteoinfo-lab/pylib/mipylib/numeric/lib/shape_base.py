@@ -12,6 +12,7 @@ def expand_dims(a, axis):
     Expand the shape of an array.
     Insert a new axis that will appear at the `axis` position in the expanded
     array shape.
+
     Parameters
     ----------
     a : array_like
@@ -25,15 +26,18 @@ def expand_dims(a, axis):
         .. versionchanged:: 1.18.0
             A tuple of axes is now supported.  Out of range axes as
             described above are now forbidden and raise an `AxisError`.
+
     Returns
     -------
     result : ndarray
         View of `a` with the number of dimensions increased.
+
     See Also
     --------
     squeeze : The inverse operation, removing singleton dimensions
     reshape : Insert, remove, and combine dimensions, and resize existing ones
     doc.indexing, atleast_1d, atleast_2d, atleast_3d
+
     Examples
     --------
     >>> x = np.array([1, 2])

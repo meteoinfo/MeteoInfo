@@ -731,7 +731,14 @@ class MapAxes(Axes):
                 xdata = np.asarray(xdatalist[0])
                 ydata = np.asarray(ydatalist[0])
                 if ydata.ndim == 1:
-                    graphics = Line2D(xdata, ydata, legend=lines[0], curve=iscurve)
+                    if xdata.contains_nan():
+                        xdata = plotutil.split_array_by_nan(xdata)
+                        ydata = plotutil.split_array_by_nan(ydata)
+                        if not kwargs.has_key('cmap'):
+                            kwargs['cmap'] = 'matlab_jet'
+                        graphics = LineCollection(None, xydata=[xdata, ydata], **kwargs)
+                    else:
+                        graphics = Line2D(xdata, ydata, legend=lines[0], curve=iscurve)
                 else:
                     if not kwargs.has_key('cmap'):
                         kwargs['cmap'] = 'matlab_jet'
@@ -753,10 +760,16 @@ class MapAxes(Axes):
             ydata = np.asarray(ydatalist[0])
             cdata = np.asarray(cdata)
             if ydata.ndim == 1:
-                graphics = Line2D(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
+                if xdata.contains_nan():
+                    xdata = plotutil.split_array_by_nan(xdata)
+                    ydata = plotutil.split_array_by_nan(ydata)
+                    cdata = plotutil.split_array_by_nan(cdata)
+                    graphics = LineCollection(None, xydata=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
+                else:
+                    graphics = Line2D(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
             else:
                 graphics = LineCollection(None, xydata=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
-            graphic = GraphicFactory.createLineString(xdata._array, ydata._array, cdata._array, ls, iscurve)
+            #graphic = GraphicFactory.createLineString(xdata._array, ydata._array, cdata._array, ls, iscurve)
             graphics.transform = transform
             graphics = self.add_graphic(graphics)
 

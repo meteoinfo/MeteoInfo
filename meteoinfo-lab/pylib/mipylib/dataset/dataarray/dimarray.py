@@ -63,6 +63,9 @@ class DimArray(NDArray):
                     indices1.append(ii)
             indices = indices1
 
+        if isinstance(indices, tuple):
+            indices = list(indices)
+
         #for all int indices
         if len(indices) == self.ndim:
             allint = True
@@ -98,8 +101,6 @@ class DimArray(NDArray):
 
         #add slice(None) to end
         if len(indices) < self.ndim:
-            if isinstance(indices, tuple):
-                indices = list(indices)
             for i in range(self.ndim - len(indices)):
                 indices.append(slice(None))
         
@@ -134,15 +135,67 @@ class DimArray(NDArray):
                 outpt2 = Reproject.reprojectPoint(inpt, fromproj, self.proj)
                 xlim = [outpt1.X, outpt2.X]
                 ylim = [outpt1.Y, outpt2.Y]
-                indices1 = []
                 for i in range(0, self.ndim):
                     if i == xidx:
-                        indices1.append(str(xlim[0]) + ':' + str(xlim[1]))
+                        indices[i] = str(xlim[0]) + ':' + str(xlim[1])
                     elif i == yidx:
-                        indices1.append(str(ylim[0]) + ':' + str(ylim[1]))
+                        indices[i] = str(ylim[0]) + ':' + str(ylim[1])
+
+        # String, datetime... to int/slice indices
+        for i in range(0, self.ndim):
+            k = indices[i]
+            if isinstance(k, basestring):
+                dim = self.dims[i]
+                kvalues = k.split(':')
+                sidx = dim.getValueIndex(float(kvalues[0]))
+                if len(kvalues) == 1:
+                    indices[i] = sidx
+                else:
+                    eidx = dim.getValueIndex(float(kvalues[1]))
+                    if len(kvalues) == 2:
+                        indices[i] = slice(sidx, eidx, 1)
                     else:
-                        indices1.append(indices[i])
-                indices = indices1
+                        step = int(float(kvalues[2]) / dim.getDeltaValue())
+                        indices[i] = slice(sidx, eidx, step)
+            elif isinstance(k, (list, tuple, NDArray)):
+                if isinstance(k[0], datetime.datetime):
+                    tlist = []
+                    for tt in k:
+                        sv = miutil.date2num(tt)
+                        idx = self.dims[i].getValueIndex(sv)
+                        tlist.append(idx)
+                    indices[i] = tlist
+            elif isinstance(k, slice):
+                if isinstance(k.start, basestring):
+                    sv = float(k.start)
+                    sidx = self.dims[i].getValueIndex(sv)
+                elif isinstance(k.start, datetime.datetime):
+                    sv = miutil.date2num(k.start)
+                    sidx = self.dims[i].getValueIndex(sv)
+                else:
+                    sidx = k.start
+
+                if isinstance(k.stop, basestring):
+                    ev = float(k.stop)
+                    eidx = self.dims[i].getValueIndex(ev)
+                elif isinstance(k.stop, datetime.datetime):
+                    ev = miutil.date2num(k.stop)
+                    eidx = self.dims[i].getValueIndex(ev)
+                else:
+                    eidx = k.stop
+
+                if isinstance(k.step, basestring):
+                    nv = float(k.step) + self.dims[i].getDimValue()[0]
+                    nidx = self.dims[i].getValueIndex(nv)
+                    step = nidx - sidx
+                elif isinstance(k.step, datetime.timedelta):
+                    nv = miutil.date2num(k.start + k.step)
+                    nidx = self.dims[i].getValueIndex(nv)
+                    step = nidx - sidx
+                else:
+                    step = k.step
+
+                indices[i] = slice(sidx, eidx, step)
 
         ndims = []
         ranges = []
@@ -168,94 +221,45 @@ class DimArray(NDArray):
                 alllist = False
                 squeeze = True
             elif isinstance(k, slice):
-                if isinstance(k.step, basestring):
-                    nv = float(k.step) + self.dims[i].getDimValue()[0]
-                    nidx = self.dims[i].getValueIndex(nv)
-                    step = nidx - sidx
-                elif isinstance(k.step, datetime.timedelta):
-                    nv = miutil.date2num(k.start + k.step)
-                    nidx = self.dims[i].getValueIndex(nv)
-                    step = nidx - sidx
+                step = 1 if k.step is None else k.step
+                if step > 0:
+                    sidx = 0 if k.start is None else k.start
+                    if sidx < 0:
+                        sidx = self._shape[i] + sidx
                 else:
-                    step = 1 if k.step is None else k.step
+                    eidx = self._shape[i] - 1 if k.start is None else k.start
+                    if eidx < 0:
+                        eidx = self._shape[i] + eidx
 
-                if isinstance(k.start, basestring):
-                    sv = float(k.start)
-                    sidx = self.dims[i].getValueIndex(sv)
-                elif isinstance(k.start, datetime.datetime):
-                    sv = miutil.date2num(k.start)
-                    sidx = self.dims[i].getValueIndex(sv)
+                if step > 0:
+                    eidx = self._shape[i] if k.stop is None else k.stop
+                    if eidx < 0:
+                        eidx = self._shape[i] + eidx
+                    eidx -= 1
                 else:
-                    if step > 0:
-                        sidx = 0 if k.start is None else k.start
+                    if k.stop is None:
+                        sidx = -1
+                    else:
+                        sidx = k.stop
                         if sidx < 0:
                             sidx = self._shape[i] + sidx
-                    else:
-                        eidx = self._shape[i] - 1 if k.start is None else k.start
-                        if eidx < 0:
-                            eidx = self._shape[i] + eidx
-                    
-                if isinstance(k.stop, basestring):
-                    ev = float(k.stop)
-                    eidx = self.dims[i].getValueIndex(ev)
-                elif isinstance(k.stop, datetime.datetime):
-                    ev = miutil.date2num(k.stop)
-                    eidx = self.dims[i].getValueIndex(ev)
-                else:
-                    if step > 0:
-                        eidx = self._shape[i] if k.stop is None else k.stop
-                        if eidx < 0:
-                            eidx = self._shape[i] + eidx
-                        eidx -= 1
-                    else:
-                        if k.stop is None:
-                            sidx = -1
-                        else:
-                            sidx = k.stop
-                            if sidx < 0:
-                                sidx = self._shape[i] + sidx
-                        sidx += 1
+                    sidx += 1
+
                 if eidx >= self._shape[i]:
                     eidx = self._shape[i] - 1
                 alllist = False
             elif isinstance(k, (list, tuple, NDArray)):
                 onlyrange = False
                 isrange = False
-                if not isinstance(k[0], datetime.datetime):
-                    if isinstance(k, (list, tuple)):
-                        k = NDArray(k)
-                else:
-                    tlist = []
-                    for tt in k:
-                        sv = miutil.date2num(tt)
-                        idx = self.dims[i].getValueIndex(sv)
-                        tlist.append(idx)
-                    k = NDArray(tlist)
+                if isinstance(k, (list, tuple)):
+                    k = NDArray(k)
                 ranges.append(k.asarray())
-            elif isinstance(k, basestring):
-                dim = self.dims[i]
-                kvalues = k.split(':')
-                sidx = dim.getValueIndex(float(kvalues[0]))
-                if len(kvalues) == 1:
-                    eidx = sidx
-                    step = 1
-                    squeeze = True
-                else:                    
-                    eidx = dim.getValueIndex(float(kvalues[1]))
-                    if len(kvalues) == 2:
-                        step = 1
-                    else:
-                        step = int(float(kvalues[2]) / dim.getDeltaValue())
-                    if sidx > eidx and step > 0:
-                        step = -step
-                alllist = False
-            else:                
-                print(k)
-                raise IndexError()
+            else:
+                raise IndexError("index {} is not valid".format(key))
                 
             if isrange:
                 if sidx >= self.shape[i] or eidx >= self.shape[i]:
-                    raise IndexError()
+                    raise IndexError("Index out of range")
 
                 n = abs(eidx - sidx) + 1
                 if n > 1:

@@ -219,8 +219,7 @@ class NDArray(object):
                 ranges.append(k.asarray())
                 continue
             else:
-                print(k)
-                return None
+                raise IndexError("index {} is not valid".format(key))
 
             if sidx >= self.shape[i] or eidx < sidx:
                 isempty = True

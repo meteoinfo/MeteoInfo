@@ -196,12 +196,13 @@ class DimVariable(object):
                     indices1.append(ii)
             indices = indices1
 
+        if isinstance(indices, tuple):
+            indices = list(indices)
+
         if self.ndim > 0:
             if len(indices) < self.ndim:
-                indices = list(indices)
                 for _ in range(self.ndim - len(indices)):
                     indices.append(slice(None))
-                indices = tuple(indices)
 
             if len(indices) != self.ndim:
                 print('indices must be ' + str(self.ndim) + ' dimensions!')
@@ -244,42 +245,43 @@ class DimVariable(object):
                     outpt2 = Reproject.reprojectPoint(inpt, fromproj, self.proj)
                     xlim = [outpt1.X, outpt2.X]
                     ylim = [outpt1.Y, outpt2.Y]
-                indices1 = []
+
                 for i in range(0, self.ndim):
                     if i == xidx:
                         if len(xlim) == 1:
-                            indices1.append(str(xlim[0]))
+                            indices[i] = str(xlim[0])
                         else:
-                            indices1.append(str(xlim[0]) + ':' + str(xlim[1]))
+                            indices[i] = str(xlim[0]) + ':' + str(xlim[1])
                     elif i == yidx:
                         if len(ylim) == 1:
-                            indices1.append(str(ylim[0]))
+                            indices[i] = str(ylim[0])
                         else:
-                            indices1.append(str(ylim[0]) + ':' + str(ylim[1]))
-                    else:
-                        indices1.append(indices[i])
-                indices = indices1
-        
-        origin = []
-        size = []
-        stride = []
-        ranges = []
-        dims = []
-        flips = []
-        onlyrange = True
-        for i in range(0, self.ndim):  
-            isrange = True
-            dimlen = self.dimlen(i)
+                            indices[i] = str(ylim[0]) + ':' + str(ylim[1])
+
+        # String, datetime... to int/slice indices
+        for i in range(0, self.ndim):
             k = indices[i]
-            sidx = 0
-            eidx = 0
-            step = 1
-            if isinstance(k, int):
-                if k < 0:
-                    k = self.dims[i].getLength() + k
-                sidx = k
-                eidx = k
-                step = 1
+            if isinstance(k, basestring):
+                dim = self.dims[i]
+                kvalues = k.split(':')
+                sidx = dim.getValueIndex(float(kvalues[0]))
+                if len(kvalues) == 1:
+                    indices[i] = sidx
+                else:
+                    eidx = dim.getValueIndex(float(kvalues[1]))
+                    if len(kvalues) == 2:
+                        indices[i] = slice(sidx, eidx, 1)
+                    else:
+                        step = int(float(kvalues[2]) / dim.getDeltaValue())
+                        indices[i] = slice(sidx, eidx, step)
+            elif isinstance(k, (list, tuple, np.NDArray)):
+                if isinstance(k[0], datetime.datetime):
+                    tlist = []
+                    for tt in k:
+                        sv = miutil.date2num(tt)
+                        idx = self.dims[i].getValueIndex(sv)
+                        tlist.append(idx)
+                    indices[i] = tlist
             elif isinstance(k, slice):
                 if isinstance(k.start, basestring):
                     sv = float(k.start)
@@ -288,10 +290,8 @@ class DimVariable(object):
                     sv = miutil.date2num(k.start)
                     sidx = self.dims[i].getValueIndex(sv)
                 else:
-                    sidx = 0 if k.start is None else k.start
-                if sidx < 0:
-                    sidx = self.dimlen(i) + sidx
-                    
+                    sidx = k.start
+
                 if isinstance(k.stop, basestring):
                     ev = float(k.stop)
                     eidx = self.dims[i].getValueIndex(ev)
@@ -299,11 +299,8 @@ class DimVariable(object):
                     ev = miutil.date2num(k.stop)
                     eidx = self.dims[i].getValueIndex(ev)
                 else:
-                    eidx = self.dimlen(i) if k.stop is None else k.stop
-                    if eidx < 0:
-                        eidx = self.dimlen(i) + eidx
-                    eidx -= 1
-                    
+                    eidx = k.stop
+
                 if isinstance(k.step, basestring):
                     nv = float(k.step) + self.dims[i].getDimValue()[0]
                     nidx = self.dims[i].getValueIndex(nv)
@@ -313,62 +310,84 @@ class DimVariable(object):
                     nidx = self.dims[i].getValueIndex(nv)
                     step = nidx - sidx
                 else:
-                    step = 1 if k.step is None else k.step
+                    step = k.step
+
+                indices[i] = slice(sidx, eidx, step)
+
+        origin = []
+        size = []
+        stride = []
+        ranges = []
+        dims = []
+        flips = []
+        onlyrange = True
+        for i in range(0, self.ndim):  
+            isrange = True
+            dim_len = self.dimlen(i)
+            k = indices[i]
+            sidx = 0
+            eidx = 0
+            step = 1
+            if isinstance(k, int):
+                if k < 0:
+                    k = dim_len + k
+                sidx = k
+                if sidx >= dim_len:
+                    raise IndexError("index {} is out of bounds for axis {} with size {}".
+                                     format(sidx, i, dim_len))
+                eidx = k
+                step = 1
+            elif isinstance(k, slice):
+                step = 1 if k.step is None else k.step
+                if step > 0:
+                    sidx = 0 if k.start is None else k.start
+                    if sidx < 0:
+                        sidx = dim_len + sidx
+                else:
+                    eidx = dim_len - 1 if k.start is None else k.start
+                    if eidx < 0:
+                        eidx = dim_len + eidx
+
+                if step > 0:
+                    eidx = dim_len if k.stop is None else k.stop
+                    if eidx < 0:
+                        eidx = dim_len + eidx
+                    eidx -= 1
+                else:
+                    if k.stop is None:
+                        sidx = -1
+                    else:
+                        sidx = k.stop
+                        if sidx < 0:
+                            sidx = dim_len + sidx
+                    sidx += 1
+
+                if eidx >= dim_len:
+                    eidx = dim_len - 1
             elif isinstance(k, list):
                 onlyrange = False
                 isrange = False
-                if not isinstance(k[0], datetime.datetime):
-                    ranges.append(k)
-                else:
-                    tlist = []
-                    for tt in k:
-                        sv = miutil.date2num(tt)
-                        idx = self.dims[i].getValueIndex(sv)
-                        tlist.append(idx)
-                    ranges.append(tlist)
-                    k = tlist
+                ranges.append(k)
             elif isinstance(k, np.NDArray):
                 onlyrange = False
                 isrange = False
                 ranges.append(k._array)
-            elif isinstance(k, basestring):
-                dim = self._variable.getDimension(i)
-                kvalues = k.split(':')
-                sv = float(kvalues[0])
-                sidx = dim.getValueIndex(sv)
-                if len(kvalues) == 1:
-                    eidx = sidx
-                    step = 1
-                else:                    
-                    ev = float(kvalues[1])
-                    eidx = dim.getValueIndex(ev)
-                    if len(kvalues) == 2:
-                        step = 1
-                    else:
-                        step = int(float(kvalues[2]) / dim.getDeltaValue())
-                if sidx > eidx and step > 0:
-                    step = -step
             else:
-                print(k)
-                return None
+                raise IndexError("index {} is not valid".format(key))
 
             if isrange:
-                if sidx >= dimlen or eidx >= dimlen:
-                    print('Index out of range!')
-                    return None
+                if sidx >= dim_len or eidx >= dim_len:
+                    raise IndexError("Index out of range")
+
                 origin.append(sidx)
                 n = abs(eidx - sidx) + 1
                 size.append(n)                   
                 if n > 1:
                     dim = self._variable.getDimension(i)
-                    #if dim.isReverse():
-                    #    step = -step
                     dim = dim.extract(sidx, eidx, step)
-                    #dim.setReverse(False)
                     dims.append(dim)
                 stride.append(step) 
                 if step < 0:
-                    #step = abs(step)
                     flips.append(i)
                 if sidx > eidx:
                     iidx = eidx
@@ -380,12 +399,10 @@ class DimVariable(object):
                 if isinstance(k, np.NDArray):
                     dim = self._variable.getDimension(i)
                     dim = dim.extract(k._array)
-                    #dim.setReverse(False)
                     dims.append(dim)
                 elif len(k) > 1:
                     dim = self._variable.getDimension(i)
                     dim = dim.extract(k)
-                    #dim.setReverse(False)
                     dims.append(dim)
 
         if onlyrange:
@@ -399,7 +416,6 @@ class DimVariable(object):
             for i in flips:
                 rr = rr.flip(i)
             rr = rr.reduce()
-            #ArrayMath.missingToNaN(rr, self.fill_value)
             if len(flips) > 0:
                 rrr = Array.factory(rr.getDataType(), rr.getShape())
                 MAMath.copy(rrr, rr)

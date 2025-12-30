@@ -428,6 +428,54 @@ class Axes3DGL(Axes3D):
         self.add_graphic(graphics)
         return graphics
 
+    def patch(self, *args, **kwargs):
+        """
+        Create filled 3D patches.
+
+        :param x: (*array_like*) X coordinates for each vertex.
+        :param y: (*array_like*) Y coordinates for each vertex.
+        :param z: (*array_like*) Z coordinates for each vertex.
+        :param color: (*Color*) Fill color.
+
+        :return: Filled 3D patches.
+        """
+        color = None
+        is_xyz = True
+        if len(args) == 4:
+            x = np.asarray(args[0])
+            y = np.asarray(args[1])
+            z = np.asarray(args[2])
+            color = args[3]
+        elif kwargs.has_key('xdata'):
+            x = np.asarray(kwargs.pop('xdata'))
+            y = np.asarray(kwargs.pop('ydata'))
+            z = np.asarray(kwargs.pop('zdata'))
+        elif kwargs.has_key('faces'):
+            faces = np.asarray(kwargs.pop('faces'))
+            vertices = np.asarray(kwargs.pop('vertices'))
+            is_xyz = False
+
+        lb, is_unique = plotutil.getlegendbreak('polygon', **kwargs)
+        if color is not None:
+            alpha = kwargs.pop('alpha', None)
+            colors = plotutil.getcolors(color, alpha)
+            if len(colors) == 1:
+                lb.setColor(colors[0])
+            else:
+                lbs = []
+                for c in colors:
+                    nlb = lb.clone()
+                    nlb.setColor(c)
+                    lbs.append(nlb)
+                lb = lbs
+        if is_xyz:
+            graphics = GraphicFactory.createPolygons3D(x._array, y._array, z._array, lb)
+        else:
+            graphics = GraphicFactory.createPolygons3D(faces._array, vertices._array, lb)
+
+        self.add_graphic(graphics)
+        return graphics
+
     def bar(self, *args, **kwargs):
         """
         Make a 3D bar plot of x, y and z, where x, y and z are sequence like objects of the same lengths.

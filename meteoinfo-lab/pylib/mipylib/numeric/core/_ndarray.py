@@ -1422,6 +1422,94 @@ class NDArray(object):
         r = ArrayMath.join(self._array, b._array, dimidx)
         return NDArray(r)
 
+
+    # def insert(self, obj, values, axis=None):
+    #     """
+    #     Insert values along the given axis before the given indices.
+    #
+    #     Parameters
+    #     ----------
+    #     obj : int, slice or sequence of ints
+    #         Object that defines the index or indices before which `values` is
+    #         inserted.
+    #
+    #         Support for multiple insertions when `obj` is a single scalar or a
+    #         sequence with one element (similar to calling insert multiple
+    #         times).
+    #     values : array_like
+    #         Values to insert into `arr`. If the type of `values` is different
+    #         from that of `arr`, `values` is converted to the type of `arr`.
+    #         `values` should be shaped so that ``arr[...,obj,...] = values``
+    #         is legal.
+    #     axis : int, optional
+    #         Axis along which to insert `values`.  If `axis` is None then `arr`
+    #         is flattened first.
+    #
+    #     Returns
+    #     -------
+    #     out : ndarray
+    #         A copy of `arr` with `values` inserted.  Note that `insert`
+    #         does not occur in-place: a new array is returned. If
+    #         `axis` is None, `out` is a flattened array.
+    #
+    #     See Also
+    #     --------
+    #     append : Append elements at the end of an array.
+    #     concatenate : Join a sequence of arrays along an existing axis.
+    #     delete : Delete elements from an array.
+    #
+    #     Notes
+    #     -----
+    #     Note that for higher dimensional inserts ``obj=0`` behaves very different
+    #     from ``obj=[0]`` just like ``arr[:,0,:] = values`` is different from
+    #     ``arr[:,[0],:] = values``.
+    #
+    #     Examples
+    #     --------
+    #     >>> a = np.array([[1, 1], [2, 2], [3, 3]])
+    #     >>> a
+    #     array([[1, 1],
+    #            [2, 2],
+    #            [3, 3]])
+    #     >>> a.insert(1, 5)
+    #     array([1, 5, 1, ..., 2, 3, 3])
+    #     >>> a.insert(1, 5, axis=1)
+    #     array([[1, 5, 1],
+    #            [2, 5, 2],
+    #            [3, 5, 3]])
+    #
+    #     Difference between sequence and scalars:
+    #
+    #     >>> a.insert([1], [[1],[2],[3]], axis=1)
+    #     array([[1, 1, 1],
+    #            [2, 2, 2],
+    #            [3, 3, 3]])
+    #     >>> np.array_equal(a.insert(1, [1, 2, 3], axis=1),
+    #     ...                a.insert([1], [[1],[2],[3]], axis=1))
+    #     True
+    #
+    #     >>> b = a.flatten()
+    #     >>> b
+    #     array([1, 1, 2, 2, 3, 3])
+    #     >>> b.insert([2, 2], [5, 6])
+    #     array([1, 1, 5, ..., 2, 3, 3])
+    #
+    #     >>> b.insert(slice(2, 4), [5, 6])
+    #     array([1, 1, 5, ..., 2, 3, 3])
+    #
+    #     >>> b.insert([2, 2], [7.13, False]) # type casting
+    #     array([1, 1, 7, ..., 2, 3, 3])
+    #
+    #     >>> x = np.arange(8).reshape(2, 4)
+    #     >>> idx = (1, 3)
+    #     >>> x.insert(idx, 999, axis=1)
+    #     array([[  0, 999,   1,   2, 999,   3],
+    #            [  4, 999,   5,   6, 999,   7]])
+    #
+    #     """
+    #     return insert(self, obj, values, axis)
+
+
     def savegrid(self, x, y, fname, format='surfer', **kwargs):
         gdata = GridArray(self._array, x._array, y._array, -9999.0)
         if format == 'surfer':

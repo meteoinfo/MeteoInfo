@@ -1800,6 +1800,69 @@ public class GraphicFactory {
     }
 
     /**
+     * Create 3D polygons
+     *
+     * @param faces Faces array
+     * @param vertices Vertices array
+     * @param polygonBreak PolygonBreak list
+     * @return Graphics
+     */
+    public static GraphicCollection3D createPolygons3D(Array faces, Array vertices, PolygonBreak polygonBreak) {
+        faces = faces.copyIfView();
+        vertices = vertices.copyIfView();
+
+        GraphicCollection3D graphics = new GraphicCollection3D();
+        int vIdx;
+        double x, y, z;
+        PolygonZShape pgs;
+        PointZ p;
+        List<PointZ> points = new ArrayList<>();
+        if (faces.getRank() == 1) {
+            IndexIterator fIter = faces.getIndexIterator();
+            Index index = vertices.getIndex();
+            while (fIter.hasNext()) {
+                vIdx = fIter.getIntNext() - 1;
+                index.set0(vIdx);
+                x = vertices.getDouble(index.set1(0));
+                y = vertices.getDouble(index.set1(1));
+                z = vertices.getDouble(index.set1(2));
+                points.add(new PointZ(x, y, z));
+            }
+            if (points.size() > 2) {
+                points.add((PointZ) points.get(0).clone());
+                pgs = new PolygonZShape();
+                pgs.setPoints(points);
+                Graphic aGraphic = new Graphic(pgs, polygonBreak);
+                graphics.add(aGraphic);
+            }
+        } else {
+            int[] shape = faces.getShape();
+            int nRow = shape[0];
+            int nCol = shape[1];
+            Index fIndex = faces.getIndex();
+            Index vIndex = vertices.getIndex();
+            for (int i = 0; i < nRow; i++) {
+                fIndex.set0(i);
+                points = new ArrayList<>();
+                for (int j = 0; j < nCol; j++) {
+                    fIndex.set1(j);
+                    vIdx = faces.getInt(fIndex) - 1;
+                    vIndex.set0(vIdx);
+                    x = vertices.getDouble(vIndex.set1(0));
+                    y = vertices.getDouble(vIndex.set1(1));
+                    z = vertices.getDouble(vIndex.set1(2));
+                    points.add(new PointZ(x, y, z));
+                }
+                points.add((PointZ) points.get(0).clone());
+                pgs = new PolygonZShape();
+                pgs.setPoints(points);
+                graphics.add(new Graphic(pgs, polygonBreak));
+            }
+        }
+        return graphics;
+    }
+
+    /**
      * Create station model graphics
      *
      * @param stationModelData Station model data

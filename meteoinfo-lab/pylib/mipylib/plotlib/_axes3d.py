@@ -787,23 +787,22 @@ class Axes3D(Axes):
         """        
         #Add data series
         label = kwargs.pop('label', 'S_0')
-        xdata = plotutil.getplotdata(x)
-        ydata = plotutil.getplotdata(y)
-        zdata = plotutil.getplotdata(z)
+        xdata = np.asarray(x)
+        ydata = np.asarray(y)
+        zdata = np.asarray(z)
         
         #Set plot data styles
         pb, isunique = plotutil.getlegendbreak('point', **kwargs)
         pb.setCaption(label)
         pstyle = plotutil.getpointstyle(marker)    
         pb.setStyle(pstyle)
-        isvalue = False
-        if isinstance(c, (NDArray, DimArray)):
-            isvalue = True
-        elif isinstance(c, (list, tuple)):
-            if isinstance(c[0], numbers.Number):
-                isvalue = True
+        is_value = False
+        if isinstance(c, (list, tuple, NDArray)):
+            c = np.asarray(c)
+            if c.shape == xdata.shape and isinstance(c[0], numbers.Number):
+                is_value = True
 
-        if isvalue:
+        if is_value:
             ls = kwargs.pop('symbolspec', None)
             if ls is None:        
                 if isinstance(c, (list, tuple)):
@@ -828,7 +827,7 @@ class Axes3D(Axes):
                     for i in range(0, n):
                         ls.getLegendBreaks()[i].setSize(s[i])
             #Create graphics
-            graphics = GraphicFactory.createPoints3D(xdata, ydata, zdata, c.asarray(), ls)
+            graphics = GraphicFactory.createPoints3D(xdata._array, ydata._array, zdata._array, c._array, ls)
         else:
             alpha = kwargs.pop('alpha', None)
             colors = plotutil.getcolors(c, alpha)   
@@ -859,7 +858,7 @@ class Axes3D(Axes):
                         npb.setColor(colors[i])
                         pbs.append(npb)
             #Create graphics
-            graphics = GraphicFactory.createPoints3D(xdata, ydata, zdata, pbs)
+            graphics = GraphicFactory.createPoints3D(xdata._array, ydata._array, zdata._array, pbs)
 
         sphere = kwargs.pop('sphere', None)
         if not sphere is None:

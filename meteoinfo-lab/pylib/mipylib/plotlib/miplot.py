@@ -41,7 +41,7 @@ __all__ = [
     'axism', 'bar', 'bar3', 'barh', 'barbs', 'barbsm', 'bgcolor', 'box', 'boxplot', 'windrose', 'cla',
     'clabel', 'clc', 'clear', 'clf', 'cll', 'cloudspec', 'colorbar', 'contour', 'contour3', 'contourf',
     'contourfm', 'contourm', 'contourfslice', 'contourslice', 'delfig', 'draw', 'draw_if_interactive',
-    'errorbar', 'figure', 'glfigure', 'figsize', 'patch', 'rectangle', 'fill', 'fill3', 'fill_between',
+    'errorbar', 'figure', 'glfigure', 'figsize', 'patch', 'patch3', 'rectangle', 'fill', 'fill3', 'fill_between',
     'fill_betweenx', 'fimplicit3', 'webmap', 'gca', 'gcf', 'gc_collect', 'geoshow', 'get_figure',
     'gifaddframe', 'gifanimation', 'giffinish', 'grid', 'gridshow', 'gridshowm', 'hist', 'imshow',
     'imshowm', 'invert_xaxis', 'invert_yaxis', 'isosurface', 'legend', 'left_title', 'lighting', 'loglog',
@@ -481,6 +481,21 @@ def patch(x, y=None, **kwargs):
             g_axes = axes()
 
     r = g_axes.patch(x, y, **kwargs)
+    if r is not None:
+        draw_if_interactive()
+    return r
+
+
+@_copy_docstring_and_deprecators(Axes3DGL.patch)
+def patch3(*args, **kwargs):
+    global g_axes
+    if g_axes is None:
+        g_axes = axes3d()
+    else:
+        if not isinstance(g_axes, Axes3D):
+            g_axes = axes3d()
+
+    r = g_axes.patch(*args, **kwargs)
     if r is not None:
         draw_if_interactive()
     return r

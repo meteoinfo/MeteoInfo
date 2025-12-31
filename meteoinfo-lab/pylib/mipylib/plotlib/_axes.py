@@ -64,9 +64,9 @@ class Axes(object):
             self.active_outerposition(True)
         else:
             self.active_outerposition(False)
-        self.set_position(position)
+        self.position = position
         if not outerposition is None:
-            self.set_outerposition(outerposition)
+            self.outerposition = outerposition
             self.active_outerposition(True)
         units = kwargs.pop('units', None)
         if not units is None:
@@ -193,7 +193,8 @@ class Axes(object):
         """
         return self._axes.getPlotType()
 
-    def get_position(self):
+    @property
+    def position(self):
         """
         Get axes position             
 
@@ -202,7 +203,8 @@ class Axes(object):
         pos = self._axes.getPosition()
         return [pos.x, pos.y, pos.width, pos.height]
 
-    def set_position(self, pos):
+    @position.setter
+    def position(self, pos):
         """
         Set axes position
         
@@ -210,8 +212,10 @@ class Axes(object):
             height] in normalized (0, 1) units
         """
         self._axes.setPosition(pos)
+        self.stale = True
 
-    def get_outerposition(self):
+    @property
+    def outerposition(self):
         """
         Get axes outer position
         
@@ -220,7 +224,8 @@ class Axes(object):
         pos = self._axes.getOuterPosition()
         return [pos.x, pos.y, pos.width, pos.height]
 
-    def set_outerposition(self, pos):
+    @outerposition.setter
+    def outerposition(self, pos):
         """
         Set axes outer position
         
@@ -228,6 +233,7 @@ class Axes(object):
             height] in normalized (0, 1) units
         """
         self._axes.setOuterPosition(pos)
+        self.stale = True
 
     def active_outerposition(self, active):
         """
@@ -247,7 +253,28 @@ class Axes(object):
         """
         return self._axes.getAxis(loc)
 
-    def set_aspect(self, aspect):
+    @property
+    def facecolor(self):
+        """Get facecolor"""
+        return self._axes.getBackground()
+
+    @facecolor.setter
+    def facecolor(self, value):
+        """
+        Set facecolor property value.
+
+        :param value: Fill color of the axes.
+        """
+        self._axes.setBackground(plotutil.getcolor(value))
+        self.stale = True
+
+    @property
+    def aspect(self):
+        """Get or set aspect ['auto' | 'equal']"""
+        return 'equal' if self._axes.getAspectType() == AspectType.EQUAL else 'auto'
+
+    @aspect.setter
+    def aspect(self, aspect):
         """
         Set axes aspect
 
@@ -261,6 +288,7 @@ class Axes(object):
                 self._axes.setAspectType(AspectType.RATIO)
             else:
                 self._axes.setAspectType(AspectType.AUTO)
+        self.stale = True
 
     def set_clip(self, clip):
         """
@@ -630,6 +658,7 @@ class Axes(object):
         self.get_axis(Location.LEFT).setVisible(True)
         self.get_axis(Location.TOP).setVisible(True)
         self.get_axis(Location.RIGHT).setVisible(True)
+        self.stale = True
 
     def set_axis_off(self):
         """
@@ -639,6 +668,7 @@ class Axes(object):
         self.get_axis(Location.LEFT).setVisible(False)
         self.get_axis(Location.TOP).setVisible(False)
         self.get_axis(Location.RIGHT).setVisible(False)
+        self.stale = True
 
     def axis(self, arg=None, **kwargs):
         """
@@ -713,6 +743,36 @@ class Axes(object):
 
         return self.get_xlim() + self.get_ylim()
 
+
+    @property
+    def xlim(self):
+        """Get or set x axis limits"""
+        extent = self._axes.getDrawExtent()
+        return extent.minX, extent.maxX
+
+
+    @xlim.setter
+    def xlim(self, val):
+        if not isinstance(val, (list, tuple)):
+            raise ValueError("value {} is not supported, list or tuple with min and max limit values"
+                             "are expected".format(val))
+
+        xmin = val[0]
+        xmax = val[1]
+        if isinstance(xmin, datetime.datetime):
+            xmin = miutil.date2num(xmin)
+        if isinstance(xmax, datetime.datetime):
+            xmax = miutil.date2num(xmax)
+
+        extent = self._axes.getDrawExtent()
+        extent.minX = xmin
+        extent.maxX = xmax
+        self._axes.setDrawExtent(extent)
+        self._axes.setExtent(extent.clone())
+        self._axes.setFixDrawExtent(True)
+        self.stale = True
+
+
     def get_xlim(self):
         """
         Get the *x* limits of the current axes.
@@ -740,6 +800,35 @@ class Axes(object):
         self._axes.setDrawExtent(extent)
         self._axes.setExtent(extent.clone())
         self._axes.setFixDrawExtent(True)
+
+
+    @property
+    def ylim(self):
+        """Get or set y axis limits"""
+        extent = self._axes.getDrawExtent()
+        return extent.minY, extent.maxY
+
+
+    @ylim.setter
+    def ylim(self, val):
+        if not isinstance(val, (list, tuple)):
+            raise ValueError("value {} is not supported, list or tuple with min and max limit values"
+                             "are expected".format(val))
+
+        ymin = val[0]
+        ymax = val[1]
+        if isinstance(ymin, datetime.datetime):
+            ymin = miutil.date2num(ymin)
+        if isinstance(ymax, datetime.datetime):
+            ymax = miutil.date2num(ymax)
+
+        extent = self._axes.getDrawExtent()
+        extent.minY = ymin
+        extent.maxY = ymax
+        self._axes.setDrawExtent(extent)
+        self._axes.setExtent(extent.clone())
+        self._axes.setFixDrawExtent(True)
+
 
     def get_ylim(self):
         """
@@ -1063,17 +1152,20 @@ class Axes(object):
                 axis.setTickLabelAvoidCollision(tickavoidcoll)
             axis.setTickLabelFont(font)
 
+
     def xreverse(self):
         """
         Reverse x axis.
         """
         self._axes.getXAxis().setInverse(True)
 
+
     def yreverse(self):
         """
         Reverse y axis.
         """
         self._axes.getYAxis().setInverse(True)
+
 
     def invert_xaxis(self):
         """
@@ -1085,6 +1177,7 @@ class Axes(object):
         t_axis.setInverse(not t_axis.isInverse())
         self.stale = True
 
+
     def invert_yaxis(self):
         """
         Invert y axis.
@@ -1094,6 +1187,7 @@ class Axes(object):
         l_axis.setInverse(not l_axis.isInverse())
         r_axis.setInverse(not r_axis.isInverse())
         self.stale = True
+
 
     def add_patch(self, patch):
         """
@@ -1107,6 +1201,7 @@ class Axes(object):
             self._axes.addGraphic(patch)
         #self._axes.setAutoExtent()
         self.stale = True
+
 
     def add_graphic(self, graphic, transform=None, zorder=None):
         """
@@ -1139,6 +1234,7 @@ class Axes(object):
         self.stale = True
         return rGraphic
 
+
     def get_graphics(self):
         """
         Get graphics
@@ -1146,12 +1242,14 @@ class Axes(object):
         """
         return self._axes.getGraphics()
 
+
     def num_graphics(self):
         """
         Get the number of graphics
         :return: (*int*) The number of graphics
         """
         return self._axes.getGraphicNumber()
+
 
     def remove_graphic(self, graphic):
         """
@@ -1166,12 +1264,14 @@ class Axes(object):
         self._axes.getGraphics().remove(graphic)
         self.stale = True
 
+
     def remove(self):
         """
         Remove all graphics.
         """
         self._axes.getGraphics().clear()
         self.stale = True
+
 
     def cll(self):
         """
@@ -1180,11 +1280,13 @@ class Axes(object):
         self._axes.removeLastGraphic()
         self.stale = True
 
+
     def clear(self):
         """
         Remove all graphics.
         """
         self._axes.getGraphics().clear()
+
 
     def data2pixel(self, x, y, z=None):
         """
@@ -1200,6 +1302,7 @@ class Axes(object):
         sy = r[1] + rect.getY()
         sy = self.figure.get_size()[1] - sy
         return sx, sy
+
 
     def grid(self, b=None, **kwargs):
         """

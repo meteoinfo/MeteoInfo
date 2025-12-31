@@ -59,9 +59,9 @@ class Axes3D(Axes):
             self.active_outerposition(True)
         else:        
             self.active_outerposition(False)        
-        self.set_position(position)   
+        self.position = position
         if not outerposition is None:
-            self.set_outerposition(outerposition)
+            self.outerposition = outerposition
             self.active_outerposition(True)
         units = kwargs.pop('units', None)
         if not units is None:
@@ -226,6 +226,29 @@ class Axes3D(Axes):
         """
         color = plotutil.getcolor(color)
         self._axes.setBoxColor(color)
+
+
+    @property
+    def xlim(self):
+        """Get or set x axis limits"""
+        return self._axes.getXMin(), self._axes.getXMax()
+
+
+    @xlim.setter
+    def xlim(self, val):
+        if not isinstance(val, (list, tuple)):
+            raise ValueError("value {} is not supported, list or tuple with min and max limit values"
+                             "are expected".format(val))
+
+        xmin = val[0]
+        xmax = val[1]
+        if isinstance(xmin, datetime.datetime):
+            xmin = miutil.date2num(xmin)
+        if isinstance(xmax, datetime.datetime):
+            xmax = miutil.date2num(xmax)
+        self._axes.setXMinMax(xmin, xmax)
+        self.stale = True
+
         
     def get_xlim(self):
         """
@@ -234,7 +257,8 @@ class Axes3D(Axes):
         :returns: (*tuple*) x limits.
         """
         return self._axes.getXMin(), self._axes.getXMax()
-        
+
+
     def set_xlim(self, xmin, xmax):
         """
         Set the *x* limits of the current axes.
@@ -247,7 +271,30 @@ class Axes3D(Axes):
         if isinstance(xmax, datetime.datetime):
             xmax = miutil.date2num(xmax)                
         self._axes.setXMinMax(xmin, xmax)
-        
+
+
+    @property
+    def ylim(self):
+        """Get or set y axis limits"""
+        return self._axes.getYMin(), self._axes.getYMax()
+
+
+    @ylim.setter
+    def ylim(self, val):
+        if not isinstance(val, (list, tuple)):
+            raise ValueError("value {} is not supported, list or tuple with min and max limit values"
+                             "are expected".format(val))
+
+        ymin = val[0]
+        ymax = val[1]
+        if isinstance(ymin, datetime.datetime):
+            ymin = miutil.date2num(ymin)
+        if isinstance(ymax, datetime.datetime):
+            ymax = miutil.date2num(ymax)
+        self._axes.setYMinMax(ymin, ymax)
+        self.stale = True
+
+
     def get_ylim(self):
         """
         Get the *y* limits of the current axes.
@@ -255,6 +302,7 @@ class Axes3D(Axes):
         :returns: (*tuple*) y limits.
         """
         return self._axes.getYMin(), self._axes.getYMax()
+
             
     def set_ylim(self, ymin, ymax):
         """
@@ -269,6 +317,29 @@ class Axes3D(Axes):
             ymax = miutil.date2num(ymax)    
         self._axes.setYMinMax(ymin, ymax)
 
+
+    @property
+    def zlim(self):
+        """Get or set z axis limits"""
+        return self._axes.getZMin(), self._axes.getZMax()
+
+
+    @zlim.setter
+    def zlim(self, val):
+        if not isinstance(val, (list, tuple)):
+            raise ValueError("value {} is not supported, list or tuple with min and max limit values"
+                             "are expected".format(val))
+
+        zmin = val[0]
+        zmax = val[1]
+        if isinstance(zmin, datetime.datetime):
+            zmin = miutil.date2num(zmin)
+        if isinstance(zmax, datetime.datetime):
+            zmax = miutil.date2num(zmax)
+        self._axes.setZMinMax(zmin, zmax)
+        self.stale = True
+
+
     def get_zlim(self):
         """
         Get the *z* limits of the current axes.
@@ -276,7 +347,8 @@ class Axes3D(Axes):
         :returns: (*tuple*) z limits.
         """
         return self._axes.getZMin(), self._axes.getZMax()
-            
+
+
     def set_zlim(self, zmin, zmax):
         """
         Set the *z* limits of the current axes.
@@ -290,6 +362,7 @@ class Axes3D(Axes):
             zmax = miutil.date2num(zmax)    
         self._axes.setZMinMax(zmin, zmax)
 
+
     def set_axis_on(self):
         """
         Set all axis visible.
@@ -299,6 +372,7 @@ class Axes3D(Axes):
         self._axes.setDisplayXY(True)
         self._axes.setDisplayZ(True)
 
+
     def set_axis_off(self):
         """
         Set all axis not visible.
@@ -307,6 +381,7 @@ class Axes3D(Axes):
         self._axes.setBoxed(False)
         self._axes.setDisplayXY(False)
         self._axes.setDisplayZ(False)
+
 
     def axis(self, arg=None, **kwargs):
         """

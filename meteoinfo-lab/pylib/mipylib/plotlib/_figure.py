@@ -99,6 +99,15 @@ class Figure(ChartPanel, _FigureBase):
         :param value: Fill color of the figure.
         """
         self.getChart().setBackground(plotutil.getcolor(value))
+        self.stale = True
+
+    @property
+    def width(self):
+        return self.getFigureWidth()
+
+    @property
+    def height(self):
+        return self.getFigureHeight()
 
     def get_size(self):
         """
@@ -803,19 +812,25 @@ class Figure(ChartPanel, _FigureBase):
         ctext = plotutil.text(0, 0, label, **kwargs)
         self.getChart().setYLabel(ctext)
 
-    def set_antialias(self, b=None, symbol=None):
+    @property
+    def antialias(self):
+        return self.getChart().isAntialias()
+
+    @antialias.setter
+    def antialias(self, b=None):
         """
         Set figure antialias or not.
         
         :param b: (*boolean*) Antialias or not.
-        :param symbol: (*boolean*) Set symbol antialias or not.
         """
         if b is None:
             b = not self.getChart().isAntialias()
-        self.getChart().setAntialias(b)
+        elif isinstance(b, (list, tuple)):
+            symbol = b[1]
+            b = b[0]
 
-        if not symbol is None:
-            self.getChart().setSymbolAntialias(symbol)
+        self.getChart().setAntialias(b)
+        self.stale = True
 
     def get_image(self):
         """

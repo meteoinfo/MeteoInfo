@@ -363,10 +363,7 @@ def scatter(*args, **kwargs):
         if g_axes.ndim == 3:
             g_axes = axes()
 
-    r = g_axes.scatter(*args, **kwargs)
-    if r is not None:
-        draw_if_interactive()
-    return r
+    return g_axes.scatter(*args, **kwargs)
 
 
 @_copy_docstring_and_deprecators(Axes3D.scatter)
@@ -1058,19 +1055,17 @@ def box(ax=None, on=None):
     draw_if_interactive()
 
 
-def antialias(b=None, symbol=None):
+def antialias(b=None):
     """
     Set figure antialias or not.
     
     :param b: (*boolean*) Set figure antialias or not. Default is ``None``, means the opposite with 
         current status.
-    :param symbol: (*boolean*) Set symbol antialias or not.
     """
     if g_figure is None:
         figure()
 
-    g_figure.set_antialias(b, symbol)
-    draw_if_interactive()
+    g_figure.antialias = b
 
 
 def savefig(fname, width=None, height=None, dpi=None, sleep=None):
@@ -2008,7 +2003,7 @@ def lighting(enable=True, **kwargs):
     draw_if_interactive()
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.set_material)
+@_copy_docstring_and_deprecators(Axes3DGL.material)
 def material(mvalues):
     global g_axes
     if g_axes is None:
@@ -2017,8 +2012,7 @@ def material(mvalues):
         if not isinstance(g_axes, Axes3DGL):
             g_axes = axes3dgl()
 
-    g_axes.set_material(mvalues)
-    draw_if_interactive()
+    g_axes.material = mvalues
 
 
 @_copy_docstring_and_deprecators(Axes3DGL.view)

@@ -66,18 +66,18 @@ class Axes3DGL(Axes3D):
             self.active_outerposition(True)
         else:
             self.active_outerposition(False)
-        self.set_position(position)
+        self.position = position
         if not outerposition is None:
-            self.set_outerposition(outerposition)
+            self.outerposition = outerposition
             self.active_outerposition(True)
-        bgcolor = kwargs.pop('bgcolor', None)
-        if not bgcolor is None:
-            bgcolor = plotutil.getcolor(bgcolor)
-            self._axes.setBackground(bgcolor)
-        fgcolor = kwargs.pop('fgcolor', None)
-        if not fgcolor is None:
-            fgcolor = plotutil.getcolor(fgcolor)
-            self._axes.setForeground(fgcolor)
+        facecolor = kwargs.pop('facecolor', None)
+        if not facecolor is None:
+            facecolor = plotutil.getcolor(facecolor)
+            self._axes.setBackground(facecolor)
+        edgecolor = kwargs.pop('edgecolor', None)
+        if not edgecolor is None:
+            edgecolor = plotutil.getcolor(edgecolor)
+            self._axes.setForeground(edgecolor)
         units = kwargs.pop('units', None)
         if not units is None:
             self._axes.setUnits(units)
@@ -136,6 +136,19 @@ class Axes3DGL(Axes3D):
     def axestype(self):
         return '3d'
 
+
+    @property
+    def rotation(self):
+        """Get or set rotation angle"""
+        return self._axes.getAngleY()
+
+
+    @rotation.setter
+    def rotation(self, val):
+        self._axes.setAngleY(val)
+        self.stale = True
+
+
     def get_rotation(self):
         """
         Get rotation angle.
@@ -143,6 +156,7 @@ class Axes3DGL(Axes3D):
         :returns: Rotation angle.
         """
         return self._axes.getAngleY()
+
 
     def set_rotation(self, rotation):
         """
@@ -152,6 +166,18 @@ class Axes3DGL(Axes3D):
         """
         self._axes.setAngleY(rotation)
 
+
+    @property
+    def elevation(self):
+        """Get or set elevation angle"""
+        return self._axes.getAngleX()
+
+
+    @elevation.setter
+    def elevation(self, val):
+        self._axes.setAngleX(val)
+
+
     def get_elevation(self):
         """
         Get elevation angle.
@@ -159,6 +185,7 @@ class Axes3DGL(Axes3D):
         :returns: Elevation angle.
         """
         return self._axes.getAngleX()
+
 
     def set_elevation(self, elevation):
         """
@@ -202,6 +229,16 @@ class Axes3DGL(Axes3D):
 
         return az, el
 
+    @property
+    def head_angle(self):
+        """Get or set head angle"""
+        return self._axes.getHeadAngle()
+
+    @head_angle.setter
+    def head_angle(self, head):
+        self._axes.setHeadAngle(head)
+        self.stale = True
+
     def get_head(self):
         """
         Get head angle.
@@ -218,6 +255,16 @@ class Axes3DGL(Axes3D):
         """
         self._axes.setHeadAngle(head)
 
+    @property
+    def pitch_angle(self):
+        """Get or set pitch angle"""
+        self._axes.getPitchAngle()
+
+    @pitch_angle.setter
+    def pitch_angle(self, pitch):
+        self._axes.setPitchAngle(pitch)
+        self.stale = True
+
     def get_pitch(self):
         """
         Get pitch angle.
@@ -233,6 +280,16 @@ class Axes3DGL(Axes3D):
         :param pitch: (*float*) Pitch angle.
         """
         self._axes.setPitchAngle(pitch)
+
+    @property
+    def zscale(self):
+        """Get or set z axis scale"""
+        return self._axes.getZScale()
+
+    @zscale.setter
+    def zscale(self, scale):
+        self._axes.setZScale(scale)
+        self.stale = True
 
     def get_zscale(self):
         """
@@ -260,13 +317,14 @@ class Axes3DGL(Axes3D):
         self._axes.setBackground(color)
 
     @property
-    def facecolor(self):
-        return self._axes.getBackground()
+    def antialias(self):
+        """Get or set antialias"""
+        return self._axes.isAntialias()
 
-    @facecolor.setter
-    def facecolor(self, color):
-        color = plotutil.getcolor(color)
-        self._axes.setBackground(color)
+    @antialias.setter
+    def antialias(self, val):
+        self._axes.setAntialias(val)
+        self.stale = True
 
     def get_antialias(self):
         """
@@ -282,6 +340,16 @@ class Axes3DGL(Axes3D):
         """
         self._axes.setAntialias(antialias)
 
+    @property
+    def orthographic(self):
+        """Get or set orthographic"""
+        return self._axes.isOrthographic()
+
+    @orthographic.setter
+    def orthographic(self, val):
+        self._axes.setOrthographic(val)
+        self.stale = True
+
     def get_orthographic(self):
         """
         Get orthographic.
@@ -295,6 +363,16 @@ class Axes3DGL(Axes3D):
         :param orthographic: (*bool*) Orthographic or not.
         """
         self._axes.setOrthographic(orthographic)
+
+    @property
+    def distance(self):
+        """Get or set camera distance"""
+        return self._axes.getDistance()
+
+    @distance.setter
+    def distance(self, val):
+        self._axes.setDistance(val)
+        self.stale = True
 
     def get_distance(self):
         """
@@ -310,7 +388,8 @@ class Axes3DGL(Axes3D):
         """
         self._axes.setDistance(dis)
 
-    def get_fov(self):
+    @property
+    def fov(self):
         """
         Get field of view angles in degrees for perspective projection.
 
@@ -318,7 +397,9 @@ class Axes3DGL(Axes3D):
         """
         return self._axes.getFieldOfView()
 
-    def set_fov(self, fov):
+
+    @fov.setter
+    def fov(self, fov):
         """
         Set field of view angles in degrees for perspective projection.
 
@@ -328,6 +409,8 @@ class Axes3DGL(Axes3D):
             warnings.warn('Field of view angles should be in the range of (0, 180)')
         else:
             self._axes.setFieldOfView(fov)
+            self.stale = True
+
 
     def set_lighting(self, enable=True, **kwargs):
         """
@@ -374,7 +457,23 @@ class Axes3DGL(Axes3D):
         if not mat_shininess is None:
             lighting.setMaterialShininess(mat_shininess)
 
-    def set_material(self, mvalues):
+        self.stale = True
+
+
+    @property
+    def material(self):
+        """Get or set material"""
+        lighting = self._axes.getLighting()
+        m = dict(ambient=lighting.getMaterialAmbient(),
+                 diffuse=lighting.getMaterialDiffuse(),
+                 specular=lighting.getMaterialSpecular(),
+                 shininess=lighting.getMaterialShininess(),
+                 emission=lighting.getMaterialEmission())
+        return m
+
+
+    @material.setter
+    def material(self, mvalues):
         """
         Set reflectance properties of surfaces and patches.
 
@@ -391,6 +490,8 @@ class Axes3DGL(Axes3D):
             lighting.setMaterialShininess(mvalues[3])
         if len(mvalues) > 4:
             lighting.setMaterialEmission(mvalues[4])
+        self.stale = True
+
 
     def add_zaxis(self, x, y, left=True):
         """
@@ -401,6 +502,7 @@ class Axes3DGL(Axes3D):
         :param left: (*boolean*) Whether left tick. Default is True.
         """
         self._axes.addZAxis(x, y, left)
+        self.stale = True
 
     def fill(self, x, y, z, color=None, **kwargs):
         """
@@ -2019,8 +2121,8 @@ class EarthAxes3D(Axes3DGL):
 
     def __init__(self, *args, **kwargs):
         kwargs['aspect'] = 'equal'
-        if 'bgcolor' not in kwargs.keys():
-            kwargs['bgcolor'] = 'k'
+        if 'facecolor' not in kwargs.keys():
+            kwargs['facecolor'] = 'k'
         kwargs['clip_plane'] = False
         kwargs['axis'] = False
         if 'distance' not in kwargs.keys():

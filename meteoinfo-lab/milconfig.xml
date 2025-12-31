@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\funny">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grads"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataset"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\scatter"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\text"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\numpy"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\imshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\traj\typhoon_marker_axes.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\christmas_tree_gif.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\math_man_gif.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\christmas_tree.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\slice3_3.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\traj\typhoon_marker_axes.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\christmas_tree_gif.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\math_man_gif.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\christmas_tree.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\slice3_3.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-6,0" MainFormSize="1364,823"/>
+  <Startup MainFormLocation="-6,-6" MainFormSize="1292,764"/>
 </MeteoInfo>

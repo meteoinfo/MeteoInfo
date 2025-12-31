@@ -9148,7 +9148,12 @@ public class GraphicFactory {
         dim2 = (int) xa.getSize();
         for (int s = 0; s < zSlice.size(); s++) {
             z = zSlice.get(s).floatValue();
-            Array r = ArrayUtil.slice(data, 0, za, z);
+            Array r;
+            if (za.getSize() <= 1 && data.getRank() == 2) {
+                r = data;
+            } else {
+                r = ArrayUtil.slice(data, 0, za, z);
+            }
             if (r != null) {
                 Index index = r.getIndex();
                 MeshGraphic graphic = new MeshGraphic();
@@ -9178,7 +9183,12 @@ public class GraphicFactory {
         dim2 = (int) ya.getSize();
         for (int s = 0; s < xSlice.size(); s++) {
             x = xSlice.get(s).floatValue();
-            Array r = ArrayUtil.slice(data, 2, xa, x);
+            Array r;
+            if (xa.getSize() <= 1 && data.getRank() == 2) {
+                r = data;
+            } else {
+                r = ArrayUtil.slice(data, 2, xa, x);
+            }
             if (r != null) {
                 Index index = r.getIndex();
                 MeshGraphic graphic = new MeshGraphic();
@@ -9208,7 +9218,12 @@ public class GraphicFactory {
         dim2 = (int) xa.getSize();
         for (int s = 0; s < ySlice.size(); s++) {
             y = ySlice.get(s).floatValue();
-            Array r = ArrayUtil.slice(data, 1, ya, y);
+            Array r;
+            if (ya.getSize() <= 1 && data.getRank() == 2) {
+                r = data;
+            } else {
+                r = ArrayUtil.slice(data, 1, ya, y);
+            }
             if (r != null) {
                 Index index = r.getIndex();
                 MeshGraphic graphic = new MeshGraphic();
@@ -9267,7 +9282,12 @@ public class GraphicFactory {
         dim2 = (int) xa.getSize();
         for (int s = 0; s < zSlice.size(); s++) {
             z = zSlice.get(s).floatValue();
-            Array r = ArrayUtil.slice(data, 0, za, z);
+            Array r;
+            if (za.getSize() <= 1 && data.getRank() == 2) {
+                r = data;
+            } else {
+                r = ArrayUtil.slice(data, 0, za, z);
+            }
             if (r != null) {
                 Index index = r.getIndex();
                 MeshGraphic graphic = new MeshGraphic();
@@ -9297,7 +9317,12 @@ public class GraphicFactory {
         dim2 = (int) ya.getSize();
         for (int s = 0; s < xSlice.size(); s++) {
             x = xSlice.get(s).floatValue();
-            Array r = ArrayUtil.slice(data, 2, xa, x);
+            Array r;
+            if (xa.getSize() <= 1 && data.getRank() == 2) {
+                r = data;
+            } else {
+                r = ArrayUtil.slice(data, 2, xa, x);
+            }
             if (r != null) {
                 Index index = r.getIndex();
                 MeshGraphic graphic = new MeshGraphic();
@@ -9327,7 +9352,12 @@ public class GraphicFactory {
         dim2 = (int) xa.getSize();
         for (int s = 0; s < ySlice.size(); s++) {
             y = ySlice.get(s).floatValue();
-            Array r = ArrayUtil.slice(data, 1, ya, y);
+            Array r;
+            if (ya.getSize() <= 1 && data.getRank() == 2) {
+                r = data;
+            } else {
+                r = ArrayUtil.slice(data, 1, ya, y);
+            }
             if (r != null) {
                 Index index = r.getIndex();
                 MeshGraphic graphic = new MeshGraphic();

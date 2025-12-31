@@ -1251,6 +1251,10 @@ public class GLPlot extends Plot {
         final GL2 gl = drawable.getGL().getGL2();
         gl.glLoadIdentity();
 
+        float[] rgba = this.background.getRGBComponents(null);
+        gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
+
         this.updateTextRender(this.xAxis.getTickLabelFont());
 
         //Set light position - follow glLoadIdentity

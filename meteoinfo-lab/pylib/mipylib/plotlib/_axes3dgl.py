@@ -259,6 +259,15 @@ class Axes3DGL(Axes3D):
         color = plotutil.getcolor(color)
         self._axes.setBackground(color)
 
+    @property
+    def facecolor(self):
+        return self._axes.getBackground()
+
+    @facecolor.setter
+    def facecolor(self, color):
+        color = plotutil.getcolor(color)
+        self._axes.setBackground(color)
+
     def get_antialias(self):
         """
         Get antialias
@@ -1055,6 +1064,10 @@ class Axes3DGL(Axes3D):
             z = args[2]
             data = args[3]
             args = args[4:]
+
+        x = np.asarray(x)
+        y = np.asarray(y)
+        z = np.asarray(z)
         if x.ndim == 3:
             x = x[0, 0]
         if y.ndim == 3:

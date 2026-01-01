@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\text"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\chart\axes">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\numpy"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
@@ -11,22 +9,26 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axes"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axes"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\christmas_tree.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\slice3_3.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\volumeplot_broccoli_specular.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\axes\axes_2.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\christmas_tree.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\slice3_3.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume\volumeplot_broccoli_specular.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\chart\axes\axes_2.py"/>
     </RecentFiles>
   </File>
   <Font>

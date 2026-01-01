@@ -460,19 +460,6 @@ class Axes3DGL(Axes3D):
         self.stale = True
 
 
-    @property
-    def material(self):
-        """Get or set material"""
-        lighting = self._axes.getLighting()
-        m = dict(ambient=lighting.getMaterialAmbient(),
-                 diffuse=lighting.getMaterialDiffuse(),
-                 specular=lighting.getMaterialSpecular(),
-                 shininess=lighting.getMaterialShininess(),
-                 emission=lighting.getMaterialEmission())
-        return m
-
-
-    @material.setter
     def material(self, mvalues):
         """
         Set reflectance properties of surfaces and patches.

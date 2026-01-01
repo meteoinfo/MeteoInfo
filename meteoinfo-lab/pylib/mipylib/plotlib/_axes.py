@@ -738,10 +738,10 @@ class Axes(object):
                     raise TypeError('the first argument to axis() must be an '
                                     'iterable of the form '
                                     '[xmin, xmax, ymin, ymax]')
-                self.set_xlim(xmin, xmax)
-                self.set_ylim(ymin, ymax)
+                self.xlim = xmin, xmax
+                self.ylim = ymin, ymax
 
-        return self.get_xlim() + self.get_ylim()
+        return self.xlim + self.ylim
 
 
     @property

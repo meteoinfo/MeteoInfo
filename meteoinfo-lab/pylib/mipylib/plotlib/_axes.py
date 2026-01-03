@@ -35,7 +35,7 @@ from mipylib.geolib.milayer import MILayer, MIXYListData
 import plotutil
 import colors
 import mipylib.miutil as miutil
-from .graphic import Line2D, Artist, Point2DCollection, LineCollection
+from .graphic import Line2D, Artist, Polygon, Point2DCollection, LineCollection, PolyCollection
 
 __all__ = ['Axes', 'PolarAxes']
 
@@ -1649,8 +1649,8 @@ class Axes(object):
             y = a.dimvalue(0)
             x = a.dimvalue(1)
         else:
-            x = args[0]
-            y = args[1]
+            x = np.asarray(args[0])
+            y = np.asarray(args[1])
 
         s = kwargs.pop('s', 8)
         c = kwargs.pop('c', None)
@@ -1672,10 +1672,12 @@ class Axes(object):
         isvalue = False
 
         if isinstance(c, NDArray):
-            isvalue = True
+            if x.size == c.size:
+                isvalue = True
         elif isinstance(c, (list, tuple)):
             if len(x) == len(c) and isinstance(c[0], (int, long, float)):
                 isvalue = True
+
         if isvalue:
             ls = kwargs.pop('symbolspec', None)
             if ls is None:
@@ -3001,13 +3003,14 @@ class Axes(object):
             is None.
         :param y: (*array_like*) Y coordinates for each vertex.
         """
-        lbreak, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         if y is None:
+            lbreak, isunique = plotutil.getlegendbreak('polygon', **kwargs)
             graphics = Graphic(x, lbreak)
         else:
-            x = plotutil.getplotdata(x)
-            y = plotutil.getplotdata(y)
-            graphics = GraphicFactory.createPolygons(x, y, lbreak)
+            x = np.asarray(x)
+            y = np.asarray(y)
+            #graphics = GraphicFactory.createPolygons(x._array, y._array, lbreak)
+            graphics = PolyCollection(None, xydata=[x, y], **kwargs)
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)

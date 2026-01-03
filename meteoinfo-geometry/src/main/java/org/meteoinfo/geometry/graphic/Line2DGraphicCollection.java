@@ -111,6 +111,7 @@ public class Line2DGraphicCollection extends GraphicCollection {
     }
 
     protected void updateGraphics(List<Array> data, List<PolylineBreak> lineBreaks) {
+        this.singleLegend = false;
         this.data = data;
         this.graphics = new ArrayList<>();
         int[] origin = new int[2];
@@ -136,6 +137,7 @@ public class Line2DGraphicCollection extends GraphicCollection {
     }
 
     protected void updateGraphics(List<Array> data, List<Array> cData, LegendScheme ls) {
+        this.singleLegend = false;
         this.data = data;
         this.graphics = new ArrayList<>();
         int[] origin = new int[2];
@@ -158,6 +160,7 @@ public class Line2DGraphicCollection extends GraphicCollection {
     }
 
     protected void updateGraphics(List<Array> data, Array cData, LegendScheme ls) {
+        this.singleLegend = false;
         this.data = data;
         this.cData = cData;
         this.graphics = new ArrayList<>();

@@ -190,7 +190,7 @@ def getcolors(cs, alpha=None):
         if isinstance(cs[0], int):
             colors.append(getcolor(cs, alpha))
         else:
-            if isinstance(alpha, (tuple, list)):
+            if isinstance(alpha, (tuple, list, NDArray)):
                 for c, a in zip(cs, alpha):
                     colors.append(getcolor(c, a))
             else:

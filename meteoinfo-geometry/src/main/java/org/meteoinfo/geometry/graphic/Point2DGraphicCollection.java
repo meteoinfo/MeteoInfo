@@ -132,8 +132,12 @@ public class Point2DGraphicCollection extends GraphicCollection {
     }
 
     protected void updateShape() {
-        if (this.hasColorData()) {
-            updateGraphics(this.legendScheme);
+        if (this.legendScheme != null) {
+            if (this.hasColorData()) {
+                updateGraphics(this.legendScheme);
+            } else {
+                updateGraphics(this.legendScheme.getLegendBreaks());
+            }
         } else {
             updateGraphics((PointBreak) this.legend);
         }

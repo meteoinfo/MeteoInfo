@@ -1,5 +1,5 @@
 from org.meteoinfo.geometry.graphic import GraphicCollection, Point2DGraphicCollection, \
-    Line2DGraphicCollection
+    Line2DGraphicCollection, PolygonGraphicCollection
 from java.awt import Font
 
 from .. import plotutil
@@ -7,7 +7,7 @@ from ... import miutil
 from artist import Artist
 import mipylib.numeric as np
 
-__all__ = ['Point2DCollection','LineCollection']
+__all__ = ['Point2DCollection','LineCollection','PolyCollection']
 
 
 class Collection(Artist):
@@ -231,6 +231,9 @@ class LineCollection(Collection, Line2DGraphicCollection):
                     else:
                         segments = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
 
+            self._xdata = xdata
+            self._ydata = ydata
+
         if isinstance(segments, np.NDArray):
             self._segments = []
             ns = segments.shape[0]
@@ -325,3 +328,220 @@ class LineCollection(Collection, Line2DGraphicCollection):
             segments = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
 
         self.set_segments(segments, cdata=cdata)
+
+    @property
+    def xdata(self):
+        """Get or set x data"""
+        return self._xdata
+
+    @xdata.setter
+    def xdata(self, val):
+        self._xdata = np.asarray(val)
+        self.set_xydata([self._xdata, self._ydata])
+
+    @property
+    def ydata(self):
+        """Get or set y data"""
+        return self._ydata
+
+    @ydata.setter
+    def ydata(self, val):
+        self._ydata = val
+        self.set_xydata([self._xdata, self._ydata])
+
+    @property
+    def data(self):
+        """Get or set x/y data"""
+        return self._xdata, self._ydata
+
+    @data.setter
+    def data(self, xydata):
+        self._xdata = np.asarray(xydata[0])
+        self._ydata = np.asarray(xydata[1])
+        self.set_xydata([self._xdata, self._ydata])
+
+
+class PolyCollection(Collection, PolygonGraphicCollection):
+
+    def __init__(self, verts, legend=None, **kwargs):
+        """
+        Class init
+
+        Parameters
+        ----------
+        verts : list of Array
+            The sequence of polygons [*verts0*, *verts1*, ...] where each
+            element *verts_i* defines the vertices of polygon *i* as a 2D
+            array-like of shape (M, 2).
+        legend : Legend
+            Polygon legend.
+        xydata : List array
+             X and Y 2D coordinates data array for lines.
+        data : Array
+            color data array.
+        """
+        Collection.__init__(self)
+
+        if verts is None:
+            xydata = kwargs.pop('xydata', None)
+            if xydata is None:
+                raise ValueError('Verts data is None!')
+            else:
+                if len(xydata) == 1:
+                    ydata = xydata[0]
+                    xdata = None
+                else:
+                    xdata = xydata[0]
+                    ydata = xydata[1]
+
+                if isinstance(ydata, (list, tuple)):
+                    verts = []
+                    nline = len(ydata)
+                    if xdata is None:
+                        verts = [np.column_stack([np.arange(ydata[i].size), ydata[i]]) for i in range(nline)]
+                    else:
+                        if isinstance(xdata, (list, tuple)):
+                            verts = [np.column_stack([xdata[i], ydata[i]]) for i in range(nline)]
+                        else:
+                            verts = [np.column_stack([xdata, ydata[i]]) for i in range(nline)]
+                else:
+                    nseg, nline = ydata.shape
+                    if xdata is None:
+                        xdata = np.arange(nseg)
+
+                    if xdata.ndim == 1:
+                        verts = [np.column_stack([xdata, ydata[:,i]]) for i in range(nline)]
+                    else:
+                        verts = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
+
+                self._xdata = xdata
+                self._ydata = ydata
+
+        if isinstance(verts, np.NDArray):
+            self._verts = []
+            ns = verts.shape[0]
+            for i in range(ns):
+                self._verts.append(verts[i])
+        else:
+            self._verts = verts
+
+        data = []
+        for s in self._verts:
+            data.append(s._array)
+
+        self._array = kwargs.pop('array', None)
+        self._cdata = kwargs.pop('cdata', None)
+
+        if self._array is None and self._cdata is None:
+            if legend is None:
+                legend = plotutil.getlegendbreak('polygon', **kwargs)[0]
+                kwargs['ncolors'] = len(self._verts)
+                legend = plotutil.getlegendbreaks(legend, **kwargs)
+            PolygonGraphicCollection.__init__(self, data, legend)
+        else:
+            if self._array is not None:
+                if legend is None:
+                    legend = plotutil.getlegendscheme([len(self._verts)], self._array.min(), self._array.max(), **kwargs)
+                    legend = plotutil.setlegendscheme_polygon(legend, **kwargs)
+                PolygonGraphicCollection.__init__(self, data, self._array._array, legend)
+            else:
+                if legend is None:
+                    legend = plotutil.getlegendscheme([], self._cdata.min(), self._cdata.max(), **kwargs)
+                    legend = plotutil.setlegendscheme_polygon(legend, **kwargs)
+                if isinstance(self._cdata, np.NDArray):
+                    PolygonGraphicCollection.__init__(self, data, self._cdata._array, legend)
+                else:
+                    PolygonGraphicCollection.__init__(self, data, [arr._array for arr in self._cdata], legend)
+
+        antialias = kwargs.pop('antialias', None)
+        if antialias is not None:
+            self.setAntiAlias(antialias)
+
+    @property
+    def visible(self):
+        """
+        The artist is visible or not.
+        """
+        return self.isVisible()
+
+    @visible.setter
+    def visible(self, val):
+        self.setVisible(val)
+        self.stale = True
+
+    @property
+    def verts(self):
+        return self._verts
+
+    @verts.setter
+    def verts(self, val):
+        self._verts = val
+        data = []
+        for s in self._verts:
+            data.append(s._array)
+        self.setData(data)
+        self.stale = True
+
+    def set_verts(self, val, cdata=None):
+        if cdata is None:
+            self.verts = val
+        else:
+            self._verts = val
+            data = []
+            for s in self._verts:
+                data.append(s._array)
+            self.setData(data, cdata._array)
+            self.stale = True
+
+    def set_xydata(self, xydata, cdata=None):
+        if len(xydata) == 1:
+            ydata = xydata[0]
+            xdata = None
+        else:
+            xdata = xydata[0]
+            ydata = xydata[1]
+
+        nseg, nline = ydata.shape
+        if xdata is None:
+            xdata = np.arange(nseg)
+
+        self._xdata = xdata
+        self._ydata = ydata
+
+        if xdata.ndim == 1:
+            verts = [np.column_stack([xdata, ydata[:,i]]) for i in range(nline)]
+        else:
+            verts = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
+
+        self.set_verts(verts, cdata=cdata)
+
+    @property
+    def xdata(self):
+        """Get or set x data"""
+        return self._xdata
+
+    @xdata.setter
+    def xdata(self, val):
+        self._xdata = np.asarray(val)
+        self.set_xydata([self._xdata, self._ydata])
+
+    @property
+    def ydata(self):
+        """Get or set y data"""
+        return self._ydata
+
+    @ydata.setter
+    def ydata(self, val):
+        self._ydata = val
+        self.set_xydata([self._xdata, self._ydata])
+
+    @property
+    def data(self):
+        """Get or set x/y data"""
+        return self._xdata, self._ydata
+
+    @data.setter
+    def data(self, xydata):
+        self._xdata = np.asarray(xydata[0])
+        self._ydata = np.asarray(xydata[1])
+        self.set_xydata([self._xdata, self._ydata])

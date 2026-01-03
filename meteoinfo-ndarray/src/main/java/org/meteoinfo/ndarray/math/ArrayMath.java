@@ -3558,8 +3558,16 @@ public class ArrayMath {
 
     private static Array powInt(Array a, int b) {
         Array r = Array.factory(DataType.INT, a.getShape());
-        for (int i = 0; i < a.getSize(); i++) {
-            r.setInt(i, (int) Math.pow(a.getInt(i), b));
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                r.setInt(i, (int) Math.pow(a.getInt(i), b));
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterA.hasNext()) {
+                iterR.setIntNext((int) Math.pow(iterA.getIntNext(), b));
+            }
         }
 
         return r;
@@ -3567,8 +3575,16 @@ public class ArrayMath {
 
     private static Array powInt(int a, Array b) {
         Array r = Array.factory(DataType.INT, b.getShape());
-        for (int i = 0; i < b.getSize(); i++) {
-            r.setInt(i, (int) Math.pow(a, b.getInt(i)));
+        if (b.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < b.getSize(); i++) {
+                r.setInt(i, (int) Math.pow(a, b.getInt(i)));
+            }
+        } else {
+            IndexIterator iterB = b.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterB.hasNext()) {
+                iterR.setIntNext((int) Math.pow(a, iterB.getIntNext()));
+            }
         }
 
         return r;
@@ -3579,8 +3595,17 @@ public class ArrayMath {
         switch (broadcast) {
             case 0:
                 Array r = Array.factory(DataType.INT, a.getShape());
-                for (int i = 0; i < a.getSize(); i++) {
-                    r.setInt(i, (int) Math.pow(a.getInt(i), b.getInt(i)));
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < a.getSize(); i++) {
+                        r.setInt(i, (int) Math.pow(a.getInt(i), b.getInt(i)));
+                    }
+                } else {
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    while (iterR.hasNext()) {
+                        iterR.setIntNext((int) Math.pow(iterA.getIntNext(), iterB.getIntNext()));
+                    }
                 }
                 return r;
             case 1:
@@ -3607,8 +3632,16 @@ public class ArrayMath {
 
     private static Array powLong(Array a, long b) {
         Array r = Array.factory(DataType.LONG, a.getShape());
-        for (int i = 0; i < a.getSize(); i++) {
-            r.setLong(i, (long) Math.pow(a.getLong(i), b));
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                r.setLong(i, (long) Math.pow(a.getLong(i), b));
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterR.hasNext()) {
+                iterR.setLongNext((long) Math.pow(iterA.getLongNext(), b));
+            }
         }
 
         return r;
@@ -3616,8 +3649,16 @@ public class ArrayMath {
 
     private static Array powLong(long a, Array b) {
         Array r = Array.factory(DataType.LONG, b.getShape());
-        for (int i = 0; i < b.getSize(); i++) {
-            r.setLong(i, (long) Math.pow(a, b.getLong(i)));
+        if (b.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < b.getSize(); i++) {
+                r.setLong(i, (long) Math.pow(a, b.getLong(i)));
+            }
+        } else {
+            IndexIterator iterB = b.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterR.hasNext()) {
+                iterR.setLongNext((long) Math.pow(a, iterB.getLongNext()));
+            }
         }
 
         return r;
@@ -3628,8 +3669,17 @@ public class ArrayMath {
         switch (broadcast) {
             case 0:
                 Array r = Array.factory(DataType.LONG, a.getShape());
-                for (int i = 0; i < a.getSize(); i++) {
-                    r.setLong(i, (long) Math.pow(a.getLong(i), b.getLong(i)));
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < a.getSize(); i++) {
+                        r.setLong(i, (long) Math.pow(a.getLong(i), b.getLong(i)));
+                    }
+                } else {
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    while (iterR.hasNext()) {
+                        iterR.setLongNext((long) Math.pow(iterA.getLongNext(), iterB.getLongNext()));
+                    }
                 }
                 return r;
             case 1:
@@ -3656,8 +3706,16 @@ public class ArrayMath {
 
     private static Array powDouble(Array a, double b) {
         Array r = Array.factory(DataType.DOUBLE, a.getShape());
-        for (int i = 0; i < a.getSize(); i++) {
-            r.setDouble(i, Math.pow(a.getDouble(i), b));
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                r.setDouble(i, Math.pow(a.getDouble(i), b));
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while(iterR.hasNext()) {
+                iterR.setDoubleNext(Math.pow(iterA.getDoubleNext(), b));
+            }
         }
 
         return r;
@@ -3665,8 +3723,16 @@ public class ArrayMath {
 
     private static Array powDouble(double a, Array b) {
         Array r = Array.factory(DataType.DOUBLE, b.getShape());
-        for (int i = 0; i < b.getSize(); i++) {
-            r.setDouble(i, Math.pow(a, b.getDouble(i)));
+        if (b.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < b.getSize(); i++) {
+                r.setDouble(i, Math.pow(a, b.getDouble(i)));
+            }
+        } else {
+            IndexIterator iterB = b.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterR.hasNext()) {
+                iterR.setDoubleNext(Math.pow(a, iterB.getDoubleNext()));
+            }
         }
 
         return r;
@@ -3677,11 +3743,20 @@ public class ArrayMath {
         switch (broadcast) {
             case 0:
                 Array r = Array.factory(DataType.DOUBLE, a.getShape());
-                for (int i = 0; i < a.getSize(); i++) {
-                    if (Double.isNaN(a.getDouble(i)) || Double.isNaN(b.getDouble(i))) {
-                        r.setDouble(i, Double.NaN);
-                    } else {
-                        r.setDouble(i, Math.pow(a.getDouble(i), b.getDouble(i)));
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < a.getSize(); i++) {
+                        if (Double.isNaN(a.getDouble(i)) || Double.isNaN(b.getDouble(i))) {
+                            r.setDouble(i, Double.NaN);
+                        } else {
+                            r.setDouble(i, Math.pow(a.getDouble(i), b.getDouble(i)));
+                        }
+                    }
+                } else {
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    while (iterR.hasNext()) {
+                        iterR.setDoubleNext(Math.pow(iterA.getDoubleNext(), iterB.getDoubleNext()));
                     }
                 }
                 return r;
@@ -3719,34 +3794,61 @@ public class ArrayMath {
                 if (isComplex(a)) {
                     if (isComplex(b)) {
                         Complex v1, v2;
-                        for (int i = 0; i < a.getSize(); i++) {
-                            v1 = a.getComplex(i);
-                            v2 = b.getComplex(i);
-                            if (v1.isNaN() || v2.isNaN()) {
-                                r.setComplex(i, v1);
-                            } else {
-                                r.setComplex(i, v1.pow(v2));
+                        if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                            for (int i = 0; i < a.getSize(); i++) {
+                                v1 = a.getComplex(i);
+                                v2 = b.getComplex(i);
+                                if (v1.isNaN() || v2.isNaN()) {
+                                    r.setComplex(i, v1);
+                                } else {
+                                    r.setComplex(i, v1.pow(v2));
+                                }
+                            }
+                        } else {
+                            IndexIterator iterA = a.getIndexIterator();
+                            IndexIterator iterB = b.getIndexIterator();
+                            IndexIterator iterR = r.getIndexIterator();
+                            while (iterR.hasNext()) {
+                                iterR.setComplexNext(iterA.getComplexNext().pow(iterB.getComplexNext()));
                             }
                         }
                     } else {
                         Complex v;
-                        for (int i = 0; i < a.getSize(); i++) {
-                            v = a.getComplex(i);
-                            if (v.isNaN() || Double.isNaN(b.getDouble(i))) {
-                                r.setComplex(i, new Complex(Double.NaN));
-                            } else {
-                                r.setComplex(i, v.pow(b.getDouble(i)));
+                        if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                            for (int i = 0; i < a.getSize(); i++) {
+                                v = a.getComplex(i);
+                                if (v.isNaN() || Double.isNaN(b.getDouble(i))) {
+                                    r.setComplex(i, new Complex(Double.NaN));
+                                } else {
+                                    r.setComplex(i, v.pow(b.getDouble(i)));
+                                }
+                            }
+                        } else {
+                            IndexIterator iterA = a.getIndexIterator();
+                            IndexIterator iterB = b.getIndexIterator();
+                            IndexIterator iterR = r.getIndexIterator();
+                            while (iterR.hasNext()) {
+                                iterR.setComplexNext(iterA.getComplexNext().pow(iterB.getDoubleNext()));
                             }
                         }
                     }
                 } else {
                     Complex v;
-                    for (int i = 0; i < a.getSize(); i++) {
-                        v = b.getComplex(i);
-                        if (v.isNaN() || Double.isNaN(a.getDouble(i))) {
-                            r.setComplex(i, new Complex(Double.NaN));
-                        } else {
-                            r.setComplex(i, v.pow(a.getDouble(i)));
+                    if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                        for (int i = 0; i < a.getSize(); i++) {
+                            v = b.getComplex(i);
+                            if (v.isNaN() || Double.isNaN(a.getDouble(i))) {
+                                r.setComplex(i, new Complex(Double.NaN));
+                            } else {
+                                r.setComplex(i, v.pow(a.getDouble(i)));
+                            }
+                        }
+                    } else {
+                        IndexIterator iterA = a.getIndexIterator();
+                        IndexIterator iterB = b.getIndexIterator();
+                        IndexIterator iterR = r.getIndexIterator();
+                        while (iterR.hasNext()) {
+                            iterR.setComplexNext(iterB.getComplexNext().pow(iterA.getDoubleNext()));
                         }
                     }
                 }
@@ -3812,12 +3914,20 @@ public class ArrayMath {
     private static Array powComplex(Array a, double b) {
         Array r = Array.factory(DataType.COMPLEX, a.getShape());
         Complex v;
-        for (int i = 0; i < a.getSize(); i++) {
-            v = a.getComplex(i);
-            if (v.isNaN()) {
-                r.setComplex(i, v);
-            } else {
-                r.setComplex(i, v.pow(b));
+        if (a.getIndexPrivate().isFastIterator()) {
+            for (int i = 0; i < a.getSize(); i++) {
+                v = a.getComplex(i);
+                if (v.isNaN()) {
+                    r.setComplex(i, v);
+                } else {
+                    r.setComplex(i, v.pow(b));
+                }
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterR.hasNext()) {
+                iterR.setComplexNext(iterA.getComplexNext().pow(b));
             }
         }
 
@@ -3826,13 +3936,21 @@ public class ArrayMath {
 
     private static Array powComplex(Array a, Complex b) {
         Array r = Array.factory(DataType.COMPLEX, a.getShape());
-        Complex v;
-        for (int i = 0; i < a.getSize(); i++) {
-            v = a.getComplex(i);
-            if (v.isNaN()) {
-                r.setComplex(i, v);
-            } else {
-                r.setComplex(i, v.pow(b));
+        if (a.getIndexPrivate().isFastIterator()) {
+            Complex v;
+            for (int i = 0; i < a.getSize(); i++) {
+                v = a.getComplex(i);
+                if (v.isNaN()) {
+                    r.setComplex(i, v);
+                } else {
+                    r.setComplex(i, v.pow(b));
+                }
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterR.hasNext()) {
+                iterR.setComplexNext(iterA.getComplexNext().pow(b));
             }
         }
 
@@ -3841,13 +3959,21 @@ public class ArrayMath {
 
     private static Array powComplex(double b, Array a) {
         Array r = Array.factory(DataType.COMPLEX, a.getShape());
-        Complex v;
-        for (int i = 0; i < a.getSize(); i++) {
-            v = a.getComplex(i);
-            if (v.isNaN()) {
-                r.setComplex(i, v);
-            } else {
-                r.setComplex(i, v.rPow(b));
+        if (a.getIndexPrivate().isFastIterator()) {
+            Complex v;
+            for (int i = 0; i < a.getSize(); i++) {
+                v = a.getComplex(i);
+                if (v.isNaN()) {
+                    r.setComplex(i, v);
+                } else {
+                    r.setComplex(i, v.rPow(b));
+                }
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterR.hasNext()) {
+                iterR.setComplexNext(iterA.getComplexNext().pow(b));
             }
         }
 
@@ -3856,13 +3982,21 @@ public class ArrayMath {
 
     private static Array powComplex(Complex b, Array a) {
         Array r = Array.factory(DataType.COMPLEX, a.getShape());
-        Complex v;
-        for (int i = 0; i < a.getSize(); i++) {
-            v = a.getComplex(i);
-            if (v.isNaN()) {
-                r.setComplex(i, v);
-            } else {
-                r.setComplex(i, b.pow(v));
+        if (a.getIndexPrivate().isFastIterator()) {
+            Complex v;
+            for (int i = 0; i < a.getSize(); i++) {
+                v = a.getComplex(i);
+                if (v.isNaN()) {
+                    r.setComplex(i, v);
+                } else {
+                    r.setComplex(i, b.pow(v));
+                }
+            }
+        } else {
+            IndexIterator iterA = a.getIndexIterator();
+            IndexIterator iterR = r.getIndexIterator();
+            while (iterR.hasNext()) {
+                iterR.setComplexNext(b.pow(iterA.getComplexNext()));
             }
         }
 
@@ -3889,13 +4023,29 @@ public class ArrayMath {
         Array r;
         if (isComplex(a)) {
             r = Array.factory(DataType.COMPLEX, a.getShape());
-            for (int i = 0; i < a.getSize(); i++) {
-                r.setComplex(i, (a.getComplex(i)).exp());
+            if (a.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    r.setComplex(i, (a.getComplex(i)).exp());
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                IndexIterator iterR = r.getIndexIterator();
+                while (iterR.hasNext()) {
+                    iterR.setComplexNext(iterA.getComplexNext().exp());
+                }
             }
         } else {
             r = Array.factory(DataType.DOUBLE, a.getShape());
-            for (int i = 0; i < a.getSize(); i++) {
-                r.setDouble(i, Math.exp(a.getDouble(i)));
+            if (a.getIndexPrivate().isFastIterator()) {
+                for (int i = 0; i < a.getSize(); i++) {
+                    r.setDouble(i, Math.exp(a.getDouble(i)));
+                }
+            } else {
+                IndexIterator iterA = a.getIndexIterator();
+                IndexIterator iterR = r.getIndexIterator();
+                while (iterR.hasNext()) {
+                    iterR.setDoubleNext(Math.exp(iterA.getDoubleNext()));
+                }
             }
         }
 

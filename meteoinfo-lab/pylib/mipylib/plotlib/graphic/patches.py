@@ -1,9 +1,10 @@
-from org.meteoinfo.geometry.graphic import Graphic
+from org.meteoinfo.geometry.graphic import Graphic, PolygonGraphic
 from org.meteoinfo.geometry.shape import ShapeUtil, CircleShape, EllipseShape, \
     RectangleShape, ArcShape
 
 from .. import plotutil
 import mipylib.numeric as np
+from artist import Artist
 
 __all__ = ['Arc','Circle','Ellipse','Rectangle','Polygon','Wedge']
 
@@ -243,12 +244,12 @@ class Rectangle(Graphic):
     def angle(self):
         return self._angle
 
-class Polygon(Graphic):
+class Polygon(PolygonGraphic, Artist):
     """
     A general polygon patch.
     """
 
-    def __init__(self, xy, closed=True, **kwargs):
+    def __init__(self, *args, **kwargs):
         """
         Create a polygon with *xy* point array.
 
@@ -256,15 +257,122 @@ class Polygon(Graphic):
         :param closed: (bool) If *closed* is *True*, the polygon will be closed so the
             starting and ending points are the same.
         """
-        if isinstance(xy, (list, tuple)):
-            xy = np.array(xy)
+        Artist.__init__(self)
 
-        self._xy = xy
-        self._closed = closed
-        shape = ShapeUtil.createPolygonShape(xy._array)
-        legend, isunique = plotutil.getlegendbreak('polygon', **kwargs)
-        super(Polygon, self).__init__(shape, legend)
+        n = len(args)
+        if n == 1:
+            xy = np.asarray(args[0])
+            self._x = xy[:, 0]
+            self._y = xy[:, 1]
+        else:
+            self._x = np.asarray(args[0])
+            self._y = np.asarray(args[1])
+
+        self._closed = kwargs.pop('closed', True)
+        legend, is_unique = plotutil.getlegendbreak('polygon', **kwargs)
+        PolygonGraphic.__init__(self, self._x._array, self._y._array, legend)
 
     @property
-    def xy(self):
-        return self._xy
+    def visible(self):
+        """
+        The artist is visible or not.
+        """
+        return self.isVisible()
+
+    @visible.setter
+    def visible(self, val):
+        self.setVisible(val)
+        self.stale = True
+
+    @property
+    def xdata(self):
+        """
+        Return the xdata.
+
+        :return: (*array*) xdata.
+        """
+        return self._x
+
+    @xdata.setter
+    def xdata(self, xdata):
+        """
+        Set the xdata.
+
+        :param xdata: (*array*) The xdata.
+        """
+        xdata = np.asarray(xdata)
+        self._x = xdata
+        self.setXData(xdata._array)
+        self.stale = True
+
+    @property
+    def ydata(self):
+        """
+        Return the ydata.
+
+        :return: (*array*) ydata.
+        """
+        return self._y
+
+    @ydata.setter
+    def ydata(self, ydata):
+        """
+        Set the ydata.
+
+        :param ydata: (*array*) The ydata.
+        """
+        ydata = np.asarray(ydata)
+        self._y = ydata
+        self.setYData(ydata._array)
+        self.stale = True
+
+    @property
+    def data(self):
+        """
+        Get x, y data.
+
+        :return: x, y data.
+        """
+        return (self._x, self._y)
+
+    @data.setter
+    def data(self, *args):
+        """
+        Set x, y data.
+
+        :param xdata: (*array*) X data.
+        :param ydata: (*array*) Y data.
+        """
+        if len(args) == 1:
+            xdata = args[0][0]
+            ydata = args[0][1]
+        else:
+            xdata = args[0]
+            ydata = args[1]
+
+        xdata = np.asarray(xdata)
+        ydata = np.asarray(ydata)
+        self._x = xdata
+        self._y = ydata
+        self.setData(xdata._array, ydata._array)
+        self.stale = True
+
+    @property
+    def color(self):
+        """
+        Return the line color.
+
+        :return: (*Color*) The line color.
+        """
+        return self.legend.getColor()
+
+    @color.setter
+    def color(self, color):
+        """
+        Set the line color.
+
+        :param color: (*color or str*) The line color.
+        """
+        color = plotutil.getcolor(color)
+        self.legend.setColor(color)
+        self.stale = True

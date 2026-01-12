@@ -114,9 +114,9 @@ class GLFigure(GLChartPanel, _FigureBase):
             ax.active_outerposition(True)
         else:
             ax.active_outerposition(False)
-        ax.set_position(position)
+        ax.position = position
         if not outerposition is None:
-            ax.set_outerposition(outerposition)
+            ax.outerposition = outerposition
             ax.active_outerposition(True)
 
         return ax
@@ -135,9 +135,9 @@ class GLFigure(GLChartPanel, _FigureBase):
             ax.active_outerposition(True)
         else:
             ax.active_outerposition(False)
-        ax.set_position(position)
+        ax.position = position
         if not outerposition is None:
-            ax.set_outerposition(outerposition)
+            ax.outerposition = outerposition
             ax.active_outerposition(True)
         units = kwargs.pop('units', None)
         if not units is None:
@@ -237,7 +237,7 @@ class GLFigure(GLChartPanel, _FigureBase):
             position = kwargs.pop('position', None)
         if position is None:
             position = [0.13, 0.11, 0.775, 0.815]
-        ax.set_position(position)
+        ax.position = position
         return ax
 
     def __set_axesm(self, ax, **kwargs):
@@ -361,9 +361,9 @@ class GLFigure(GLChartPanel, _FigureBase):
             ax.active_outerposition(True)
         else:
             ax.active_outerposition(False)
-        ax.set_position(position)
+        ax.position = position
         if not outerposition is None:
-            ax.set_outerposition(outerposition)
+            ax.outerposition = outerposition
             ax.active_outerposition(True)
 
         return ax
@@ -478,7 +478,7 @@ class GLFigure(GLChartPanel, _FigureBase):
                 ax._axes.isSubPlot = True
                 position = kwargs.pop('position', None)
                 if position is None:
-                    ax.set_position(plot.getPosition())
+                    ax.position = plot.getPosition()
             chart.setCurrentPlot(ax._axes)
         ax.figure = self
 
@@ -596,15 +596,15 @@ class GLFigure(GLChartPanel, _FigureBase):
                     height = 1. / nrows
                     x = width * colidx
                     y = 1. - height * (rowidx + 1)
-                ax.set_position([x, y, width, height])
-                ax.set_outerposition([x, y, width, height])
+                ax.position = [x, y, width, height]
+                ax.outerposition = [x, y, width, height]
                 ax.active_outerposition(True)
         else:
-            ax.set_position(position)
+            ax.position = position
             ax.active_outerposition(False)
         outerposition = kwargs.pop('outerposition', None)
         if not outerposition is None:
-            ax.set_outerposition(outerposition)
+            ax.outerposition = outerposition
             ax.active_outerposition(True)
 
         # if isinstance(ax, MapAxes):
@@ -686,14 +686,14 @@ class GLFigure(GLChartPanel, _FigureBase):
                 if not iswspace and not ishspace:
                     x = left + w * j
                     y = (bottom + height) - h * (i + 1)
-                    ax.set_position([x, y, w, h])
-                    ax.set_outerposition([x, y, w, h])
+                    ax.position = [x, y, w, h]
+                    ax.outerposition = [x, y, w, h]
                     ax.active_outerposition(True)
                 else:
                     if iswspace:
                         if j > 0:
                             x += wspace
-                    ax.set_position([x, y, w, h])
+                    ax.position = [x, y, w, h]
                     ax.active_outerposition(False)
                     x += w
                 if sharex:

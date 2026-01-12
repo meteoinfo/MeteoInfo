@@ -165,6 +165,7 @@ class Axes3DGL(Axes3D):
         :param rotation: (*float*) Rotation angle.
         """
         self._axes.setAngleY(rotation)
+        self.stale = True
 
 
     @property
@@ -176,6 +177,7 @@ class Axes3DGL(Axes3D):
     @elevation.setter
     def elevation(self, val):
         self._axes.setAngleX(val)
+        self.stale = True
 
 
     def get_elevation(self):
@@ -194,6 +196,7 @@ class Axes3DGL(Axes3D):
         :param elevation: (*float*) Elevation angle.
         """
         self._axes.setAngleX(elevation)
+        self.stale = True
 
     def view(self, *args):
         """
@@ -258,7 +261,7 @@ class Axes3DGL(Axes3D):
     @property
     def pitch_angle(self):
         """Get or set pitch angle"""
-        self._axes.getPitchAngle()
+        return self._axes.getPitchAngle()
 
     @pitch_angle.setter
     def pitch_angle(self, pitch):
@@ -387,6 +390,7 @@ class Axes3DGL(Axes3D):
         :param dis: (*float*) Camera distance.
         """
         self._axes.setDistance(dis)
+        self.stale = True
 
     @property
     def fov(self):

@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\chart\axes">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\geoshow">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
@@ -14,19 +11,24 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\patch"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\subplot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart\axes"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\chart"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\christmas_tree.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\fireworks.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\chart\axes\axes_3.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\map\geoshow\shaperead.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\christmas_tree.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\fireworks.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\chart\axes\axes_3.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\map\geoshow\shaperead.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -34,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-6,0" MainFormSize="1327,804"/>
+  <Startup MainFormLocation="-6,-6" MainFormSize="1292,764"/>
 </MeteoInfo>

@@ -430,12 +430,10 @@ public class ShapeFileManage {
         byte[] bytes;
         ByteBuffer buffer;
 
-        for (int i = 0; i < shapeNum; i++) {            
-            //br.skipBytes(12);
+        for (int i = 0; i < shapeNum; i++) {
             bytes = new byte[8];
             br.read(bytes);
             buffer = ByteBuffer.wrap(bytes);
-            //br.skipBytes(12); 
             buffer.order(ByteOrder.BIG_ENDIAN);
             RecordNum = buffer.getInt();
             ContentLength = buffer.getInt();
@@ -495,12 +493,10 @@ public class ShapeFileManage {
         byte[] bytes;
         ByteBuffer buffer;
 
-        for (int i = 0; i < shapeNum; i++) {            
-            //br.skipBytes(12);
+        for (int i = 0; i < shapeNum; i++) {
             bytes = new byte[8];
             br.read(bytes);
             buffer = ByteBuffer.wrap(bytes);
-            //br.skipBytes(12); 
             buffer.order(ByteOrder.BIG_ENDIAN);
             RecordNum = buffer.getInt();
             ContentLength = buffer.getInt();
@@ -569,12 +565,10 @@ public class ShapeFileManage {
         byte[] bytes;
         ByteBuffer buffer;
 
-        for (int i = 0; i < shapeNum; i++) {            
-            //br.skipBytes(12);
+        for (int i = 0; i < shapeNum; i++) {
             bytes = new byte[8];
             br.read(bytes);
             buffer = ByteBuffer.wrap(bytes);
-            //br.skipBytes(12); 
             buffer.order(ByteOrder.BIG_ENDIAN);
             RecordNum = buffer.getInt();
             ContentLength = buffer.getInt();
@@ -621,11 +615,13 @@ public class ShapeFileManage {
             }
             
             //Read measure
-            double mmin = buffer.getDouble();
-            double mmax = buffer.getDouble();
             double[] mArray = new double[numPoints];
-            for (int j = 0; j < numPoints; j++) {
-                mArray[j] = buffer.getDouble();
+            if (buffer.hasRemaining()) {
+                double mmin = buffer.getDouble();
+                double mmax = buffer.getDouble();
+                for (int j = 0; j < numPoints; j++) {
+                    mArray[j] = buffer.getDouble();
+                }
             }
             
             //Get pointZ list

@@ -874,7 +874,7 @@ class Axes3D(Axes):
         is_value = False
         if isinstance(c, (list, tuple, NDArray)):
             c = np.asarray(c)
-            if c.shape == xdata.shape and isinstance(c[0], numbers.Number):
+            if c.shape == xdata.shape and c.dtype.is_numeric():
                 is_value = True
 
         if is_value:

@@ -1704,7 +1704,7 @@ class Axes(object):
                         ls.getLegendBreaks()[i].setSize(s[i])
             # Create graphics
             #graphics = GraphicFactory.createPoints(xdata, ydata, c.asarray(), ls)
-            graphics = Point2DCollection(xdata, ydata, c._array, legend=ls)
+            graphics = Point2DCollection(xdata, ydata, c, legend=ls)
         else:
             alpha = kwargs.pop('alpha', None)
             colors = plotutil.getcolors(c, alpha)

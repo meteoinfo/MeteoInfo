@@ -52,6 +52,7 @@ package org.meteoinfo.geometry.legend;
      private ExtendType extendType = ExtendType.NONE;
      private ExtendFraction extendFraction = ExtendFraction.NONE;
      private List<ColorBreak> legendBreaks;
+     private ColorBreak missingValueBreak;
      private boolean hasNoData;
      private double minValue = -Double.MAX_VALUE;
      private double maxValue = Double.MAX_VALUE;
@@ -332,6 +333,30 @@ package org.meteoinfo.geometry.legend;
      }
 
      /**
+      * Get the missing value color break
+      * @return Missing value color break
+      */
+     public ColorBreak getMissingValueBreak() {
+         return this.missingValueBreak;
+     }
+
+     /**
+      * Set missing value color break
+      * @param value Missing value color break
+      */
+     public void setMissingValueBreak(ColorBreak value) {
+         this.missingValueBreak = value;
+     }
+
+     /**
+      * Get if has missing value break
+      * @return If has missing value break
+      */
+     public boolean hasMissingValueBreak() {
+         return this.missingValueBreak != null;
+     }
+
+     /**
       * Get if has no data
       *
       * @return If has no data
@@ -601,6 +626,10 @@ package org.meteoinfo.geometry.legend;
                      return null;
                  }
              default:
+                 if (Double.isNaN(v.doubleValue())) {
+                    return this.hasMissingValueBreak() ? this.missingValueBreak : null;
+                 }
+
                  if (v.doubleValue() < this.minValue || v.doubleValue() > this.maxValue) {
                      return null;
                  }

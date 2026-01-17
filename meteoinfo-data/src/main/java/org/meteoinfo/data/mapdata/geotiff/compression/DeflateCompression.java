@@ -20,10 +20,10 @@ public class DeflateCompression implements CompressionDecoder, CompressionEncode
 
     @Override
     public byte[] decode(byte[] bytes, ByteOrder byteOrder) {
+        Inflater inflater = new Inflater();
+        inflater.setInput(bytes);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(bytes.length);
         try {
-            Inflater inflater = new Inflater();
-            inflater.setInput(bytes);
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream(bytes.length);
             byte[] buffer = new byte[1024];
             while (!inflater.finished()) {
                 int count = inflater.inflate(buffer);
@@ -37,6 +37,8 @@ public class DeflateCompression implements CompressionDecoder, CompressionEncode
             throw new TiffException("Failed close decoded byte stream", e);
         } catch (DataFormatException e) {
             throw new TiffException("Data format error while decoding stream", e);
+        } finally {
+            inflater.end();
         }
     }
 

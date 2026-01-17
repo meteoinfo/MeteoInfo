@@ -1118,6 +1118,9 @@ public class GeoTiff {
                 }
             }
         }
+        IFDEntry predictorTag = findTag(Tag.Predictor);
+        int predictor = predictorTag == null ? 0 : predictorTag.value[0];
+
         IFDEntry tileOffsetTag = findTag(Tag.TileOffsets);
         ByteBuffer buffer;
         if (tileOffsetTag != null) {
@@ -1217,6 +1220,9 @@ public class GeoTiff {
                                 continue;
 
                             buffer = testReadData(tileOffset, tileSize, cDecoder);
+                            if (predictor == 2) {
+                                decodeHorizontalPrediction(buffer, tileWidth);
+                            }
                             if (buffer.limit() < size){
                                 ByteBuffer nbuffer = ByteBuffer.allocate(size);
                                 nbuffer.put(buffer.array());
@@ -1337,8 +1343,8 @@ public class GeoTiff {
                             if (i == stripNum - 1) {
                                 size = width * (height - rowNum * (stripNum - 1));
                             }
-                            if (cDecoder instanceof LZWCompression) {
-                                undoFloatData(buffer, width);
+                            if (predictor == 2) {
+                                decodeHorizontalPrediction(buffer, width);
                             }
                             if (samplesPerPixel == 1) {
                                 for (int j = 0; j < size; j++) {
@@ -1429,6 +1435,8 @@ public class GeoTiff {
                 }
             }
         }
+        IFDEntry predictorTag = findTag(Tag.Predictor);
+        int predictor = predictorTag == null ? 0 : predictorTag.value[0];
 
         IFDEntry tileOffsetTag = findTag(Tag.TileOffsets);
         ByteBuffer buffer;
@@ -1548,6 +1556,9 @@ public class GeoTiff {
                                 continue;
 
                             buffer = testReadData(tileOffset, tileSize, cDecoder);
+                            if (predictor == 2) {
+                                decodeHorizontalPrediction(buffer, tileWidth);
+                            }
                             if (buffer.limit() < size){
                                 ByteBuffer nbuffer = ByteBuffer.allocate(size);
                                 nbuffer.put(buffer.array());
@@ -1664,8 +1675,8 @@ public class GeoTiff {
                             if (i == stripNum - 1) {
                                 size = width * (height - rowNum * (stripNum - 1));
                             }
-                            if (cDecoder instanceof LZWCompression) {
-                                undoFloatData(buffer, width);
+                            if (predictor == 2) {
+                                decodeHorizontalPrediction(buffer, width);
                             }
                             for (int j = 0; j < size; j++) {
                                 counter = index.getCurrentCounter();
@@ -1736,7 +1747,7 @@ public class GeoTiff {
         return buffer;
     }
 
-    private void undoFloatData(ByteBuffer buffer, int width) {
+    private void decodeHorizontalPrediction(ByteBuffer buffer, int width) {
         int n = buffer.limit();
         int height = n / (width * 4);
         for (int y = 0; y < height; y++) {

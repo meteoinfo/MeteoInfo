@@ -43,6 +43,7 @@ import java.util.HashMap;
      public static final Tag ResolutionUnit = new Tag("ResolutionUnit", 296);
      public static final Tag PageNumber = new Tag("PageNumber", 297);
      public static final Tag Software = new Tag("Software", 305);
+     public static final Tag Predictor = new Tag("Predictor", 317);
      public static final Tag ColorMap = new Tag("ColorMap", 320);
      public static final Tag TileWidth = new Tag("TileWidth", 322);
      public static final Tag TileLength = new Tag("TileLength", 323);

@@ -465,6 +465,7 @@ public class SymbolControl extends JPanel {
                 PolygonBreak aPGB = new PolygonBreak();
                 aPGB.setColor(Color.red);
                 aPGB.setOutlineColor(Color.black);
+                aPGB.setDrawFill(true);
                 for (int i = 0; i < _symbolNumber; i++) {
                     int row = i / _colNumber;
                     if (row > hideRows) {

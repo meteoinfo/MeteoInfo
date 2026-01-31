@@ -243,7 +243,7 @@ public class ArrayString extends Array {
      * get the integer value at the specified index.
      */
     public int getInt(Index i) {
-        return Integer.parseInt(storage[i.currentElement()]);
+        return Integer.parseInt(storage[i.currentElement()].trim());
     }
 
     /**
@@ -363,7 +363,7 @@ public class ArrayString extends Array {
     }
 
     public int getInt(int index) {
-        return Integer.parseInt(storage[index]);
+        return Integer.parseInt(storage[index].trim());
     }
 
     public void setInt(int index, int value) {

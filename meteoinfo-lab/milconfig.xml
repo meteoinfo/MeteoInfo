@@ -1,34 +1,30 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\scatter">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\image"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\geotiff"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grads"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\binary"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\patch"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\scatter"/>
+  <Path OpenPath="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataset"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\fengyuan"/>
+    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS"/>
+    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips"/>
+    <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\christmas_tree.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\geotiff\geotif_8.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter\scatterm_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter\scatterm_addlabels.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_x_phase_XPD.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\christmas_tree.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\geotiff\geotif_8.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter\scatterm_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter\scatterm_addlabels.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\radar\radar_x_phase_XPD.py"/>
     </RecentFiles>
   </File>
   <Font>

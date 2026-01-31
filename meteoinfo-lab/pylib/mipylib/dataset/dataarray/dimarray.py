@@ -88,7 +88,7 @@ class DimArray(NDArray):
 
         #for None index - np.newaxis
         newaxis = []
-        if len(indices) > self.ndim:
+        if None in indices:
             nindices = []
             i = 0
             for ii in indices:

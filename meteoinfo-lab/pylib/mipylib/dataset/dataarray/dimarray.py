@@ -54,7 +54,7 @@ class DimArray(NDArray):
         #deal with Ellipsis
         if Ellipsis in indices:
             indices1 = []
-            n = self.ndim - len(indices) + 1
+            n = self.ndim - len(indices) + 1 + indices.count(None)
             for ii in indices:
                 if ii is Ellipsis:
                     for _ in range(n):

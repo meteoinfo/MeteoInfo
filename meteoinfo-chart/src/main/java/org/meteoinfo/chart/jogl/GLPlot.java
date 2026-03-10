@@ -69,7 +69,7 @@ public class GLPlot extends Plot {
     // <editor-fold desc="Variables">
     protected ProjectionInfo projInfo;
     protected boolean sampleBuffers = false;
-    protected Color background = Color.white;
+    protected Color background = null;
     protected boolean doScreenShot;
     protected BufferedImage screenImage;
     protected GL2 gl;
@@ -1251,10 +1251,6 @@ public class GLPlot extends Plot {
         final GL2 gl = drawable.getGL().getGL2();
         gl.glLoadIdentity();
 
-        float[] rgba = this.background.getRGBComponents(null);
-        gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
-        gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
-
         this.updateTextRender(this.xAxis.getTickLabelFont());
 
         //Set light position - follow glLoadIdentity
@@ -1279,6 +1275,13 @@ public class GLPlot extends Plot {
         gl.glLoadMatrixf(modelViewMatrix.get(fb));
 
         this.updateMatrix(gl);
+
+        //Clear
+        if (this.background != null) {
+            float[] rgba = this.background.getRGBComponents(null);
+            gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
+        }
+        gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
 
         //Draw base
         if (this.drawBase) {

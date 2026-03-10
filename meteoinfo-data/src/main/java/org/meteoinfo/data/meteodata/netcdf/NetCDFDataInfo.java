@@ -4041,6 +4041,10 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
         //Define variables
         List<ucar.nc2.Variable> nvars = new ArrayList<>();
         for (ucar.nc2.Variable var : aDataInfo.ncVariables) {
+            DataType dataType = var.getDataType();
+            if (dataType == DataType.LONG) {
+                dataType = DataType.INT;
+            }
             ucar.nc2.Variable nvar = ncfile.addVariable(null, var.getShortName(), var.getDataType(), var.getDimensions());
             for (ucar.nc2.Attribute attr : var.getAttributes()) {
                 nvar.addAttribute(attr);

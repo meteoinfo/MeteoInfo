@@ -102,7 +102,7 @@ class NDArray(object):
 
         #deal with Ellipsis
         if Ellipsis in indices:
-            n = self.ndim - len(indices) + 1
+            n = self.ndim - len(indices) + 1 + indices.count(None)
 
             indices1 = []
             for ii in indices:

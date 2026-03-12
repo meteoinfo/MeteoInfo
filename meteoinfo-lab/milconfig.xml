@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo\eof">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\fengyuan"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\symjy">
     <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS"/>
     <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips"/>
     <RecentFolder Folder="D:\MyProgram\java\MeteoInfoDev\toolbox\EMIPS\emips\gui"/>
@@ -13,18 +12,21 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\model"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\eof"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\symjy"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\model\obj_utah_teapot.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\eof\eof_elnino_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\symjy\calculus.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\symjy\solve_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\model\obj_utah_teapot.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\eof\eof_elnino_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\symjy\calculus.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\symjy\solve_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -32,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-6,-6" MainFormSize="1292,764"/>
+  <Startup MainFormLocation="-6,0" MainFormSize="1384,835"/>
 </MeteoInfo>

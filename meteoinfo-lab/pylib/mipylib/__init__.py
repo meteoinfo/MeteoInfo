@@ -10,7 +10,6 @@ from .dataset import *
 import meteolib as meteo
 import imagelib
 from dataframe import *
-import symjy
 import enum
 
 import os

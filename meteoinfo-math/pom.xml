@@ -119,11 +119,6 @@
             <version>0.3.10-1.5.4</version>
         </dependency>
         <dependency>
-            <groupId>org.matheclipse</groupId>
-            <artifactId>matheclipse-core</artifactId>
-            <version>3.1.1</version>
-        </dependency>
-        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.9.0</version>

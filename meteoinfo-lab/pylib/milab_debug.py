@@ -7,5 +7,6 @@ sys.path.append(os.path.join(toolbox_path, 'miml_dev'))
 sys.path.append(os.path.join(toolbox_path, 'EMIPS'))
 sys.path.append(os.path.join(toolbox_path, 'IMEP'))
 sys.path.append(os.path.join(toolbox_path, 'meteoview3d'))
+sys.path.append(os.path.join(toolbox_path, 'symjy_dev'))
 
 mipylib.migl.mifolder = 'D:/MyProgram/Distribution/Java/MeteoInfo/MeteoInfo'

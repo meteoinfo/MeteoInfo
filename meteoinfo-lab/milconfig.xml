@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\toolbox\qaqc">
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\dataset">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
@@ -9,22 +9,24 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\model"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\eof"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\symjy"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml\classification"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\miml"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\verification"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\toolbox\qaqc"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataset"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\model\obj_utah_teapot.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\symjy\calculus.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataset\loc.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\dataset\read_imshow.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\model\obj_utah_teapot.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\symjy\calculus.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\dataset\loc.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\dataset\read_imshow.py"/>
     </RecentFiles>
   </File>
   <Font>

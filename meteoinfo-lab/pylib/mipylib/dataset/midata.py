@@ -121,13 +121,13 @@ def addfile(fname, access='r', dtype='netcdf', keepopen=False, **kwargs):
         meteodata.openData(fname, keepopen)
         datainfo = meteodata.getDataInfo()
         if datainfo.getDataType() == MeteoDataType.RADAR:
-            datafile = RadarDataFile(meteodata, access=access)
+            datafile = RadarDataFile(datainfo, access=access)
         elif datainfo.isRadial():
-            datafile = RadarDataFile(meteodata, access=access)
+            datafile = RadarDataFile(datainfo, access=access)
         elif datainfo.getDataType() == MeteoDataType.NETCDF and datainfo.getFileTypeId() == 'BUFR':
-            datafile = BUFRDataFile(meteodata, access=access)
+            datafile = BUFRDataFile(datainfo, access=access)
         else:
-            datafile = DimDataFile(meteodata, access=access)
+            datafile = DimDataFile(datainfo, access=access)
         return datafile
     elif access == 'c':
         if dtype == 'arl':
@@ -165,7 +165,7 @@ def addfile(fname, access='r', dtype='netcdf', keepopen=False, **kwargs):
         ncfile = NetcdfFileWriter.openExisting(fname)
         meteodata = MeteoDataInfo()
         meteodata.openData(ncfile.getNetcdfFile(), True)  
-        datafile = DimDataFile(dataset=meteodata, access=access, ncfile=ncfile)
+        datafile = DimDataFile(dataset=meteodata.getDataInfo(), access=access, ncfile=ncfile)
         return datafile
     else:
         return None
@@ -184,7 +184,7 @@ def addfile_grads(fname, getfn=True):
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
     meteodata.openGrADSData(fname)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
     
 def addfile_nc(fname, getfn=True):
@@ -200,7 +200,7 @@ def addfile_nc(fname, getfn=True):
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
     meteodata.openNetCDFData(fname)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
     
 def addfile_grib(fname, getfn=True, version=None):
@@ -220,7 +220,7 @@ def addfile_grib(fname, getfn=True, version=None):
         meteodata.openNetCDFData(fname)
     else:
         meteodata.openGRIBData(fname, version)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
     
 def addfile_arl(fname, getfn=True):
@@ -236,7 +236,7 @@ def addfile_arl(fname, getfn=True):
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
     meteodata.openARLData(fname)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
     
 def addfile_surfer(fname, getfn=True):
@@ -252,7 +252,7 @@ def addfile_surfer(fname, getfn=True):
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
     meteodata.openSurferGridData(fname)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
     
 def addfile_mm5(fname, getfn=True, reffile=None):
@@ -272,7 +272,7 @@ def addfile_mm5(fname, getfn=True, reffile=None):
         meteodata.openMM5Data(fname)
     else:
         meteodata.openMM5Data(fname, reffile)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
 
 def addfile_matlab(fname, getfn=True):
@@ -288,7 +288,7 @@ def addfile_matlab(fname, getfn=True):
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
     meteodata.openMatLabData(fname)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
 
 def addfile_lonlat(fname, getfn=True, missingv=-9999.0):
@@ -305,7 +305,7 @@ def addfile_lonlat(fname, getfn=True, missingv=-9999.0):
     meteodata = MeteoDataInfo()
     meteodata.openLonLatData(fname)
     meteodata.getDataInfo().setMissingValue(missingv)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
     
 def addfile_micaps(fname, getfn=True):
@@ -321,7 +321,7 @@ def addfile_micaps(fname, getfn=True):
         fname, isweb = __getfilename(fname)
     meteodata = MeteoDataInfo()
     meteodata.openMICAPSData(fname)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
 
 def addfile_hytraj(fname, getfn=True):
@@ -340,7 +340,7 @@ def addfile_hytraj(fname, getfn=True):
         raise IOError('No such file: ' + fname)
     meteodata = MeteoDataInfo()
     meteodata.openHYSPLITTrajData(fname)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
     
 def addfile_hyconc(fname, getfn=True, big_endian=True):
@@ -359,7 +359,7 @@ def addfile_hyconc(fname, getfn=True, big_endian=True):
         raise IOError('No such file: ' + fname)
     meteodata = MeteoDataInfo()
     meteodata.openHYSPLITConcData(fname, big_endian)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
 
 def addfile_hypart(fname, skip_bytes=4, getfn=True):
@@ -377,7 +377,7 @@ def addfile_hypart(fname, skip_bytes=4, getfn=True):
         raise IOError('No such file: ' + fname)
     meteodata = MeteoDataInfo()
     meteodata.openHYSPLITPartData(fname, skip_bytes)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
     
 def addfile_geotiff(fname, getfn=True):
@@ -395,7 +395,7 @@ def addfile_geotiff(fname, getfn=True):
         raise IOError('No such file: ' + fname)
     meteodata = MeteoDataInfo()
     meteodata.openGeoTiffData(fname)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
     
 def addfile_bil(fname, getfn=True):
@@ -413,7 +413,7 @@ def addfile_bil(fname, getfn=True):
         raise IOError('No such file: ' + fname)
     meteodata = MeteoDataInfo()
     meteodata.openBILData(fname)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
     
 def addfile_awx(fname, getfn=True):
@@ -432,7 +432,7 @@ def addfile_awx(fname, getfn=True):
         raise IOError('No such file: ' + fname)
     meteodata = MeteoDataInfo()
     meteodata.openAWXData(fname)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
     
 def addfile_ascii_grid(fname, getfn=True):
@@ -450,7 +450,7 @@ def addfile_ascii_grid(fname, getfn=True):
         raise IOError('No such file: ' + fname)
     meteodata = MeteoDataInfo()
     meteodata.openASCIIGridData(fname)
-    datafile = DimDataFile(meteodata)
+    datafile = DimDataFile(meteodata.getDataInfo())
     return datafile
     
 def addtimedim(infn, outfn, t, tunit='hours'):

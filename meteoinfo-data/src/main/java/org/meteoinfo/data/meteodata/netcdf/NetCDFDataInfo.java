@@ -228,7 +228,6 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
 
     /**
      * Close file
-     * @throws IOException
      */
     public void close() throws IOException {
         if (this.ncfile != null) {

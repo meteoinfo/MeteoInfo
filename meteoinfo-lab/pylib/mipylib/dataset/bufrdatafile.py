@@ -8,7 +8,7 @@ class BUFRDataFile(DimDataFile):
         """
         Create a BUFR data file object.
 
-        :param dataset: (*MeteoDataInfo*) Underline dataset.
+        :param dataset: (*DataInfo*) Underline dataset.
         :param access: (*string*) File access.
         :param bufrdata: (*object*) Bufr data.
         """

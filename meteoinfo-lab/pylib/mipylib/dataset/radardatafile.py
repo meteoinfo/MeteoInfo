@@ -7,7 +7,7 @@ class RadarDataFile(DimDataFile):
 
     def __init__(self, dataset=None, access='r'):
         super(RadarDataFile, self).__init__(dataset, access)
-        self.datainfo = dataset.getDataInfo()
+        self.datainfo = dataset
 
     def get_products(self):
         """

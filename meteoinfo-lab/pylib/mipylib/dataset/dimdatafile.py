@@ -28,7 +28,7 @@ import jarray
 # Dimension dataset
 class DimDataFile(object):
     
-    # dataset must be org.meteoinfo.data.meteodata.MeteoDataInfo
+    # dataset must be org.meteoinfo.data.meteodata.DataInfo
     def __init__(self, dataset=None, access='r', ncfile=None, arldata=None, bufrdata=None):
         self.dataset = dataset
         self.access = access
@@ -37,11 +37,11 @@ class DimDataFile(object):
         self._coordinates = []
         if not dataset is None:
             self.filename = dataset.getFileName()
-            self.nvar = dataset.getDataInfo().getVariableNum()
+            self.nvar = dataset.getVariableNum()
             self.fill_value = dataset.getMissingValue()
             self.proj = dataset.getProjectionInfo()
             self.projection = self.proj
-            for v in dataset.getDataInfo().getVariables():
+            for v in dataset.getVariables():
                 dim_var = DimVariable.factory(v, self)
                 self._variables.append(dim_var)
                 setattr(self, dim_var.name, dim_var)
@@ -71,12 +71,12 @@ class DimDataFile(object):
     def __str__(self):
         if self.dataset is None:
             return 'None'
-        return self.dataset.getInfoText()
+        return self.dataset.toString()
         
     def __repr__(self):
         if self.dataset is None:
             return 'None'
-        return self.dataset.getInfoText()
+        return self.dataset.toString()
             
     def close(self):
         """
@@ -95,14 +95,14 @@ class DimDataFile(object):
         """
         Reopen the data file
         """
-        self.dataset.getDataInfo().reOpen()
+        self.dataset.reOpen()
 
     @property
     def dimensions(self):
         """
         Get dimensions
         """
-        return self.dataset.getDataInfo().getDimensions()
+        return self.dataset.getDimensions()
 
     @property
     def dimnames(self):
@@ -123,7 +123,7 @@ class DimDataFile(object):
         
         :name: (*string*) Dimension name
         """
-        for dim in self.dataset.getDataInfo().getDimensions():
+        for dim in self.dataset.getDimensions():
             if name == dim.getShortName():
                 return dim
         return None
@@ -161,7 +161,7 @@ class DimDataFile(object):
         """
         Get global attributes.
         """
-        return self.dataset.getDataInfo().getGlobalAttributes()
+        return self.dataset.getGlobalAttributes()
     
     def attrvalue(self, attr):
         """
@@ -170,7 +170,7 @@ class DimDataFile(object):
         :param attr: (*string or Attribute*) Attribute or Attribute name
         """
         if isinstance(attr, str):
-            attr = self.dataset.getDataInfo().findGlobalAttribute(attr)
+            attr = self.dataset.findGlobalAttribute(attr)
         
         if attr is None:
             return None
@@ -212,7 +212,7 @@ class DimDataFile(object):
     @property
     def coordnames(self):
         """Get all coordinate names"""
-        return self.dataset.getDataInfo().getCoordinateNames()
+        return self.dataset.getCoordinateNames()
         
     def read(self, varname, origin=None, size=None, stride=None):
         """
@@ -229,7 +229,7 @@ class DimDataFile(object):
         """
         Print data file information
         """
-        print(self.dataset.getInfoText())
+        print(self.dataset.toSting())
         
     def read_dataframe(self, tidx=None):
         """
@@ -238,16 +238,16 @@ class DimDataFile(object):
         :returns: (*DataFrame*) The DataFrame.
         """
         if tidx is None:
-            df = self.dataset.getDataInfo().readDataFrame()
+            df = self.dataset.readDataFrame()
         else:
-            df = self.dataset.getDataInfo().readDataFrame(tidx)
+            df = self.dataset.readDataFrame(tidx)
         return DataFrame(dataframe=df)
         
     def read_table(self):
         """
         Read data table from dataset.
         """
-        dt = self.dataset.getDataInfo().readTable()
+        dt = self.dataset.readTable()
         return np.datatable(dt)
         
     def griddata(self, varname='var', timeindex=0, levelindex=0, yindex=None, xindex=None):
@@ -335,7 +335,7 @@ class DimDataFile(object):
         
         :returns: (*int*) Time dimension length.
         """
-        return self.dataset.getDataInfo().getTimeNum()
+        return self.dataset.getTimeNum()
     
     def gettime(self, idx):
         """
@@ -345,7 +345,7 @@ class DimDataFile(object):
         
         :returns: (*datetime*) The time
         """
-        t = self.dataset.getDataInfo().getTimes().getDate(idx)
+        t = self.dataset.getTimes().getDate(idx)
         if t is None:
             return None
 
@@ -357,7 +357,7 @@ class DimDataFile(object):
         """
         Get time list.
         """
-        tt = self.dataset.getDataInfo().getTimes()
+        tt = self.dataset.getTimes()
         if tt is None:
             return None
 
@@ -372,9 +372,9 @@ class DimDataFile(object):
         
         :param big_endian: (*boolean*) Big endian or not.
         """
-        datatype = self.dataset.getDataInfo().getDataType()
+        datatype = self.dataset.getDataType()
         if datatype.isGrADS() or datatype == MeteoDataType.HYSPLIT_Conc:
-            self.dataset.getDataInfo().setBigEndian(big_endian)            
+            self.dataset.setBigEndian(big_endian)
             
     def tostation(self, varname, x, y, z, t):
         """

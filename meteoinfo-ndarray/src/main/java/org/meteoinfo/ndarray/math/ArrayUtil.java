@@ -22,6 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAmount;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -910,46 +911,6 @@ public class ArrayUtil {
      * @param step Step value
      * @return Array
      */
-    public static Array arrayRange_bak(Number start, Number stop, final Number step) {
-        if (stop == null) {
-            stop = start;
-            start = 0;
-        }
-        DataType dataType = ArrayUtil.objectsToType(new Object[]{
-            start,
-            stop,
-            step});
-        double startv = start.doubleValue();
-        double stopv = stop.doubleValue();
-        double stepv = step.doubleValue();
-        List<Object> data = new ArrayList<>();
-        if (dataType == DataType.FLOAT || dataType == DataType.DOUBLE) {
-            while (startv < stopv) {
-                data.add(startv);
-                startv = BigDecimalUtil.add(startv, stepv);
-            }
-        } else {
-            while (startv < stopv) {
-                data.add(startv);
-                startv += stepv;
-            }
-        }
-        int length = data.size();
-        Array a = Array.factory(dataType, new int[]{length});
-        for (int i = 0; i < length; i++) {
-            a.setObject(i, data.get(i));
-        }
-        return a;
-    }
-
-    /**
-     * Array range
-     *
-     * @param start Start value
-     * @param stop Stop value
-     * @param step Step value
-     * @return Array
-     */
     public static Array arrayRange(Number start, Number stop, final Number step) {
         if (stop == null) {
             stop = start;
@@ -1002,6 +963,60 @@ public class ArrayUtil {
             }
         }
         return a;
+    }
+
+    /**
+     * Create DateArray from datetime list
+     *
+     * @param dts Datetime list
+     * @return DateArray object
+     */
+    public static Array dateArray(List<LocalDateTime> dts) {
+        Array r = Array.factory(DataType.DATE, new int[]{dts.size()});
+        for (int i = 0; i < r.getSize(); i++) {
+            r.setDate(i, dts.get(i));
+        }
+
+        return r;
+    }
+
+    /**
+     * Array range
+     *
+     * @param start Start date time
+     * @param end End date time
+     * @param p Period
+     * @return Array
+     */
+    public static Array arrayRange(LocalDateTime start, LocalDateTime end, TemporalAmount p) {
+        List<LocalDateTime> dts = JDateUtil.getDateTimes(start, end, p);
+        return dateArray(dts);
+    }
+
+    /**
+     * Array range
+     *
+     * @param start Start date time
+     * @param tNum Date time number
+     * @param p Period
+     * @return Array
+     */
+    public static Array arrayRange(LocalDateTime start, int tNum, TemporalAmount p) {
+        List<LocalDateTime> dts = JDateUtil.getDateTimes(start, tNum, p);
+        return dateArray(dts);
+    }
+
+    /**
+     * Array range
+     *
+     * @param tNum Date time number
+     * @param end End date time
+     * @param p Period
+     * @return Array
+     */
+    public static Array arrayRange(int tNum, LocalDateTime end, TemporalAmount p) {
+        List<LocalDateTime> dts = JDateUtil.getDateTimes(tNum, end, p);
+        return dateArray(dts);
     }
 
     /**

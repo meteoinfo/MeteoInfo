@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.data.dimarray;
 
+import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;
@@ -671,7 +672,62 @@ public class Dimension {
      * @param v Value
      * @return Index
      */
-    public int getValueIndex(double v) {
+    public int getValueIndex(String v) {
+        if (this.dimValue.getDataType() == DataType.DATE) {
+            LocalDateTime ldt = JDateUtil.getDateTime(v);
+            return getValueIndex(ldt);
+        } else {
+            int idx = ArrayMath.asList(this.dimValue).indexOf(v);
+            return idx < 0 ? 0 : idx;
+        }
+    }
+
+    /**
+     * Get value index
+     *
+     * @param v Value
+     * @return Index
+     */
+    public int getValueIndex(LocalDateTime v) {
+        int idx = ArrayMath.asList(this.dimValue).indexOf(v);
+        if (idx < 0) {
+            idx = this.getLength() - 1;
+            if (getDeltaValue() > 0) {
+                for (int i = 0; i < this.getLength(); i++) {
+                    if (v.isBefore(this.dimValue.getDate(i))) {
+                        if (i == 0)
+                            idx = 0;
+                        else {
+                            idx = i;
+                        }
+                        break;
+                    }
+                }
+            } else {
+                for (int i = 0; i < this.getLength(); i++) {
+                    if (v.isAfter(this.dimValue.getDate(i))) {
+                        if (i == 0)
+                            idx = 0;
+                        else {
+                            idx = i - 1;
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        return idx;
+    }
+
+    /**
+     * Get value index
+     *
+     * @param n Value
+     * @return Index
+     */
+    public int getValueIndex(Number n) {
+        double v = n.doubleValue();
         int idx = ArrayMath.asList(this.dimValue).indexOf(v);
         if (idx < 0) {
             idx = this.getLength() - 1;
@@ -704,6 +760,30 @@ public class Dimension {
                     }
                 }
             }
+        }
+
+        return idx;
+    }
+
+    /**
+     * Get value index from data list
+     *
+     * @param vlist Data list
+     * @return Value index
+     */
+    public List<Integer> getValueIndex(List vlist) {
+        if (vlist.get(0) instanceof String && this.dimValue.getDataType() == DataType.DATE) {
+            List<LocalDateTime> tlist = new ArrayList<>();
+            for (int i = 0; i < vlist.size(); i++) {
+                tlist.add(JDateUtil.getDateTime((String) vlist.get(i)));
+            }
+            vlist = tlist;
+        }
+
+        List<Object> data = ArrayMath.asList(this.dimValue);
+        List<Integer> idx = new ArrayList<>();
+        for (int i = 0; i < vlist.size(); i++) {
+            idx.add(data.indexOf(vlist.get(i)));
         }
 
         return idx;

@@ -10,8 +10,9 @@ from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.geometry.geoprocess import GeometryUtil
 from org.meteoinfo.common import ResampleMethods
 from org.meteoinfo.common import PointD
+from org.meteoinfo.common.util import JDateUtil
 from org.meteoinfo.ndarray import Array, Range, MAMath, DataType
-from org.meteoinfo.data.dimarray import Dimension, DimensionType
+from org.meteoinfo.data.dimarray import DimensionType
 from java.lang import Double
 from java.util import ArrayList
 
@@ -21,34 +22,103 @@ import numbers
 import mipylib.miutil as miutil
 import mipylib.numeric as np
 from mipylib.numeric.core._ndarray import NDArray
+from mipylib.dataframe.indexing import LocIndexer
 from .accessor_dt import DateTimeAccessor
+from ._dimensions import Dimension, Dimensions
 
-nan = Double.NaN
+
+def date_range(start=None, end=None, periods=None, freq='D'):
+    """
+    Create DateTimeIndex by date range.
+
+    :param start: (*string or datetime*) Start date time.
+    :param end: (*string or datetime*) End date time.
+    :param periods: (*int*) Periods number.
+    :param freq: (*string*) Date time frequent value [ Y | M | D | h | min | s ].
+
+    :returns: (*DateTimeIndex*) DateTimeIndex
+    """
+    if start is not None:
+        start = JDateUtil.getDateTime(start)
+    if end is not None:
+        end = JDateUtil.getDateTime(end)
+    freq = JDateUtil.getPeriod(freq)
+
+    if start is None:
+        r = ArrayUtil.arrayRange(periods, end, freq)
+    elif end is None:
+        r = ArrayUtil.arrayRange(start, periods, freq)
+    else:
+        r = ArrayUtil.arrayRange(start, end, freq)
+
+    return NDArray(r)
 
 
 # Dimension array
 class DimArray(NDArray):
     
-    def __init__(self, array, dims=None, proj=ProjectionInfo.LONG_LAT):
-        if isinstance(array, NDArray):
-            array = array._array
-        super(DimArray, self).__init__(array)
+    def __init__(self, data, dims=None, coords=None, name=None, attrs=None, proj=ProjectionInfo.LONG_LAT):
+        data = np.asarray(data)
+        super(DimArray, self).__init__(data._array)
 
-        self.dims = None
         if dims is None or len(dims) == 0:
             dims = []
             for i in range(self.ndim):
-                dim = Dimension()
-                dim.setDimValues(range(self.shape[i]))
+                dim = Dimension('dim_{}'.format(str(i)), np.arange(self.shape[i]))
                 dims.append(dim)
 
-        for dim in dims:
-            self.adddim(dim)
+        if isinstance(dims, Dimensions):
+            self.dims = dims
+        else:
+            if isinstance(dims[0], basestring):
+                ndims = []
+                if coords is None:
+                    for i, dim in enumerate(dims):
+                        dim = Dimension(dim, np.arange(self.shape[i]))
+                        ndims.append(dim)
+                else:
+                    for i, dim in enumerate(dims):
+                        dim = Dimension(dim, coords[dim])
+                        ndims.append(dim)
+                dims = ndims
+            self.dims = Dimensions(dims)
 
+        self._name = name
+        self._attrs = attrs
         self.proj = proj
 
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self._name = value
+
+    @property
+    def attrs(self):
+        return self._attrs
+
+    def __repr__(self):
+        r = 'DimArray'
+        if self._name is not None:
+            r += ' {}'.format(self._name)
+        r += ' ('
+        for i, dim in enumerate(self.dims):
+            r += '{}: {}'.format(dim.name, dim.length)
+            if i < self.ndim - 1:
+                r += ', '
+        r += ')\n'
+        r += self.array.__repr__()
+        r += '\n'
+
+        return r
+
+    def __str__(self):
+        return self.__repr__()
+
     def __getitem__(self, indices):
-        if not isinstance(indices, tuple):
+        if not isinstance(indices, (tuple, list)):
             indices = [indices]
 
         #deal with Ellipsis
@@ -115,13 +185,13 @@ class DimArray(NDArray):
             yidx = -1
             for i in range(0, self.ndim):
                 dim = self.dims[i]
-                if dim.getDimType() == DimensionType.X:                    
+                if dim.type == DimensionType.X:
                     k = indices[i]
                     if isinstance(k, basestring):
                         xlims = k.split(':')
                         xlim = [float(xlims[0]), float(xlims[1])]
                         xidx = i
-                elif dim.getDimType() == DimensionType.Y:
+                elif dim.type == DimensionType.Y:
                     k = indices[i]
                     if isinstance(k, basestring):
                         ylims = k.split(':')
@@ -147,50 +217,50 @@ class DimArray(NDArray):
             if isinstance(k, basestring):
                 dim = self.dims[i]
                 kvalues = k.split(':')
-                sidx = dim.getValueIndex(float(kvalues[0]))
+                sidx = dim.value_index(float(kvalues[0]))
                 if len(kvalues) == 1:
                     indices[i] = sidx
                 else:
-                    eidx = dim.getValueIndex(float(kvalues[1]))
+                    eidx = dim.value_index(float(kvalues[1]))
                     if len(kvalues) == 2:
                         indices[i] = slice(sidx, eidx, 1)
                     else:
-                        step = int(float(kvalues[2]) / dim.getDeltaValue())
+                        step = int(float(kvalues[2]) / dim.delta_value())
                         indices[i] = slice(sidx, eidx, step)
             elif isinstance(k, (list, tuple, NDArray)):
                 if isinstance(k[0], datetime.datetime):
                     tlist = []
                     for tt in k:
                         sv = miutil.date2num(tt)
-                        idx = self.dims[i].getValueIndex(sv)
+                        idx = self.dims[i].value_index(sv)
                         tlist.append(idx)
                     indices[i] = tlist
             elif isinstance(k, slice):
                 if isinstance(k.start, basestring):
                     sv = float(k.start)
-                    sidx = self.dims[i].getValueIndex(sv)
+                    sidx = self.dims[i].value_index(sv)
                 elif isinstance(k.start, datetime.datetime):
                     sv = miutil.date2num(k.start)
-                    sidx = self.dims[i].getValueIndex(sv)
+                    sidx = self.dims[i].value_index(sv)
                 else:
                     sidx = k.start
 
                 if isinstance(k.stop, basestring):
                     ev = float(k.stop)
-                    eidx = self.dims[i].getValueIndex(ev)
+                    eidx = self.dims[i].value_index(ev)
                 elif isinstance(k.stop, datetime.datetime):
                     ev = miutil.date2num(k.stop)
-                    eidx = self.dims[i].getValueIndex(ev)
+                    eidx = self.dims[i].value_index(ev)
                 else:
                     eidx = k.stop
 
                 if isinstance(k.step, basestring):
                     nv = float(k.step) + self.dims[i].getDimValue()[0]
-                    nidx = self.dims[i].getValueIndex(nv)
+                    nidx = self.dims[i].value_index(nv)
                     step = nidx - sidx
                 elif isinstance(k.step, datetime.timedelta):
                     nv = miutil.date2num(k.start + k.step)
-                    nidx = self.dims[i].getValueIndex(nv)
+                    nidx = self.dims[i].value_index(nv)
                     step = nidx - sidx
                 else:
                     step = k.step
@@ -211,7 +281,7 @@ class DimArray(NDArray):
             k = indices[i]
             if isinstance(k, int):
                 if k < 0:
-                    k = self.dims[i].getLength() + k
+                    k = self.dims[i].length + k
                 sidx = k
                 if sidx >= self._shape[i]:
                     raise IndexError("index {} is out of bounds for axis {} with size {}".
@@ -255,7 +325,7 @@ class DimArray(NDArray):
                     k = NDArray(k)
                 ranges.append(k.asarray())
             else:
-                raise IndexError("index {} is not valid".format(key))
+                raise IndexError("index {} is not valid".format(k))
                 
             if isrange:
                 if sidx >= self.shape[i] or eidx >= self.shape[i]:
@@ -287,7 +357,7 @@ class DimArray(NDArray):
         else:
             if alllist:
                 r = ArrayMath.takeValues(self._array, ranges)
-                return NDArray(r)
+                #return NDArray(r)
             else:
                 r = ArrayMath.take(self._array, ranges)
 
@@ -313,6 +383,56 @@ class DimArray(NDArray):
         if onlyrange:
             data.base = self.get_base()
         return data
+
+    @property
+    def loc(self):
+        """
+        Return loc indexer.
+        """
+        return LocIndexer(self)
+
+    def _getitem_loc(self, key):
+        """
+        Get item by loc index.
+        """
+        if not isinstance(key, tuple):
+            key = (key, None)
+
+        indices = []
+        for k, dim in zip(key, self.dims):
+            if isinstance(k, slice):
+                sidx = None if k.start is None else dim.value_index(k.start)
+                eidx = None if k.stop is None else dim.value_index(k.stop) + 1
+                indices.append(slice(sidx, eidx))
+            else:
+                idx = dim.value_index(k)
+                indices.append(idx)
+
+        return self.__getitem__(indices)
+
+    def sel(self, **kwargs):
+        """
+        Return a new DimArray whose data is given by selecting index
+        labels along the specified dimension(s).
+        """
+        indices = []
+        for _ in range(self.ndim):
+            indices.append(slice(None))
+
+        for k, v in kwargs.items():
+            idx_dim, dim = self.dims.name_index(k)
+            if dim is None:
+                raise ValueError('Dimension {} not found'.format(k))
+
+            if isinstance(v, slice):
+                sidx = None if v.start is None else dim.value_index(v.start)
+                eidx = None if v.stop is None else dim.value_index(v.stop) + 1
+                indices[idx_dim] = slice(sidx, eidx)
+            else:
+                idx = dim.value_index(v)
+                indices[idx_dim] = idx
+
+        return self.__getitem__(indices)
 
     @property
     def array(self):
@@ -497,7 +617,7 @@ class DimArray(NDArray):
         
         :returns: (*int*) Dimension length.
         """
-        return self.dims[idx].getLength()
+        return self.dims[idx].length
         
     def dimvalue(self, idx=0, convert=False):
         """
@@ -511,12 +631,12 @@ class DimArray(NDArray):
         """
         dim = self.dims[idx]
         if convert:
-            if dim.getDimType() == DimensionType.T:
-                return miutil.nums2dates(dim.getDimValue())
+            if dim.type == DimensionType.T:
+                return miutil.nums2dates(dim.values)
             else:
-                return NDArray(self.dims[idx].getDimValue())
+                return dim.values
         else:
-            return NDArray(self.dims[idx].getDimValue())
+            return dim.values
         
     def setdimvalue(self, idx, dimvalue):
         """
@@ -525,10 +645,7 @@ class DimArray(NDArray):
         :param idx: (*int*) Dimension index.
         :param dimvalue: (*array_like*) Dimension value.
         """
-        if isinstance(dimvalue, NDArray):
-            self.dims[idx].setDimValue(dimvalue._array)
-        else:
-            self.dims[idx].setDimValues(dimvalue)
+        self.dims[idx].values = np.asarray(dimvalue)
         
     def setdimtype(self, idx, dimtype):
         """
@@ -546,7 +663,7 @@ class DimArray(NDArray):
             dtype = DimensionType.Z
         elif dimtype.upper() == 'T':
             dtype = DimensionType.T
-        self.dims[idx].setDimType(dtype)
+        self.dims[idx].type = dtype
         
     def adddim(self, dimvalue, dimtype=None, index=None):
         """
@@ -559,27 +676,18 @@ class DimArray(NDArray):
         if isinstance(dimvalue, Dimension):
             dim = dimvalue
         else:
-            if isinstance(dimvalue, (NDArray, DimArray)):
-                dimvalue = dimvalue.aslist()
-            dtype = DimensionType.OTHER
-            if not dimtype is None:
-                if dimtype.upper() == 'X':
-                    dtype = DimensionType.X
-                elif dimtype.upper() == 'Y':
-                    dtype = DimensionType.Y
-                elif dimtype.upper() == 'Z':
-                    dtype = DimensionType.Z
-                elif dimtype.upper() == 'T':
-                    dtype = DimensionType.T
-            dim = Dimension(dtype)
-            dim.setDimValues(dimvalue)
+            dim = Dimension(dimvalue, dimtype)
+
         if self.dims is None:
-            self.dims = [dim]
+            self.dims = Dimensions(dim)
         else:
+            dims = list(self.dims)
             if index is None:
-                self.dims.append(dim)
+                dims.append(dim)
             else:
-                self.dims.insert(index, dim)
+                dims.insert(index, dim)
+            self.dims = Dimensions(dims)
+
         self.ndim = len(self.dims)
         
     def addtdim(self, t):
@@ -589,13 +697,14 @@ class DimArray(NDArray):
         :param t: (*array_like*) datetime array.
         """
         if self.tdim() is None:
-            dim = Dimension(DimensionType.T)
             t = miutil.date2num(t)
-            dim.setDimValues([t])
+            dim = Dimension([t], DimensionType.T)
             if self.dims is None:
-                self.dims = [dim]
+                self.dims = Dimensions(dim)
             else:
-                self.dims.insert(0, dim)
+                dims = list(self.dims)
+                dims.insert(0, dim)
+                self.dims = Dimensions(dims)
             self.ndim = len(self.dims)
             ss = list(self.shape)
             ss.insert(0, 1)
@@ -608,7 +717,7 @@ class DimArray(NDArray):
         Get x dimension.
         """
         for dim in self.dims:
-            if dim.getDimType() == DimensionType.X:
+            if dim.type == DimensionType.X:
                 return dim        
         return None
         
@@ -617,7 +726,7 @@ class DimArray(NDArray):
         Get y dimension.
         """
         for dim in self.dims:
-            if dim.getDimType() == DimensionType.Y:
+            if dim.type == DimensionType.Y:
                 return dim        
         return None
         
@@ -626,7 +735,7 @@ class DimArray(NDArray):
         Get z dimension.
         """
         for dim in self.dims:
-            if dim.getDimType() == DimensionType.Z:
+            if dim.type == DimensionType.Z:
                 return dim        
         return None
         
@@ -638,7 +747,7 @@ class DimArray(NDArray):
             return None
 
         for dim in self.dims:
-            if dim.getDimType() == DimensionType.T:
+            if dim.type == DimensionType.T:
                 return dim        
         return None
         
@@ -649,7 +758,7 @@ class DimArray(NDArray):
         :param idx: (*int*) Dimension index.
         """
         dim = self.dims[idx]
-        if dim.getDimType() == DimensionType.X and self.proj.isLonLat():
+        if dim.type == DimensionType.X and self.proj.isLonLat():
             return True
         else:
             return False
@@ -661,7 +770,7 @@ class DimArray(NDArray):
         :param idx: (*int*) Dimension index.
         """
         dim = self.dims[idx]
-        if dim.getDimType() == DimensionType.Y and self.proj.isLonLat():
+        if dim.type == DimensionType.Y and self.proj.isLonLat():
             return True
         else:
             return False
@@ -681,7 +790,7 @@ class DimArray(NDArray):
         :param idx: (*int*) Dimension index.
         """
         dim = self.dims[idx]
-        if dim.getDimType() == DimensionType.T:
+        if dim.type == DimensionType.T:
             return True
         else:
             return False
@@ -725,8 +834,8 @@ class DimArray(NDArray):
         """
         r = self._array.reduce()
         dims = []
-        for dim in a.dims:
-            if dim.getLength() > 1:
+        for dim in self.dims:
+            if dim.length > 1:
                 dims.append(dim)
         return DimArray(r, dims, self.proj)
 

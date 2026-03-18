@@ -6968,6 +6968,28 @@ public class ArrayMath {
      * @return The returned array has the same type as a.
      */
     public static Array takeValues(Array a, List<Array> ranges) {
+        int n = ranges.size();
+        int[] shape = new int[n];
+        for (int i = 0; i < n; i++) {
+            shape[i] = (int) ranges.get(i).getSize();
+        }
+
+        Array r = Array.factory(a.getDataType(), shape);
+        IndexIterator rIter = r.getIndexIterator();
+        Index index = a.getIndex();
+        int[] current;
+        CartesianProductIterator iter = new CartesianProductIterator(ranges);
+        while (iter.hasNext()) {
+            current = iter.next();
+            index.set(current);
+            rIter.setObjectNext(a.getObject(index));
+        }
+
+        return r;
+    }
+
+    /*
+    public static Array takeValues(Array a, List<Array> ranges) {
         int n = a.getRank();
         Array bigArray = ranges.get(0).copyIfView();
         if (bigArray.getDataType().isBoolean()) {
@@ -7012,7 +7034,7 @@ public class ArrayMath {
         }
 
         return r;
-    }
+    }*/
 
     /**
      * Set section

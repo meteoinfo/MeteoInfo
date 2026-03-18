@@ -101,6 +101,16 @@ public class JythonUtil {
     }
 
     /**
+     * Convert Timestamp to LocalDateTime
+     *
+     * @param dt Timestamp object
+     * @return LocalDateTime object
+     */
+    public static LocalDateTime toDateTime(Timestamp dt) {
+        return dt.toLocalDateTime();
+    }
+
+    /**
      * Convert Java LocalDateTime object to Jython datetime object
      *
      * @param dt Java LocalDatetime object
@@ -139,5 +149,29 @@ public class JythonUtil {
         }
     }
 
-
+    /**
+     * Convert PyObject list to ArrayDate
+     * @param data PyObject list
+     * @return ArrayDate
+     */
+    public static Array toDateArray(List<Timestamp> data) {
+        if (data.get(0) instanceof List) {
+            int ndim = data.size();
+            int len = ((List) data.get(0)).size();
+            Array a = Array.factory(DataType.DATE, new int[]{ndim, len});
+            for (int i = 0; i < ndim; i++) {
+                List<Timestamp> d = (List) data.get(i);
+                for (int j = 0; j < len; j++) {
+                    a.setDate(i * len + j, toDateTime(d.get(j)));
+                }
+            }
+            return a;
+        } else {
+            Array a = Array.factory(DataType.DATE, new int[]{data.size()});
+            for (int i = 0; i < data.size(); i++) {
+                a.setDate(i, toDateTime(data.get(i)));
+            }
+            return a;
+        }
+    }
 }

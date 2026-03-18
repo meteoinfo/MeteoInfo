@@ -6,7 +6,7 @@
 #-----------------------------------------------------
 from org.meteoinfo.data.meteodata import MeteoDataType
 from org.meteoinfo.data.meteodata.netcdf import NCUtil
-from org.meteoinfo.data.dimarray import DimensionType, Dimension
+from org.meteoinfo.data.dimarray import DimensionType
 from org.meteoinfo.jython import JythonUtil
 from ucar.ma2 import DataType as NCDataType
 from ucar.nc2 import Attribute as NCAttribute
@@ -19,6 +19,7 @@ import mipylib.miutil as miutil
 import mipylib.numeric as np
 from mipylib.numeric.core._dtype import DataType
 from .util.ncutil import to_dtype
+from .dataarray import Dimension, Dimensions
 
 import datetime
 
@@ -35,12 +36,13 @@ class DimDataFile(object):
         self.ncfile = ncfile
         self._variables = []
         self._coordinates = []
-        if not dataset is None:
+        if dataset is not None:
             self.filename = dataset.getFileName()
             self.nvar = dataset.getVariableNum()
             self.fill_value = dataset.getMissingValue()
             self.proj = dataset.getProjectionInfo()
             self.projection = self.proj
+            self.dims = Dimensions.new_dimensions(self.dataset.getDimensions())
             for v in dataset.getVariables():
                 dim_var = DimVariable.factory(v, self)
                 self._variables.append(dim_var)
@@ -102,7 +104,7 @@ class DimDataFile(object):
         """
         Get dimensions
         """
-        return self.dataset.getDimensions()
+        return self.dims
 
     @property
     def dimnames(self):
@@ -111,11 +113,7 @@ class DimDataFile(object):
 
         :return: (*list of str*) Dimension names.
         """
-        names = []
-        for dim in self.dimensions:
-            names.append(dim.getName())
-
-        return names
+        return self.dims._fields
         
     def finddim(self, name):
         """
@@ -123,10 +121,7 @@ class DimDataFile(object):
         
         :name: (*string*) Dimension name
         """
-        for dim in self.dataset.getDimensions():
-            if name == dim.getShortName():
-                return dim
-        return None
+        return self.dims.name_index(name)[1]
 
     def dimlen(self, name):
         """
@@ -150,12 +145,12 @@ class DimDataFile(object):
         """
         dim = self.finddim(name)
         if convert:
-            if dim.getDimType() == DimensionType.T:
-                return miutil.nums2dates(dim.getDimValue())
+            if dim.type == DimensionType.T:
+                return miutil.nums2dates(dim.values)
             else:
-                return np.array(dim.getDimValue())
+                return dim.values
         else:
-            return np.array(dim.getDimValue())
+            return dim.values
         
     def attributes(self):
         """

@@ -5,7 +5,7 @@
 # Note: Jython
 #-----------------------------------------------------
 from org.meteoinfo.ndarray import Range, Array, MAMath
-from org.meteoinfo.data.dimarray import Dimension, DimensionType
+from org.meteoinfo.data.dimarray import DimensionType
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.common import PointD
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
@@ -17,8 +17,9 @@ from org.meteoinfo.data.meteodata.netcdf import NCUtil
 from org.meteoinfo.ndarray import DataType
 
 import mipylib.numeric as np
-from .dataarray import DimArray
+from .dataarray import DimArray, Dimensions, Dimension
 from .dataarray import DateTimeAccessor
+from mipylib.dataframe.indexing import LocIndexer
 import mipylib.miutil as miutil
 import datetime
 import numbers
@@ -86,7 +87,7 @@ class DimVariable(object):
             self._real_name = variable.getName()
             self._name = to_valid_variable_name(self._real_name)
             self.dtype = np.dtype.fromjava(variable.getDataType())
-            self.dims = variable.getDimensions()
+            self.dims = Dimensions.new_dimensions(variable.getDimensions())
             self.ndim = variable.getDimNumber()
             self.attributes = variable.getAttributes()
             self._coordinate = variable.isDimVar()
@@ -144,8 +145,8 @@ class DimVariable(object):
     def __len__(self):
         len = 1
         if not self._variable is None:
-            for dim in self._variable.getDimensions():
-                len = len * dim.getLength()            
+            for dim in self.dims:
+                len = len * dim.length
         return len
         
     def __str__(self):
@@ -154,7 +155,7 @@ class DimVariable(object):
             r = r + '):'
         else:
             for dim in self.dims:
-                dimname = dim.getShortName()
+                dimname = dim.name
                 if dimname is None:
                     dimname = 'null'
                 r = r + dimname + ','
@@ -181,7 +182,7 @@ class DimVariable(object):
                 inds.append(slice(None))
             indices = tuple(inds)
         
-        if not isinstance(indices, tuple):
+        if not isinstance(indices, (tuple, list)):
             indices = [indices]
 
         #deal with Ellipsis
@@ -215,7 +216,7 @@ class DimVariable(object):
             yidx = -1
             for i in range(0, self.ndim):
                 dim = self.dims[i]
-                if dim.getDimType() == DimensionType.X:                    
+                if dim.type == DimensionType.X:
                     k = indices[i]
                     if isinstance(k, basestring):
                         xlims = k.split(':')
@@ -224,7 +225,7 @@ class DimVariable(object):
                         else:
                             xlim = [float(xlims[0]), float(xlims[1])]
                         xidx = i
-                elif dim.getDimType() == DimensionType.Y:
+                elif dim.type == DimensionType.Y:
                     k = indices[i]
                     if isinstance(k, basestring):
                         ylims = k.split(':')
@@ -264,50 +265,50 @@ class DimVariable(object):
             if isinstance(k, basestring):
                 dim = self.dims[i]
                 kvalues = k.split(':')
-                sidx = dim.getValueIndex(float(kvalues[0]))
+                sidx = dim.value_index(float(kvalues[0]))
                 if len(kvalues) == 1:
                     indices[i] = sidx
                 else:
-                    eidx = dim.getValueIndex(float(kvalues[1]))
+                    eidx = dim.value_index(float(kvalues[1]))
                     if len(kvalues) == 2:
                         indices[i] = slice(sidx, eidx, 1)
                     else:
-                        step = int(float(kvalues[2]) / dim.getDeltaValue())
+                        step = int(float(kvalues[2]) / dim.delta_value())
                         indices[i] = slice(sidx, eidx, step)
             elif isinstance(k, (list, tuple, np.NDArray)):
                 if isinstance(k[0], datetime.datetime):
                     tlist = []
                     for tt in k:
                         sv = miutil.date2num(tt)
-                        idx = self.dims[i].getValueIndex(sv)
+                        idx = self.dims[i].value_index(sv)
                         tlist.append(idx)
                     indices[i] = tlist
             elif isinstance(k, slice):
                 if isinstance(k.start, basestring):
                     sv = float(k.start)
-                    sidx = self.dims[i].getValueIndex(sv)
+                    sidx = self.dims[i].value_index(sv)
                 elif isinstance(k.start, datetime.datetime):
                     sv = miutil.date2num(k.start)
-                    sidx = self.dims[i].getValueIndex(sv)
+                    sidx = self.dims[i].value_index(sv)
                 else:
                     sidx = k.start
 
                 if isinstance(k.stop, basestring):
                     ev = float(k.stop)
-                    eidx = self.dims[i].getValueIndex(ev)
+                    eidx = self.dims[i].value_index(ev)
                 elif isinstance(k.stop, datetime.datetime):
                     ev = miutil.date2num(k.stop)
-                    eidx = self.dims[i].getValueIndex(ev)
+                    eidx = self.dims[i].value_index(ev)
                 else:
                     eidx = k.stop
 
                 if isinstance(k.step, basestring):
-                    nv = float(k.step) + self.dims[i].getDimValue()[0]
-                    nidx = self.dims[i].getValueIndex(nv)
+                    nv = float(k.step) + self.dims[i].values[0]
+                    nidx = self.dims[i].value_index(nv)
                     step = nidx - sidx
                 elif isinstance(k.step, datetime.timedelta):
                     nv = miutil.date2num(k.start + k.step)
-                    nidx = self.dims[i].getValueIndex(nv)
+                    nidx = self.dims[i].value_index(nv)
                     step = nidx - sidx
                 else:
                     step = k.step
@@ -383,7 +384,7 @@ class DimVariable(object):
                 n = abs(eidx - sidx) + 1
                 size.append(n)                   
                 if n > 1:
-                    dim = self._variable.getDimension(i)
+                    dim = self.dims[i]
                     dim = dim.extract(sidx, eidx, step)
                     dims.append(dim)
                 stride.append(step) 
@@ -397,11 +398,11 @@ class DimVariable(object):
                 ranges.append(rr)
             else:
                 if isinstance(k, np.NDArray):
-                    dim = self._variable.getDimension(i)
+                    dim = self.dims[i]
                     dim = dim.extract(k._array)
                     dims.append(dim)
                 elif len(k) > 1:
-                    dim = self._variable.getDimension(i)
+                    dim = self.dims[i]
                     dim = dim.extract(k)
                     dims.append(dim)
 
@@ -424,6 +425,56 @@ class DimVariable(object):
                 array = np.array(rr)
             data = DimArray(array, dims, self.dataset.proj)
             return data
+
+    @property
+    def loc(self):
+        """
+        Return loc indexer.
+        """
+        return LocIndexer(self)
+
+    def _getitem_loc(self, key):
+        """
+        Get item by loc index.
+        """
+        if not isinstance(key, tuple):
+            key = (key, None)
+
+        indices = []
+        for k, dim in zip(key, self.dims):
+            if isinstance(k, slice):
+                sidx = None if k.start is None else dim.value_index(k.start)
+                eidx = None if k.stop is None else dim.value_index(k.stop) + 1
+                indices.append(slice(sidx, eidx))
+            else:
+                idx = dim.value_index(k)
+                indices.append(idx)
+
+        return self.__getitem__(indices)
+
+    def sel(self, **kwargs):
+        """
+        Return a new DimArray whose data is given by selecting index
+        labels along the specified dimension(s).
+        """
+        indices = []
+        for _ in range(self.ndim):
+            indices.append(slice(None))
+
+        for k, v in kwargs.items():
+            idx_dim, dim = self.dims.name_index(k)
+            if dim is None:
+                raise ValueError('Dimension {} not found'.format(k))
+
+            if isinstance(v, slice):
+                sidx = None if v.start is None else dim.value_index(v.start)
+                eidx = None if v.stop is None else dim.value_index(v.stop) + 1
+                indices[idx_dim] = slice(sidx, eidx)
+            else:
+                idx = dim.value_index(v)
+                indices[idx_dim] = idx
+
+        return self.__getitem__(indices)
     
     def read(self):
         """
@@ -571,7 +622,7 @@ class DimVariable(object):
 
         :return: Dimension length.
         """
-        return self.dims[idx].getLength()
+        return self.dims[idx].length
         
     def dimvalue(self, idx, convert=False):
         """
@@ -585,12 +636,12 @@ class DimVariable(object):
         """
         dim = self.dims[idx]
         if convert:
-            if dim.getDimType() == DimensionType.T:
-                return miutil.nums2dates(dim.getDimValue())
+            if dim.type == DimensionType.T:
+                return miutil.nums2dates(dim.values)
             else:
-                return np.array(dim.getDimValue())
+                return dim.values
         else:
-            return np.array(dim.getDimValue())
+            return dim.values
         
     def attrvalue(self, attr):
         """
@@ -607,25 +658,25 @@ class DimVariable(object):
         
     def xdim(self):
         for dim in self.dims:
-            if dim.getDimType() == DimensionType.X:
+            if dim.type == DimensionType.X:
                 return dim        
         return None
         
     def ydim(self):
         for dim in self.dims:
-            if dim.getDimType() == DimensionType.Y:
+            if dim.type == DimensionType.Y:
                 return dim        
         return None
         
     def zdim(self):
         for dim in self.dims:
-            if dim.getDimType() == DimensionType.Z:
+            if dim.type == DimensionType.Z:
                 return dim        
         return None
         
     def tdim(self):
         for dim in self.dims:
-            if dim.getDimType() == DimensionType.T:
+            if dim.type == DimensionType.T:
                 return dim        
         return None
         
@@ -942,7 +993,7 @@ class TDimVariable(object):
             times.append(miutil.date2num(t))
         tdim.setDimValues(times)
         dims[0] = tdim
-        self.dims = dims
+        self.dims = Dimensions.new_dimensions(dims)
         self.tnum = len(times)
 
     def __str__(self):
@@ -951,7 +1002,7 @@ class TDimVariable(object):
 
         r = str(self.dtype) + ' ' + self.name + '('
         for dim in self.dims:
-            dimname = dim.getShortName()
+            dimname = dim.name
             if dimname is None:
                 dimname = 'null'
             r = r + dimname + ','

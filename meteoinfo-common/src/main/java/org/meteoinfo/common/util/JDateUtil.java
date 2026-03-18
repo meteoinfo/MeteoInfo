@@ -423,7 +423,7 @@ public class JDateUtil {
      *
      * @param start Start date time
      * @param end End date time
-     * @param p Peroid
+     * @param p Period
      * @return Date time list
      */
     public static List<LocalDateTime> getDateTimes(LocalDateTime start, LocalDateTime end, TemporalAmount p) {
@@ -441,7 +441,7 @@ public class JDateUtil {
      *
      * @param start Start date time
      * @param tNum Date time number
-     * @param p Peroid
+     * @param p Period
      * @return Date time list
      */
     public static List<LocalDateTime> getDateTimes(LocalDateTime start, int tNum, TemporalAmount p) {
@@ -457,9 +457,9 @@ public class JDateUtil {
     /**
      * Get date time list
      *
-     * @param end End date time
      * @param tNum Date time number
-     * @param p Peroid
+     * @param end End date time
+     * @param p Period
      * @return Date time list
      */
     public static List<LocalDateTime> getDateTimes(int tNum, LocalDateTime end, TemporalAmount p) {
@@ -504,26 +504,4 @@ public class JDateUtil {
         return OffsetDateTime.of(datePart, timePart, zoneOffset).toLocalDateTime();
     }
 
-    /**
-     * Parse string to LocalDateTime
-     * @param dtStr The string
-     * @param formatter DateTimeFormatter
-     * @return LocalDateTime
-     */
-    public static LocalDateTime parseDateTime_bak(String dtStr, DateTimeFormatter formatter) {
-        TemporalAccessor ta = formatter.parse(dtStr);
-        if (ta.isSupported(ChronoField.HOUR_OF_DAY))
-
-            return LocalDateTime.from(ta);
-        else {
-            if (ta.isSupported(ChronoField.DAY_OF_MONTH))
-                return (LocalDate.from(ta)).atStartOfDay();
-            else if (ta.isSupported(ChronoField.MONTH_OF_YEAR)) {
-                return (LocalDate.of(ta.get(ChronoField.YEAR), ta.get(ChronoField.MONTH_OF_YEAR),
-                        1).atStartOfDay());
-            } else {
-                return (LocalDate.of(ta.get(ChronoField.YEAR), 1, 1).atStartOfDay());
-            }
-        }
-    }
 }

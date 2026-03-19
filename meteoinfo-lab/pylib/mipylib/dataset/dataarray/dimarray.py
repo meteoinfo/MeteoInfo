@@ -404,6 +404,8 @@ class DimArray(NDArray):
                 sidx = None if k.start is None else dim.value_index(k.start)
                 eidx = None if k.stop is None else dim.value_index(k.stop) + 1
                 indices.append(slice(sidx, eidx))
+            elif isinstance(k, (list, tuple, NDArray)) and isinstance(k[0], bool):
+                indices.append(k)
             else:
                 idx = dim.value_index(k)
                 indices.append(idx)
@@ -428,6 +430,8 @@ class DimArray(NDArray):
                 sidx = None if v.start is None else dim.value_index(v.start)
                 eidx = None if v.stop is None else dim.value_index(v.stop) + 1
                 indices[idx_dim] = slice(sidx, eidx)
+            elif isinstance(v, (list, tuple, NDArray)) and isinstance(v[0], bool):
+                indices[idx_dim] = v
             else:
                 idx = dim.value_index(v)
                 indices[idx_dim] = idx

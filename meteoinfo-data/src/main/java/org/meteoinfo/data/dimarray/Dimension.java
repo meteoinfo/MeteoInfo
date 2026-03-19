@@ -826,6 +826,36 @@ public class Dimension {
     }
 
     /**
+     * Get whether the dimension values are monotonic
+     * @return Monotonic or not
+     */
+    public boolean isMonotonic() {
+        // Track whether the array could still be decreasing or increasing
+        boolean isDecreasing = true;
+        boolean isIncreasing = true;
+
+        // Traverse the array once, comparing adjacent elements
+        for (int i = 0; i < dimValue.getSize() - 1; i++) {
+            if (dimValue.getDouble(i) < dimValue.getDouble(i + 1)) {
+                // A decrease violates non-decreasing order
+                isDecreasing = false;
+            }
+            if (dimValue.getDouble(i) > dimValue.getDouble(i + 1)) {
+                // An increase violates non-increasing order
+                isIncreasing = false;
+            }
+
+            // Early termination: if neither property holds, the array is not monotonic
+            if (!isDecreasing && !isIncreasing) {
+                return false;
+            }
+        }
+
+        // The array is monotonic if at least one of the two properties holds
+        return true;
+    }
+
+    /**
      * Reverse the dimension values
      */
     public void reverse() {

@@ -2,6 +2,7 @@
 from org.meteoinfo.data.dimarray import Dimension as JDimension, DimensionType
 from org.meteoinfo.jython import JythonUtil
 import mipylib.numeric as np
+from .accessor_dt import DateTimeAccessor
 
 
 def dimension(value, name='null', type=None):
@@ -97,10 +98,21 @@ class Dimension(object):
     def type(self, value):
         self._type = value
 
+    @property
+    def dt(self):
+        a = self._values
+        if a.dtype == np.dtype.datetime:
+            return DateTimeAccessor(a)
+        else:
+            return None
+
     def __repr__(self):
         r = '{}: {}\n'.format(self._name, self.length)
         r += self._values.__repr__()
         return r
+
+    def is_monotonic(self):
+        return self._dim.isMonotonic()
 
     def value_index(self, value):
         idx = self._dim.getValueIndex(value)

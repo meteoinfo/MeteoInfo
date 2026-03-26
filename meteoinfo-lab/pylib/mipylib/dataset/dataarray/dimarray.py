@@ -412,6 +412,31 @@ class DimArray(NDArray):
 
         return self.__getitem__(indices)
 
+    def isel(self, **kwargs):
+        """
+        Return a new DimArray whose data is given by selecting index
+        along the specified dimension(s).
+        """
+        indices = []
+        for _ in range(self.ndim):
+            indices.append(slice(None))
+
+        for k, v in kwargs.items():
+            idx_dim, dim = self.dims.name_index(k)
+            if dim is None:
+                raise ValueError('Dimension {} not found'.format(k))
+
+            if isinstance(v, slice):
+                sidx = None if v.start is None else v.start
+                eidx = None if v.stop is None else v.stop
+                indices[idx_dim] = slice(sidx, eidx)
+            elif isinstance(v, (list, tuple, NDArray)) and isinstance(v[0], bool):
+                indices[idx_dim] = v
+            else:
+                indices[idx_dim] = v
+
+        return self.__getitem__(indices)
+
     def sel(self, **kwargs):
         """
         Return a new DimArray whose data is given by selecting index
@@ -428,8 +453,11 @@ class DimArray(NDArray):
 
             if isinstance(v, slice):
                 sidx = None if v.start is None else dim.value_index(v.start)
-                eidx = None if v.stop is None else dim.value_index(v.stop) + 1
-                indices[idx_dim] = slice(sidx, eidx)
+                eidx = None if v.stop is None else dim.value_index(v.stop)
+                if sidx <= eidx:
+                    indices[idx_dim] = slice(sidx, eidx + 1)
+                else:
+                    indices[idx_dim] = slice(sidx, eidx - 1, -1)
             elif isinstance(v, (list, tuple, NDArray)) and isinstance(v[0], bool):
                 indices[idx_dim] = v
             else:

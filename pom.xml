@@ -55,7 +55,7 @@
         <tag>master</tag>
         <url>https://github.com/meteoinfo/MeteoInfo</url>
         <connection>scm:git:git@github.com:meteoinfo/MeteoInfo.git</connection>
-        <developerConnection>scm:git:git@github.com:meteoinfo/MeteoInfo.git</developerConnection>
+        <developerConnection>scm:git:ssh@github.com:meteoinfo/MeteoInfo.git</developerConnection>
     </scm>
     <developers>
         <developer>
@@ -71,7 +71,7 @@
             <plugin>
                 <groupId>org.sonatype.central</groupId>
                 <artifactId>central-publishing-maven-plugin</artifactId>
-                <version>0.8.0</version>
+                <version>0.9.0</version>
                 <extensions>true</extensions>
                 <configuration>
                     <!-- The name matches with Maven setting server id -->
@@ -93,7 +93,7 @@
                 </configuration>
             </plugin>
 
-            <!--<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>3.3.0</version>
@@ -104,9 +104,9 @@
                         <goals><goal>jar</goal></goals>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
 
-            <!-- <plugin>
+             <plugin>
                 <inherited>true</inherited>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -123,7 +123,20 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals><goal>sign</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
 
             <!-- add flatten-maven-plugin -->
             <plugin>

@@ -1395,12 +1395,6 @@ def mean(x, axis=None, keepdims=False):
                 a.append(xx.asarray())
             r = ArrayMath.mean(a)
             return x[0].array_wrap(r)
-        elif isinstance(x[0], PyStationData):
-            a = []
-            for xx in x:
-                a.append(xx.data)
-            r = DataMath.mean(a)
-            return PyStationData(r)
         else:
             x = array(x)
     r = x.mean(axis, keepdims)
@@ -1496,13 +1490,7 @@ def median(x, axis=None):
             for xx in x:
                 a.append(xx.asarray())
             r = ArrayMath.median(a)
-            return x[0]._unfunc_finalize(r)
-        elif isinstance(x[0], PyStationData):
-            a = []
-            for xx in x:
-                a.append(xx.data)
-            r = DataMath.median(a)
-            return PyStationData(r)
+            return x[0].array_wrap(r)
         else:
             x = array(x)
     r = x.median(axis)

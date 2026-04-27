@@ -380,8 +380,8 @@ def maskout(data, mask, x=None, y=None):
 
     if x is None or y is None:
         if isinstance(data, DimArray):
-            x = data.dimvalue(data.ndim - 1)
-            y = data.dimvalue(data.ndim - 2)
+            x = data.dims[-1].values
+            y = data.dims[-2].values
         else:
             return None
 
@@ -444,8 +444,8 @@ def maskin(data, mask, x=None, y=None):
 
     if x is None or y is None:
         if isinstance(data, DimArray):
-            x = data.dimvalue(data.ndim - 1)
-            y = data.dimvalue(data.ndim - 2)
+            x = data.dims[-1].values
+            y = data.dims[-2].values
         else:
             return None
 

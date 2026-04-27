@@ -929,9 +929,9 @@ class DimArray(NDArray):
             r = ArrayMath.maskout(self.asarray(), mask.asarray())
             return DimArray(NDArray(r), self.dims, self.proj)
         else:
-            x = self.dims[1].getDimValue()
-            y = self.dims[0].getDimValue()
-            xy = ArrayUtil.meshgrid([x,y])
+            x = self.dims[-1].values
+            y = self.dims[-2].values
+            xy = ArrayUtil.meshgrid([x._array, y._array])
             x = xy[0]
             y = xy[1]
             if not isinstance(mask, (list, ArrayList)):
@@ -952,8 +952,8 @@ class DimArray(NDArray):
             r = ArrayMath.maskin(self.asarray(), mask.asarray())
             return DimArray(r, self.dims, self.proj)
         else:
-            x = self.dimvalue(1)
-            y = self.dimvalue(0)
+            x = self.dims[-1].values
+            y = self.dims[-2].values
             if not isinstance(mask, (list, ArrayList)):
                 mask = [mask]
             r = GeometryUtil.maskin(self._array, x._array, y._array, mask)

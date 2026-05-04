@@ -1,17 +1,15 @@
 package org.meteoinfo.math.optimize;
 
-import org.bytedeco.javacpp.DoublePointer;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 
-import static org.bytedeco.openblas.global.openblas.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 /**
  * Linear programming solver with an interface aligned to SciPy's linprog.
- * Internally uses a two‑phase simplex method accelerated by OpenBLAS.
+ * Now supports arbitrary variable bounds (including free variables).
  */
 public class LinearProgram {
 
@@ -43,61 +41,50 @@ public class LinearProgram {
         this.bounds = bounds;
     }
 
-    public LinearProgram(double[] c,
-                         double[][] A_ub, double[] b_ub,
-                         double[][] A_eq, double[] b_eq,
-                         double[][] bounds, String method) {
-        this.c = c.clone();
-        this.A_ub = (A_ub != null) ? A_ub : new double[0][];
-        this.b_ub = (b_ub != null) ? b_ub : new double[0];
-        this.A_eq = (A_eq != null) ? A_eq : new double[0][];
-        this.b_eq = (b_eq != null) ? b_eq : new double[0];
-        this.bounds = bounds;
+public LinearProgram(double[] c,
+                     double[][] A_ub, double[] b_ub,
+                     double[][] A_eq, double[] b_eq,
+                     double[][] bounds, String method) {
+        this(c, A_ub, b_ub, A_eq, b_eq, bounds);
         this.method = method;
     }
 
-    public LinearProgram(Array ca, Array A_uba, Array b_uba, Array A_eqa, Array b_eqa, List<List<Double>> bounds,
-                         String method) {
+    public LinearProgram(Array ca, Array A_uba, Array b_uba, Array A_eqa, Array b_eqa,
+                         List<List<Double>> bounds, String method) {
         this((double[]) ca.get1DJavaArray(double.class),
-            A_uba == null ? null : (double[][]) ArrayUtil.copyToNDJavaArray_Double(A_uba),
-            b_uba == null ? null : (double[]) b_uba.get1DJavaArray(double.class),
-            A_eqa == null ? null : (double[][]) ArrayUtil.copyToNDJavaArray_Double(A_eqa),
-            b_eqa == null ? null : (double[]) b_eqa.get1DJavaArray(double.class),
-            (double[][]) bounds.stream().map(innerList -> innerList.stream()
-                    .mapToDouble(Double::doubleValue)
-                    .toArray())
-                    .toArray(double[][]::new),
-            method);
+                A_uba == null ? null : (double[][]) ArrayUtil.copyToNDJavaArray_Double(A_uba),
+                b_uba == null ? null : (double[]) b_uba.get1DJavaArray(double.class),
+                A_eqa == null ? null : (double[][]) ArrayUtil.copyToNDJavaArray_Double(A_eqa),
+                b_eqa == null ? null : (double[]) b_eqa.get1DJavaArray(double.class),
+                (double[][]) bounds.stream().map(innerList -> innerList.stream()
+                                .mapToDouble(Double::doubleValue)
+                                .toArray())
+                        .toArray(double[][]::new),
+                method);
     }
 
     public Result solve() {
         try {
-            // Convert to standard
             StandardForm sf = convertToStandard();
 
-            // Solve with a solver
             LinProgSolver solver = LinProgSolver.factory(sf.c, sf.A, sf.b, method);
             double[] y = solver.solve();
             double obj = solver.getObjectiveValue();
 
-            // Fix sign for simplex (returns maximization value)
+            // Simplex returns maximization value → flip sign
             if ("simplex".equalsIgnoreCase(method)) obj = -obj;
 
-            // Map back
+            // Recover original variables
             double[] x = new double[c.length];
-            for (int j = 0; j < sf.nOrig; j++) {
-                int origIdx = sf.origIdx[j];
+            for (int k = 0; k < sf.nTotal; k++) {
+                int origIdx = sf.origIdx[k];
                 if (origIdx >= 0) {
-                    x[origIdx] = y[j] + (sf.shift != null ? sf.shift[origIdx] : 0);
+                    x[origIdx] += sf.coeff[k] * y[k] + sf.constantPerCol[k];
                 }
             }
 
-            // Add back the constant term from variable shifting
-            double constant = 0.0;
-            for (int j = 0; j < sf.nOrig; j++) {
-                constant += c[j] * sf.shift[j];
-            }
-            obj += constant;
+            // Add constant offset from variable transformations
+            obj += sf.objectiveConstant;
 
             Result res = new Result();
             res.success = true;
@@ -116,169 +103,244 @@ public class LinearProgram {
     }
 
     /**
-     * Converts user‑provided problem to standard form:
-     *    minimize    c_std^T y
-     *    subject to  A_std y = b_std,  y >= 0.
-     *
-     * Lower bounds are shifted to zero via y_j = x_j - lb_j.
-     * Upper bounds become extra equality rows with a slack variable.
-     * Inequalities become equalities by adding slack (+1) or surplus (-1) variables.
-     * Equalities are kept as they are (after possible RHS sign flip to ensure b_std >= 0).
+     * Converts the user‑friendly problem into standard form.
+     * Handles all bound types: finite, one‑sided, and free.
      */
     private StandardForm convertToStandard() {
         int nOrig = c.length;
-        double[] shift = new double[nOrig];
-        List<double[]> rows = new ArrayList<>();
-        List<Double> rhsList = new ArrayList<>();
-        List<Integer> rowTypes = new ArrayList<>(); // 1 = slack, -1 = surplus, 0 = equality
+        List<ColInfo> colList = new ArrayList<>();
+        List<Double> objCoeffs = new ArrayList<>();
+        double objConst = 0.0;
 
-        // Process bounds and upper bounds
+        // Upper bounds that become explicit constraints
+        List<double[]> upperRows = new ArrayList<>();
+        List<Double> upperRHS = new ArrayList<>();
+
+        // ---------- 1. Process each original variable ----------
         for (int j = 0; j < nOrig; j++) {
             double lb = (bounds != null && j < bounds.length) ? bounds[j][0] : 0.0;
             double ub = (bounds != null && j < bounds.length) ? bounds[j][1] : Double.POSITIVE_INFINITY;
-            if (Double.isInfinite(lb)) throw new UnsupportedOperationException("Free variables not supported.");
-            if (Math.abs(lb) > 1e-12) {
-                shift[j] = lb;
-                ub -= lb;
-            }
-            // Upper bound constraint: y_j <= ub => y_j + s = ub
-            if (ub < Double.POSITIVE_INFINITY) {
-                double[] row = new double[nOrig];
-                row[j] = 1.0;
-                rows.add(row);
-                rhsList.add(ub);
-                rowTypes.add(1); // slack
+
+            if (lb > Double.NEGATIVE_INFINITY && ub < Double.POSITIVE_INFINITY) {
+                // Both finite: shift to zero, add upper constraint if needed
+                double shift = lb;
+                double newUb = ub - lb;
+                colList.add(new ColInfo(j, 1.0, shift));
+                objCoeffs.add(c[j]);           // minimization coefficient stays the same (x = y + shift)
+                objConst += c[j] * shift;
+
+                if (newUb < Double.POSITIVE_INFINITY) {
+                    double[] row = new double[colList.size()]; // will be extended later
+                    row[colList.size() - 1] = 1.0;
+                    upperRows.add(row);
+                    upperRHS.add(newUb);
+                }
+
+            } else if (lb > Double.NEGATIVE_INFINITY && ub == Double.POSITIVE_INFINITY) {
+                // Only lower bound: shift
+                double shift = lb;
+                colList.add(new ColInfo(j, 1.0, shift));
+                objCoeffs.add(c[j]);
+                objConst += c[j] * shift;
+
+            } else if (lb == Double.NEGATIVE_INFINITY && ub < Double.POSITIVE_INFINITY) {
+                // Only upper bound: substitute x = ub - y
+                colList.add(new ColInfo(j, -1.0, ub));
+                objCoeffs.add(-c[j]);          // since c[j]*x = c[j]*(ub - y) = c[j]*ub - c[j]*y
+                objConst += c[j] * ub;
+
+            } else if (lb == Double.NEGATIVE_INFINITY && ub == Double.POSITIVE_INFINITY) {
+                // Free variable: split x = x⁺ - x⁻
+                colList.add(new ColInfo(j, 1.0, 0.0));
+                colList.add(new ColInfo(j, -1.0, 0.0));
+                objCoeffs.add(c[j]);           // coefficient for x⁺
+                objCoeffs.add(-c[j]);          // coefficient for x⁻
+                // no constant term
+
+            } else {
+                throw new UnsupportedOperationException("Unsupported bound combination.");
             }
         }
 
-        // Inequalities
+        int nNew = colList.size();          // columns before slacks
+
+        // ---------- 2. Process original constraints ----------
+        List<double[]> consRows = new ArrayList<>();
+        List<Double> consRHS = new ArrayList<>();
+        List<Integer> rowType = new ArrayList<>(); // 1=slack, -1=surplus, 0=equality
+
+        // Upper bound rows (each gets a slack variable)
+        for (int r = 0; r < upperRows.size(); r++) {
+            double[] oldRow = upperRows.get(r);
+            double[] newRow = new double[nNew];
+            System.arraycopy(oldRow, 0, newRow, 0, oldRow.length);
+            consRows.add(newRow);
+            consRHS.add(upperRHS.get(r));
+            rowType.add(1);   // slack
+        }
+
+        // Inequality constraints: A_ub * x <= b_ub
         if (A_ub != null) {
             for (int i = 0; i < A_ub.length; i++) {
-                double[] row = new double[nOrig];
+                double[] row = new double[nNew];
                 double rhs = b_ub[i];
-                for (int j = 0; j < nOrig; j++) {
-                    row[j] = A_ub[i][j];
-                    rhs -= A_ub[i][j] * shift[j];
+                for (int k = 0; k < nNew; k++) {
+                    ColInfo info = colList.get(k);
+                    row[k] += A_ub[i][info.origIdx] * info.coeff;
                 }
+                // Subtract constant contributions
+                for (int j = 0; j < nOrig; j++) {
+                    double constJ = 0.0;
+                    for (ColInfo ci : colList) {
+                        if (ci.origIdx == j) {
+                            constJ = ci.constant;
+                            break;
+                        }
+                    }
+                    rhs -= A_ub[i][j] * constJ;
+                }
+
                 if (rhs >= -1e-12) {
-                    rows.add(row); rhsList.add(rhs); rowTypes.add(1); // slack
+                    consRows.add(row);
+                    consRHS.add(rhs);
+                    rowType.add(1);      // slack
                 } else {
-                    for (int j = 0; j < nOrig; j++) row[j] = -row[j];
+                    for (int k = 0; k < nNew; k++) row[k] = -row[k];
                     rhs = -rhs;
-                    rows.add(row); rhsList.add(rhs); rowTypes.add(-1); // surplus
+                    consRows.add(row);
+                    consRHS.add(rhs);
+                    rowType.add(-1);     // surplus
                 }
             }
         }
 
-        // Equalities
+        // Equality constraints: A_eq * x == b_eq
         if (A_eq != null) {
             for (int i = 0; i < A_eq.length; i++) {
-                double[] row = new double[nOrig];
+                double[] row = new double[nNew];
                 double rhs = b_eq[i];
+                for (int k = 0; k < nNew; k++) {
+                    ColInfo info = colList.get(k);
+                    row[k] += A_eq[i][info.origIdx] * info.coeff;
+                }
                 for (int j = 0; j < nOrig; j++) {
-                    row[j] = A_eq[i][j];
-                    rhs -= A_eq[i][j] * shift[j];
+                    double constJ = 0.0;
+                    for (ColInfo ci : colList) {
+                        if (ci.origIdx == j) {
+                            constJ = ci.constant;
+                            break;
+                        }
+                    }
+                    rhs -= A_eq[i][j] * constJ;
                 }
                 if (rhs < -1e-12) {
-                    for (int j = 0; j < nOrig; j++) row[j] = -row[j];
+                    for (int k = 0; k < nNew; k++) row[k] = -row[k];
                     rhs = -rhs;
                 }
-                rows.add(row); rhsList.add(rhs); rowTypes.add(0);
+                consRows.add(row);
+                consRHS.add(rhs);
+                rowType.add(0);   // equality (no extra variable)
             }
         }
 
-        // Count slack/surplus variables
+        // ---------- 3. Count slack/surplus and build final matrices ----------
         int nSlack = 0, nSurplus = 0;
-        for (int t : rowTypes) {
+        for (int t : rowType) {
             if (t == 1) nSlack++;
-            if (t == -1) nSurplus++;
+            else if (t == -1) nSurplus++;
         }
 
-        int m = rows.size();
-        int nTotal = nOrig + nSlack + nSurplus;
-        double[][] A_std = new double[m][nTotal];
-        double[] b_std = new double[m];
+        int nTotal = nNew + nSlack + nSurplus;
+        double[][] A_std = new double[consRows.size()][nTotal];
+        double[] b_std = new double[consRows.size()];
         double[] c_std = new double[nTotal];
-        int[] origIdx = new int[nTotal]; // maps standard column to original variable index
+        int[] origIdx = new int[nTotal];
+        double[] coeff = new double[nTotal];
+        double[] constantPerCol = new double[nTotal];
 
-        // c_std: original c (minimization) for original vars, zeros for added
-        for (int j = 0; j < nOrig; j++) {
-            c_std[j] = c[j];
-            origIdx[j] = j;
-        }
-        for (int j = nOrig; j < nTotal; j++) {
-            c_std[j] = 0.0;
-            origIdx[j] = -1;
+        // Fill columns from variable transformations
+        for (int k = 0; k < nNew; k++) {
+            ColInfo info = colList.get(k);
+            c_std[k] = objCoeffs.get(k);
+            origIdx[k] = info.origIdx;
+            coeff[k] = info.coeff;
+            constantPerCol[k] = info.constant;
         }
 
-        int slkCnt = 0, surCnt = 0;
-        for (int i = 0; i < m; i++) {
-            System.arraycopy(rows.get(i), 0, A_std[i], 0, nOrig);
-            int type = rowTypes.get(i);
+        // Slack / surplus columns
+        for (int k = nNew; k < nTotal; k++) {
+            c_std[k] = 0.0;
+            origIdx[k] = -1;
+            coeff[k] = 0.0;
+            constantPerCol[k] = 0.0;
+        }
+
+        int slkIdx = 0, surIdx = 0;
+        for (int i = 0; i < consRows.size(); i++) {
+            System.arraycopy(consRows.get(i), 0, A_std[i], 0, nNew);
+            int type = rowType.get(i);
             if (type == 1) {
-                A_std[i][nOrig + slkCnt++] = 1.0;
+                A_std[i][nNew + slkIdx++] = 1.0;
             } else if (type == -1) {
-                A_std[i][nOrig + nSlack + surCnt++] = -1.0;
+                A_std[i][nNew + nSlack + surIdx++] = -1.0;
             }
-            b_std[i] = rhsList.get(i);
+            b_std[i] = consRHS.get(i);
         }
 
         StandardForm sf = new StandardForm();
         sf.c = c_std;
         sf.A = A_std;
         sf.b = b_std;
-        sf.shift = shift;
         sf.origIdx = origIdx;
+        sf.coeff = coeff;
+        sf.constantPerCol = constantPerCol;
+        sf.nTotal = nTotal;
         sf.nOrig = nOrig;
+        sf.objectiveConstant = objConst;
         return sf;
+    }
+
+    // ---------- Helper classes ----------
+
+    /** Stores information about one column in the standard form. */
+    private static class ColInfo {
+        int origIdx;       // original variable index
+        double coeff;      // multiplier for recovery (1 or -1)
+        double constant;   // constant added to the original variable from this column
+
+        ColInfo(int origIdx, double coeff, double constant) {
+            this.origIdx = origIdx;
+            this.coeff = coeff;
+            this.constant = constant;
+        }
     }
 
     static class StandardForm {
         double[] c;
         double[][] A;
         double[] b;
-        double[] shift;
         int[] origIdx;
+        double[] coeff;
+        double[] constantPerCol;
+        int nTotal;
         int nOrig;
+        double objectiveConstant;
     }
-
 
     // ---------------- Example usage ----------------
     public static void main(String[] args) {
-        // Original problem: maximize 5x1 + 7x2
-        // s.t. 2x1 + 3x2 <= 18
-        //      x1 + 2x2 >= 8
-        //      x1 + x2  = 6
-        //      x1, x2 >= 0
-        // Equivalent minimization: min -5x1 -7x2
-        /*double[] c = {-5, -7};
-        double[][] A_ub = {
-                {2, 3},                // 2x1 + 3x2 <= 18
-                {-1, -2}               // -x1 -2x2 <= -8  ->  x1 + 2x2 >= 8
-        };
-        double[] b_ub = {18, -8};
-        double[][] A_eq = {{1, 1}};
-        double[] b_eq = {6};
-        double[][] bounds = {
-                {0, Double.POSITIVE_INFINITY},
-                {0, Double.POSITIVE_INFINITY}
-        };*/
-
         double[] c = {-1, 4};
         double[][] A_ub = {
                 {-3, 1},
                 {1, 2}
         };
         double[] b_ub = {6, 4};
-        double[][] A_eq = null;   // no equality constraints
-        double[] b_eq = null;
         double[][] bounds = {
-                {-10000, Double.POSITIVE_INFINITY},
-                {-3, Double.POSITIVE_INFINITY}
+                {Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY},  // free variable x1
+                {-3, Double.POSITIVE_INFINITY}                          // x2 >= -3
         };
 
-        //LinearProgram solver = new LinearProgram(c, A_ub, b_ub, A_eq, b_eq, bounds,"interior-point");
-        LinearProgram solver = new LinearProgram(c, A_ub, b_ub, A_eq, b_eq, bounds);
+        LinearProgram solver = new LinearProgram(c, A_ub, b_ub, null, null, bounds);
         Result res = solver.solve();
         System.out.println("Success: " + res.success);
         System.out.println("Message: " + res.message);

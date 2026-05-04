@@ -235,7 +235,7 @@ def linprog(c, A_ub=None, b_ub=None, A_eq=None, b_eq=None,
     for b in bounds:
         _b = []
         if b[0] is None:
-            _b.append(-1.797e+308)
+            _b.append(float('-inf'))
         else:
             _b.append(float(b[0]))
         if b[1] is None:

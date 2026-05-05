@@ -1,4 +1,4 @@
-from org.meteoinfo.math.optimize import LinearProgram
+from org.meteoinfo.math.optimize import LinearProgram, HighsSolver
 
 from ..core import numeric as np
 from ._optimize import OptimizeResult
@@ -9,7 +9,7 @@ __all__ = ['linprog']
 
 
 def linprog(c, A_ub=None, b_ub=None, A_eq=None, b_eq=None,
-            bounds=(0, None), method='simplex'):
+            bounds=(0, None), method='highs'):
     r"""
     Linear programming: minimize a linear objective function subject to linear
     equality and inequality constraints.
@@ -249,7 +249,10 @@ def linprog(c, A_ub=None, b_ub=None, A_eq=None, b_eq=None,
         if n > 1:
             _bounds = _bounds * n
 
-    lp = LinearProgram(c._array, A_ub, b_ub, A_eq, b_eq, _bounds, method)
-    r = lp.solve()
+    if method.lower() == 'highs':
+        r = HighsSolver.solve(c._array, A_ub, b_ub, A_eq, b_eq, _bounds)
+    else:
+        lp = LinearProgram(c._array, A_ub, b_ub, A_eq, b_eq, _bounds, method)
+        r = lp.solve()
 
     return OptimizeResult(x=np.array(r.x), fun=r.fun, message=r.message, success=r.success)

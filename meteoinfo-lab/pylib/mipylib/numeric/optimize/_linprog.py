@@ -244,7 +244,12 @@ def linprog(c, A_ub=None, b_ub=None, A_eq=None, b_eq=None,
             _b.append(float(b[1]))
         _bounds.append(_b)
 
+    if len(_bounds) == 1:
+        n = len(c)
+        if n > 1:
+            _bounds = _bounds * n
+
     lp = LinearProgram(c._array, A_ub, b_ub, A_eq, b_eq, _bounds, method)
     r = lp.solve()
 
-    return OptimizeResult(x=r.x, fun=r.fun, message=r.message, success=r.success)
+    return OptimizeResult(x=np.array(r.x), fun=r.fun, message=r.message, success=r.success)

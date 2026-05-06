@@ -5,20 +5,19 @@ import com.google.ortools.linearsolver.MPConstraint;
 import com.google.ortools.linearsolver.MPObjective;
 import com.google.ortools.linearsolver.MPSolver;
 import com.google.ortools.linearsolver.MPVariable;
-
-import java.util.Arrays;
-import java.util.List;
 import org.meteoinfo.math.optimize.LinearProgram.Result;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Linear programming solver that uses Google OR‑Tools with the
- * HiGHS backend (the same engine as SciPy's linprog).
+ * CBC backend.
  *
- * <p>Interface aligned with SciPy's {@code linprog}:
  * <pre>{@code
- *   Result res = LinprogORTools.solve(
+ *   Result res = CBCSolver.solve(
  *       c,          // objective coefficients (minimization)
  *       A_ub, b_ub, // inequality constraints A_ub * x <= b_ub
  *       A_eq, b_eq, // equality constraints   A_eq * x == b_eq
@@ -26,7 +25,7 @@ import org.meteoinfo.ndarray.math.ArrayUtil;
  *   );
  * }</pre>
  */
-public class HighsSolver {
+public class CBCSolver {
 
     // Load OR‑Tools native libraries once
     static {
@@ -77,12 +76,12 @@ public class HighsSolver {
         try {
             int nVars = c.length;
 
-            // Create the HiGHS solver via OR‑Tools
-            MPSolver solver = MPSolver.createSolver("HIGHS");
+            // Create the CBC solver via OR‑Tools
+            MPSolver solver = MPSolver.createSolver("CBC");
             if (solver == null) {
                 Result res = new Result();
                 res.success = false;
-                res.message = "Could not create HiGHS solver (check OR‑Tools native libraries).";
+                res.message = "Could not create CBC solver (check OR‑Tools native libraries).";
                 return res;
             }
             solver.suppressOutput();
@@ -144,7 +143,7 @@ public class HighsSolver {
                     x[j] = vars[j].solutionValue();
                 }
                 result.success = true;
-                result.message = "Optimization terminated successfully (HiGHS via OR‑Tools).";
+                result.message = "Optimization terminated successfully (CBC via OR-Tools).";
                 result.x = x;
                 result.fun = objective.value();
             } else {
@@ -159,7 +158,7 @@ public class HighsSolver {
         } catch (Exception e) {
             Result res = new Result();
             res.success = false;
-            res.message = "Exception in OR‑Tools LP solver: " + e.getMessage();
+            res.message = "Exception in OR-Tools LP solver: " + e.getMessage();
             res.x = null;
             res.fun = Double.NaN;
             return res;
@@ -181,7 +180,7 @@ public class HighsSolver {
                 {0, Double.POSITIVE_INFINITY}
         };
 
-        Result res = HighsSolver.solve(c, A_ub, b_ub, null, null, bounds);
+        Result res = CBCSolver.solve(c, A_ub, b_ub, null, null, bounds);
         System.out.println("Success: " + res.success);
         System.out.println("Message: " + res.message);
         System.out.println("x = " + Arrays.toString(res.x));

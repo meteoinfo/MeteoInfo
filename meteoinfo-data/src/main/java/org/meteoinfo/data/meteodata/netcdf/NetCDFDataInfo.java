@@ -3187,6 +3187,20 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
      * @param origin The origin array
      * @param size The size array
      * @param stride The stride array
+     * @return Array data
+     */
+    @Override
+    public Array read(String varName, int[] origin, int[] size, int[] stride) {
+        return read(varName, origin, size, stride, true);
+    }
+
+    /**
+     * Read array data of the variable
+     *
+     * @param varName Variable name
+     * @param origin The origin array
+     * @param size The size array
+     * @param stride The stride array
      * @param unpack Unpack data or not
      * @return Array data
      */

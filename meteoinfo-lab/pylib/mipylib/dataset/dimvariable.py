@@ -86,6 +86,8 @@ class DimVariable(object):
         if not variable is None:
             self._real_name = variable.getName()
             self._name = to_valid_variable_name(self._real_name)
+            if self._name == 'projection':
+                self._name = '_projection'
             self.dtype = np.dtype.fromjava(variable.getDataType())
             self.dims = Dimensions.new_dimensions(variable.getDimensions())
             self.ndim = variable.getDimNumber()
@@ -771,7 +773,7 @@ class StructureVariable(DimVariable):
         self._parent_variable = parent_variable
 
         if dataset is not None:
-            datainfo = dataset.dataset.getDataInfo()
+            datainfo = dataset.dataset
             if not datainfo.isOpened():
                 datainfo.reOpen()
 
@@ -841,7 +843,7 @@ class MemberVariable(DimVariable):
         self._parent_variable = parent_variable
 
         if dataset is not None:
-            datainfo = dataset.dataset.getDataInfo()
+            datainfo = dataset.dataset
             if not datainfo.isOpened():
                 datainfo.reOpen()
 
@@ -1019,11 +1021,10 @@ class TDimVariable(object):
         self.dtype = np.dtype.fromjava(variable.getDataType())
         self.ndim = variable.getDimNumber()
         dims = variable.getDimensions()
-        tdim = Dimension(DimensionType.T)
         times = []
         for t in self.dataset.times:
             times.append(miutil.date2num(t))
-        tdim.setDimValues(times)
+        tdim = Dimension('time', times, DimensionType.T)
         dims[0] = tdim
         self.dims = Dimensions.new_dimensions(dims)
         self.tnum = len(times)
@@ -1184,6 +1185,6 @@ class TDimVariable(object):
                 return aa
 
             dims = aa.dims
-            dims[0].setDimValues(times)
+            dims[0].values = times
             r = DimArray(data, dims, aa.proj)
             return r

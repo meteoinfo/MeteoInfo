@@ -84,7 +84,7 @@ class Dimension(object):
 
     @values.setter
     def values(self, value):
-        self._values = value
+        self._values = np.asarray(value)
 
     @property
     def length(self):
@@ -141,12 +141,13 @@ class Dimensions(tuple):
         for arg in args:
             if not isinstance(arg, Dimension):
                 raise TypeError("values must by Dimension object")
-            cls._fields.append(arg.name)
+            if arg.name is not None:
+                cls._fields.append(arg.name)
 
         instance = super(Dimensions, cls).__new__(cls, args)
         instance._fields = cls._fields
-        for naem, dim in zip(instance._fields, instance):
-            instance.__setattr__(naem, dim)
+        for name, dim in zip(instance._fields, instance):
+            instance.__setattr__(name, dim)
 
         return instance
 
@@ -155,9 +156,23 @@ class Dimensions(tuple):
     def new_dimensions(cls, jdims):
         dims = []
         for jdim in jdims:
-            dims.append(Dimension.new_dimension(jdim))
+            if isinstance(jdim, Dimension):
+                dims.append(jdim)
+            else:
+                dims.append(Dimension.new_dimension(jdim))
 
         return Dimensions(dims)
+
+
+    def add_dim(self, dim):
+        """
+        Add a dimension.
+        :param dim: The dimension to add.
+        """
+        if dim.name is not None:
+            self.__add__(dim)
+            self._fields.append(dim.name)
+            self.__setattr__(dim.name, dim)
 
 
     def __repr__(self):

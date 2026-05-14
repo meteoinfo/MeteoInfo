@@ -131,7 +131,7 @@ class DimDataFile(object):
 
         :return: Dimension length.
         """
-        return self.finddim(name).getLength()
+        return self.finddim(name).length
 
     def dimvalue(self, name, convert=False):
         """
@@ -855,7 +855,7 @@ class DimDataFiles(list):
     def __getitem__(self, key):
         if isinstance(key, str):
             #print key
-            return TDimVariable(self[0].dataset.getDataInfo().getVariable(key), self)
+            return TDimVariable(self[0].dataset.getVariable(key), self)
         else:
             return list.__getitem__(self, key)
 

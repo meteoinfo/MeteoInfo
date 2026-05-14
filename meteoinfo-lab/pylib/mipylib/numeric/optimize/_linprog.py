@@ -1,4 +1,4 @@
-from org.meteoinfo.math.optimize import LinearProgram, GLOPSolver
+from org.meteoinfo.math.optimize import LinearProgram
 
 from ..core import numeric as np
 from ._optimize import OptimizeResult
@@ -6,6 +6,11 @@ from numbers import Number
 
 
 __all__ = ['linprog']
+
+
+_use_ortools = False
+if _use_ortools:
+    from org.meteoinfo.math.optimize import GLOPSolver
 
 
 def linprog(c, A_ub=None, b_ub=None, A_eq=None, b_eq=None,
@@ -250,7 +255,10 @@ def linprog(c, A_ub=None, b_ub=None, A_eq=None, b_eq=None,
             _bounds = _bounds * n
 
     if method.lower() == 'highs':
-        r = GLOPSolver.solve(c._array, A_ub, b_ub, A_eq, b_eq, _bounds)
+        if _use_ortools:
+            r = GLOPSolver.solve(c._array, A_ub, b_ub, A_eq, b_eq, _bounds)
+        else:
+            raise NotImplementedError('{} method is not implemented.'.format(method))
     else:
         lp = LinearProgram(c._array, A_ub, b_ub, A_eq, b_eq, _bounds, method)
         r = lp.solve()

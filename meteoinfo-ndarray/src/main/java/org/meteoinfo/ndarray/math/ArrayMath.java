@@ -9193,21 +9193,69 @@ public class ArrayMath {
      * @return The maximum of x1 and x2, element-wise.
      */
     public static Array maximum(Array x1, Array x2) {
-        DataType dt = commonType(x1.getDataType(), x2.getDataType());
+        int broadcast = broadcastCheck(x1, x2);
+        switch (broadcast) {
+            case 0:
+                DataType dt = commonType(x1.getDataType(), x2.getDataType());
+                Array r = Array.factory(dt, x1.getShape());
+                if (x1.getIndexPrivate().isFastIterator() && x2.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < r.getSize(); i++) {
+                        r.setObject(i, Math.max(x1.getDouble(i), x2.getDouble(i)));
+                    }
+                } else {
+                    IndexIterator iterX1 = x1.getIndexIterator();
+                    IndexIterator iterX2 = x2.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    while (iterX1.hasNext()) {
+                        iterR.setObjectNext(Math.max(iterX1.getDoubleNext(), iterX2.getDoubleNext()));
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(x1, x2);
+                dt = commonType(x1.getDataType(), x2.getDataType());
+                r = Array.factory(dt, shape);
+                Index index = r.getIndex();
+                Index aindex = x1.getIndex();
+                Index bindex = x2.getIndex();
+                int n = r.getRank();
+                int na = x1.getRank();
+                int nb = x2.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    r.setObject(i, Math.max(x1.getDouble(aindex), x2.getDouble(bindex)));
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Element-wise maximum of array elements.
+     *
+     * @param x1 Array 1
+     * @param x2 Number 2
+     * @return The maximum of x1 and x2, element-wise.
+     */
+    public static Array maximum(Array x1, Number x2) {
+        DataType dt = commonType(x1.getDataType(), DataType.getType(x2.getClass()));
         Array r = Array.factory(dt, x1.getShape());
-        if (x1.getIndexPrivate().isFastIterator() && x2.getIndexPrivate().isFastIterator()) {
+        double v = x2.doubleValue();
+        if (x1.getIndexPrivate().isFastIterator()) {
             for (int i = 0; i < r.getSize(); i++) {
-                r.setObject(i, Math.max(x1.getDouble(i), x2.getDouble(i)));
+                r.setObject(i, Math.max(x1.getDouble(i), v));
             }
         } else {
             IndexIterator iterX1 = x1.getIndexIterator();
-            IndexIterator iterX2 = x2.getIndexIterator();
             IndexIterator iterR = r.getIndexIterator();
             while (iterX1.hasNext()) {
-                iterR.setObjectNext(Math.max(iterX1.getDoubleNext(), iterX2.getDoubleNext()));
+                iterR.setObjectNext(Math.max(iterX1.getDoubleNext(), v));
             }
         }
-
         return r;
     }
 
@@ -9219,36 +9267,104 @@ public class ArrayMath {
      * @return The maximum of x1 and x2, element-wise.
      */
     public static Array fmax(Array x1, Array x2) {
-        DataType dt = commonType(x1.getDataType(), x2.getDataType());
+        int broadcast = broadcastCheck(x1, x2);
+        double v1, v2;
+        switch (broadcast) {
+            case 0:
+                DataType dt = commonType(x1.getDataType(), x2.getDataType());
+                Array r = Array.factory(dt, x1.getShape());
+                if (x1.getIndexPrivate().isFastIterator() && x2.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < r.getSize(); i++) {
+                        v1 = x1.getDouble(i);
+                        v2 = x2.getDouble(i);
+                        if (Double.isNaN(v1)) {
+                            r.setObject(i, v2);
+                        } else if (Double.isNaN(v2)) {
+                            r.setObject(i, v1);
+                        } else {
+                            r.setObject(i, Math.max(v1, v2));
+                        }
+                    }
+                } else {
+                    IndexIterator iterX1 = x1.getIndexIterator();
+                    IndexIterator iterX2 = x2.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    while (iterX1.hasNext()) {
+                        v1 = iterX1.getDoubleNext();
+                        v2 = iterX2.getDoubleNext();
+                        if (Double.isNaN(v1)) {
+                            iterR.setObjectNext(v2);
+                        } else if (Double.isNaN(v2)) {
+                            iterR.setObjectNext(v1);
+                        } else {
+                            iterR.setObjectNext(Math.max(v1, v2));
+                        }
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(x1, x2);
+                dt = commonType(x1.getDataType(), x2.getDataType());
+                r = Array.factory(dt, shape);
+                Index index = r.getIndex();
+                Index aindex = x1.getIndex();
+                Index bindex = x2.getIndex();
+                int n = r.getRank();
+                int na = x1.getRank();
+                int nb = x2.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    v1 = x1.getDouble(aindex);
+                    v2 = x2.getDouble(bindex);
+                    if (Double.isNaN(v1)) {
+                        r.setObject(i, v2);
+                    } else if (Double.isNaN(v2)) {
+                        r.setObject(i, v1);
+                    } else {
+                        r.setObject(i, Math.max(v1, v2));
+                    }
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Element-wise maximum of array elements, ignores NaNs.
+     *
+     * @param x1 Array 1
+     * @param x2 Number 2
+     * @return The maximum of x1 and x2, element-wise.
+     */
+    public static Array fmax(Array x1, Number x2) {
+        DataType dt = commonType(x1.getDataType(), DataType.getType(x2.getClass()));
         Array r = Array.factory(dt, x1.getShape());
-        if (x1.getIndexPrivate().isFastIterator() && x2.getIndexPrivate().isFastIterator()) {
+        double v = x2.doubleValue();
+        if (x1.getIndexPrivate().isFastIterator()) {
             for (int i = 0; i < r.getSize(); i++) {
                 if (Double.isNaN(x1.getDouble(i))) {
-                    r.setObject(i, x2.getDouble(i));
-                } else if (Double.isNaN(x2.getDouble(i))) {
-                    r.setObject(i, x1.getDouble(i));
+                    r.setObject(i, v);
                 } else {
-                    r.setObject(i, Math.max(x1.getDouble(i), x2.getDouble(i)));
+                    r.setObject(i, Math.max(x1.getDouble(i), v));
                 }
             }
         } else {
             IndexIterator iterX1 = x1.getIndexIterator();
-            IndexIterator iterX2 = x2.getIndexIterator();
             IndexIterator iterR = r.getIndexIterator();
-            double v1, v2;
+            double v1;
             while (iterX1.hasNext()) {
                 v1 = iterX1.getDoubleNext();
-                v2 = iterX2.getDoubleNext();
                 if (Double.isNaN(v1)) {
-                    iterR.setObjectNext(v2);
-                } else if (Double.isNaN(v2)) {
-                    iterR.setObjectNext(v1);
+                    iterR.setObjectNext(v);
                 } else {
-                    iterR.setObjectNext(Math.max(v1, v2));
+                    iterR.setObjectNext(Math.max(v1, v));
                 }
             }
         }
-
         return r;
     }
 
@@ -9260,21 +9376,69 @@ public class ArrayMath {
      * @return The minimum of x1 and x2, element-wise.
      */
     public static Array minimum(Array x1, Array x2) {
-        DataType dt = commonType(x1.getDataType(), x2.getDataType());
+        int broadcast = broadcastCheck(x1, x2);
+        switch (broadcast) {
+            case 0:
+                DataType dt = commonType(x1.getDataType(), x2.getDataType());
+                Array r = Array.factory(dt, x1.getShape());
+                if (x1.getIndexPrivate().isFastIterator() && x2.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < r.getSize(); i++) {
+                        r.setObject(i, Math.min(x1.getDouble(i), x2.getDouble(i)));
+                    }
+                } else {
+                    IndexIterator iterX1 = x1.getIndexIterator();
+                    IndexIterator iterX2 = x2.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    while (iterX1.hasNext()) {
+                        iterR.setObjectNext(Math.min(iterX1.getDoubleNext(), iterX2.getDoubleNext()));
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(x1, x2);
+                dt = commonType(x1.getDataType(), x2.getDataType());
+                r = Array.factory(dt, shape);
+                Index index = r.getIndex();
+                Index aindex = x1.getIndex();
+                Index bindex = x2.getIndex();
+                int n = r.getRank();
+                int na = x1.getRank();
+                int nb = x2.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    r.setObject(i, Math.min(x1.getDouble(aindex), x2.getDouble(bindex)));
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Element-wise minimum of array elements.
+     *
+     * @param x1 Array 1
+     * @param x2 Number 2
+     * @return The minimum of x1 and x2, element-wise.
+     */
+    public static Array minimum(Array x1, Number x2) {
+        DataType dt = commonType(x1.getDataType(), DataType.getType(x2.getClass()));
         Array r = Array.factory(dt, x1.getShape());
-        if (x1.getIndexPrivate().isFastIterator() && x2.getIndexPrivate().isFastIterator()) {
+        double v = x2.doubleValue();
+        if (x1.getIndexPrivate().isFastIterator()) {
             for (int i = 0; i < r.getSize(); i++) {
-                r.setObject(i, Math.min(x1.getDouble(i), x2.getDouble(i)));
+                r.setObject(i, Math.min(x1.getDouble(i), v));
             }
         } else {
             IndexIterator iterX1 = x1.getIndexIterator();
-            IndexIterator iterX2 = x2.getIndexIterator();
             IndexIterator iterR = r.getIndexIterator();
             while (iterX1.hasNext()) {
-                iterR.setObjectNext(Math.min(iterX1.getDoubleNext(), iterX2.getDoubleNext()));
+                iterR.setObjectNext(Math.min(iterX1.getDoubleNext(), v));
             }
         }
-
         return r;
     }
 
@@ -9286,36 +9450,104 @@ public class ArrayMath {
      * @return The minimum of x1 and x2, element-wise.
      */
     public static Array fmin(Array x1, Array x2) {
-        DataType dt = commonType(x1.getDataType(), x2.getDataType());
+        int broadcast = broadcastCheck(x1, x2);
+        double v1, v2;
+        switch (broadcast) {
+            case 0:
+                DataType dt = commonType(x1.getDataType(), x2.getDataType());
+                Array r = Array.factory(dt, x1.getShape());
+                if (x1.getIndexPrivate().isFastIterator() && x2.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < r.getSize(); i++) {
+                        v1 = x1.getDouble(i);
+                        v2 = x2.getDouble(i);
+                        if (Double.isNaN(v1)) {
+                            r.setObject(i, v2);
+                        } else if (Double.isNaN(v2)) {
+                            r.setObject(i, v1);
+                        } else {
+                            r.setObject(i, Math.min(v1, v2));
+                        }
+                    }
+                } else {
+                    IndexIterator iterX1 = x1.getIndexIterator();
+                    IndexIterator iterX2 = x2.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    while (iterX1.hasNext()) {
+                        v1 = iterX1.getDoubleNext();
+                        v2 = iterX2.getDoubleNext();
+                        if (Double.isNaN(v1)) {
+                            iterR.setObjectNext(v2);
+                        } else if (Double.isNaN(v2)) {
+                            iterR.setObjectNext(v1);
+                        } else {
+                            iterR.setObjectNext(Math.min(v1, v2));
+                        }
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(x1, x2);
+                dt = commonType(x1.getDataType(), x2.getDataType());
+                r = Array.factory(dt, shape);
+                Index index = r.getIndex();
+                Index aindex = x1.getIndex();
+                Index bindex = x2.getIndex();
+                int n = r.getRank();
+                int na = x1.getRank();
+                int nb = x2.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    v1 = x1.getDouble(aindex);
+                    v2 = x2.getDouble(bindex);
+                    if (Double.isNaN(v1)) {
+                        r.setObject(i, v2);
+                    } else if (Double.isNaN(v2)) {
+                        r.setObject(i, v1);
+                    } else {
+                        r.setObject(i, Math.min(v1, v2));
+                    }
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Element-wise minimum of array elements, ignores NaNs.
+     *
+     * @param x1 Array 1
+     * @param x2 Number 2
+     * @return The minimum of x1 and x2, element-wise.
+     */
+    public static Array fmin(Array x1, Number x2) {
+        DataType dt = commonType(x1.getDataType(), DataType.getType(x2.getClass()));
         Array r = Array.factory(dt, x1.getShape());
-        if (x1.getIndexPrivate().isFastIterator() && x2.getIndexPrivate().isFastIterator()) {
+        double v = x2.doubleValue();
+        if (x1.getIndexPrivate().isFastIterator()) {
             for (int i = 0; i < r.getSize(); i++) {
                 if (Double.isNaN(x1.getDouble(i))) {
-                    r.setObject(i, x2.getDouble(i));
-                } else if (Double.isNaN(x2.getDouble(i))) {
-                    r.setObject(i, x1.getDouble(i));
+                    r.setObject(i, v);
                 } else {
-                    r.setObject(i, Math.min(x1.getDouble(i), x2.getDouble(i)));
+                    r.setObject(i, Math.min(x1.getDouble(i), v));
                 }
             }
         } else {
             IndexIterator iterX1 = x1.getIndexIterator();
-            IndexIterator iterX2 = x2.getIndexIterator();
             IndexIterator iterR = r.getIndexIterator();
-            double v1, v2;
+            double v1;
             while (iterX1.hasNext()) {
                 v1 = iterX1.getDoubleNext();
-                v2 = iterX2.getDoubleNext();
                 if (Double.isNaN(v1)) {
-                    iterR.setObjectNext(v2);
-                } else if (Double.isNaN(v2)) {
-                    iterR.setObjectNext(v1);
+                    iterR.setObjectNext(v);
                 } else {
-                    iterR.setObjectNext(Math.min(v1, v2));
+                    iterR.setObjectNext(Math.min(v1, v));
                 }
             }
         }
-
         return r;
     }
 

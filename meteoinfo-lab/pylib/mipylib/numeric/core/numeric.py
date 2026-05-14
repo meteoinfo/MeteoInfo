@@ -33,10 +33,11 @@ pi = Math.PI
 e = Math.E
 inf = Double.POSITIVE_INFINITY
 nan = Double.NaN
+eps = sys.float_info.epsilon
 newaxis = None
 
 __all__ = [
-    'pi','e','inf','nan','acos','abs','all','allclose','any','arange','arange1',
+    'pi','e','inf','nan','eps','acos','abs','all','allclose','any','arange','arange1',
     'argmin','argmax','argsort','array','array_split','amax','amin','asanyarray','asarray',
     'arcsin','asin','asmiarray','atleast_1d','atleast_2d','arctan','atan',
     'arctan2','atan2','average','histogram','broadcast_to','cdiff','ceil',
@@ -627,7 +628,7 @@ def abs(x):
     :param x: (*array_like*) Input array.
 
     :returns: An array containing the absolute value of each element in x.
-        For complex input, a + ib, the absolute value is \sqrt{ a^2 + b^2 }.
+        For complex input, a + ib, the absolute value is \\sqrt{ a^2 + b^2 }.
     """
     if isinstance(x, list):
         x = array(x)
@@ -1510,15 +1511,23 @@ def maximum(x1, x2):
     
     :returns: The maximum of x1 and x2, element-wise. Returns scalar if both x1 and x2 are scalars.
     """
-    if isinstance(x1, list):
+    if isinstance(x1, numbers.Number) and isinstance(x2, numbers.Number):
+        return __builtin__.max(x1, x2)
+
+    if isinstance(x1, (list, tuple)):
         x1 = array(x1)
-    if isinstance(x2, list):
+
+    if isinstance(x2, (list, tuple)):
         x2 = array(x2)
+
     if isinstance(x1, NDArray):
-        r = ArrayMath.maximum(x1.asarray(), x2.asarray())
+        x2 = x2._array if isinstance(x2, NDArray) else x2
+        r = ArrayMath.maximum(x1._array, x2)
         return x1.array_wrap(r)
     else:
-        return max(x1, x2)
+        r = ArrayMath.maximum(x2._array, x1)
+        return x2.array_wrap(r)
+
         
 def fmax(x1, x2):
     """
@@ -1535,15 +1544,28 @@ def fmax(x1, x2):
     
     :returns: The maximum of x1 and x2, element-wise. Returns scalar if both x1 and x2 are scalars.
     """
-    if isinstance(x1, list):
+    if isinstance(x1, numbers.Number) and isinstance(x2, numbers.Number):
+        if math.isnan(x1):
+            return x2
+        elif math.isnan(x2):
+            return x1
+        else:
+            return __builtin__.max(x1, x2)
+
+    if isinstance(x1, (list, tuple)):
         x1 = array(x1)
-    if isinstance(x2, list):
+
+    if isinstance(x2, (list, tuple)):
         x2 = array(x2)
+
     if isinstance(x1, NDArray):
-        r = ArrayMath.fmax(x1.asarray(), x2.asarray())
+        x2 = x2._array if isinstance(x2, NDArray) else x2
+        r = ArrayMath.fmax(x1._array, x2)
         return x1.array_wrap(r)
     else:
-        return max(x1, x2)
+        r = ArrayMath.fmax(x2._array, x1)
+        return x2.array_wrap(r)
+
         
 def minimum(x1, x2):
     """
@@ -1559,15 +1581,23 @@ def minimum(x1, x2):
     
     :returns: The minimum of x1 and x2, element-wise. Returns scalar if both x1 and x2 are scalars.
     """
-    if isinstance(x1, list):
+    if isinstance(x1, numbers.Number) and isinstance(x2, numbers.Number):
+        return __builtin__.min(x1, x2)
+
+    if isinstance(x1, (list, tuple)):
         x1 = array(x1)
-    if isinstance(x2, list):
+
+    if isinstance(x2, (list, tuple)):
         x2 = array(x2)
+
     if isinstance(x1, NDArray):
-        r = ArrayMath.minimum(x1.asarray(), x2.asarray())
+        x2 = x2._array if isinstance(x2, NDArray) else x2
+        r = ArrayMath.minimum(x1._array, x2)
         return x1.array_wrap(r)
     else:
-        return min(x1, x2)
+        r = ArrayMath.minimum(x2._array, x1)
+        return x2.array_wrap(r)
+
         
 def fmin(x1, x2):
     """
@@ -1584,15 +1614,28 @@ def fmin(x1, x2):
     
     :returns: The minimum of x1 and x2, element-wise. Returns scalar if both x1 and x2 are scalars.
     """
-    if isinstance(x1, list):
+    if isinstance(x1, numbers.Number) and isinstance(x2, numbers.Number):
+        if math.isnan(x1):
+            return x2
+        elif math.isnan(x2):
+            return x1
+        else:
+            return __builtin__.min(x1, x2)
+
+    if isinstance(x1, (list, tuple)):
         x1 = array(x1)
-    if isinstance(x2, list):
+
+    if isinstance(x2, (list, tuple)):
         x2 = array(x2)
+
     if isinstance(x1, NDArray):
-        r = ArrayMath.fmin(x1.asarray(), x2.asarray())
+        x2 = x2._array if isinstance(x2, NDArray) else x2
+        r = ArrayMath.fmin(x1._array, x2)
         return x1.array_wrap(r)
     else:
-        return min(x1, x2)
+        r = ArrayMath.fmin(x2._array, x1)
+        return x2.array_wrap(r)
+
         
 def min(a, axis=None):
     """

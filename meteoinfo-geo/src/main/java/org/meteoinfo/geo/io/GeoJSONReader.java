@@ -83,6 +83,19 @@ public class GeoJSONReader {
     }
 
     /**
+     * Create a VectorLayer from GeoJSON feature collection
+     * @param features The feature collection
+     * @param name Layer name
+     * @return VectorLayer object
+     */
+    public static VectorLayer read(FeatureCollection features, String name) {
+        VectorLayer layer = read(features);
+        layer.setLayerName(name);
+
+        return layer;
+    }
+
+    /**
      * Create a VectorLayer from GeoJSON string
      * @param json The GeoJSON string
      * @return VectorLayer object
@@ -101,7 +114,11 @@ public class GeoJSONReader {
     public static VectorLayer read(File file) {
         FeatureCollection features = (FeatureCollection) GeoJSONFactory.create(file);
 
-        return read(features);
+        String fileName = file.getName();
+        int dotIndex = fileName.lastIndexOf('.');
+        String nameWithoutExt = (dotIndex > 0) ? fileName.substring(0, dotIndex) : fileName;
+
+        return read(features, nameWithoutExt);
     }
 
 }

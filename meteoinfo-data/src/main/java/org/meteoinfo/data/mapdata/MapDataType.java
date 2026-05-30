@@ -18,4 +18,5 @@ public enum MapDataType {
     GRADS,
     ESRI_ASCII_GRID,
     SURFER_ASCII_GRID,
+    GEO_JSON
 }

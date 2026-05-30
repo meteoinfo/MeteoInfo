@@ -427,6 +427,7 @@ public class GeoJSONUtil {
                         color = ColorUtil.getColor(color, alpha);
                     }
                     cb.setColor(color);
+                    cb.setDrawFill(true);
                 }
                 if (properties.containsKey("stroke")) {
                     Color color = ColorUtil.parseToColor((String) properties.get("stroke"));

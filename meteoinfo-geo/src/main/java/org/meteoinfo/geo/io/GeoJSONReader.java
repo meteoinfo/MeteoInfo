@@ -12,9 +12,38 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.ndarray.DataType;
 
 import java.awt.*;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Map;
 
 public class GeoJSONReader {
+
+    public static boolean isGeoJsonQuick(File file) {
+        try {
+            // only read first 1KB
+            byte[] bytes = new byte[1024];
+            Files.newInputStream(file.toPath()).read(bytes);
+            String head = new String(bytes, StandardCharsets.UTF_8).trim();
+
+            // must start with { and contains "type"
+            if (!head.startsWith("{") || !head.contains("\"type\"")) {
+                return false;
+            }
+
+            // check any GeoJSON type
+            return head.contains("\"FeatureCollection\"")
+                    || head.contains("\"Feature\"")
+                    || head.contains("\"Point\"")
+                    || head.contains("\"MultiPoint\"")
+                    || head.contains("\"LineString\"")
+                    || head.contains("\"MultiLineString\"")
+                    || head.contains("\"Polygon\"")
+                    || head.contains("\"MultiPolygon\"");
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     /**
      * Create a VectorLayer from GeoJSON feature collection
@@ -60,6 +89,17 @@ public class GeoJSONReader {
      */
     public static VectorLayer read(String json) {
         FeatureCollection features = (FeatureCollection) GeoJSONFactory.create(json);
+
+        return read(features);
+    }
+
+    /**
+     * Create a VectorLayer from GeoJSON string
+     * @param file The GeoJSON file
+     * @return VectorLayer object
+     */
+    public static VectorLayer read(File file) {
+        FeatureCollection features = (FeatureCollection) GeoJSONFactory.create(file);
 
         return read(features);
     }

@@ -25,6 +25,7 @@ import org.meteoinfo.data.mapdata.geotiff.GeoTiff;
 import org.meteoinfo.data.meteodata.ascii.ASCIIGridDataInfo;
 import org.meteoinfo.data.meteodata.ascii.SurferGridDataInfo;
 import org.meteoinfo.data.meteodata.bandraster.BILDataInfo;
+import org.meteoinfo.geo.io.GeoJSONReader;
 import org.meteoinfo.geo.layer.*;
 import org.meteoinfo.geo.legend.LegendManage;
 import org.meteoinfo.geo.meteodata.DrawMeteoData;
@@ -92,17 +93,21 @@ public class MapDataManage {
                     mdt = MapDataType.BIL;
                     break;
                 default:
-                    RandomAccessFile br = new RandomAccessFile(fileName, "r");
-                    byte[] bytes = new byte[100];
-                    br.read(bytes);
-                    String line = new String(bytes).trim().toUpperCase();
-                    br.close();
-                    if (line.contains("NCOLS")) {
-                        mdt = MapDataType.ESRI_ASCII_GRID;
-                    } else if (line.contains("DSAA")) {
-                        mdt = MapDataType.SURFER_ASCII_GRID;
+                    if (GeoJSONReader.isGeoJsonQuick(new File(fileName))) {
+                        mdt = MapDataType.GEO_JSON;
                     } else {
-                        mdt = MapDataType.GRADS;
+                        RandomAccessFile br = new RandomAccessFile(fileName, "r");
+                        byte[] bytes = new byte[100];
+                        br.read(bytes);
+                        String line = new String(bytes).trim().toUpperCase();
+                        br.close();
+                        if (line.contains("NCOLS")) {
+                            mdt = MapDataType.ESRI_ASCII_GRID;
+                        } else if (line.contains("DSAA")) {
+                            mdt = MapDataType.SURFER_ASCII_GRID;
+                        } else {
+                            mdt = MapDataType.GRADS;
+                        }
                     }
                     break;
             }
@@ -150,6 +155,9 @@ public class MapDataManage {
                 break;
             case GRADS:
                 aLayer = readMapFile_GrADS(aFile);
+                break;
+            case GEO_JSON:
+                aLayer = GeoJSONReader.read(new File(aFile));
                 break;
         }
 

@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\radar">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\common_math\random"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\funny"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\json">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\text"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\hdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\json"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\optimize\linprog_ip_2.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\carnation.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\json\geoshow_geojson_4.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\json\geoshow_geojson_1.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\optimize\linprog_ip_2.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\funny\carnation.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\json\geoshow_geojson_4.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\json\geoshow_geojson_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -32,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-6,0" MainFormSize="1319,810"/>
+  <Startup MainFormLocation="-6,-6" MainFormSize="1292,764"/>
 </MeteoInfo>

@@ -1,6 +1,10 @@
 package org.meteoinfo.geometry.io.geojson;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -10,10 +14,28 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.type.MapType;
 
 public class GeoJSONFactory {
-    private static final ObjectMapper mapper = new ObjectMapper();
+    private static final ObjectMapper mapper = JsonMapper.builder().build();
+
+    public static GeoJSON create(File file) {
+        try {
+            InputStreamReader reader = new InputStreamReader(
+                    new FileInputStream(file), StandardCharsets.UTF_8);
+            JsonNode node = mapper.readTree(reader);
+            String type = node.get("type").asText();
+            if (type.equals("FeatureCollection"))
+                return readFeatureCollection(node);
+            else if (type.equals("Feature"))
+                return readFeature(node);
+            else
+                return readGeometry(node, type);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static GeoJSON create(String json) {
         try {

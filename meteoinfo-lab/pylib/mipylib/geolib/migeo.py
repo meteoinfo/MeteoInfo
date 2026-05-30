@@ -106,10 +106,6 @@ def georead(fn, encoding=None):
         else:
             try:
                 layer = MILayer(MapDataManage.loadLayer(fn))
-                if not layer.legend is None:
-                    lb = layer.legend.getLegendBreaks()[0]
-                    if lb.getBreakType() == BreakTypes.POLYGON_BREAK:
-                        lb.setDrawFill(False)
                 return layer
             except:
                 raise

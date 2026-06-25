@@ -314,7 +314,7 @@ public class FastFourierTransform implements ComplexTransform {
      * @throws IllegalArgumentException if the length of the data array is not a power of two.
      */
     @Override
-    public Array apply(final double[] f) {
+    public Array apply(double[] f) {
         final double[][] dataRI = {
                 Arrays.copyOf(f, f.length),
                 new double[f.length]

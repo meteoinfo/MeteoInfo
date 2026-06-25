@@ -1400,7 +1400,7 @@ class Axes3D(Axes):
         ls = ls.convertTo(ShapeTypes.POLYLINE)
         plotutil.setlegendscheme(ls, **kwargs)
 
-        smooth = kwargs.pop('smooth', True)
+        smooth = kwargs.pop('smooth', False)
         igraphic = GraphicFactory.createContourLines3D(x.asarray(), y.asarray(), z.asarray(), ls, smooth)
 
         lighting = kwargs.pop('lighting', None)

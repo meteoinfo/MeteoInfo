@@ -7090,8 +7090,12 @@ public class GraphicFactory {
             windSpeed = wsIter.getDoubleNext();
             x = xIter.getDoubleNext();
             y = yIter.getDoubleNext();
-            if (cdata != null)
+            if (cdata != null) {
                 v = cIter.getDoubleNext();
+                if (Double.isNaN(v)) {
+                    continue;
+                }
+            }
             if (!Double.isNaN(windDir) && !Double.isNaN(windSpeed)) {
                 aPoint = new PointD();
                 aPoint.X = x;

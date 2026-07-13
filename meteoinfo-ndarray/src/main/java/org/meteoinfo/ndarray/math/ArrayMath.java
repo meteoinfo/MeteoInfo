@@ -203,6 +203,75 @@ public class ArrayMath {
     }
 
     /**
+     * Calculate final broadcast shape after broadcasting multiple input shapes together
+     * @param shapes array of shape arrays, e.g. new int[][]{{2,1}, {3}, {1,5}}
+     * @return unified shape after full broadcasting
+     * @throws IllegalArgumentException if shape dimension mismatch cannot broadcast
+     */
+    public static int[] broadcastShapes(List<int[]> shapes) {
+        if (shapes == null || shapes.size() == 0) {
+            return new int[0];
+        }
+        // Initialize result shape with the first input shape
+        int[] resultShape = shapes.get(0);
+        // Iteratively broadcast with each subsequent shape
+        for (int i = 1; i < shapes.size(); i++) {
+            resultShape = broadcast(resultShape, shapes.get(i));
+        }
+        return resultShape;
+    }
+
+    /**
+     * Compute broadcast shape of two single shapes
+     * Rule: dim length equal OR one dimension equals 1, output takes max length
+     * @param a first shape array
+     * @param b second shape array
+     * @return merged broadcast shape of a and b
+     */
+    public static int[] broadcast(int[] a, int[] b) {
+        List<Integer> resultDimList = new ArrayList<>();
+        int dimCountA = a.length;
+        int dimCountB = b.length;
+        int maxDimension = Math.max(dimCountA, dimCountB);
+
+        // Traverse dimensions starting from last axis backward
+        for (int i = 0; i < maxDimension; i++) {
+            // Fill missing leading dimensions with length 1
+            int lenA = (i < dimCountA) ? a[dimCountA - 1 - i] : 1;
+            int lenB = (i < dimCountB) ? b[dimCountB - 1 - i] : 1;
+
+            // Throw error if neither dimension is 1 and lengths differ
+            if (lenA != 1 && lenB != 1 && lenA != lenB) {
+                throw new IllegalArgumentException(
+                        String.format("Dimension mismatch, cannot broadcast: dimA=%d, dimB=%d", lenA, lenB));
+            }
+            // Take larger value as output dimension length
+            resultDimList.add(Math.max(lenA, lenB));
+        }
+
+        // Reverse list to restore original dimension order (we collected from back to front)
+        int[] outputShape = new int[resultDimList.size()];
+        for (int i = 0; i < outputShape.length; i++) {
+            outputShape[i] = resultDimList.get(resultDimList.size() - 1 - i);
+        }
+        return outputShape;
+    }
+
+    /**
+     * Broadcast shape from array list
+     * @param arrays Array list
+     * @return Broadcast shape
+     */
+    public static int[] broadcast(List<Array> arrays) {
+        List<int[]> shapes = new ArrayList<>();
+        for (Array array : arrays) {
+            shapes.add(array.getShape());
+        }
+
+        return broadcastShapes(shapes);
+    }
+
+    /**
      * Get broadcast shape from two arrays
      *
      * @param a Array a
@@ -291,6 +360,20 @@ public class ArrayMath {
                     bindex.setDim(ib, 0);
                 } else {
                     bindex.setDim(ib, current[n - j - 1]);
+                }
+            }
+        }
+    }
+
+    private static void setIndex(Index index, int[] current, int n, int na) {
+        int ia;
+        for (int j = 0; j < n; j++) {
+            ia = na - j - 1;
+            if (ia >= 0) {
+                if (index.getShape(ia) == 1) {
+                    index.setDim(ia, 0);
+                } else {
+                    index.setDim(ia, current[n - j - 1]);
                 }
             }
         }
@@ -6969,6 +7052,48 @@ public class ArrayMath {
      */
     public static Array takeValues(Array a, List<Array> ranges) {
         int n = ranges.size();
+        int[] shape = broadcast(ranges);
+        int rn = shape.length;
+
+        Array r = Array.factory(a.getDataType(), shape);
+        IndexIterator rIter = r.getIndexIterator();
+        Index aIndex = a.getIndex();
+        int[] aShape = a.getShape();
+        int[] current;
+        int[] indices = new int[n];
+        List<Index> indexes = new ArrayList<>();
+        List<Integer> nDims = new ArrayList<>();
+        for (Array array : ranges) {
+            indexes.add(array.getIndex());
+            nDims.add(array.getRank());
+        }
+        while (rIter.hasNext()) {
+            rIter.next();
+            current = rIter.getCurrentCounter();
+            for (int i = 0; i < n; i++) {
+                Index index = indexes.get(i);
+                setIndex(index, current, rn, nDims.get(i));
+                indices[i] = ranges.get(i).getInt(index);
+                if (indices[i] < 0) {
+                    indices[i] = aShape[i] + indices[i];
+                }
+            }
+            aIndex.set(indices);
+            rIter.setObjectCurrent(a.getObject(aIndex));
+        }
+
+        return r;
+    }
+
+    /**
+     * Take elements from an array.
+     *
+     * @param a The array
+     * @param ranges The indices of the values to extract.
+     * @return The returned array has the same type as a.
+     *//*
+    public static Array takeValues(Array a, List<Array> ranges) {
+        int n = ranges.size();
         int[] shape = new int[n];
         for (int i = 0; i < n; i++) {
             shape[i] = (int) ranges.get(i).getSize();
@@ -6986,7 +7111,7 @@ public class ArrayMath {
         }
 
         return r;
-    }
+    }*/
 
     /*
     public static Array takeValues(Array a, List<Array> ranges) {

@@ -342,7 +342,7 @@ class DimArray(NDArray):
                 ranges.append(rr)
                 nshape.append(eidx - sidx + 1 if eidx - sidx >= 0 else 0)
             else:
-                if len(k) > 1:
+                if k.ndim == 1 and k.size > 1:
                     dim = self.dims[i]
                     if isinstance(k, NDArray):
                         k = k.asarray()
@@ -357,7 +357,7 @@ class DimArray(NDArray):
         else:
             if alllist:
                 r = ArrayMath.takeValues(self._array, ranges)
-                #return NDArray(r)
+                return NDArray(r)
             else:
                 r = ArrayMath.take(self._array, ranges)
 

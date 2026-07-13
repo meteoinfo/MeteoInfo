@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\wind">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\burf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\hdf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\radar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\meteo\calc">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\geoshow"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\json"/>
@@ -16,17 +11,24 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\wind"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array\slice"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\array"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\common_math\optimize\linprog_ip_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contour\contour3_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\quiver_4.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\isentropic_analysis.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\frontogenesis.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\calc\frontogenesis-1.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\common_math\optimize\linprog_ip_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contour\contour3_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\quiver_4.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\isentropic_analysis.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\frontogenesis.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\calc\frontogenesis-1.py"/>
     </RecentFiles>
   </File>
   <Font>

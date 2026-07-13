@@ -6,6 +6,9 @@ __all__ = ['broadcast_indices', 'validate_choice']
 def broadcast_indices(x, minv, ndim, axis):
     """Calculate index values to properly broadcast index array within data array.
 
+    The purpose of this function is work around the challenges trying to work with arrays of
+    indices that need to be "broadcast" against full slices for other dimensions.
+
     See usage in interp.
     """
     ret = []

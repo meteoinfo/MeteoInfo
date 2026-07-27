@@ -955,11 +955,8 @@ public class ArrayMath {
                 return ArrayMath.subFloat(a, b);
             case DOUBLE:
                 return ArrayMath.subDouble(a, b);
-            case OBJECT:
-                if (isComplex(a) || isComplex(b)) {
-                    return ArrayMath.subComplex(a, b);
-                }
-                break;
+            case COMPLEX:
+                return ArrayMath.subComplex(a, b);
         }
         return null;
     }

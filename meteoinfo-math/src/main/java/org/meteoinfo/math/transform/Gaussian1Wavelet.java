@@ -4,27 +4,20 @@ import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Complex;
 import org.meteoinfo.ndarray.DataType;
 
+public class Gaussian1Wavelet extends Wavelet {
 
-public class MorletWavelet extends Wavelet {
-    private final double w0;   // central angular frequency (default 6)
-    private static final double NORM = Math.pow(Math.sqrt(Math.PI) / 2.0 * (1.0 + Math.exp(-25.0)), -0.25);
+    private static final double NORM = (Math.pow(2, 1.25) / Math.pow(Math.PI, 0.25));
 
-    public MorletWavelet(double w0) {
-        super("morl");
-        this.w0 = w0;
+    public Gaussian1Wavelet() {
+        super("gaus1");
         this.complex = false;
+        this.lowerBound = -5.0;
+        this.upperBound = 5.0;
     }
 
-    public MorletWavelet() {
-        this(6.0);   // PyWavelets default
-    }
-
-    /** Evaluate wavelet psi(x) */
+    @Override
     public Complex value(double x) {
-        double norm = Math.pow(Math.PI, -0.25);
-        double envelope = norm * Math.exp(-0.5 * x * x);
-        return new Complex(envelope * Math.cos(w0 * x),
-                envelope * Math.sin(w0 * x));
+        return new Complex(-NORM * x * Math.exp(-0.5 * x * x), 0);
     }
 
     @Override
@@ -34,9 +27,8 @@ public class MorletWavelet extends Wavelet {
         double invSqrtA = 1.0 / Math.sqrt(scale);
         for (int i = 0; i < n; i++) {
             double x = t[i] / scale;
-            double envelope = NORM * Math.exp(-0.5 * x * x) * invSqrtA;
-            psi[i] = new Complex(envelope * Math.cos(w0 * x),
-                    0);
+            double val = -x * Math.exp(-x * x) * NORM * invSqrtA;
+            psi[i] = new Complex(val, 0.0);
         }
         return psi;
     }
@@ -47,16 +39,18 @@ public class MorletWavelet extends Wavelet {
         int numPoints = (int) Math.pow(2, precision);
 
         // 2. Define time grid range
+        //    Gaussian wavelet decays to near zero outside [-5, 5], which is sufficient.
         double step = (upperBound - lowerBound) / (numPoints - 1);
 
         Array psi = Array.factory(DataType.DOUBLE, new int[]{numPoints});
         Array x = Array.factory(DataType.DOUBLE, new int[]{numPoints});
 
         // 3. Compute wavelet values at each point
+        //    psi(t) = -t * exp(-t^2)
         for (int i = 0; i < numPoints; i++) {
             double t = lowerBound + i * step;
             x.setDouble(i, t);
-            psi.setDouble(i, Math.cos(w0 * t) * Math.exp(-0.5 * t * t) * NORM);
+            psi.setDouble(i, -t * Math.exp(-t * t) * NORM);
         }
 
         // 4. Return wavelet values and grid
@@ -65,7 +59,6 @@ public class MorletWavelet extends Wavelet {
 
     @Override
     public double centralFrequency() {
-        // (w0 + sqrt(2 + w0^2)) / (4*pi)   for w0=6 → ~0.968
-        return (w0 + Math.sqrt(2 + w0 * w0)) / (4 * Math.PI);
+        return 0.2;   // approximate
     }
 }

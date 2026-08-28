@@ -45,7 +45,7 @@ __all__ = [
     'degrees','delnan','diag','diff','dot','empty','empty_like','exp','eye','flatnonzero','floor',
     'fmax','fmin','full','geomspace','hcurl','hdivg','hstack','hypot','identity','indices','interp2d',
     'interpn','isarray',
-    'isclose','isfinite','isinf','isnan','isscalar','linspace','log','log10','logical_not','logspace',
+    'isclose','isfinite','isinf','isnan','isscalar','linspace','log','log10','logical_and','logical_not','logspace',
     'magic','magnitude','max','maximum','mean','median','meshgrid','min','minimum','monthname',
     'moveaxis','newaxis','ones','ones_like','outer','peaks','pol2cart','power','radians','reciprocal','reshape',
     'repeat','roll','rolling_mean','rot90','round','sec','sign','sin','sinh','shape','smooth5','smooth9','sort',
@@ -473,6 +473,7 @@ def zeros_like(a, dtype=None):
         
     :returns: Array of zeros with the same shape and type as a.
     """
+    a = asarray(a)
     shape = a.shape
     if dtype is None:
         dtype = a.dtype
@@ -2163,6 +2164,29 @@ def logical_not(arr):
         arr = array(arr)
     r = ArrayMath.logicalNot(arr._array)
     return NDArray(r)
+
+
+def logical_and(x1, x2):
+    """
+    Compute the truth value of x1 AND x2 element-wise.
+
+    Parameters
+    ----------
+    x1, x2 : array_like
+        Input arrays. If x1.shape != x2.shape, they must be broadcastable to a common shape
+        (which becomes the shape of the output).
+
+    Returns
+    -------
+    y : ndarray or bool
+        Boolean result of the logical AND operation applied to the elements of x1 and x2; the
+        shape is determined by broadcasting. This is a scalar if both x1 and x2 are scalars.
+    """
+    x1 = asanyarray(x1)
+    x2 = asanyarray(x2)
+    r = ArrayMath.logicalAnd(x1._array, x2._array)
+    return NDArray(r)
+
     
 def delete(arr, obj, axis=None):
     """

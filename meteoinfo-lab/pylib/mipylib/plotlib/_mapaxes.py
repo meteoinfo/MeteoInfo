@@ -123,7 +123,7 @@ class MapAxes(Axes):
         """
         Set plot.
         
-        :param plot: (*Axes3D*) Plot.
+        :param plot: (*Axes*) Plot.
         """
         if plot is None:
             self._axes = MapPlot()

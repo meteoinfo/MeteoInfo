@@ -5702,6 +5702,53 @@ public class ArrayMath {
     }
 
     /**
+     * Logical and
+     *
+     * @param a Array a
+     * @param b Array b
+     * @return Result array
+     */
+    public static Array logicalAnd(Array a, Array b) {
+        int broadcast = broadcastCheck(a, b);
+        switch (broadcast) {
+            case 0:
+                Array r = Array.factory(DataType.BOOLEAN, a.getShape());
+                if (a.getIndexPrivate().isFastIterator() && b.getIndexPrivate().isFastIterator()) {
+                    for (int i = 0; i < r.getSize(); i++) {
+                        r.setBoolean(i, a.getBoolean(i) && b.getBoolean(i));
+                    }
+                } else {
+                    IndexIterator iterA = a.getIndexIterator();
+                    IndexIterator iterB = b.getIndexIterator();
+                    IndexIterator iterR = r.getIndexIterator();
+                    while (iterA.hasNext()) {
+                        iterR.setBooleanNext(iterA.getBooleanNext() && iterB.getBooleanNext());
+                    }
+                }
+                return r;
+            case 1:
+                int[] shape = broadcast(a, b);
+                r = Array.factory(DataType.BOOLEAN, shape);
+                Index index = r.getIndex();
+                Index aindex = a.getIndex();
+                Index bindex = b.getIndex();
+                int n = r.getRank();
+                int na = a.getRank();
+                int nb = b.getRank();
+                int[] current;
+                for (int i = 0; i < r.getSize(); i++) {
+                    current = index.getCurrentCounter();
+                    setIndex(aindex, bindex, current, n, na, nb);
+                    r.setBoolean(i, a.getBoolean(aindex) && b.getBoolean(bindex));
+                    index.incr();
+                }
+                return r;
+            default:
+                return null;
+        }
+    }
+
+    /**
      * Bit left shift operation
      *
      * @param a Array a

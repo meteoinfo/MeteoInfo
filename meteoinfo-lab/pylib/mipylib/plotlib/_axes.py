@@ -143,6 +143,7 @@ class Axes(object):
         if not clip is None:
             self._axes.setClip(clip)
 
+
     def _set_plot(self, plot):
         """
         Set plot.
@@ -154,9 +155,11 @@ class Axes(object):
         else:
             self._axes = plot
 
+
     @property
     def stale(self):
         return self._stale
+
 
     @stale.setter
     def stale(self, val):
@@ -166,17 +169,21 @@ class Axes(object):
         if self._figure is not None:
             self._figure.stale = val
 
+
     @property
     def figure(self):
         return self._figure
+
 
     @figure.setter
     def figure(self, val):
         self._figure = val
 
+
     @property
     def axestype(self):
         return 'cartesian'
+
 
     @property
     def ndim(self):
@@ -185,6 +192,7 @@ class Axes(object):
         """
         return 2
 
+
     def get_type(self):
         """
         Get axes type
@@ -192,6 +200,7 @@ class Axes(object):
         :returns: Axes type
         """
         return self._axes.getPlotType()
+
 
     @property
     def position(self):
@@ -202,6 +211,7 @@ class Axes(object):
         """
         pos = self._axes.getPosition()
         return [pos.x, pos.y, pos.width, pos.height]
+
 
     @position.setter
     def position(self, pos):
@@ -214,6 +224,7 @@ class Axes(object):
         self._axes.setPosition(pos)
         self.stale = True
 
+
     @property
     def outerposition(self):
         """
@@ -223,6 +234,7 @@ class Axes(object):
         """
         pos = self._axes.getOuterPosition()
         return [pos.x, pos.y, pos.width, pos.height]
+
 
     @outerposition.setter
     def outerposition(self, pos):
@@ -235,6 +247,7 @@ class Axes(object):
         self._axes.setOuterPosition(pos)
         self.stale = True
 
+
     def active_outerposition(self, active):
         """
         Set axes outer position active or not.
@@ -242,6 +255,7 @@ class Axes(object):
         :param active: (*boolean*) Active or not
         """
         self._axes.setOuterPosActive(active)
+
 
     def get_axis(self, loc):
         """
@@ -253,10 +267,12 @@ class Axes(object):
         """
         return self._axes.getAxis(loc)
 
+
     @property
     def facecolor(self):
         """Get facecolor"""
         return self._axes.getBackground()
+
 
     @facecolor.setter
     def facecolor(self, value):
@@ -268,10 +284,12 @@ class Axes(object):
         self._axes.setBackground(plotutil.getcolor(value))
         self.stale = True
 
+
     @property
     def aspect(self):
         """Get or set aspect ['auto' | 'equal']"""
         return 'equal' if self._axes.getAspectType() == AspectType.EQUAL else 'auto'
+
 
     @aspect.setter
     def aspect(self, aspect):
@@ -290,6 +308,7 @@ class Axes(object):
                 self._axes.setAspectType(AspectType.AUTO)
         self.stale = True
 
+
     def set_clip(self, clip):
         """
         Set axes clip or not
@@ -297,6 +316,8 @@ class Axes(object):
         :param clip: (*bool*) Clip or not
         """
         self._axes.setClip(clip)
+        self.stale = True
+
 
     def get_title(self, loc='center'):
         """
@@ -313,6 +334,7 @@ class Axes(object):
             return self._axes.getRightTitle()
         else:
             return self._axes.getTitle()
+
 
     def set_title(self, label, loc='center', **kwargs):
         """
@@ -339,8 +361,9 @@ class Axes(object):
             self._axes.setRightTitle(title)
         else:
             self._axes.setTitle(title)
-
+        self.stale = True
         return title
+
 
     def set_xlabel(self, label, **kwargs):
         """
@@ -366,6 +389,8 @@ class Axes(object):
             text.setXAlign('center')
             text.setYAlign('bottom')
             axis_t.setLabel(text)
+        self.stale = True
+
 
     def set_ylabel(self, label, **kwargs):
         """
@@ -393,6 +418,8 @@ class Axes(object):
             text.setXAlign('left')
             text.setYAlign('center')
             axis_r.setLabel(text)
+        self.stale = True
+
 
     def get_xticks(self):
         """
@@ -401,6 +428,7 @@ class Axes(object):
         axis = self._axes.getXAxis()
         axis.updateTickLabels()
         return axis.getTickLocations()
+
 
     def set_xticks(self, locs):
         """
@@ -417,6 +445,8 @@ class Axes(object):
             axis_t = self._axes.getAxis(Location.TOP)
         if not axis_t is None:
             axis_t.setTickLocations(locs)
+        self.stale = True
+
 
     def get_yticks(self):
         """
@@ -425,6 +455,7 @@ class Axes(object):
         axis = self._axes.getYAxis()
         axis.updateTickLabels()
         return axis.getTickLocations()
+
 
     def set_yticks(self, locs):
         """
@@ -441,6 +472,8 @@ class Axes(object):
             axis_r = self._axes.getAxis(Location.RIGHT)
         if not axis_r is None:
             axis_r.setTickLocations(locs)
+        self.stale = True
+
 
     def get_xticklabels(self):
         """
@@ -449,6 +482,7 @@ class Axes(object):
         axis = self._axes.getXAxis()
         axis.updateTickLabels()
         return axis.getTickLabelText()
+
 
     def set_xticklabels(self, labels, **kwargs):
         """
@@ -493,6 +527,8 @@ class Axes(object):
             axis_t.setTickLabelFont(font)
             axis_t.setTickLabelColor(c)
             axis_t.setTickLabelAngle(angle)
+        self.stale = True
+
 
     def get_yticklabels(self):
         """
@@ -501,6 +537,7 @@ class Axes(object):
         axis = self._axes.getYAxis()
         axis.updateTickLabels()
         return axis.getTickLabelText()
+
 
     def set_yticklabels(self, labels, **kwargs):
         """
@@ -545,6 +582,8 @@ class Axes(object):
             axis_r.setTickLabelFont(font)
             axis_r.setTickLabelColor(c)
             axis_r.setTickLabelAngle(angle)
+        self.stale = True
+
 
     def set_xaxis_type(self, axistype, timetickformat=None):
         """
@@ -599,6 +638,8 @@ class Axes(object):
             ax.setAxis(b_axis, Location.BOTTOM)
             t_axis = Axis(ax.getAxis(Location.TOP))
             ax.setAxis(t_axis, Location.TOP)
+        self.stale = True
+
 
     def set_yaxis_type(self, axistype, timetickformat=None):
         """
@@ -649,6 +690,8 @@ class Axes(object):
             ax.setAxis(l_axis, Location.LEFT)
             r_axis = Axis(ax.getAxis(Location.RIGHT))
             ax.setAxis(r_axis, Location.RIGHT)
+        self.stale = True
+
 
     def set_axis_on(self):
         """
@@ -660,6 +703,7 @@ class Axes(object):
         self.get_axis(Location.RIGHT).setVisible(True)
         self.stale = True
 
+
     def set_axis_off(self):
         """
         Set all axis not visible.
@@ -669,6 +713,7 @@ class Axes(object):
         self.get_axis(Location.TOP).setVisible(False)
         self.get_axis(Location.RIGHT).setVisible(False)
         self.stale = True
+
 
     def axis(self, arg=None, **kwargs):
         """
@@ -748,7 +793,10 @@ class Axes(object):
     def xlim(self):
         """Get or set x axis limits"""
         extent = self._axes.getDrawExtent()
-        return extent.minX, extent.maxX
+        if self.get_xinverted():
+            return extent.maxX, extent.minX
+        else:
+            return extent.minX, extent.maxX
 
 
     @xlim.setter
@@ -763,6 +811,14 @@ class Axes(object):
             xmin = miutil.date2num(xmin)
         if isinstance(xmax, datetime.datetime):
             xmax = miutil.date2num(xmax)
+
+        if xmin < xmax:
+            self._axes.getXAxis().setInverse(False)
+        else:
+            self._axes.getXAxis().setInverse(True)
+            temp = xmin
+            xmin = xmax
+            xmax = temp
 
         extent = self._axes.getDrawExtent()
         extent.minX = xmin
@@ -780,7 +836,11 @@ class Axes(object):
         :returns: (*tuple*) x limits.
         """
         extent = self._axes.getDrawExtent()
-        return extent.minX, extent.maxX
+        if self.get_xinverted():
+            return extent.maxX, extent.minX
+        else:
+            return extent.minX, extent.maxX
+
 
     def set_xlim(self, xmin, xmax):
         """
@@ -794,19 +854,31 @@ class Axes(object):
         if isinstance(xmax, datetime.datetime):
             xmax = miutil.date2num(xmax)
 
+        if xmin < xmax:
+            self._axes.getXAxis().setInverse(False)
+        else:
+            self._axes.getXAxis().setInverse(True)
+            temp = xmin
+            xmin = xmax
+            xmax = temp
+
         extent = self._axes.getDrawExtent()
         extent.minX = xmin
         extent.maxX = xmax
         self._axes.setDrawExtent(extent)
         self._axes.setExtent(extent.clone())
         self._axes.setFixDrawExtent(True)
+        self.stale = True
 
 
     @property
     def ylim(self):
         """Get or set y axis limits"""
         extent = self._axes.getDrawExtent()
-        return extent.minY, extent.maxY
+        if self.get_yinverted():
+            return extent.maxY, extent.minY
+        else:
+            return extent.minY, extent.maxY
 
 
     @ylim.setter
@@ -822,12 +894,21 @@ class Axes(object):
         if isinstance(ymax, datetime.datetime):
             ymax = miutil.date2num(ymax)
 
+        if ymin < ymax:
+            self._axes.getYAxis().setInverse(False)
+        else:
+            self._axes.getYAxis().setInverse(True)
+            temp = ymin
+            ymin = ymax
+            ymax = temp
+
         extent = self._axes.getDrawExtent()
         extent.minY = ymin
         extent.maxY = ymax
         self._axes.setDrawExtent(extent)
         self._axes.setExtent(extent.clone())
         self._axes.setFixDrawExtent(True)
+        self.stale = True
 
 
     def get_ylim(self):
@@ -837,7 +918,11 @@ class Axes(object):
         :returns: (*tuple*) y limits.
         """
         extent = self._axes.getDrawExtent()
-        return extent.minY, extent.maxY
+        if self.get_yinverted():
+            return extent.maxY, extent.minY
+        else:
+            return extent.minY, extent.maxY
+
 
     def set_ylim(self, ymin, ymax):
         """
@@ -851,12 +936,22 @@ class Axes(object):
         if isinstance(ymax, datetime.datetime):
             ymax = miutil.date2num(ymax)
 
+        if ymin < ymax:
+            self._axes.getYAxis().setInverse(False)
+        else:
+            self._axes.getYAxis().setInverse(True)
+            temp = ymin
+            ymin = ymax
+            ymax = temp
+
         extent = self._axes.getDrawExtent()
         extent.minY = ymin
         extent.maxY = ymax
         self._axes.setDrawExtent(extent)
         self._axes.setExtent(extent.clone())
         self._axes.setFixDrawExtent(True)
+        self.stale = True
+
 
     def set_draw_extent(self, extent):
         """
@@ -867,6 +962,8 @@ class Axes(object):
         if not self._axes.isFixDrawExtent():
             self._axes.setDrawExtent(extent.clone())
             self._axes.setExtent(extent.clone())
+        self.stale = True
+
 
     def twinx(self):
         """
@@ -890,6 +987,7 @@ class Axes(object):
         axis.setDrawLabel(True)
         return ax2
 
+
     def twiny(self):
         """
         Make a second axes that shares the y-axis. The new axes will overlay *ax*. The ticks 
@@ -911,6 +1009,7 @@ class Axes(object):
         axis.setDrawTickLabel(True)
         axis.setDrawLabel(True)
         return ax2
+
 
     def xaxis(self, **kwargs):
         """
@@ -1031,6 +1130,8 @@ class Axes(object):
             if not tickavoidcoll is None:
                 axis.setTickLabelAvoidCollision(tickavoidcoll)
             axis.setTickLabelFont(font)
+        self.stale = True
+
 
     def yaxis(self, **kwargs):
         """
@@ -1151,6 +1252,111 @@ class Axes(object):
             if not tickavoidcoll is None:
                 axis.setTickLabelAvoidCollision(tickavoidcoll)
             axis.setTickLabelFont(font)
+        self.stale = True
+
+
+    def get_xscale(self):
+        """
+        Return the xaxis' scale (as a str).
+        """
+        axis = self._axes.getAxis(Location.BOTTOM)
+        if isinstance(axis, LogAxis):
+            return 'log'
+        else:
+            return 'linear'
+
+
+    def set_xscale(self, scale):
+        """
+        Set the yaxis' scale (as a str).
+
+        Parameters
+        ----------
+        valuestr or ScaleBase
+            The axis scale type to apply. Valid string values are the names of scale
+            classes ("linear", "log",...).
+        """
+        if scale.lower() == 'log':
+            l_axis = LogAxis(self._axes.getAxis(Location.BOTTOM))
+            l_axis.setMinorTickNum(10)
+            self._axes.setAxis(l_axis, Location.BOTTOM)
+            r_axis = LogAxis(self._axes.getAxis(Location.TOP))
+            r_axis.setMinorTickNum(10)
+            self._axes.setAxis(r_axis, Location.TOP)
+            self._axes.setAutoExtent()
+        else:
+            l_axis = Axis(self._axes.getAxis(Location.BOTTOM))
+            self._axes.setAxis(l_axis, Location.BOTTOM)
+            r_axis = Axis(self._axes.getAxis(Location.TOP))
+            self._axes.setAxis(r_axis, Location.TOP)
+        self.stale = True
+
+
+    def get_yscale(self):
+        """
+        Return the yaxis' scale (as a str).
+        """
+        axis = self._axes.getAxis(Location.LEFT)
+        if isinstance(axis, LogAxis):
+            return 'log'
+        else:
+            return 'linear'
+
+
+    def set_yscale(self, scale):
+        """
+        Set the yaxis' scale (as a str).
+
+        Parameters
+        ----------
+        valuestr or ScaleBase
+            The axis scale type to apply. Valid string values are the names of scale
+            classes ("linear", "log",...).
+        """
+        if scale.lower() == 'log':
+            l_axis = LogAxis(self._axes.getAxis(Location.LEFT))
+            l_axis.setMinorTickNum(10)
+            self._axes.setAxis(l_axis, Location.LEFT)
+            r_axis = LogAxis(self._axes.getAxis(Location.RIGHT))
+            r_axis.setMinorTickNum(10)
+            self._axes.setAxis(r_axis, Location.RIGHT)
+            self._axes.setAutoExtent()
+        else:
+            l_axis = Axis(self._axes.getAxis(Location.LEFT))
+            self._axes.setAxis(l_axis, Location.LEFT)
+            r_axis = Axis(self._axes.getAxis(Location.RIGHT))
+            self._axes.setAxis(r_axis, Location.RIGHT)
+        self.stale = True
+
+
+    def get_xinverted(self):
+        """
+        Return whether the xaxis is oriented in the "inverse" direction.
+        """
+        return self._axes.getXAxis().isInverse()
+
+
+    def set_xinverted(self, value):
+        """
+        Set whether the xaxis is oriented in the "inverse" direction.
+        """
+        self._axes.getXAxis().setInverse(value)
+        self.stale = True
+
+
+    def get_yinverted(self):
+        """
+        Return whether the yaxis is oriented in the "inverse" direction.
+        """
+        return self._axes.getYAxis().isInverse()
+
+
+    def set_yinverted(self, value):
+        """
+        Set whether the yaxis is oriented in the "inverse" direction.
+        """
+        self._axes.getYAxis().setInverse(value)
+        self.stale = True
 
 
     def xreverse(self):
@@ -1470,6 +1676,7 @@ class Axes(object):
         # Set plot data styles
         zvalues = kwargs.pop('zvalues', None)
         cdata = kwargs.pop('cdata', zvalues)
+        alpha = kwargs['alpha'] if kwargs.has_key('alpha') else None
         if cdata is None:
             lines = []
             legend = kwargs.pop('legend', None)
@@ -1480,7 +1687,7 @@ class Axes(object):
                     lines = legend.getLegendBreaks()
             else:
                 if not styles is None:
-                    colors = plotutil.makecolors(len(styles))
+                    colors = plotutil.makecolors(len(styles), alpha=alpha)
                     for i in range(0, len(styles)):
                         label = kwargs.pop('label', 'S_' + str(i + 1))
                         if styles[i] is None:
@@ -1497,17 +1704,17 @@ class Axes(object):
                     else:
                         if kwargs.has_key('color'):
                             color = kwargs['color']
-                            color = plotutil.getcolor(color)
+                            color = plotutil.getcolor(color, alpha=alpha)
                             colors = [color] * snum
                         else:
-                            colors = plotutil.makecolors(snum)
+                            colors = plotutil.makecolors(snum, alpha=alpha)
 
                     for i in range(0, snum):
                         label = kwargs.pop('label', 'S_' + str(i + 1))
                         line = plotutil.getlegendbreak('line', **kwargs)[0]
                         line.setCaption(label)
                         if i < len(colors):
-                            line.setColor(plotutil.getcolor(colors[i]))
+                            line.setColor(plotutil.getcolor(colors[i], alpha=alpha))
                         lines.append(line)
         else:
             ls = kwargs.pop('symbolspec', None)
@@ -3067,18 +3274,14 @@ class Axes(object):
                 where = np.array(where)
             where = where.asarray()
 
-        # Set plot data styles
-        # if not 'fill' in kwargs:
-        # kwargs['fill'] = True
-        # if not 'edge' in kwargs:
-        # kwargs['edge'] = False
         pb, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         pb.setCaption(label)
 
         # Create graphics
         graphics = GraphicFactory.createFillBetweenPolygons(xdata, y1, y2, where, pb)
-        zorder = kwargs.pop('zorder', None)
-        self.add_graphic(graphics, zorder=zorder)
+        if graphics.size() > 0:
+            zorder = kwargs.pop('zorder', None)
+            self.add_graphic(graphics, zorder=zorder)
 
         return pb
 
@@ -3115,18 +3318,14 @@ class Axes(object):
                 where = np.array(where)
             where = where.asarray()
 
-        # Set plot data styles
-        # if not 'fill' in kwargs:
-        # kwargs['fill'] = True
-        # if not 'edge' in kwargs:
-        # kwargs['edge'] = False
         pb, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         pb.setCaption(label)
 
         # Create graphics
         graphics = GraphicFactory.createFillBetweenPolygonsX(ydata, x1, x2, where, pb)
-        zorder = kwargs.pop('zorder', None)
-        self.add_graphic(graphics, zorder=zorder)
+        if graphics.size() > 0:
+            zorder = kwargs.pop('zorder', None)
+            self.add_graphic(graphics, zorder=zorder)
 
         return pb
 

@@ -5,7 +5,6 @@ import org.joml.Matrix4f;
 import org.meteoinfo.chart.jogl.Lighting;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.render.GraphicRender;
-import org.meteoinfo.geometry.graphic.Graphic;
 
 import java.nio.IntBuffer;
 

@@ -2,8 +2,7 @@ package org.meteoinfo.chart.render.jogl;
 
 import com.jogamp.opengl.GL2;
 import org.meteoinfo.chart.render.Render;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 
 public abstract class JOGLRender extends Render {
     protected GL2 gl;

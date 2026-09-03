@@ -19,7 +19,7 @@ import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.geometry.graphic.ResizeAbility;
+import org.meteoinfo.chart.graphic.ResizeAbility;
 import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.ui.event.ILayersUpdatedListener;
 import org.meteoinfo.ui.event.IMapViewUpdatedListener;

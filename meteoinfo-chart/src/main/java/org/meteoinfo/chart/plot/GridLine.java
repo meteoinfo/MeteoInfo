@@ -6,7 +6,7 @@
 package org.meteoinfo.chart.plot;
 
 import org.meteoinfo.common.colors.ColorUtil;
-import org.meteoinfo.geometry.graphic.Artist;
+import org.meteoinfo.chart.graphic.Artist;
 import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.geometry.legend.PolylineBreak;
 

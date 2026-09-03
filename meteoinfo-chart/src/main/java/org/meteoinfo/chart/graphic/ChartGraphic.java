@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.meteoinfo.geometry.graphic;
+package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.geometry.legend.ChartBreak;
 import org.meteoinfo.common.PointD;
@@ -81,7 +81,7 @@ public class ChartGraphic extends Graphic {
     public void exportToXML(Document doc, Element parent) {
         Element graphic = doc.createElement("Graphic");
         this.addShape(doc, graphic, this.getShape());
-        this.addLegend(doc, graphic, this.getLegend(), this.getShape().getShapeType());
+        this.addLegend(doc, graphic, this.getLegendBreak(), this.getShape().getShapeType());
         this.addStartPosition(doc, graphic, startPosition);
 
         parent.appendChild(graphic);
@@ -113,7 +113,7 @@ public class ChartGraphic extends Graphic {
         this.setShape((PointShape)loadShape(shape));
 
         Node legend = graphicNode.getElementsByTagName("Legend").item(0);
-        this.setLegend(loadLegend(legend, this.getShape().getShapeType()));
+        this.setLegendBreak(loadLegend(legend, this.getShape().getShapeType()));
 
         Node startPos = graphicNode.getElementsByTagName("StartPosition").item(0);
         if (startPos != null) {

@@ -6,12 +6,12 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.meteoinfo.geometry.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.cylinder.Cylinder;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
-import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.WindArrow3D;
@@ -70,7 +70,7 @@ public class QuiverRender extends JOGLGraphicRender {
 
         this.graphics = graphics;
         this.quiverNumber = graphics.getNumGraphics();
-        PointBreak pb = (PointBreak) graphics.getGraphicN(0).getLegend();
+        PointBreak pb = (PointBreak) graphics.getGraphicN(0).getLegendBreak();
         this.lineWidth = pb.getOutlineSize();
     }
 
@@ -85,7 +85,7 @@ public class QuiverRender extends JOGLGraphicRender {
         for (int i = 0, pi = 0, ci = 0; i < quiverNumber; i++, pi+=6, ci+=8) {
             Graphic graphic = graphics.getGraphicN(i);
             WindArrow3D shape = (WindArrow3D) graphic.getShape();
-            PointBreak pb = (PointBreak) graphic.getLegend();
+            PointBreak pb = (PointBreak) graphic.getLegendBreak();
             PointZ sp = (PointZ) shape.getPoint();
             PointZ ep = (PointZ) shape.getEndPoint();
 

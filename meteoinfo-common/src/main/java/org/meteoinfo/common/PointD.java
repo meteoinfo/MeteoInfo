@@ -64,6 +64,14 @@ public class PointD implements Cloneable{
     }
 
     /**
+     * To PointF
+     * @return PointF object
+     */
+    public PointF toPointF() {
+        return new PointF((float) X, (float) Y);
+    }
+
+    /**
      * Equals of two pointDs
      * @param p PointD
      * @return Boolean

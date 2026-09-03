@@ -56,7 +56,7 @@ public class MIMath {
      */
     public static boolean doubleEquals(final double a, final double b, final double epsilon) {
         final double diff = Math.abs(a - b);
-        return diff < epsilon
+        return diff <= epsilon
                 || (Double.isNaN(diff) && a == b); // Handle the case where a = b = Double.POSITIVE_INFINITY or a = b = Double.NEGATIVE_INFINITY.
     }
 

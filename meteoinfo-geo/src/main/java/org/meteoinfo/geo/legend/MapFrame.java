@@ -15,7 +15,7 @@ package org.meteoinfo.geo.legend;
 
 import com.l2fprod.common.beans.BaseBeanInfo;
 import org.meteoinfo.common.colors.ColorUtil;
-import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.Constants;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.LineStyles;

@@ -26,7 +26,7 @@ import org.meteoinfo.geo.layer.*;
 import org.meteoinfo.geo.legend.LegendManage;
 import org.meteoinfo.geometry.colors.ExtendType;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
-import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;

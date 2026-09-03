@@ -1,4 +1,4 @@
-from org.meteoinfo.geometry.graphic import Graphic, PolygonGraphic
+from org.meteoinfo.chart.graphic import Graphic, PolygonGraphic
 from org.meteoinfo.geometry.shape import ShapeUtil, CircleShape, EllipseShape, \
     RectangleShape, ArcShape
 

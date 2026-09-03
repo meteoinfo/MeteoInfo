@@ -740,7 +740,7 @@ public class StatsUtil {
      */
     public static double[] chiSquareTest(Array e, Array o) {
         double[] ed = (double[]) e.get1DJavaArray(double.class);
-        long[] od = (long[]) o.get1DJavaArray(double.class);
+        long[] od = (long[]) o.get1DJavaArray(long.class);
         double s = InferenceTestUtils.chiSquare(ed, od);
         double p = InferenceTestUtils.chiSquareTest(ed, od);
         

@@ -19,6 +19,7 @@ import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.imaging.ImageFormats;
+import org.meteoinfo.chart.render.java2d.Java2DGraphicRender;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.geo.mapdata.MapDataManage;
@@ -63,8 +64,8 @@ import org.meteoinfo.geometry.shape.CircleShape;
 import org.meteoinfo.geometry.shape.CurveLineShape;
 import org.meteoinfo.geometry.shape.CurvePolygonShape;
 import org.meteoinfo.geometry.shape.EllipseShape;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.shape.PointShape;
 import org.meteoinfo.geometry.shape.Polygon;
 import org.meteoinfo.geometry.shape.PolygonShape;
@@ -159,7 +160,7 @@ import org.meteoinfo.image.ImageUtil;
 import org.meteoinfo.geo.layer.VisibleScale;
 import org.meteoinfo.geo.layer.WebMapLayer;
 import org.meteoinfo.projection.Reproject;
-import org.meteoinfo.geometry.graphic.ChartGraphic;
+import org.meteoinfo.chart.graphic.ChartGraphic;
 import org.meteoinfo.geometry.shape.PointZShape;
 import org.meteoinfo.geometry.shape.StationModelShape;
 import org.w3c.dom.Attr;
@@ -1389,7 +1390,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                     aPS.setPoint(new PointD(pXY[0], pXY[1]));
                     Graphic aGraphic = new Graphic();
                     aGraphic.setShape(aPS);
-                    aGraphic.setLegend((PointBreak) _defPointBreak.clone());
+                    aGraphic.setLegendBreak((PointBreak) _defPointBreak.clone());
                     _graphicCollection.add(aGraphic);
                     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     drawGraphic(g, aGraphic, 0);
@@ -2152,32 +2153,32 @@ public class MapView extends JPanel implements IWebMapPanel {
                             }
 
                             //Show symbol form
-                            switch (aGraphic.getLegend().getBreakType()) {
+                            switch (aGraphic.getLegendBreak().getBreakType()) {
                                 case POINT_BREAK:
                                     if (_frmPointSymbolSet != null) {
                                         if (_frmPointSymbolSet.isVisible()) {
-                                            _frmPointSymbolSet.setPointBreak((PointBreak) aGraphic.getLegend());
+                                            _frmPointSymbolSet.setPointBreak((PointBreak) aGraphic.getLegendBreak());
                                         }
                                     }
                                     break;
                                 case LABEL_BREAK:
                                     if (_frmLabelSymbolSet != null) {
                                         if (_frmLabelSymbolSet.isVisible()) {
-                                            _frmLabelSymbolSet.setLabelBreak((LabelBreak) aGraphic.getLegend());
+                                            _frmLabelSymbolSet.setLabelBreak((LabelBreak) aGraphic.getLegendBreak());
                                         }
                                     }
                                     break;
                                 case POLYLINE_BREAK:
                                     if (_frmPolylineSymbolSet != null) {
                                         if (_frmPolylineSymbolSet.isVisible()) {
-                                            _frmPolylineSymbolSet.setPolylineBreak((PolylineBreak) aGraphic.getLegend());
+                                            _frmPolylineSymbolSet.setPolylineBreak((PolylineBreak) aGraphic.getLegendBreak());
                                         }
                                     }
                                     break;
                                 case POLYGON_BREAK:
                                     if (_frmPolygonSymbolSet != null) {
                                         if (_frmPolygonSymbolSet.isVisible()) {
-                                            _frmPolygonSymbolSet.setPolygonBreak((PolygonBreak) aGraphic.getLegend());
+                                            _frmPolygonSymbolSet.setPolygonBreak((PolygonBreak) aGraphic.getLegendBreak());
                                         }
                                     }
                                     break;
@@ -2242,32 +2243,32 @@ public class MapView extends JPanel implements IWebMapPanel {
                                 _selectedGraphics.get(0).getShape().setSelected(true);
 
                                 //Show symbol form
-                                switch (aGraphic.getLegend().getBreakType()) {
+                                switch (aGraphic.getLegendBreak().getBreakType()) {
                                     case POINT_BREAK:
                                         if (_frmPointSymbolSet != null) {
                                             if (_frmPointSymbolSet.isVisible()) {
-                                                _frmPointSymbolSet.setPointBreak((PointBreak) aGraphic.getLegend());
+                                                _frmPointSymbolSet.setPointBreak((PointBreak) aGraphic.getLegendBreak());
                                             }
                                         }
                                         break;
                                     case LABEL_BREAK:
                                         if (_frmLabelSymbolSet != null) {
                                             if (_frmLabelSymbolSet.isVisible()) {
-                                                _frmLabelSymbolSet.setLabelBreak((LabelBreak) aGraphic.getLegend());
+                                                _frmLabelSymbolSet.setLabelBreak((LabelBreak) aGraphic.getLegendBreak());
                                             }
                                         }
                                         break;
                                     case POLYLINE_BREAK:
                                         if (_frmPolylineSymbolSet != null) {
                                             if (_frmPolylineSymbolSet.isVisible()) {
-                                                _frmPolylineSymbolSet.setPolylineBreak((PolylineBreak) aGraphic.getLegend());
+                                                _frmPolylineSymbolSet.setPolylineBreak((PolylineBreak) aGraphic.getLegendBreak());
                                             }
                                         }
                                         break;
                                     case POLYGON_BREAK:
                                         if (_frmPolygonSymbolSet != null) {
                                             if (_frmPolygonSymbolSet.isVisible()) {
-                                                _frmPolygonSymbolSet.setPolygonBreak((PolygonBreak) aGraphic.getLegend());
+                                                _frmPolygonSymbolSet.setPolygonBreak((PolygonBreak) aGraphic.getLegendBreak());
                                             }
                                         }
                                         break;
@@ -2297,7 +2298,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 UndoableEdit edit = (new MapViewUndoRedo()).new ResizeGraphicEdit(this, aG, _resizeRectangle);
                 this.fireUndoEditEvent(edit);
                 Shape shape = aG.getShape();
-                resizeShapeOnScreen(shape, aG.getLegend(), _resizeRectangle);
+                resizeShapeOnScreen(shape, aG.getLegendBreak(), _resizeRectangle);
                 //aG.setShape(shape);                
 
                 _selectedGraphics.remove(aG);
@@ -2719,7 +2720,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                             });
                             jPopupMenu_Graphic.add(jMenuItem_Remove);
 
-                            if (aGraphic.getLegend().getBreakType() == BreakTypes.POLYLINE_BREAK || aGraphic.getLegend().getBreakType() == BreakTypes.POLYGON_BREAK) {
+                            if (aGraphic.getLegendBreak().getBreakType() == BreakTypes.POLYLINE_BREAK || aGraphic.getLegendBreak().getBreakType() == BreakTypes.POLYGON_BREAK) {
                                 JMenuItem jMenuItem_Reverse = new JMenuItem("Reverse");
                                 jMenuItem_Reverse.addActionListener(new ActionListener() {
                                     @Override
@@ -2740,10 +2741,10 @@ public class MapView extends JPanel implements IWebMapPanel {
                                     });
                                     jPopupMenu_Graphic.add(jMenuItem_Smooth);
                                 }
-                                if (aGraphic.getLegend().getBreakType() == BreakTypes.POLYGON_BREAK) {
+                                if (aGraphic.getLegendBreak().getBreakType() == BreakTypes.POLYGON_BREAK) {
                                     jPopupMenu_Graphic.add(new JSeparator());
                                     JMenuItem jMenuItem_Maskout = new JMenuItem("Set Maskout");
-                                    if (((PolygonBreak) aGraphic.getLegend()).isMaskout()) {
+                                    if (((PolygonBreak) aGraphic.getLegendBreak()).isMaskout()) {
                                         jMenuItem_Maskout.setText("No Maskout");
                                     }
                                     jMenuItem_Maskout.addActionListener(new ActionListener() {
@@ -2911,7 +2912,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                         //this.paintLayers();
                         this.repaintNew();
 
-                        showSymbolSetForm(aGraphic.getLegend());
+                        showSymbolSetForm(aGraphic.getLegendBreak());
                     }
                     break;
                 case EDIT_NEW_FEATURE:
@@ -3298,7 +3299,7 @@ public class MapView extends JPanel implements IWebMapPanel {
 
     private void onGraphicMaskoutClick(ActionEvent e) {
         Graphic aGraphic = _selectedGraphics.get(0);
-        ((PolygonBreak) aGraphic.getLegend()).setMaskout(!((PolygonBreak) aGraphic.getLegend()).isMaskout());
+        ((PolygonBreak) aGraphic.getLegendBreak()).setMaskout(!((PolygonBreak) aGraphic.getLegendBreak()).isMaskout());
         //this.paintLayers();
         this.repaintNew();
     }
@@ -5985,7 +5986,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 case CURVE_POLYGON:
                 case ELLIPSE:
                 case ARC:
-                    if (((PolygonBreak) aGraphic.getLegend()).isMaskout()) {
+                    if (((PolygonBreak) aGraphic.getLegendBreak()).isMaskout()) {
                         setClipRegion(g);
                     }
                     break;
@@ -5999,7 +6000,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 sXY = projToScreen(points.get(i).X, points.get(i).Y, lonShift);
                 screenPoints[i] = new PointF((float) sXY[0], (float) sXY[1]);
             }
-            Draw.drawGraphic(screenPoints, aGraphic, g, _mouseTool == MouseTools.EDIT_VERTICES);
+            Java2DGraphicRender.drawGraphic(screenPoints, aGraphic, g, _mouseTool == MouseTools.EDIT_VERTICES);
 
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, rend);
         }
@@ -6206,7 +6207,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         for (i = 0; i < LabelPoints.size(); i++) {
             Graphic aLP = LabelPoints.get(i);
             PointShape aPS = (PointShape) aLP.getShape();
-            LabelBreak aLB = (LabelBreak) aLP.getLegend();
+            LabelBreak aLB = (LabelBreak) aLP.getLegendBreak();
             aPS.setVisible(true);
             LabelStr = aLB.getText();
             aPoint.X = (float) aPS.getPoint().X;
@@ -6282,7 +6283,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                 }
                 g.setFont(drawFont);
                 //g.setColor(aLayer.getLabelSet().getLabelColor());
-                g.setColor(aLP.getLegend().getColor());
+                g.setColor(aLP.getLegendBreak().getColor());
                 g.drawString(LabelStr, aPoint.X, aPoint.Y);
 
                 //Draw selected rectangle
@@ -6316,7 +6317,7 @@ public class MapView extends JPanel implements IWebMapPanel {
         for (i = 0; i < chartPoints.size(); i++) {
             ChartGraphic aCP = chartPoints.get(i);
             PointShape aPS = (PointShape) aCP.getShape();
-            ChartBreak aCB = (ChartBreak) aCP.getLegend();
+            ChartBreak aCB = (ChartBreak) aCP.getLegendBreak();
             if (aCB.getChartData().isEmpty()) {
                 continue;
             }
@@ -7597,7 +7598,7 @@ public class MapView extends JPanel implements IWebMapPanel {
      * @param newRect New rectangle
      */
     public void resizeShapeOnScreen(Graphic graphic, Rectangle newRect) {
-        resizeShapeOnScreen(graphic.getShape(), graphic.getLegend(), newRect);
+        resizeShapeOnScreen(graphic.getShape(), graphic.getLegendBreak(), newRect);
     }
 
     /**
@@ -8770,9 +8771,9 @@ public class MapView extends JPanel implements IWebMapPanel {
                 sXY = projToScreen(aPS.getPoint().X, aPS.getPoint().Y, lonShift);
                 aX = (float) sXY[0];
                 aY = (float) sXY[1];
-                switch (aGraphic.getLegend().getBreakType()) {
+                switch (aGraphic.getLegendBreak().getBreakType()) {
                     case POINT_BREAK:
-                        PointBreak aPB = (PointBreak) aGraphic.getLegend();
+                        PointBreak aPB = (PointBreak) aGraphic.getLegendBreak();
                         int buffer = (int) aPB.getSize() + 2;
                         rect.x = (int) aX - buffer / 2;
                         rect.y = (int) aY - buffer / 2;
@@ -8780,7 +8781,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                         rect.height = buffer;
                         break;
                     case LABEL_BREAK:
-                        LabelBreak aLB = (LabelBreak) aGraphic.getLegend();
+                        LabelBreak aLB = (LabelBreak) aGraphic.getLegendBreak();
                         g.setFont(aLB.getFont());
                         Dimension labSize = Draw.getStringDimension(aLB.getTexts(), aLB.getLineSpace(), g);
                         switch (aLB.getAlignType()) {
@@ -8800,7 +8801,7 @@ public class MapView extends JPanel implements IWebMapPanel {
                         rect.height = (int) labSize.height;
                         break;
                     case CHART_BREAK:
-                        ChartBreak aCB = (ChartBreak) aGraphic.getLegend();
+                        ChartBreak aCB = (ChartBreak) aGraphic.getLegendBreak();
                         rect = aCB.getDrawExtent(new PointF(aX, aY)).convertToRectangle();
                         break;
                 }

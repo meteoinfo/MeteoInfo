@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.render;
 
-import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 
 public abstract class Render {
     protected GraphicCollection graphics;

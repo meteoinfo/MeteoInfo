@@ -3,9 +3,7 @@ package org.meteoinfo.chart.graphic;
 import org.locationtech.proj4j.CoordinateTransform;
 import org.locationtech.proj4j.CoordinateTransformFactory;
 import org.locationtech.proj4j.ProjCoordinate;
-import org.meteoinfo.chart.graphic.GeoGraphicCollection;
-import org.meteoinfo.geometry.geoprocess.GeoComputation;
-import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.chart.geo.ProjectUtil;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.projection.*;
 import org.meteoinfo.table.DataColumn;
@@ -77,7 +75,7 @@ public class GraphicProjectionUtil extends ProjectionUtil {
                 return null;
             }
         } else {
-            return ProjectionUtil.projectClipGraphic(graphic, fromProj, toProj);
+            return ProjectUtil.projectClipGraphic(graphic, fromProj, toProj);
         }
     }
 

@@ -1,7 +1,7 @@
 import org.meteoinfo.chart.GLChart;
 import org.meteoinfo.chart.GLChartPanel;
 import org.meteoinfo.chart.MouseMode;
-import org.meteoinfo.geometry.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.GraphicFactory;
 import org.meteoinfo.chart.jogl.GLPlot;
 import org.meteoinfo.chart.jogl.Lighting;

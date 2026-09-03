@@ -13,7 +13,7 @@ import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JColorChooser;
 
-import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.table.Field;
 
 /**
@@ -437,7 +437,7 @@ public class FrmLabelSet extends javax.swing.JDialog {
 
     private void updateLabelsFontColor() {
         for (Graphic lp : _layer.getLabelPoints()) {
-            LabelBreak lb = (LabelBreak) lp.getLegend();
+            LabelBreak lb = (LabelBreak) lp.getLegendBreak();
             LabelSet labelSet = _layer.getLabelSet();
             if (!labelSet.isColorByLegend()) {
                 lb.setColor(labelSet.getLabelColor());

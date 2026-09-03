@@ -840,9 +840,9 @@ public class XY1DPlot extends AbstractPlot2D {
     @Override
     public void updateLegendScheme() {
         if (this.getLegend() == null) {
-            this.setLegend(new ChartLegend(this.getLegendScheme()));
+            this.setLegend(new ChartLegend(this.getLegendScheme().getLegendBreaks()));
         } else {
-            this.getLegend().setLegendScheme(this.getLegendScheme());
+            this.getLegend().setLegendBreaks(this.getLegendScheme().getLegendBreaks());
         }
     }
 

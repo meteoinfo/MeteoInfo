@@ -8,14 +8,14 @@ package org.meteoinfo.chart.plot;
 import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.axis.LogAxis;
-import org.meteoinfo.geometry.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.plot3d.Projector;
 import org.meteoinfo.common.*;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.Dataset;
 import org.meteoinfo.render.java2d.Draw;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.geometry.shape.*;
@@ -1164,7 +1164,7 @@ public class Plot3D extends Plot {
     private void drawPoint(Graphics2D g, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
             PointZShape shape = (PointZShape) graphic.getShape();
-            PointBreak pb = (PointBreak) graphic.getLegend();
+            PointBreak pb = (PointBreak) graphic.getLegendBreak();
             PointZ p = (PointZ) shape.getPoint();
             /*PointZ pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
                     (p.Z - this.zmin) * zfactor - 10);
@@ -1242,7 +1242,7 @@ public class Plot3D extends Plot {
     private void drawLineString(Graphics2D g, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
             PolylineZShape shape = (PolylineZShape) graphic.getShape();
-            ColorBreak pb = graphic.getLegend();
+            ColorBreak pb = graphic.getLegendBreak();
             for (Polyline line : shape.getPolylines()){
                 List<PointZ> ps = (List<PointZ>)line.getPointList();
                 PointF[] points = new PointF[ps.size()];
@@ -1322,7 +1322,7 @@ public class Plot3D extends Plot {
     private void drawPolygonShape(Graphics2D g, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
             PolygonZShape shape = (PolygonZShape) graphic.getShape();
-            PolygonBreak pb = (PolygonBreak) graphic.getLegend();
+            PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
             for (PolygonZ poly : (List<PolygonZ>) shape.getPolygons()) {
                 drawPolygon(g, poly, pb);
             }
@@ -1526,7 +1526,7 @@ public class Plot3D extends Plot {
     private void drawWindArrow(Graphics2D g, Graphic graphic) {        
         if (extent.intersects(graphic.getExtent())) {
             WindArrow3D shape = (WindArrow3D) graphic.getShape();
-            PointBreak pb = (PointBreak) graphic.getLegend();
+            PointBreak pb = (PointBreak) graphic.getLegendBreak();
             PointZ p = (PointZ) shape.getPoint();
             /*PointZ pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
                     (p.Z - this.zmin) * zfactor - 10);
@@ -2384,7 +2384,7 @@ public class Plot3D extends Plot {
             ShapeTypes stype = ShapeTypes.POLYLINE;
             ls = new LegendScheme(stype);
             for (Graphic g : this.graphics.getGraphics()) {
-                ls.getLegendBreaks().add(g.getLegend());
+                ls.getLegendBreaks().add(g.getLegendBreak());
             }
         }
         return ls;

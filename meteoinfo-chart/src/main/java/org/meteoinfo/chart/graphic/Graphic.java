@@ -11,8 +11,9 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
  * General Public License for more details.
  */
-package org.meteoinfo.geometry.graphic;
+package org.meteoinfo.chart.graphic;
 
+ import org.meteoinfo.chart.transform.Transform;
  import org.meteoinfo.geometry.legend.*;
  import org.meteoinfo.common.Extent;
  import org.meteoinfo.common.PointD;
@@ -36,7 +37,7 @@ package org.meteoinfo.geometry.graphic;
      // <editor-fold desc="Variables">
 
      protected Shape shape;
-     protected ColorBreak legend;
+     protected ColorBreak legendBreak;
      protected GeneralPath clipPath;
      protected Graphic clipGraphic;
      protected Transform transform;
@@ -59,7 +60,7 @@ package org.meteoinfo.geometry.graphic;
       */
      public Graphic(Shape shape, ColorBreak legend) {
          this.shape = shape;
-         this.legend = legend;
+         this.legendBreak = legend;
          updateResizeAbility();
      }
      // </editor-fold>
@@ -89,17 +90,27 @@ package org.meteoinfo.geometry.graphic;
       *
       * @return Legend
       */
-     public ColorBreak getLegend() {
-         return legend;
+     public ColorBreak getLegendBreak() {
+         return legendBreak;
      }
 
      /**
       * Set legend
-      * @param legend Legend
+      * @param legendBreak Legend
       */
-     public void setLegend(ColorBreak legend) {
-         this.legend = legend;
+     public void setLegendBreak(ColorBreak legendBreak) {
+         this.legendBreak = legendBreak;
          updateResizeAbility();
+     }
+
+     /**
+      * Get legend breaks
+      * @return Legend breaks
+      */
+     public List<? extends ColorBreak> getLegendBreaks() {
+         List<ColorBreak> legendBreaks = new ArrayList<>();
+         legendBreaks.add(legendBreak);
+         return legendBreaks;
      }
 
      /**
@@ -298,10 +309,10 @@ package org.meteoinfo.geometry.graphic;
      }
 
      private void updateResizeAbility() {
-         if (shape != null && legend != null) {
+         if (shape != null && legendBreak != null) {
              switch (shape.getShapeType()) {
                  case POINT:
-                     switch (legend.getBreakType()) {
+                     switch (legendBreak.getBreakType()) {
                          case POINT_BREAK:
                              _resizeAbility = ResizeAbility.SAME_WIDTH_HEIGHT;
                              break;
@@ -387,7 +398,7 @@ package org.meteoinfo.geometry.graphic;
      public void exportToXML(Document doc, Element parent) {
          Element graphic = doc.createElement("Graphic");
          addShape(doc, graphic, shape);
-         addLegend(doc, graphic, legend, shape.getShapeType());
+         addLegend(doc, graphic, legendBreak, shape.getShapeType());
 
          parent.appendChild(graphic);
      }
@@ -645,7 +656,7 @@ package org.meteoinfo.geometry.graphic;
          this.shape = loadShape(shape);
 
          Node legend = graphicNode.getElementsByTagName("Legend").item(0);
-         this.legend = loadLegend(legend, this.shape.getShapeType());
+         this.legendBreak = loadLegend(legend, this.shape.getShapeType());
 
          updateResizeAbility();
      }

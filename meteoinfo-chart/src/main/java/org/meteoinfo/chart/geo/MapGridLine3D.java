@@ -1,14 +1,11 @@
 package org.meteoinfo.chart.geo;
 
-import org.meteoinfo.chart.geo.MapGridLine;
-import org.meteoinfo.geometry.graphic.GraphicCollection3D;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.PolylineZShape;
 import org.meteoinfo.projection.ProjectionInfo;
-import org.meteoinfo.projection.ProjectionUtil;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,7 +49,7 @@ public class MapGridLine3D extends MapGridLine {
             PolylineZShape line = new PolylineZShape();
             line.setPoints(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
-            graphic = ProjectionUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
+            graphic = ProjectUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
             graphic.getShape().setValue(lon);
             this.longitudeLines.add(graphic);
         }
@@ -81,7 +78,11 @@ public class MapGridLine3D extends MapGridLine {
             PolylineZShape line = new PolylineZShape();
             line.setPoints(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
-            graphic = ProjectionUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
+            graphic = ProjectUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
+            if (graphic == null) {
+                continue;
+            }
+
             if (graphic.getShape().getPartNum() > 1) {
                 points = (List<PointZ>) ((PolylineZShape) graphic.getShape()).getPolylines().get(0).getPointList();
                 List<PointZ> points1 = (List<PointZ>) ((PolylineZShape) graphic.getShape()).getPolylines().

@@ -1,11 +1,12 @@
-package org.meteoinfo.projection;
+package org.meteoinfo.chart.transform;
 
 import org.locationtech.proj4j.BasicCoordinateTransform;
 import org.locationtech.proj4j.CoordinateTransform;
 import org.locationtech.proj4j.ProjCoordinate;
 import org.meteoinfo.common.PointD;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.Transform;
+import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.projection.ProjectionInfo;
+import org.meteoinfo.chart.geo.ProjectUtil;
 
 public class GeoTransform extends Transform {
 
@@ -47,16 +48,23 @@ public class GeoTransform extends Transform {
     }
 
     @Override
-    public PointD transform(double x, double y) {
-        ProjCoordinate s = new ProjCoordinate(x, y);
+    public PointD transform(PointD point) {
+        ProjCoordinate s = new ProjCoordinate(point.X, point.Y);
         ProjCoordinate t = new ProjCoordinate();
         this.coordinateTransform.transform(s, t);
+        clearInvalid();
         return new PointD(t.x, t.y);
     }
 
     @Override
     public Graphic transform(Graphic graphic) {
-        return ProjectionUtil.projectClipGraphic(graphic, this.sourceProj, this.targetProj);
+        clearInvalid();
+        return ProjectUtil.projectClipGraphic(graphic, this.sourceProj, this.targetProj);
+    }
+
+    @Override
+    public boolean isAffine() {
+        return false;
     }
 
     @Override

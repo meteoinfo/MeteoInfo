@@ -23,7 +23,7 @@ import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.table.*;
 import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.chart.graphic.Graphic;
 
 import java.awt.Color;
 import java.io.File;
@@ -53,7 +53,7 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.meteoinfo.geo.legend.LegendManage;
-import org.meteoinfo.geometry.graphic.ChartGraphic;
+import org.meteoinfo.chart.graphic.ChartGraphic;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -440,7 +440,7 @@ public class VectorLayer extends MapLayer {
      */
     public void updateChartsProp() {
         for (Graphic chartG : _chartPoints) {
-            ChartBreak aCP = (ChartBreak) chartG.getLegend();
+            ChartBreak aCP = (ChartBreak) chartG.getLegendBreak();
             aCP.setLegendScheme(_chartSet.getLegendScheme());
             aCP.setMinSize(_chartSet.getMinSize());
             aCP.setMaxSize(_chartSet.getMaxSize());
@@ -573,7 +573,7 @@ public class VectorLayer extends MapLayer {
     public void updateCharts() {
         int shapeIdx;
         for (ChartGraphic cg : this._chartPoints) {
-            ChartBreak aCP = (ChartBreak) cg.getLegend();
+            ChartBreak aCP = (ChartBreak) cg.getLegendBreak();
             shapeIdx = aCP.getShapeIndex();
             aCP.getChartData().clear();
             for (String fn : _chartSet.getFieldNames()) {
@@ -1978,7 +1978,7 @@ public class VectorLayer extends MapLayer {
      */
     public Graphic getLabel(String text) {
         for (Graphic lb : _labelPoints) {
-            if (((LabelBreak) lb.getLegend()).getText().equals(text)) {
+            if (((LabelBreak) lb.getLegendBreak()).getText().equals(text)) {
                 return lb;
             }
         }
@@ -2007,7 +2007,7 @@ public class VectorLayer extends MapLayer {
      * @param y Y
      */
     public void moveLabel(Graphic lb, float x, float y) {
-        LabelBreak lbb = (LabelBreak) lb.getLegend();
+        LabelBreak lbb = (LabelBreak) lb.getLegendBreak();
         lbb.setXShift(lbb.getXShift() + x);
         lbb.setYShift(lbb.getYShift() + y);
     }

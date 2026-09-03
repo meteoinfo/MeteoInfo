@@ -18,7 +18,6 @@ import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.geoprocess.Spline;
 import org.meteoinfo.common.colors.ColorUtil;
-import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.shape.*;
 
 import java.awt.BasicStroke;
@@ -2429,108 +2428,6 @@ public class Draw {
 
     // </editor-fold>
     // <editor-fold desc="Graphic">
-    /**
-     * Draw graphic
-     *
-     * @param points The points
-     * @param aGraphic The graphic
-     * @param g Graphics2D
-     * @param isEditingVertices Is editing vertices
-     */
-    public static void drawGraphic(PointF[] points, Graphic aGraphic, Graphics2D g, boolean isEditingVertices) {
-        Rectangle rect = new Rectangle();
-        Extent aExtent = MIMath.getPointFsExtent(points);
-        rect.x = (int) aExtent.minX;
-        rect.y = (int) aExtent.minY;
-        rect.width = (int) aExtent.getWidth();
-        rect.height = (int) aExtent.getHeight();
-
-        switch (aGraphic.getShape().getShapeType()) {
-            case POINT:
-                switch (aGraphic.getLegend().getBreakType()) {
-                    case POINT_BREAK:
-                        drawPoint((PointF) points[0].clone(), (PointBreak) aGraphic.getLegend(), g);
-                        int aSize = (int) ((PointBreak) aGraphic.getLegend()).getSize() / 2 + 2;
-                        rect.x = (int) points[0].X - aSize;
-                        rect.y = (int) points[0].Y - aSize;
-                        rect.width = aSize * 2;
-                        rect.height = aSize * 2;
-                        break;
-                    case LABEL_BREAK:
-                        drawLabelPoint((PointF) points[0].clone(), (LabelBreak) aGraphic.getLegend(), g, rect);
-                        break;
-                }
-                break;
-            case POLYLINE:
-                if (aGraphic.getLegend().getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
-                    drawPolyline(points, (ColorBreakCollection) aGraphic.getLegend(), g);
-                } else {
-                    drawPolyline(points, (PolylineBreak) aGraphic.getLegend(), g);
-                }
-                break;
-            case POLYGON:
-                PolygonShape pgs = (PolygonShape) aGraphic.getShape().clone();
-                pgs.setPoints_keep(points);
-                drawPolygonShape(pgs, (PolygonBreak) aGraphic.getLegend(), g);
-                break;
-            case RECTANGLE:
-                //drawPolygon(points, (PolygonBreak) aGraphic.getLegend(), g);
-                Extent extent = GeometryUtil.getExtent(points);
-                drawRectangle(new PointF((float)extent.minX, (float)extent.minY),
-                        (float)extent.getWidth(), (float)extent.getHeight(),
-                        (PolygonBreak) aGraphic.getLegend(), g);
-                break;
-            case CURVE_LINE:
-                drawCurveLine(points, (PolylineBreak) aGraphic.getLegend(), g);
-                break;
-            case CURVE_POLYGON:
-                drawCurvePolygon(points, (PolygonBreak) aGraphic.getLegend(), g);
-                break;
-            case CIRCLE:
-                drawCircle(points, (PolygonBreak) aGraphic.getLegend(), g);
-                break;
-            case ELLIPSE:
-                EllipseShape eshape = (EllipseShape) aGraphic.getShape();
-                drawEllipse(points, eshape.getAngle(), (PolygonBreak) aGraphic.getLegend(), g);
-                break;
-            case ARC:
-                ArcShape arcShape = (ArcShape) aGraphic.getShape();
-                drawArc(points, arcShape, (PolygonBreak) aGraphic.getLegend(), g);
-                break;
-        }
-
-        //Draw selected rectangle
-        if (aGraphic.getShape().isSelected()) {
-            if (isEditingVertices) {
-                drawSelectedVertices(g, points);
-            } else {
-                float[] dashPattern = new float[]{2.0F, 1.0F};
-                g.setColor(Color.cyan);
-                g.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, dashPattern, 0.0f));
-                g.draw(rect);
-                switch (aGraphic.getShape().getShapeType()) {
-                    case POINT:
-                        if (aGraphic.getLegend().getBreakType() == BreakTypes.POINT_BREAK) {
-                            drawSelectedCorners(g, rect);
-                        }
-                        break;
-                    case POLYLINE:
-                    case CURVE_LINE:
-                    case POLYGON:
-                    case RECTANGLE:
-                    case ELLIPSE:
-                    case CURVE_POLYGON:
-                        drawSelectedCorners(g, rect);
-                        drawSelectedEdgeCenters(g, rect);
-                        break;
-                    case CIRCLE:
-                        drawSelectedCorners(g, rect);
-                        break;
-                }
-            }
-        }
-    }
-
     /**
      * Draw polyline
      *

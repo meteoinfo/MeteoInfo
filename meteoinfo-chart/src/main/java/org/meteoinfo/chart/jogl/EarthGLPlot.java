@@ -3,20 +3,18 @@ package org.meteoinfo.chart.jogl;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.ChartColorBar;
 import org.meteoinfo.chart.ChartText;
-import org.meteoinfo.chart.ChartText3D;
+import org.meteoinfo.chart.geo.ProjectUtil;
 import org.meteoinfo.chart.graphic.GraphicFactory;
 import org.meteoinfo.chart.graphic.MeshGraphic;
 import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.legend.LegendManage;
-import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolygonBreak;
-import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.image.ImageUtil;
 import org.meteoinfo.ndarray.Array;
@@ -150,7 +148,7 @@ public class EarthGLPlot extends GLPlot {
     @Override
     public void addGraphic(Graphic graphic, ProjectionInfo proj) {
         if (! proj.equals(this.projInfo)) {
-            Graphic nGraphic = ProjectionUtil.projectGraphic(graphic, proj, this.projInfo);
+            Graphic nGraphic = ProjectUtil.projectGraphic(graphic, proj, this.projInfo);
             addGraphic(nGraphic);
         } else {
             addGraphic(graphic);
@@ -167,7 +165,7 @@ public class EarthGLPlot extends GLPlot {
     @Override
     public void addGraphic(int index, Graphic graphic, ProjectionInfo proj) {
         if (! proj.equals(this.projInfo)) {
-            Graphic nGraphic = ProjectionUtil.projectGraphic(graphic, proj, this.projInfo);
+            Graphic nGraphic = ProjectUtil.projectGraphic(graphic, proj, this.projInfo);
             addGraphic(index, nGraphic);
         } else {
             addGraphic(index, graphic);

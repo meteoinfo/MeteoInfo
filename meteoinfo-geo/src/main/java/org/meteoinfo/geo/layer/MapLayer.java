@@ -14,7 +14,6 @@
 package org.meteoinfo.geo.layer;
 
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.geometry.graphic.Graphic;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;

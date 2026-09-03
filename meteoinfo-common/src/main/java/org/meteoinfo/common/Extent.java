@@ -14,6 +14,7 @@
 package org.meteoinfo.common;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 
 /**
  * Template
@@ -39,6 +40,8 @@ public class Extent implements Cloneable {
     /// maximum y
     /// </summary>
     public double maxY;
+
+    public static Extent Identity = new Extent(0, 1, 0, 1);
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -74,15 +77,26 @@ public class Extent implements Cloneable {
         this.minY = aExtent.minY;
         this.maxY = aExtent.maxY;
     }
+
+    /**
+     * Constructor
+     * @param rec The rectangle
+     */
+    public Extent(Rectangle2D rec) {
+        this.minX = rec.getMinX();
+        this.maxX = rec.getMaxX();
+        this.minY = rec.getMinY();
+        this.maxY = rec.getMaxY();
+    }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
 
     public double getWidth() {
-        return maxX - minX;
+        return Math.abs(maxX - minX);
     }
 
     public double getHeight() {
-        return maxY - minY;
+        return Math.abs(maxY - minY);
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
@@ -118,6 +132,15 @@ public class Extent implements Cloneable {
      */
     public Rectangle convertToRectangle() {
         return new Rectangle((int) minX, (int) minY, (int) getWidth(), (int) getHeight());
+    }
+
+    /**
+     * Convert to rectangle
+     *
+     * @return rectangle
+     */
+    public Rectangle2D toRectangle() {
+        return new Rectangle2D.Double(minX, minY, getWidth(), getHeight());
     }
 
     /**

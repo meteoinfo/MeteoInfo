@@ -23,7 +23,7 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 import org.meteoinfo.chart.plot.PlotOrientation;
-import org.meteoinfo.geometry.graphic.Artist;
+import org.meteoinfo.chart.graphic.Artist;
 import org.meteoinfo.geometry.legend.*;
 
 /**
@@ -34,7 +34,7 @@ public class ChartLegend extends Artist {
     // <editor-fold desc="Variables">
 
     //private final XY1DPlot plot;
-    protected LegendScheme legendScheme;
+    protected List<ColorBreak> legendBreaks;
     private LegendPosition position;
     protected float shrink;
     protected int aspect;
@@ -67,7 +67,7 @@ public class ChartLegend extends Artist {
     private boolean autoRowColNum = true;
     private Dimension symbolDimension;
     protected boolean extendRect;
-    protected ExtendFraction extendFraction;
+    //protected ExtendFraction extendFraction;
     protected float xshift;
     protected float yshift;
     // </editor-fold>
@@ -75,12 +75,8 @@ public class ChartLegend extends Artist {
 
     /**
      * Constructor
-     *
-     * @param ls LegendScheme
      */
-    public ChartLegend(LegendScheme ls) {
-        //this.plot = plot;
-        this.legendScheme = ls;
+    public ChartLegend() {
         this.colorBar = false;
         this.position = LegendPosition.LOWER_CENTER_OUTSIDE;
         this.orientation = PlotOrientation.HORIZONTAL;
@@ -104,9 +100,29 @@ public class ChartLegend extends Artist {
         this.tickLabelAngle = 0;
         this.symbolDimension = new Dimension(16, 10);
         this.extendRect = true;
-        this.extendFraction = ls.getExtendFraction();
+        //this.extendFraction = ls.getExtendFraction();
         this.xshift = 0;
         this.yshift = 0;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param legendBreaks Legend breaks
+     */
+    public ChartLegend(List<ColorBreak> legendBreaks) {
+        this();
+        this.legendBreaks = legendBreaks;
+    }
+
+    /**
+     * Constructor
+     *
+     * @param legendScheme Legend scheme
+     */
+    public ChartLegend(LegendScheme legendScheme) {
+        this();
+        this.legendBreaks = legendScheme.getLegendBreaks();
     }
 
     // </editor-fold>
@@ -114,21 +130,21 @@ public class ChartLegend extends Artist {
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
     /**
-     * Get legend scheme
+     * Get legend breaks
      *
-     * @return Legend scheme
+     * @return Legend breaks
      */
-    public LegendScheme getLegendScheme() {
-        return this.legendScheme;
+    public List<ColorBreak> getLegendBreaks() {
+        return this.legendBreaks;
     }
 
     /**
-     * Set legend scheme
+     * Set legend breaks
      *
-     * @param value Legend scheme
+     * @param value Legend breaks
      */
-    public void setLegendScheme(LegendScheme value) {
-        this.legendScheme = value;
+    public void setLegendBreaks(List<ColorBreak> value) {
+        this.legendBreaks = value;
     }
 
     /**
@@ -695,30 +711,14 @@ public class ChartLegend extends Artist {
     }
 
     /**
-     * Get extend fraction
-     * @return Extend fraction
-     */
-    public ExtendFraction getExtendFraction() {
-        return this.extendFraction;
-    }
-
-    /**
-     * Set extend fraction
-     * @param value
-     */
-    public void setExtendFraction(ExtendFraction value) {
-        this.extendFraction = value;
-    }
-
-    /**
      * Set tick labels
      *
      * @param value Tick labels
      */
     public void setTickCaptions(List<String> value) {
-        for (int i = 0; i < this.legendScheme.getBreakNum(); i++) {
+        for (int i = 0; i < this.legendBreaks.size(); i++) {
             if (i < value.size()) {
-                this.legendScheme.getLegendBreaks().get(i).setCaption(value.get(i));
+                this.legendBreaks.get(i).setCaption(value.get(i));
             } else {
                 break;
             }
@@ -797,10 +797,10 @@ public class ChartLegend extends Artist {
         g.setStroke(new BasicStroke(1));
         switch (this.orientation) {
             case HORIZONTAL:
-                drawHorizontalLegend(g, legendScheme);
+                drawHorizontalLegend(g);
                 break;
             case VERTICAL:
-                this.drawVerticalLegend(g, legendScheme);
+                this.drawVerticalLegend(g);
                 break;
         }
 
@@ -815,7 +815,7 @@ public class ChartLegend extends Artist {
         g.setTransform(oldMatrix);
     }
 
-    private void drawVerticalLegend(Graphics2D g, LegendScheme aLS) {
+    private void drawVerticalLegend(Graphics2D g) {
         String caption;
         float breakHeight = this.getBreakHeight(g);
         float symbolHeight = this.symbolDimension.height;
@@ -824,8 +824,8 @@ public class ChartLegend extends Artist {
 
         //Set columns
         int[] rowNums = new int[rowColNum];
-        int ave = aLS.getVisibleBreakNum() / rowColNum;
-        if (ave * rowColNum < aLS.getBreakNum()) {
+        int ave = legendBreaks.size() / rowColNum;
+        if (ave * rowColNum < legendBreaks.size()) {
             ave += 1;
         }
         int num = 0;
@@ -834,7 +834,7 @@ public class ChartLegend extends Artist {
             rowNums[i] = ave;
             num += ave;
         }
-        rowNums[0] = aLS.getVisibleBreakNum() - num;
+        rowNums[0] = legendBreaks.size() - num;
 
         //Draw title        
         float y0 = 0;
@@ -854,16 +854,16 @@ public class ChartLegend extends Artist {
             x = symbolWidth / 2 + leftSpace + col * colWidth;
             y = y0 + breakHeight / 2;
             for (int row = 0; row < rowNums[col]; row++) {
-                if (!aLS.getLegendBreaks().get(i).isDrawShape()) {
+                if (!legendBreaks.get(i).isDrawShape()) {
                     continue;
                 }
 
                 //y += breakHeight + breakSpace;
-                ColorBreak cb = aLS.getLegendBreaks().get(i);
+                ColorBreak cb = legendBreaks.get(i);
                 if (!cb.isDrawShape()) {
                     continue;
                 }
-                caption = aLS.getLegendBreaks().get(i).getCaption();
+                caption = cb.getCaption();
                 if (cb instanceof PointBreak) {
                     PointBreak aPB = (PointBreak) cb.clone();
                     ((PointBreak) aPB).setSize(((PointBreak) cb).getSize() * (symbolHeight / 10.f));
@@ -876,6 +876,7 @@ public class ChartLegend extends Artist {
                 } else {
                     PolygonBreak pgb = new PolygonBreak();
                     pgb.setColor(cb.getColor());
+                    pgb.setDrawFill(true);
                     pgb.setOutlineColor(Color.black);
                     Draw.drawPolygonSymbol(new PointF(x, y), symbolWidth, symbolHeight, pgb, g);
                 }
@@ -893,7 +894,7 @@ public class ChartLegend extends Artist {
         }
     }
 
-    private void drawHorizontalLegend(Graphics2D g, LegendScheme aLS) {
+    private void drawHorizontalLegend(Graphics2D g) {
         String caption;
         float breakHeight = this.getBreakHeight(g);
         float symbolHeight = this.symbolDimension.height;
@@ -901,8 +902,8 @@ public class ChartLegend extends Artist {
 
         //Set columns
         int[] colNums = new int[rowColNum];
-        int ave = aLS.getVisibleBreakNum() / rowColNum;
-        if (ave * rowColNum < aLS.getBreakNum()) {
+        int ave = legendBreaks.size() / rowColNum;
+        if (ave * rowColNum < legendBreaks.size()) {
             ave += 1;
         }
         int num = 0;
@@ -911,7 +912,7 @@ public class ChartLegend extends Artist {
             colNums[i] = ave;
             num += ave;
         }
-        colNums[rowColNum - 1] = aLS.getVisibleBreakNum() - num;
+        colNums[rowColNum - 1] = legendBreaks.size() - num;
 
         //Draw legend    
         float x, y;
@@ -920,15 +921,15 @@ public class ChartLegend extends Artist {
         for (int row = 0; row < rowColNum; row++) {
             x = this.symbolDimension.width / 2 + 5;
             for (int col = 0; col < colNums[row]; col++) {
-                if (i >= aLS.getBreakNum()) {
+                if (i >= legendBreaks.size()) {
                     break;
                 }
 
-                ColorBreak cb = aLS.getLegendBreaks().get(i);
+                ColorBreak cb = legendBreaks.get(i);
                 if (!cb.isDrawShape()) {
                     continue;
                 }
-                caption = aLS.getLegendBreaks().get(i).getCaption();
+                caption = cb.getCaption();
                 if (cb instanceof PointBreak) {
                     PointBreak aPB = (PointBreak) cb;
                     Draw.drawPoint(new PointF(x, y), aPB, g);
@@ -956,11 +957,11 @@ public class ChartLegend extends Artist {
     private int getMaxLabelWidth(Graphics2D g) {
         String caption;
         Dimension aSF;
-        int bNum = legendScheme.getBreakNum();
+        int bNum = legendBreaks.size();
         int labWidth = 0;
         g.setFont(this.tickLabelFont);
         for (int i = 0; i < bNum; i++) {
-            caption = legendScheme.getLegendBreaks().get(i).getCaption();
+            caption = legendBreaks.get(i).getCaption();
             boolean isValid = true;
             if (isValid) {
                 aSF = Draw.getStringDimension(caption, this.tickLabelAngle, g);
@@ -976,7 +977,7 @@ public class ChartLegend extends Artist {
 
     private int getBreakHeight(Graphics2D g) {
         g.setFont(tickLabelFont);
-        Dimension dim = Draw.getStringDimension(this.legendScheme.getLegendBreak(0).getCaption(), g);
+        Dimension dim = Draw.getStringDimension(this.legendBreaks.get(0).getCaption(), g);
         return Math.max(dim.height, this.symbolDimension.height);
     }
 
@@ -988,7 +989,7 @@ public class ChartLegend extends Artist {
      * @return Legend dimension
      */
     public Dimension getLegendDimension(Graphics2D g, Dimension limitDim) {
-        if (legendScheme != null) {
+        if (legendBreaks != null) {
             if (this.colorBar) {
                 switch (this.orientation) {
                     case VERTICAL:
@@ -1030,7 +1031,7 @@ public class ChartLegend extends Artist {
                     case VERTICAL:
                         //Get column number
                         if (this.autoRowColNum) {
-                            int tHeight = (int) (legendScheme.getBreakNum() * (breakHeight + breakSpace)
+                            int tHeight = (int) (legendBreaks.size() * (breakHeight + breakSpace)
                                     + breakSpace * 2 + breakHeight / 2 + 5);
                             rowColNum = 1;
                             if (tHeight > limitDim.height * 10 / 8) {
@@ -1038,8 +1039,8 @@ public class ChartLegend extends Artist {
                                 if (rowColNum == 1) {
                                     rowColNum = 2;
                                 } else {
-                                    int n = legendScheme.getBreakNum() / rowColNum;
-                                    int m = legendScheme.getBreakNum() % rowColNum;
+                                    int n = legendBreaks.size() / rowColNum;
+                                    int m = legendBreaks.size() % rowColNum;
                                     if (m != 0) {
                                         if (m <= n) {
                                             rowColNum += 1;
@@ -1059,8 +1060,8 @@ public class ChartLegend extends Artist {
 
                         //Get height
                         int[] rowNums = new int[rowColNum];
-                        int ave = legendScheme.getBreakNum() / rowColNum;
-                        if (ave * rowColNum < legendScheme.getBreakNum()) {
+                        int ave = legendBreaks.size() / rowColNum;
+                        if (ave * rowColNum < legendBreaks.size()) {
                             ave += 1;
                         }
                         int num = 0;
@@ -1069,7 +1070,7 @@ public class ChartLegend extends Artist {
                             rowNums[i] = ave;
                             num += ave;
                         }
-                        rowNums[rowColNum - 1] = legendScheme.getBreakNum() - num;
+                        rowNums[rowColNum - 1] = legendBreaks.size() - num;
 
 //                        this.height = (int) (rowNums[0] * (breakHeight + _breakSpace)
 //                                + _breakSpace * 2 + breakHeight / 2 + 5);
@@ -1079,15 +1080,15 @@ public class ChartLegend extends Artist {
                         //Get row number
                         if (this.autoRowColNum) {
                             int breakWidth = this.symbolDimension.width + this.getMaxLabelWidth(g) + 15;
-                            int tWidth = breakWidth * legendScheme.getBreakNum();
+                            int tWidth = breakWidth * legendBreaks.size();
                             rowColNum = 1;
                             if (tWidth > limitDim.width * 8 / 10) {
                                 rowColNum = tWidth / (limitDim.width * 8 / 10);
                                 if (rowColNum == 1) {
                                     rowColNum = 2;
                                 } else {
-                                    int n = legendScheme.getBreakNum() / rowColNum;
-                                    int m = legendScheme.getBreakNum() % rowColNum;
+                                    int n = legendBreaks.size() / rowColNum;
+                                    int m = legendBreaks.size() % rowColNum;
                                     if (m != 0) {
                                         if (m <= n) {
                                             rowColNum += 1;
@@ -1106,26 +1107,26 @@ public class ChartLegend extends Artist {
 
                         //Get width
                         //FontMetrics metrics = g.getFontMetrics(tickFont);
-                        ave = legendScheme.getBreakNum() / rowColNum;
-                        if (ave * rowColNum < legendScheme.getBreakNum()) {
+                        ave = legendBreaks.size() / rowColNum;
+                        if (ave * rowColNum < legendBreaks.size()) {
                             ave += 1;
                         }
                         num = 0;
                         int maxWidth = 0;
                         int tempWidth = 0;
-                        for (i = 0; i < legendScheme.getBreakNum(); i++) {
+                        for (i = 0; i < legendBreaks.size(); i++) {
                             if (num < ave) {
                                 //tempWidth += this.symbolDimension.width + 15
                                 //        + metrics.stringWidth(legendScheme.getLegendBreaks().get(i).getCaption());
                                 tempWidth += this.symbolDimension.width + 15
-                                        + Draw.getStringDimension(legendScheme.getLegendBreaks().get(i).getCaption(), g).width;
+                                        + Draw.getStringDimension(legendBreaks.get(i).getCaption(), g).width;
                                 num += 1;
                             } else {
                                 if (maxWidth < tempWidth) {
                                     maxWidth = tempWidth;
                                 }
                                 //tempWidth = metrics.stringWidth(legendScheme.getLegendBreaks().get(i).getCaption()) + 15;
-                                tempWidth = Draw.getStringDimension(legendScheme.getLegendBreaks().get(i).getCaption(), g).width;
+                                tempWidth = Draw.getStringDimension(legendBreaks.get(i).getCaption(), g).width;
                                 num = 1;
                             }
                         }
@@ -1148,63 +1149,17 @@ public class ChartLegend extends Artist {
 
     protected int getTickWidth(Graphics2D g) {
         float rwidth = 0;
-        String caption = "";
-        int bNum = this.legendScheme.getBreakNum();
-        //FontMetrics metrics = g.getFontMetrics(this.tickFont);
-        g.setFont(this.tickLabelFont);
-        if (this.legendScheme.getLegendBreaks().get(bNum - 1).isNoData()) {
-            bNum -= 1;
-        }
-        for (int i = 0; i < bNum; i++) {
-            switch (this.legendScheme.getShapeType()) {
-                case POINT:
-                    PointBreak aPB = (PointBreak) legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
-                        caption = DataConvert.removeTailingZeros(aPB.getEndValue().toString());
-                    } else {
-                        caption = aPB.getCaption();
-                    }
-                    break;
-                case POLYLINE:
-                    PolylineBreak aPLB = (PolylineBreak) legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
-                        caption = DataConvert.removeTailingZeros(aPLB.getEndValue().toString());
-                    } else {
-                        caption = aPLB.getCaption();
-                    }
-                    break;
-                case POLYGON:
-                    PolygonBreak aPGB = (PolygonBreak) legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
-                        caption = DataConvert.removeTailingZeros(aPGB.getEndValue().toString());
-                    } else {
-                        caption = aPGB.getCaption();
-                    }
-                    break;
-                case IMAGE:
-                    ColorBreak aCB = legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
-                        caption = DataConvert.removeTailingZeros(aCB.getEndValue().toString());
-                    } else {
-                        caption = aCB.getCaption();
-                    }
-                    break;
+        String caption;
+        for (ColorBreak cb : this.legendBreaks) {
+            if (cb.isNoData()) {
+                continue;
             }
 
+            caption = cb.getCaption();
             boolean isValid = true;
-            switch (legendScheme.getLegendType()) {
-                case GRADUATED_COLOR:
-                    if (i == bNum - 1) {
-                        isValid = false;
-                    }
-                    break;
-            }
-            if (isValid) {
-                //float labwidth = metrics.stringWidth(caption);
-                float labwidth = (float) Draw.getStringDimension(caption, this.tickLabelAngle, g).getWidth();
-                if (rwidth < labwidth) {
-                    rwidth = labwidth;
-                }
+            float labwidth = (float) Draw.getStringDimension(caption, this.tickLabelAngle, g).getWidth();
+            if (rwidth < labwidth) {
+                rwidth = labwidth;
             }
         }
 
@@ -1213,62 +1168,16 @@ public class ChartLegend extends Artist {
 
     protected int getTickHeight(Graphics2D g) {
         float rheight = 0;
-        String caption = "";
-        int bNum = this.legendScheme.getBreakNum();
-        //FontMetrics metrics = g.getFontMetrics(this.tickFont);
-        g.setFont(this.tickLabelFont);
-        if (this.legendScheme.getLegendBreaks().get(bNum - 1).isNoData()) {
-            bNum -= 1;
-        }
-        for (int i = 0; i < bNum; i++) {
-            switch (this.legendScheme.getShapeType()) {
-                case POINT:
-                    PointBreak aPB = (PointBreak) legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
-                        caption = DataConvert.removeTailingZeros(aPB.getEndValue().toString());
-                    } else {
-                        caption = aPB.getCaption();
-                    }
-                    break;
-                case POLYLINE:
-                    PolylineBreak aPLB = (PolylineBreak) legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
-                        caption = DataConvert.removeTailingZeros(aPLB.getEndValue().toString());
-                    } else {
-                        caption = aPLB.getCaption();
-                    }
-                    break;
-                case POLYGON:
-                    PolygonBreak aPGB = (PolygonBreak) legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
-                        caption = DataConvert.removeTailingZeros(aPGB.getEndValue().toString());
-                    } else {
-                        caption = aPGB.getCaption();
-                    }
-                    break;
-                case IMAGE:
-                    ColorBreak aCB = legendScheme.getLegendBreaks().get(i);
-                    if (legendScheme.getLegendType() == LegendType.GRADUATED_COLOR) {
-                        caption = DataConvert.removeTailingZeros(aCB.getEndValue().toString());
-                    } else {
-                        caption = aCB.getCaption();
-                    }
-                    break;
+        String caption;
+        for (ColorBreak cb : this.legendBreaks) {
+            if (cb.isNoData()) {
+                continue;
             }
 
-            boolean isValid = true;
-            switch (legendScheme.getLegendType()) {
-                case GRADUATED_COLOR:
-                    if (i == bNum - 1) {
-                        isValid = false;
-                    }
-                    break;
-            }
-            if (isValid) {
-                float labheight = (float) Draw.getStringDimension(caption, 90 - Math.abs(this.tickLabelAngle), g).getWidth();
-                if (rheight < labheight) {
-                    rheight = labheight;
-                }
+            caption = cb.getCaption();
+            float labheight = (float) Draw.getStringDimension(caption, 90 - Math.abs(this.tickLabelAngle), g).getWidth();
+            if (rheight < labheight) {
+                rheight = labheight;
             }
         }
 
@@ -1287,7 +1196,7 @@ public class ChartLegend extends Artist {
         }
 
         double len;
-        int n = this.legendScheme.getBreakNum();
+        int n = this.legendBreaks.size();
         int nn;
         if (this.orientation == PlotOrientation.HORIZONTAL) {
             len = this.width;

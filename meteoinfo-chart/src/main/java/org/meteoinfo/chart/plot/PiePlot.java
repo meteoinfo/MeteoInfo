@@ -8,8 +8,8 @@ package org.meteoinfo.chart.plot;
 import org.meteoinfo.chart.AspectType;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.render.java2d.Draw;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.shape.ArcShape;
@@ -54,7 +54,7 @@ public class PiePlot extends Plot2D {
 
         for (int m = 0; m < this.getGraphics().getNumGraphics(); m++) {
             Graphic graphic = this.getGraphics().get(m);
-            ColorBreak cb = graphic.getLegend();
+            ColorBreak cb = graphic.getLegendBreak();
             float dist = 5;
             float ex = this.getExplode();
             Font labelFont = ((GraphicCollection)graphic).getLabelSet().getLabelFont();
@@ -62,7 +62,7 @@ public class PiePlot extends Plot2D {
             for (int i = 0; i < graphic.getNumGraphics(); i++) {
                 Graphic gg = graphic.getGraphicN(i);
                 if (!graphic.isSingleLegend()) {
-                    cb = gg.getLegend();
+                    cb = gg.getLegendBreak();
                 }
                 Shape shape = gg.getShape();
                 this.drawArc(g, (ArcShape) shape, (PolygonBreak) cb, area, dist, ex, labelFont,

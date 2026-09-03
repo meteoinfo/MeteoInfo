@@ -28,10 +28,6 @@ import org.meteoinfo.geometry.colors.ExtendType;
 import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.colors.OpacityTransferFunction;
 import org.meteoinfo.geometry.colors.TransferFunction;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection;
-import org.meteoinfo.geometry.graphic.GraphicCollection3D;
-import org.meteoinfo.geometry.graphic.ImageGraphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.geometry.shape.*;
@@ -2236,7 +2232,13 @@ public class GraphicFactory {
 //            ebreak.setColor(Color.black);
 //            graphics.add(new Graphic(pls, ebreak));
 //        }
-        graphics.setSingleLegend(false);
+
+        if (bbs.size() == 1) {
+            graphics.setLegendBreak(bb);
+            graphics.setSingleLegend(true);
+        } else {
+            graphics.setSingleLegend(false);
+        }
 
         return graphics;
     }
@@ -2348,7 +2350,13 @@ public class GraphicFactory {
 //            ebreak.setColor(Color.black);
 //            graphics.add(new Graphic(pls, ebreak));
 //        }
-        graphics.setSingleLegend(false);
+
+        if (bbs.size() == 1) {
+            graphics.setLegendBreak(bb);
+            graphics.setSingleLegend(true);
+        } else {
+            graphics.setSingleLegend(false);
+        }
 
         return graphics;
     }
@@ -2464,7 +2472,13 @@ public class GraphicFactory {
             ebreak.setColor(Color.black);
             graphics.add(new Graphic(pls, ebreak));
         }
-        graphics.setSingleLegend(false);
+
+        if (bbs.size() == 1) {
+            graphics.setLegendBreak(bb);
+            graphics.setSingleLegend(true);
+        } else {
+            graphics.setSingleLegend(false);
+        }
 
         return graphics;
     }
@@ -8285,6 +8299,7 @@ public class GraphicFactory {
             }
             PolygonBreak pgb = new PolygonBreak();
             pgb.setColor(colors.get(i));
+            pgb.setDrawFill(true);
             if (drawEdge != null) {
                 pgb.setDrawOutline(drawEdge);
             }

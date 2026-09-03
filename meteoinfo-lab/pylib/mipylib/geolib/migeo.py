@@ -10,7 +10,7 @@ import numbers
 
 from org.meteoinfo.data.mapdata.geotiff import GeoTiff
 from org.meteoinfo.geometry.shape import ShapeUtil, PolygonShape
-from org.meteoinfo.geometry.graphic import Graphic
+from org.meteoinfo.chart.graphic import Graphic
 from org.meteoinfo.geometry.legend import BreakTypes
 from org.meteoinfo.geometry.geoprocess import GeoComputation, GeometryUtil
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil

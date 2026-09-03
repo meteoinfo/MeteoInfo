@@ -1,36 +1,33 @@
-package org.meteoinfo.geometry.graphic;
+package org.meteoinfo.chart.graphic;
 
-import org.meteoinfo.common.PointD;
 import org.meteoinfo.geometry.legend.LegendScheme;
-import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.legend.PolylineBreak;
-import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.IndexIterator;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PolygonGraphicCollection extends GraphicCollection {
-
+public class Line2DGraphicCollection extends GraphicCollection {
     private Array cData;
     private List<Array> data;
+    private boolean curve = false;
 
     /**
      * Constructor
      */
-    public PolygonGraphicCollection() {
-        this(new ArrayList<PolygonGraphic>());
+    public Line2DGraphicCollection() {
+        this(new ArrayList<Line2DGraphic>());
     }
 
     /**
      * Constructor
      * @param graphics Graphics
      */
-    public PolygonGraphicCollection(List<PolygonGraphic> graphics) {
+    public Line2DGraphicCollection(List<Line2DGraphic> graphics) {
         super();
         this.graphics = graphics;
-        this.legend = new PolygonBreak();
+        this.legendBreak = new PolylineBreak();
     }
 
     /**
@@ -38,21 +35,21 @@ public class PolygonGraphicCollection extends GraphicCollection {
      * @param data Data list
      * @param lineBreak Polyline break
      */
-    public PolygonGraphicCollection(List<Array> data, PolygonBreak polygonBreak) {
+    public Line2DGraphicCollection(List<Array> data, PolylineBreak lineBreak) {
         super();
 
-        updateGraphics(data, polygonBreak);
+        updateGraphics(data, lineBreak);
     }
 
     /**
      * Constructor
      * @param data Data list
-     * @param polygonBreaks Polygon break list
+     * @param lineBreaks Polyline break list
      */
-    public PolygonGraphicCollection(List<Array> data, List<PolygonBreak> polygonBreaks) {
+    public Line2DGraphicCollection(List<Array> data, List<PolylineBreak> lineBreaks) {
         super();
 
-        updateGraphics(data, polygonBreaks);
+        updateGraphics(data, lineBreaks);
     }
 
     /**
@@ -61,16 +58,16 @@ public class PolygonGraphicCollection extends GraphicCollection {
      * @param cdata Color data
      * @param ls Legend scheme
      */
-    public PolygonGraphicCollection(List<Array> data, Array cData, LegendScheme ls) {
+    public Line2DGraphicCollection(List<Array> data, Array cData, LegendScheme ls) {
         this.legendScheme = ls;
         this.setSingleLegend(false);
         if (cData.getSize() == data.size()) {
-            List<PolygonBreak> polygonBreaks = new ArrayList<>();
+            List<PolylineBreak> lineBreaks = new ArrayList<>();
             IndexIterator iterC = cData.getIndexIterator();
             while (iterC.hasNext()) {
-                polygonBreaks.add((PolygonBreak) ls.findLegendBreak(iterC.getDoubleNext()));
+                lineBreaks.add((PolylineBreak) ls.findLegendBreak(iterC.getDoubleNext()));
             }
-            updateGraphics(data, polygonBreaks);
+            updateGraphics(data, lineBreaks);
         } else {
             updateGraphics(data, cData, ls);
         }
@@ -82,13 +79,13 @@ public class PolygonGraphicCollection extends GraphicCollection {
      * @param cdata Color data
      * @param ls Legend scheme
      */
-    public PolygonGraphicCollection(List<Array> data, List<Array> cData, LegendScheme ls) {
+    public Line2DGraphicCollection(List<Array> data, List<Array> cData, LegendScheme ls) {
         this.legendScheme = ls;
         this.setSingleLegend(false);
         updateGraphics(data, cData, ls);
     }
 
-    protected void updateGraphics(List<Array> data, PolygonBreak polygonBreak) {
+    protected void updateGraphics(List<Array> data, PolylineBreak lineBreak) {
         this.data = data;
         this.graphics = new ArrayList<>();
         int[] origin = new int[2];
@@ -101,14 +98,14 @@ public class PolygonGraphicCollection extends GraphicCollection {
                 x = array.section(origin, shape);
                 origin = new int[]{0, 1};
                 y = array.section(origin, shape);
-                this.add(new PolygonGraphic(x, y, polygonBreak));
+                this.add(new Line2DGraphic(x, y, lineBreak));
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    protected void updateGraphics(List<Array> data, List<PolygonBreak> breaks) {
+    protected void updateGraphics(List<Array> data, List<PolylineBreak> lineBreaks) {
         this.singleLegend = false;
         this.data = data;
         this.graphics = new ArrayList<>();
@@ -123,10 +120,10 @@ public class PolygonGraphicCollection extends GraphicCollection {
                 x = array.section(origin, shape);
                 origin = new int[]{0, 1};
                 y = array.section(origin, shape);
-                if (i >= breaks.size()) {
+                if (i >= lineBreaks.size()) {
                     i = 0;
                 }
-                this.add(new PolygonGraphic(x, y, breaks.get(i)));
+                this.add(new Line2DGraphic(x, y, lineBreaks.get(i)));
                 i += 1;
             }
         } catch (Exception e) {
@@ -149,7 +146,7 @@ public class PolygonGraphicCollection extends GraphicCollection {
                 x = array.section(origin, shape);
                 origin = new int[]{0, 1};
                 y = array.section(origin, shape);
-                this.add(new PolygonGraphic(x, y, cData.get(i), ls));
+                this.add(new Line2DGraphic(x, y, cData.get(i), ls));
                 i += 1;
             }
         } catch (Exception e) {
@@ -175,7 +172,7 @@ public class PolygonGraphicCollection extends GraphicCollection {
                 y = array.section(origin, shape);
                 origin = new int[]{0, i};
                 c = cData.section(origin, shape);
-                this.add(new PolygonGraphic(x, y, c, ls));
+                this.add(new Line2DGraphic(x, y, c, ls));
                 i += 1;
             }
         } catch (Exception e) {
@@ -190,6 +187,22 @@ public class PolygonGraphicCollection extends GraphicCollection {
      */
     public boolean hasColorData() {
         return this.cData != null;
+    }
+
+    /**
+     * Return plot as curve line or not
+     * @return Curve line or not
+     */
+    public boolean isCurve() {
+        return this.curve;
+    }
+
+    /**
+     * Set plot as curve line or not
+     * @param value Curve line or not
+     */
+    public void setCurve(boolean value) {
+        this.curve = value;
     }
 
     /**
@@ -208,8 +221,8 @@ public class PolygonGraphicCollection extends GraphicCollection {
         if (this.cData != null) {
             updateGraphics(value, this.cData, this.legendScheme);
         } else {
-            List<PolygonBreak> breaks = getLegendBreaks();
-            updateGraphics(value, breaks);
+            List<PolylineBreak> lineBreaks = (List<PolylineBreak>) getLegendBreaks();
+            updateGraphics(value, lineBreaks);
         }
     }
 
@@ -219,18 +232,6 @@ public class PolygonGraphicCollection extends GraphicCollection {
      */
     public void setData(List<Array> value, Array cData) {
         updateGraphics(value, cData, this.legendScheme);
-    }
-
-    /**
-     * Get legend breaks
-     * @return Legend breaks
-     */
-    public List<PolygonBreak> getLegendBreaks() {
-        List<PolygonBreak> breaks = new ArrayList<>();
-        for (PolygonGraphic graphic : (List<PolygonGraphic>) this.getGraphics()) {
-            breaks.add((PolygonBreak) graphic.legend);
-        }
-        return breaks;
     }
 
 }

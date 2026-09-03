@@ -12,7 +12,7 @@ from org.meteoinfo.geometry.legend import LineStyles, HatchStyle, ColorBreak, Po
     PolygonBreak, ArrowBreak, ArrowLineBreak, ArrowPolygonBreak, StreamlineBreak, \
     PointStyle, MarkerType, LegendScheme, LegendManage, ExtendFraction
 from org.meteoinfo.geometry.colors import ExtendType
-from org.meteoinfo.geometry.graphic import Graphic
+from org.meteoinfo.chart.graphic import Graphic
 from org.meteoinfo.common.colors import ColorUtil, ColorMap
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.chart import ChartText
@@ -1282,7 +1282,7 @@ def makelegend(source, **kwargs):
             elif isinstance(source[0], Graphic):
                 breaks = []
                 for g in source:
-                    breaks.append(g.getLegend())
+                    breaks.append(g.getLegendBreak())
                 ls = LegendScheme(breaks)
             else:
                 colors = getcolors(source)
@@ -1306,34 +1306,3 @@ def makelegend(source, **kwargs):
                 cbs = source.findBreaks(values)
                 ls = LegendScheme(cbs)
     return ls
-
-
-def split_array_by_nan(arr):
-    """
-    Split one dimensional array by nan.
-
-    Parameters
-    ----------
-    arr : ndarray
-        One dimension array to be divided into sub-arrays.
-
-    Returns
-    -------
-    sub-arrays : list of ndarrays
-        A list of sub-arrays as views into `ary`.
-    """
-    arr = np.asarray(arr)
-    nan_indices = np.where(np.isnan(arr))[0]
-    split_arrays = np.split(arr, nan_indices)
-    r = []
-    for sub_arr in split_arrays:
-        if len(sub_arr) == 0:
-            continue
-
-        if np.isnan(sub_arr[0]):
-            sub_arr = sub_arr[1:]
-
-        if len(sub_arr) > 0:
-            r.append(sub_arr)
-
-    return r

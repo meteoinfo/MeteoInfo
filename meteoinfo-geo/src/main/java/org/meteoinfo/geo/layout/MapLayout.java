@@ -54,7 +54,7 @@ import org.meteoinfo.geometry.shape.CircleShape;
 import org.meteoinfo.geometry.shape.CurveLineShape;
 import org.meteoinfo.geometry.shape.CurvePolygonShape;
 import org.meteoinfo.geometry.shape.EllipseShape;
-import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.shape.PointShape;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.geometry.shape.PolylineShape;
@@ -1551,7 +1551,8 @@ import org.xml.sax.SAXException;
                              if (MIMath.pointInRectangle(pageP, aElement.getBounds())) {
                                  if (aElement.getElementType() == ElementType.LAYOUT_GRAPHIC) {
                                      Graphic aGraphic = ((LayoutGraphic) aElement).getGraphic();
-                                     if (aGraphic.getLegend().getBreakType() == BreakTypes.POLYLINE_BREAK || aGraphic.getLegend().getBreakType() == BreakTypes.POLYGON_BREAK) {
+                                     if (aGraphic.getLegendBreak().getBreakType() == BreakTypes.POLYLINE_BREAK ||
+                                             aGraphic.getLegendBreak().getBreakType() == BreakTypes.POLYGON_BREAK) {
                                          JMenuItem jMenuItem_Reverse = new JMenuItem("Reverse");
                                          jMenuItem_Reverse.addActionListener(new ActionListener() {
                                              @Override
@@ -1561,7 +1562,8 @@ import org.xml.sax.SAXException;
                                          });
                                          jPopupMenu_Element.add(jMenuItem_Reverse);
 
-                                         if (aGraphic.getShape().getShapeType() == ShapeTypes.POLYLINE || aGraphic.getShape().getShapeType() == ShapeTypes.POLYGON) {
+                                         if (aGraphic.getShape().getShapeType() == ShapeTypes.POLYLINE ||
+                                                 aGraphic.getShape().getShapeType() == ShapeTypes.POLYGON) {
                                              jPopupMenu_Element.add(new JSeparator());
                                              JMenuItem jMenuItem_Smooth = new JMenuItem("Smooth Graphic");
                                              jMenuItem_Smooth.addActionListener(new ActionListener() {
@@ -1884,7 +1886,7 @@ import org.xml.sax.SAXException;
 
      private void showSymbolSetForm(Graphic graphic) {
          Shape shape = graphic.getShape();
-         ColorBreak aCB = graphic.getLegend();
+         ColorBreak aCB = graphic.getLegendBreak();
          switch (aCB.getBreakType()) {
              case POINT_BREAK:
                  PointBreak aPB = (PointBreak) aCB;
@@ -3538,7 +3540,7 @@ import org.xml.sax.SAXException;
          List<LayoutGraphic> texts = new ArrayList<>();
          List<LayoutGraphic> graphics = getLayoutGraphics();
          for (LayoutGraphic aLG : graphics) {
-             if (aLG.getGraphic().getLegend().getBreakType() == BreakTypes.LABEL_BREAK) {
+             if (aLG.getGraphic().getLegendBreak().getBreakType() == BreakTypes.LABEL_BREAK) {
                  texts.add(aLG);
              }
          }
@@ -3555,7 +3557,7 @@ import org.xml.sax.SAXException;
      public LayoutGraphic getText(String text) {
          List<LayoutGraphic> texts = getTexts();
          for (LayoutGraphic aLG : texts) {
-             if (((LabelBreak) aLG.getGraphic().getLegend()).getText().equals(text)) {
+             if (((LabelBreak) aLG.getGraphic().getLegendBreak()).getText().equals(text)) {
                  return aLG;
              }
          }

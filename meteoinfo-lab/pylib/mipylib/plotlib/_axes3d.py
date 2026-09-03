@@ -10,11 +10,10 @@ from org.meteoinfo.chart.plot import Plot3D
 from org.meteoinfo.chart.graphic import GraphicFactory
 from org.meteoinfo.chart import ChartText3D
 from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
-#from org.meteoinfo.geo.legend import LegendManage
 from org.meteoinfo.geo.io import GraphicUtil
 from org.meteoinfo.geometry.legend import BreakTypes, PolylineBreak, LegendManage
 from org.meteoinfo.geometry.shape import ShapeTypes
-from org.meteoinfo.geometry.graphic import Graphic
+from org.meteoinfo.chart.graphic import Graphic
 from org.meteoinfo.geo.layer import LayerTypes
 from org.meteoinfo.common import Extent3D
 
@@ -722,6 +721,9 @@ class Axes3D(Axes):
         if not linestyle is None:
             linestyle = plotutil.getlinestyle(linestyle)
             gridline.setStyle(linestyle)
+
+        self.stale = True
+
 
     def plot(self, x, y, z, *args, **kwargs):
         """

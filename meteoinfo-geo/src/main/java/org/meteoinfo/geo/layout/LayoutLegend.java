@@ -16,7 +16,7 @@ package org.meteoinfo.geo.layout;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.render.java2d.Draw;
-import org.meteoinfo.geometry.graphic.ResizeAbility;
+import org.meteoinfo.chart.graphic.ResizeAbility;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.ui.event.IMapViewUpdatedListener;
 import org.meteoinfo.ui.event.MapViewUpdatedEvent;
@@ -493,7 +493,7 @@ public class LayoutLegend extends LayoutElement {
 
     private void drawChartLegend(Graphics2D g, float zoom, PointF aPoint, boolean drawBreaks) {
         VectorLayer aLayer = (VectorLayer) _legendLayer;
-        ChartBreak aCB = ((ChartBreak) aLayer.getChartPoints().get(0).getLegend()).getSampleChartBreak();
+        ChartBreak aCB = ((ChartBreak) aLayer.getChartPoints().get(0).getLegendBreak()).getSampleChartBreak();
 
         //Draw chart symbol
         aPoint.X = 5;
@@ -1513,7 +1513,7 @@ public class LayoutLegend extends LayoutElement {
         if (_legendStyle == LegendStyles.NORMAL) {
             if (_legendLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                 if (((VectorLayer) _legendLayer).getChartSet().isDrawCharts()) {
-                    ChartBreak aCB = ((ChartBreak) ((VectorLayer) _legendLayer).getChartPoints().get(0).getLegend()).getSampleChartBreak();
+                    ChartBreak aCB = ((ChartBreak) ((VectorLayer) _legendLayer).getChartPoints().get(0).getLegendBreak()).getSampleChartBreak();
                     if (aCB.getChartType() == ChartTypes.BAR_CHART) {
                         LegendScheme ls = aCB.getLegendScheme();
                         for (ColorBreak cb : ls.getLegendBreaks()) {
@@ -1613,7 +1613,7 @@ public class LayoutLegend extends LayoutElement {
                     if (_legendLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                         VectorLayer aLayer = (VectorLayer) _legendLayer;
                         if (aLayer.getChartSet().isDrawCharts()) {
-                            ChartBreak aCB = ((ChartBreak) aLayer.getChartPoints().get(0).getLegend()).getSampleChartBreak();
+                            ChartBreak aCB = ((ChartBreak) aLayer.getChartPoints().get(0).getLegendBreak()).getSampleChartBreak();
                             this.setHeight(this.getHeight() + (int) (_breakSpace * 2 + aCB.getHeight()
                                     + aCB.getLegendScheme().getBreakNum() * (aHeight + _breakSpace) + aHeight / 2 + 5));
                         }

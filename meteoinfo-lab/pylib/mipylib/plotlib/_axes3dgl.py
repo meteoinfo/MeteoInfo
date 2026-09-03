@@ -12,12 +12,12 @@ from org.meteoinfo.geometry.legend import BreakTypes, BarBreak, LegendManage
 from org.meteoinfo.geo.layer import LayerTypes
 from org.meteoinfo.geo.io import GraphicUtil
 from org.meteoinfo.geometry.shape import ShapeTypes
-from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection
+from org.meteoinfo.chart.graphic import Graphic, GraphicCollection
 from org.meteoinfo.chart.jogl import GLPlot, GLForm, JOGLUtil, EarthGLPlot, MapGLPlot
 from org.meteoinfo.math.interpolate import InterpolationMethod
 from org.meteoinfo.image import ImageUtil
 from org.meteoinfo.common import Extent3D
-from org.meteoinfo.projection import GeoTransform
+from org.meteoinfo.chart.transform import GeoTransform
 from javax.swing import WindowConstants
 from java.awt import Font, Color
 from java.awt.image import BufferedImage

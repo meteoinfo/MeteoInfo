@@ -1,4 +1,4 @@
-package org.meteoinfo.geometry.graphic;
+package org.meteoinfo.chart.graphic;
 
 public class Artist {
 

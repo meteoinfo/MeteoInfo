@@ -1,13 +1,13 @@
 # coding=utf-8
 
-from .numeric import asarray, array, isscalar
+from .numeric import asarray, array, isscalar, split, isnan
 from ._ndarray import NDArray
 from .stride_tricks import broadcast_arrays
 from org.meteoinfo.ndarray.math import ArrayUtil, ArrayMath
 
 
-__all__ = ['clip','cumprod', 'cumsum', 'ndim', 'nonzero', 'prod', 'ravel', 'searchsorted', 'sum',
-           'where']
+__all__ = ['clip','cumprod', 'cumsum', 'ndim', 'nonzero', 'prod', 'ravel', 'searchsorted',
+           'split_array_by_nan', 'sum', 'where']
 
 
 def ndim(a):
@@ -118,6 +118,37 @@ def where(condition, *args):
         x, y = broadcast_arrays(x, y)
         r = ArrayUtil.where(condition._array, x._array, y._array)
         return condition.array_wrap(r)
+
+
+def split_array_by_nan(arr):
+    """
+    Split one dimensional array by nan.
+
+    Parameters
+    ----------
+    arr : ndarray
+        One dimension array to be divided into sub-arrays.
+
+    Returns
+    -------
+    sub-arrays : list of ndarrays
+        A list of sub-arrays as views into `ary`.
+    """
+    arr = asarray(arr)
+    nan_indices = where(isnan(arr))[0]
+    split_arrays = split(arr, nan_indices)
+    r = []
+    for sub_arr in split_arrays:
+        if len(sub_arr) == 0:
+            continue
+
+        if isnan(sub_arr[0]):
+            sub_arr = sub_arr[1:]
+
+        if len(sub_arr) > 0:
+            r.append(sub_arr)
+
+    return r
 
 
 def searchsorted(a, v, side='left', sorter=None):

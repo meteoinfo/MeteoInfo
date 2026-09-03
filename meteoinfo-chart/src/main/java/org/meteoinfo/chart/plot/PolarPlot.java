@@ -10,7 +10,7 @@ import org.meteoinfo.chart.Margin;
 import org.meteoinfo.chart.graphic.GraphicFactory;
 import org.meteoinfo.common.*;
 import org.meteoinfo.render.java2d.Draw;
-import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 

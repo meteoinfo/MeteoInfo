@@ -393,7 +393,7 @@ public class Chart {
      *
      * @return Boolean
      */
-    public boolean isAntiAlias() {
+    public boolean isAntialias() {
         return this.antiAlias;
     }
 
@@ -402,7 +402,7 @@ public class Chart {
      *
      * @param value Boolean
      */
-    public void setAntiAlias(boolean value) {
+    public void setAntialias(boolean value) {
         this.antiAlias = value;
     }
     

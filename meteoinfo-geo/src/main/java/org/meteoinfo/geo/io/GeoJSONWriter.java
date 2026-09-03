@@ -2,8 +2,8 @@ package org.meteoinfo.geo.io;
 
 import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.io.geojson.Feature;
 import org.meteoinfo.geometry.io.geojson.FeatureCollection;
 import org.meteoinfo.geometry.io.geojson.GeoJSONUtil;
@@ -75,7 +75,7 @@ public class GeoJSONWriter {
             Shape shape = graphic.getShape();
             Geometry geometry = GeoJSONUtil.fromShape(shape);
             Map<String, Object> properties = new HashMap<>();
-            ColorBreak cb = graphic.getLegend();
+            ColorBreak cb = graphic.getLegendBreak();
             switch (cb.getBreakType()) {
                 case POINT_BREAK:
                     PointBreak pointBreak = (PointBreak) cb;

@@ -46,14 +46,14 @@ __all__ = [
     'gifaddframe', 'gifanimation', 'giffinish', 'grid', 'gridshow', 'gridshowm', 'hist', 'imshow',
     'imshowm', 'invert_xaxis', 'invert_yaxis', 'isosurface', 'legend', 'left_title', 'lighting', 'loglog',
     'makecolors', 'makelegend','makemarkers',
-    'makesymbolspec', 'masklayer', 'material', 'mesh', 'meshc', 'model', 'particles', 'pcolor', 'pcolorm',
+    'makesymbolspec', 'masklayer', 'material', 'mesh', 'meshc', 'minorticks_on', 'minorticks_off', 'model', 'particles', 'pcolor', 'pcolorm',
     'pie', 'plot', 'plot3', 'plotm', 'quiver', 'quiver3', 'quiverkey', 'quiverm', 'readlegend',
     'right_title', 'refresh', 'savefig', 'savefig_jpeg', 'scatter', 'scatter3', 'scatterm', 'semilogx',
     'semilogy', 'show', 'slice3', 'stationmodel', 'stem', 'stem3', 'step', 'streamplot', 'streamplot3',
     'streamplotm', 'streamslice', 'subplot', 'subplots', 'suptitle', 'supxlabel', 'supylabel', 'surf',
     'surfc', 'taylor_diagram', 'text', 'text3', 'title', 'trisurf', 'twinx', 'twiny', 'view', 'violinplot',
-    'volumeplot', 'weatherspec', 'xaxis', 'xlabel', 'xlim', 'xreverse', 'xticks', 'yaxis', 'ylabel',
-    'ylim', 'yreverse', 'yticks', 'zaxis', 'zlabel', 'zlim', 'zticks', 'interactive', 'set_interactive'
+    'volumeplot', 'weatherspec', 'xaxis', 'xlabel', 'xlim', 'xinverted', 'xreverse', 'xscale', 'xticks', 'yaxis', 'ylabel',
+    'ylim', 'yinverted', 'yreverse', 'yscale', 'yticks', 'zaxis', 'zlabel', 'zlim', 'zticks', 'interactive', 'set_interactive'
 ]
 
 
@@ -1410,6 +1410,16 @@ def zticks(*args, **kwargs):
     draw_if_interactive()
 
 
+@_copy_docstring_and_deprecators(Axes.minorticks_on)
+def minorticks_on():
+    g_axes.minorticks_on()
+
+
+@_copy_docstring_and_deprecators(Axes.minorticks_off)
+def minorticks_off():
+    g_axes.minorticks_off()
+
+
 def text(x, y, s, **kwargs):
     """
     Add text to the axes. Add text in string *s* to axis at location *x* , *y* , data
@@ -1469,52 +1479,44 @@ def axism(limits=None, lonlat=True):
         draw_if_interactive()
 
 
-@_copy_docstring_and_deprecators(MapAxes.grid)
+@_copy_docstring_and_deprecators(Axes.grid)
 def grid(b=None, **kwargs):
     g_axes.grid(b, **kwargs)
-    draw_if_interactive()
 
 
 @_copy_docstring_and_deprecators(Axes.set_xlim)
 def xlim(xmin, xmax):
     g_axes.set_xlim(xmin, xmax)
-    draw_if_interactive()
 
 
 @_copy_docstring_and_deprecators(Axes.set_ylim)
 def ylim(ymin, ymax):
     g_axes.set_ylim(ymin, ymax)
-    draw_if_interactive()
 
 
 @_copy_docstring_and_deprecators(Axes3D.set_zlim)
 def zlim(zmin, zmax):
     g_axes.set_zlim(zmin, zmax)
-    draw_if_interactive()
 
 
-@_copy_docstring_and_deprecators(Axes.xreverse)
-def xreverse():
-    g_axes.xreverse()
-    draw_if_interactive()
+@_copy_docstring_and_deprecators(Axes.set_xinverted)
+def xinverted(value):
+    g_axes.set_xinverted(value)
 
 
-@_copy_docstring_and_deprecators(Axes.yreverse)
-def yreverse():
-    g_axes.yreverse()
-    draw_if_interactive()
+@_copy_docstring_and_deprecators(Axes.set_yinverted)
+def yinverted(value):
+    g_axes.set_yinverted(value)
 
 
-@_copy_docstring_and_deprecators(Axes.invert_xaxis)
-def invert_xaxis():
-    g_axes.invert_xaxis()
-    #draw_if_interactive()
+@_copy_docstring_and_deprecators(Axes.set_xscale)
+def xscale(value):
+    g_axes.set_xscale(value)
 
 
-@_copy_docstring_and_deprecators(Axes.invert_yaxis)
-def invert_yaxis():
-    g_axes.invert_yaxis()
-    #draw_if_interactive()
+@_copy_docstring_and_deprecators(Axes.set_yscale)
+def yscale(value):
+    g_axes.set_yscale(value)
 
 
 @_copy_docstring_and_deprecators(Axes.legend)

@@ -6,13 +6,13 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.meteoinfo.geometry.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.ParticleGraphics;
 import org.meteoinfo.chart.graphic.sphere.Sphere;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
-import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.PointZShape;
@@ -76,7 +76,7 @@ public class PointRender extends JOGLGraphicRender {
             this.pointSize = ((ParticleGraphics) this.graphics).getPointSize();
         } else {
             this.pointNum = pointGraphics.getNumGraphics();
-            PointBreak pb = (PointBreak) this.graphics.getGraphicN(0).getLegend();
+            PointBreak pb = (PointBreak) this.graphics.getGraphicN(0).getLegendBreak();
             this.pointSize = pb.getSize();
         }
     }
@@ -114,7 +114,7 @@ public class PointRender extends JOGLGraphicRender {
         } else {
             float[] color;
             for (Graphic graphic : this.graphics.getGraphics()) {
-                PointBreak pb = (PointBreak) graphic.getLegend();
+                PointBreak pb = (PointBreak) graphic.getLegendBreak();
                 color = pb.getColor().getRGBComponents(null);
                 System.arraycopy(color, 0, vertexColor, i * 4, 4);
                 i++;
@@ -168,7 +168,7 @@ public class PointRender extends JOGLGraphicRender {
         for (Graphic graphic : this.graphics.getGraphics()) {
             PointZShape shape = (PointZShape) graphic.getShape();
             PointZ p = (PointZ) shape.getPoint();
-            PointBreak pb = (PointBreak) graphic.getLegend();
+            PointBreak pb = (PointBreak) graphic.getLegendBreak();
             if (size != pb.getSize()) {
                 size = pb.getSize();
                 sphere = new Sphere(size * sphereScale * dpiScale, 36, 18);
@@ -233,7 +233,7 @@ public class PointRender extends JOGLGraphicRender {
         for (Graphic graphic : this.graphics.getGraphics()) {
             PointZShape shape = (PointZShape) graphic.getShape();
             PointZ p = (PointZ) shape.getPoint();
-            PointBreak pb = (PointBreak) graphic.getLegend();
+            PointBreak pb = (PointBreak) graphic.getLegendBreak();
             if (size != pb.getSize()) {
                 size = pb.getSize();
                 sphere = new Sphere(size * sphereScale * dpiScale, 36, 18);

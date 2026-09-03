@@ -8,13 +8,14 @@ package org.meteoinfo.chart.axis;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.Location;
 import org.meteoinfo.chart.plot.AbstractPlot2D;
+import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.XAlign;
 import org.meteoinfo.common.YAlign;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.render.java2d.Draw;
-import org.meteoinfo.geometry.graphic.Artist;
+import org.meteoinfo.chart.graphic.Artist;
 import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
@@ -33,6 +34,7 @@ import java.util.List;
 public class Axis extends Artist implements Cloneable {
     
     // <editor-fold desc="Variables">
+    protected Plot plot;
     protected boolean xAxis;
     protected Location location;
     protected ChartText label;
@@ -209,6 +211,7 @@ public class Axis extends Artist implements Cloneable {
      */
     public Axis(Axis axis) {
         this(axis.getLabel(), axis.isXAxis());
+        this.plot = axis.plot;
         this.autoTick = axis.isAutoTick();
         this.drawLabel = axis.isDrawLabel();
         this.drawTickLabel = axis.isDrawTickLabel();
@@ -239,6 +242,23 @@ public class Axis extends Artist implements Cloneable {
 
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
+
+    /**
+     * Get plot
+     * @return The plot
+     */
+    public Plot getPlot() {
+        return  plot;
+    }
+
+    /**
+     * Set plot
+     * @param plot The plot
+     */
+    public void setPlot(Plot plot) {
+        this.plot = plot;
+    }
+
     /**
      * Get if is x axis
      *

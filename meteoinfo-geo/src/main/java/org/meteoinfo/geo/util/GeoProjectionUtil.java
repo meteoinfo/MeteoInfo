@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.geo.util;
 
+import org.meteoinfo.chart.geo.ProjectUtil;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
@@ -407,7 +408,7 @@ public class GeoProjectionUtil {
 
         if (oLayer.getLabelPoints().size() > 0) {
             if (projectLabels) {
-                oLayer.setLabelPoints(ProjectionUtil.projectGraphic(oLayer.getLabelPoints(), fromProj, toProj));
+                oLayer.setLabelPoints(ProjectUtil.projectGraphic(oLayer.getLabelPoints(), fromProj, toProj));
             } else {
                 oLayer.setLabelPoints(new ArrayList<>(oLayer.getLabelPoints()));
             }
@@ -641,7 +642,7 @@ public class GeoProjectionUtil {
         oLayer.getAttributeTable().setTable(aTable);
 
         if (oLayer.getLabelPoints().size() > 0) {
-            oLayer.setLabelPoints(ProjectionUtil.projectGraphic(oLayer.getLabelPoints(), fromProj, toProj));
+            oLayer.setLabelPoints(ProjectUtil.projectGraphic(oLayer.getLabelPoints(), fromProj, toProj));
         }
     }
 }

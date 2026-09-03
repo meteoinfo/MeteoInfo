@@ -2119,7 +2119,7 @@ def delnan(a):
     if isinstance(a, (list, tuple))and (not isinstance(a[0], NDArray)):
         a = array(a)
     if isinstance(a, NDArray):
-        r = ArrayMath.removeNaN(a._array)[0]
+        r = ArrayMath.removeNaN(a._array)
         return NDArray(r)
     else:
         aa = []

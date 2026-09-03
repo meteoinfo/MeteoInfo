@@ -1,8 +1,11 @@
-package org.meteoinfo.geometry.graphic;
+package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.shape.ImageShape;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ImageGraphic extends Graphic {
     protected LegendScheme legendScheme;
@@ -40,5 +43,9 @@ public class ImageGraphic extends Graphic {
      */
     public void setLegendScheme(LegendScheme value) {
         this.legendScheme = value;
+    }
+
+    public List<ColorBreak> getLegendBreaks() {
+        return this.legendScheme.getLegendBreaks();
     }
 }

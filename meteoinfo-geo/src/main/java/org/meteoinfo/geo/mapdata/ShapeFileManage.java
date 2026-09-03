@@ -20,12 +20,11 @@ package org.meteoinfo.geo.mapdata;
  import org.meteoinfo.geo.layer.LayerDrawType;
  import org.meteoinfo.geo.layer.VectorLayer;
  import org.meteoinfo.geo.legend.LegendManage;
- import org.meteoinfo.geometry.graphic.GraphicCollection;
+ import org.meteoinfo.chart.graphic.GraphicCollection;
  import org.meteoinfo.geometry.shape.Shape;
  import org.meteoinfo.geometry.shape.*;
  import org.meteoinfo.projection.ProjectionInfo;
  import org.meteoinfo.table.AttributeTable;
- import org.w3c.dom.Attr;
 
  import java.awt.*;
  import java.io.*;

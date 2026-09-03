@@ -15,7 +15,7 @@ package org.meteoinfo.geo.layout;
 
 import org.meteoinfo.common.*;
 import org.meteoinfo.render.java2d.Draw;
-import org.meteoinfo.geometry.graphic.ResizeAbility;
+import org.meteoinfo.chart.graphic.ResizeAbility;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.ui.event.IMapViewUpdatedListener;
 import org.meteoinfo.ui.event.ISizeChangedListener;
@@ -25,7 +25,7 @@ import org.meteoinfo.geo.layer.LayerDrawType;
 import org.meteoinfo.geo.layer.LayerTypes;
 import org.meteoinfo.geo.layer.MapLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.shape.PointShape;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.geometry.shape.WindArrow;
@@ -72,9 +72,9 @@ public class LayoutGraphic extends LayoutElement {
         _mapLayout = aMapLayout;
         _isPaint = true;
         this.setGraphic(aGraphic);
-        if (_graphic.getLegend() != null) {
-            if (_graphic.getLegend().getBreakType() == BreakTypes.LABEL_BREAK) {
-                ((LabelBreak) _graphic.getLegend()).addSizeChangedListener(new ISizeChangedListener() {
+        if (_graphic.getLegendBreak() != null) {
+            if (_graphic.getLegendBreak().getBreakType() == BreakTypes.LABEL_BREAK) {
+                ((LabelBreak) _graphic.getLegendBreak()).addSizeChangedListener(new ISizeChangedListener() {
                     @Override
                     public void sizeChangedEvent(SizeChangedEvent event) {
                         updateControlSize();
@@ -99,9 +99,9 @@ public class LayoutGraphic extends LayoutElement {
         _mapLayout = aMapLayout;
         _isPaint = true;
         this.setGraphic(aGraphic);
-        if (_graphic.getLegend() != null) {
-            if (_graphic.getLegend().getBreakType() == BreakTypes.LABEL_BREAK) {
-                ((LabelBreak) _graphic.getLegend()).addSizeChangedListener(new ISizeChangedListener() {
+        if (_graphic.getLegendBreak() != null) {
+            if (_graphic.getLegendBreak().getBreakType() == BreakTypes.LABEL_BREAK) {
+                ((LabelBreak) _graphic.getLegendBreak()).addSizeChangedListener(new ISizeChangedListener() {
                     @Override
                     public void sizeChangedEvent(SizeChangedEvent event) {
                         updateControlSize();
@@ -114,7 +114,7 @@ public class LayoutGraphic extends LayoutElement {
         _layoutMap.addMapViewUpdatedListener(new IMapViewUpdatedListener() {
             @Override
             public void mapViewUpdatedEvent(MapViewUpdatedEvent event) {
-                if (_graphic.getLegend().getBreakType() == BreakTypes.VECTOR_BREAK) {
+                if (_graphic.getLegendBreak().getBreakType() == BreakTypes.VECTOR_BREAK) {
                     for (int i = 0; i < _layoutMap.getMapFrame().getMapView().getLayerNum(); i++) {
                         MapLayer aLayer = _layoutMap.getMapFrame().getMapView().getLayers().
                                 get(_layoutMap.getMapFrame().getMapView().getLayerNum() - 1 - i);
@@ -122,7 +122,7 @@ public class LayoutGraphic extends LayoutElement {
                             if (aLayer.isVisible() && aLayer.getLayerDrawType() == LayerDrawType.VECTOR) {
                                 setVisible(true);
                                 float zoom = ((VectorLayer) aLayer).getDrawingZoom();
-                                ((VectorBreak) _graphic.getLegend()).setZoom(zoom);
+                                ((VectorBreak) _graphic.getLegendBreak()).setZoom(zoom);
 //                                float max = 30.0f / zoom;
 //                                WindArraw aWA = (WindArraw) _graphic.getShape();
 //                                int llen = 5;
@@ -156,9 +156,9 @@ public class LayoutGraphic extends LayoutElement {
         if (_graphic.getShape() != null) {
             switch (_graphic.getShape().getShapeType()) {
                 case POINT:
-                    if (_graphic.getLegend().getBreakType() == BreakTypes.POINT_BREAK) {
+                    if (_graphic.getLegendBreak().getBreakType() == BreakTypes.POINT_BREAK) {
                         this.setResizeAbility(ResizeAbility.SAME_WIDTH_HEIGHT);
-                    } else if (_graphic.getLegend().getBreakType() == BreakTypes.LABEL_BREAK) {
+                    } else if (_graphic.getLegendBreak().getBreakType() == BreakTypes.LABEL_BREAK) {
                         this.setResizeAbility(ResizeAbility.NONE);
                     }
                     break;
@@ -222,8 +222,8 @@ public class LayoutGraphic extends LayoutElement {
     public void setLabelText(String text) {
         switch (_graphic.getShape().getShapeType()) {
             case POINT:
-                if (_graphic.getLegend().getBreakType() == BreakTypes.LABEL_BREAK) {
-                    ((LabelBreak) _graphic.getLegend()).setText(text);
+                if (_graphic.getLegendBreak().getBreakType() == BreakTypes.LABEL_BREAK) {
+                    ((LabelBreak) _graphic.getLegendBreak()).setText(text);
                     updateControlSize();
                 }
                 break;
@@ -245,14 +245,14 @@ public class LayoutGraphic extends LayoutElement {
                 PointShape aPS = (PointShape) _graphic.getShape();
                 this.setLeft((int) aPS.getPoint().X);
                 this.setTop((int) aPS.getPoint().Y);
-                if (_graphic.getLegend().getBreakType() == BreakTypes.POINT_BREAK) {
-                    PointBreak aPB = (PointBreak) _graphic.getLegend();
+                if (_graphic.getLegendBreak().getBreakType() == BreakTypes.POINT_BREAK) {
+                    PointBreak aPB = (PointBreak) _graphic.getLegendBreak();
                     this.setLeft(this.getLeft() - (int) (aPB.getSize() / 2));
                     this.setTop(this.getTop() - (int) (aPB.getSize() / 2));
                     this.setWidth((int) Math.ceil(aPB.getSize()));
                     this.setHeight((int) Math.ceil(aPB.getSize()));
-                } else if (_graphic.getLegend().getBreakType() == BreakTypes.LABEL_BREAK) {
-                    LabelBreak aLB = (LabelBreak) _graphic.getLegend();
+                } else if (_graphic.getLegendBreak().getBreakType() == BreakTypes.LABEL_BREAK) {
+                    LabelBreak aLB = (LabelBreak) _graphic.getLegendBreak();
                     //FontMetrics metrics = _mapLayout.getGraphics().getFontMetrics(aLB.getFont());
                     BufferedImage image = new BufferedImage(_mapLayout.getPageBounds().width, _mapLayout.getPageBounds().height, BufferedImage.TYPE_INT_ARGB);
                     Graphics2D g = (Graphics2D)image.getGraphics();
@@ -273,7 +273,7 @@ public class LayoutGraphic extends LayoutElement {
                     if (aWA.length == 0){
                         aWA.length = 20;
                     }
-                    this.setWidth((int)(aWA.length * ((VectorBreak)_graphic.getLegend()).getZoom()));
+                    this.setWidth((int)(aWA.length * ((VectorBreak)_graphic.getLegendBreak()).getZoom()));
                     this.setHeight(20);
                 break;
             case POLYLINE:
@@ -364,8 +364,8 @@ public class LayoutGraphic extends LayoutElement {
             case POINT:
                 PointD dPoint = _graphic.getShape().getPoints().get(0);
                 PointF aPoint = pageToScreen((float) dPoint.X, (float) dPoint.Y, pageLocation, zoom);
-                if (_graphic.getLegend().getBreakType() == BreakTypes.POINT_BREAK) {
-                    PointBreak aPB = (PointBreak) ((PointBreak) _graphic.getLegend()).clone();
+                if (_graphic.getLegendBreak().getBreakType() == BreakTypes.POINT_BREAK) {
+                    PointBreak aPB = (PointBreak) ((PointBreak) _graphic.getLegendBreak()).clone();
                     float size = aPB.getSize();
                     aPB.setSize(aPB.getSize() * zoom);
                     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -374,8 +374,8 @@ public class LayoutGraphic extends LayoutElement {
                     if (!_antiAlias) {
                         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     }
-                } else if (_graphic.getLegend().getBreakType() == BreakTypes.LABEL_BREAK) {
-                    LabelBreak aLB = (LabelBreak) ((LabelBreak) _graphic.getLegend()).clone();
+                } else if (_graphic.getLegendBreak().getBreakType() == BreakTypes.LABEL_BREAK) {
+                    LabelBreak aLB = (LabelBreak) ((LabelBreak) _graphic.getLegendBreak()).clone();
                     Font font = new Font(aLB.getFont().getFontName(), aLB.getFont().getStyle(), aLB.getFont().getSize());
                     aLB.setFont(new Font(font.getFontName(), font.getStyle(), (int) (font.getSize() * zoom)));
                     Rectangle rect = new Rectangle();
@@ -388,7 +388,7 @@ public class LayoutGraphic extends LayoutElement {
                 dPoint = _graphic.getShape().getPoints().get(0);
                 aPoint = pageToScreen((float) dPoint.X, (float) dPoint.Y, pageLocation, zoom);
                 WindArrow aArraw = (WindArrow) _graphic.getShape();
-                VectorBreak aVB = (VectorBreak) _graphic.getLegend();
+                VectorBreak aVB = (VectorBreak) _graphic.getLegendBreak();
                 Draw.drawArraw(aVB.getColor(), aPoint, aArraw, g, aVB.getZoom() * zoom);
                 Font drawFont = new Font("Arial", Font.PLAIN, (int) (12 * zoom));
                 FontMetrics metrics = g.getFontMetrics(drawFont);
@@ -413,47 +413,47 @@ public class LayoutGraphic extends LayoutElement {
 
                 switch (_graphic.getShape().getShapeType()) {
                     case POLYLINE:
-                        PolylineBreak aPLB = (PolylineBreak) ((PolylineBreak) _graphic.getLegend()).clone();
+                        PolylineBreak aPLB = (PolylineBreak) ((PolylineBreak) _graphic.getLegendBreak()).clone();
                         float size = aPLB.getWidth();
                         aPLB.setWidth(size * zoom);
-                        Draw.drawPolyline(points, (PolylineBreak) _graphic.getLegend(), g);
+                        Draw.drawPolyline(points, (PolylineBreak) _graphic.getLegendBreak(), g);
                         aPLB.setWidth(size);
                         break;
                     case POLYGON:
                     case RECTANGLE:
-                        PolygonBreak aPGB = (PolygonBreak) ((PolygonBreak) _graphic.getLegend()).clone();
+                        PolygonBreak aPGB = (PolygonBreak) ((PolygonBreak) _graphic.getLegendBreak()).clone();
                         size = aPGB.getOutlineSize();
                         aPGB.setOutlineSize(size * zoom);
-                        Draw.drawPolygon(points, (PolygonBreak) _graphic.getLegend(), g);
+                        Draw.drawPolygon(points, (PolygonBreak) _graphic.getLegendBreak(), g);
                         aPGB.setOutlineSize(size);
                         break;
                     case CIRCLE:
-                        aPGB = (PolygonBreak) ((PolygonBreak) _graphic.getLegend()).clone();
+                        aPGB = (PolygonBreak) ((PolygonBreak) _graphic.getLegendBreak()).clone();
                         size = aPGB.getOutlineSize();
                         aPGB.setOutlineSize(size * zoom);
-                        Draw.drawCircle(points, (PolygonBreak) _graphic.getLegend(), g);
+                        Draw.drawCircle(points, (PolygonBreak) _graphic.getLegendBreak(), g);
                         aPGB.setOutlineSize(size);
                         break;
                     case CURVE_LINE:
-                        aPLB = (PolylineBreak) ((PolylineBreak) _graphic.getLegend()).clone();
+                        aPLB = (PolylineBreak) ((PolylineBreak) _graphic.getLegendBreak()).clone();
                         size = aPLB.getWidth();
                         aPLB.setWidth(size * zoom);
-                        Draw.drawCurveLine(points, (PolylineBreak) _graphic.getLegend(), g);
+                        Draw.drawCurveLine(points, (PolylineBreak) _graphic.getLegendBreak(), g);
                         aPLB.setWidth(size);
                         break;
                     case CURVE_POLYGON:
-                        aPGB = (PolygonBreak) ((PolygonBreak) _graphic.getLegend()).clone();
+                        aPGB = (PolygonBreak) ((PolygonBreak) _graphic.getLegendBreak()).clone();
                         size = aPGB.getOutlineSize();
                         aPGB.setOutlineSize(size * zoom);
-                        Draw.drawCurvePolygon(points, (PolygonBreak) _graphic.getLegend(), g);
+                        Draw.drawCurvePolygon(points, (PolygonBreak) _graphic.getLegendBreak(), g);
                         aPGB.setOutlineSize(size);
                         break;
                     case ELLIPSE:
-                        aPGB = (PolygonBreak) ((PolygonBreak) _graphic.getLegend()).clone();
+                        aPGB = (PolygonBreak) ((PolygonBreak) _graphic.getLegendBreak()).clone();
                         size = aPGB.getOutlineSize();
                         aPGB.setOutlineSize(size * zoom);
                         float angle = ((EllipseShape)_graphic.getShape()).getAngle();
-                        Draw.drawEllipse(points, angle, (PolygonBreak) _graphic.getLegend(), g);
+                        Draw.drawEllipse(points, angle, (PolygonBreak) _graphic.getLegendBreak(), g);
                         aPGB.setOutlineSize(size);
                         break;
                 }
@@ -470,9 +470,9 @@ public class LayoutGraphic extends LayoutElement {
             double minY = aExtent.minY;
             if (_graphic.getShape().getShapeType() == ShapeTypes.POINT) {
                 //minX -= this.getWidth() / 2;
-                if (_graphic.getLegend().getBreakType() == BreakTypes.POINT_BREAK)
+                if (_graphic.getLegendBreak().getBreakType() == BreakTypes.POINT_BREAK)
                     minY -= this.getHeight() / 2;
-                else if (_graphic.getLegend().getBreakType() == BreakTypes.LABEL_BREAK)
+                else if (_graphic.getLegendBreak().getBreakType() == BreakTypes.LABEL_BREAK)
                     minY -= this.getHeight() * 2 / 3;
             }
             int shiftX = this.getLeft() - (int) minX;
@@ -491,8 +491,8 @@ public class LayoutGraphic extends LayoutElement {
         if (_graphic.getShape() != null) {
             switch (_graphic.getShape().getShapeType()) {
                 case POINT:
-                    if (_graphic.getLegend().getBreakType() == BreakTypes.POINT_BREAK) {
-                        PointBreak aPB = (PointBreak) _graphic.getLegend();
+                    if (_graphic.getLegendBreak().getBreakType() == BreakTypes.POINT_BREAK) {
+                        PointBreak aPB = (PointBreak) _graphic.getLegendBreak();
                         aPB.setSize(this.getWidth());
                         updateControlSize();
                     }

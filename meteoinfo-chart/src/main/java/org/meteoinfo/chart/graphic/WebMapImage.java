@@ -3,7 +3,6 @@ package org.meteoinfo.chart.graphic;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.data.mapdata.webmap.*;
 import org.meteoinfo.data.mapdata.webmap.empty.EmptyTileFactory;
-import org.meteoinfo.geometry.graphic.Graphic;
 
 import java.awt.*;
 import java.awt.geom.Point2D;

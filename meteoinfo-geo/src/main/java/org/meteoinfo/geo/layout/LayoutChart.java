@@ -8,9 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
 import org.meteoinfo.chart.Chart;
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.geo.layout.ElementType;
-import org.meteoinfo.geo.layout.LayoutElement;
-import org.meteoinfo.geometry.graphic.ResizeAbility;
+import org.meteoinfo.chart.graphic.ResizeAbility;
 
 /**
  *

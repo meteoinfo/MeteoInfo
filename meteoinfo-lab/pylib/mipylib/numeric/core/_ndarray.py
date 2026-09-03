@@ -172,7 +172,7 @@ class NDArray(object):
         alllist = True
         isempty = False
         nshape = []
-        squeeze = False
+        squeeze = []
         for i in range(0, self.ndim):
             k = indices[i]
             if isinstance(k, int):
@@ -185,7 +185,7 @@ class NDArray(object):
                 eidx = k
                 step = 1
                 alllist = False
-                squeeze = True
+                squeeze.append(i)
             elif isinstance(k, slice):
                 step = 1 if k.step is None else k.step
                 if step > 0:
@@ -241,9 +241,16 @@ class NDArray(object):
             else:
                 r = ArrayMath.take(self._array, ranges)
 
+        for i in flips:
+            r = r.flip(i)
+
+        if squeeze:
+            ii = 0
+            for i in squeeze:
+                r = r.reduce(i - ii)
+                ii += 1
+
         if newaxis:
-            for i in flips:
-                r = r.flip(i)
             rr = Array.factory(r.getDataType(), r.getShape())
             MAMath.copy(rr, r)
             rr = NDArray(rr)
@@ -255,10 +262,6 @@ class NDArray(object):
                 rr.base = self.get_base()
             return rr
 
-        for i in flips:
-            r = r.flip(i)
-        if squeeze:
-            r = r.reduce()
         r = NDArray(r)
         if onlyrange:
             r.base = self.get_base()
@@ -1232,6 +1235,9 @@ class NDArray(object):
 
         :returns: (*int*) Value index.
         """
+        if isinstance(v, datetime.datetime):
+            v = miutil.jdatetime(v)
+
         return self.tolist().index(v)
 
     def asarray(self):

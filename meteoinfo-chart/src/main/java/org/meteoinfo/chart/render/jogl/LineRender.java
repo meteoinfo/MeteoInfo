@@ -6,12 +6,12 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.meteoinfo.geometry.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.cylinder.Cylinder;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
-import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.Polyline;
@@ -74,7 +74,7 @@ public class LineRender extends JOGLGraphicRender {
         this(gl);
 
         this.graphics = graphics;
-        ColorBreak cb = graphics.getGraphicN(0).getLegend();
+        ColorBreak cb = graphics.getGraphicN(0).getLegendBreak();
         PolylineBreak lineBreak;
         if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
             lineBreak = (PolylineBreak) ((ColorBreakCollection) cb).get(0);
@@ -107,7 +107,7 @@ public class LineRender extends JOGLGraphicRender {
         float[] color;
         for (Graphic graphic : this.graphics.getGraphics()) {
             int n = graphic.getShape().getPointNum();
-            ColorBreak cb = graphic.getLegend();
+            ColorBreak cb = graphic.getLegendBreak();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 PolylineBreak lineBreak;
                 for (int j = 0; j < n; j++) {
@@ -178,7 +178,7 @@ public class LineRender extends JOGLGraphicRender {
             PolylineZShape shape = (PolylineZShape) graphic.getShape();
             int pointNum = shape.getPointNum();
             List<PointZ> ps = (List<PointZ>) shape.getPoints();
-            ColorBreak cb = graphic.getLegend();
+            ColorBreak cb = graphic.getLegendBreak();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;
                 StreamlineBreak slb = (StreamlineBreak) cbc.get(0);

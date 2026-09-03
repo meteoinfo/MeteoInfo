@@ -4,8 +4,6 @@ import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.shape.Shape;
@@ -183,7 +181,7 @@ public class GeoGraphicCollection extends GraphicCollection {
         for (Graphic graphic : this.graphics) {
             Shape shape = graphic.getShape();
             shapeIdx += 1;
-            ColorBreak aCB = graphic.getLegend();
+            ColorBreak aCB = graphic.getLegendBreak();
             if (!aCB.isDrawShape()) {
                 continue;
             }

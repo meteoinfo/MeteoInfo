@@ -1,13 +1,11 @@
 package org.meteoinfo.chart.geo;
 
-import org.meteoinfo.chart.axis.PositionType;
 import org.meteoinfo.chart.plot.GridLabelPosition;
 import org.meteoinfo.chart.plot.GridLine;
 import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection;
-import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.shape.Polyline;
 import org.meteoinfo.geometry.shape.PolylineShape;
 import org.meteoinfo.geometry.shape.PolylineZShape;
@@ -291,7 +289,7 @@ public class MapGridLine extends GridLine {
             PolylineShape line = new PolylineShape();
             line.setPoints(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
-            graphic = ProjectionUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
+            graphic = ProjectUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
             if (graphic != null) {
                 graphic.getShape().setValue(lon);
                 this.longitudeLines.add(graphic);
@@ -324,7 +322,7 @@ public class MapGridLine extends GridLine {
             PolylineShape line = new PolylineShape();
             line.setPoints(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
-            graphic = ProjectionUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
+            graphic = ProjectUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
             if (graphic == null) {
                 continue;
             }

@@ -277,13 +277,8 @@ class DimDataFile(object):
         """
         Get station model data.
         """
-        if self.dataset.isStationData():
-            self.dataset.setTimeIndex(timeindex)
-            self.dataset.setLevelIndex(levelindex)
-            smdata = self.dataset.getStationModelData()
-            return smdata
-        else:
-            return None
+        smdata = self.dataset.getStationModelData(timeindex, levelindex)
+        return smdata
             
     def trajlayer(self):
         """

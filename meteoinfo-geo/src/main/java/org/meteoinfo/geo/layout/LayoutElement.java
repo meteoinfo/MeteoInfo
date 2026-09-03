@@ -14,7 +14,7 @@
 package org.meteoinfo.geo.layout;
 
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.geometry.graphic.ResizeAbility;
+import org.meteoinfo.chart.graphic.ResizeAbility;
 import org.meteoinfo.ui.event.ILocationChangedListener;
 import org.meteoinfo.ui.event.ISizeChangedListener;
 import org.meteoinfo.ui.event.LocationChangedEvent;

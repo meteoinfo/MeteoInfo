@@ -1,4 +1,4 @@
-package org.meteoinfo.geometry.graphic;
+package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.geometry.legend.PointBreak;
 import org.meteoinfo.geometry.shape.PointShape;
@@ -14,7 +14,7 @@ public class Point2DGraphic extends Graphic {
      */
     public Point2DGraphic(PointShape pointShape, PointBreak pointBreak) {
         this.shape = pointShape;
-        this.legend = pointBreak;
+        this.legendBreak = pointBreak;
         this.x = pointShape.getPoint().X;
         this.y = pointShape.getPoint().Y;
     }

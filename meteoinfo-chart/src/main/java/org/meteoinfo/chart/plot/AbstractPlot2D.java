@@ -8,7 +8,11 @@ package org.meteoinfo.chart.plot;
 import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.axis.LogAxis;
+import org.meteoinfo.chart.axis.LonLatAxis;
+import org.meteoinfo.chart.axis.TimeAxis;
+import org.meteoinfo.chart.transform.*;
 import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.render.java2d.Draw;
 
@@ -35,6 +39,10 @@ public abstract class AbstractPlot2D extends Plot {
     protected Extent drawExtent;
     protected double xScale = 1.0;
     protected double yScale = 1.0;
+    protected ScaleType xScaleType = ScaleType.LINEAR;
+    protected ScaleType yScaleType = ScaleType.LINEAR;
+    protected AxisType xAxisType = AxisType.NORMAL;
+    protected AxisType yAxisType = AxisType.NORMAL;
     protected final Map<Location, Axis> axis;
     private Location xAxisLocation;
     private Location yAxisLocation;
@@ -55,6 +63,10 @@ public abstract class AbstractPlot2D extends Plot {
     protected double aspect = 1;
     protected boolean clip = true;
     protected boolean fixDrawExtent = false;
+    protected TransformWrapper transScale;
+    protected BboxTransformFrom transLimits;
+    protected BboxTransformTo transAxes;
+    protected CompositeTransform transData;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -64,12 +76,19 @@ public abstract class AbstractPlot2D extends Plot {
     public AbstractPlot2D() {
         super();
         this.background = null;
-        this.drawExtent = new Extent(0, 1, 0, 1);
+        this.drawExtent = Extent.Identity;
+        this.transScale = new TransformWrapper(new IdentityTransform());
+        this.transLimits = new BboxTransformFrom(Extent.Identity);
+        this.transAxes = new BboxTransformTo(Extent.Identity);
+        this.transData = transScale.plus(transLimits).plus(transAxes);
         this.axis = new HashMap<>();
         this.axis.put(Location.BOTTOM, new Axis("X", true, Location.BOTTOM));
         this.axis.put(Location.LEFT, new Axis("Y", false, Location.LEFT));
         this.axis.put(Location.TOP, new Axis("X", true, Location.TOP, false));
         this.axis.put(Location.RIGHT, new Axis("Y", false, Location.RIGHT, false));
+        this.axis.forEach((key, value) -> {
+            value.setPlot(this);
+        });
         this.xAxisLocation = Location.BOTTOM;
         this.yAxisLocation = Location.RIGHT;
         this.orientation = PlotOrientation.VERTICAL;
@@ -287,10 +306,7 @@ public abstract class AbstractPlot2D extends Plot {
     @Override
     public void setDrawExtent(Extent extent) {
         this.drawExtent = extent;
-        this.getAxis(Location.BOTTOM).setMinMaxValue(extent.minX, extent.maxX);
-        this.getAxis(Location.TOP).setMinMaxValue(extent.minX, extent.maxX);
-        this.getAxis(Location.LEFT).setMinMaxValue(extent.minY, extent.maxY);
-        this.getAxis(Location.RIGHT).setMinMaxValue(extent.minY, extent.maxY);
+        updateDrawExtent();
     }
 
     /**
@@ -325,10 +341,28 @@ public abstract class AbstractPlot2D extends Plot {
      * Update draw extent
      */
     public void updateDrawExtent() {
+        if (this.isLogX()) {
+            if (drawExtent.maxX <= 0) {
+                drawExtent.maxX = 100;
+            }
+            if (drawExtent.minX <= 0) {
+                drawExtent.minX = 10;
+            }
+        }
+        if (this.isLogY()) {
+            if (drawExtent.maxY <= 0) {
+                drawExtent.maxY = 100;
+            }
+            if (drawExtent.minY <= 0) {
+                drawExtent.minY = 10;
+            }
+        }
+
         this.getAxis(Location.BOTTOM).setMinMaxValue(drawExtent.minX, drawExtent.maxX);
         this.getAxis(Location.TOP).setMinMaxValue(drawExtent.minX, drawExtent.maxX);
         this.getAxis(Location.LEFT).setMinMaxValue(drawExtent.minY, drawExtent.maxY);
         this.getAxis(Location.RIGHT).setMinMaxValue(drawExtent.minY, drawExtent.maxY);
+        this.updateTransLimits();
     }
 
     /**
@@ -345,6 +379,240 @@ public abstract class AbstractPlot2D extends Plot {
      */
     public double getYScale() {
         return this.yScale;
+    }
+
+    /**
+     * Get x scale type
+     * @return X scale type
+     */
+    public ScaleType getXScaleType() {
+        return this.xScaleType;
+    }
+
+    /**
+     * Set x scale type
+     * @param value X scale type
+     */
+    public void setXScaleType(ScaleType value) {
+        this.xScaleType = value;
+        switch (value) {
+            case LOG:
+                LogAxis logBAxis = new LogAxis(this.getAxis(Location.BOTTOM));
+                logBAxis.setMinorTickNum(10);
+                this.setAxis(logBAxis, Location.BOTTOM);
+                LogAxis logTAxis = new LogAxis(this.getAxis(Location.TOP));
+                logTAxis.setMinorTickNum(10);
+                this.setAxis(logTAxis, Location.TOP);
+                updateDrawExtent();
+                break;
+            case LINEAR:
+                Axis bAxis = new Axis(this.getAxis(Location.BOTTOM));
+                this.setAxis(bAxis, Location.BOTTOM);
+                Axis tAxis = new Axis(this.getAxis(Location.TOP));
+                this.setAxis(tAxis, Location.TOP);
+                break;
+        }
+
+        updateTransScale();
+    }
+
+    /**
+     * Set x scale type
+     * @param value X scale type
+     */
+    public void setXScaleType(String value) {
+        ScaleType scaleType = ScaleType.LINEAR;
+        if (value.toLowerCase().equals("log")) {
+            scaleType = ScaleType.LOG;
+        }
+
+        this.setXScaleType(scaleType);
+    }
+
+    /**
+     * Get y scale type
+     * @return Y scale type
+     */
+    public ScaleType getYScaleType() {
+        return this.yScaleType;
+    }
+
+    /**
+     * Set y scale type
+     * @param value Y scale type
+     */
+    public  void setYScaleType(ScaleType value) {
+        this.yScaleType = value;
+        switch (value) {
+            case LOG:
+                LogAxis logLAxis = new LogAxis(this.getAxis(Location.LEFT));
+                logLAxis.setMinorTickNum(10);
+                this.setAxis(logLAxis, Location.LEFT);
+                LogAxis logRAxis = new LogAxis(this.getAxis(Location.RIGHT));
+                logRAxis.setMinorTickNum(10);
+                this.setAxis(logRAxis, Location.RIGHT);
+                updateDrawExtent();
+                break;
+            case LINEAR:
+                Axis lAxis = new Axis(this.getAxis(Location.LEFT));
+                this.setAxis(lAxis, Location.LEFT);
+                Axis rAxis = new Axis(this.getAxis(Location.RIGHT));
+                this.setAxis(rAxis, Location.RIGHT);
+                break;
+        }
+
+        updateTransScale();
+    }
+
+    /**
+     * Set y scale type
+     * @param value Y scale type
+     */
+    public  void setYScaleType(String value) {
+        ScaleType scaleType = ScaleType.LINEAR;
+        if (value.toLowerCase().equals("log")) {
+            scaleType = ScaleType.LOG;
+        }
+
+        this.setYScaleType(scaleType);
+    }
+
+    /**
+     * Get x axis type
+     * @return X axis type
+     */
+    public AxisType getXAxisType() {
+        return this.xAxisType;
+    }
+
+    /**
+     * Set x axis type
+     * @param value X axis type
+     */
+    public void setXAxisType(AxisType value) {
+        this.xAxisType = value;
+        ScaleType scaleType = ScaleType.LINEAR;
+        switch (value) {
+            case LOG:
+                scaleType = ScaleType.LOG;
+                LogAxis logBAxis = new LogAxis(this.getAxis(Location.BOTTOM));
+                logBAxis.setMinorTickNum(10);
+                this.setAxis(logBAxis, Location.BOTTOM);
+                LogAxis logTAxis = new LogAxis(this.getAxis(Location.TOP));
+                logTAxis.setMinorTickNum(10);
+                this.setAxis(logTAxis, Location.TOP);
+                break;
+            case NORMAL:
+                Axis bAxis = new Axis(this.getAxis(Location.BOTTOM));
+                this.setAxis(bAxis, Location.BOTTOM);
+                Axis tAxis = new Axis(this.getAxis(Location.TOP));
+                this.setAxis(tAxis, Location.TOP);
+                break;
+            case TIME:
+                TimeAxis tBAxis = new TimeAxis(this.getAxis(Location.BOTTOM));
+                this.setAxis(tBAxis, Location.BOTTOM);
+                TimeAxis tTAxis = new TimeAxis(this.getAxis(Location.TOP));
+                this.setAxis(tTAxis, Location.TOP);
+                break;
+            case LON_LAT:
+                LonLatAxis lBAxis = new LonLatAxis(this.getAxis(Location.BOTTOM));
+                lBAxis.setLongitude(true);
+                this.setAxis(lBAxis, Location.BOTTOM);
+                LonLatAxis lTAxis = new LonLatAxis(this.getAxis(Location.TOP));
+                lTAxis.setLongitude(true);
+                this.setAxis(lTAxis, Location.TOP);
+                break;
+        }
+
+        this.xScaleType = scaleType;
+        updateDrawExtent();
+        updateTransScale();
+    }
+
+    /**
+     * Get y axis type
+     * @return Y axis type
+     */
+    public AxisType getYAxisType() {
+        return this.yAxisType;
+    }
+
+    /**
+     * Set y axis type
+     * @param value Y axis type
+     */
+    public void setYAxisType(AxisType value) {
+        this.yAxisType = value;
+        ScaleType scaleType = ScaleType.LINEAR;
+        switch (value) {
+            case LOG:
+                scaleType = ScaleType.LOG;
+                LogAxis logLAxis = new LogAxis(this.getAxis(Location.LEFT));
+                logLAxis.setMinorTickNum(10);
+                this.setAxis(logLAxis, Location.LEFT);
+                LogAxis logRAxis = new LogAxis(this.getAxis(Location.RIGHT));
+                logRAxis.setMinorTickNum(10);
+                this.setAxis(logRAxis, Location.RIGHT);
+                break;
+            case NORMAL:
+                Axis lAxis = new Axis(this.getAxis(Location.LEFT));
+                this.setAxis(lAxis, Location.LEFT);
+                Axis rAxis = new Axis(this.getAxis(Location.RIGHT));
+                this.setAxis(rAxis, Location.RIGHT);
+                break;
+            case TIME:
+                TimeAxis tLAxis = new TimeAxis(this.getAxis(Location.LEFT));
+                this.setAxis(tLAxis, Location.LEFT);
+                TimeAxis tRAxis = new TimeAxis(this.getAxis(Location.RIGHT));
+                this.setAxis(tRAxis, Location.RIGHT);
+                break;
+            case LON_LAT:
+                LonLatAxis lLAxis = new LonLatAxis(this.getAxis(Location.LEFT));
+                lLAxis.setLongitude(false);
+                this.setAxis(lLAxis, Location.LEFT);
+                LonLatAxis lRAxis = new LonLatAxis(this.getAxis(Location.RIGHT));
+                lRAxis.setLongitude(false);
+                this.setAxis(lRAxis, Location.RIGHT);
+                break;
+        }
+
+        this.yScaleType = scaleType;
+        updateDrawExtent();
+        updateTransScale();
+    }
+
+    /**
+     * Ge whether x inverted
+     * @return X inverted or not
+     */
+    public boolean isXInverted() {
+        return this.getXAxis().isInverse();
+    }
+
+    /**
+     * Set whether x inverted
+     * @param value X inverted or not
+     */
+    public void setXInverted(boolean value) {
+        this.getXAxis().setInverse(value);
+        this.transLimits.setBbox(drawExtent, this.isXInverted(), this.isYInverted());
+    }
+
+    /**
+     * Get whether y inverted
+     * @return Y inverted or not
+     */
+    public boolean isYInverted() {
+        return this.getYAxis().isInverse();
+    }
+
+    /**
+     * Set whether y inverted
+     * @param value Y inverted or not
+     */
+    public void setYInverted(boolean value) {
+        this.getYAxis().setInverse(value);
+        this.transLimits.setBbox(drawExtent, this.isXInverted(), this.isYInverted());
     }
 
     /**
@@ -623,8 +891,7 @@ public abstract class AbstractPlot2D extends Plot {
      * @return Boolean
      */
     public boolean isLogX() {
-        Axis xAxis = this.getXAxis();
-        return xAxis instanceof LogAxis;
+        return this.xScaleType == ScaleType.LOG;
     }
 
     /**
@@ -633,8 +900,7 @@ public abstract class AbstractPlot2D extends Plot {
      * @return Boolean
      */
     public boolean isLogY() {
-        Axis yAxis = this.getYAxis();
-        return yAxis instanceof LogAxis;
+        return this.yScaleType == ScaleType.LOG;
     }
 
     /**
@@ -756,6 +1022,7 @@ public abstract class AbstractPlot2D extends Plot {
      */
     public void setAxis(Axis axis, Location loc) {
         this.axis.put(loc, axis);
+        axis.setPlot(this);
     }
 
     /**
@@ -812,6 +1079,31 @@ public abstract class AbstractPlot2D extends Plot {
         }
         xScale = area.getWidth() / width;
         yScale = area.getHeight() / height;
+    }
+
+    /**
+     * Update transScale
+     */
+    public void updateTransScale() {
+        if (this.xScaleType == ScaleType.LOG || this.yScaleType == ScaleType.LOG) {
+            this.transScale.setInnerTransform(new LogTransform(10,
+                    this.xScaleType == ScaleType.LOG,
+                    this.yScaleType == ScaleType.LOG));
+        } else {
+            this.transScale.setInnerTransform(new IdentityTransform());
+        }
+
+        updateTransLimits();
+    }
+
+    public void updateTransLimits() {
+        Extent bBox = (Extent) drawExtent.clone();
+        if (!(this.transScale.getInnerTransform() instanceof IdentityTransform)) {
+            PointD ll = this.transScale.transform(new PointD(bBox.minX, bBox.minY));
+            PointD tr = this.transScale.transform(new PointD(bBox.maxX, bBox.maxY));
+            bBox = new Extent(ll.X, tr.X, ll.Y, tr.Y);
+        }
+        this.transLimits.setBbox(bBox, this.isXInverted(), this.isYInverted());
     }
 
     /**
@@ -1026,10 +1318,8 @@ public abstract class AbstractPlot2D extends Plot {
      */
     @Override
     public Rectangle2D getPositionArea() {
-        if (this.aspectType == AspectType.AUTO) {
-            return super.getPositionArea();
-        } else {
-            Rectangle2D plotArea = super.getPositionArea();
+        Rectangle2D plotArea = super.getPositionArea();
+        if (this.aspectType != AspectType.AUTO) {
             double width = this.drawExtent.getWidth();
             double height = this.drawExtent.getHeight();
             if (width / height / aspect > plotArea.getWidth() / plotArea.getHeight()) {
@@ -1041,34 +1331,12 @@ public abstract class AbstractPlot2D extends Plot {
                 double delta = plotArea.getWidth() - w;
                 plotArea.setRect(plotArea.getX() + delta / 2, plotArea.getY(), w, plotArea.getHeight());
             }
-            this.positionArea = plotArea;
-
-            return plotArea;
         }
+
+        this.transAxes.setBbox(new Extent(plotArea.getMinX(), plotArea.getMaxX(), plotArea.getMinY(),
+                plotArea.getMaxY()), false, true);
+        return plotArea;
     }
-
-    /**
-     * Set position area
-     *
-     * @param area Position area
-     *//*
-    @Override
-    public void setPositionArea(Rectangle2D area) {
-        this.positionArea = area;
-        if (this.aspectType != AspectType.AUTO) {
-            double width = this.drawExtent.getWidth();
-            double height = this.drawExtent.getHeight();
-            if (width / height / aspect > positionArea.getWidth() / positionArea.getHeight()) {
-                double h = positionArea.getWidth() * height * aspect / width;
-                double delta = positionArea.getHeight() - h;
-                positionArea.setRect(positionArea.getX(), positionArea.getY() + delta / 2, positionArea.getWidth(), h);
-            } else {
-                double w = width * positionArea.getHeight() / height / aspect;
-                double delta = positionArea.getWidth() - w;
-                positionArea.setRect(positionArea.getX() + delta / 2, positionArea.getY(), w, positionArea.getHeight());
-            }
-        }
-    }*/
     
     /**
      * Get outer position area
@@ -1533,12 +1801,34 @@ public abstract class AbstractPlot2D extends Plot {
      * Convert data length to screen length in x direction
      *
      * @param len data length
+     * @return Screen length
+     */
+    public double projXLength(double len) {
+        double scaleX = transAxes.getBbox().getWidth() / transLimits.getBbox().getWidth();
+        return len * scaleX;
+    }
+
+    /**
+     * Convert data length to screen length in x direction
+     *
+     * @param len data length
      * @param area Drawing area
      * @return Screen length
      */
     public double projXLength(double len, Rectangle2D area) {
         double scaleX = area.getWidth() / drawExtent.getWidth();
         return len * scaleX;
+    }
+
+    /**
+     * Convert data length to screen length in y direction
+     *
+     * @param len data length
+     * @return Screen length
+     */
+    public double projYLength(double len) {
+        double scaleY = this.transAxes.getBbox().getHeight() / this.transLimits.getBbox().getHeight();
+        return len * scaleY;
     }
 
     /**

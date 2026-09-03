@@ -14,7 +14,7 @@
 package org.meteoinfo.chart;
 
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.geometry.graphic.Artist;
+import org.meteoinfo.chart.graphic.Artist;
 import org.meteoinfo.ui.event.ILocationChangedListener;
 import org.meteoinfo.ui.event.ISizeChangedListener;
 import org.meteoinfo.ui.event.LocationChangedEvent;
@@ -23,7 +23,7 @@ import org.meteoinfo.ui.event.SizeChangedEvent;
 import java.awt.Color;
 import java.awt.Rectangle;
 import javax.swing.event.EventListenerList;
-import org.meteoinfo.geometry.graphic.ResizeAbility;
+import org.meteoinfo.chart.graphic.ResizeAbility;
 
 /**
  *

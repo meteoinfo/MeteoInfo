@@ -5,8 +5,8 @@ import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.chart.jogl.tessellator.Primitive;
 import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.shape.PointZ;
 import org.meteoinfo.geometry.shape.PolygonZ;
@@ -141,7 +141,7 @@ public class SphericalTransform {
                     Shape shape = gg.getGraphicN(0).getShape();
                     boolean isTess = false;
                     if (shape instanceof PolygonZShape) {
-                        PolygonBreak pb = (PolygonBreak) gg.getGraphicN(0).getLegend();
+                        PolygonBreak pb = (PolygonBreak) gg.getGraphicN(0).getLegendBreak();
                         isTess = pb.isDrawFill();
                     }
                     if (isTess) {

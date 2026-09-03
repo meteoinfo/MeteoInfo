@@ -7,7 +7,7 @@
 # -----------------------------------------------------
 
 from org.meteoinfo.chart import Location, ChartWindArrow, ChartText, LegendPosition, \
-    ChartLegend, ChartColorBar, AspectType
+    ChartLegend, ChartColorBar, AspectType, ScaleType, AxisType
 from org.meteoinfo.chart.plot import Plot2D, PolarPlot, PlotOrientation
 from org.meteoinfo.chart.graphic import GraphicFactory
 from org.meteoinfo.common import XAlign, YAlign
@@ -15,7 +15,7 @@ from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
 from org.meteoinfo.geometry.legend import BarBreak, PolygonBreak, PolylineBreak, \
     PointBreak, LineStyles, PointStyle, LegendScheme, LegendType, LegendManage, ExtendFraction
 from org.meteoinfo.geometry.shape import ShapeTypes
-from org.meteoinfo.geometry.graphic import Graphic, GraphicCollection, ImageGraphic
+from org.meteoinfo.chart.graphic import Graphic, GraphicCollection, ImageGraphic
 from org.meteoinfo.geometry.colors import ExtendType
 from org.meteoinfo.common import MIMath, Extent
 from org.meteoinfo.geo.layer import MapLayer
@@ -164,7 +164,7 @@ class Axes(object):
     @stale.setter
     def stale(self, val):
         self._stale = val
-        self._axes.setAutoExtent()
+        #self._axes.setAutoExtent()
 
         if self._figure is not None:
             self._figure.stale = val
@@ -592,52 +592,21 @@ class Axes(object):
         :param axistype: (*string*) Axis type ['lon' | 'lat' | 'time' | 'log'].
         :param timetickformat: (*string*) Time tick label format.
         """
-        ax = self._axes
-        b_axis = ax.getAxis(Location.BOTTOM)
-        t_axis = ax.getAxis(Location.TOP)
+        axis_type = AxisType.NORMAL
         if axistype == 'lon':
-            if not isinstance(b_axis, LonLatAxis):
-                b_axis = LonLatAxis(b_axis)
-            b_axis.setLongitude(True)
-            ax.setAxis(b_axis, Location.BOTTOM)
-            if not isinstance(t_axis, LonLatAxis):
-                t_axis = LonLatAxis(t_axis)
-            t_axis.setLongitude(True)
-            ax.setAxis(t_axis, Location.TOP)
+            axis_type = AxisType.LON_LAT
         elif axistype == 'lat':
-            if not isinstance(b_axis, LonLatAxis):
-                b_axis = LonLatAxis(b_axis)
-            b_axis.setLongitude(False)
-            ax.setAxis(b_axis, Location.BOTTOM)
-            if not isinstance(t_axis, LonLatAxis):
-                t_axis = LonLatAxis(t_axis)
-            t_axis.setLongitude(False)
-            ax.setAxis(t_axis, Location.TOP)
+            axis_type = AxisType.LON_LAT
         elif axistype == 'time':
-            if not isinstance(b_axis, TimeAxis):
-                b_axis = TimeAxis(b_axis)
-            ax.setAxis(b_axis, Location.BOTTOM)
-            if not isinstance(t_axis, TimeAxis):
-                t_axis = TimeAxis(t_axis)
-            ax.setAxis(t_axis, Location.TOP)
-            if not timetickformat is None:
-                b_axis.setTimeFormat(timetickformat)
-                t_axis.setTimeFormat(timetickformat)
+            axis_type = AxisType.TIME
         elif axistype == 'log':
-            if not isinstance(b_axis, LogAxis):
-                b_axis = LogAxis(b_axis)
-                b_axis.setMinorTickNum(10)
-            ax.setAxis(b_axis, Location.BOTTOM)
-            if not isinstance(t_axis, LogAxis):
-                t_axis = LogAxis(t_axis)
-                t_axis.setMinorTickNum(10)
-            ax.setAxis(t_axis, Location.TOP)
-            ax.setAutoExtent()
-        else:
-            b_axis = Axis(ax.getAxis(Location.BOTTOM))
-            ax.setAxis(b_axis, Location.BOTTOM)
-            t_axis = Axis(ax.getAxis(Location.TOP))
-            ax.setAxis(t_axis, Location.TOP)
+            axis_type = AxisType.LOG
+
+        self._axes.setXAxisType(axis_type)
+        if axistype == 'time':
+            if timetickformat is not None:
+                self._axes.getAxis(Location.BOTTOM).setTimeFormat(timetickformat)
+                self._axes.getAxis(Location.TOP).setTimeFormat(timetickformat)
         self.stale = True
 
 
@@ -648,48 +617,21 @@ class Axes(object):
         :param axistype: (*string*) Axis type ['lon' | 'lat' | 'time' | 'log'].
         :param timetickformat: (*string*) Time tick label format.
         """
-        ax = self._axes
+        axis_type = AxisType.NORMAL
         if axistype == 'lon':
-            b_axis = LonLatAxis(ax.getAxis(Location.LEFT))
-            # b_axis.setLabel('Longitude')
-            b_axis.setLongitude(True)
-            ax.setAxis(b_axis, Location.LEFT)
-            t_axis = LonLatAxis(ax.getAxis(Location.RIGHT))
-            # t_axis.setLabel('Longitude')
-            t_axis.setLongitude(True)
-            ax.setAxis(t_axis, Location.RIGHT)
+            axis_type = AxisType.LON_LAT
         elif axistype == 'lat':
-            b_axis = LonLatAxis(ax.getAxis(Location.LEFT))
-            # b_axis.setLabel('Latitude')
-            b_axis.setLongitude(False)
-            ax.setAxis(b_axis, Location.LEFT)
-            t_axis = LonLatAxis(ax.getAxis(Location.RIGHT))
-            # t_axis.setLabel('Latitude')
-            t_axis.setLongitude(False)
-            ax.setAxis(t_axis, Location.RIGHT)
+            axis_type = AxisType.LON_LAT
         elif axistype == 'time':
-            b_axis = TimeAxis(ax.getAxis(Location.LEFT))
-            ax.setAxis(b_axis, Location.LEFT)
-            t_axis = TimeAxis(ax.getAxis(Location.RIGHT))
-            ax.setAxis(t_axis, Location.RIGHT)
-            if not timetickformat is None:
-                ax.getAxis(Location.LEFT).setTimeFormat(timetickformat)
-                ax.getAxis(Location.RIGHT).setTimeFormat(timetickformat)
+            axis_type = AxisType.TIME
         elif axistype == 'log':
-            l_axis = LogAxis(ax.getAxis(Location.LEFT))
-            # l_axis.setLabel('Log')
-            l_axis.setMinorTickNum(10)
-            ax.setAxis(l_axis, Location.LEFT)
-            r_axis = LogAxis(ax.getAxis(Location.RIGHT))
-            # r_axis.setLabel('Log')
-            r_axis.setMinorTickNum(10)
-            ax.setAxis(r_axis, Location.RIGHT)
-            ax.setAutoExtent()
-        else:
-            l_axis = Axis(ax.getAxis(Location.LEFT))
-            ax.setAxis(l_axis, Location.LEFT)
-            r_axis = Axis(ax.getAxis(Location.RIGHT))
-            ax.setAxis(r_axis, Location.RIGHT)
+            axis_type = AxisType.LOG
+
+        self._axes.setYAxisType(axis_type)
+        if axistype == 'time':
+            if timetickformat is not None:
+                self._axes.getAxis(Location.LEFT).setTimeFormat(timetickformat)
+                self._axes.getAxis(Location.RIGHT).setTimeFormat(timetickformat)
         self.stale = True
 
 
@@ -713,6 +655,15 @@ class Axes(object):
         self.get_axis(Location.TOP).setVisible(False)
         self.get_axis(Location.RIGHT).setVisible(False)
         self.stale = True
+
+
+    def set_aspect(self, aspect):
+        if aspect == 'equal':
+            self._axes.setAspectType(AspectType.EQUAL)
+        else:
+            if isinstance(aspect, (int, float)):
+                self._axes.setAspect(aspect)
+                self._axes.setAspectType(AspectType.RATIO)
 
 
     def axis(self, arg=None, **kwargs):
@@ -855,9 +806,9 @@ class Axes(object):
             xmax = miutil.date2num(xmax)
 
         if xmin < xmax:
-            self._axes.getXAxis().setInverse(False)
+            self._axes.setXInverted(False)
         else:
-            self._axes.getXAxis().setInverse(True)
+            self._axes.setXInverted(True)
             temp = xmin
             xmin = xmax
             xmax = temp
@@ -1276,19 +1227,7 @@ class Axes(object):
             The axis scale type to apply. Valid string values are the names of scale
             classes ("linear", "log",...).
         """
-        if scale.lower() == 'log':
-            l_axis = LogAxis(self._axes.getAxis(Location.BOTTOM))
-            l_axis.setMinorTickNum(10)
-            self._axes.setAxis(l_axis, Location.BOTTOM)
-            r_axis = LogAxis(self._axes.getAxis(Location.TOP))
-            r_axis.setMinorTickNum(10)
-            self._axes.setAxis(r_axis, Location.TOP)
-            self._axes.setAutoExtent()
-        else:
-            l_axis = Axis(self._axes.getAxis(Location.BOTTOM))
-            self._axes.setAxis(l_axis, Location.BOTTOM)
-            r_axis = Axis(self._axes.getAxis(Location.TOP))
-            self._axes.setAxis(r_axis, Location.TOP)
+        self._axes.setXScaleType(scale)
         self.stale = True
 
 
@@ -1313,19 +1252,7 @@ class Axes(object):
             The axis scale type to apply. Valid string values are the names of scale
             classes ("linear", "log",...).
         """
-        if scale.lower() == 'log':
-            l_axis = LogAxis(self._axes.getAxis(Location.LEFT))
-            l_axis.setMinorTickNum(10)
-            self._axes.setAxis(l_axis, Location.LEFT)
-            r_axis = LogAxis(self._axes.getAxis(Location.RIGHT))
-            r_axis.setMinorTickNum(10)
-            self._axes.setAxis(r_axis, Location.RIGHT)
-            self._axes.setAutoExtent()
-        else:
-            l_axis = Axis(self._axes.getAxis(Location.LEFT))
-            self._axes.setAxis(l_axis, Location.LEFT)
-            r_axis = Axis(self._axes.getAxis(Location.RIGHT))
-            self._axes.setAxis(r_axis, Location.RIGHT)
+        self._axes.setYScaleType(scale)
         self.stale = True
 
 
@@ -1333,14 +1260,14 @@ class Axes(object):
         """
         Return whether the xaxis is oriented in the "inverse" direction.
         """
-        return self._axes.getXAxis().isInverse()
+        return self._axes.isXInverted()
 
 
     def set_xinverted(self, value):
         """
         Set whether the xaxis is oriented in the "inverse" direction.
         """
-        self._axes.getXAxis().setInverse(value)
+        self._axes.setXInverted(value)
         self.stale = True
 
 
@@ -1348,14 +1275,14 @@ class Axes(object):
         """
         Return whether the yaxis is oriented in the "inverse" direction.
         """
-        return self._axes.getYAxis().isInverse()
+        return self._axes.isYInverted()
 
 
     def set_yinverted(self, value):
         """
         Set whether the yaxis is oriented in the "inverse" direction.
         """
-        self._axes.getYAxis().setInverse(value)
+        self._axes.setYInverted(value)
         self.stale = True
 
 
@@ -1364,6 +1291,7 @@ class Axes(object):
         Reverse x axis.
         """
         self._axes.getXAxis().setInverse(True)
+        self.stale = True
 
 
     def yreverse(self):
@@ -1371,6 +1299,7 @@ class Axes(object):
         Reverse y axis.
         """
         self._axes.getYAxis().setInverse(True)
+        self.stale = True
 
 
     def invert_xaxis(self):
@@ -1395,6 +1324,29 @@ class Axes(object):
         self.stale = True
 
 
+    def minorticks_on(self):
+        """
+        Display minor ticks on the Axes.
+
+        Displaying minor ticks may reduce performance; you may turn them off
+        using `minorticks_off()` if drawing speed is a problem.
+        """
+        self._axes.getAxis(Location.BOTTOM).setMinorTickVisible(True)
+        self._axes.getAxis(Location.TOP).setMinorTickVisible(True)
+        self._axes.getAxis(Location.LEFT).setMinorTickVisible(True)
+        self._axes.getAxis(Location.RIGHT).setMinorTickVisible(True)
+
+
+    def minorticks_off(self):
+        """
+        Remove minor ticks from the Axes.
+        """
+        self._axes.getAxis(Location.BOTTOM).setMinorTickVisible(False)
+        self._axes.getAxis(Location.TOP).setMinorTickVisible(False)
+        self._axes.getAxis(Location.LEFT).setMinorTickVisible(False)
+        self._axes.getAxis(Location.RIGHT).setMinorTickVisible(False)
+
+
     def add_patch(self, patch):
         """
         Add a patch.
@@ -1405,7 +1357,7 @@ class Axes(object):
             self._axes.addGraphics(patch)
         else:
             self._axes.addGraphic(patch)
-        #self._axes.setAutoExtent()
+        self._axes.setAutoExtent()
         self.stale = True
 
 
@@ -1436,7 +1388,9 @@ class Axes(object):
             else:
                 rGraphic = self._axes.addGraphic(zorder, graphic, transform)
 
-        #self._axes.setAutoExtent()
+        if self.num_graphics() <= 1:
+            self._axes.setAutoExtent()
+
         self.stale = True
         return rGraphic
 
@@ -1743,8 +1697,8 @@ class Axes(object):
                 ydata = np.asarray(ydatalist[0])
                 if ydata.ndim == 1:
                     if xdata.contains_nan():
-                        xdata = plotutil.split_array_by_nan(xdata)
-                        ydata = plotutil.split_array_by_nan(ydata)
+                        xdata = np.split_array_by_nan(xdata)
+                        ydata = np.split_array_by_nan(ydata)
                         if kwargs.has_key('color'):
                             kwargs['colors'] = kwargs['color']
                         if not kwargs.has_key('cmap'):
@@ -1772,9 +1726,9 @@ class Axes(object):
             cdata = np.asarray(cdata)
             if ydata.ndim == 1:
                 if xdata.contains_nan():
-                    xdata = plotutil.split_array_by_nan(xdata)
-                    ydata = plotutil.split_array_by_nan(ydata)
-                    cdata = plotutil.split_array_by_nan(cdata)
+                    xdata = np.split_array_by_nan(xdata)
+                    ydata = np.split_array_by_nan(ydata)
+                    cdata = np.split_array_by_nan(cdata)
                     graphics = LineCollection(None, xydata=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
                 else:
                     graphics = Line2D(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
@@ -1795,6 +1749,7 @@ class Axes(object):
                 self.add_graphic(graphic, zorder=zorder)
         else:
             self.add_graphic(graphics, zorder=zorder)
+        self._axes.setAutoExtent()
 
         return graphics
 
@@ -1831,6 +1786,7 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
+        self._axes.setAutoExtent()
 
         return graphics
 
@@ -1955,6 +1911,7 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
+        self._axes.setAutoExtent()
 
         return graphics
 
@@ -2207,6 +2164,7 @@ class Axes(object):
                                                         yerrU, line, eline, capsize)
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
+        self._axes.setAutoExtent()
 
         return graphics
 
@@ -2262,6 +2220,7 @@ class Axes(object):
             if isinstance(x[0], datetime.datetime):
                 isdate = True
         x = np.asarray(x)
+        x = x.astype('double')
         height = np.asarray(height)
         if isdate and width <= 1:
             width = (x[1] - x[0]) * width
@@ -2279,7 +2238,7 @@ class Axes(object):
         # Set plot data styles
         fcobj = kwargs.pop('color', None)
         if fcobj is None:
-            fcobj = kwargs.pop('facecolor', 'b')
+            fcobj = kwargs.pop('facecolor', None)
         if isinstance(fcobj, (tuple, list)):
             colors = plotutil.getcolors(fcobj)
         else:
@@ -2302,7 +2261,9 @@ class Axes(object):
         for color in colors:
             lb = BarBreak()
             lb.setCaption(label)
-            lb.setColor(color)
+            if color is not None:
+                lb.setColor(color)
+                lb.setDrawFill(True)
             if edgecolor is None:
                 lb.setDrawOutline(False)
             else:
@@ -2338,6 +2299,7 @@ class Axes(object):
         if autowidth:
             barswidth = kwargs.pop('barswidth', 0.8)
             self._axes.setBarsWidth(barswidth)
+        self._axes.setAutoExtent()
 
         return graphics
 
@@ -2420,7 +2382,7 @@ class Axes(object):
         # Set plot data styles
         fcobj = kwargs.pop('color', None)
         if fcobj is None:
-            fcobj = kwargs.pop('facecolor', 'b')
+            fcobj = kwargs.pop('facecolor', None)
         if isinstance(fcobj, (tuple, list)):
             colors = plotutil.getcolors(fcobj)
         else:
@@ -2440,7 +2402,9 @@ class Axes(object):
         for color in colors:
             lb = BarBreak()
             lb.setCaption(label)
-            lb.setColor(color)
+            if color is not None:
+                lb.setColor(color)
+                lb.setDrawFill(True)
             if edgecolor is None:
                 lb.setDrawOutline(False)
             else:
@@ -2465,6 +2429,7 @@ class Axes(object):
         if autoheight:
             barsheight = kwargs.pop('barsheight', 0.8)
             self._axes.setBarsWidth(barsheight)
+        self._axes.setAutoExtent()
 
         return graphics
 
@@ -2626,6 +2591,7 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
+        self._axes.setAutoExtent()
 
         return linefmt
 
@@ -2935,10 +2901,8 @@ class Axes(object):
         gridline = self._axes.getGridLine()
         gridline.setTop(True)
 
-        if ls is None:
-            return igraphic
-        else:
-            return ls
+        return igraphic
+
 
     def pcolor(self, *args, **kwargs):
         """
@@ -3199,6 +3163,7 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
+        self._axes.setAutoExtent()
 
         return graphics
 
@@ -3216,11 +3181,16 @@ class Axes(object):
         else:
             x = np.asarray(x)
             y = np.asarray(y)
+            if x.ndim == 1 and x.contains_nan():
+                x = np.split_array_by_nan(x)
+            if y.ndim == 1 and y.contains_nan():
+                y = np.split_array_by_nan(y)
             #graphics = GraphicFactory.createPolygons(x._array, y._array, lbreak)
             graphics = PolyCollection(None, xydata=[x, y], **kwargs)
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
+        self._axes.setAutoExtent()
 
         return graphics
 
@@ -3238,6 +3208,7 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphic, zorder=zorder)
+        self._axes.setAutoExtent()
 
         return graphic
 
@@ -3282,8 +3253,9 @@ class Axes(object):
         if graphics.size() > 0:
             zorder = kwargs.pop('zorder', None)
             self.add_graphic(graphics, zorder=zorder)
+            self._axes.setAutoExtent()
 
-        return pb
+        return graphics
 
     def fill_betweenx(self, y, x1, x2=0, where=None, **kwargs):
         """
@@ -3326,8 +3298,9 @@ class Axes(object):
         if graphics.size() > 0:
             zorder = kwargs.pop('zorder', None)
             self.add_graphic(graphics, zorder=zorder)
+            self._axes.setAutoExtent()
 
-        return pb
+        return graphics
 
     def pie(self, x, explode=None, labels=None, colors=None, autopct=None, pctdistance=0.6, shadow=False,
             labeldistance=1.1, startangle=0, radius=None, wedgeprops=None, **kwargs):
@@ -3551,6 +3524,7 @@ class Axes(object):
             graphics.setAntiAlias(antialias)
 
         self.add_graphic(graphics)
+        self._axes.setAutoExtent()
 
         return graphics
 
@@ -4105,6 +4079,7 @@ class Axes(object):
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(igraphic, zorder=zorder)
+        self._axes.setAutoExtent()
 
         return igraphic
 
@@ -4152,58 +4127,65 @@ class Axes(object):
         :returns: (*ChartLegend*) The chart legend.
         """
         newlegend = kwargs.pop('newlegend', True)
-        ols = self._axes.getLegendScheme()
+        ols = self._axes.getLegendBreaks()
         if newlegend:
             clegend = ChartLegend(ols)
         else:
             clegend = self._axes.getLegend()
 
         ls = kwargs.pop('legend', None)
-        if len(args) > 0:
-            if isinstance(args[0], MILayer):
-                ls = args[0].legend()
-                args = args[1:]
-            elif isinstance(args[0], LegendScheme):
-                ls = args[0]
-                args = args[1:]
-            elif isinstance(args[0], GraphicCollection):
-                if not args[0].isSingleLegend():
-                    ls = args[0].getLegendScheme()
-                    args = args[1:]
+        # if len(args) > 0:
+        #     if isinstance(args[0], MILayer):
+        #         ls = args[0].legend()
+        #         args = args[1:]
+        #     elif isinstance(args[0], LegendScheme):
+        #         ls = args[0]
+        #         args = args[1:]
+        #     elif isinstance(args[0], GraphicCollection):
+        #         if not args[0].isSingleLegend():
+        #             ls = args[0].getLegendScheme()
+        #             args = args[1:]
 
         if ls is None:
             if len(args) > 0:
+                gg = args[0]
+                if not isinstance(gg, (list, tuple)):
+                    gg = [gg]
+
                 lbs = []
-                for lb in args[0]:
+                for lb in gg:
                     if isinstance(lb, Graphic):
-                        lbs.append(lb.getLegend().clone())
+                        lbs.extend(lb.getLegendBreaks())
                     elif isinstance(lb, MILayer):
                         lbs.extend(lb.legend().getLegendBreaks())
+                    elif isinstance(lb, LegendScheme):
+                        lbs.extend(lb.getLegendBreaks())
                     else:
                         lbs.append(lb)
 
                 if len(args) == 2:
                     labels = args[1]
                     for i in range(0, len(lbs)):
-                        lbs[i].setCaption(labels[i])
+                        if i < len(labels):
+                            lbs[i].setCaption(labels[i])
 
                 if isinstance(lbs[0], basestring):
                     clegend.setTickCaptions(lbs)
                 else:
-                    ls = LegendScheme()
-                    for lb in lbs:
-                        ls.addLegendBreak(lb)
-                    if len(lbs) == 1:
-                        ls.setLegendType(LegendType.SINGLE_SYMBOL)
-                    elif lbs[0].getStartValue() == lbs[1].getEndValue():
-                        ls.setLegendType(LegendType.UNIQUE_VALUE)
-                    else:
-                        ls.setLegendType(LegendType.GRADUATED_COLOR)
+                    # ls = LegendScheme()
+                    # for lb in lbs:
+                    #     ls.addLegendBreak(lb)
+                    # if len(lbs) == 1:
+                    #     ls.setLegendType(LegendType.SINGLE_SYMBOL)
+                    # elif lbs[0].getStartValue() == lbs[1].getEndValue():
+                    #     ls.setLegendType(LegendType.UNIQUE_VALUE)
+                    # else:
+                    #     ls.setLegendType(LegendType.GRADUATED_COLOR)
                     if clegend is None:
-                        clegend = ChartLegend(ls)
+                        clegend = ChartLegend(lbs)
                         self._axes.setLegend(clegend)
                     else:
-                        clegend.setLegendScheme(ls)
+                        clegend.setLegendBreaks(lbs)
         else:
             if len(args) > 0:
                 labels = args[0]
@@ -4214,7 +4196,7 @@ class Axes(object):
                 clegend = ChartLegend(ls)
                 self._axes.setLegend(clegend)
             else:
-                clegend.setLegendScheme(ls)
+                clegend.setLegendBreaks(ls.getLegendBreaks())
 
         loc = kwargs.pop('loc', 'upper right')
         lp = LegendPosition.fromString(loc)

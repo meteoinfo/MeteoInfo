@@ -202,7 +202,7 @@ public class LayerNode extends ItemNode {
                     if (aLayer.getChartSet().isDrawCharts() && aLayer.getChartPoints().size() > 0) {
                         LegendNode aLN = new LegendNode();
                         aLN.setShapeType(ShapeTypes.POLYGON);
-                        ChartBreak aCB = ((ChartBreak) aLayer.getChartPoints().get(0).getLegend()).getSampleChartBreak();
+                        ChartBreak aCB = ((ChartBreak) aLayer.getChartPoints().get(0).getLegendBreak()).getSampleChartBreak();
                         aLN.setLegendBreak(aCB);
                         aLN.setHeight(((ChartBreak) aLN.getLegendBreak()).getHeight() + 10);
                         _legendNodes.add(aLN);

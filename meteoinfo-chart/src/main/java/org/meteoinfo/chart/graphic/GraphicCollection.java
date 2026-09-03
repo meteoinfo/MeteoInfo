@@ -11,16 +11,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
  * General Public License for more details.
  */
-package org.meteoinfo.geometry.graphic;
+package org.meteoinfo.chart.graphic;
 
-import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
-import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.IndexIterator;
 
@@ -43,7 +41,6 @@ public class GraphicCollection extends Graphic implements Iterator {
     protected LabelSet labelSet;
     protected List<Graphic> labelPoints;
     protected LegendScheme legendScheme;
-    protected ColorBreak legendBreak;
     protected boolean avoidCollision = false;
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -203,17 +200,13 @@ public class GraphicCollection extends Graphic implements Iterator {
      *
      * @return Legend break
      */
+    @Override
     public ColorBreak getLegendBreak() {
-        return this.legendBreak;
-    }
-
-    /**
-     * Set legend break
-     *
-     * @param value Legend break
-     */
-    public void setLegendBreak(ColorBreak value) {
-        this.legendBreak = value;
+        if (this.legendBreak == null) {
+            return this.get(0).legendBreak;
+        } else {
+            return this.legendBreak;
+        }
     }
 
     /**
@@ -472,27 +465,22 @@ public class GraphicCollection extends Graphic implements Iterator {
     }
 
     /**
-     * Get legend
-     *
-     * @return Legend
-     */
-    @Override
-    public ColorBreak getLegend() {
-        if (this.legendBreak != null) {
-            return this.legendBreak;
-        } else {
-            return this.graphics.get(0).getLegend();
-        }
-    }
-
-    /**
      * Get legend list
      * @return Legend list
      */
-    public List<ColorBreak> getLegends() {
+    @Override
+    public List<? extends ColorBreak> getLegendBreaks() {
         List<ColorBreak> breaks = new ArrayList<>();
-        for (Graphic graphic : this.graphics) {
-            breaks.add(graphic.getLegend());
+        if (this.singleLegend) {
+            breaks.add(this.getLegendBreak());
+        } else {
+            if (this.legendScheme != null) {
+                breaks.addAll(this.legendScheme.getLegendBreaks());
+            } else {
+                for (Graphic graphic : this.graphics) {
+                    breaks.add(graphic.getLegendBreak());
+                }
+            }
         }
 
         return breaks;
@@ -645,7 +633,7 @@ public class GraphicCollection extends Graphic implements Iterator {
         String dFormat = "%1$." + String.valueOf(labelSet.getDecimalDigits()) + "f";
         PointD aPoint;
         for (Graphic graphic : this.graphics) {
-            ColorBreak cb = graphic.getLegend();
+            ColorBreak cb = graphic.getLegendBreak();
             Shape shape = graphic.getShape();
             PointShape aPS = new PointShape();
             switch (shape.getShapeType()) {
@@ -707,7 +695,7 @@ public class GraphicCollection extends Graphic implements Iterator {
                 break;
             }
 
-            ColorBreak cb = graphic.getLegend();
+            ColorBreak cb = graphic.getLegendBreak();
             Shape shape = graphic.getShape();
             PointShape aPS = new PointShape();
             switch (shape.getShapeType()) {
@@ -771,7 +759,7 @@ public class GraphicCollection extends Graphic implements Iterator {
         String text;
         for (Graphic graphic : this.graphics) {
             Shape shape = graphic.getShape();
-            ColorBreak cb = graphic.getLegend();
+            ColorBreak cb = graphic.getLegendBreak();
             PolylineShape aPLS = (PolylineShape) shape;
             Extent IExtent = aPLS.getExtent();
             if (IExtent.maxX - IExtent.minX > (sExtent.maxX - sExtent.minX) / 10
@@ -809,7 +797,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      */
     public Graphic getLabel(String text) {
         for (Graphic lb : labelPoints) {
-            if (((LabelBreak) lb.getLegend()).getText().equals(text)) {
+            if (((LabelBreak) lb.getLegendBreak()).getText().equals(text)) {
                 return lb;
             }
         }
@@ -838,7 +826,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      * @param y Y
      */
     public void moveLabel(Graphic lb, float x, float y) {
-        LabelBreak lbb = (LabelBreak) lb.getLegend();
+        LabelBreak lbb = (LabelBreak) lb.getLegendBreak();
         lbb.setXShift(lbb.getXShift() + x);
         lbb.setYShift(lbb.getYShift() + y);
     }
@@ -857,8 +845,8 @@ public class GraphicCollection extends Graphic implements Iterator {
      * @return Arrow zoom
      */
     public float getArrowZoom() {
-        if (this.getLegend().getBreakType() == BreakTypes.POINT_BREAK) {
-            float size = ((PointBreak) this.getLegend()).getSize();
+        if (this.getLegendBreak().getBreakType() == BreakTypes.POINT_BREAK) {
+            float size = ((PointBreak) this.getLegendBreak()).getSize();
             return size / 10;
         }
 
@@ -878,7 +866,7 @@ public class GraphicCollection extends Graphic implements Iterator {
                 Shape bShape = this.graphics.get(i).getShape();
                 Shape clipShape = bShape.intersection(aPGS);
                 if (clipShape != null) {
-                    cgraphics.add(new Graphic(clipShape, this.graphics.get(i).getLegend()));
+                    cgraphics.add(new Graphic(clipShape, this.graphics.get(i).getLegendBreak()));
                 }
             }
         }
@@ -915,7 +903,7 @@ public class GraphicCollection extends Graphic implements Iterator {
             for (PointD p : shape.getPoints()) {
                 p.X += xs;
             }
-            Graphic graphic = new Graphic(shape, g.legend);
+            Graphic graphic = new Graphic(shape, g.legendBreak);
             graphic.setExtent(graphic.getExtent().shift(xs, 0));
             graphicCollection.add(graphic);
         }

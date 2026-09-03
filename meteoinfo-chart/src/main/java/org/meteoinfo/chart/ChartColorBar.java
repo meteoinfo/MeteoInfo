@@ -32,6 +32,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
 public class ChartColorBar extends ChartLegend {
 
     // <editor-fold desc="Variables">
+    private LegendScheme legendScheme;
     private List<Double> tickLocations = new ArrayList<>();
     private List<ChartText> tickLabels = new ArrayList<>();
     private boolean autoTick;
@@ -45,6 +46,7 @@ public class ChartColorBar extends ChartLegend {
     private ExtendType extendType;
     private boolean drawMinorTick;
     protected int minorTickNum;
+    protected ExtendFraction extendFraction;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -54,8 +56,9 @@ public class ChartColorBar extends ChartLegend {
      * @param ls LegendScheme
      */
     public ChartColorBar(LegendScheme ls) {
-        super(ls);
+        super();
 
+        this.legendScheme = ls;
         this.autoTick = true;
         this.insideTick = false;
         this.tickLength = 5;
@@ -67,11 +70,37 @@ public class ChartColorBar extends ChartLegend {
         this.extendType = ls.getExtendType();
         this.drawMinorTick = false;
         this.minorTickNum = 5;
+        this.extendFraction = ls.getExtendFraction();
         this.setLegendScheme(ls);
     }
 
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
+
+    /**
+     * Get legend scheme
+     * @return Legend scheme
+     */
+    public LegendScheme getLegendScheme() {
+        return this.legendScheme;
+    }
+
+    /**
+     * Get extend fraction
+     * @return Extend fraction
+     */
+    public ExtendFraction getExtendFraction() {
+        return this.extendFraction;
+    }
+
+    /**
+     * Set extend fraction
+     * @param value
+     */
+    public void setExtendFraction(ExtendFraction value) {
+        this.extendFraction = value;
+    }
+
     /**
      * Tick locations
      *
@@ -277,9 +306,9 @@ public class ChartColorBar extends ChartLegend {
      *
      * @param value Legend scheme
      */
-    @Override
     public void setLegendScheme(LegendScheme value) {
         this.legendScheme = value;
+        this.legendBreaks = value.getLegendBreaks();
         Normalize normalize = this.legendScheme.getNormalize();
         if (normalize != null) {
             double min = normalize.getMinValue();

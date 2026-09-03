@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.meteoinfo.common.PointD;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.IndexIterator;
 

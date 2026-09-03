@@ -275,7 +275,7 @@ class DimArray(NDArray):
         alllist = True
         isempty = False
         nshape = []
-        squeeze = False
+        squeeze = []
         for i in range(0, self.ndim):  
             isrange = True
             k = indices[i]
@@ -289,7 +289,7 @@ class DimArray(NDArray):
                 eidx = k
                 step = 1       
                 alllist = False
-                squeeze = True
+                squeeze.append(i)
             elif isinstance(k, slice):
                 step = 1 if k.step is None else k.step
                 if step > 0:
@@ -361,6 +361,15 @@ class DimArray(NDArray):
             else:
                 r = ArrayMath.take(self._array, ranges)
 
+        for i in flips:
+            r = r.flip(i)
+
+        if squeeze:
+            ii = 0
+            for i in squeeze:
+                r = r.reduce(i - ii)
+                ii += 1
+
         if newaxis:
             for i in flips:
                 r = r.flip(i)
@@ -375,10 +384,6 @@ class DimArray(NDArray):
                 rr.base = self.get_base()
             return rr
 
-        for i in flips:
-            r = r.flip(i)
-        if squeeze:
-            r = r.reduce()
         data = DimArray(r, ndims, self.proj)
         if onlyrange:
             data.base = self.get_base()

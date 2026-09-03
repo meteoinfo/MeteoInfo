@@ -4,7 +4,6 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
-import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
@@ -12,6 +11,7 @@ import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import org.joml.*;
 import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.axis.Axis;
+import org.meteoinfo.chart.geo.ProjectUtil;
 import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.chart.graphic.pipe.Pipe;
 import org.meteoinfo.chart.graphic.pipe.PipeShape;
@@ -25,14 +25,13 @@ import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.data.Dataset;
-import org.meteoinfo.projection.GeoTransform;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.render.java2d.StringType;
 import org.meteoinfo.geometry.colors.BoundaryNorm;
 import org.meteoinfo.geometry.colors.Normalize;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection;
-import org.meteoinfo.geometry.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.chart.graphic.GraphicCollection;
+import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.shape.Shape;
@@ -1172,7 +1171,7 @@ public class GLPlot extends Plot {
         if (this.projInfo == null || proj.equals(this.projInfo)) {
             addGraphic(graphic);
         } else {
-            Graphic nGraphic = ProjectionUtil.projectGraphic(graphic, proj, this.projInfo);
+            Graphic nGraphic = ProjectUtil.projectGraphic(graphic, proj, this.projInfo);
             addGraphic(nGraphic);
         }
     }
@@ -1188,7 +1187,7 @@ public class GLPlot extends Plot {
         if (this.projInfo == null || proj.equals(this.projInfo)) {
             addGraphic(index, graphic);
         } else {
-            Graphic nGraphic = ProjectionUtil.projectGraphic(graphic, proj, this.projInfo);
+            Graphic nGraphic = ProjectUtil.projectGraphic(graphic, proj, this.projInfo);
             addGraphic(index, nGraphic);
         }
     }
@@ -2936,7 +2935,7 @@ public class GLPlot extends Plot {
 
         if (isDraw) {
             PointZShape shape = (PointZShape) graphic.getShape();
-            PointBreak pb = (PointBreak) graphic.getLegend();
+            PointBreak pb = (PointBreak) graphic.getLegendBreak();
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glPointSize(pb.getSize() * this.dpiScale);
@@ -2948,12 +2947,12 @@ public class GLPlot extends Plot {
     }
 
     private void drawPoints(GL2 gl, Graphic graphic) {
-        PointBreak pb = (PointBreak) graphic.getGraphicN(0).getLegend();
+        PointBreak pb = (PointBreak) graphic.getGraphicN(0).getLegendBreak();
         gl.glPointSize(pb.getSize() * this.dpiScale);
         gl.glBegin(GL2.GL_POINTS);
         for (Graphic gg : ((GraphicCollection) graphic).getGraphics()) {
             PointZShape shape = (PointZShape) gg.getShape();
-            pb = (PointBreak) gg.getLegend();
+            pb = (PointBreak) gg.getLegendBreak();
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             PointZ p = (PointZ) shape.getPoint();
@@ -2969,7 +2968,7 @@ public class GLPlot extends Plot {
 
         if (isDraw) {
             PointZShape shape = (PointZShape) graphic.getShape();
-            PointBreak pb = (PointBreak) graphic.getLegend();
+            PointBreak pb = (PointBreak) graphic.getLegendBreak();
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4fv(rgba, 0);
             gl.glPushMatrix();
@@ -3135,7 +3134,7 @@ public class GLPlot extends Plot {
 
         if (isDraw) {
             PolylineZShape shape = (PolylineZShape) graphic.getShape();
-            ColorBreak cb = graphic.getLegend();
+            ColorBreak cb = graphic.getLegendBreak();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;
                 Polyline line = shape.getPolylines().get(0);
@@ -3177,7 +3176,7 @@ public class GLPlot extends Plot {
 
         if (isDraw) {
             PipeShape shape = (PipeShape) graphic.getShape();
-            ColorBreak cb = graphic.getLegend();
+            ColorBreak cb = graphic.getLegendBreak();
             shape.transform(transform);
             Pipe pipe = shape.getPipe();
             int count = pipe.getContourCount();
@@ -3234,7 +3233,7 @@ public class GLPlot extends Plot {
 
         if (isDraw) {
             PolygonZShape shape = (PolygonZShape) graphic.getShape();
-            PolygonBreak pb = (PolygonBreak) graphic.getLegend();
+            PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
             java.util.List<PolygonZ> polygonZS = (java.util.List<PolygonZ>) shape.getPolygons();
             for (int i = 0; i < polygonZS.size(); i++) {
                 PolygonZ polygonZ = polygonZS.get(i);
@@ -3393,7 +3392,7 @@ public class GLPlot extends Plot {
 
             if (isDraw) {
                 PolygonZShape shape = (PolygonZShape) gg.getShape();
-                PolygonBreak pb = (PolygonBreak) gg.getLegend();
+                PolygonBreak pb = (PolygonBreak) gg.getLegendBreak();
                 for (PolygonZ poly : (java.util.List<PolygonZ>) shape.getPolygons()) {
                     drawQuads(gl, poly, pb);
                 }
@@ -3437,7 +3436,7 @@ public class GLPlot extends Plot {
 
             if (isDraw) {
                 PolygonZShape shape = (PolygonZShape) gg.getShape();
-                PolygonBreak pb = (PolygonBreak) gg.getLegend();
+                PolygonBreak pb = (PolygonBreak) gg.getLegendBreak();
                 for (PolygonZ poly : (java.util.List<PolygonZ>) shape.getPolygons()) {
                     drawTriangle(gl, poly, pb);
                 }
@@ -3723,7 +3722,7 @@ public class GLPlot extends Plot {
 
         if (isDraw) {
             CubicShape cubic = (CubicShape) graphic.getShape();
-            BarBreak bb = (BarBreak) graphic.getLegend();
+            BarBreak bb = (BarBreak) graphic.getLegendBreak();
             java.util.List<PointZ> ps = cubic.getPoints();
             java.util.List<float[]> vertex = new ArrayList<>();
             for (PointZ p : ps) {
@@ -3770,7 +3769,7 @@ public class GLPlot extends Plot {
 
         if (isDraw) {
             CylinderShape cylinder = (CylinderShape) graphic.getShape();
-            BarBreak bb = (BarBreak) graphic.getLegend();
+            BarBreak bb = (BarBreak) graphic.getLegendBreak();
             java.util.List<PointZ> ps = cylinder.getPoints();
             java.util.List<float[]> vertex = new ArrayList<>();
             for (PointZ p : ps) {
@@ -4110,7 +4109,7 @@ public class GLPlot extends Plot {
             ShapeTypes stype = ShapeTypes.POLYLINE;
             ls = new LegendScheme(stype);
             for (Graphic g : this.graphics.getGraphics()) {
-                ls.getLegendBreaks().add(g.getLegend());
+                ls.getLegendBreaks().add(g.getLegendBreak());
             }
         }
         return ls;

@@ -28,8 +28,8 @@ import org.meteoinfo.geometry.shape.CircleShape;
 import org.meteoinfo.geometry.shape.CurveLineShape;
 import org.meteoinfo.geometry.shape.CurvePolygonShape;
 import org.meteoinfo.geometry.shape.EllipseShape;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.shape.PointShape;
 import org.meteoinfo.geometry.shape.Polygon;
 import org.meteoinfo.geometry.shape.PolygonShape;
@@ -1203,7 +1203,7 @@ public class ProjectionSet {
         for (Graphic aGraphic : graphics) {
             Shape aShape = projectShape(aGraphic.getShape(), fromProj, toProj);
             if (aShape != null) {
-                newGraphics.add(new Graphic(aShape, aGraphic.getLegend()));
+                newGraphics.add(new Graphic(aShape, aGraphic.getLegendBreak()));
             }
         }
 

@@ -18,12 +18,11 @@ import org.meteoinfo.data.mapdata.webmap.GeoPosition;
 import org.meteoinfo.data.mapdata.webmap.GeoUtil;
 import org.meteoinfo.data.mapdata.webmap.IWebMapPanel;
 import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
-import org.meteoinfo.geometry.graphic.Transform;
 import org.meteoinfo.projection.*;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.chart.graphic.GeoGraphicCollection;
-import org.meteoinfo.geometry.graphic.Graphic;
-import org.meteoinfo.geometry.graphic.GraphicCollection;
+import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.chart.graphic.GraphicProjectionUtil;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.*;
@@ -455,7 +454,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         g.translate(area.getX(), area.getY());
 
         if (this.boundary != null) {
-            PolygonBreak pb = (PolygonBreak)this.boundary.getLegend().clone();
+            PolygonBreak pb = (PolygonBreak)this.boundary.getLegendBreak().clone();
             if (pb.isDrawFill()) {
                 pb.setDrawOutline(false);
                 this.drawGraphic(g, this.boundary, pb, area);
@@ -465,14 +464,15 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         g.setTransform(oldMatrix);
 
         //Plot graphics
-        g.translate(area.getX(), area.getY());
+        //g.translate(area.getX(), area.getY());
 
-        plotGraphics(g, area);
+        //plotGraphics(g, area);
+        plotGraphics(g);
 
         //Draw boundary line
         if (this.boundary != null) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            PolygonBreak pb = (PolygonBreak)this.boundary.getLegend().clone();
+            PolygonBreak pb = (PolygonBreak)this.boundary.getLegendBreak().clone();
             pb.setDrawFill(false);
             this.drawGraphic(g, this.boundary, pb, area);
             if (!this.antiAlias) {
@@ -483,6 +483,44 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         g.setTransform(oldMatrix);
         if (this.clip) {
             g.setClip(oldRegion);
+        }
+    }
+
+    @Override
+    protected void plotGraphics(Graphics2D g) {
+        Rectangle2D area = this.transAxes.getBbox().toRectangle();
+        int barIdx = 0;
+        for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
+            Graphic graphic = this.graphics.get(m);
+            if (graphic.isVisible()) {
+                if (graphic instanceof WebMapImage) {
+                    this.updateXYScale(area.getWidth(), area.getHeight());
+                    this.updateWebMapScale(area.getWidth(), area.getHeight());
+                    this.drawWebMapImage(g, (WebMapImage) graphic, area);
+                    continue;
+                }
+
+                ShapeTypes shapeType = graphic.getGraphicN(0).getShape().getShapeType();
+                switch (shapeType) {
+                    case BAR:
+                        this.drawBars(g, (GraphicCollection) graphic, barIdx);
+                        barIdx += 1;
+                        continue;
+                    case STATION_MODEL:
+                        this.drawStationModel(g, (GraphicCollection) graphic);
+                        continue;
+                }
+
+                if (graphic.getExtent().intersects(this.drawExtent)) {
+                    drawGraphics(g, graphic);
+                }
+
+                if (this.isLonLatMap() && graphic instanceof GeoGraphicCollection) {
+                    if (this.drawExtent.maxX > 180) {
+                        drawGraphics(g, ((GeoGraphicCollection) graphic).xShiftCopy(360));
+                    }
+                }
+            }
         }
     }
 
@@ -499,15 +537,17 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
                     continue;
                 }
 
-                ColorBreak cb = graphic.getLegend();
+                ColorBreak cb = graphic.getLegendBreak();
                 ShapeTypes shapeType = graphic.getGraphicN(0).getShape().getShapeType();
                 switch (shapeType) {
                     case BAR:
-                        this.drawBars(g, (GraphicCollection) graphic, barIdx, area);
+                        //this.drawBars(g, (GraphicCollection) graphic, barIdx, area);
+                        this.drawBars(g, (GraphicCollection) graphic, barIdx);
                         barIdx += 1;
                         continue;
                     case STATION_MODEL:
-                        this.drawStationModel(g, (GraphicCollection) graphic, area);
+                        //this.drawStationModel(g, (GraphicCollection) graphic, area);
+                        this.drawStationModel(g, (GraphicCollection) graphic);
                         continue;
                 }
 
@@ -519,6 +559,60 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
                     if (this.drawExtent.maxX > 180) {
                         drawGraphics(g, ((GeoGraphicCollection) graphic).xShiftCopy(360), area);
                     }
+                }
+            }
+        }
+    }
+
+    void drawStationModel(Graphics2D g, GraphicCollection graphics) {
+        PointF pointF = new PointF();
+        LegendScheme ls = graphics.getLegendScheme();
+        List<Extent> extentList = new ArrayList<>();
+        Extent maxExtent = new Extent();
+        Extent aExtent;
+        PointBreak pointBreak = (PointBreak) ls.getLegendBreak(0);
+        for (Graphic graphic : graphics.getGraphics()) {
+            StationModelShape shape = (StationModelShape) graphic.getShape();
+            PointD p = shape.getPoint();
+            if (p.X < drawExtent.minX || p.X > drawExtent.maxX
+                    || p.Y < drawExtent.minY || p.Y > drawExtent.maxY) {
+                continue;
+            }
+
+            if (pointBreak.isDrawShape()) {
+                PointD sp = this.transData.transform(p);
+                pointF = sp.toPointF();
+                boolean isDraw = true;
+                if (graphics.isAvoidCollision()) {
+                    float aSize = pointBreak.getSize();
+                    aExtent = new Extent();
+                    aExtent.minX = pointF.X - aSize;
+                    aExtent.maxX = pointF.X + aSize;
+                    aExtent.minY = pointF.Y - aSize;
+                    aExtent.maxY = pointF.Y + aSize;
+                    if (extentList.isEmpty()) {
+                        maxExtent = (Extent) aExtent.clone();
+                        extentList.add(aExtent);
+                    } else if (!MIMath.isExtentCross(aExtent, maxExtent)) {
+                        extentList.add(aExtent);
+                        maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                    } else {
+                        for (Extent extent : extentList) {
+                            if (MIMath.isExtentCross(aExtent, extent)) {
+                                isDraw = false;
+                                break;
+                            }
+                        }
+                        if (isDraw) {
+                            extentList.add(aExtent);
+                            maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                        }
+                    }
+                }
+
+                if (isDraw) {
+                    Draw.drawStationModel(pointBreak.getColor(), pointBreak.getOutlineColor(), pointF, shape,
+                            g, pointBreak.getSize(), pointBreak.getSize() / 8 * 3);
                 }
             }
         }
@@ -1099,19 +1193,19 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
             if (this.clip) {
                 g.setClip(area);
             }
-            g.translate(area.getX(), area.getY());
+            //g.translate(area.getX(), area.getY());
 
             MapGridLine mapGridLine = (MapGridLine) gridLine;
             //Longitude
             if (mapGridLine.isDrawXLine()) {
                 if (mapGridLine.getLongitudeLines() != null) {
-                    this.drawGraphics(g, mapGridLine.getLongitudeLines(), area);
+                    this.drawGraphics(g, mapGridLine.getLongitudeLines());
                 }
             }
             //Latitude
             if (mapGridLine.isDrawYLine()) {
                 if (mapGridLine.getLatitudeLines() != null) {
-                    this.drawGraphics(g, mapGridLine.getLatitudeLines(), area);
+                    this.drawGraphics(g, mapGridLine.getLatitudeLines());
                 }
             }
 

@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from org.meteoinfo.geometry.graphic import Graphic
+from org.meteoinfo.chart.graphic import Graphic
 
 
 __all__ = ['Artist']

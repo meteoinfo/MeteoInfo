@@ -1,4 +1,4 @@
-from org.meteoinfo.geometry.graphic import Line2DGraphic
+from org.meteoinfo.chart.graphic import Line2DGraphic
 from org.meteoinfo.geometry.legend import PolylineBreak
 
 from .. import plotutil

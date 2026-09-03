@@ -1,4 +1,4 @@
-package org.meteoinfo.geometry.graphic;
+package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.geometry.legend.ColorBreak;
@@ -6,8 +6,6 @@ import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.LegendType;
 import org.meteoinfo.geometry.legend.PointBreak;
 import org.meteoinfo.geometry.shape.PointShape;
-import org.meteoinfo.geometry.shape.PolylineShape;
-import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.IndexIterator;
@@ -26,7 +24,7 @@ public class Point2DGraphicCollection extends GraphicCollection {
     public Point2DGraphicCollection() {
         super();
         this.graphics = new ArrayList<Point2DGraphic>();
-        this.legend = new PointBreak();
+        this.legendBreak = new PointBreak();
     }
 
     /**
@@ -139,16 +137,16 @@ public class Point2DGraphicCollection extends GraphicCollection {
                 updateGraphics(this.legendScheme.getLegendBreaks());
             }
         } else {
-            updateGraphics((PointBreak) this.legend);
+            updateGraphics((PointBreak) this.legendBreak);
         }
     }
 
     protected void updateGraphics() {
-        updateGraphics((PointBreak) this.legend);
+        updateGraphics((PointBreak) this.legendBreak);
     }
 
     protected void updateGraphics(PointBreak pointBreak) {
-        this.legend = pointBreak;
+        this.legendBreak = pointBreak;
         this.graphics = new ArrayList<>();
         List<PointD> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();

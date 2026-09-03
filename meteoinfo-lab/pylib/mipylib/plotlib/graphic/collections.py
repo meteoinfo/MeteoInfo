@@ -1,4 +1,4 @@
-from org.meteoinfo.geometry.graphic import GraphicCollection, Point2DGraphicCollection, \
+from org.meteoinfo.chart.graphic import GraphicCollection, Point2DGraphicCollection, \
     Line2DGraphicCollection, PolygonGraphicCollection
 from java.awt import Font
 
@@ -405,6 +405,9 @@ class PolyCollection(Collection, PolygonGraphicCollection):
                         else:
                             verts = [np.column_stack([xdata, ydata[i]]) for i in range(nline)]
                 else:
+                    if ydata.ndim == 1:
+                        ydata = ydata[:,np.newaxis]
+
                     nseg, nline = ydata.shape
                     if xdata is None:
                         xdata = np.arange(nseg)

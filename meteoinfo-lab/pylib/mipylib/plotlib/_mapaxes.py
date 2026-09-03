@@ -19,8 +19,9 @@ from org.meteoinfo.geo.mapview import MapView
 from org.meteoinfo.geo.io import GraphicUtil
 from org.meteoinfo.geometry.legend import BreakTypes, LegendScheme, LegendType, LegendManage
 from org.meteoinfo.geometry.shape import Shape, PolylineShape, PolygonShape, ShapeTypes
-from org.meteoinfo.geometry.graphic import Graphic
-from org.meteoinfo.projection import ProjectionInfo, GeoTransform
+from org.meteoinfo.chart.graphic import Graphic
+from org.meteoinfo.chart.transform import GeoTransform
+from org.meteoinfo.projection import ProjectionInfo
 from org.meteoinfo.common import Extent
 from org.meteoinfo.geo.layer import LayerTypes, WebMapLayer
 from org.meteoinfo.data.mapdata.webmap import WebMapProvider, DefaultTileFactory, TileFactoryInfo
@@ -551,6 +552,8 @@ class MapAxes(Axes):
             graphics.setTransform(transform)
             graphics = self.add_graphic(graphics, zorder=zorder)
             graphics.setVisible(visible)
+            self.stale = True
+            self._axes.setAutoExtent()
             return GeoGraphicCollection(graphics)
         else:
             if isinstance(args[0], Graphic):
@@ -608,10 +611,12 @@ class MapAxes(Axes):
 
                 transform = GeoTransform(migeo.projinfo(), self.projection)
                 graphic.setTransform(transform)
-                graphic = self._axes.addGraphic(graphic)
+                graphic = self.add_graphic(graphic)
 
                 graphic.setVisible(visible)
 
+            self.stale = True
+            self._axes.setAutoExtent()
             return graphic
 
     @_add_transform
@@ -732,8 +737,8 @@ class MapAxes(Axes):
                 ydata = np.asarray(ydatalist[0])
                 if ydata.ndim == 1:
                     if xdata.contains_nan():
-                        xdata = plotutil.split_array_by_nan(xdata)
-                        ydata = plotutil.split_array_by_nan(ydata)
+                        xdata = np.split_array_by_nan(xdata)
+                        ydata = np.split_array_by_nan(ydata)
                         if not kwargs.has_key('cmap'):
                             kwargs['cmap'] = 'matlab_jet'
                         graphics = LineCollection(None, xydata=[xdata, ydata], **kwargs)
@@ -761,9 +766,9 @@ class MapAxes(Axes):
             cdata = np.asarray(cdata)
             if ydata.ndim == 1:
                 if xdata.contains_nan():
-                    xdata = plotutil.split_array_by_nan(xdata)
-                    ydata = plotutil.split_array_by_nan(ydata)
-                    cdata = plotutil.split_array_by_nan(cdata)
+                    xdata = np.split_array_by_nan(xdata)
+                    ydata = np.split_array_by_nan(ydata)
+                    cdata = np.split_array_by_nan(cdata)
                     graphics = LineCollection(None, xydata=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
                 else:
                     graphics = Line2D(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)

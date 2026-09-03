@@ -3,12 +3,10 @@ package org.meteoinfo.chart.graphic;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.geometry.colors.TransferFunction;
-import org.meteoinfo.geometry.graphic.GraphicCollection3D;
 import org.meteoinfo.geometry.legend.LegendScheme;
-import org.meteoinfo.projection.GeoTransform;
+import org.meteoinfo.chart.transform.GeoTransform;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

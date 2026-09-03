@@ -4,12 +4,12 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.ChartText;
-import org.meteoinfo.geometry.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.GraphicProjectionUtil;
 import org.meteoinfo.chart.geo.MapGridLine;
 import org.meteoinfo.chart.geo.MapGridLine3D;
 import org.meteoinfo.common.*;
-import org.meteoinfo.geometry.graphic.Graphic;
+import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.projection.ProjectionInfo;
 
 import java.awt.geom.Rectangle2D;

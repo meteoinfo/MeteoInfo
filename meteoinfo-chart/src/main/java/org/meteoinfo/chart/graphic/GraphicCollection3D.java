@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.meteoinfo.geometry.graphic;
+package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.PointD;
@@ -231,7 +231,7 @@ public class GraphicCollection3D extends GraphicCollection{
         this.setLegendScheme(value);
 
         if (!this.graphics.isEmpty()) {
-            if (this.getGraphicN(0).getLegend().getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
+            if (this.getGraphicN(0).getLegendBreak().getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 for (Graphic graphic : this.graphics) {
                     ColorBreakCollection cbs = new ColorBreakCollection();
                     Shape shape = graphic.getShape();
@@ -239,7 +239,7 @@ public class GraphicCollection3D extends GraphicCollection{
                         ColorBreak cb = this.legendScheme.findLegendBreak(pointZ.M);
                         cbs.add(cb);
                     }
-                    graphic.setLegend(cbs);
+                    graphic.setLegendBreak(cbs);
                 }
             }
         }
@@ -329,7 +329,7 @@ public class GraphicCollection3D extends GraphicCollection{
                     PolygonZ polygonZ = (PolygonZ) polygonZShape.getPolygons().get(0);
                     sw.write("Color");
                     sw.newLine();
-                    Color color = g.getLegend().getColor();
+                    Color color = g.getLegendBreak().getColor();
                     sw.write(String.valueOf(color.getRGB()));
                     sw.newLine();
                     sw.write("Outline");

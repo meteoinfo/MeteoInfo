@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.chart.graphic;
 
+import org.meteoinfo.chart.transform.Transform;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
@@ -100,6 +101,17 @@ public class GraphicCollection extends Graphic implements Iterator {
     public void setGraphics(List<Graphic> value) {
         this.graphics = value;
         this.updateExtent();
+        this.updateTransform();
+    }
+
+    /**
+     * Set transform
+     * @param value Transform The transform
+     */
+    @Override
+    public void setTransform(Transform value) {
+        super.setTransform(value);
+        this.updateTransform();
     }
 
     /**
@@ -265,19 +277,29 @@ public class GraphicCollection extends Graphic implements Iterator {
     }
 
     /**
+     * Update transform
+     */
+    public void updateTransform() {
+        for (Graphic graphic : this.graphics) {
+            graphic.setTransform(this.transform);
+        }
+    }
+
+    /**
      * Add a graphic
      *
-     * @param aGraphic The graphic
+     * @param graphic The graphic
      * @return Boolean
      */
-    public boolean add(Graphic aGraphic) {
-        boolean istrue = ((List<Graphic>) this.graphics).add(aGraphic);
+    public boolean add(Graphic graphic) {
+        graphic.transform = this.transform;
+        boolean istrue = ((List<Graphic>) this.graphics).add(graphic);
 
         //Update extent
         if (this.graphics.size() == 1) {
-            extent = aGraphic.getExtent();
+            extent = graphic.getExtent();
         } else {
-            extent = MIMath.getLagerExtent(extent, aGraphic.getExtent());
+            extent = MIMath.getLagerExtent(extent, graphic.getExtent());
         }
 
         return istrue;
@@ -287,16 +309,17 @@ public class GraphicCollection extends Graphic implements Iterator {
      * Inset a graphic
      *
      * @param index Index
-     * @param aGraphic The graphic
+     * @param graphic The graphic
      */
-    public void add(int index, Graphic aGraphic) {
-        ((List<Graphic>) this.graphics).add(index, aGraphic);
+    public void add(int index, Graphic graphic) {
+        graphic.transform = this.transform;
+        ((List<Graphic>) this.graphics).add(index, graphic);
 
         //Update extent
         if (this.graphics.size() == 1) {
-            extent = aGraphic.getExtent();
+            extent = graphic.getExtent();
         } else {
-            extent = MIMath.getLagerExtent(extent, aGraphic.getExtent());
+            extent = MIMath.getLagerExtent(extent, graphic.getExtent());
         }
     }
 

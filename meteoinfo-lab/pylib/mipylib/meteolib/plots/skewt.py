@@ -5,10 +5,33 @@ Contain tools for making thermodynamic diagrams, including the base plotting cla
 `SkewT`, derived `Stuve` and `Emagram` classes, and a class for making a `Hodograph`.
 """
 
+from org.meteoinfo.chart.transform import Affine2D, IdentityTransform, BlendedTransform
+from java.awt.geom import AffineTransform
+
 import mipylib.numeric as np
 from mipylib.plotlib import LineCollection
 from ..calc import dry_lapse, moist_lapse, vapor_pressure, dewpoint, lcl, el
 from .. import constants
+
+
+class SkewTTransform(Affine2D):
+    """Perform Skew transform for Skew-T plotting.
+
+    This works in pixel space, so is designed to be applied after the normal plotting
+    transformations.
+    """
+
+    def __init__(self, rotation):
+        """Initialize skew transform.
+
+        This needs a reference to the parent bounding box to do the appropriate math and
+        to register it as a child so that the transform is invalidated and regenerated if
+        the bounding box changes.
+        """
+        Affine2D.__init__(self)
+
+        self._rotation = np.tan(np.deg2rad(rotation))
+        self.affineTransform.shear(self._rotation, 0)
 
 
 class SkewT:
@@ -26,7 +49,7 @@ class SkewT:
 
     """
 
-    def __init__(self, fig=None, rotation=0, rect=None):
+    def __init__(self, fig=None, rotation=30, rect=None):
         r"""Create SkewT - logP plots.
 
         Parameters
@@ -51,6 +74,10 @@ class SkewT:
             self.ax = fig.add_axes(rect)
         else:
             self.ax = fig.add_axes()
+
+        self.transSkew = SkewTTransform(rotation)
+        self.ax.transData = (self.ax.transScale.plus(self.ax.transLimits).
+            plus(self.transSkew).plus(self.ax.transAxes))
 
         # Set the yaxis as inverted with log scaling
         self.ax.set_yscale('log')
@@ -92,7 +119,7 @@ class SkewT:
         return self.ax.plot(t, pressure, *args, **kwargs)
 
 
-    def plot_barbs(self, pressure, u, v, xloc=10, **kwargs):
+    def plot_barbs(self, pressure, u, v, c=None, xloc=1.0, **kwargs):
         r"""Plot wind barbs.
 
         Adds wind barbs to the skew-T plot. This is a wrapper around the
@@ -107,8 +134,11 @@ class SkewT:
             U (East-West) component of wind
         v : array-like
             V (North-South) component of wind
+        c : array-like, optional
+            An optional array used to map colors to the barbs
         xloc : float, optional
-            Position for the barbs
+            Position for the barbs, in normalized axes coordinates, where 0.0
+            denotes far left and 1.0 denotes far right. Defaults to far right.
         kwargs
             Other keyword arguments to pass to :func:`~plotlib.barbs`
 
@@ -119,7 +149,13 @@ class SkewT:
         """
         x = np.zeros_like(pressure)
         x = x + xloc
-        self.ax.barbs(x, pressure, u, v, **kwargs)
+        trans = BlendedTransform(self.ax.transAxes, self.ax.transData)
+        if c is None:
+            b = self.ax.barbs(x, pressure, u, v, transform=trans, clip_on=False, **kwargs)
+        else:
+            b = self.ax.barbs(x, pressure, u, v, c, transform=trans, clip_on=False, **kwargs)
+
+        return b
 
 
     def plot_dry_adiabats(self, t0=None, pressure=None, **kwargs):

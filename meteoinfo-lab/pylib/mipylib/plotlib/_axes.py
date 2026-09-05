@@ -39,6 +39,8 @@ from .graphic import Line2D, Artist, Polygon, Point2DCollection, LineCollection,
 
 __all__ = ['Axes', 'PolarAxes']
 
+from ..numeric.spatial import transform
+
 
 class Axes(object):
     """
@@ -178,6 +180,46 @@ class Axes(object):
     @figure.setter
     def figure(self, val):
         self._figure = val
+
+
+    @property
+    def transData(self):
+        return self._axes.getTransData()
+
+
+    @transData.setter
+    def transData(self, val):
+        self._axes.setTransData(val)
+
+
+    @property
+    def transScale(self):
+        return self._axes.getTransScale()
+
+
+    @transScale.setter
+    def transScale(self, val):
+        self._axes.setTransScale(val)
+
+
+    @property
+    def transLimits(self):
+        return self._axes.getTransLimits()
+
+
+    @transLimits.setter
+    def transLimits(self, val):
+        self._axes.setTransLimits(val)
+
+
+    @property
+    def transAxes(self):
+        return self._axes.getTransAxes()
+
+
+    @transAxes.setter
+    def transAxes(self, val):
+        self._axes.setTransAxes(val)
 
 
     @property
@@ -1361,7 +1403,7 @@ class Axes(object):
         self.stale = True
 
 
-    def add_graphic(self, graphic, transform=None, zorder=None):
+    def add_graphic(self, graphic, zorder=None):
         """
         Add a graphic
         
@@ -1377,16 +1419,10 @@ class Axes(object):
             if zorder > self.num_graphics():
                 zorder = self.num_graphics()
 
-        if transform is None:
-            if zorder is None:
-                rGraphic = self._axes.addGraphic(graphic)
-            else:
-                rGraphic = self._axes.addGraphic(zorder, graphic)
+        if zorder is None:
+            rGraphic = self._axes.addGraphic(graphic)
         else:
-            if zorder is None:
-                rGraphic = self._axes.addGraphic(graphic, transform)
-            else:
-                rGraphic = self._axes.addGraphic(zorder, graphic, transform)
+            rGraphic = self._axes.addGraphic(zorder, graphic)
 
         if self.num_graphics() <= 1:
             self._axes.setAutoExtent()
@@ -1515,6 +1551,8 @@ class Axes(object):
         top = kwargs.pop('top', None)
         if not top is None:
             gridline.setTop(top)
+
+        self.stale = True
 
         return gridline
 
@@ -3817,6 +3855,14 @@ class Axes(object):
         if not xaxistype is None:
             self.set_xaxis_type(xaxistype)
             self._axes.updateDrawExtent()
+
+        clip_on = kwargs.pop('clip_on', None)
+        if clip_on is not None:
+            graphics.setClipOn(clip_on)
+
+        transform = kwargs.pop('transform', None)
+        if transform is not None:
+            graphics.setTransform(transform)
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)

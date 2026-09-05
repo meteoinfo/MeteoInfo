@@ -19,6 +19,7 @@ import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.axis.LogAxis;
 import org.meteoinfo.chart.axis.TimeAxis;
 import org.meteoinfo.chart.graphic.WebMapImage;
+import org.meteoinfo.chart.transform.Transform;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
@@ -115,12 +116,15 @@ public class Plot2D extends AbstractPlot2D {
     /**
      * Add a graphic
      *
-     * @param g Graphic
+     * @param graphic Graphic
      */
-    public Graphic addGraphic(Graphic g) {
-        this.graphics.add(g);
-        this.lastAddedGraphic = g;
-        return g;
+    public Graphic addGraphic(Graphic graphic) {
+        if (graphic.getTransform() == null) {
+            graphic.setTransform(this.transData);
+        }
+        this.graphics.add(graphic);
+        this.lastAddedGraphic = graphic;
+        return graphic;
     }
 
     /**
@@ -129,10 +133,13 @@ public class Plot2D extends AbstractPlot2D {
      * @param idx Index
      * @param g Graphic
      */
-    public Graphic addGraphic(int idx, Graphic g) {
-        this.graphics.add(idx, g);
-        this.lastAddedGraphic = g;
-        return g;
+    public Graphic addGraphic(int idx, Graphic graphic) {
+        if (graphic.getTransform() == null) {
+            graphic.setTransform(this.transData);
+        }
+        this.graphics.add(idx, graphic);
+        this.lastAddedGraphic = graphic;
+        return graphic;
     }
 
     /**
@@ -180,195 +187,29 @@ public class Plot2D extends AbstractPlot2D {
 
     @Override
     protected void drawGraph(Graphics2D g, Rectangle2D area) {
-        AffineTransform oldMatrix = g.getTransform();
         java.awt.Shape oldRegion = g.getClip();
         if (this.clip) {
             g.setClip(area);
         }
-        //g.translate(area.getX(), area.getY());
 
         //plotGraphics(g, area);
         plotGraphics(g);
 
-        g.setTransform(oldMatrix);
         if (this.clip) {
             g.setClip(oldRegion);
         }
     }
-    
-    private boolean isPiePlot(){
-        boolean isPie = false;
-        int n = 0;
-        for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
-            Graphic graphic = this.graphics.get(m).getGraphicN(0);
-            ShapeTypes st = graphic.getShape().getShapeType();
-            switch (st){
-                case ARC:
-                    isPie = true;
-                    n += 1;
-                    break;
-            }
-        }
-        //return isPie && n == 1;
-        return isPie;
-    }
-
-    void plotPie(Graphics2D g) {
-        AffineTransform oldMatrix = g.getTransform();
-        //g.translate(area.getX(), area.getY());
-
-        //Draw background
-        if (this.background != null) {
-            g.setColor(this.getBackground());
-            g.fill(new Rectangle2D.Double(0, 0, transAxes.getBbox().getWidth(),
-                    transAxes.getBbox().getHeight()));
-        }
-
-        for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
-            Graphic graphic = this.graphics.get(m);
-            ColorBreak cb = graphic.getLegendBreak();
-            for (int i = 0; i < graphic.getNumGraphics(); i++) {
-                Graphic gg = graphic.getGraphicN(i);
-                if (!graphic.isSingleLegend()) {
-                    cb = gg.getLegendBreak();
-                }
-                Shape shape = gg.getShape();
-                switch (shape.getShapeType()) {
-                    case POINT:
-                    case POINT_M:
-                    case POINT_Z:
-                        this.drawPoint(g, (PointShape) shape, (PointBreak) cb);
-                        break;
-                    case TEXT:
-                        this.drawText((ChartText)shape, g);
-                        break;
-                    case POLYLINE:
-                    case POLYLINE_Z:
-                        if (cb instanceof PointBreak) {
-                            this.drawPolyline(g, (PolylineShape) shape, (PointBreak) cb);
-                        } else {
-                            this.drawPolyline(g, (PolylineShape) shape, (PolylineBreak) cb);
-                        }
-                        break;
-                    case POLYGON:
-                    case POLYGON_Z:
-                        for (Polygon poly : ((PolygonShape) shape).getPolygons()) {
-                            drawPolygon(g, poly, (PolygonBreak) cb, false);
-                        }
-                        break;
-                    case RECTANGLE:
-                        this.drawRectangle(g, (RectangleShape) shape, (PolygonBreak) cb, false);
-                        break;
-                    case ARC:
-                        this.drawArc(g, (ArcShape) shape, (PolygonBreak) cb);
-                        break;
-                    case WIND_BARB:
-                        this.drawWindBarb(g, (WindBarb) shape, (PointBreak) cb);
-                        break;
-                    case WIND_ARROW:
-                        this.drawWindArrow(g, (WindArrow) shape, (ArrowBreak) cb);
-                        break;
-                    case IMAGE:
-                        this.drawImage(g, gg);
-                        break;
-                }
-            }
-            if (graphic instanceof GraphicCollection) {
-                GraphicCollection gc = (GraphicCollection) graphic;
-                if (gc.getLabelSet().isDrawLabels()) {
-                    this.drawLabels(g, gc);
-                }
-            }
-        }
-
-        g.setTransform(oldMatrix);
-    }
-    
-    void plotPie(Graphics2D g, Rectangle2D area) {
-        AffineTransform oldMatrix = g.getTransform();
-        g.translate(area.getX(), area.getY());
-
-        //Draw background
-        if (this.background != null) {
-            g.setColor(this.getBackground());
-            g.fill(new Rectangle2D.Double(0, 0, area.getWidth(), area.getHeight()));
-        }
-
-        for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
-            Graphic graphic = this.graphics.get(m);
-            ColorBreak cb = graphic.getLegendBreak();
-            for (int i = 0; i < graphic.getNumGraphics(); i++) {
-                Graphic gg = graphic.getGraphicN(i);
-                if (!graphic.isSingleLegend()) {
-                    cb = gg.getLegendBreak();
-                }
-                Shape shape = gg.getShape();
-                switch (shape.getShapeType()) {
-                    case POINT:
-                    case POINT_M:
-                    case POINT_Z:
-                        //this.drawPoint(g, (PointShape) shape, (PointBreak) cb, area);
-                        this.drawPoint(g, (PointShape) shape, (PointBreak) cb);
-                        break;
-                    case TEXT:
-                        this.drawText((ChartText)shape, g, area);
-                        break;
-                    case POLYLINE:
-                    case POLYLINE_Z:
-                        if (cb instanceof PointBreak) {
-                            //this.drawPolyline(g, (PolylineShape) shape, (PointBreak) cb, area);
-                            this.drawPolyline(g, (PolylineShape) shape, (PointBreak) cb);
-                        } else {
-                            //this.drawPolyline(g, (PolylineShape) shape, (PolylineBreak) cb, area);
-                            this.drawPolyline(g, (PolylineShape) shape, (PolylineBreak) cb);
-                        }
-                        break;
-                    case POLYGON:
-                    case POLYGON_Z:
-                        for (Polygon poly : ((PolygonShape) shape).getPolygons()) {
-                            //drawPolygon(g, poly, (PolygonBreak) cb, false, area);
-                            drawPolygon(g, poly, (PolygonBreak) cb, false);
-                        }
-                        break;
-                    case RECTANGLE:
-                        //this.drawRectangle(g, (RectangleShape) shape, (PolygonBreak) cb, false, area);
-                        this.drawRectangle(g, (RectangleShape) shape, (PolygonBreak) cb, false);
-                        break;
-                    case ARC:
-                        //this.drawArc(g, (ArcShape) shape, (PolygonBreak) cb, area);
-                        this.drawArc(g, (ArcShape) shape, (PolygonBreak) cb);
-                        break;
-                    case WIND_BARB:
-                        //this.drawWindBarb(g, (WindBarb) shape, (PointBreak) cb, area);
-                        this.drawWindBarb(g, (WindBarb) shape, (PointBreak) cb);
-                        break;
-                    case WIND_ARROW:
-                        //this.drawWindArrow(g, (WindArrow) shape, (ArrowBreak) cb, area);
-                        this.drawWindArrow(g, (WindArrow) shape, (ArrowBreak) cb);
-                        break;
-                    case IMAGE:
-                        //this.drawImage(g, gg, area);
-                        this.drawImage(g, gg);
-                        break;
-                }
-            }
-            if (graphic instanceof GraphicCollection) {
-                GraphicCollection gc = (GraphicCollection) graphic;
-                if (gc.getLabelSet().isDrawLabels()) {
-                    //this.drawLabels(g, gc, area);
-                    this.drawLabels(g, gc);
-                }
-            }
-        }
-
-        g.setTransform(oldMatrix);
-    }
 
     protected void plotGraphics(Graphics2D g) {
         int barIdx = 0;
+        java.awt.Shape oldClip = g.getClip();
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);
             if (graphic.isVisible()) {
+                if (!graphic.isClipOn()) {
+                    g.setClip(null);
+                }
+
                 ColorBreak cb = graphic.getLegendBreak();
                 ShapeTypes shapeType = graphic.getGraphicN(0).getShape().getShapeType();
                 switch (shapeType) {
@@ -379,35 +220,17 @@ public class Plot2D extends AbstractPlot2D {
                 }
 
                 if (graphic.getExtent().intersects(this.drawExtent)) {
-                    drawGraphics(g, graphic);
-                }
-            }
-        }
-    }
-    
-    protected void plotGraphics(Graphics2D g, Rectangle2D area) {
-        int barIdx = 0;
-        for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
-            Graphic graphic = this.graphics.get(m);
-            if (graphic.isVisible()) {
-                ColorBreak cb = graphic.getLegendBreak();
-                ShapeTypes shapeType = graphic.getGraphicN(0).getShape().getShapeType();
-                switch (shapeType) {
-                    case BAR:
-                        //this.drawBars(g, (GraphicCollection) graphic, barIdx, area);
-                        this.drawBars(g, (GraphicCollection) graphic, barIdx);
-                        barIdx += 1;
-                        continue;
+                    drawGraphic(g, graphic);
                 }
 
-                if (graphic.getExtent().intersects(this.drawExtent)) {
-                    drawGraphics(g, graphic, area);
+                if (!graphic.isClipOn()) {
+                    g.setClip(oldClip);
                 }
             }
         }
     }
 
-    protected void drawGraphics(Graphics2D g, Graphic graphic) {
+    protected void drawGraphic(Graphics2D g, Graphic graphic) {
         if (this.antiAlias || graphic.isAntiAlias()) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
@@ -508,117 +331,6 @@ public class Plot2D extends AbstractPlot2D {
         }
     }
 
-    protected void drawGraphics(Graphics2D g, Graphic graphic, Rectangle2D area) {
-        if (this.antiAlias || graphic.isAntiAlias()) {
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-        } else {
-            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
-            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
-            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
-            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_DEFAULT);
-            g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
-        }
-
-        java.awt.Shape oldClip = g.getClip();
-        if (graphic.isClip()) {
-            //GeneralPath clipPath = getClipPath(graphic.getClipGraphic(), area);
-            GeneralPath clipPath = getClipPath(graphic.getClipGraphic());
-            g.setClip(clipPath);
-            if (oldClip != null) {
-                g.clip(oldClip);
-            }
-        }
-
-        ColorBreak cb = graphic.getLegendBreak();
-        if (graphic instanceof GraphicCollection) {
-            if (((GraphicCollection) graphic).isAvoidCollision() && graphic.getShapeType().isPoint()) {
-                List<Extent> extentList = new ArrayList<>();
-                Extent maxExtent = new Extent();
-                Extent ext = new Extent();
-                PointD point;
-                double[] xy;
-                float size;
-                for (int i = 0; i < graphic.getNumGraphics(); i++) {
-                    Graphic gg = graphic.getGraphicN(i);
-                    if (gg.getExtent().intersects(this.drawExtent)) {
-                        if (!graphic.isSingleLegend()) {
-                            cb = gg.getLegendBreak();
-                        }
-                        PointShape shape = (PointShape) gg.getShape();
-                        PointBreak pointBreak = (PointBreak) cb;
-                        point = shape.getPoint();
-                        xy = projToScreen(point.X, point.Y, area);
-                        size = pointBreak.getSize() / 2;
-                        ext.minX = xy[0] - size;
-                        ext.maxX = xy[0] + size;
-                        ext.minY = xy[1] - size;
-                        ext.maxY = xy[1] + size;
-                        if (extentList.isEmpty()) {
-                            maxExtent = (Extent) ext.clone();
-                            extentList.add((Extent) ext.clone());
-                            drawGraphic(g, gg, cb, area);
-                        } else if (!MIMath.isExtentCross(ext, maxExtent)) {
-                            extentList.add((Extent) ext.clone());
-                            maxExtent = MIMath.getLagerExtent(maxExtent, ext);
-                            drawGraphic(g, gg, cb, area);
-                        } else {
-                            boolean ifDraw = true;
-                            for (int j = 0; j < extentList.size(); j++) {
-                                if (MIMath.isExtentCross(ext, extentList.get(j))) {
-                                    ifDraw = false;
-                                    break;
-                                }
-                            }
-                            if (ifDraw) {
-                                extentList.add((Extent) ext.clone());
-                                maxExtent = MIMath.getLagerExtent(maxExtent, ext);
-                                drawGraphic(g, gg, cb, area);
-                            }
-                        }
-                    }
-                }
-            } else {
-                for (int i = 0; i < graphic.getNumGraphics(); i++) {
-                    Graphic gg = graphic.getGraphicN(i);
-                    if (gg.getExtent().intersects(this.drawExtent)) {
-                        if (!graphic.isSingleLegend()) {
-                            cb = gg.getLegendBreak();
-                        }
-                        drawGraphic(g, gg, cb, area);
-                    }
-                }
-            }
-
-            GraphicCollection gc = (GraphicCollection) graphic;
-            if (gc.getLabelSet().isDrawLabels()) {
-                //this.drawLabels(g, gc, area);
-                this.drawLabels(g, gc);
-            }
-        } else {
-            if (graphic.getExtent().intersects(this.drawExtent)) {
-                drawGraphic(g, graphic, cb, area);
-            }
-        }
-
-        if (graphic.isClip()) {
-            g.setClip(oldClip);
-        }
-    }
-
-    void drawGraphic(Graphics2D g, Graphic graphic) {
-        ColorBreak cb = graphic.getLegendBreak();
-        drawGraphic(g, graphic, cb);
-    }
-
-    void drawGraphic(Graphics2D g, Graphic graphic, Rectangle2D area) {
-        ColorBreak cb = graphic.getLegendBreak();
-        drawGraphic(g, graphic, cb, area);
-    }
-
     protected void drawGraphic(Graphics2D g, Graphic graphic, ColorBreak cb) {
         if (graphic instanceof Line2DGraphic) {
             this.drawLine2D(g, (Line2DGraphic) graphic);
@@ -630,7 +342,7 @@ public class Plot2D extends AbstractPlot2D {
             case POINT:
             case POINT_M:
             case POINT_Z:
-                this.drawPoint(g, (PointShape) shape, (PointBreak) cb);
+                this.drawPoint(g, graphic, (PointBreak) cb);
                 break;
             case TEXT:
                 this.drawText((ChartText)shape, g);
@@ -682,101 +394,12 @@ public class Plot2D extends AbstractPlot2D {
                 this.drawArc(g, (ArcShape) shape, (PolygonBreak) cb);
                 break;
             case WIND_BARB:
-                this.drawWindBarb(g, (WindBarb) shape, (PointBreak) cb);
+                this.drawWindBarb(g, graphic, (PointBreak) cb);
                 break;
             case WIND_ARROW:
                 this.drawWindArrow(g, (WindArrow) shape, (ArrowBreak) cb);
                 break;
             case IMAGE:
-                this.drawImage(g, graphic);
-                break;
-        }
-    }
-
-    protected void drawGraphic(Graphics2D g, Graphic graphic, ColorBreak cb, Rectangle2D area) {
-        if (graphic instanceof Line2DGraphic) {
-            this.drawLine2D(g, (Line2DGraphic) graphic, area);
-            return;
-        }
-
-        Shape shape = graphic.getShape();
-        switch (shape.getShapeType()) {
-            case POINT:
-            case POINT_M:
-            case POINT_Z:
-                //this.drawPoint(g, (PointShape) shape, (PointBreak) cb, area);
-                this.drawPoint(g, (PointShape) shape, (PointBreak) cb);
-                break;
-            case TEXT:
-                this.drawText((ChartText)shape, g, area);
-                break;
-            case POLYLINE:
-            case POLYLINE_Z:
-                if (shape instanceof CapPolylineShape){
-                    //this.drawCapPolyline(g, (CapPolylineShape) shape, (PolylineBreak) cb, area);
-                    this.drawCapPolyline(g, (CapPolylineShape) shape, (PolylineBreak) cb);
-                } else {
-                    switch (cb.getBreakType()){
-                        case POINT_BREAK:
-                            this.drawPolyline(g, (PolylineShape) shape, (PointBreak) cb, area);
-                            break;
-                        case POLYLINE_BREAK:
-                            //this.drawPolyline(g, (PolylineShape) shape, (PolylineBreak) cb, area);
-                            this.drawPolyline(g, (PolylineShape) shape, (PolylineBreak) cb);
-                            break;
-                        case COLOR_BREAK_COLLECTION:
-                            //this.drawPolyline(g, (PolylineShape) shape, (ColorBreakCollection) cb, area);
-                            this.drawPolyline(g, (PolylineShape) shape, (ColorBreakCollection) cb);
-                            break;
-                    }
-                }
-                break;
-            case CURVE_LINE:
-                //this.drawCurveline(g, (CurveLineShape) shape, (PolylineBreak) cb, area);
-                this.drawCurveline(g, (CurveLineShape) shape, (PolylineBreak) cb);
-                break;
-            case POLYLINE_ERROR:
-                if (cb instanceof PointBreak) {
-                    //this.drawPolylineError(g, (PolylineErrorShape) shape, (PointBreak) cb, area);
-                    this.drawPolylineError(g, (PolylineErrorShape) shape, (PointBreak) cb);
-                } else {
-                    //this.drawPolylineError(g, (PolylineErrorShape) shape, (PolylineBreak) cb, area);
-                    this.drawPolylineError(g, (PolylineErrorShape) shape, (PolylineBreak) cb);
-                }
-                break;
-            case POLYGON:
-            case POLYGON_Z:
-                for (Polygon poly : ((PolygonShape) shape).getPolygons()) {
-                    //drawPolygon(g, poly, (PolygonBreak) cb, false, area);
-                    drawPolygon(g, poly, (PolygonBreak) cb, false);
-                }
-                break;
-            case RECTANGLE:
-                //this.drawRectangle(g, (RectangleShape) shape, (PolygonBreak) cb, false, area);
-                this.drawRectangle(g, (RectangleShape) shape, (PolygonBreak) cb, false);
-                break;
-            case CIRCLE:
-                //this.drawCircle(g, (CircleShape) shape, (PolygonBreak) cb, false, area);
-                this.drawCircle(g, (CircleShape) shape, (PolygonBreak) cb, false);
-                break;
-            case ELLIPSE:
-                //this.drawEllipse(g, (EllipseShape) shape, (PolygonBreak) cb, false, area);
-                this.drawEllipse(g, (EllipseShape) shape, (PolygonBreak) cb, false);
-                break;
-            case ARC:
-                //this.drawArc(g, (ArcShape) shape, (PolygonBreak) cb, area);
-                this.drawArc(g, (ArcShape) shape, (PolygonBreak) cb);
-                break;
-            case WIND_BARB:
-                //this.drawWindBarb(g, (WindBarb) shape, (PointBreak) cb, area);
-                this.drawWindBarb(g, (WindBarb) shape, (PointBreak) cb);
-                break;
-            case WIND_ARROW:
-                //this.drawWindArrow(g, (WindArrow) shape, (ArrowBreak) cb, area);
-                this.drawWindArrow(g, (WindArrow) shape, (ArrowBreak) cb);
-                break;
-            case IMAGE:
-                //this.drawImage(g, graphic, area);
                 this.drawImage(g, graphic);
                 break;
         }
@@ -861,9 +484,10 @@ public class Plot2D extends AbstractPlot2D {
         return clipPath;
     }
 
-    void drawPoint(Graphics2D g, PointShape aPS, PointBreak aPB) {
-        PointD p = aPS.getPoint();
-        PointD sp = this.transData.transform(p);
+    void drawPoint(Graphics2D g, Graphic graphic, PointBreak aPB) {
+        PointShape pointShape = (PointShape) graphic.getShape();
+        PointD p = pointShape.getPoint();
+        PointD sp = graphic.getTransform().transform(p);
         PointF pf = sp.toPointF();
         RenderingHints rend = g.getRenderingHints();
         boolean rc = false;
@@ -877,10 +501,10 @@ public class Plot2D extends AbstractPlot2D {
         }
     }
 
-    void drawPoint(Graphics2D g, PointShape aPS, PointBreak aPB, Rectangle2D area) {
+    void drawPoint(Graphics2D g, PointShape aPS, PointBreak aPB) {
         PointD p = aPS.getPoint();
-        double[] sXY = projToScreen(p.X, p.Y, area);
-        PointF pf = new PointF((float) sXY[0], (float) sXY[1]);
+        PointD sp = this.transData.transform(p);
+        PointF pf = sp.toPointF();
         RenderingHints rend = g.getRenderingHints();
         boolean rc = false;
         if (this.symbolAntiAlias && rend.get(RenderingHints.KEY_ANTIALIASING) != RenderingHints.VALUE_ANTIALIAS_ON) {
@@ -962,6 +586,13 @@ public class Plot2D extends AbstractPlot2D {
         Draw.drawString(g, s, x, y, text.isUseExternalFont());
     }
 
+    void drawWindBarb(Graphics2D g, Graphic graphic, PointBreak aPB) {
+        WindBarb barb = (WindBarb) graphic.getShape();
+        PointD sp = graphic.getTransform().transform(barb.getPoint());
+        PointF pf = sp.toPointF();
+        Draw.drawWindBarb(pf, barb, aPB, g);
+    }
+
     void drawWindBarb(Graphics2D g, WindBarb aPS, PointBreak aPB) {
         PointD p = aPS.getPoint();
         PointD sp = this.transData.transform(p);
@@ -1005,28 +636,6 @@ public class Plot2D extends AbstractPlot2D {
                     drawPolyline(g, (PolylineShape) line2D.getShape(), (ColorBreakCollection) line2D.getLegendBreak());
                     break;
                 default:
-                    drawPolyline(g, (PolylineShape) line2D.getShape(), (PolylineBreak) line2D.getLegendBreak());
-                    break;
-            }
-        }
-    }
-
-    void drawLine2D(Graphics2D g, Line2DGraphic line2D, Rectangle2D area) {
-        if (line2D.isCurve()) {
-            //drawCurveline(g, (PolylineShape) line2D.getShape(), (PolylineBreak) line2D.getLegend(), area);
-            drawCurveline(g, (PolylineShape) line2D.getShape(), (PolylineBreak) line2D.getLegendBreak());
-        } else {
-            BreakTypes breakType = line2D.getLegendBreak().getBreakType();
-            switch (breakType) {
-                case POINT_BREAK:
-                    drawPolyline(g, (PolylineShape) line2D.getShape(), (PointBreak) line2D.getLegendBreak(), area);
-                    break;
-                case COLOR_BREAK_COLLECTION:
-                    //drawPolyline(g, (PolylineShape) line2D.getShape(), (ColorBreakCollection) line2D.getLegend(), area);
-                    drawPolyline(g, (PolylineShape) line2D.getShape(), (ColorBreakCollection) line2D.getLegendBreak());
-                    break;
-                default:
-                    //drawPolyline(g, (PolylineShape) line2D.getShape(), (PolylineBreak) line2D.getLegend(), area);
                     drawPolyline(g, (PolylineShape) line2D.getShape(), (PolylineBreak) line2D.getLegendBreak());
                     break;
             }
@@ -2256,13 +1865,14 @@ public class Plot2D extends AbstractPlot2D {
     }
 
     protected void drawBars(Graphics2D g, GraphicCollection bars, int barIdx) {
-        PointD sp = this.transData.transform(new PointD(0, 0));
+        Transform transform = bars.getTransform();
+        PointD sp = transform.transform(new PointD(0, 0));
         float y0 = (float) sp.Y;
         int len = bars.getNumGraphics();
         PointF[] points = new PointF[len];
         for (int i = 0; i < len; i++) {
             BarShape bs = (BarShape) bars.getGraphicN(i).getShape();
-            sp = this.transData.transform(bs.getPoint());
+            sp = transform.transform(bs.getPoint());
             points[i] = sp.toPointF();
         }
         float width;
@@ -2282,7 +1892,7 @@ public class Plot2D extends AbstractPlot2D {
                 height = Math.abs((float) (points[i].Y - y0));
                 float yBottom = y0;
                 if (bs.isDrawBottom()) {
-                    sp = this.transData.transform(new PointD(bs.getPoint().X, bs.getBottom()));
+                    sp = transform.transform(new PointD(bs.getPoint().X, bs.getBottom()));
                     yBottom = (float) sp.Y;
                 }
                 float yb = yBottom;
@@ -2315,7 +1925,7 @@ public class Plot2D extends AbstractPlot2D {
                 height = Math.abs((float) (points[i].Y - y0));
                 float yBottom = y0;
                 if (bs.isDrawBottom()) {
-                    sp = this.transData.transform(new PointD(bs.getPoint().X, bs.getBottom()));
+                    sp = transform.transform(new PointD(bs.getPoint().X, bs.getBottom()));
                     yBottom = (float) sp.Y;
                 }
                 float yb = yBottom;
@@ -2343,98 +1953,6 @@ public class Plot2D extends AbstractPlot2D {
         if (drawBaseline) {
             g.setColor(Color.black);
             g.draw(new Line2D.Double(0, y0, this.transLimits.getBbox().getWidth(), y0));
-        }
-    }
-
-    protected void drawBars(Graphics2D g, GraphicCollection bars, int barIdx, Rectangle2D area) {
-        double[] xy;
-        xy = this.projToScreen(0, 0, area);
-        float y0 = (float) xy[1];
-        int len = bars.getNumGraphics();
-        PointF[] points = new PointF[len];
-        for (int i = 0; i < len; i++) {
-            BarShape bs = (BarShape) bars.getGraphicN(i).getShape();
-            xy = this.projToScreen(bs.getPoint().X, bs.getPoint().Y, area);
-            points[i] = new PointF((float) xy[0], (float) xy[1]);
-        }
-        float width;
-        int barSeriesN = this.getBarSeriesNum();
-        BarShape bs1 = (BarShape) bars.getGraphicN(0).getShape();
-        if (bs1.isAutoWidth()) {
-            if (len > 1) {
-                width = (float) ((points[1].X - points[0].X) * this.barsWidth) / barSeriesN;
-            } else {
-                width = (float) (area.getWidth() / 10) / barSeriesN;
-            }
-            float height;
-            BarBreak bb;
-            for (int i = 0; i < len; i++) {
-                BarShape bs = (BarShape) bars.getGraphicN(i).getShape();
-                bb = (BarBreak) bars.getGraphicN(i).getLegendBreak();
-                height = Math.abs((float) (points[i].Y - y0));
-                float yBottom = y0;
-                if (bs.isDrawBottom()) {
-                    xy = this.projToScreen(bs.getPoint().X, bs.getBottom(), area);
-                    yBottom = (float) xy[1];
-                }
-                float yb = yBottom;
-                if (points[i].Y >= y0) {
-                    yb += height;
-                }
-                Draw.drawBar(new PointF(points[i].X - width * barSeriesN / 2
-                        + barIdx * width, yb), width, height, bb, g, false, 5);
-                if (bs.isDrawError()) {
-                    PointF p = (PointF) points[i].clone();
-                    p.Y -= y0 - yBottom;
-                    double elen = 6;
-                    double error = bs.getError();
-                    error = this.projYLength(error, area);
-                    double x = p.X - width * barSeriesN / 2
-                            + barIdx * width + width / 2;
-                    g.setColor(bb.getErrorColor());
-                    g.draw(new Line2D.Double(x, p.Y - error, x, p.Y + error));
-                    g.draw(new Line2D.Double(x - (elen * 0.5), p.Y - error, x + (elen * 0.5), p.Y - error));
-                    g.draw(new Line2D.Double(x - (elen * 0.5), p.Y + error, x + (elen * 0.5), p.Y + error));
-                }
-            }
-        } else {
-            width = (float) this.projXLength(bs1.getWidth(), area);
-            float height;
-            BarBreak bb;
-            for (int i = 0; i < len; i++) {
-                BarShape bs = (BarShape) bars.getGraphicN(i).getShape();
-                bb = (BarBreak) bars.getGraphicN(i).getLegendBreak();
-                height = Math.abs((float) (points[i].Y - y0));
-                float yBottom = y0;
-                if (bs.isDrawBottom()) {
-                    xy = this.projToScreen(bs.getPoint().X, bs.getBottom(), area);
-                    yBottom = (float) xy[1];
-                }
-                float yb = yBottom;
-                if (points[i].Y >= y0) {
-                    yb += height;
-                }
-                Draw.drawBar(new PointF(points[i].X, yb), width, height, bb, g, false, 5);
-                if (bs.isDrawError()) {
-                    PointF p = (PointF) points[i].clone();
-                    p.Y -= y0 - yBottom;
-                    double elen = 6;
-                    double error = bs.getError();
-                    error = this.projYLength(error, area);
-                    double x = p.X + width / 2;
-                    g.setColor(bb.getErrorColor());
-                    g.draw(new Line2D.Double(x, p.Y - error, x, p.Y + error));
-                    g.draw(new Line2D.Double(x - (elen * 0.5), p.Y - error, x + (elen * 0.5), p.Y - error));
-                    g.draw(new Line2D.Double(x - (elen * 0.5), p.Y + error, x + (elen * 0.5), p.Y + error));
-                }
-            }
-        }
-
-        //Draw baseline
-        boolean drawBaseline = true;
-        if (drawBaseline) {
-            g.setColor(Color.black);
-            g.draw(new Line2D.Double(0, y0, area.getWidth(), y0));
         }
     }
 

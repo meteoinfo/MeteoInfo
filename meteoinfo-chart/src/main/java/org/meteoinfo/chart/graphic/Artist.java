@@ -4,6 +4,7 @@ public class Artist {
 
     protected boolean antiAlias = false;
     protected boolean visible = true;
+    protected boolean clipOn = true;
 
     /**
      * Return antiAlias
@@ -35,5 +36,21 @@ public class Artist {
      */
     public void setVisible(boolean value) {
         this.visible = value;
+    }
+
+    /**
+     * Returen clip on
+     * @return Clip on
+     */
+    public boolean isClipOn() {
+        return this.clipOn;
+    }
+
+    /**
+     * Set clip on
+     * @param clipOn Clip on
+     */
+    public void setClipOn(boolean clipOn) {
+        this.clipOn = clipOn;
     }
 }

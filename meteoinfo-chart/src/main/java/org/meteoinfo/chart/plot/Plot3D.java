@@ -769,12 +769,12 @@ public class Plot3D extends Plot {
             if (graphic instanceof GraphicCollection3D && ((GraphicCollection3D) graphic).isFixZ()) {
                 this.drawGraphics_FixZ(g2, graphic);
             } else {
-                this.drawGrahpics(g2, graphic);
+                this.drawGraphics(g2, graphic);
             }
         }
     }
 
-    private void drawGrahic(Graphics2D g, Graphic graphic) {
+    private void drawGraphic(Graphics2D g, Graphic graphic) {
         Shape shape = graphic.getGraphicN(0).getShape();
         switch (shape.getShapeType()) {
             case POINT:
@@ -895,7 +895,7 @@ public class Plot3D extends Plot {
                 //g.setClip(oldRegion);
                 this.drawImage(g, gg, zdir, (float) ((GraphicCollection3D) graphic).getZValue());
             } else {
-                this.drawGrahic(g, gg);
+                this.drawGraphic(g, gg);
             }
         }
 
@@ -905,10 +905,10 @@ public class Plot3D extends Plot {
         }
     }
 
-    private void drawGrahpics(Graphics2D g, Graphic graphic) {
+    private void drawGraphics(Graphics2D g, Graphic graphic) {
         if (graphic.getNumGraphics() == 1) {
             Graphic gg = graphic.getGraphicN(0);
-            this.drawGrahic(g, gg);
+            this.drawGraphic(g, gg);
         } else {
             int n = graphic.getNumGraphics();
             double[] dds = new double[n];
@@ -945,71 +945,7 @@ public class Plot3D extends Plot {
 
             for (int i : order) {
                 Graphic gg = graphic.getGraphicN(i);
-                this.drawGrahic(g, gg);
-            }
-        }
-    }
-    
-    private void drawGrahpics_bak(Graphics2D g, Graphic graphic) {
-        if (graphic.getNumGraphics() == 1) {
-            Graphic gg = graphic.getGraphicN(0);
-            this.drawGrahic(g, gg);
-        } else {
-            List<Double> dds = new ArrayList<>();
-            List<Integer> order = new ArrayList<>();
-            PointZ p;
-            double d;
-            boolean isIn;
-            float angle = projector.getRotationAngle();
-            boolean xdir = true;
-            if (angle < 45 || angle > 135 && angle < 225 || angle > 315) {
-                xdir = false;
-            }
-            if (xdir) {
-                for (int i = 0; i < graphic.getNumGraphics(); i++) {
-                    Graphic gg = graphic.getGraphicN(i);
-                    Shape shape = gg.getShape();
-                    p = (PointZ) shape.getPoints().get(0);
-                    d = p.X * projector.getSinRotationAngle();
-                    isIn = false;
-                    for (int j = 0; j < dds.size(); j++) {
-                        if (d < dds.get(j)) {
-                            dds.add(j, d);
-                            order.add(j, i);
-                            isIn = true;
-                            break;
-                        }
-                    }
-                    if (!isIn) {
-                        dds.add(d);
-                        order.add(i);
-                    }
-                }
-            } else {
-                for (int i = 0; i < graphic.getNumGraphics(); i++) {
-                    Graphic gg = graphic.getGraphicN(i);
-                    Shape shape = gg.getShape();
-                    p = (PointZ) shape.getPoints().get(0);
-                    d = p.Y * projector.getCosRotationAngle();
-                    isIn = false;
-                    for (int j = 0; j < dds.size(); j++) {
-                        if (d < dds.get(j)) {
-                            dds.add(j, d);
-                            order.add(j, i);
-                            isIn = true;
-                            break;
-                        }
-                    }
-                    if (!isIn) {
-                        dds.add(d);
-                        order.add(i);
-                    }
-                }
-            }
-
-            for (int i : order) {
-                Graphic gg = graphic.getGraphicN(i);
-                this.drawGrahic(g, gg);
+                this.drawGraphic(g, gg);
             }
         }
     }

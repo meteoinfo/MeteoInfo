@@ -71,4 +71,22 @@ public class CompositeTransform extends Transform {
         return new ArrayList<>(children);
     }
 
+    public boolean isXShear() {
+        for (Transform t : children) {
+            if (t instanceof CompositeTransform) {
+                if (((CompositeTransform) t).isXShear()) {
+                    return true;
+                }
+            } else {
+                if (t instanceof Affine2D) {
+                    if (((Affine2D) t).affineTransform.getShearX() != 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
 }

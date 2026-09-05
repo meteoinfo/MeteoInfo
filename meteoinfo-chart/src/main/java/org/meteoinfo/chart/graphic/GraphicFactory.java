@@ -2235,10 +2235,8 @@ public class GraphicFactory {
 
         if (bbs.size() == 1) {
             graphics.setLegendBreak(bb);
-            graphics.setSingleLegend(true);
-        } else {
-            graphics.setSingleLegend(false);
         }
+        graphics.setSingleLegend(false);
 
         return graphics;
     }
@@ -2353,10 +2351,8 @@ public class GraphicFactory {
 
         if (bbs.size() == 1) {
             graphics.setLegendBreak(bb);
-            graphics.setSingleLegend(true);
-        } else {
-            graphics.setSingleLegend(false);
         }
+        graphics.setSingleLegend(false);
 
         return graphics;
     }
@@ -2475,10 +2471,8 @@ public class GraphicFactory {
 
         if (bbs.size() == 1) {
             graphics.setLegendBreak(bb);
-            graphics.setSingleLegend(true);
-        } else {
-            graphics.setSingleLegend(false);
         }
+        graphics.setSingleLegend(false);
 
         return graphics;
     }

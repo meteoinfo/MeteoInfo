@@ -985,6 +985,38 @@ public abstract class AbstractPlot2D extends Plot {
         this.fixDrawExtent = value;
     }
 
+    public CompositeTransform getTransData() {
+        return this.transData;
+    }
+
+    public void setTransData(CompositeTransform value) {
+        this.transData = value;
+    }
+
+    public TransformWrapper getTransScale() {
+        return this.transScale;
+    }
+
+    public void setTransScale(TransformWrapper value) {
+        this.transScale = value;
+    }
+
+    public BboxTransformFrom getTransLimits() {
+        return this.transLimits;
+    }
+
+    public void setTransLimits(BboxTransformFrom value) {
+        this.transLimits = value;
+    }
+
+    public BboxTransformTo getTransAxes() {
+        return this.transAxes;
+    }
+
+    public void setTransAxes(BboxTransformTo value) {
+        this.transAxes = value;
+    }
+
     // </editor-fold>
     // <editor-fold desc="Method">
     /**
@@ -1465,7 +1497,10 @@ public abstract class AbstractPlot2D extends Plot {
             g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
         }
 
-        double[] xy;
+        java.awt.Shape oldClip = g.getClip();
+        g.setClip(area);
+
+        //double[] xy;
         double x, y;
         double miny = area.getY();
         double minx = area.getX();
@@ -1479,51 +1514,56 @@ public abstract class AbstractPlot2D extends Plot {
 
         //Draw x grid lines
         if (this.gridLine.isDrawXLine()) {
-            this.getXAxis().updateTickLabels();
-            //this.getXAxis().updateLabelGap(g, area);
+            Axis xAxis = this.getXAxis();
+            xAxis.updateTickLabels();
+            double[] values = xAxis.getTickValues();
             int n = 0;
-            while (n < this.getXAxis().getTickValues().length) {
-                double value = this.getXAxis().getTickValues()[n];
-                if (value <= this.getXAxis().getMinValue() || value >= this.getXAxis().getMaxValue()) {
-                    n += this.getXAxis().getTickLabelGap();
+            int gap = xAxis.getTickLabelGap();
+            double sv = values[0];
+            while (n < xAxis.getTickValues().length) {
+                double value = values[n];
+                if (value <= xAxis.getMinValue() || value >= xAxis.getMaxValue()) {
+                    n += gap;
                     continue;
                 }
-                xy = this.projToScreen(value, this.drawExtent.minY, area);
-                x = xy[0];
-                if (x > 0 && x < area.getWidth()) {                    
-                    if (this.getXAxis().isInverse()) {
-                        x = area.getWidth() - x;
-                    }
-                    x += minx;
-                    g.draw(new Line2D.Double(x, maxy, x, miny));
+                sv = value;
+                PointD sp = this.transData.transform(new PointD(value, this.drawExtent.minY));
+                PointD ep = this.transData.transform(new PointD(value, this.drawExtent.maxY));
+                g.draw(new Line2D.Double(sp.X, sp.Y, ep.X, ep.Y));
+                n += gap;
+            }
+
+            if (this.transData.isXShear()) {
+                double dx = values[gap] - values[0];
+                for (int i = 1; i < 10; i++) {
+                    double value = sv - i * dx;
+                    PointD sp = this.transData.transform(new PointD(value, this.drawExtent.minY));
+                    PointD ep = this.transData.transform(new PointD(value, this.drawExtent.maxY));
+                    g.draw(new Line2D.Double(sp.X, sp.Y, ep.X, ep.Y));
                 }
-                n += this.getXAxis().getTickLabelGap();
             }
         }
 
         //Draw y grid lines
         if (this.gridLine.isDrawYLine()) {
-            this.getYAxis().updateTickLabels();
-            //this.getYAxis().updateLabelGap(g, area);
+            Axis yAxis = this.getYAxis();
+            yAxis.updateTickLabels();
             int n = 0;
-            while (n < this.getYAxis().getTickValues().length) {
-                double value = this.getYAxis().getTickValues()[n];
-                if (value <= this.getYAxis().getMinValue() || value >= this.getYAxis().getMaxValue()) {
-                    n += this.getYAxis().getTickLabelGap();
+            while (n < yAxis.getTickValues().length) {
+                double value = yAxis.getTickValues()[n];
+                if (value <= yAxis.getMinValue() || value >= yAxis.getMaxValue()) {
+                    n += yAxis.getTickLabelGap();
                     continue;
                 }
-                xy = this.projToScreen(this.drawExtent.minX, value, area);
-                y = xy[1];
-                if (y > 0 && y < area.getHeight()) {
-                    if (this.getYAxis().isInverse()) {
-                        y = area.getHeight() - y;
-                    }
-                    y += miny;
-                    g.draw(new Line2D.Double(minx, y, maxx, y));
+                PointD sp = this.transData.transform(new PointD(this.drawExtent.minX, value));
+                if (sp.Y > miny && sp.Y < maxy) {
+                    g.draw(new Line2D.Double(minx, sp.Y, maxx, sp.Y));
                 }
-                n += this.getYAxis().getTickLabelGap();
+                n += yAxis.getTickLabelGap();
             }
         }
+
+        g.setClip(oldClip);
     }
 
     abstract void drawGraph(Graphics2D g, Rectangle2D area);

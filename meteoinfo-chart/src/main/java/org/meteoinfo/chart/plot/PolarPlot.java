@@ -273,9 +273,9 @@ public class PolarPlot extends Plot2D {
      * @param g Graphic
      */
     @Override
-    public Graphic addGraphic(Graphic g) {
-        GraphicFactory.polarToCartesian(g, this.bottom);
-        return super.addGraphic(g);
+    public Graphic addGraphic(Graphic graphic) {
+        GraphicFactory.polarToCartesian(graphic, this.bottom);
+        return super.addGraphic(graphic);
     }
 
     /**
@@ -285,9 +285,9 @@ public class PolarPlot extends Plot2D {
      * @param g Graphic
      */
     @Override
-    public Graphic addGraphic(int idx, Graphic g) {
-        GraphicFactory.polarToCartesian(g, this.bottom);
-        return super.addGraphic(idx, g);
+    public Graphic addGraphic(int idx, Graphic graphic) {
+        GraphicFactory.polarToCartesian(graphic, this.bottom);
+        return super.addGraphic(idx, graphic);
     }
 
     @Override

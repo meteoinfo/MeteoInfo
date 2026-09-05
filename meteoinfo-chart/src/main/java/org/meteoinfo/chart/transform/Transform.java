@@ -2,6 +2,8 @@ package org.meteoinfo.chart.transform;
 
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
 
 public abstract class Transform extends TransformNode {
 
@@ -11,6 +13,22 @@ public abstract class Transform extends TransformNode {
 
     // Forward transformation
     public abstract PointD transform(PointD p);
+
+    public Array[] transform(Array xa, Array ya) {
+        xa = xa.copyIfView();
+        ya = ya.copyIfView();
+        Array xr = Array.factory(DataType.DOUBLE, xa.getShape());
+        Array yr = Array.factory(DataType.DOUBLE, ya.getShape());
+        PointD p;
+        for (int i = 0; i < xa.getSize(); i++) {
+            p = new PointD(xa.getDouble(i), ya.getDouble(i));
+            p = transform(p);
+            xr.setDouble(i, p.X);
+            yr.setDouble(i, p.Y);
+        }
+
+        return new Array[]{xr, yr};
+    }
 
     // Get inverted transformation (optional implementation)
     public Transform inverted() {

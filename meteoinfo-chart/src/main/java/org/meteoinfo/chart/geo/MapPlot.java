@@ -23,7 +23,6 @@ import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.chart.graphic.GeoGraphicCollection;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
-import org.meteoinfo.chart.graphic.GraphicProjectionUtil;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.*;
 import org.w3c.dom.Document;
@@ -450,23 +449,16 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         if (this.clip) {
             g.setClip(area);
         }
-        AffineTransform oldMatrix = g.getTransform();
-        g.translate(area.getX(), area.getY());
 
         if (this.boundary != null) {
             PolygonBreak pb = (PolygonBreak)this.boundary.getLegendBreak().clone();
             if (pb.isDrawFill()) {
                 pb.setDrawOutline(false);
-                this.drawGraphic(g, this.boundary, pb, area);
+                this.drawGraphic(g, this.boundary, pb);
             }
         }
 
-        g.setTransform(oldMatrix);
-
         //Plot graphics
-        //g.translate(area.getX(), area.getY());
-
-        //plotGraphics(g, area);
         plotGraphics(g);
 
         //Draw boundary line
@@ -474,13 +466,12 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             PolygonBreak pb = (PolygonBreak)this.boundary.getLegendBreak().clone();
             pb.setDrawFill(false);
-            this.drawGraphic(g, this.boundary, pb, area);
+            this.drawGraphic(g, this.boundary, pb);
             if (!this.antiAlias) {
                 g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
             }
         }
 
-        g.setTransform(oldMatrix);
         if (this.clip) {
             g.setClip(oldRegion);
         }
@@ -512,52 +503,12 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
                 }
 
                 if (graphic.getExtent().intersects(this.drawExtent)) {
-                    drawGraphics(g, graphic);
+                    drawGraphic(g, graphic);
                 }
 
                 if (this.isLonLatMap() && graphic instanceof GeoGraphicCollection) {
                     if (this.drawExtent.maxX > 180) {
-                        drawGraphics(g, ((GeoGraphicCollection) graphic).xShiftCopy(360));
-                    }
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void plotGraphics(Graphics2D g, Rectangle2D area) {
-        int barIdx = 0;
-        for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
-            Graphic graphic = this.graphics.get(m);
-            if (graphic.isVisible()) {
-                if (graphic instanceof WebMapImage) {
-                    this.updateXYScale(area.getWidth(), area.getHeight());
-                    this.updateWebMapScale(area.getWidth(), area.getHeight());
-                    this.drawWebMapImage(g, (WebMapImage) graphic, area);
-                    continue;
-                }
-
-                ColorBreak cb = graphic.getLegendBreak();
-                ShapeTypes shapeType = graphic.getGraphicN(0).getShape().getShapeType();
-                switch (shapeType) {
-                    case BAR:
-                        //this.drawBars(g, (GraphicCollection) graphic, barIdx, area);
-                        this.drawBars(g, (GraphicCollection) graphic, barIdx);
-                        barIdx += 1;
-                        continue;
-                    case STATION_MODEL:
-                        //this.drawStationModel(g, (GraphicCollection) graphic, area);
-                        this.drawStationModel(g, (GraphicCollection) graphic);
-                        continue;
-                }
-
-                if (graphic.getExtent().intersects(this.drawExtent)) {
-                    drawGraphics(g, graphic, area);
-                }
-
-                if (this.isLonLatMap() && graphic instanceof GeoGraphicCollection) {
-                    if (this.drawExtent.maxX > 180) {
-                        drawGraphics(g, ((GeoGraphicCollection) graphic).xShiftCopy(360), area);
+                        drawGraphic(g, ((GeoGraphicCollection) graphic).xShiftCopy(360));
                     }
                 }
             }
@@ -767,6 +718,9 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     }
 
     void drawWebMapImage(Graphics2D g, WebMapImage graphic, Rectangle2D area) {
+        AffineTransform oldTransform = g.getTransform();
+        g.translate(area.getX(), area.getY());
+
         PointD geoCenter = this.getGeoCenter();
         graphic.setAddressLocation(new GeoPosition(geoCenter.Y, geoCenter.X));
         double webMapScale = graphic.getWebMapScale();
@@ -797,6 +751,8 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         }
 
         graphic.draw(g, area, this.tileLoadListener);
+
+        g.setTransform(oldTransform);
     }
 
     /**
@@ -807,6 +763,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     @Override
     public Graphic addGraphic(Graphic graphic) {
         graphic.doTransform();
+        graphic.setTransform(this.transData);
 
         return super.addGraphic(graphic);
     }
@@ -820,50 +777,11 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     @Override
     public Graphic addGraphic(int idx, Graphic graphic) {
         graphic.doTransform();
+        graphic.setTransform(this.transData);
 
         return super.addGraphic(idx, graphic);
     }
 
-    /**
-     * Add a graphic
-     *
-     * @param graphic The graphic
-     * @param proj The graphic projection
-     * @return Added graphic
-     */
-    public Graphic addGraphic(Graphic graphic, ProjectionInfo proj) {
-        ProjectionInfo toProj = this.getProjInfo();
-        if (proj.equals(toProj)) {
-            super.addGraphic(graphic);
-            return graphic;
-        } else {
-            Graphic nGraphic = GraphicProjectionUtil.projectClipGraphic(graphic, proj, toProj);
-            if (nGraphic != null) {
-                super.addGraphic(nGraphic);
-            }
-            return nGraphic;
-        }
-    }
-
-    /**
-     * Add a graphic
-     *
-     * @param index The graphic index
-     * @param graphic The graphic
-     * @param proj The graphic projection
-     * @return Added graphic
-     */
-    public Graphic addGraphic(int index, Graphic graphic, ProjectionInfo proj) {
-        ProjectionInfo toProj = this.getProjInfo();
-        if (proj.equals(toProj)) {
-            this.addGraphic(index, graphic);
-            return graphic;
-        } else {
-            Graphic nGraphic = GraphicProjectionUtil.projectClipGraphic(graphic, proj, toProj);
-            this.addGraphic(index, nGraphic);
-            return nGraphic;
-        }
-    }
 
     @Override
     public void addText(ChartText text) {
@@ -1199,13 +1117,13 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
             //Longitude
             if (mapGridLine.isDrawXLine()) {
                 if (mapGridLine.getLongitudeLines() != null) {
-                    this.drawGraphics(g, mapGridLine.getLongitudeLines());
+                    this.drawGraphic(g, mapGridLine.getLongitudeLines());
                 }
             }
             //Latitude
             if (mapGridLine.isDrawYLine()) {
                 if (mapGridLine.getLatitudeLines() != null) {
-                    this.drawGraphics(g, mapGridLine.getLatitudeLines());
+                    this.drawGraphic(g, mapGridLine.getLatitudeLines());
                 }
             }
 

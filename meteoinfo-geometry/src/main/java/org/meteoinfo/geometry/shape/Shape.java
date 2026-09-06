@@ -333,8 +333,15 @@ public abstract class Shape implements Cloneable{
             case "MultiPoint":
                 if (geo.getNumPoints() < 1)
                     return null;
-                else
+                else if (geo.getNumPoints() == 1)
                     return new PointShape(geo);
+                else {
+                    PointShape[] pointShapes = new PointShape[geo.getNumPoints()];
+                    for (int i = 0; i < geo.getNumPoints(); i++) {
+                        pointShapes[i] = new PointShape(geo.getGeometryN(i));
+                    }
+                    return new  MultiPointShape(pointShapes);
+                }
             case "LineString":
             case "MultiLineString":
                 if (geo.getNumPoints() < 2)

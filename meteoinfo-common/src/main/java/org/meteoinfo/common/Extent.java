@@ -60,10 +60,21 @@ public class Extent implements Cloneable {
      * @param yMax Maximum Y
      */
     public Extent(double xMin, double xMax, double yMin, double yMax) {
-        minX = xMin;
-        maxX = xMax;
-        minY = yMin;
-        maxY = yMax;
+        if (xMin > xMax) {
+            minX = xMax;
+            maxX = xMin;
+        } else {
+            minX = xMin;
+            maxX = xMax;
+        }
+
+        if (yMin > yMax) {
+            minY = yMax;
+            maxY = yMin;
+        } else {
+            minY = yMin;
+            maxY = yMax;
+        }
     }
 
     /**
@@ -92,11 +103,11 @@ public class Extent implements Cloneable {
     // <editor-fold desc="Get Set Methods">
 
     public double getWidth() {
-        return Math.abs(maxX - minX);
+        return maxX - minX;
     }
 
     public double getHeight() {
-        return Math.abs(maxY - minY);
+        return maxY - minY;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
@@ -123,6 +134,10 @@ public class Extent implements Cloneable {
      */
     public boolean intersects(Extent bET) {
         return !(maxX < bET.minX || maxY < bET.minY || bET.maxX < minX || bET.maxY < minY);
+    }
+
+    public boolean contains(PointD p) {
+        return (p.X >= minX && p.X <= maxX && p.Y >= minY && p.Y <= maxY);
     }
 
     /**

@@ -494,7 +494,7 @@ public class GraphicCollection extends Graphic implements Iterator {
     @Override
     public List<? extends ColorBreak> getLegendBreaks() {
         List<ColorBreak> breaks = new ArrayList<>();
-        if (this.singleLegend) {
+        if (this.legendBreak != null) {
             breaks.add(this.getLegendBreak());
         } else {
             if (this.legendScheme != null) {

@@ -38,8 +38,9 @@ public class GridLine extends Artist {
      */
     public GridLine(boolean visible) {
         this.lineBreak = new PolylineBreak();
-        this.lineBreak.setColor(new Color(0.15f, 0.15f, 0.15f, 0.15f));
-        this.lineBreak.setStyle(LineStyles.DASH);
+        this.lineBreak.setColor(new Color(175, 176, 176));
+        this.lineBreak.setWidth(0.8f);
+        this.lineBreak.setStyle(LineStyles.SOLID);
         this.top = false;
         this.drawXLine = visible;
         this.drawYLine = visible;

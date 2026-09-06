@@ -69,6 +69,8 @@ public class MICAPSDataInfo {
                     mdType = MeteoDataType.MICAPS_3;
                 } else if (dataType.equals("diamond 4")) {
                     mdType = MeteoDataType.MICAPS_4;
+                } else if (dataType.equals("diamond 5")) {
+                    mdType = MeteoDataType.MICAPS_5;
                 } else if (dataType.equals("diamond 7")) {
                     mdType = MeteoDataType.MICAPS_7;
                 } else if (dataType.contains("iamond 120")) {
@@ -135,6 +137,8 @@ public class MICAPSDataInfo {
                         dataInfo = new MICAPS3DataInfo();
                     } else if (dataType.equals("diamond 4")) {
                         dataInfo = new MICAPS4DataInfo();
+                    } else if (dataType.equals("diamond 5")) {
+                        dataInfo = new MICAPS5DataInfo();
                     } else if (dataType.equals("diamond 7")) {
                         dataInfo = new MICAPS7DataInfo();
                     }

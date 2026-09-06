@@ -103,7 +103,7 @@ def getcolor(style, alpha=None):
         elif style == 'blue' or style == 'b':
             c = Color.blue
         elif style == 'green' or style == 'g':
-            c = Color.green
+            c = Color(0, 127, 0)
         elif style == 'white' or style == 'w':
             c = Color.white
         elif style == 'yellow' or style == 'y':
@@ -161,7 +161,7 @@ def getcolor_style(style):
         c = Color.blue
         rr = 'b'
     elif 'g' in style:
-        c = Color.green
+        c = Color(0, 127, 0)
         rr = 'g'
     elif 'w' in style:
         c = Color.white

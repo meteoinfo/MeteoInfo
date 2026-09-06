@@ -62,6 +62,7 @@ public class PolylineShape extends Shape implements Cloneable {
      * @param points Point list
      */
     public PolylineShape(List<PointD> points) {
+        this();
         this.setPoints(points);
     }
 

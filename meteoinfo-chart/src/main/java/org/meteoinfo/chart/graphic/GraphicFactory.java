@@ -6422,14 +6422,16 @@ public class GraphicFactory {
      */
     public static GraphicCollection createFillBetweenPolygons(Array xdata, Array y1data,
             Array y2data, Array where, PolygonBreak pb) {
+        xdata = xdata.copyIfView();
+        y1data = y1data.copyIfView();
+        y2data = y2data.copyIfView();
+
         GraphicCollection gc = new GraphicCollection();
         int len = (int) xdata.getSize();
-        if (!xdata.getIndexPrivate().isFastIterator())
-            xdata = xdata.copy();
-        if (!y1data.getIndexPrivate().isFastIterator())
-            y1data = y1data.copy();
-        if (!y2data.getIndexPrivate().isFastIterator())
-            y2data = y2data.copy();
+        if (len == 0) {
+            return gc;
+        }
+
         if (where == null) {
             if (ArrayMath.containsNaN(y1data) || ArrayMath.containsNaN(y2data)) {
                 where = Array.factory(DataType.BOOLEAN, new int[]{len});
@@ -6458,8 +6460,21 @@ public class GraphicFactory {
             Graphic graphic = new Graphic(pgs, pb);
             gc.add(graphic);
         } else {
-            if (!where.getIndexPrivate().isFastIterator())
-                where = where.copy();
+            where = where.copyIfView();
+            List<PointD> points1 = new ArrayList<>();
+            List<PointD> points2 = new ArrayList<>();
+            for (int i = 0; i < len; i++) {
+                points1.add(new PointD(xdata.getDouble(i), y1data.getDouble(i)));
+                points2.add(new PointD(xdata.getDouble(i), y2data.getDouble(i)));
+            }
+            PolylineShape polylineShape1 = new PolylineShape(points1);
+            PolylineShape polylineShape2 = new PolylineShape(points2);
+            Shape intersection = polylineShape1.intersection(polylineShape2);
+            PointShape[] pointShapes = new PointShape[0];
+            if (intersection instanceof MultiPointShape) {
+                pointShapes = (PointShape[]) ((MultiPointShape) intersection).getShapes();
+            }
+
             boolean ob = false;
             List<List<Integer>> idxs = new ArrayList<>();
             List<Integer> idx = new ArrayList<>();
@@ -6479,16 +6494,47 @@ public class GraphicFactory {
                 int nn = index.size();
                 if (nn >= 2) {
                     PolygonShape pgs = new PolygonShape();
-                    List<PointD> points = new ArrayList<>();
+                    points1 = new ArrayList<>();
+                    points2 = new ArrayList<>();
                     int ii;
                     for (int j = 0; j < nn; j++) {
                         ii = index.get(j);
-                        points.add(new PointD(xdata.getDouble(ii), y1data.getDouble(ii)));
+                        points1.add(new PointD(xdata.getDouble(ii), y1data.getDouble(ii)));
                     }
                     for (int j = 0; j < nn; j++) {
                         ii = index.get(nn - j - 1);
-                        points.add(new PointD(xdata.getDouble(ii), y2data.getDouble(ii)));
+                        points2.add(new PointD(xdata.getDouble(ii), y2data.getDouble(ii)));
                     }
+
+                    Extent sExtent = null;
+                    if (index.get(0) > 0) {
+                        sExtent = new Extent(xdata.getDouble(index.get(0) - 1), xdata.getDouble(index.get(0)),
+                                y1data.getDouble(index.get(0) - 1), y1data.getDouble(index.get(0)));
+                    }
+                    Extent eExtent = null;
+                    if (index.get(nn - 1) < len - 1) {
+                        eExtent = new Extent(xdata.getDouble(index.get(nn - 1)), xdata.getDouble(index.get(nn - 1) + 1),
+                                y1data.getDouble(index.get(nn - 1)), y1data.getDouble(index.get(nn - 1) + 1));
+                    }
+                    List<PointD> points = new ArrayList<>();
+                    if (pointShapes.length > 0) {
+                        for (PointShape pointShape : pointShapes) {
+                            if (sExtent != null && sExtent.contains(pointShape.getPoint())) {
+                                points.add(pointShape.getPoint());
+                                break;
+                            }
+                        }
+                    }
+                    points.addAll(points1);
+                    if (pointShapes.length > 0) {
+                        for (PointShape pointShape : pointShapes) {
+                            if (eExtent != null && eExtent.contains(pointShape.getPoint())) {
+                                points.add(pointShape.getPoint());
+                                break;
+                            }
+                        }
+                    }
+                    points.addAll(points2);
                     pgs.setPoints(points);
                     Graphic graphic = new Graphic(pgs, pb);
                     gc.add(graphic);
@@ -6511,14 +6557,15 @@ public class GraphicFactory {
      */
     public static GraphicCollection createFillBetweenPolygonsX(Array ydata, Array x1data,
             Array x2data, Array where, PolygonBreak pb) {
+        ydata = ydata.copyIfView();
+        x1data = x1data.copyIfView();
+        x2data = x2data.copyIfView();
         GraphicCollection gc = new GraphicCollection();
         int len = (int) ydata.getSize();
-        if (!ydata.getIndexPrivate().isFastIterator())
-            ydata = ydata.copy();
-        if (!x1data.getIndexPrivate().isFastIterator())
-            x1data = x1data.copy();
-        if (!x2data.getIndexPrivate().isFastIterator())
-            x2data = x2data.copy();
+        if (len == 0) {
+            return gc;
+        }
+
         if (where == null) {
             if (ArrayMath.containsNaN(x1data) || ArrayMath.containsNaN(x2data)) {
                 where = Array.factory(DataType.BOOLEAN, new int[]{len});
@@ -6547,8 +6594,21 @@ public class GraphicFactory {
             Graphic graphic = new Graphic(pgs, pb);
             gc.add(graphic);
         } else {
-            if (!where.getIndexPrivate().isFastIterator())
-                where = where.copy();
+            where = where.copyIfView();
+            List<PointD> points1 = new ArrayList<>();
+            List<PointD> points2 = new ArrayList<>();
+            for (int i = 0; i < len; i++) {
+                points1.add(new PointD(x1data.getDouble(i), ydata.getDouble(i)));
+                points2.add(new PointD(x2data.getDouble(i), ydata.getDouble(i)));
+            }
+            PolylineShape polylineShape1 = new PolylineShape(points1);
+            PolylineShape polylineShape2 = new PolylineShape(points2);
+            Shape intersection = polylineShape1.intersection(polylineShape2);
+            PointShape[] pointShapes = new PointShape[0];
+            if (intersection instanceof MultiPointShape) {
+                pointShapes = (PointShape[]) ((MultiPointShape) intersection).getShapes();
+            }
+
             boolean ob = false;
             List<List<Integer>> idxs = new ArrayList<>();
             List<Integer> idx = new ArrayList<>();
@@ -6568,16 +6628,47 @@ public class GraphicFactory {
                 int nn = index.size();
                 if (nn >= 2) {
                     PolygonShape pgs = new PolygonShape();
-                    List<PointD> points = new ArrayList<>();
+                    points1 = new ArrayList<>();
+                    points2 = new ArrayList<>();
                     int ii;
                     for (int j = 0; j < nn; j++) {
                         ii = index.get(j);
-                        points.add(new PointD(x1data.getDouble(ii), ydata.getDouble(ii)));
+                        points1.add(new PointD(x1data.getDouble(ii), ydata.getDouble(ii)));
                     }
                     for (int j = 0; j < nn; j++) {
                         ii = index.get(nn - j - 1);
-                        points.add(new PointD(x2data.getDouble(ii), ydata.getDouble(ii)));
+                        points2.add(new PointD(x2data.getDouble(ii), ydata.getDouble(ii)));
                     }
+
+                    Extent sExtent = null;
+                    if (index.get(0) > 0) {
+                        sExtent = new Extent(x1data.getDouble(index.get(0) - 1), x1data.getDouble(index.get(0)),
+                                ydata.getDouble(index.get(0) - 1), ydata.getDouble(index.get(0)));
+                    }
+                    Extent eExtent = null;
+                    if (index.get(nn - 1) < len - 1) {
+                        eExtent = new Extent(x2data.getDouble(index.get(nn - 1)), x2data.getDouble(index.get(nn - 1) + 1),
+                                ydata.getDouble(index.get(nn - 1)), ydata.getDouble(index.get(nn - 1) + 1));
+                    }
+                    List<PointD> points = new ArrayList<>();
+                    if (pointShapes.length > 0) {
+                        for (PointShape pointShape : pointShapes) {
+                            if (sExtent != null && sExtent.contains(pointShape.getPoint())) {
+                                points.add(pointShape.getPoint());
+                                break;
+                            }
+                        }
+                    }
+                    points.addAll(points1);
+                    if (pointShapes.length > 0) {
+                        for (PointShape pointShape : pointShapes) {
+                            if (eExtent != null && eExtent.contains(pointShape.getPoint())) {
+                                points.add(pointShape.getPoint());
+                                break;
+                            }
+                        }
+                    }
+                    points.addAll(points2);
                     pgs.setPoints(points);
                     Graphic graphic = new Graphic(pgs, pb);
                     gc.add(graphic);

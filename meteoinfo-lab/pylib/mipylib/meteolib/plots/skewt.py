@@ -30,8 +30,8 @@ class SkewTTransform(Affine2D):
         """
         Affine2D.__init__(self)
 
-        self._rotation = np.tan(np.deg2rad(rotation))
-        self.affineTransform.shear(self._rotation, 0)
+        self._rot_factor = np.tan(np.deg2rad(rotation))
+        self.affineTransform.shear(self._rot_factor, 0)
 
 
 class SkewT:
@@ -75,6 +75,7 @@ class SkewT:
         else:
             self.ax = fig.add_axes()
 
+        self._rotation = rotation
         self.transSkew = SkewTTransform(rotation)
         self.ax.transData = (self.ax.transScale.plus(self.ax.transLimits).
             plus(self.transSkew).plus(self.ax.transAxes))
@@ -86,7 +87,7 @@ class SkewT:
         self.ax.set_ylim(1050, 100)
         self.ax.set_xlim(-40, 50)
         self.ax.grid(True)
-        self.ax.set_yticks([1000, 850, 700, 500, 400, 300, 250, 200, 150, 100])
+        self.ax.set_yticks([1000, 900, 800, 700, 600, 500, 400, 300, 200, 100])
 
         self.mixing_lines = None
         self.dry_adiabats = None
@@ -209,7 +210,8 @@ class SkewT:
         linedata = [np.vstack((ti, pressure)).T for ti in t]
 
         # Add to plot
-        kwargs.setdefault('colors', [255,204,0])
+        kwargs.setdefault('colors', 'r')
+        kwargs.setdefault('linestyle', '--')
         kwargs.setdefault('alpha', 0.5)
         self.dry_adiabats = self.ax.add_graphic(LineCollection(linedata, **kwargs))
         return self.dry_adiabats
@@ -267,7 +269,7 @@ class SkewT:
         linedata = [np.vstack((ti, pressure)).T for ti in t]
 
         # Add to plot
-        kwargs.setdefault('colors', 'g')
+        kwargs.setdefault('colors', 'b')
         kwargs.setdefault('linestyle', '--')
         kwargs.setdefault('alpha', 0.5)
         self.moist_adiabats = self.ax.add_graphic(LineCollection(linedata, **kwargs))
@@ -315,7 +317,7 @@ class SkewT:
 
         # Set pressure range if necessary
         if pressure is None:
-            pressure = np.linspace(200, max(self.ax.get_ylim()))
+            pressure = np.linspace(600, max(self.ax.get_ylim()))
 
         # Assemble data for plotting
         td = dewpoint(vapor_pressure(pressure, mixing_ratio)) - constants.degCtoK
@@ -323,9 +325,8 @@ class SkewT:
 
         # Add to plot
         kwargs.setdefault('colors', 'g')
-        kwargs.setdefault('linestyle', '-')
-        kwargs.setdefault('linewidth', 0.5)
-        kwargs.setdefault('alpha', 0.5)
+        kwargs.setdefault('linestyle', '--')
+        kwargs.setdefault('alpha', 0.8)
         self.mixing_lines = self.ax.add_graphic(LineCollection(linedata, **kwargs))
         return self.mixing_lines
 
@@ -380,6 +381,7 @@ class SkewT:
             fill_args.pop('where', None)
 
         fill_args['interpolate'] = True
+        fill_args['edgecolor'] = None
 
         return self.ax.fill_betweenx(*arrs, **fill_args)
 

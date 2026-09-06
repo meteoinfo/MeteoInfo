@@ -25,6 +25,7 @@ public enum MeteoDataType {
         MICAPS_2,
         MICAPS_3,
         MICAPS_4,
+        MICAPS_5,
         MICAPS_7,
         MICAPS_11,
         MICAPS_13,
@@ -64,6 +65,7 @@ public enum MeteoDataType {
                 case MICAPS_2:
                 case MICAPS_3:
                 case MICAPS_4:
+                case MICAPS_5:
                 case MICAPS_7:
                 case MICAPS_11:
                 case MICAPS_13:

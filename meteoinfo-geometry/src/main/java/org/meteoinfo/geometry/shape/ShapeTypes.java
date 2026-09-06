@@ -50,7 +50,8 @@ public enum ShapeTypes {
     CUBIC(61),
     CYLINDER(62),
     CONE(63),
-    SPHERE(64);
+    SPHERE(64),
+    SHAPE_COLLECTION(70);
 
     private final int value;
 

@@ -22,4 +22,16 @@ public class NumberUtil {
     public static boolean isDecimal(String str) {
         return str.matches("-?\\d*\\.\\d+");
     }
+
+    /**
+     * Check if the two double value are equal
+     *
+     * @param x1 Double value 1
+     * @param x2 Double value 2
+     * @param tolerance Tolerance
+     * @return Is equal or not
+     */
+    public static boolean equalsWithTolerance(double x1, double x2, double tolerance) {
+        return Math.abs(x1 - x2) <= tolerance;
+    }
 }

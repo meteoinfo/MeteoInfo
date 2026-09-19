@@ -3,10 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.meteoinfo.geometry.geoprocess;
+package org.meteoinfo.geometry;
 
-import java.util.ArrayList;
-import java.util.List;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -14,8 +12,14 @@ import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointF;
+import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.shape.*;
-import org.meteoinfo.ndarray.*;
+import org.meteoinfo.ndarray.Array;
+import org.meteoinfo.ndarray.DataType;
+import org.meteoinfo.ndarray.IndexIterator;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *

@@ -8951,7 +8951,7 @@ public class GraphicFactory {
      * @param ls Legend scheme
      * @return Surface graphic
      */
-    public static MeshGraphic surface(Array xa, Array ya, Array za, LegendScheme ls) {
+    public static QuadMeshGraphic surface(Array xa, Array ya, Array za, LegendScheme ls) {
         return surface(xa, ya, za, za, ls);
     }
 
@@ -8965,13 +8965,13 @@ public class GraphicFactory {
      * @param ls Legend scheme
      * @return Surface graphic
      */
-    public static MeshGraphic surface(Array xa, Array ya, Array za, Array va, LegendScheme ls) {
+    public static QuadMeshGraphic surface(Array xa, Array ya, Array za, Array va, LegendScheme ls) {
         xa = xa.copyIfView();
         ya = ya.copyIfView();
         za = za.copyIfView();
         va = va.copyIfView();
 
-        MeshGraphic surfaceGraphic = new MeshGraphic();
+        QuadMeshGraphic surfaceGraphic = new QuadMeshGraphic();
         int[] shape = xa.getShape();
         int colNum = shape[1];
         int rowNum = shape[0];
@@ -9042,8 +9042,8 @@ public class GraphicFactory {
      * @return Graphics
      * @throws IOException
      */
-    public static MeshGraphic geoSurface(BufferedImage image, Extent extent, double offset, double xShift,
-                                      int nLon, int nLat) throws IOException {
+    public static QuadMeshGraphic geoSurface(BufferedImage image, Extent extent, double offset, double xShift,
+                                             int nLon, int nLat) throws IOException {
         Array lon = ArrayUtil.lineSpace(extent.minX + xShift, extent.maxX + xShift, nLon + 1, true);
         Array lat = ArrayUtil.lineSpace(extent.minY, extent.maxY, nLat + 1, true);
         lat = lat.flip(0).copy();
@@ -9056,7 +9056,7 @@ public class GraphicFactory {
         ((PolygonBreak) ls.getLegendBreak(0)).setDrawOutline(false);
         ((PolygonBreak) ls.getLegendBreak(0)).setOutlineColor(Color.white);
 
-        MeshGraphic graphic = GraphicFactory.surface(lon, lat, alt, ls);
+        QuadMeshGraphic graphic = GraphicFactory.surface(lon, lat, alt, ls);
         graphic.setImage(image);
 
         return graphic;
@@ -9076,8 +9076,8 @@ public class GraphicFactory {
      * @return Graphics
      * @throws IOException
      */
-    public static MeshGraphic geoSurface(BufferedImage image, Extent imageExtent, double offset, double xShift,
-                                         int nLon, int nLat, ProjectionInfo toProj) throws IOException {
+    public static QuadMeshGraphic geoSurface(BufferedImage image, Extent imageExtent, double offset, double xShift,
+                                             int nLon, int nLat, ProjectionInfo toProj) throws IOException {
         Extent extent = (Extent) imageExtent.clone();
         double width = extent.getWidth();
         double height = extent.getHeight();
@@ -9166,7 +9166,7 @@ public class GraphicFactory {
         ((PolygonBreak) ls.getLegendBreak(0)).setDrawOutline(false);
         ((PolygonBreak) ls.getLegendBreak(0)).setOutlineColor(Color.white);
 
-        MeshGraphic graphic = GraphicFactory.surface(lon, lat, alt, ls);
+        QuadMeshGraphic graphic = GraphicFactory.surface(lon, lat, alt, ls);
         graphic.setImage(image);
 
         return graphic;
@@ -9187,8 +9187,8 @@ public class GraphicFactory {
      * @return Graphics
      * @throws IOException
      */
-    public static MeshGraphic geoSurface(BufferedImage image, Extent imageExtent, double offset, double xShift,
-                                         int nLon, int nLat, ProjectionInfo toProj, List<Number> limits) throws IOException {
+    public static QuadMeshGraphic geoSurface(BufferedImage image, Extent imageExtent, double offset, double xShift,
+                                             int nLon, int nLat, ProjectionInfo toProj, List<Number> limits) throws IOException {
         Extent extent = new Extent(limits.get(0).doubleValue(), limits.get(1).doubleValue(),
                 limits.get(2).doubleValue(), limits.get(3).doubleValue());
         double width = imageExtent.getWidth();
@@ -9215,7 +9215,7 @@ public class GraphicFactory {
         ((PolygonBreak) ls.getLegendBreak(0)).setDrawOutline(false);
         ((PolygonBreak) ls.getLegendBreak(0)).setOutlineColor(Color.white);
 
-        MeshGraphic graphic = GraphicFactory.surface(lon, lat, alt, ls);
+        QuadMeshGraphic graphic = GraphicFactory.surface(lon, lat, alt, ls);
         graphic.setImage(image);
 
         return graphic;
@@ -9234,14 +9234,14 @@ public class GraphicFactory {
      * @param ls     Legend scheme
      * @return Surface graphics
      */
-    public static List<MeshGraphic> slice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
-                                          List<Number> ySlice, List<Number> zSlice, LegendScheme ls) throws InvalidRangeException {
+    public static List<QuadMeshGraphic> slice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
+                                              List<Number> ySlice, List<Number> zSlice, LegendScheme ls) throws InvalidRangeException {
         data = data.copyIfView();
         xa = xa.copyIfView();
         ya = ya.copyIfView();
         za = za.copyIfView();
 
-        List<MeshGraphic> sgs = new ArrayList<>();
+        List<QuadMeshGraphic> sgs = new ArrayList<>();
 
         int dim1, dim2;
         float x, y, z;
@@ -9260,7 +9260,7 @@ public class GraphicFactory {
             }
             if (r != null) {
                 Index index = r.getIndex();
-                MeshGraphic graphic = new MeshGraphic();
+                QuadMeshGraphic graphic = new QuadMeshGraphic();
                 float[] vertexPosition = new float[dim1 * dim2 * 3];
                 float[] vertexValue = new float[dim1 * dim2];
                 for (int i = 0; i < dim1; i++) {
@@ -9295,7 +9295,7 @@ public class GraphicFactory {
             }
             if (r != null) {
                 Index index = r.getIndex();
-                MeshGraphic graphic = new MeshGraphic();
+                QuadMeshGraphic graphic = new QuadMeshGraphic();
                 float[] vertexPosition = new float[dim1 * dim2 * 3];
                 float[] vertexValue = new float[dim1 * dim2];
                 for (int i = 0; i < dim1; i++) {
@@ -9330,7 +9330,7 @@ public class GraphicFactory {
             }
             if (r != null) {
                 Index index = r.getIndex();
-                MeshGraphic graphic = new MeshGraphic();
+                QuadMeshGraphic graphic = new QuadMeshGraphic();
                 float[] vertexPosition = new float[dim1 * dim2 * 3];
                 float[] vertexValue = new float[dim1 * dim2];
                 for (int i = 0; i < dim1; i++) {
@@ -9368,14 +9368,14 @@ public class GraphicFactory {
      * @param transferFunction Transfer function
      * @return Surface graphics
      */
-    public static List<MeshGraphic> slice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
-                                          List<Number> ySlice, List<Number> zSlice, TransferFunction transferFunction) throws InvalidRangeException {
+    public static List<QuadMeshGraphic> slice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
+                                              List<Number> ySlice, List<Number> zSlice, TransferFunction transferFunction) throws InvalidRangeException {
         data = data.copyIfView();
         xa = xa.copyIfView();
         ya = ya.copyIfView();
         za = za.copyIfView();
 
-        List<MeshGraphic> sgs = new ArrayList<>();
+        List<QuadMeshGraphic> sgs = new ArrayList<>();
 
         int dim1, dim2;
         float x, y, z;
@@ -9394,7 +9394,7 @@ public class GraphicFactory {
             }
             if (r != null) {
                 Index index = r.getIndex();
-                MeshGraphic graphic = new MeshGraphic();
+                QuadMeshGraphic graphic = new QuadMeshGraphic();
                 float[] vertexPosition = new float[dim1 * dim2 * 3];
                 float[] vertexValue = new float[dim1 * dim2];
                 for (int i = 0; i < dim1; i++) {
@@ -9429,7 +9429,7 @@ public class GraphicFactory {
             }
             if (r != null) {
                 Index index = r.getIndex();
-                MeshGraphic graphic = new MeshGraphic();
+                QuadMeshGraphic graphic = new QuadMeshGraphic();
                 float[] vertexPosition = new float[dim1 * dim2 * 3];
                 float[] vertexValue = new float[dim1 * dim2];
                 for (int i = 0; i < dim1; i++) {
@@ -9464,7 +9464,7 @@ public class GraphicFactory {
             }
             if (r != null) {
                 Index index = r.getIndex();
-                MeshGraphic graphic = new MeshGraphic();
+                QuadMeshGraphic graphic = new QuadMeshGraphic();
                 float[] vertexPosition = new float[dim1 * dim2 * 3];
                 float[] vertexValue = new float[dim1 * dim2];
                 for (int i = 0; i < dim1; i++) {
@@ -9501,8 +9501,8 @@ public class GraphicFactory {
      * @param method Interpolation method - nearest or linear
      * @return Surface graphics
      */
-    public static MeshGraphic slice(Array data, Array xa, Array ya, Array za, List<Number> xySlice,
-                                    LegendScheme ls, InterpolationMethod method) throws InvalidRangeException {
+    public static QuadMeshGraphic slice(Array data, Array xa, Array ya, Array za, List<Number> xySlice,
+                                        LegendScheme ls, InterpolationMethod method) throws InvalidRangeException {
         data = data.copyIfView();
         xa = xa.copyIfView();
         ya = ya.copyIfView();
@@ -9513,7 +9513,7 @@ public class GraphicFactory {
         Array x2d = rxy[4];
         Array y2d = rxy[5];
         Array z2d = rxy[6];
-        MeshGraphic graphic = new MeshGraphic();
+        QuadMeshGraphic graphic = new QuadMeshGraphic();
         int[] shape = r.getShape();
         int colNum = shape[1];
         int rowNum = shape[0];
@@ -9548,8 +9548,8 @@ public class GraphicFactory {
      * @param ls     Legend scheme
      * @return Surface graphics
      */
-    public static List<MeshGraphic> slice(Array data, Array xa, Array ya, Array za, Array xSlice,
-                                          Array ySlice, Array zSlice, LegendScheme ls) throws InvalidRangeException {
+    public static List<QuadMeshGraphic> slice(Array data, Array xa, Array ya, Array za, Array xSlice,
+                                              Array ySlice, Array zSlice, LegendScheme ls) throws InvalidRangeException {
         data = data.copyIfView();
         xa = xa.copyIfView();
         ya = ya.copyIfView();
@@ -9558,11 +9558,11 @@ public class GraphicFactory {
         ySlice = ySlice.copyIfView();
         zSlice = zSlice.copyIfView();
 
-        List<MeshGraphic> sgs = new ArrayList<>();
+        List<QuadMeshGraphic> sgs = new ArrayList<>();
 
         RectNearestInterpolator3D interpolator3D = new RectNearestInterpolator3D(xa, ya, za, data);
         Array r = interpolator3D.interpolate(xSlice, ySlice, zSlice);
-        MeshGraphic graphic = new MeshGraphic();
+        QuadMeshGraphic graphic = new QuadMeshGraphic();
         int[] shape = r.getShape();
         int colNum = shape[1];
         int rowNum = shape[0];
@@ -9925,49 +9925,6 @@ public class GraphicFactory {
         meshGraphic.setLegendScheme(ls);
 
         return meshGraphic;
-    }
-
-    /**
-     * Create model graphic
-     *
-     * @param faceIndices Vertex indices array
-     * @param x X coordinates array
-     * @param y Y coordinates array
-     * @param z Z coordinates array
-     * @param ls Legend scheme
-     * @return
-     */
-    public static Model model(Array faceIndices, Array x, Array y,
-                                            Array z, LegendScheme ls) {
-        Model model = new Model();
-        model.setTriangles(faceIndices, x, y, z);
-        model.setLegendScheme(ls);
-
-        return model;
-    }
-
-    /**
-     * Create model graphic
-     *
-     * @param faceIndices Vertex indices array
-     * @param x X coordinates array
-     * @param y Y coordinates array
-     * @param z Z coordinates array
-     * @param normal Normal array
-     * @param ls Legend scheme
-     * @return
-     */
-    public static Model model(Array faceIndices, Array x, Array y,
-                                            Array z, Array normal, LegendScheme ls) {
-        if (normal == null) {
-            return model(faceIndices, x, y, z, ls);
-        }
-
-        Model model = new Model();
-        model.setTriangles(faceIndices, x, y, z, normal);
-        model.setLegendScheme(ls);
-
-        return model;
     }
 
     /**

@@ -2,6 +2,7 @@ package org.meteoinfo.chart.graphic;
 
 import org.joml.Vector3f;
 import org.meteoinfo.chart.jogl.Transform;
+import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.geometry.colors.TransferFunction;
@@ -11,19 +12,18 @@ import org.meteoinfo.chart.transform.GeoTransform;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class MeshGraphic extends GraphicCollection3D {
-    private float[] vertexPosition;
-    private float[] vertexValue;
-    private float[] vertexColor;
-    private float[] vertexNormal;
-    private float[] vertexTexture;
-    private int[] vertexIndices;
-    private int rows;
-    private int columns;
-    private boolean faceInterp;
-    private boolean edgeInterp;
-    private BufferedImage image;
-    private boolean mesh;
+public abstract class MeshGraphic extends GraphicCollection3D {
+    protected float[] vertexPosition;
+    protected float[] vertexValue;
+    protected float[] vertexColor;
+    protected float[] vertexNormal;
+    protected float[] vertexTexture;
+    protected int[] vertexIndices;
+    protected boolean faceInterp;
+    protected boolean edgeInterp;
+    protected BufferedImage image;
+    protected boolean mesh;
+    protected boolean model;
 
     /**
      * Constructor
@@ -71,54 +71,6 @@ public class MeshGraphic extends GraphicCollection3D {
     }
 
     /**
-     * Set vertex position
-     * @param value Vertex position
-     * @param rows Row number
-     */
-    public void setVertexPosition(float[] value, int rows) {
-        this.setVertexPosition(value);
-
-        this.setRows(rows);
-        updateVertexIndices();
-    }
-
-    /**
-     * Get row number
-     * @return Row number
-     */
-    public int getRows() {
-        return this.rows;
-    }
-
-    /**
-     * Set row number
-     * @param value Row number
-     */
-    public void setRows(int value) {
-        this.rows = value;
-        this.columns = this.getVertexNumber() / value;
-        calculateNormalVectors(vertexPosition);
-    }
-
-    /**
-     * Get column number
-     * @return Column number
-     */
-    public int getColumns() {
-        return this.columns;
-    }
-
-    /**
-     * Set column number
-     * @param value Column number
-     */
-    public void setColumns(int value) {
-        this.columns = value;
-        this.rows = this.getVertexNumber() / value;
-        calculateNormalVectors(vertexPosition);
-    }
-
-    /**
      * Get vertex values
      * @return Vertex values
      */
@@ -143,6 +95,14 @@ public class MeshGraphic extends GraphicCollection3D {
     }
 
     /**
+     * Set vertex indices
+     * @param value Vertex indices
+     */
+    public void setVertexIndices(int[] value) {
+        this.vertexIndices = value;
+    }
+
+    /**
      * Get vertex color data
      * @return Vertex color data
      */
@@ -164,6 +124,14 @@ public class MeshGraphic extends GraphicCollection3D {
      */
     public float[] getVertexNormal() {
         return vertexNormal;
+    }
+
+    /**
+     * Set vertex normal
+     * @param value Vertex normal
+     */
+    public void setVertexNormal(float[] value) {
+        this.vertexNormal = value;
     }
 
     /**
@@ -259,8 +227,46 @@ public class MeshGraphic extends GraphicCollection3D {
      * Get face number
      * @return Face number
      */
-    public int getFaceNumber() {
-        return (rows - 1) * (columns - 1);
+    public abstract int getFaceNumber();
+
+
+    /**
+     * Get vertex
+     * @param vData Vertex array
+     * @param idx Vertex index
+     * @return Vertex
+     */
+    public Vector3f getVertex(float[] vData, int idx) {
+        return new Vector3f(vData[idx * 3], vData[idx * 3 + 1], vData[idx * 3 + 2]);
+    }
+
+    /**
+     * Get vertex
+     * @param idx Vertex index
+     * @return Vertex
+     */
+    public Vector3f getVertex(int idx) {
+        return getVertex(vertexPosition, idx);
+    }
+
+    /**
+     * Get extent
+     *
+     * @return The extent
+     */
+    @Override
+    public Extent getExtent() {
+        return extent;
+    }
+
+    /**
+     * Set extent
+     *
+     * @param value Extent
+     */
+    @Override
+    public void setExtent(Extent value) {
+        this.extent = value;
     }
 
     /**
@@ -292,29 +298,18 @@ public class MeshGraphic extends GraphicCollection3D {
         this.extent = new Extent3D(minX, maxX, minY, maxY, minZ, maxZ);
     }
 
-    /**
-     * Update vertex indices
-     */
-    public void updateVertexIndices() {
-        int n = (rows - 1) * (columns - 1) * 4;
-        vertexIndices = new int[n];
-        int idx, vIdx;
-        for (int i = 0; i < rows - 1; i++) {
-            for (int j = 0; j < columns - 1; j++) {
-                vIdx = i * columns + j;
-                idx = (i * (columns - 1) + j) * 4;
-                vertexIndices[idx] = vIdx;
-                vertexIndices[idx + 1] = vIdx + 1;
-                vertexIndices[idx + 2] = vIdx + 1 + columns;
-                vertexIndices[idx + 3] = vIdx + columns;
-            }
-        }
-    }
-
     @Override
     public void setLegendScheme(LegendScheme ls) {
         super.setLegendScheme(ls);
         updateVertexColor();
+    }
+
+    /**
+     * Only update legend scheme
+     * @param ls Legend scheme
+     */
+    public void updateLegendScheme(LegendScheme ls) {
+        this.legendScheme = ls;
     }
 
     /**
@@ -357,75 +352,13 @@ public class MeshGraphic extends GraphicCollection3D {
     /**
      * Update vertex texture data
      */
-    public void updateVertexTexture() {
-        vertexTexture = new float[getVertexNumber() * 2];
-        int idx;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                idx = (i * columns + j) * 2;
-                vertexTexture[idx] = (float) j / (columns - 1);
-                vertexTexture[idx + 1] = (float) i / (rows - 1);
-            }
-        }
-    }
-
-    /**
-     * Get vertex
-     * @param vData Vertex array
-     * @param row Row index
-     * @param col Column index
-     * @return Vertex
-     */
-    public Vector3f getVertex(float[] vData, int row, int col) {
-        int idx = (row * this.columns + col) * 3;
-        return new Vector3f(vData[idx], vData[idx + 1], vData[idx + 2]);
-    }
-
-    /**
-     * Get vertex
-     * @param row Row index
-     * @param col Column index
-     * @return Vertex
-     */
-    public Vector3f getVertex(int row, int col) {
-        return getVertex(this.vertexPosition, row, col);
-    }
+    public abstract void updateVertexTexture();
 
     /**
      * Calculate vertex normal vectors
      * @param vData Vertex position
      */
-    public void calculateNormalVectors(float[] vData) {
-        int n = this.getVertexNumber();
-        this.vertexNormal = new float[n * 3];
-        Vector3f v, left, right, up, down;
-        Vector3f normal, nLeftUp, nLeftDown, nRightUp, nRightDown;
-        int idx;
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                idx = (i * columns + j) * 3;
-                v = new Vector3f(vData[idx], vData[idx + 1], vData[idx + 2]);
-                left = j > 0 ? getVertex(vData, i, j - 1) : null;
-                right = j < columns - 1 ? getVertex(vData, i, j + 1) : null;
-                down = i > 0 ? getVertex(vData, i - 1, j) : null;
-                up = i < rows - 1 ? getVertex(vData, i + 1, j) : null;
-                nLeftUp = (left == null || up == null) ? new Vector3f() :
-                        left.sub(v, new Vector3f()).cross(up.sub(v, new Vector3f()));
-                nLeftDown = (left == null || down == null) ? new Vector3f() :
-                        down.sub(v, new Vector3f()).cross(left.sub(v, new Vector3f()));
-                nRightUp = (right == null || up == null) ? new Vector3f() :
-                        up.sub(v, new Vector3f()).cross(right.sub(v, new Vector3f()));
-                nRightDown = (right == null || down == null) ? new Vector3f() :
-                        right.sub(v, new Vector3f()).cross(down.sub(v, new Vector3f()));
-                normal = nLeftUp.add(nLeftDown).add(nRightUp).add(nRightDown).normalize();
-                normal.negate();
-
-                vertexNormal[idx] = normal.x;
-                vertexNormal[idx + 1] = normal.y;
-                vertexNormal[idx + 2] = normal.z;
-            }
-        }
-    }
+    public abstract void calculateNormalVectors(float[] vData);
 
     public Color getColor() {
         return Color.red;

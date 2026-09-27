@@ -12,7 +12,7 @@ from org.meteoinfo.geometry.legend import BreakTypes, BarBreak, LegendManage
 from org.meteoinfo.geo.layer import LayerTypes
 from org.meteoinfo.geo.io import GraphicUtil
 from org.meteoinfo.geometry.shape import ShapeTypes
-from org.meteoinfo.chart.graphic import Graphic, GraphicCollection
+from org.meteoinfo.chart.graphic import Graphic, GraphicCollection, ModelGraphic
 from org.meteoinfo.chart.jogl import GLPlot, GLForm, JOGLUtil, EarthGLPlot, MapGLPlot
 from org.meteoinfo.math.interpolate import InterpolationMethod
 from org.meteoinfo.image import ImageUtil
@@ -1633,15 +1633,24 @@ class Axes3DGL(Axes3D):
 
         if not image is None:
             graphics.setImage(image)
+
         if face_interp:
             graphics.setFaceInterp(face_interp)
+
         lighting = kwargs.pop('lighting', None)
         if not lighting is None:
             graphics.setUsingLight(lighting)
+
+        model = kwargs.pop('model', False)
+        if model:
+            graphics = ModelGraphic(graphics)
+
         visible = kwargs.pop('visible', True)
         if visible:
             self.add_graphic(graphics)
+
         return graphics
+
 
     def surfc(self, *args, **kwargs):
         """
@@ -1792,7 +1801,7 @@ class Axes3DGL(Axes3D):
         """
         return self.isosurface(*args, **kwargs)
 
-    def trisurf(self, T, x, y, z, normal=None, **kwargs):
+    def trisurf(self, T, x, y, z, normal=None, model=False, **kwargs):
         """
         Triangular surface plot.
 
@@ -1802,6 +1811,7 @@ class Axes3DGL(Axes3D):
         :param y: (*array*) Y coordinates array.
         :param z: (*array*) Z coordinates array.
         :param normal: (*array*) Normal array. Default is `None`.
+        :param model: (*bool*) Create model array or not. Default is `False`.
 
         :return: Triangle mesh graphic.
         """
@@ -1818,6 +1828,9 @@ class Axes3DGL(Axes3D):
         else:
             graphics = GraphicFactory.triSurface(T._array, x._array, y._array, z._array,
                                                  normal._array, ls)
+
+        if model:
+            graphics = ModelGraphic(graphics)
 
         visible = kwargs.pop('visible', True)
         if visible:
@@ -1847,10 +1860,12 @@ class Axes3DGL(Axes3D):
         plotutil.setlegendscheme(ls, **kwargs)
 
         if normal is None:
-            graphics = GraphicFactory.model(T._array, x._array, y._array, z._array, ls)
+            graphics = GraphicFactory.triSurface(T._array, x._array, y._array, z._array, ls)
         else:
-            graphics = GraphicFactory.model(T._array, x._array, y._array, z._array,
+            graphics = GraphicFactory.triSurface(T._array, x._array, y._array, z._array,
                                                  normal._array, ls)
+
+        graphics = ModelGraphic(graphics)
 
         location = kwargs.pop('location', None)
         if location is not None:

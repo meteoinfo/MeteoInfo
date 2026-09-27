@@ -7,12 +7,12 @@ import com.jogamp.opengl.util.GLBuffers;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import org.meteoinfo.chart.graphic.MeshGraphic;
+import org.meteoinfo.chart.graphic.QuadMeshGraphic;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
 import org.meteoinfo.geometry.legend.PolygonBreak;
 
-import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -20,16 +20,17 @@ import static com.jogamp.opengl.GL.*;
 
 public class MeshRender extends JOGLGraphicRender {
 
-    private MeshGraphic meshGraphic;
-    private IntBuffer vbo;
-    private IntBuffer vao;
-    private Program program;
-    private int sizePosition;
-    private int sizeNormal;
-    private int sizeColorTexture;
-    private int sizeIndices;
-    private Texture texture;
-    private int textureID;
+    protected MeshGraphic meshGraphic;
+    protected IntBuffer vbo;
+    protected IntBuffer vao;
+    protected Program program;
+    protected int sizePosition;
+    protected int sizeNormal;
+    protected int sizeColorTexture;
+    protected int sizeIndices;
+    protected Texture texture;
+    protected int textureID;
+    protected boolean quad = false;
 
     /**
      * Constructor
@@ -60,6 +61,7 @@ public class MeshRender extends JOGLGraphicRender {
         this(gl);
 
         this.meshGraphic = meshGraphic;
+        this.quad = meshGraphic instanceof QuadMeshGraphic ? true : false;
         setBufferData();
         if (meshGraphic.isUsingTexture()) {
             texture = AWTTextureIO.newTexture(gl.getGLProfile(), meshGraphic.getImage(), true);
@@ -73,9 +75,12 @@ public class MeshRender extends JOGLGraphicRender {
         vbo = GLBuffers.newDirectIntBuffer(2);
     }
 
-    private void setBufferData() {
-        float[] vertexData = meshGraphic.getVertexPosition();
-        FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexData);
+    protected void setBufferData() {
+        float[] vertexPosition = meshGraphic.getVertexPosition();
+        FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
+        if (meshGraphic.getVertexNormal() == null) {
+            meshGraphic.calculateNormalVectors(vertexPosition);
+        }
         FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(meshGraphic.getVertexNormal());
         sizePosition = vertexBuffer.capacity() * Float.BYTES;
         sizeNormal = normalBuffer.capacity() * Float.BYTES;
@@ -229,12 +234,22 @@ public class MeshRender extends JOGLGraphicRender {
                     gl.glBindTexture(GL_TEXTURE_2D, this.textureID);
                 }
 
-                if (meshGraphic.isFaceInterp())
-                    gl.glDrawElements(GL2.GL_QUADS, meshGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
-                else {
-                    gl.glShadeModel(GL2.GL_FLAT);
-                    gl.glDrawElements(GL2.GL_QUADS, meshGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
-                    gl.glShadeModel(GL2.GL_SMOOTH);
+                if (quad) {
+                    if (meshGraphic.isFaceInterp())
+                        gl.glDrawElements(GL2.GL_QUADS, meshGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
+                    else {
+                        gl.glShadeModel(GL2.GL_FLAT);
+                        gl.glDrawElements(GL2.GL_QUADS, meshGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
+                        gl.glShadeModel(GL2.GL_SMOOTH);
+                    }
+                } else {
+                    if (meshGraphic.isFaceInterp()) {
+                        gl.glDrawElements(GL2.GL_TRIANGLES, meshGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
+                    } else {
+                        gl.glShadeModel(GL2.GL_FLAT);
+                        gl.glDrawElements(GL2.GL_TRIANGLES, meshGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
+                        gl.glShadeModel(GL2.GL_SMOOTH);
+                    }
                 }
             }
             if (pb.isDrawOutline()) {
@@ -249,7 +264,11 @@ public class MeshRender extends JOGLGraphicRender {
                     gl.glColor4fv(rgba, 0);
                 }
                 gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_LINE);
-                gl.glDrawElements(GL2.GL_QUADS, meshGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
+                if (quad) {
+                    gl.glDrawElements(GL2.GL_QUADS, meshGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
+                } else {
+                    gl.glDrawElements(GL.GL_TRIANGLES, meshGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
+                }
                 gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
                 if (lightEnabled) {
                     this.lighting.start(gl);

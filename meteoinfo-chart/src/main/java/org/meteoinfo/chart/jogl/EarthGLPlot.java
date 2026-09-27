@@ -9,7 +9,7 @@ import org.meteoinfo.chart.ChartColorBar;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.geo.ProjectUtil;
 import org.meteoinfo.chart.graphic.GraphicFactory;
-import org.meteoinfo.chart.graphic.MeshGraphic;
+import org.meteoinfo.chart.graphic.QuadMeshGraphic;
 import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.chart.graphic.Graphic;
@@ -22,7 +22,6 @@ import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
-import org.meteoinfo.projection.ProjectionUtil;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -34,7 +33,7 @@ import java.util.List;
 public class EarthGLPlot extends GLPlot {
     // <editor-fold desc="Variables">
     private float radius = 6371.f;
-    private MeshGraphic surface;
+    private QuadMeshGraphic surface;
     private Extent3D dataExtent;
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -176,7 +175,7 @@ public class EarthGLPlot extends GLPlot {
      * Set earth surface
      * @param n The sphere has n*n faces
      */
-    public MeshGraphic earthSurface(int n) {
+    public QuadMeshGraphic earthSurface(int n) {
         Array lon = ArrayUtil.lineSpace(-180.f, 180.f, n + 1, true);
         Array lat = ArrayUtil.lineSpace(-90.f, 90.f, n + 1, true);
         lat = lat.flip(0).copy();

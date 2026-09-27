@@ -18,23 +18,10 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public class TriMeshGraphic extends GraphicCollection3D {
+public class TriMeshGraphic extends MeshGraphic {
 
     protected Logger logger = LoggerFactory.getLogger("TriMeshGraphic");
-    protected float[] vertexPosition;
-    protected float[] vertexValue;
-    protected float[] vertexColor;
-    protected float[] vertexNormal;
-    protected int[] vertexIndices;
-    //private LinkedHashMap<Integer, List<Integer>> triangleMap;
-    protected boolean faceInterp;
-    protected boolean edgeInterp;
-    protected boolean mesh;
     protected boolean normalLoaded = false;
-    protected Extent extent;
-    protected LegendScheme legendScheme;
-    protected boolean singleLegend = true;
-    protected ColorBreak legendBreak;
 
     /**
      * Constructor
@@ -45,163 +32,8 @@ public class TriMeshGraphic extends GraphicCollection3D {
         faceInterp = true;
         edgeInterp = false;
         mesh = false;
-    }
-
-    /**
-     * Get vertex position
-     * @return Vertex position
-     */
-    public float[] getVertexPosition() {
-        return vertexPosition;
-    }
-
-    /**
-     * Get vertex position
-     * @param transform The transform
-     * @return Vertex position
-     */
-    public float[] getVertexPosition(Transform transform) {
-        int n = vertexPosition.length;
-        float[] vData = new float[n];
-        for (int i = 0; i < n; i+=3) {
-            vData[i] = transform.transform_x(vertexPosition[i]);
-            vData[i + 1] = transform.transform_y(vertexPosition[i + 1]);
-            vData[i + 2] = transform.transform_z(vertexPosition[i + 2]);
-        }
-
-        return vData;
-    }
-
-    /**
-     * Set vertex position
-     * @param value Vertex position
-     */
-    public void setVertexPosition(float[] value) {
-        vertexPosition = value;
-        updateExtent();
-    }
-
-    /**
-     * Get vertex values
-     * @return Vertex values
-     */
-    public float[] getVertexValue() {
-        return this.vertexValue;
-    }
-
-    /**
-     * Set vertex values
-     * @param value Vertex values
-     */
-    public void setVertexValue(float[] value) {
-        this.vertexValue = value;
-    }
-
-    /**
-     * Get vertex indices
-     * @return Vertex indices
-     */
-    public int[] getVertexIndices() {
-        return this.vertexIndices;
-    }
-
-    /**
-     * Set vertex indices
-     * @param value Vertex indices
-     */
-    public void setVertexIndices(int[] value) {
-        this.vertexIndices = value;
-    }
-
-    /**
-     * Get vertex color data
-     * @return Vertex color data
-     */
-    public float[] getVertexColor() {
-        return vertexColor;
-    }
-
-    /**
-     * Get vertex normal
-     * @return Vertex normal
-     */
-    public float[] getVertexNormal() {
-        return vertexNormal;
-    }
-
-    /**
-     * Set vertex normal
-     * @param value Vertex normal
-     */
-    public void setVertexNormal(float[] value) {
-        this.vertexNormal = value;
-    }
-
-    /**
-     * Get whether using interpolated coloring for each face
-     * @return Boolean
-     */
-    public boolean isFaceInterp() {
-        return this.faceInterp;
-    }
-
-    /**
-     * Set whether using interpolated coloring for each face
-     * @param value Boolean
-     */
-    public void setFaceInterp(boolean value) {
-        this.faceInterp = value;
-    }
-
-    /**
-     * Get whether using interpolated coloring for each edge
-     * @return Boolean
-     */
-    public boolean isEdgeInterp() {
-        return this.edgeInterp;
-    }
-
-    /**
-     * Set whether using interpolated coloring for each edge
-     * @param value Boolean
-     */
-    public void setEdgeInterp(boolean value) {
-        this.edgeInterp = value;
-    }
-
-    /**
-     * Get if is mesh
-     * @return Boolean
-     */
-    public boolean isMesh() {
-        return this.mesh;
-    }
-
-    /**
-     * Set if is mesh
-     * @param value Boolean
-     */
-    public void setMesh(boolean value) {
-        this.mesh = value;
-    }
-
-    /**
-     * Get vertex
-     * @param vData Vertex array
-     * @param idx Vertex index
-     * @return Vertex
-     */
-    public Vector3f getVertex(float[] vData, int idx) {
-        return new Vector3f(vData[idx * 3], vData[idx * 3 + 1], vData[idx * 3 + 2]);
-    }
-
-    /**
-     * Get vertex
-     * @param idx Vertex index
-     * @return Vertex
-     */
-    public Vector3f getVertex(int idx) {
-        return getVertex(vertexPosition, idx);
+        normalLoaded = false;
+        singleLegend = true;
     }
 
     /**
@@ -352,12 +184,6 @@ public class TriMeshGraphic extends GraphicCollection3D {
         int vertexIdx = 0;
         int nFace = faceIndices.getShape()[0];
         this.vertexIndices = (int[]) faceIndices.getStorage();
-        /*for (int i = 0; i < nFace; i++) {
-            for (int j = 0; j < 3; j++) {
-                vertexIndices[vertexIdx] = faceIndices.getInt(i * 3 + j) - 1;
-                vertexIdx += 1;
-            }
-        }*/
 
         logger.info("Set vertex position and normal...");
         int n = x.getShape()[0];
@@ -391,8 +217,6 @@ public class TriMeshGraphic extends GraphicCollection3D {
         this.extent = new Extent3D(minX, maxX, minY, maxY, minZ, maxZ);
 
         this.normalLoaded = true;
-
-        //updateExtent();
 
         logger.info("Set triangles finished!");
     }
@@ -476,94 +300,9 @@ public class TriMeshGraphic extends GraphicCollection3D {
         }
     }
 
-    /**
-     * Get extent
-     *
-     * @return The extent
-     */
     @Override
-    public Extent getExtent() {
-        return extent;
-    }
+    public void updateVertexTexture() {
 
-    /**
-     * Set extent
-     *
-     * @param value Extent
-     */
-    @Override
-    public void setExtent(Extent value) {
-        this.extent = value;
-    }
-
-    /**
-     * Get legend scheme
-     * @return Legend scheme
-     */
-    public LegendScheme getLegendScheme() {
-        return this.legendScheme;
-    }
-
-    /**
-     * Set legend scheme
-     * @param ls Legend scheme
-     */
-    public void setLegendScheme(LegendScheme ls) {
-        this.legendScheme = ls;
-        updateVertexColor();
-    }
-
-    /**
-     * Get is single legend or not
-     * @return Boolean
-     */
-    public boolean isSingleLegend() {
-        return this.singleLegend;
-    }
-
-    /**
-     * Set single legend or not
-     * @param value Boolean
-     */
-    public void setSingleLegend(boolean value) {
-        this.singleLegend = value;
-    }
-
-    /**
-     * Get legend break
-     *
-     * @return Legend break
-     */
-    public ColorBreak getLegendBreak() {
-        return this.legendBreak;
-    }
-
-    /**
-     * Set legend break
-     *
-     * @param value Legend break
-     */
-    public void setLegendBreak(ColorBreak value) {
-        this.legendBreak = value;
-    }
-
-    /**
-     * Set transfer function
-     * @param transferFunction Transfer function
-     */
-    public void setTransferFunction(TransferFunction transferFunction) {
-        if (vertexValue != null) {
-            vertexColor = new float[getVertexNumber() * 4];
-            float[] color;
-            for (int i = 0; i < vertexValue.length; i++) {
-                color = transferFunction.getColor(vertexValue[i]).getRGBComponents(null);
-                System.arraycopy(color, 0, vertexColor, i * 4, 4);
-            }
-        }
-
-        LegendScheme ls = LegendManage.createLegendScheme(transferFunction);
-        this.legendScheme = ls;
-        this.setSingleLegend(false);
     }
 
     /**
@@ -596,11 +335,8 @@ public class TriMeshGraphic extends GraphicCollection3D {
         return vertexPosition.length / 3;
     }
 
-    /**
-     * Get triangle number
-     * @return Triangle number
-     */
-    public int getTriangleNumber() {
+    @Override
+    public int getFaceNumber() {
         return this.vertexIndices.length / 3;
     }
 
@@ -619,31 +355,6 @@ public class TriMeshGraphic extends GraphicCollection3D {
     public void setColor(Color color) {
         this.legendScheme.getLegendBreak(0).setColor(color);
         updateVertexColor();
-    }
-
-    public void updateExtent() {
-        float x, y, z;
-        float minX = Float.MAX_VALUE, maxX = Float.MIN_VALUE, minY = minX, maxY = maxX,
-                minZ = minX, maxZ = maxX;
-        for (int i = 0; i < vertexPosition.length; i+=3) {
-            x = vertexPosition[i];
-            y = vertexPosition[i + 1];
-            z = vertexPosition[i + 2];
-            if (minX > x)
-                minX = x;
-            if (maxX < x)
-                maxX = x;
-            if (minY > y)
-                minY = y;
-            if (maxY < y)
-                maxY = y;
-            if (minZ > z)
-                minZ = z;
-            if (maxZ < z)
-                maxZ = z;
-        }
-
-        this.extent = new Extent3D(minX, maxX, minY, maxY, minZ, maxZ);
     }
 
     /**
@@ -675,7 +386,7 @@ public class TriMeshGraphic extends GraphicCollection3D {
      * @return All triangles
      */
     public List<Triangle3D> getTriangles(float[] vData) {
-        int n = getTriangleNumber();
+        int n = getFaceNumber();
         List<Triangle3D> triangles = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             triangles.add(getTriangle(i));
@@ -691,36 +402,6 @@ public class TriMeshGraphic extends GraphicCollection3D {
     public List<Triangle3D> getTriangles() {
         return getTriangles(this.vertexPosition);
     }
-
-    /**
-     * Given the vertex coordinates of a shape this function calculates the
-     * normal vector coordinates.
-     *//*
-    public void calculateNormalVectors_bak(float[] vData) {
-        if (this.normalLoaded)
-            return;
-
-        List<Triangle3D> triangles = getTriangles(vData);
-        int nVertex = getVertexNumber();
-        vertexNormal = new float[vData.length];
-        Vector3f vertex, normal;
-        List<Integer> indexes;
-        Triangle3D triangle;
-        for (int i = 0; i < nVertex; i++) {
-            vertex = getVertex(i);
-            indexes = triangleMap.get(i);
-            normal = new Vector3f();
-            for (int idx : indexes) {
-                triangle = triangles.get(idx);
-                normal.add(triangle.getNormal(vertex));
-            }
-            normal.normalize();
-            normal.negate();
-            vertexNormal[i * 3] = normal.x;
-            vertexNormal[i * 3 + 1] = normal.y;
-            vertexNormal[i * 3 + 2] = normal.z;
-        }
-    }*/
 
     /**
      * Given the vertex coordinates of a shape this function calculates the

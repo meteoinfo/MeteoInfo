@@ -825,6 +825,46 @@ class DataFrame(object):
             r = self._dataframe.dropNAAll(row)
         return DataFrame(dataframe=r)
 
+    def drop_duplicates(self, subset=None, keep='first', inplace=False):
+        """
+        Return DataFrame with duplicate rows removed.
+
+        :param subset: (*string or list of strings*) Column label or sequence of labels to consider
+            for identifying duplicates. If None, use all columns.
+        :param keep: (*str*) {'first', 'last', False}, default 'first'.
+            - 'first' : Drop duplicates except for the first occurrence.
+            - 'last' : Drop duplicates except for the last occurrence.
+            - False : Drop all duplicates.
+        :param inplace: (*bool*) If True, do operation inplace and return None.
+
+        :returns: (*DataFrame*) DataFrame with duplicates removed or None if inplace=True.
+        """
+        # Normalize keep parameter: Python False -> Java string "false"
+        if keep is False:
+            jkeep = "false"
+        elif keep in ('first', 'last'):
+            jkeep = keep
+        else:
+            raise ValueError("keep must be 'first', 'last', or False")
+
+        # Normalize subset to Java String array
+        if subset is None:
+            jsubset = None
+        elif isinstance(subset, basestring):
+            jsubset = [subset]
+        else:
+            jsubset = list(subset)
+
+        # Call Java backend
+        result_df = self._dataframe.dropDuplicates(jsubset, jkeep)
+
+        if inplace:
+            self._dataframe = result_df
+            self._index = Index.factory(index=result_df.getIndex())
+            return None
+
+        return DataFrame(dataframe=result_df)
+
     def replace(self, to_replace, value):
         """
         Replace values given in to_replace with value.

@@ -1170,22 +1170,20 @@ class DimArray(NDArray):
         
         :returns: (*NDArray*) Projected array
         """
-        yy = self.dims[self.ndim - 2].getDimValue()
-        xx = self.dims[self.ndim - 1].getDimValue()
+        yy = self.dims[self.ndim - 2].values
+        xx = self.dims[self.ndim - 1].values
         if toproj is None:
             toproj = self.proj
         
         if x is None or y is None:
-            pr = Reproject.reproject(self._array, xx, yy, self.proj, toproj)
+            pr = Reproject.reproject(self._array, xx._array, yy._array, self.proj, toproj)
             r = pr[0]
             x = pr[1]
             y = pr[2]
-            dims = self.dims
-            ydim = Dimension(DimensionType.Y)
-            ydim.setDimValues(NDArray(y).aslist())
+            dims = list(self.dims)
+            ydim = Dimension('y', NDArray(y), DimensionType.Y)
             dims[-2] = ydim
-            xdim = Dimension(DimensionType.X)
-            xdim.setDimValues(NDArray(x).aslist())    
+            xdim = Dimension('x', NDArray(x), DimensionType.X)
             dims[-1] = xdim
             rr = DimArray(NDArray(r), dims, toproj)
             return rr
@@ -1225,7 +1223,7 @@ class DimArray(NDArray):
         for i in range(0, len(self.dims)):
             if i == dimidx:
                 ndim = Dimension()
-                ndim.setDimValues(dimr)
+                ndim.values = dimr
                 rdims.append(ndim)
             else:
                 rdims.append(self.dims[i])

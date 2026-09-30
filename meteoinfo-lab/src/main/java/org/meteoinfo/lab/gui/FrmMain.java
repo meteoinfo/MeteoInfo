@@ -325,7 +325,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
                         public void actionPerformed(ActionEvent e) {
                             if (finalFile != null) {
                                 //FrmMain.this.consoleDock.execfile(finalFile.getAbsolutePath());
-                                FrmMain.this.consoleDock.execJythonFile(finalFile.getAbsolutePath());
+                                FrmMain.this.consoleDock.runJythonFile(finalFile.getAbsolutePath());
                             }
                         }
                     });
@@ -352,38 +352,44 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
         System.setOut(this.consoleDock.getConsole().getOut());
         System.setErr(this.consoleDock.getConsole().getOut());
 
-        this.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent ke) {
-            }
+        // Replace the broken JFrame KeyListener with a global dispatcher.
+        // JFrame KeyListeners do NOT fire when child components (like JConsole)
+        // have focus. KeyboardFocusManager intercepts ALL key events in the window
+        // regardless of which component currently holds focus.
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .addKeyEventDispatcher(new KeyEventDispatcher() {
+                    @Override
+                    public boolean dispatchKeyEvent(KeyEvent e) {
+                        // Only intercept Ctrl+C on KEY_PRESSED to avoid double-firing
+                        if (e.getID() == KeyEvent.KEY_PRESSED
+                                && e.getKeyCode() == KeyEvent.VK_C
+                                && e.isControlDown()) {
 
-            @Override
-            public void keyPressed(KeyEvent ke) {
-                switch (ke.getKeyCode()) {
-                    // Control-C
-                    case (KeyEvent.VK_C):
-                        if (ke.isControlDown()) {
-                            /*SwingWorker myWorker = consoleDock.getSwingWorker();
-                            if (myWorker != null && !myWorker.isCancelled() && !myWorker.isDone()) {
-                                myWorker.cancel(true);
-                                myWorker = null;
-                            }*/
+                            // Use cooperative interrupt instead of deprecated Thread.stop().
+                            // Thread.stop() corrupts Jython interpreter state, leaks locks,
+                            // and can crash the JVM. interrupt() sets a flag that Jython's
+                            // execution loop checks between bytecodes, allowing clean shutdown.
+                            Thread workerThread = consoleDock.getMyThread();
+                            if (workerThread != null && workerThread.isAlive()) {
+                                workerThread.interrupt();
 
-                            Thread myThread = consoleDock.getMyThread();
-                            if (myThread != null) {
-                                myThread.stop();
-                                myThread = null;
+                                // Also cancel SwingWorker if one is active
+                                SwingWorker<?, ?> sw = consoleDock.getSwingWorker();
+                                if (sw != null && !sw.isDone()) {
+                                    sw.cancel(true);
+                                }
+
+                                // Visual feedback so the user knows Ctrl+C was received
+                                consoleDock.getConsole().print("^C\n", Color.red);
                             }
+
+                            // Consume the event to prevent it from being typed into the console
+                            e.consume();
+                            return true;
                         }
-                        break;
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent ke) {
-            }
-
-        });
+                        return false; // Let all other keys pass through normally
+                    }
+                });
     }
 
     /**
@@ -991,7 +997,7 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
             }
         } else {
             //this.consoleDock.execfile(te.getFileName());
-            this.consoleDock.execJythonFile(te.getFileName());
+            this.consoleDock.runJythonFile(te.getFileName());
         }
     }//GEN-LAST:event_jButton_RunScriptActionPerformed
 

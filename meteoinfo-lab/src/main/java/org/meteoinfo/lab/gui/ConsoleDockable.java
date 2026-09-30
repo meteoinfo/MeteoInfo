@@ -14,6 +14,7 @@ import org.meteoinfo.console.JConsole;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
@@ -356,29 +357,52 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                     SwingUtilities.invokeLater(() ->
                             console.print(errorText, consoleColors.getErrorColor())
                     );
-                    interp.fireConsoleExecEvent();
                 }
             } finally {
-                SwingUtilities.invokeLater(() -> {
-                    // Only print prompt on normal completion.
-                    // When interrupted, safeExec already printed "^C" / "KeyboardInterrupt".
-                    if (!interrupted[0]) {
-                        console.print(">>> ", consoleColors.getPromptColor());
-                    }
+                // 1. Flush Jython's internal Python-level buffers into the Java pipe
+                try {
+                    interp.exec("import sys; sys.stdout.flush(); sys.stderr.flush()");
+                } catch (Exception ignored) {}
 
-                    // Always reset input attributes regardless of interrupt status
-                    MutableAttributeSet cmdAttr = new SimpleAttributeSet();
-                    StyleConstants.setForeground(cmdAttr, consoleColors.getCommandColor());
-                    Font f = console.getTextPane().getFont();
-                    StyleConstants.setFontFamily(cmdAttr, f.getFamily());
-                    StyleConstants.setFontSize(cmdAttr, f.getSize());
-                    console.getTextPane().setCharacterAttributes(cmdAttr, true);
+                // 2. ALWAYS restore interactive state
+                try {
+                    safeExec("mipylib.plotlib.miplot.set_interactive(True)");
+                } catch (Exception ignored) {}
 
-                    interp.exec("mipylib.plotlib.miplot.isinteractive = True");
-                    parent.getProgressBar().setVisible(false);
-                });
+                // 3. Block until the inPipeWatcher thread has read all
+                // remaining bytes from the pipe AND the EDT has rendered them.
+                console.awaitPipeDrain();
 
-                // Clear thread reference to prevent stale interrupts
+                // 4. Print the prompt and reset UI state
+                try {
+                    SwingUtilities.invokeAndWait(() -> {
+                        // Use printPrompt to avoid treating ">>>" as editable command history
+                        console.printPrompt(">>> ", consoleColors.getPromptColor());
+
+                        MutableAttributeSet cmdAttr = new SimpleAttributeSet();
+                        StyleConstants.setForeground(cmdAttr, consoleColors.getCommandColor());
+                        Font f = console.getTextPane().getFont();
+                        StyleConstants.setFontFamily(cmdAttr, f.getFamily());
+                        StyleConstants.setFontSize(cmdAttr, f.getSize());
+                        console.getTextPane().setCharacterAttributes(cmdAttr, true);
+
+                        IChartPanel cp = parent.getFigureDock().getCurrentFigure();
+                        if (cp != null) {
+                            cp.paintGraphics();
+                        }
+                        parent.getProgressBar().setVisible(false);
+                    });
+                } catch (Exception e) {
+                    Logger.getLogger(ConsoleDockable.class.getName()).log(Level.WARNING,
+                            "Prompt sync failed", e);
+                    SwingUtilities.invokeLater(() -> {
+                        if (!interrupted[0]) {
+                            console.print(">>> ", consoleColors.getPromptColor());
+                        }
+                        parent.getProgressBar().setVisible(false);
+                    });
+                }
+
                 myThread = null;
             }
         }, "Jython-RunCommand");
@@ -424,30 +448,51 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                         );
                     }
                 } finally {
-                    // ALWAYS restore state and clear thread reference
+                    // 1. Flush Jython's internal Python-level buffers into the Java pipe
+                    try {
+                        interp.exec("import sys; sys.stdout.flush(); sys.stderr.flush()");
+                    } catch (Exception ignored) {}
+
+                    // 2. ALWAYS restore interactive state
                     try {
                         safeExec("mipylib.plotlib.miplot.set_interactive(True)");
                     } catch (Exception ignored) {}
 
-                    SwingUtilities.invokeLater(() -> {
-                        if (interrupted[0]) {
-                            console.print(">>> ", consoleColors.getPromptColor());
-                        }
-                        MutableAttributeSet cmdAttr = new SimpleAttributeSet();
-                        StyleConstants.setForeground(cmdAttr, consoleColors.getCommandColor());
-                        Font f = console.getTextPane().getFont();
-                        StyleConstants.setFontFamily(cmdAttr, f.getFamily());
-                        StyleConstants.setFontSize(cmdAttr, f.getSize());
-                        console.getTextPane().setCharacterAttributes(cmdAttr, true);
+                    // 3. Block until the inPipeWatcher thread has read all
+                    // remaining bytes from the pipe AND the EDT has rendered them.
+                    console.awaitPipeDrain();
 
-                        IChartPanel cp = parent.getFigureDock().getCurrentFigure();
-                        if (cp != null) {
-                            cp.paintGraphics();
-                        }
-                        parent.getProgressBar().setVisible(false);
-                    });
+                    // 4. Print the prompt and reset UI state
+                    try {
+                        SwingUtilities.invokeAndWait(() -> {
+                            // Use printPrompt to avoid treating ">>>" as editable command history
+                            console.printPrompt(">>> ", consoleColors.getPromptColor());
 
-                    myThread = null;  // Clear reference to prevent stale interrupts
+                            MutableAttributeSet cmdAttr = new SimpleAttributeSet();
+                            StyleConstants.setForeground(cmdAttr, consoleColors.getCommandColor());
+                            Font f = console.getTextPane().getFont();
+                            StyleConstants.setFontFamily(cmdAttr, f.getFamily());
+                            StyleConstants.setFontSize(cmdAttr, f.getSize());
+                            console.getTextPane().setCharacterAttributes(cmdAttr, true);
+
+                            IChartPanel cp = parent.getFigureDock().getCurrentFigure();
+                            if (cp != null) {
+                                cp.paintGraphics();
+                            }
+                            parent.getProgressBar().setVisible(false);
+                        });
+                    } catch (Exception e) {
+                        Logger.getLogger(ConsoleDockable.class.getName()).log(Level.WARNING,
+                                "Prompt sync failed", e);
+                        SwingUtilities.invokeLater(() -> {
+                            if (!interrupted[0]) {
+                                console.print(">>> ", consoleColors.getPromptColor());
+                            }
+                            parent.getProgressBar().setVisible(false);
+                        });
+                    }
+
+                    myThread = null;
                 }
             }
         }, "Jython-ExecFile");
@@ -492,26 +537,49 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                         );
                     }
                 } finally {
+                    // 1. Flush Jython's internal Python-level buffers into the Java pipe
+                    try {
+                        interp.exec("import sys; sys.stdout.flush(); sys.stderr.flush()");
+                    } catch (Exception ignored) {}
+
+                    // 2. ALWAYS restore interactive state
                     try {
                         safeExec("mipylib.plotlib.miplot.set_interactive(True)");
                     } catch (Exception ignored) {}
 
-                    SwingUtilities.invokeLater(() -> {
-                        IChartPanel cp = parent.getFigureDock().getCurrentFigure();
-                        if (cp != null) {
-                            cp.paintGraphics();
-                        }
-                        if (interrupted[0]) {
-                            console.print(">>> ", consoleColors.getPromptColor());
-                        }
-                        MutableAttributeSet cmdAttr = new SimpleAttributeSet();
-                        StyleConstants.setForeground(cmdAttr, consoleColors.getCommandColor());
-                        Font f = console.getTextPane().getFont();
-                        StyleConstants.setFontFamily(cmdAttr, f.getFamily());
-                        StyleConstants.setFontSize(cmdAttr, f.getSize());
-                        console.getTextPane().setCharacterAttributes(cmdAttr, true);
-                        parent.getProgressBar().setVisible(false);
-                    });
+                    // 3. [FIX] Block until the inPipeWatcher thread has read all
+                    // remaining bytes from the pipe AND the EDT has rendered them.
+                    console.awaitPipeDrain();
+
+                    // 4. Print the prompt and reset UI state
+                    try {
+                        SwingUtilities.invokeAndWait(() -> {
+                            // Use printPrompt to avoid treating ">>>" as editable command history
+                            console.printPrompt(">>> ", consoleColors.getPromptColor());
+
+                            MutableAttributeSet cmdAttr = new SimpleAttributeSet();
+                            StyleConstants.setForeground(cmdAttr, consoleColors.getCommandColor());
+                            Font f = console.getTextPane().getFont();
+                            StyleConstants.setFontFamily(cmdAttr, f.getFamily());
+                            StyleConstants.setFontSize(cmdAttr, f.getSize());
+                            console.getTextPane().setCharacterAttributes(cmdAttr, true);
+
+                            IChartPanel cp = parent.getFigureDock().getCurrentFigure();
+                            if (cp != null) {
+                                cp.paintGraphics();
+                            }
+                            parent.getProgressBar().setVisible(false);
+                        });
+                    } catch (Exception e) {
+                        Logger.getLogger(ConsoleDockable.class.getName()).log(Level.WARNING,
+                                "Prompt sync failed", e);
+                        SwingUtilities.invokeLater(() -> {
+                            if (!interrupted[0]) {
+                                console.print(">>> ", consoleColors.getPromptColor());
+                            }
+                            parent.getProgressBar().setVisible(false);
+                        });
+                    }
 
                     myThread = null;
                 }

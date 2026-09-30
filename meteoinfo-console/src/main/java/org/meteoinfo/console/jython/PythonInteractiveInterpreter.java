@@ -166,7 +166,7 @@ public class PythonInteractiveInterpreter extends InteractiveConsole implements 
         this.cflags.source_is_utf8 = false;
         super.execfile(fn);
         this.cflags.source_is_utf8 = true;
-        this.fireConsoleExecEvent();
+        //this.fireConsoleExecEvent();
     }
 
     public void execfile_(String fn) {
@@ -185,6 +185,9 @@ public class PythonInteractiveInterpreter extends InteractiveConsole implements 
 
     public void fireConsoleExecEvent() {
         fireConsoleExecEvent(new ConsoleExecEvent(this));
+
+        this.console.awaitPipeDrain();
+
         this.console.print(">>> ", this.consoleColors.getPromptColor());
         this.console.setStyle(this.consoleColors.getCommandColor());
         this.console.setForeground(this.consoleColors.getCommandColor());

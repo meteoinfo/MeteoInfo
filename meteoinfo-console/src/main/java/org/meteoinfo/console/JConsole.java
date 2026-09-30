@@ -1186,6 +1186,65 @@ public class JConsole extends JScrollPane
     }
 
     /**
+     * Blocks the calling thread until all data currently sitting in the
+     * input pipe buffer has been read by the inPipeWatcher thread AND
+     * rendered on the EDT.
+     *
+     * MUST be called from a background thread (e.g., Jython-ExecFile).
+     * Calling this from the EDT will cause a deadlock.
+     */
+    public void awaitPipeDrain() {
+        if (SwingUtilities.isEventDispatchThread()) {
+            // Cannot block EDT, and inPipeWatcher runs independently anyway
+            return;
+        }
+
+        // 1. Give the inPipeWatcher thread a moment to read any remaining
+        // bytes sitting in the PipedInputStream buffer.
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return;
+        }
+
+        // 2. Post a dummy task to the EDT using invokeAndWait.
+        // Because inPipeWatcher uses invokeAndWait() for every chunk it reads,
+        // and invokeAndWait tasks are processed sequentially by the EDT,
+        // this dummy task will ONLY execute after all previously queued
+        // text rendering tasks from the pipe have completed.
+        try {
+            SwingUtilities.invokeAndWait(() -> {
+                // No-op: just waiting for the EDT queue to drain
+            });
+        } catch (InterruptedException | InvocationTargetException e) {
+            // Ignore
+        }
+    }
+
+    /**
+     * Prints text synchronously without altering the cmdStart boundary.
+     * Used for printing prompts after script execution.
+     */
+    public void printPrompt(final String text, final Color color) {
+        invokeAndWait(() -> {
+            MutableAttributeSet attr = new SimpleAttributeSet();
+            StyleConstants.setForeground(attr, color);
+            Font f = this.text.getFont();
+            StyleConstants.setFontFamily(attr, f.getFamily());
+            StyleConstants.setFontSize(attr, f.getSize());
+
+            try {
+                doc.insertString(doc.getLength(), text, attr);
+                resetCommandStart();
+                this.text.setCaretPosition(cmdStart);
+            } catch (BadLocationException e) {
+                append(text);
+            }
+        });
+    }
+
+    /**
      * The overridden read method in this class will not throw "Broken pipe"
      * IOExceptions; It will simply wait for new writers and data. This is used
      * by the JConsole internal read thread to allow writers in different (and

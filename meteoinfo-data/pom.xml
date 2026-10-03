@@ -15,7 +15,7 @@
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
-        <netcdf.version>5.10.0</netcdf.version>
+        <netcdf.version>5.11.0</netcdf.version>
     </properties>
 
     <repositories>

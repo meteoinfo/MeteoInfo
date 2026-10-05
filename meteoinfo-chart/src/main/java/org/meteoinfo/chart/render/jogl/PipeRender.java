@@ -15,7 +15,7 @@ import org.meteoinfo.chart.graphic.pipe.Pipe;
 import org.meteoinfo.chart.graphic.pipe.PipeShape;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.shape.PolylineZShape;
 import org.meteoinfo.math.Matrix4f;
 

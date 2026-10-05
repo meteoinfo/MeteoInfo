@@ -25,7 +25,9 @@ import org.locationtech.jts.operation.polygonize.Polygonizer;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
 import org.meteoinfo.common.Extent;
+import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 
 /**
@@ -36,11 +38,11 @@ import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 public abstract class Shape implements Cloneable{
     // <editor-fold desc="Variables">
 
-    protected List<? extends PointD> points;
+    protected List<PointZ> points;
     protected boolean visible;
     protected boolean selected;
     private boolean editing;
-    protected Extent extent = new Extent();
+    protected Extent3D extent = new Extent3D();
     protected int legendIndex = 0;
     protected double value;
 
@@ -116,7 +118,7 @@ public abstract class Shape implements Cloneable{
      * Get points
      * @return The points
      */
-    public List<? extends PointD> getPoints() {
+    public List<PointZ> getPoints() {
         return this.points;
     }
 
@@ -125,7 +127,7 @@ public abstract class Shape implements Cloneable{
      *
      * @param points point list
      */
-    public void setPoints(List<? extends PointD> points) {
+    public void setPoints(List<PointZ> points) {
         this.points = points;
         this.updateExtent();
     }
@@ -171,7 +173,7 @@ public abstract class Shape implements Cloneable{
      *
      * @return extent Extent
      */
-    public Extent getExtent() {
+    public Extent3D getExtent() {
         return extent;
     }
 
@@ -180,8 +182,17 @@ public abstract class Shape implements Cloneable{
      *
      * @param aExtent Extent
      */
-    public void setExtent(Extent aExtent) {
+    public void setExtent(Extent3D aExtent) {
         extent = aExtent;
+    }
+
+    /**
+     * Set extent
+     *
+     * @param aExtent Extent
+     */
+    public void setExtent(Extent aExtent) {
+        extent = aExtent.to3D();
     }
 
     /**
@@ -225,7 +236,7 @@ public abstract class Shape implements Cloneable{
      */
     public void updateExtent() {
         if (this.points != null) {
-            this.extent = GeometryUtil.getPointsExtent(points);
+            this.extent = (Extent3D) GeometryUtil.getPointsExtent(points);
         }
     }
 
@@ -250,7 +261,7 @@ public abstract class Shape implements Cloneable{
      * @param vIdx Vertice index
      * @param vertice The vertice
      */
-    public void addVertice(int vIdx, PointD vertice){        
+    public void addVertice(int vIdx, PointZ vertice){
     }
     
     /**
@@ -268,7 +279,7 @@ public abstract class Shape implements Cloneable{
      * @param newY New Y
      */
     public void moveVertice(int vIdx, double newX, double newY) {
-        List<PointD> points = (List<PointD>) getPoints();
+        List<PointZ> points = getPoints();
         if (this.getShapeType().isPolygon()) {
             int last = points.size() - 1;
             if (vIdx == 0) {
@@ -297,8 +308,8 @@ public abstract class Shape implements Cloneable{
      * @param yShift Y shift
      */
     public void move(double xShift, double yShift){
-        List<PointD> points = (List<PointD>) this.getPoints();
-        for (PointD aPoint : points) {
+        List<PointZ> points = this.getPoints();
+        for (PointZ aPoint : points) {
             aPoint.X += xShift;
             aPoint.Y += yShift;
         }

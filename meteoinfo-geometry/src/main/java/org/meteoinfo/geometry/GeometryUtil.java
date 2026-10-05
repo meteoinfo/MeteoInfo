@@ -8,10 +8,7 @@ package org.meteoinfo.geometry;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.common.PointD;
-import org.meteoinfo.common.PointF;
+import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.ndarray.Array;
@@ -353,7 +350,7 @@ public class GeometryUtil {
             Array r = Array.factory(DataType.INT, a.getShape());
             for (int i = 0; i < yNum; i++) {
                 for (int j = 0; j < xNum; j++) {
-                    if (GeoComputation.pointInPolygons(polygons, new PointD(x.get(j).doubleValue(), y.get(i).doubleValue()))) {
+                    if (GeoComputation.pointInPolygons(polygons, new PointZ(x.get(j).doubleValue(), y.get(i).doubleValue()))) {
                         r.setInt(i * xNum + j, 1);
                     } else {
                         r.setInt(i * xNum + j, -1);
@@ -366,7 +363,7 @@ public class GeometryUtil {
             int n = x.size();
             Array r = Array.factory(DataType.INT, a.getShape());
             for (int i = 0; i < n; i++) {
-                if (GeoComputation.pointInPolygons(polygons, new PointD(x.get(i).doubleValue(), y.get(i).doubleValue()))) {
+                if (GeoComputation.pointInPolygons(polygons, new PointZ(x.get(i).doubleValue(), y.get(i).doubleValue()))) {
                     r.setInt(i, 1);
                 } else {
                     r.setInt(i, -1);
@@ -393,7 +390,7 @@ public class GeometryUtil {
         IndexIterator yIter = y.getIndexIterator();
         IndexIterator rIter = r.getIndexIterator();
         while (rIter.hasNext()){
-            if (GeoComputation.pointInPolygons(polygons, new PointD(xIter.getDoubleNext(),
+            if (GeoComputation.pointInPolygons(polygons, new PointZ(xIter.getDoubleNext(),
                     yIter.getDoubleNext()))) {
                 rIter.setBooleanNext(true);
             } else {
@@ -417,9 +414,9 @@ public class GeometryUtil {
      */
     public static Array inPolygon(Array a, List<Number> x, List<Number> y, List<Number> x_p, List<Number> y_p) {
         PolygonShape ps = new PolygonShape();
-        List<PointD> points = new ArrayList<>();
+        List<PointZ> points = new ArrayList<>();
         for (int i = 0; i < x_p.size(); i++) {
-            points.add(new PointD(x_p.get(i).doubleValue(), y_p.get(i).doubleValue()));
+            points.add(new PointZ(x_p.get(i).doubleValue(), y_p.get(i).doubleValue()));
         }
         ps.setPoints(points);
         List<PolygonShape> shapes = new ArrayList<>();
@@ -439,11 +436,11 @@ public class GeometryUtil {
      */
     public static Array inPolygon(Array x, Array y, Array x_p, Array y_p) {
         PolygonShape ps = new PolygonShape();
-        List<PointD> points = new ArrayList<>();
+        List<PointZ> points = new ArrayList<>();
         IndexIterator xIter = x_p.getIndexIterator();
         IndexIterator yIter = y_p.getIndexIterator();
         while (xIter.hasNext()) {
-            points.add(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
+            points.add(new PointZ(xIter.getDoubleNext(), yIter.getDoubleNext()));
         }
         ps.setPoints(points);
         List<PolygonShape> shapes = new ArrayList<>();
@@ -466,7 +463,7 @@ public class GeometryUtil {
         IndexIterator rIter = r.getIndexIterator();
         int idx;
         while (rIter.hasNext()){
-            idx = GeoComputation.polygonIndex(polygons, new PointD(xIter.getDoubleNext(),
+            idx = GeoComputation.polygonIndex(polygons, new PointZ(xIter.getDoubleNext(),
                     yIter.getDoubleNext()));
             rIter.setIntNext(idx);
         }
@@ -506,7 +503,7 @@ public class GeometryUtil {
         IndexIterator yIter = y.getIndexIterator();
         int i = 0;
         while (aIter.hasNext()){
-            if (GeoComputation.pointInPolygons(polygons, new PointD(xIter.getDoubleNext(),
+            if (GeoComputation.pointInPolygons(polygons, new PointZ(xIter.getDoubleNext(),
                     yIter.getDoubleNext()))) {
                 r.setObject(i, aIter.getObjectNext());
             } else {
@@ -534,7 +531,7 @@ public class GeometryUtil {
         IndexIterator yIter = y.getIndexIterator();
         int i = 0;
         while(aIter.hasNext()) {
-            if (GeoComputation.pointInPolygons(polygons, new PointD(xIter.getDoubleNext(),
+            if (GeoComputation.pointInPolygons(polygons, new PointZ(xIter.getDoubleNext(),
                     yIter.getDoubleNext()))) {
                 r.setObject(i, Double.NaN);
                 aIter.next();
@@ -567,7 +564,7 @@ public class GeometryUtil {
             va = aIter.getDoubleNext();
             vx = xIter.getDoubleNext();
             vy = yIter.getDoubleNext();
-            if (GeoComputation.pointInPolygons(polygons, new PointD(vx, vy))) {
+            if (GeoComputation.pointInPolygons(polygons, new PointZ(vx, vy))) {
                 rdata.add(va);
                 rxdata.add(vx);
                 rydata.add(vy);
@@ -610,7 +607,7 @@ public class GeometryUtil {
             va = aIter.getDoubleNext();
             vx = xIter.getDoubleNext();
             vy = yIter.getDoubleNext();
-            if (!GeoComputation.pointInPolygons(polygons, new PointD(vx, vy))) {
+            if (!GeoComputation.pointInPolygons(polygons, new PointZ(vx, vy))) {
                 rdata.add(va);
                 rxdata.add(vx);
                 rydata.add(vy);
@@ -664,7 +661,7 @@ public class GeometryUtil {
         if (a.getRank() == 1) {
             int i = 0;
             while (iter.hasNext()) {
-                if (GeoComputation.pointInPolygons(polygons, new PointD(x.get(i).doubleValue(), y.get(i).doubleValue()))) {
+                if (GeoComputation.pointInPolygons(polygons, new PointZ(x.get(i).doubleValue(), y.get(i).doubleValue()))) {
                     r.setObject(i, iter.getObjectNext());
                 } else {
                     r.setObject(i, missingValue);
@@ -677,7 +674,7 @@ public class GeometryUtil {
             for (int i = 0; i < yNum; i++) {
                 for (int j = 0; j < xNum; j++) {
                     idx = i * xNum + j;
-                    if (GeoComputation.pointInPolygons(polygons, new PointD(x.get(j).doubleValue(), y.get(i).doubleValue()))) {
+                    if (GeoComputation.pointInPolygons(polygons, new PointZ(x.get(j).doubleValue(), y.get(i).doubleValue()))) {
                         r.setObject(idx, iter.getObjectNext());
                     } else {
                         r.setObject(idx, missingValue);
@@ -761,11 +758,11 @@ public class GeometryUtil {
      * @param points Outline point of the polygon
      * @return Is convex or not
      */
-    public static boolean isConvex(List<? extends PointD> points) {
+    public static boolean isConvex(List<PointZ> points) {
         if (points.size() <= 5)
             return true;
         
-        PointD p0, p1, p2;
+        PointZ p0, p1, p2;
         int sign = 0;
         for (int i = 0; i < points.size() - 1; i++) {
             p0 = points.get(i == 0 ? points.size() - 2 : i - 1);
@@ -812,29 +809,17 @@ public class GeometryUtil {
         }
         int i = 0;
         for (Polygon polygon : pgs.getPolygons()) {
-            for (List points : polygon.getRings()) {
-                if (isZ) {
-                    for (PointZ p : (List<PointZ>) points) {
-                        xArray.setDouble(i, p.X);
-                        yArray.setDouble(i, p.Y);
-                        zArray.setDouble(i, p.Z);
-                        i += 1;
-                    }
-                    if (i < n) {
-                        xArray.setDouble(i, Double.NaN);
-                        yArray.setDouble(i, Double.NaN);
-                        zArray.setDouble(i, Double.NaN);
-                    }
-                } else {
-                    for (PointD p : (List<PointD>) points) {
-                        xArray.setDouble(i, p.X);
-                        yArray.setDouble(i, p.Y);
-                        i += 1;
-                    }
-                    if (i < n) {
-                        xArray.setDouble(i, Double.NaN);
-                        yArray.setDouble(i, Double.NaN);
-                    }
+            for (List<PointZ> points : polygon.getRings()) {
+                for (PointZ p : (List<PointZ>) points) {
+                    xArray.setDouble(i, p.X);
+                    yArray.setDouble(i, p.Y);
+                    zArray.setDouble(i, p.Z);
+                    i += 1;
+                }
+                if (i < n) {
+                    xArray.setDouble(i, Double.NaN);
+                    yArray.setDouble(i, Double.NaN);
+                    zArray.setDouble(i, Double.NaN);
                 }
                 i += 1;
             }
@@ -877,7 +862,7 @@ public class GeometryUtil {
                     zArray.setDouble(i, Double.NaN);
                 }
             } else {
-                for (PointD p : (List<PointD>) polyline.getPointList()) {
+                for (PointZ p : polyline.getPointList()) {
                     xArray.setDouble(i, p.X);
                     yArray.setDouble(i, p.Y);
                     i += 1;

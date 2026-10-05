@@ -2,7 +2,8 @@ package org.meteoinfo.geo.io;
 
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geo.layer.ImageLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.chart.graphic.Graphic;
@@ -39,7 +40,7 @@ public class GraphicUtil {
         } else {
             for (Shape shape : layer.getShapes()) {
                 if (shape.getLegendIndex() >= 0) {
-                    for (PointD p : shape.getPoints()) {
+                    for (PointZ p : shape.getPoints()) {
                         p.X += xShift;
                     }
                     shape.updateExtent();
@@ -82,8 +83,8 @@ public class GraphicUtil {
                         cb = ls.getLegendBreaks().get(shape.getLegendIndex());
                         for (Polyline pl : (List<Polyline>) shape.getPolylines()) {
                             PolylineShape s = new PolylineShape();
-                            List<PointD> plist = new ArrayList<>();
-                            for (PointD p : pl.getPointList()) {
+                            List<PointZ> plist = new ArrayList<>();
+                            for (PointZ p : pl.getPointList()) {
                                 p.X += xShift;
                                 plist.add(p);
                             }
@@ -97,8 +98,8 @@ public class GraphicUtil {
                 for (PolygonShape shape : (List<PolygonShape>) layer.getShapes()) {
                     if (shape.getLegendIndex() >= 0) {
                         PolygonShape s = new PolygonShape();
-                        List<PointD> plist = new ArrayList<>();
-                        for (PointD p : shape.getPoints()) {
+                        List<PointZ> plist = new ArrayList<>();
+                        for (PointZ p : shape.getPoints()) {
                             p.X += xShift;
                             plist.add(p);
                         }
@@ -192,7 +193,7 @@ public class GraphicUtil {
             case POINT:
                 for (PointShape shape : (List<PointShape>) layer.getShapes()) {
                     PointZShape s = new PointZShape();
-                    PointD pd = shape.getPoint();
+                    PointZ pd = shape.getPoint();
                     pz = new PointZ(pd.X + xshift, pd.Y, offset);
                     s.setPoint(pz);
                     cb = ls.getLegendBreaks().get(shape.getLegendIndex());
@@ -205,7 +206,7 @@ public class GraphicUtil {
                     for (Polyline pl : (List<Polyline>) shape.getPolylines()) {
                         PolylineZShape s = new PolylineZShape();
                         List<PointZ> plist = new ArrayList<>();
-                        for (PointD pd : pl.getPointList()) {
+                        for (PointZ pd : pl.getPointList()) {
                             pz = new PointZ(pd.X + xshift, pd.Y, offset);
                             plist.add(pz);
                         }
@@ -218,7 +219,7 @@ public class GraphicUtil {
                 for (PolygonShape shape : (List<PolygonShape>) layer.getShapes()) {
                     PolygonZShape s = new PolygonZShape();
                     List<PointZ> plist = new ArrayList<>();
-                    for (PointD pd : shape.getPoints()) {
+                    for (PointZ pd : shape.getPoints()) {
                         pz = new PointZ(pd.X + xshift, pd.Y, offset);
                         plist.add(pz);
                     }
@@ -247,7 +248,7 @@ public class GraphicUtil {
                     case POLYLINE_Z:
                         for (PolylineZShape shape : (List<PolylineZShape>) layer.getShapes()) {
                             cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                            for (PolylineZ pl : (List<PolylineZ>) shape.getPolylines()) {
+                            for (Polyline pl : shape.getPolylines()) {
                                 PolylineZShape s = new PolylineZShape();
                                 List<PointZ> plist = new ArrayList<>();
                                 for (PointZ pd : (List<PointZ>) pl.getPointList()) {

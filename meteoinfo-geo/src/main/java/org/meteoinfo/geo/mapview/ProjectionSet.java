@@ -15,7 +15,7 @@ package org.meteoinfo.geo.mapview;
 
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geo.util.GeoProjectionUtil;
 import org.meteoinfo.ui.event.IProjectionChangedListener;
 import org.meteoinfo.ui.event.ProjectionChangedEvent;
@@ -265,8 +265,8 @@ public class ProjectionSet {
         for (int i = 0; i < aMapView.getLonLatLayer().getShapeNum(); i++) {
             PolylineShape aPLS = (PolylineShape) aMapView.getLonLatLayer().getShapes().get(i);
             if (aPLS.getPolylines().size() == 2) {
-                PointD aP = aPLS.getPolylines().get(0).getPointList().get(aPLS.getPolylines().get(0).getPointList().size() - 1);
-                PointD bP = aPLS.getPolylines().get(1).getPointList().get(aPLS.getPolylines().get(1).getPointList().size() - 1);
+                PointZ aP = aPLS.getPolylines().get(0).getPointList().get(aPLS.getPolylines().get(0).getPointList().size() - 1);
+                PointZ bP = aPLS.getPolylines().get(1).getPointList().get(aPLS.getPolylines().get(1).getPointList().size() - 1);
                 boolean isJoin = false;
                 if (refLon == 0) {
                     if (Math.abs(aP.X) < 0.1 && Math.abs(bP.X) < 0.1 && MIMath.doubleEquals(aP.Y, bP.Y)) {
@@ -279,8 +279,8 @@ public class ProjectionSet {
                 if (isJoin) {
                     List<Polyline> polyLines = new ArrayList<>();
                     Polyline aPL = new Polyline();
-                    List<PointD> pList = (List<PointD>) new ArrayList<>(aPLS.getPolylines().get(1).getPointList());
-                    List<PointD> bPList = (List<PointD>) new ArrayList<>(aPLS.getPolylines().get(0).getPointList());
+                    List<PointZ> pList = (List<PointZ>) new ArrayList<>(aPLS.getPolylines().get(1).getPointList());
+                    List<PointZ> bPList = (List<PointZ>) new ArrayList<>(aPLS.getPolylines().get(0).getPointList());
                     Collections.reverse(bPList);
                     pList.addAll(bPList);
                     aPL.setPointList(pList);
@@ -710,9 +710,9 @@ public class ProjectionSet {
 //
 //        //coordinate transform process
 //        int s;
-//        //PointD wPoint = new PointD();
-//        PointD aPoint;
-//        List<PointD> newPoints = new ArrayList<>();
+//        //PointZ wPoint = new PointZ();
+//        PointZ aPoint;
+//        List<PointZ> newPoints = new ArrayList<>();
 //        //Extent lExtent = new Extent();
 //
 //        DataTable aTable = new DataTable();
@@ -747,7 +747,7 @@ public class ProjectionSet {
 //            try {
 //                Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
 //                toP = points[0];
-//                aPoint = new PointD();
+//                aPoint = new PointZ();
 //                aPoint.X = (float) toP[0];
 //                aPoint.Y = (float) toP[1];
 //                aPS.setPoint(aPoint);
@@ -790,7 +790,7 @@ public class ProjectionSet {
             Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
             if (!Double.isNaN(points[0][0]) && !Double.isNaN(points[0][1])) {
                 double[] toP = points[0];
-                newPS.setPoint(new PointD(points[0][0], points[0][1]));
+                newPS.setPoint(new PointZ(points[0][0], points[0][1]));
                 switch (aPS.getShapeType()) {
                     case WIND_BARB:
                         ((WindBarb) newPS).angle = projectAngle(((WindBarb) newPS).angle, fromP, toP, fromProj, toProj);
@@ -814,13 +814,13 @@ public class ProjectionSet {
     private PolylineShape projectPolylineShape(PolylineShape aPLS, ProjectionInfo fromProj, ProjectionInfo toProj) {
         List<Polyline> polyLines = new ArrayList<>();
         for (int i = 0; i < aPLS.getPolylines().size(); i++) {
-            List<PointD> newPoints = new ArrayList<>();
+            List<PointZ> newPoints = new ArrayList<>();
             Polyline aPL = aPLS.getPolylines().get(i);
             Polyline bPL;
             double x;
             for (int j = 0; j < aPL.getPointList().size(); j++) {
                 double[][] points = new double[1][];
-                PointD wPoint = aPL.getPointList().get(j);
+                PointZ wPoint = aPL.getPointList().get(j);
                 x = wPoint.X;
                 if (fromProj.isLonLat()) {
                     if (x > 180) {
@@ -833,7 +833,7 @@ public class ProjectionSet {
                 try {
                     Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
                     if (!Double.isNaN(points[0][0]) && !Double.isNaN(points[0][1])) {
-                        //wPoint = new PointD();
+                        //wPoint = new PointZ();
                         wPoint.X = points[0][0];
                         wPoint.Y = points[0][1];
                         newPoints.add(wPoint);
@@ -862,17 +862,17 @@ public class ProjectionSet {
     private CurveLineShape projectCurvelineShape(CurveLineShape aPLS, ProjectionInfo fromProj, ProjectionInfo toProj) {
         List<Polyline> polyLines = new ArrayList<>();
         for (int i = 0; i < aPLS.getPolylines().size(); i++) {
-            List<PointD> newPoints = new ArrayList<>();
+            List<PointZ> newPoints = new ArrayList<>();
             Polyline aPL = aPLS.getPolylines().get(i);
             Polyline bPL;
             for (int j = 0; j < aPL.getPointList().size(); j++) {
                 double[][] points = new double[1][];
-                PointD wPoint = aPL.getPointList().get(j);
+                PointZ wPoint = aPL.getPointList().get(j);
                 points[0] = new double[]{wPoint.X, wPoint.Y};
                 try {
                     Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
                     if (!Double.isNaN(points[0][0]) && !Double.isNaN(points[0][1])) {
-                        wPoint = new PointD();
+                        wPoint = new PointZ();
                         wPoint.X = points[0][0];
                         wPoint.Y = points[0][1];
                         newPoints.add(wPoint);
@@ -912,16 +912,16 @@ public class ProjectionSet {
             Polygon aPG = aPGS.getPolygons().get(i);
             Polygon bPG = null;
             for (int r = 0; r < aPG.getRingNumber(); r++) {
-                List<PointD> pList = (List<PointD>)aPG.getRings().get(r);
-                List<PointD> newPoints = new ArrayList<>();
+                List<PointZ> pList = aPG.getRings().get(r);
+                List<PointZ> newPoints = new ArrayList<>();
                 for (int j = 0; j < pList.size(); j++) {
                     double[][] points = new double[1][];
-                    PointD wPoint = pList.get(j);
+                    PointZ wPoint = pList.get(j);
                     points[0] = new double[]{wPoint.X, wPoint.Y};
                     try {
                         Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
                         if (!Double.isNaN(points[0][0]) && !Double.isNaN(points[0][1])) {
-                            wPoint = new PointD();
+                            wPoint = new PointZ();
                             wPoint.X = points[0][0];
                             wPoint.Y = points[0][1];
                             newPoints.add(wPoint);
@@ -964,16 +964,16 @@ public class ProjectionSet {
             Polygon aPG = aPGS.getPolygons().get(i);
             Polygon bPG = null;
             for (int r = 0; r < aPG.getRingNumber(); r++) {
-                List<PointD> pList = (List<PointD>)aPG.getRings().get(r);
-                List<PointD> newPoints = new ArrayList<>();
+                List<PointZ> pList = aPG.getRings().get(r);
+                List<PointZ> newPoints = new ArrayList<>();
                 for (int j = 0; j < pList.size(); j++) {
                     double[][] points = new double[1][];
-                    PointD wPoint = pList.get(j);
+                    PointZ wPoint = pList.get(j);
                     points[0] = new double[]{wPoint.X, wPoint.Y};
                     try {
                         Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
                         if (!Double.isNaN(points[0][0]) && !Double.isNaN(points[0][1])) {
-                            wPoint = new PointD();
+                            wPoint = new PointZ();
                             wPoint.X = points[0][0];
                             wPoint.Y = points[0][1];
                             newPoints.add(wPoint);
@@ -1013,7 +1013,7 @@ public class ProjectionSet {
     private CircleShape projectCircleShape(CircleShape aCS, ProjectionInfo fromProj, ProjectionInfo toProj) {
         double radius = Math.abs(aCS.getPoints().get(1).X - aCS.getPoints().get(0).X);
         double[][] points = new double[1][];
-        PointD centerPoint = new PointD(aCS.getPoints().get(0).X + radius, aCS.getPoints().get(0).Y);
+        PointZ centerPoint = new PointZ(aCS.getPoints().get(0).X + radius, aCS.getPoints().get(0).Y);
         points[0] = new double[]{centerPoint.X, centerPoint.Y};
         try {
             Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
@@ -1028,7 +1028,7 @@ public class ProjectionSet {
         }
 
         points = new double[1][];
-        PointD leftPoint = aCS.getPoints().get(0);
+        PointZ leftPoint = aCS.getPoints().get(0);
         points[0] = new double[]{leftPoint.X, leftPoint.Y};
         try {
             Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
@@ -1043,11 +1043,11 @@ public class ProjectionSet {
         }
 
         radius = Math.abs(centerPoint.X - leftPoint.X);
-        List<PointD> newPoints = new ArrayList<>();
-        newPoints.add(new PointD(centerPoint.X - radius, centerPoint.Y));
-        newPoints.add(new PointD(centerPoint.X, centerPoint.Y - radius));
-        newPoints.add(new PointD(centerPoint.X + radius, centerPoint.Y));
-        newPoints.add(new PointD(centerPoint.X, centerPoint.Y + radius));
+        List<PointZ> newPoints = new ArrayList<>();
+        newPoints.add(new PointZ(centerPoint.X - radius, centerPoint.Y));
+        newPoints.add(new PointZ(centerPoint.X, centerPoint.Y - radius));
+        newPoints.add(new PointZ(centerPoint.X + radius, centerPoint.Y));
+        newPoints.add(new PointZ(centerPoint.X, centerPoint.Y + radius));
         CircleShape newCS = new CircleShape();
         newCS.setPoints(newPoints);
 
@@ -1058,7 +1058,7 @@ public class ProjectionSet {
         double xRadius = Math.abs(aES.getPoints().get(2).X - aES.getPoints().get(0).X) / 2;
         double yRadius = Math.abs(aES.getPoints().get(2).Y - aES.getPoints().get(0).Y) / 2;
         double[][] points = new double[1][];
-        PointD centerPoint = new PointD(aES.getExtent().minX + xRadius, aES.getExtent().minY + yRadius);
+        PointZ centerPoint = new PointZ(aES.getExtent().minX + xRadius, aES.getExtent().minY + yRadius);
         points[0] = new double[]{centerPoint.X, centerPoint.Y};
         try {
             Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
@@ -1073,7 +1073,7 @@ public class ProjectionSet {
         }
 
         points = new double[1][];
-        PointD lbPoint = new PointD(aES.getExtent().minX, aES.getExtent().minY);
+        PointZ lbPoint = new PointZ(aES.getExtent().minX, aES.getExtent().minY);
         points[0] = new double[]{lbPoint.X, lbPoint.Y};
         try {
             Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
@@ -1089,11 +1089,11 @@ public class ProjectionSet {
 
         xRadius = Math.abs(centerPoint.X - lbPoint.X);
         yRadius = Math.abs(centerPoint.Y - lbPoint.Y);
-        List<PointD> newPoints = new ArrayList<>();
-        newPoints.add(new PointD(centerPoint.X - xRadius, centerPoint.Y - yRadius));
-        newPoints.add(new PointD(centerPoint.X - xRadius, centerPoint.Y + yRadius));
-        newPoints.add(new PointD(centerPoint.X + xRadius, centerPoint.Y + yRadius));
-        newPoints.add(new PointD(centerPoint.X + xRadius, centerPoint.Y - yRadius));
+        List<PointZ> newPoints = new ArrayList<>();
+        newPoints.add(new PointZ(centerPoint.X - xRadius, centerPoint.Y - yRadius));
+        newPoints.add(new PointZ(centerPoint.X - xRadius, centerPoint.Y + yRadius));
+        newPoints.add(new PointZ(centerPoint.X + xRadius, centerPoint.Y + yRadius));
+        newPoints.add(new PointZ(centerPoint.X + xRadius, centerPoint.Y - yRadius));
         EllipseShape newES = new EllipseShape();
         newES.setPoints(newPoints);
 

@@ -15,7 +15,7 @@ package org.meteoinfo.geo.mapdata;
 
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.common.io.IOUtil;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.data.GridArray;
@@ -253,8 +253,8 @@ public class MapDataManage {
         double lon, lat;
         byte[] bytes;
 
-        PointD aPoint;
-        List<PointD> pList = new ArrayList<>();
+        PointZ aPoint;
+        List<PointZ> pList = new ArrayList<>();
 
         VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE);
         String columnName = "Value";
@@ -291,7 +291,7 @@ public class MapDataManage {
                 }
                 lat = val / 10000.0 - 90.0;
 
-                aPoint = new PointD();
+                aPoint = new PointZ();
                 aPoint.X = lon;
                 aPoint.Y = lat;
                 pList.add(aPoint);
@@ -476,8 +476,8 @@ public class MapDataManage {
             String[] dataArray;
             int shapeNum;
             int i, j, pNum;
-            List<PointD> pList = new ArrayList<>();
-            PointD aPoint;
+            List<PointZ> pList = new ArrayList<>();
+            PointZ aPoint;
             boolean IsTrue;
             String columnName = "Value";
             VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
@@ -492,7 +492,7 @@ public class MapDataManage {
                     for (i = 0; i < shapeNum; i++) {
                         aLine = sr.readLine();
                         dataArray = aLine.split(",");
-                        aPoint = new PointD();
+                        aPoint = new PointZ();
                         aPoint.X = Double.parseDouble(dataArray[0]);
                         aPoint.Y = Double.parseDouble(dataArray[1]);
                         pList.add(aPoint);
@@ -521,7 +521,7 @@ public class MapDataManage {
                         for (j = 0; j < pNum; j++) {
                             aLine = sr.readLine();
                             dataArray = aLine.split(",");
-                            aPoint = new PointD();
+                            aPoint = new PointZ();
                             aPoint.X = Double.parseDouble(dataArray[0]);
                             aPoint.Y = Double.parseDouble(dataArray[1]);
                             pList.add(aPoint);
@@ -553,7 +553,7 @@ public class MapDataManage {
                         for (j = 0; j < pNum; j++) {
                             aLine = sr.readLine();
                             dataArray = aLine.split(",");
-                            aPoint = new PointD();
+                            aPoint = new PointZ();
                             aPoint.X = Double.parseDouble(dataArray[0]);
                             aPoint.Y = Double.parseDouble(dataArray[1]);
                             pList.add(aPoint);
@@ -646,22 +646,22 @@ public class MapDataManage {
                     shapeNum = 0;
                     for (i = 0; i < shpNum; i++) {
                         aPLS = (PolylineShape) shapes.get(i);
-                        PointD[] Pointps;
+                        PointZ[] Pointps;
                         for (int p = 0; p < aPLS.getPartNum(); p++) {
                             if (p == aPLS.getPartNum() - 1) {
-                                Pointps = new PointD[aPLS.getPointNum() - aPLS.parts[p]];
+                                Pointps = new PointZ[aPLS.getPointNum() - aPLS.parts[p]];
                                 for (int pp = aPLS.parts[p]; pp < aPLS.getPointNum(); pp++) {
-                                    Pointps[pp - aPLS.parts[p]] = (PointD) aPLS.getPoints().get(pp);
+                                    Pointps[pp - aPLS.parts[p]] = (PointZ) aPLS.getPoints().get(pp);
                                 }
                             } else {
-                                Pointps = new PointD[aPLS.parts[p + 1] - aPLS.parts[p]];
+                                Pointps = new PointZ[aPLS.parts[p + 1] - aPLS.parts[p]];
                                 for (int pp = aPLS.parts[p]; pp < aPLS.parts[p + 1]; pp++) {
-                                    Pointps[pp - aPLS.parts[p]] = (PointD) aPLS.getPoints().get(pp);
+                                    Pointps[pp - aPLS.parts[p]] = (PointZ) aPLS.getPoints().get(pp);
                                 }
                             }
                             sw.write(String.valueOf(Pointps.length));
                             sw.newLine();
-                            for (PointD aPoint : Pointps) {
+                            for (PointZ aPoint : Pointps) {
                                 sw.write(String.valueOf(aPoint.X) + "," + String.valueOf(aPoint.Y));
                                 sw.newLine();
                             }
@@ -685,22 +685,22 @@ public class MapDataManage {
                     for (i = 0; i < shpNum; i++) {
                         aPGS = (PolygonShape) shapes.get(i);
 
-                        PointD[] Pointps;
+                        PointZ[] Pointps;
                         for (int p = 0; p < aPGS.getPartNum(); p++) {
                             if (p == aPGS.getPartNum() - 1) {
-                                Pointps = new PointD[aPGS.getPointNum() - aPGS.parts[p]];
+                                Pointps = new PointZ[aPGS.getPointNum() - aPGS.parts[p]];
                                 for (int pp = aPGS.parts[p]; pp < aPGS.getPointNum(); pp++) {
-                                    Pointps[pp - aPGS.parts[p]] = (PointD) aPGS.getPoints().get(pp);
+                                    Pointps[pp - aPGS.parts[p]] = (PointZ) aPGS.getPoints().get(pp);
                                 }
                             } else {
-                                Pointps = new PointD[aPGS.parts[p + 1] - aPGS.parts[p]];
+                                Pointps = new PointZ[aPGS.parts[p + 1] - aPGS.parts[p]];
                                 for (int pp = aPGS.parts[p]; pp < aPGS.parts[p + 1]; pp++) {
-                                    Pointps[pp - aPGS.parts[p]] = (PointD) aPGS.getPoints().get(pp);
+                                    Pointps[pp - aPGS.parts[p]] = (PointZ) aPGS.getPoints().get(pp);
                                 }
                             }
                             sw.write(String.valueOf(Pointps.length));
                             sw.newLine();
-                            for (PointD aPoint : Pointps) {
+                            for (PointZ aPoint : Pointps) {
                                 sw.write(String.valueOf(aPoint.X) + "," + String.valueOf(aPoint.Y));
                                 sw.newLine();
                             }

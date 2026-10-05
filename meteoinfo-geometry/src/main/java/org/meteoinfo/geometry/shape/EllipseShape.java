@@ -14,8 +14,7 @@
  package org.meteoinfo.geometry.shape;
 
  import org.meteoinfo.common.PointD;
- import org.meteoinfo.geometry.geoprocess.GeoComputation;
- import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+ import org.meteoinfo.common.PointZ;
 
  import java.util.ArrayList;
  import java.util.List;
@@ -45,11 +44,11 @@
       * @param height Height
       */
      public EllipseShape(double x, double y, double width, double height) {
-         List<PointD> points = new ArrayList<>();
-         points.add(new PointD(x - width * 0.5, y - height * 0.5));
-         points.add(new PointD(x - width * 0.5, y + height * 0.5));
-         points.add(new PointD(x + width * 0.5, y + height * 0.5));
-         points.add(new PointD(x + width * 0.5, y - height * 0.5));
+         List<PointZ> points = new ArrayList<>();
+         points.add(new PointZ(x - width * 0.5, y - height * 0.5));
+         points.add(new PointZ(x - width * 0.5, y + height * 0.5));
+         points.add(new PointZ(x + width * 0.5, y + height * 0.5));
+         points.add(new PointZ(x + width * 0.5, y - height * 0.5));
          super.setPoints(points);
      }
 
@@ -64,7 +63,7 @@
       * Get center point
       * @return Center point
       */
-     public PointD getCenter() {
+     public PointZ getCenter() {
          return this.getExtent().getCenterPoint();
      }
 

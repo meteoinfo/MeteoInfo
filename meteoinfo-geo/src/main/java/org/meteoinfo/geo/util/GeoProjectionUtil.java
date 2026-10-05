@@ -16,7 +16,7 @@ package org.meteoinfo.geo.util;
 import org.meteoinfo.chart.geo.ProjectUtil;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.geo.layer.RasterLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
@@ -575,9 +575,9 @@ public class GeoProjectionUtil {
 
         //coordinate transform process
         int s;
-        //PointD wPoint = new PointD();
-        PointD aPoint;
-        List<PointD> newPoints = new ArrayList<>();
+        //PointZ wPoint = new PointZ();
+        PointZ aPoint;
+        List<PointZ> newPoints = new ArrayList<>();
         //Extent lExtent = new Extent();
 
         DataTable aTable = new DataTable();
@@ -612,7 +612,7 @@ public class GeoProjectionUtil {
             try {
                 Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
                 toP = points[0];
-                aPoint = new PointD();
+                aPoint = new PointZ();
                 aPoint.X = (float) toP[0];
                 aPoint.Y = (float) toP[1];
                 aPS.setPoint(aPoint);

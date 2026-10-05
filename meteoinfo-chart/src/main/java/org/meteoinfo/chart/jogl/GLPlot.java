@@ -25,6 +25,7 @@ import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.data.Dataset;
+import org.meteoinfo.geometry.shape.Polygon;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.render.java2d.StringType;
 import org.meteoinfo.geometry.colors.BoundaryNorm;
@@ -3229,9 +3230,9 @@ public class GLPlot extends Plot {
         if (isDraw) {
             PolygonZShape shape = (PolygonZShape) graphic.getShape();
             PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
-            java.util.List<PolygonZ> polygonZS = (java.util.List<PolygonZ>) shape.getPolygons();
+            java.util.List<Polygon> polygonZS = shape.getPolygons();
             for (int i = 0; i < polygonZS.size(); i++) {
-                PolygonZ polygonZ = polygonZS.get(i);
+                Polygon polygonZ = polygonZS.get(i);
                 if (pb.isDrawFill()) {
                     if (polygonZ instanceof TessPolygon) {
                         drawTessPolygon(gl, (TessPolygon) polygonZ, pb);
@@ -3301,7 +3302,7 @@ public class GLPlot extends Plot {
         }
     }
 
-    private void drawPolygon(GL2 gl, PolygonZ aPG, PolygonBreak aPGB) {
+    private void drawPolygon(GL2 gl, Polygon aPG, PolygonBreak aPGB) {
         if (aPGB.isDrawFill() && aPGB.getColor().getAlpha() > 0) {
             gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
             gl.glPolygonOffset(1.0f, 1.0f);
@@ -3351,7 +3352,7 @@ public class GLPlot extends Plot {
         }
     }
 
-    private void drawConvexPolygon(GL2 gl, PolygonZ aPG, PolygonBreak aPGB) {
+    private void drawConvexPolygon(GL2 gl, Polygon aPG, PolygonBreak aPGB) {
         PointZ p;
         if (aPGB.isDrawFill()) {
             float[] rgba = aPGB.getColor().getRGBComponents(null);
@@ -3388,14 +3389,14 @@ public class GLPlot extends Plot {
             if (isDraw) {
                 PolygonZShape shape = (PolygonZShape) gg.getShape();
                 PolygonBreak pb = (PolygonBreak) gg.getLegendBreak();
-                for (PolygonZ poly : (java.util.List<PolygonZ>) shape.getPolygons()) {
+                for (Polygon poly : shape.getPolygons()) {
                     drawQuads(gl, poly, pb);
                 }
             }
         }
     }
 
-    private void drawQuads(GL2 gl, PolygonZ aPG, PolygonBreak aPGB) {
+    private void drawQuads(GL2 gl, Polygon aPG, PolygonBreak aPGB) {
         PointZ p;
         float[] rgba = aPGB.getColor().getRGBComponents(null);
         if (aPGB.isDrawFill()) {
@@ -3432,14 +3433,14 @@ public class GLPlot extends Plot {
             if (isDraw) {
                 PolygonZShape shape = (PolygonZShape) gg.getShape();
                 PolygonBreak pb = (PolygonBreak) gg.getLegendBreak();
-                for (PolygonZ poly : (java.util.List<PolygonZ>) shape.getPolygons()) {
+                for (Polygon poly : shape.getPolygons()) {
                     drawTriangle(gl, poly, pb);
                 }
             }
         }
     }
 
-    private void drawTriangle(GL2 gl, PolygonZ aPG, PolygonBreak aPGB) {
+    private void drawTriangle(GL2 gl, Polygon aPG, PolygonBreak aPGB) {
         PointZ p;
         float[] rgba = aPGB.getColor().getRGBComponents(null);
         if (aPGB.isDrawFill()) {

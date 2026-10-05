@@ -32,7 +32,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.ui.CheckBoxListEntry;
 import org.xml.sax.SAXException;

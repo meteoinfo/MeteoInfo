@@ -14,7 +14,7 @@
 package org.meteoinfo.projection.info;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
@@ -84,24 +84,24 @@ public class LambertConformalConic extends ProjectionInfo {
     public void updateBoundary() {
         double epsilon = 1e-10;
         double cenLon = this.getCenterLon();
-        List<PointD> points = new ArrayList<>();
+        List<PointZ> points = new ArrayList<>();
         double lon = cenLon - 180 + epsilon;
         double lat = this.cutoff;
         while (lon < cenLon + 180 - epsilon) {
-            points.add(new PointD(lon, lat));
+            points.add(new PointZ(lon, lat));
             lon += 1;
         }
         lon = cenLon + 180 - epsilon;
-        points.add(new PointD(lon, lat));
+        points.add(new PointZ(lon, lat));
         lat += 1;
         while (lat < 90) {
-            points.add(new PointD(lon, lat));
+            points.add(new PointZ(lon, lat));
             lat += 1;
         }
-        points.add(new PointD(lon, 90));
+        points.add(new PointZ(lon, 90));
         lon = cenLon - 180 + epsilon;
         while (lat > this.cutoff) {
-            points.add(new PointD(lon, lat));
+            points.add(new PointZ(lon, lat));
             lat -= 1;
         }
 

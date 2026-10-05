@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.graphic;
 
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.ndarray.Array;
@@ -68,7 +68,7 @@ public class PolygonGraphic extends Graphic {
     }
 
     protected void updateShape() {
-        List<PointD> points = new ArrayList<>();
+        List<PointZ> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
         double x, y;
@@ -78,7 +78,7 @@ public class PolygonGraphic extends Graphic {
             if (Double.isNaN(x) || Double.isNaN(y)) {
                 continue;
             }
-            points.add(new PointD(x, y));
+            points.add(new PointZ(x, y));
         }
         if (this.shape == null) {
             this.shape = new PolygonShape();
@@ -88,7 +88,7 @@ public class PolygonGraphic extends Graphic {
 
     protected void updateShapeLegend(LegendScheme legendScheme) {
         this.legendScheme = legendScheme;
-        List<PointD> points = new ArrayList<>();
+        List<PointZ> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
         IndexIterator cIter = this.cData.getIndexIterator();
@@ -102,7 +102,7 @@ public class PolygonGraphic extends Graphic {
             if (Double.isNaN(x) || Double.isNaN(y)) {
                 continue;
             }
-            points.add(new PointD(x, y));
+            points.add(new PointZ(x, y));
             cb = legendScheme.findLegendBreakAlways(c);
             cbc.add(cb);
         }

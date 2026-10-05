@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.transform;
 
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 
 // Exponential Transform (Inverse of Log)
 public class ExpTransform extends Transform {
@@ -13,12 +13,12 @@ public class ExpTransform extends Transform {
     }
 
     @Override
-    public PointD transform(PointD p) {
+    public PointZ transform(PointZ p) {
         double x = p.X, y = p.Y;
         if (doX) x = Math.pow(base, x);
         if (doY) y = Math.pow(base, y);
         clearInvalid();
-        return new PointD(x, y);
+        return new PointZ(x, y);
     }
 
     @Override

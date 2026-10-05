@@ -21,10 +21,7 @@ package org.meteoinfo.projection;
  import org.locationtech.proj4j.parser.Proj4Keyword;
  import org.locationtech.proj4j.parser.Proj4Parser;
  import org.locationtech.proj4j.proj.Projection;
- import org.meteoinfo.common.GridLabel;
- import org.meteoinfo.common.PointD;
- import org.meteoinfo.common.XAlign;
- import org.meteoinfo.common.YAlign;
+ import org.meteoinfo.common.*;
  import org.meteoinfo.geometry.shape.PolygonShape;
  import org.meteoinfo.ndarray.Array;
  import org.meteoinfo.ndarray.math.ArrayUtil;
@@ -360,14 +357,14 @@ package org.meteoinfo.projection;
       * @param n
       * @return  Ellipse boundary
       */
-     protected List<PointD> ellipse_boundary(double semimajor, double semiminor, double easting, double northing, int n) {
+     protected List<PointZ> ellipse_boundary(double semimajor, double semiminor, double easting, double northing, int n) {
          Array t = ArrayUtil.lineSpace(0, -2 * Math.PI, n, true);
-         List<PointD> r = new ArrayList<>();
+         List<PointZ> r = new ArrayList<>();
          double x, y;
          for (int i = 0; i < t.getSize(); i++) {
              x = semimajor * Math.cos(t.getDouble(i)) + easting;
              y = semiminor * Math.sin(t.getDouble(i)) + northing;
-             r.add(new PointD(x, y));
+             r.add(new PointZ(x, y));
          }
 
          return r;

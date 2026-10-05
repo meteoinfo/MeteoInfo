@@ -163,8 +163,8 @@ public class Extent implements Cloneable {
      *
      * @return Center point
      */
-    public PointD getCenterPoint() {
-        return new PointD((maxX - minX) / 2 + minX, (maxY - minY) / 2 + minY);
+    public PointZ getCenterPoint() {
+        return new PointZ((maxX - minX) / 2 + minX, (maxY - minY) / 2 + minY);
     }
 
     /**

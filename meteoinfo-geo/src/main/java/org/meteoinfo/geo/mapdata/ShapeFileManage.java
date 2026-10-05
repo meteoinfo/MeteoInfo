@@ -15,7 +15,7 @@ package org.meteoinfo.geo.mapdata;
 
  import org.meteoinfo.chart.graphic.GeoGraphicCollection;
  import org.meteoinfo.common.Extent;
- import org.meteoinfo.common.PointD;
+ import org.meteoinfo.common.PointZ;
  import org.meteoinfo.common.io.EndianDataOutputStream;
  import org.meteoinfo.geo.layer.LayerDrawType;
  import org.meteoinfo.geo.layer.VectorLayer;
@@ -224,7 +224,7 @@ public class ShapeFileManage {
             y = buffer.getDouble();
 
             PointShape aP = new PointShape();
-            PointD aPoint = new PointD();
+            PointZ aPoint = new PointZ();
             aPoint.X = x;
             aPoint.Y = y;
             aP.setPoint(aPoint);
@@ -281,7 +281,7 @@ public class ShapeFileManage {
         byte[] bytes;
         ByteBuffer buffer;
         
-        //PointD aPoint;
+        //PointZ aPoint;
         for (int i = 0; i < shapeNum; i++) {
             bytes = new byte[8];
             br.read(bytes);
@@ -308,7 +308,7 @@ public class ShapeFileManage {
             aPL.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
             aPL.parts = new int[aPL.getPartNum()];
-            List<PointD> points = new ArrayList<>();
+            List<PointZ> points = new ArrayList<>();
 
             //firstly read out parts begin pos in file 
             for (int j = 0; j < aPL.getPartNum(); j++) {
@@ -319,7 +319,7 @@ public class ShapeFileManage {
             for (int j = 0; j < numPoints; j++) {
                 x = buffer.getDouble();
                 y = buffer.getDouble();
-                PointD aPoint = new PointD();
+                PointZ aPoint = new PointZ();
                 aPoint.X = x;
                 aPoint.Y = y;
                 points.add(aPoint);
@@ -341,7 +341,7 @@ public class ShapeFileManage {
         byte[] bytes;
         ByteBuffer buffer;
         
-        //PointD aPoint;
+        //PointZ aPoint;
         for (int i = 0; i < shapeNum; i++) {
             //br.skipBytes(12);
             bytes = new byte[8];
@@ -370,7 +370,7 @@ public class ShapeFileManage {
             aPL.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
             aPL.parts = new int[aPL.getPartNum()];
-            List<PointD> points = new ArrayList<>();
+            List<PointZ> points = new ArrayList<>();
 
             //firstly read out parts begin position in file 
             for (int j = 0; j < aPL.getPartNum(); j++) {
@@ -381,7 +381,7 @@ public class ShapeFileManage {
             for (int j = 0; j < numPoints; j++) {
                 x = buffer.getDouble();
                 y = buffer.getDouble();
-                PointD aPoint = new PointD();
+                PointZ aPoint = new PointZ();
                 aPoint.X = x;
                 aPoint.Y = y;
                 points.add(aPoint);
@@ -459,7 +459,7 @@ public class ShapeFileManage {
             aSPG.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
             aSPG.parts = new int[aSPG.getPartNum()];
-            List<PointD> points = new ArrayList<>();
+            List<PointZ> points = new ArrayList<>();
 
             //firstly read out parts begin pos in file 
             for (int j = 0; j < aSPG.getPartNum(); j++) {
@@ -470,7 +470,7 @@ public class ShapeFileManage {
             for (int j = 0; j < numPoints; j++) {
                 x = buffer.getDouble();
                 y = buffer.getDouble();
-                PointD aPoint = new PointD();
+                PointZ aPoint = new PointZ();
                 aPoint.X = x;
                 aPoint.Y = y;
                 points.add(aPoint);
@@ -516,7 +516,7 @@ public class ShapeFileManage {
             aSPG.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
             aSPG.parts = new int[aSPG.getPartNum()];
-            List<PointD> points = new ArrayList<>();
+            List<PointZ> points = new ArrayList<>();
 
             //firstly read out parts begin pos in file 
             for (int j = 0; j < aSPG.getPartNum(); j++) {
@@ -527,7 +527,7 @@ public class ShapeFileManage {
             for (int j = 0; j < numPoints; j++) {
                 x = buffer.getDouble();
                 y = buffer.getDouble();
-                PointD aPoint = new PointD();
+                PointZ aPoint = new PointZ();
                 aPoint.X = x;
                 aPoint.Y = y;
                 points.add(aPoint);
@@ -542,9 +542,9 @@ public class ShapeFileManage {
             }
             
             //Get pointM list
-            List<PointM> pointMs = new ArrayList<>();
+            List<PointZ> pointMs = new ArrayList<>();
             for (int j = 0; j < numPoints; j++) {
-                pointMs.add(new PointM(points.get(j).X, points.get(j).Y, mArray[j]));
+                pointMs.add(new PointZ(points.get(j).X, points.get(j).Y, Double.NaN, mArray[j]));
             }
             
             aSPG.setPoints(pointMs);
@@ -588,7 +588,7 @@ public class ShapeFileManage {
             aSPG.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
             aSPG.parts = new int[aSPG.getPartNum()];
-            List<PointD> points = new ArrayList<>();
+            List<PointZ> points = new ArrayList<>();
 
             //firstly read out parts begin pos in file 
             for (int j = 0; j < aSPG.getPartNum(); j++) {
@@ -599,7 +599,7 @@ public class ShapeFileManage {
             for (int j = 0; j < numPoints; j++) {
                 x = buffer.getDouble();
                 y = buffer.getDouble();
-                PointD aPoint = new PointD();
+                PointZ aPoint = new PointZ();
                 aPoint.X = x;
                 aPoint.Y = y;
                 points.add(aPoint);

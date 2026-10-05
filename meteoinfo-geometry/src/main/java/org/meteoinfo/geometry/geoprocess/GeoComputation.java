@@ -17,11 +17,9 @@ import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.shape.*;
 //import org.meteoinfo.map.GridLabel;
 //import org.meteoinfo.math.meteo.MeteoMath;
-import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,9 +47,9 @@ public class GeoComputation {
      * @param pointList point list
      * @return boolean
      */
-    public static boolean isClockwise(List<? extends PointD> pointList) {
+    public static boolean isClockwise(List<PointZ> pointList) {
         int i;
-        PointD aPoint;
+        PointZ aPoint;
         double yMax = 0;
         int yMaxIdx = 0;
         for (i = 0; i < pointList.size() - 1; i++) {
@@ -66,7 +64,7 @@ public class GeoComputation {
                 }
             }
         }
-        PointD p1, p2, p3;
+        PointZ p1, p2, p3;
         int p1Idx, p2Idx, p3Idx;
         p1Idx = yMaxIdx - 1;
         p2Idx = yMaxIdx;
@@ -88,8 +86,8 @@ public class GeoComputation {
      * @param points point array
      * @return boolean
      */
-    public static boolean isClockwise(PointD[] points) {
-        List<PointD> pointList = Arrays.asList(points);
+    public static boolean isClockwise(PointZ[] points) {
+        List<PointZ> pointList = Arrays.asList(points);
         return isClockwise(pointList);
     }
 
@@ -100,7 +98,7 @@ public class GeoComputation {
      * @param aPoint The point
      * @return If the point is in the polygon
      */
-    public static boolean pointInPolygon(List<? extends PointD> poly, PointD aPoint) {
+    public static boolean pointInPolygon(List<PointZ> poly, PointZ aPoint) {
         double xNew, yNew, xOld, yOld;
         double x1, y1, x2, y2;
         int i;
@@ -148,7 +146,7 @@ public class GeoComputation {
      * @param aPoint The point
      * @return Boolean
      */
-    public static boolean pointInPolygon(PolygonShape aPolygon, PointD aPoint) {
+    public static boolean pointInPolygon(PolygonShape aPolygon, PointZ aPoint) {
         if (!MIMath.pointInExtent(aPoint, aPolygon.getExtent())) {
             return false;
         }
@@ -168,7 +166,7 @@ public class GeoComputation {
             isIn = pointInPolygon(aPRing.getOutLine(), aPoint);
             if (isIn) {
                 if (aPRing.hasHole()) {
-                    for (List<? extends PointD> aLine : aPRing.getHoleLines()) {
+                    for (List<PointZ> aLine : aPRing.getHoleLines()) {
                         if (pointInPolygon(aLine, aPoint)) {
                             isIn = false;
                             break;
@@ -194,7 +192,7 @@ public class GeoComputation {
      * @return Boolean
      */
     public static boolean pointInPolygon(PolygonShape aPolygon, double x, double y) {
-        return pointInPolygon(aPolygon, new PointD(x, y));
+        return pointInPolygon(aPolygon, new PointZ(x, y));
     }
 
     /**
@@ -204,7 +202,7 @@ public class GeoComputation {
      * @param aPoint The point
      * @return Boolean
      */
-    public static boolean pointInPolygon(Polygon aPolygon, PointD aPoint) {
+    public static boolean pointInPolygon(Polygon aPolygon, PointZ aPoint) {
         if (!MIMath.pointInExtent(aPoint, aPolygon.getExtent())) {
             return false;
         }
@@ -212,7 +210,7 @@ public class GeoComputation {
         if (aPolygon.hasHole()) {
             boolean isIn = pointInPolygon(aPolygon.getOutLine(), aPoint);
             if (isIn) {
-                for (List<? extends PointD> aLine : aPolygon.getHoleLines()) {
+                for (List<PointZ> aLine : aPolygon.getHoleLines()) {
                     if (pointInPolygon(aLine, aPoint)) {
                         isIn = false;
                         break;
@@ -233,7 +231,7 @@ public class GeoComputation {
      * @param aPoint The point
      * @return Boolean
      */
-    public static boolean pointInPolygons(List<PolygonShape> polygons, PointD aPoint) {
+    public static boolean pointInPolygons(List<PolygonShape> polygons, PointZ aPoint) {
         boolean isIn = false;
         Extent ext = GeometryUtil.getExtent(polygons);
         if (MIMath.pointInExtent(aPoint, ext)) {
@@ -254,7 +252,7 @@ public class GeoComputation {
      * @param point The point
      * @return Polygon index - the point is inside the polygon
      */
-    public static int polygonIndex(List<PolygonShape> polygons, PointD point) {
+    public static int polygonIndex(List<PolygonShape> polygons, PointZ point) {
         int idx = -1;
         Extent ext = GeometryUtil.getExtent(polygons);
         if (MIMath.pointInExtent(point, ext)) {
@@ -278,7 +276,7 @@ public class GeoComputation {
 //     * @param onlySel If check only selected shapes
 //     * @return Inside or outside
 //     */
-//    public static boolean pointInPolygonLayer(VectorLayer aLayer, PointD aPoint, boolean onlySel) {
+//    public static boolean pointInPolygonLayer(VectorLayer aLayer, PointZ aPoint, boolean onlySel) {
 //        if (!MIMath.pointInExtent(aPoint, aLayer.getExtent())) {
 //            return false;
 //        }
@@ -307,7 +305,7 @@ public class GeoComputation {
      * @param pt2 End point of the line segment
      * @return Distance
      */
-    public static double dis_PointToLine(PointD point, PointD pt1, PointD pt2) {
+    public static double dis_PointToLine(PointZ point, PointZ pt1, PointZ pt2) {
         double dis;
         if (MIMath.doubleEquals(pt2.X, pt1.X)) {
             dis = Math.abs(point.X - pt1.X);
@@ -318,7 +316,7 @@ public class GeoComputation {
             double x = (k * k * pt1.X + k * (point.Y - pt1.Y) + point.X) / (k * k + 1);
             double y = k * (x - pt1.X) + pt1.Y;
             //double dis = Math.sqrt((point.Y - y) * (point.Y - y) + (point.X - x) * (point.X - x));
-            dis = distance(point, new PointD(x, y));
+            dis = distance(point, new PointZ(x, y));
         }
         return dis;
     }
@@ -330,7 +328,7 @@ public class GeoComputation {
      * @param pt2 Point two
      * @return Distance
      */
-    public static double distance(PointD pt1, PointD pt2) {
+    public static double distance(PointZ pt1, PointZ pt2) {
         return Math.sqrt((pt2.Y - pt1.Y) * (pt2.Y - pt1.Y) + (pt2.X - pt1.X) * (pt2.X - pt1.X));
     }
 
@@ -342,7 +340,7 @@ public class GeoComputation {
      * @param buffer Buffer
      * @return Is the polyline shape selected
      */
-    public static Object selectPolylineShape(PointD sp, PolylineShape aPLS, double buffer) {
+    public static Object selectPolylineShape(PointZ sp, PolylineShape aPLS, double buffer) {
         Extent aExtent = new Extent();
         aExtent.minX = sp.X - buffer;
         aExtent.maxX = sp.X + buffer;
@@ -351,12 +349,12 @@ public class GeoComputation {
         double dis;
         if (MIMath.isExtentCross(aExtent, aPLS.getExtent())) {
             for (int j = 0; j < aPLS.getPointNum(); j++) {
-                PointD aPoint = aPLS.getPoints().get(j);
+                PointZ aPoint = aPLS.getPoints().get(j);
                 if (MIMath.pointInExtent(aPoint, aExtent)) {
                     return GeoComputation.distance(sp, aPoint);
                 }
                 if (j < aPLS.getPointNum() - 1) {
-                    PointD bPoint = aPLS.getPoints().get(j + 1);
+                    PointZ bPoint = aPLS.getPoints().get(j + 1);
                     if (Math.abs(sp.Y - aPoint.Y) <= Math.abs(bPoint.Y - aPoint.Y)
                             || Math.abs(sp.X - aPoint.X) <= Math.abs(bPoint.X - aPoint.X)) {
                         dis = GeoComputation.dis_PointToLine(sp, aPoint, bPoint);
@@ -379,7 +377,7 @@ public class GeoComputation {
      * @param buffer Buffer
      * @return Is the polyline shape selected
      */
-    public static Object selectPolyline(PointD sp, List<PointD> points, double buffer) {
+    public static Object selectPolyline(PointZ sp, List<PointZ> points, double buffer) {
         Extent aExtent = new Extent();
         aExtent.minX = sp.X - buffer;
         aExtent.maxX = sp.X + buffer;
@@ -389,12 +387,12 @@ public class GeoComputation {
         double dis;
         if (MIMath.isExtentCross(aExtent, bExtent)) {
             for (int j = 0; j < points.size(); j++) {
-                PointD aPoint = points.get(j);
+                PointZ aPoint = points.get(j);
                 if (MIMath.pointInExtent(aPoint, aExtent)) {
                     return GeoComputation.distance(sp, aPoint);
                 }
                 if (j < points.size() - 1) {
-                    PointD bPoint = points.get(j + 1);
+                    PointZ bPoint = points.get(j + 1);
                     if (Math.abs(sp.Y - aPoint.Y) <= Math.abs(bPoint.Y - aPoint.Y)
                             || Math.abs(sp.X - aPoint.X) <= Math.abs(bPoint.X - aPoint.X)) {
                         dis = GeoComputation.dis_PointToLine(sp, aPoint, bPoint);
@@ -565,7 +563,7 @@ public class GeoComputation {
      * @param isLonLat if is lon/lat
      * @return area
      */
-    public static double getArea(List<? extends PointD> points, boolean isLonLat) {
+    public static double getArea(List<PointZ> points, boolean isLonLat) {
 
         int Count = points.size();
         if (Count > 2) {
@@ -605,7 +603,7 @@ public class GeoComputation {
      * @param points point list
      * @return area
      */
-    public static double getArea(List<? extends PointD> points) {
+    public static double getArea(List<PointZ> points) {
         return getArea(points, false);
     }
 
@@ -615,7 +613,7 @@ public class GeoComputation {
      * @param points point list
      * @return area
      */
-    public static double calArea(List<PointD> points) {
+    public static double calArea(List<PointZ> points) {
         if (points.size() < 3) {
             return 0.0;
         }
@@ -637,7 +635,7 @@ public class GeoComputation {
      * @param points lon/lat point list
      * @return area
      */
-    public static double sphericalPolygonArea(List<? extends PointD> points) {
+    public static double sphericalPolygonArea(List<PointZ> points) {
         return sphericalPolygonArea(points, EARTH_RADIUS * 1000);
     }
 
@@ -648,7 +646,7 @@ public class GeoComputation {
      * @param r spherical radius
      * @return area
      */
-    public static double sphericalPolygonArea(List<? extends PointD> points, double r) {
+    public static double sphericalPolygonArea(List<PointZ> points, double r) {
         double[] lat = new double[points.size()];
         double[] lon = new double[points.size()];
         for (int i = 0; i < points.size(); i++) {
@@ -730,7 +728,7 @@ public class GeoComputation {
      * @param isLonLat If is lon/lat
      * @return Distance
      */
-    public static double getDistance(List<? extends PointD> points, boolean isLonLat) {
+    public static double getDistance(List<PointZ> points, boolean isLonLat) {
         double tdis = 0.0;
         for (int i = 0; i < points.size() - 1; i++) {
             double ax = points.get(i).X;
@@ -895,7 +893,7 @@ public class GeoComputation {
      */
     public static List<GridLabel> getGridLabels(Polyline inPolyLine, Extent clipExtent, boolean isVertical) {
         List<GridLabel> gridLabels = new ArrayList<>();
-        List<PointD> aPList = (List<PointD>) inPolyLine.getPointList();
+        List<PointZ> aPList = inPolyLine.getPointList();
 
         if (!isExtentCross(inPolyLine.getExtent(), clipExtent)) {
             return gridLabels;
@@ -903,8 +901,8 @@ public class GeoComputation {
 
         int i, j;
         //Judge if all points of the polyline are in the cut polygon - outline
-        List<List<PointD>> newLines = new ArrayList<>();
-        PointD p1, p2;
+        List<List<PointZ>> newLines = new ArrayList<>();
+        PointZ p1, p2;
         boolean isReversed = false;
         if (pointInClipObj(clipExtent, aPList.get(0))) {
             boolean isAllIn = true;
@@ -919,7 +917,7 @@ public class GeoComputation {
             if (!isAllIn) //Put start point outside of the cut polygon
             {
                 if (inPolyLine.isClosed()) {
-                    List<PointD> bPList = new ArrayList<>();
+                    List<PointZ> bPList = new ArrayList<>();
                     bPList.addAll(aPList.subList(notInIdx, aPList.size() - 1));
                     bPList.addAll(aPList.subList(1, notInIdx));
                     bPList.add(bPList.get(0));
@@ -973,8 +971,8 @@ public class GeoComputation {
         //Prepare border point list
         List<BorderPoint> borderList = new ArrayList<>();
         BorderPoint aBP;
-        List<PointD> clipPList = getClipPointList(clipExtent);
-        for (PointD aP : clipPList) {
+        List<PointZ> clipPList = getClipPointList(clipExtent);
+        for (PointZ aP : clipPList) {
             aBP = new BorderPoint();
             aBP.Point = aP;
             aBP.Id = -1;
@@ -985,9 +983,9 @@ public class GeoComputation {
         for (int l = 0; l < newLines.size(); l++) {
             aPList = newLines.get(l);
             boolean isInPolygon = pointInClipObj(clipExtent, aPList.get(0));
-            PointD q1, q2, IPoint = new PointD();
+            PointZ q1, q2, IPoint = new PointZ();
             Line lineA, lineB;
-            List<PointD> newPlist = new ArrayList<>();
+            List<PointZ> newPlist = new ArrayList<>();
             //Polyline bLine = new Polyline();
             p1 = aPList.get(0);
             int inIdx = -1, outIdx = -1;
@@ -1282,7 +1280,7 @@ public class GeoComputation {
 
     private static List<? extends Polyline> clipPolyline(Polyline inPolyLine, Object clipObj) {
         List<Polyline> newPolylines = new ArrayList<>();
-        List<PointD> aPList = (List<PointD>) inPolyLine.getPointList();
+        List<PointZ> aPList = inPolyLine.getPointList();
 
         if (!isExtentCross(inPolyLine.getExtent(), clipObj)) {
             return newPolylines;
@@ -1291,8 +1289,8 @@ public class GeoComputation {
         int i, j;
 
         if (clipObj instanceof List) {
-            if (!isClockwise((List<PointD>) clipObj)) {
-                Collections.reverse((List<PointD>) clipObj);
+            if (!isClockwise((List<PointZ>) clipObj)) {
+                Collections.reverse((List<PointZ>) clipObj);
             }
         } else if (clipObj.getClass() == ClipLine.class) {
             if (((ClipLine) clipObj).isExtentInside(inPolyLine.getExtent())) {
@@ -1302,7 +1300,7 @@ public class GeoComputation {
         }
 
         //Judge if all points of the polyline are in the cut polygon - outline   
-        List<List<PointD>> newLines = new ArrayList<>();
+        List<List<PointZ>> newLines = new ArrayList<>();
         if (pointInClipObj(clipObj, aPList.get(0))) {
             boolean isAllIn = true;
             int notInIdx = 0;
@@ -1316,7 +1314,7 @@ public class GeoComputation {
             if (!isAllIn) //Put start point outside of the cut polygon
             {
                 if (inPolyLine.isClosed()) {
-                    List<PointD> bPList = new ArrayList<>();
+                    List<PointZ> bPList = new ArrayList<>();
                     bPList.addAll(aPList.subList(notInIdx, aPList.size()));
                     bPList.addAll(aPList.subList(0, notInIdx));
 
@@ -1338,8 +1336,8 @@ public class GeoComputation {
         //Prepare border point list
         List<BorderPoint> borderList = new ArrayList<>();
         BorderPoint aBP = new BorderPoint();
-        List<PointD> clipPList = getClipPointList(clipObj);
-        for (PointD aP : clipPList) {
+        List<PointZ> clipPList = getClipPointList(clipObj);
+        for (PointZ aP : clipPList) {
             aBP = new BorderPoint();
             aBP.Point = aP;
             aBP.Id = -1;
@@ -1350,9 +1348,9 @@ public class GeoComputation {
         for (int l = 0; l < newLines.size(); l++) {
             aPList = newLines.get(l);
             boolean isInPolygon = pointInClipObj(clipObj, aPList.get(0));
-            PointD q1, q2, p1, p2, IPoint = new PointD();
+            PointZ q1, q2, p1, p2, IPoint = new PointZ();
             Line lineA, lineB;
-            List<PointD> newPlist = new ArrayList<>();
+            List<PointZ> newPlist = new ArrayList<>();
             Polyline bLine;
             p1 = aPList.get(0);
             int inIdx = -1, outIdx = -1;
@@ -1567,7 +1565,7 @@ public class GeoComputation {
     public static List<Polygon> clipPolygon(Polygon inPolygon, Object clipObj) {
         List<Polygon> newPolygons = new ArrayList<>();
         List<Polyline> newPolylines = new ArrayList<>();
-        List<PointD> aPList = (List<PointD>) inPolygon.getOutLine();
+        List<PointZ> aPList = (List<PointZ>) inPolygon.getOutLine();
 
         if (!isExtentCross(inPolygon.getExtent(), clipObj)) {
             return newPolygons;
@@ -1576,8 +1574,8 @@ public class GeoComputation {
         int i, j;
 
         if (clipObj instanceof List) {
-            if (!isClockwise((List<PointD>) clipObj)) {
-                Collections.reverse((List<PointD>) clipObj);
+            if (!isClockwise((List<PointZ>) clipObj)) {
+                Collections.reverse((List<PointZ>) clipObj);
             }
         } else if (clipObj.getClass() == ClipLine.class) {
             if (((ClipLine) clipObj).isExtentInside(inPolygon.getExtent())) {
@@ -1587,7 +1585,7 @@ public class GeoComputation {
         }
 
         //Judge if all points of the polyline are in the cut polygon - outline   
-        List<List<PointD>> newLines = new ArrayList<>();
+        List<List<PointZ>> newLines = new ArrayList<>();
         if (pointInClipObj(clipObj, aPList.get(0))) {
             boolean isAllIn = true;
             int notInIdx = 0;
@@ -1600,7 +1598,7 @@ public class GeoComputation {
             }
             if (!isAllIn) //Put start point outside of the cut polygon
             {
-                List<PointD> bPList = new ArrayList<>();
+                List<PointZ> bPList = new ArrayList<>();
                 bPList.addAll(aPList.subList(notInIdx, aPList.size()));
                 bPList.addAll(aPList.subList(1, notInIdx));
 
@@ -1616,10 +1614,10 @@ public class GeoComputation {
         }
 
         //Holes
-        List<List<PointD>> holeLines = new ArrayList<>();
+        List<List<PointZ>> holeLines = new ArrayList<>();
         if (inPolygon.hasHole()) {
             for (int h = 0; h < inPolygon.getHoleLines().size(); h++) {
-                List<PointD> holePList = (List<PointD>) inPolygon.getHoleLines().get(h);
+                List<PointZ> holePList = inPolygon.getHoleLines().get(h);
                 Extent plExtent = GeometryUtil.getPointsExtent(holePList);
                 if (!isExtentCross(plExtent, clipObj)) {
                     continue;
@@ -1637,7 +1635,7 @@ public class GeoComputation {
                     }
                     if (!isAllIn) //Put start point outside of the cut polygon
                     {
-                        List<PointD> bPList = new ArrayList<>();
+                        List<PointZ> bPList = new ArrayList<>();
                         bPList.addAll(holePList.subList(notInIdx, holePList.size()));
                         bPList.addAll(holePList.subList(1, notInIdx));
 
@@ -1645,7 +1643,7 @@ public class GeoComputation {
                         newLines.add(bPList);
                     } else //the hole is inside the cut polygon
                     {
-                        holeLines.add((List<PointD>) inPolygon.getHoleLines().get(h));
+                        holeLines.add(inPolygon.getHoleLines().get(h));
                     }
                 } else {
                     newLines.add(holePList);
@@ -1656,10 +1654,10 @@ public class GeoComputation {
         //Prepare border point list
         List<BorderPoint> borderList = new ArrayList<>();
         BorderPoint aBP = new BorderPoint();
-        List<PointD> clipPList = getClipPointList(clipObj, inPolygon instanceof PolygonZ);
-        for (PointD aP : clipPList) {
+        List<PointZ> clipPList = getClipPointList(clipObj);
+        for (PointZ aP : clipPList) {
             aBP = new BorderPoint();
-            aBP.Point = (PointD) aP.clone();
+            aBP.Point = (PointZ) aP.clone();
             aBP.Id = -1;
             borderList.add(aBP);
         }
@@ -1668,25 +1666,25 @@ public class GeoComputation {
         for (int l = 0; l < newLines.size(); l++) {
             aPList = newLines.get(l);
             boolean isInPolygon = false;
-            PointD q1, q2, p1, p2, IPoint = new PointD();
+            PointZ q1, q2, p1, p2, IPoint = new PointZ();
             Line lineA, lineB;
-            List<PointD> newPlist = new ArrayList<>();
+            List<PointZ> newPlist = new ArrayList<>();
             Polyline bLine;
-            p1 = (PointD) aPList.get(0).clone();
+            p1 = (PointZ) aPList.get(0).clone();
             int inIdx = -1, outIdx = -1;
             boolean newLine = true;
             int a1 = 0;
             for (i = 1; i < aPList.size(); i++) {
-                p2 = (PointD) aPList.get(i).clone();
+                p2 = (PointZ) aPList.get(i).clone();
                 if (pointInClipObj(clipObj, p2)) {
                     if (!isInPolygon) {
                         lineA = new Line();
                         lineA.P1 = p1;
                         lineA.P2 = p2;
                         //q1 = borderList[borderList.Count - 1].Point;
-                        q1 = (PointD) borderList.get(0).Point.clone();
+                        q1 = (PointZ) borderList.get(0).Point.clone();
                         for (j = 1; j < borderList.size(); j++) {
-                            q2 = (PointD) borderList.get(j).Point.clone();
+                            q2 = (PointZ) borderList.get(j).Point.clone();
                             lineB = new Line();
                             lineB.P1 = q1;
                             lineB.P2 = q2;
@@ -1694,7 +1692,7 @@ public class GeoComputation {
                                 IPoint = getCrossPoint(lineA, lineB);
                                 aBP = new BorderPoint();
                                 aBP.Id = newPolylines.size();
-                                aBP.Point = (PointD) IPoint.clone();
+                                aBP.Point = (PointZ) IPoint.clone();
                                 borderList.add(j, aBP);
                                 inIdx = j;
                                 break;
@@ -1710,9 +1708,9 @@ public class GeoComputation {
                         lineA = new Line();
                         lineA.P1 = p1;
                         lineA.P2 = p2;
-                        q1 = (PointD) borderList.get(0).Point.clone();
+                        q1 = (PointZ) borderList.get(0).Point.clone();
                         for (j = 1; j < borderList.size(); j++) {
-                            q2 = (PointD) borderList.get(j).Point.clone();
+                            q2 = (PointZ) borderList.get(j).Point.clone();
                             lineB = new Line();
                             lineB.P1 = q1;
                             lineB.P2 = q2;
@@ -1738,7 +1736,7 @@ public class GeoComputation {
                                 IPoint = getCrossPoint(lineA, lineB);
                                 aBP = new BorderPoint();
                                 aBP.Id = newPolylines.size();
-                                aBP.Point = (PointD) IPoint.clone();
+                                aBP.Point = (PointZ) IPoint.clone();
                                 borderList.add(j, aBP);
                                 outIdx = j;
                                 a1 = inIdx;
@@ -1779,7 +1777,7 @@ public class GeoComputation {
                     try {
                         Polygon aPolygon = inPolygon.getClass().getDeclaredConstructor().newInstance();
                         aPolygon.setOutLine(new ArrayList<>(clipPList));
-                        //aPolygon.setHoleLines(new ArrayList<List<PointD>>());
+                        //aPolygon.setHoleLines(new ArrayList<List<PointZ>>());
 
                         newPolygons.add(aPolygon);
                     } catch (Exception e) {
@@ -1799,7 +1797,7 @@ public class GeoComputation {
     private static List<Polygon> clipPolygon_Extent(Polygon inPolygon, Extent extent) {
         List<Polygon> newPolygons = new ArrayList<>();
         List<Polyline> newPolylines = new ArrayList<>();
-        List<PointD> aPList = (List<PointD>) inPolygon.getOutLine();
+        List<PointZ> aPList = inPolygon.getOutLine();
 
         if (!isExtentCross(inPolygon.getExtent(), extent)) {
             return newPolygons;
@@ -1807,7 +1805,7 @@ public class GeoComputation {
 
         int i, j;
         //Judge if all points of the polyline are in the cut polygon - outline   
-        List<List<PointD>> newLines = new ArrayList<>();
+        List<List<PointZ>> newLines = new ArrayList<>();
         if (pointInClipObj(extent, aPList.get(0))) {
             boolean isAllIn = true;
             int notInIdx = 0;
@@ -1820,7 +1818,7 @@ public class GeoComputation {
             }
             if (!isAllIn) //Put start point outside of the cut polygon
             {
-                List<PointD> bPList = new ArrayList<>();
+                List<PointZ> bPList = new ArrayList<>();
                 bPList.addAll(aPList.subList(notInIdx, aPList.size()));
                 bPList.addAll(aPList.subList(1, notInIdx));
 
@@ -1836,10 +1834,10 @@ public class GeoComputation {
         }
 
         //Holes
-        List<List<PointD>> holeLines = new ArrayList<>();
+        List<List<PointZ>> holeLines = new ArrayList<>();
         if (inPolygon.hasHole()) {
             for (int h = 0; h < inPolygon.getHoleLines().size(); h++) {
-                List<PointD> holePList = (List<PointD>) inPolygon.getHoleLines().get(h);
+                List<PointZ> holePList = inPolygon.getHoleLines().get(h);
                 Extent plExtent = GeometryUtil.getPointsExtent(holePList);
                 if (!isExtentCross(plExtent, extent)) {
                     continue;
@@ -1857,7 +1855,7 @@ public class GeoComputation {
                     }
                     if (!isAllIn) //Put start point outside of the cut polygon
                     {
-                        List<PointD> bPList = new ArrayList<>();
+                        List<PointZ> bPList = new ArrayList<>();
                         bPList.addAll(holePList.subList(notInIdx, holePList.size()));
                         bPList.addAll(holePList.subList(1, notInIdx));
 
@@ -1865,7 +1863,7 @@ public class GeoComputation {
                         newLines.add(bPList);
                     } else //the hole is inside the cut polygon
                     {
-                        holeLines.add((List<PointD>) inPolygon.getHoleLines().get(h));
+                        holeLines.add(inPolygon.getHoleLines().get(h));
                     }
                 } else {
                     newLines.add(holePList);
@@ -1876,10 +1874,10 @@ public class GeoComputation {
         //Prepare border point list
         List<BorderPoint> borderList = new ArrayList<>();
         BorderPoint aBP = new BorderPoint();
-        List<PointD> clipPList = getClipPointList(extent);
+        List<PointZ> clipPList = getClipPointList(extent);
         for (i = 0; i < clipPList.size(); i++) {
             aBP = new BorderPoint();
-            aBP.Point = (PointD) clipPList.get(i).clone();
+            aBP.Point = (PointZ) clipPList.get(i).clone();
             aBP.Id = -1;
             switch (i) {
                 case 0:
@@ -1905,25 +1903,25 @@ public class GeoComputation {
         for (int l = 0; l < newLines.size(); l++) {
             aPList = newLines.get(l);
             boolean isInPolygon = false;
-            PointD q1, q2, p1, p2, IPoint = new PointD();
+            PointZ q1, q2, p1, p2, IPoint = new PointZ();
             Line lineA, lineB;
-            List<PointD> newPlist = new ArrayList<>();
+            List<PointZ> newPlist = new ArrayList<>();
             Polyline bLine;
-            p1 = (PointD) aPList.get(0).clone();
+            p1 = (PointZ) aPList.get(0).clone();
             int inIdx = -1, outIdx = -1;
             boolean newLine = true;
             int a1 = 0;
             for (i = 1; i < aPList.size(); i++) {
-                p2 = (PointD) aPList.get(i).clone();
+                p2 = (PointZ) aPList.get(i).clone();
                 if (pointInClipObj(extent, p2)) {
                     if (!isInPolygon) {
                         lineA = new Line();
                         lineA.P1 = p1;
                         lineA.P2 = p2;
                         //q1 = borderList[borderList.Count - 1].Point;
-                        q1 = (PointD) borderList.get(0).Point.clone();
+                        q1 = (PointZ) borderList.get(0).Point.clone();
                         for (j = 1; j < borderList.size(); j++) {
-                            q2 = (PointD) borderList.get(j).Point.clone();
+                            q2 = (PointZ) borderList.get(j).Point.clone();
                             lineB = new Line();
                             lineB.P1 = q1;
                             lineB.P2 = q2;
@@ -1931,7 +1929,7 @@ public class GeoComputation {
                                 IPoint = getCrossPoint(lineA, lineB);
                                 aBP = new BorderPoint();
                                 aBP.Id = newPolylines.size();
-                                aBP.Point = (PointD) IPoint.clone();
+                                aBP.Point = (PointZ) IPoint.clone();
                                 borderList.add(j, aBP);
                                 inIdx = j;
                                 break;
@@ -1947,9 +1945,9 @@ public class GeoComputation {
                         lineA = new Line();
                         lineA.P1 = p1;
                         lineA.P2 = p2;
-                        q1 = (PointD) borderList.get(0).Point.clone();
+                        q1 = (PointZ) borderList.get(0).Point.clone();
                         for (j = 1; j < borderList.size(); j++) {
-                            q2 = (PointD) borderList.get(j).Point.clone();
+                            q2 = (PointZ) borderList.get(j).Point.clone();
                             lineB = new Line();
                             lineB.P1 = q1;
                             lineB.P2 = q2;
@@ -1975,7 +1973,7 @@ public class GeoComputation {
                                 IPoint = getCrossPoint(lineA, lineB);
                                 aBP = new BorderPoint();
                                 aBP.Id = newPolylines.size();
-                                aBP.Point = (PointD) IPoint.clone();
+                                aBP.Point = (PointZ) IPoint.clone();
                                 borderList.add(j, aBP);
                                 outIdx = j;
                                 a1 = inIdx;
@@ -2009,7 +2007,7 @@ public class GeoComputation {
                             for (j = 0; j < clippedBPs.size(); j++) {
                                 BorderPoint cBP = clippedBPs.get(j);
                                 cBP.Id = newPolylines.size();
-                                newPlist.add((PointD) cBP.Point.clone());
+                                newPlist.add((PointZ) cBP.Point.clone());
                                 switch (cBP.rectPointType) {
                                     case Left:
                                         for (int k = 0; k < borderList.size(); k++) {
@@ -2093,7 +2091,7 @@ public class GeoComputation {
 
                 Polygon aPolygon = new Polygon();
                 aPolygon.setOutLine(new ArrayList<>(clipPList));
-                //aPolygon.setHoleLines(new ArrayList<List<PointD>>());
+                //aPolygon.setHoleLines(new ArrayList<List<PointZ>>());
 
                 newPolygons.add(aPolygon);
             }
@@ -2114,15 +2112,15 @@ public class GeoComputation {
         List<Polygon> aPolygonList = new ArrayList<>(), newPolygonlist;
         List<Polyline> aLineList;
         Polyline aLine;
-        PointD aPoint;
+        PointZ aPoint;
         Polygon aPolygon;
         int i, j;
 
         aLineList = new ArrayList<>(LineList);
 
         //---- Tracing border polygon
-        List<PointD> aPList = new ArrayList<>();
-        List<PointD> newPList;
+        List<PointZ> aPList = new ArrayList<>();
+        List<PointZ> newPList;
         BorderPoint bP;
         int[] timesArray = new int[borderList.size() - 1];
         for (i = 0; i < timesArray.length; i++) {
@@ -2133,7 +2131,7 @@ public class GeoComputation {
         //List<BorderPoint> lineBorderList = new ArrayList<BorderPoint>();
 
         pNum = borderList.size() - 1;
-        PointD bPoint, b1Point;
+        PointZ bPoint, b1Point;
         for (i = 0; i < pNum; i++) {
             if ((borderList.get(i)).Id == -1) {
                 continue;
@@ -2153,7 +2151,7 @@ public class GeoComputation {
                     pIdx = 0;
                 }
 
-                bPoint = (PointD) borderList.get(pIdx).Point.clone();
+                bPoint = (PointZ) borderList.get(pIdx).Point.clone();
                 if (borderList.get(pIdx).Id > -1) {
                     bPoint.X = (bPoint.X + b1Point.X) / 2;
                     bPoint.Y = (bPoint.Y + b1Point.Y) / 2;
@@ -2178,7 +2176,7 @@ public class GeoComputation {
                             timesArray[pIdx] += +1;
                             aLine = aLineList.get(bP.Id);
 
-                            newPList = (List<PointD>) new ArrayList<>(aLine.getPointList());
+                            newPList = (List<PointZ>) new ArrayList<>(aLine.getPointList());
                             aPoint = newPList.get(0);
 
                             if (!(MIMath.doubleEquals(bP.Point.X, aPoint.X) && MIMath.doubleEquals(bP.Point.Y, aPoint.Y))) {
@@ -2202,7 +2200,7 @@ public class GeoComputation {
                                 try {
                                     aPolygon = inPolygon.getClass().getDeclaredConstructor().newInstance();
                                     aPolygon.setOutLine(new ArrayList<>(aPList));
-                                    //aPolygon.setHoleLines(new ArrayList<List<PointD>>());
+                                    //aPolygon.setHoleLines(new ArrayList<List<PointZ>>());
                                     aPolygonList.add(aPolygon);
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -2228,7 +2226,7 @@ public class GeoComputation {
                     pIdx = pNum - 1;
                 }
 
-                bPoint = (PointD) borderList.get(pIdx).Point.clone();
+                bPoint = (PointZ) borderList.get(pIdx).Point.clone();
                 if (borderList.get(pIdx).Id > -1) {
                     bPoint.X = (bPoint.X + b1Point.X) / 2;
                     bPoint.Y = (bPoint.Y + b1Point.Y) / 2;
@@ -2253,7 +2251,7 @@ public class GeoComputation {
                             timesArray[pIdx] += +1;
                             aLine = aLineList.get(bP.Id);
 
-                            newPList = (List<PointD>) new ArrayList<>(aLine.getPointList());
+                            newPList = new ArrayList<>(aLine.getPointList());
                             aPoint = newPList.get(0);
 
                             if (!(MIMath.doubleEquals(bP.Point.X, aPoint.X) && MIMath.doubleEquals(bP.Point.Y, aPoint.Y))) {
@@ -2278,7 +2276,7 @@ public class GeoComputation {
                                     aPolygon = inPolygon.getClass().getDeclaredConstructor().newInstance();
                                     Collections.reverse(aPList);
                                     aPolygon.setOutLine(new ArrayList<>(aPList));
-                                    //aPolygon.setHoleLines(new ArrayList<List<PointD>>());
+                                    //aPolygon.setHoleLines(new ArrayList<List<PointZ>>());
                                     aPolygonList.add(aPolygon);
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -2301,16 +2299,16 @@ public class GeoComputation {
         return newPolygonlist;
     }
 
-    private static void addHoles_Ring(List<Polygon> polygonList, List<List<PointD>> holeList) {
+    private static void addHoles_Ring(List<Polygon> polygonList, List<List<PointZ>> holeList) {
         int i, j;
         for (i = 0; i < holeList.size(); i++) {
-            List<PointD> holePs = holeList.get(i);
+            List<PointZ> holePs = holeList.get(i);
             Extent aExtent = GeometryUtil.getPointsExtent(holePs);
             for (j = 0; j < polygonList.size(); j++) {
                 Polygon aPolygon = polygonList.get(j);
                 if (aPolygon.getExtent().include(aExtent)) {
                     boolean isHole = true;
-                    for (PointD aP : holePs) {
+                    for (PointZ aP : holePs) {
                         if (!pointInPolygon(aPolygon.getOutLine(), aP)) {
                             isHole = false;
                             break;
@@ -2328,7 +2326,7 @@ public class GeoComputation {
 
     protected static boolean isExtentCross(Extent aExtent, Object clipObj) {
         if (clipObj instanceof List) {
-            Extent bExtent = GeometryUtil.getPointsExtent((List<PointD>) clipObj);
+            Extent bExtent = GeometryUtil.getPointsExtent((List<PointZ>) clipObj);
             return MIMath.isExtentCross(aExtent, bExtent);
         }
         if (clipObj.getClass() == ClipLine.class) {
@@ -2344,9 +2342,9 @@ public class GeoComputation {
         return false;
     }
 
-    protected static boolean pointInClipObj(Object clipObj, PointD aPoint) {
+    protected static boolean pointInClipObj(Object clipObj, PointZ aPoint) {
         if (clipObj instanceof List) {
-            return pointInPolygon((List<PointD>) clipObj, aPoint);
+            return pointInPolygon((List<PointZ>) clipObj, aPoint);
         }
         if (clipObj.getClass() == ClipLine.class) {
             return ((ClipLine) clipObj).isInside(aPoint);
@@ -2358,39 +2356,39 @@ public class GeoComputation {
         return false;
     }
 
-    protected static List<PointD> getClipPointList(Object clipObj) {
-        List<PointD> clipPList = new ArrayList<>();
+    protected static List<PointZ> getClipPointList(Object clipObj) {
+        List<PointZ> clipPList = new ArrayList<>();
         if (clipObj instanceof List) {
-            clipPList = (List<PointD>) clipObj;
+            clipPList = (List<PointZ>) clipObj;
         }
         if (clipObj.getClass() == ClipLine.class) {
             ClipLine clipLine = (ClipLine) clipObj;
             if (clipLine.isLongitude()) {
                 for (int i = -100; i <= 100; i++) {
-                    clipPList.add(new PointD(clipLine.getValue(), i));
+                    clipPList.add(new PointZ(clipLine.getValue(), i));
                 }
             } else {
                 for (int i = -370; i <= 370; i++) {
-                    clipPList.add(new PointD(i, clipLine.getValue()));
+                    clipPList.add(new PointZ(i, clipLine.getValue()));
                 }
             }
         }
         if (clipObj instanceof Extent) {
             Extent aExtent = (Extent) clipObj;
-            clipPList.add(new PointD(aExtent.minX, aExtent.minY));
-            clipPList.add(new PointD(aExtent.minX, aExtent.maxY));
-            clipPList.add(new PointD(aExtent.maxX, aExtent.maxY));
-            clipPList.add(new PointD(aExtent.maxX, aExtent.minY));
-            clipPList.add((PointD) clipPList.get(0).clone());
+            clipPList.add(new PointZ(aExtent.minX, aExtent.minY));
+            clipPList.add(new PointZ(aExtent.minX, aExtent.maxY));
+            clipPList.add(new PointZ(aExtent.maxX, aExtent.maxY));
+            clipPList.add(new PointZ(aExtent.maxX, aExtent.minY));
+            clipPList.add((PointZ) clipPList.get(0).clone());
         }
 
         return clipPList;
     }
 
-    protected static List<PointD> getClipPointList(Object clipObj, boolean z) {
-        List<PointD> clipPList = new ArrayList<>();
+    protected static List<PointZ> getClipPointList(Object clipObj, boolean z) {
+        List<PointZ> clipPList = new ArrayList<>();
         if (clipObj instanceof List) {
-            clipPList = (List<PointD>) clipObj;
+            clipPList = (List<PointZ>) clipObj;
         }
         if (clipObj.getClass() == ClipLine.class) {
             ClipLine clipLine = (ClipLine) clipObj;
@@ -2407,11 +2405,11 @@ public class GeoComputation {
             } else {
                 if (clipLine.isLongitude()) {
                     for (int i = -100; i <= 100; i++) {
-                        clipPList.add(new PointD(clipLine.getValue(), i));
+                        clipPList.add(new PointZ(clipLine.getValue(), i));
                     }
                 } else {
                     for (int i = -370; i <= 370; i++) {
-                        clipPList.add(new PointD(i, clipLine.getValue()));
+                        clipPList.add(new PointZ(i, clipLine.getValue()));
                     }
                 }
             }
@@ -2425,11 +2423,11 @@ public class GeoComputation {
                 clipPList.add(new PointZ(aExtent.maxX, aExtent.minY, 0));
                 clipPList.add((PointZ) clipPList.get(0).clone());
             } else {
-                clipPList.add(new PointD(aExtent.minX, aExtent.minY));
-                clipPList.add(new PointD(aExtent.minX, aExtent.maxY));
-                clipPList.add(new PointD(aExtent.maxX, aExtent.maxY));
-                clipPList.add(new PointD(aExtent.maxX, aExtent.minY));
-                clipPList.add((PointD) clipPList.get(0).clone());
+                clipPList.add(new PointZ(aExtent.minX, aExtent.minY));
+                clipPList.add(new PointZ(aExtent.minX, aExtent.maxY));
+                clipPList.add(new PointZ(aExtent.maxX, aExtent.maxY));
+                clipPList.add(new PointZ(aExtent.maxX, aExtent.minY));
+                clipPList.add((PointZ) clipPList.get(0).clone());
             }
         }
 
@@ -2438,7 +2436,7 @@ public class GeoComputation {
 
     private static boolean isLineSegmentCross_old(Line lineA, Line lineB) {
         Extent boundA, boundB;
-        List<PointD> PListA = new ArrayList<>(), PListB = new ArrayList<>();
+        List<PointZ> PListA = new ArrayList<>(), PListB = new ArrayList<>();
         PListA.add(lineA.P1);
         PListA.add(lineA.P2);
         PListB.add(lineB.P1);
@@ -2463,7 +2461,7 @@ public class GeoComputation {
 
     protected static boolean isLineSegmentCross(Line lineA, Line lineB) {
         Extent boundA, boundB;
-        List<PointD> PListA = new ArrayList<>(), PListB = new ArrayList<>();
+        List<PointZ> PListA = new ArrayList<>(), PListB = new ArrayList<>();
         PListA.add(lineA.P1);
         PListA.add(lineA.P2);
         PListB.add(lineB.P1);
@@ -2510,7 +2508,7 @@ public class GeoComputation {
      * @param p3 Piont 3
      * @return Cross product of the two vectors
      */
-    public static double crossProduct(PointD p1, PointD p2, PointD p3) {
+    public static double crossProduct(PointZ p1, PointZ p2, PointZ p3) {
         return (p2.X - p1.X) * (p3.Y - p1.Y) - (p3.X - p1.X) * (p2.Y - p1.Y);
     }
 
@@ -2522,7 +2520,7 @@ public class GeoComputation {
      * @param p3 Piont 3
      * @return Cross product of the two vectors
      */
-    public static double pointProduct(PointD p1, PointD p2, PointD p3) {
+    public static double pointProduct(PointZ p1, PointZ p2, PointZ p3) {
         return (p2.X - p1.X) * (p3.X - p1.X) + (p2.Y - p1.Y) * (p3.Y - p1.Y);
     }
 
@@ -2535,7 +2533,7 @@ public class GeoComputation {
         return result;
     }
 
-    private static boolean checkRectLineH(PointD start, PointD end, double y0, double x1, double x2) {
+    private static boolean checkRectLineH(PointZ start, PointZ end, double y0, double x1, double x2) {
         if ((y0 < start.Y) && (y0 < end.Y)) {
             return false;
         }
@@ -2564,7 +2562,7 @@ public class GeoComputation {
         return ((x >= x1) && (x <= x2));
     }
 
-    private static boolean checkRectLineV(PointD start, PointD end, double x0, double y1, double y2) {
+    private static boolean checkRectLineV(PointZ start, PointZ end, double x0, double y1, double y2) {
         if ((x0 < start.X) && (x0 < end.X)) {
             return false;
         }
@@ -2610,7 +2608,7 @@ public class GeoComputation {
             if ((y >= extent.minY) && (y <= extent.maxY)) {
                 BorderPoint bp = new BorderPoint();
                 bp.rectPointType = RectPointTypes.Left;
-                bp.Point = new PointD(extent.minX, y);
+                bp.Point = new PointZ(extent.minX, y);
                 crossPoints.add(bp);
             }
         }
@@ -2621,7 +2619,7 @@ public class GeoComputation {
             if ((x >= extent.minX) && (x <= extent.maxX)) {
                 BorderPoint bp = new BorderPoint();
                 bp.rectPointType = RectPointTypes.Top;
-                bp.Point = new PointD(x, extent.maxY);
+                bp.Point = new PointZ(x, extent.maxY);
                 crossPoints.add(bp);
             }
         }
@@ -2632,7 +2630,7 @@ public class GeoComputation {
             if ((y >= extent.minY) && (y <= extent.maxY)) {
                 BorderPoint bp = new BorderPoint();
                 bp.rectPointType = RectPointTypes.Right;
-                bp.Point = new PointD(extent.maxX, y);
+                bp.Point = new PointZ(extent.maxX, y);
                 crossPoints.add(bp);
             }
         }
@@ -2643,7 +2641,7 @@ public class GeoComputation {
             if ((x >= extent.minX) && (x <= extent.maxX)) {
                 BorderPoint bp = new BorderPoint();
                 bp.rectPointType = RectPointTypes.Bottom;
-                bp.Point = new PointD(x, extent.minY);
+                bp.Point = new PointZ(x, extent.minY);
                 crossPoints.add(bp);
             }
         }
@@ -2651,9 +2649,9 @@ public class GeoComputation {
         return crossPoints;
     }
 
-    protected static PointD getCrossPoint(Line lineA, Line lineB) {
-        PointD IPoint = new PointD();
-        PointD p1, p2, q1, q2;
+    protected static PointZ getCrossPoint(Line lineA, Line lineB) {
+        PointZ IPoint = new PointZ();
+        PointZ p1, p2, q1, q2;
         double tempLeft, tempRight;
 
         double XP1 = (lineB.P1.X - lineA.P1.X) * (lineA.P2.Y - lineA.P1.Y)
@@ -2762,12 +2760,12 @@ public class GeoComputation {
                     continue;
                 }
                 PolygonShape ps = new PolygonShape();
-                List<PointD> points = new ArrayList<>();
-                points.add(new PointD(xll, yll));
-                points.add(new PointD(xtl, ytl));
-                points.add(new PointD(xtr, ytr));
-                points.add(new PointD(xlr, ylr));
-                points.add((PointD) points.get(0).clone());
+                List<PointZ> points = new ArrayList<>();
+                points.add(new PointZ(xll, yll));
+                points.add(new PointZ(xtl, ytl));
+                points.add(new PointZ(xtr, ytr));
+                points.add(new PointZ(xlr, ylr));
+                points.add((PointZ) points.get(0).clone());
                 ps.setPoints(points);
                 minxi = (int) ((ps.getExtent().minX - X.getDouble(0)) / dX);
                 maxxi = (int) ((ps.getExtent().maxX - X.getDouble(0)) / dX);

@@ -302,7 +302,7 @@ public class LayoutGraphic extends LayoutElement {
      * @param newY New y
      */
     public void verticeEditUpdate(int vIdx, double newX, double newY) {
-        List<PointD> points = (List<PointD>) _graphic.getShape().getPoints();
+        List<PointZ> points = _graphic.getShape().getPoints();
         switch (_graphic.getShape().getShapeType()) {
             case POLYGON:
             case CURVE_POLYGON:
@@ -322,7 +322,7 @@ public class LayoutGraphic extends LayoutElement {
                 break;
         }
 
-        PointD aP = points.get(vIdx);
+        PointZ aP = points.get(vIdx);
         aP.X = newX;
         aP.Y = newY;
         _graphic.getShape().setPoints(points);
@@ -362,7 +362,7 @@ public class LayoutGraphic extends LayoutElement {
     public void paintGraphics(Graphics2D g, PointF pageLocation, float zoom) {
         switch (_graphic.getShape().getShapeType()) {
             case POINT:
-                PointD dPoint = _graphic.getShape().getPoints().get(0);
+                PointZ dPoint = _graphic.getShape().getPoints().get(0);
                 PointF aPoint = pageToScreen((float) dPoint.X, (float) dPoint.Y, pageLocation, zoom);
                 if (_graphic.getLegendBreak().getBreakType() == BreakTypes.POINT_BREAK) {
                     PointBreak aPB = (PointBreak) ((PointBreak) _graphic.getLegendBreak()).clone();
@@ -405,7 +405,7 @@ public class LayoutGraphic extends LayoutElement {
             case CURVE_LINE:
             case CURVE_POLYGON:
             case ELLIPSE:
-                List<PointD> pList = (List<PointD>) _graphic.getShape().getPoints();
+                List<PointZ> pList = _graphic.getShape().getPoints();
                 PointF[] points = new PointF[pList.size()];
                 for (int i = 0; i < pList.size(); i++) {
                     points[i] = pageToScreen((float) pList.get(i).X, (float) pList.get(i).Y, pageLocation, zoom);
@@ -464,7 +464,7 @@ public class LayoutGraphic extends LayoutElement {
     @Override
     public void moveUpdate() {
         if (_graphic.getShape() != null) {
-            List<PointD> points = (List<PointD>) _graphic.getShape().getPoints();
+            List<PointZ> points = _graphic.getShape().getPoints();
             Extent aExtent = _graphic.getShape().getExtent();
             double minX = aExtent.minX;
             double minY = aExtent.minY;
@@ -478,7 +478,7 @@ public class LayoutGraphic extends LayoutElement {
             int shiftX = this.getLeft() - (int) minX;
             int shiftY = this.getTop() - (int) minY;
             for (int i = 0; i < points.size(); i++) {
-                PointD aP = points.get(i);
+                PointZ aP = points.get(i);
                 aP.X += shiftX;
                 aP.Y += shiftY;
             }
@@ -502,13 +502,13 @@ public class LayoutGraphic extends LayoutElement {
                 case CURVE_LINE:
                 case CURVE_POLYGON:
                     moveUpdate();
-                    List<PointD> points = (List<PointD>) _graphic.getShape().getPoints();
+                    List<PointZ> points = _graphic.getShape().getPoints();
                     Extent aExtent = _graphic.getShape().getExtent();
                     int deltaX = this.getWidth() - (int) aExtent.getWidth();
                     int deltaY = this.getHeight() - (int) aExtent.getHeight();
 
                     for (int i = 0; i < points.size(); i++) {
-                        PointD aP = points.get(i);
+                        PointZ aP = points.get(i);
                         aP.X = aP.X + deltaX * (aP.X - aExtent.minX) / aExtent.getWidth();
                         aP.Y = aP.Y + deltaY * (aP.Y - aExtent.minY) / aExtent.getHeight();
                     }
@@ -517,21 +517,21 @@ public class LayoutGraphic extends LayoutElement {
                 case RECTANGLE:
                 case ELLIPSE:
                     points = new ArrayList<>();
-                    points.add(new PointD(this.getLeft(), this.getTop()));
-                    points.add(new PointD(this.getLeft(), this.getBottom()));
-                    points.add(new PointD(this.getRight(), this.getBottom()));
-                    points.add(new PointD(this.getRight(), this.getTop()));
+                    points.add(new PointZ(this.getLeft(), this.getTop()));
+                    points.add(new PointZ(this.getLeft(), this.getBottom()));
+                    points.add(new PointZ(this.getRight(), this.getBottom()));
+                    points.add(new PointZ(this.getRight(), this.getTop()));
                     if (_graphic.getShape().getShapeType() == ShapeTypes.RECTANGLE) {
-                        points.add((PointD) points.get(0).clone());
+                        points.add((PointZ) points.get(0).clone());
                     }
                     _graphic.getShape().setPoints(points);
                     break;
                 case CIRCLE:
                     points = new ArrayList<>();
-                    points.add(new PointD(this.getLeft(), this.getTop() + this.getWidth() / 2));
-                    points.add(new PointD(this.getLeft() + this.getWidth() / 2, this.getTop()));
-                    points.add(new PointD(this.getLeft() + this.getWidth(), this.getTop() + this.getWidth() / 2));
-                    points.add(new PointD(this.getLeft() + this.getWidth() / 2, this.getTop() + this.getWidth()));
+                    points.add(new PointZ(this.getLeft(), this.getTop() + this.getWidth() / 2));
+                    points.add(new PointZ(this.getLeft() + this.getWidth() / 2, this.getTop()));
+                    points.add(new PointZ(this.getLeft() + this.getWidth(), this.getTop() + this.getWidth() / 2));
+                    points.add(new PointZ(this.getLeft() + this.getWidth() / 2, this.getTop() + this.getWidth()));
                     _graphic.getShape().setPoints(points);
                     break;
             }

@@ -555,7 +555,7 @@ public class ChartColorBar extends ChartLegend {
         }
     }
     
-    private void drawTickLine(Graphics2D g, PointD sP, float tickLen, boolean vertical, double shift) {
+    private void drawTickLine(Graphics2D g, PointZ sP, float tickLen, boolean vertical, double shift) {
         if (vertical) {
             if (this.insideTick) {
                 g.draw(new Line2D.Double(sP.X + shift, sP.Y, sP.X + shift, sP.Y - tickLen));
@@ -575,7 +575,7 @@ public class ChartColorBar extends ChartLegend {
         }
     }
 
-    private PointD drawTickLine(Graphics2D g, double x, double y, float tickLen, boolean vertical, double shift) {
+    private PointZ drawTickLine(Graphics2D g, double x, double y, float tickLen, boolean vertical, double shift) {
         if (vertical) {
             if (this.insideTick) {
                 g.draw(new Line2D.Double(x + shift, y, x + shift, y - tickLen));
@@ -594,7 +594,7 @@ public class ChartColorBar extends ChartLegend {
             x += 5;
         }
 
-        return new PointD(x, y);
+        return new PointZ(x, y);
     }
 
     private void drawHorizontal(Graphics2D g, LegendScheme ls) {
@@ -797,8 +797,8 @@ public class ChartColorBar extends ChartLegend {
     }
 
     private void drawHorizontalBarLegend(Graphics2D g, LegendScheme aLS) {
-        PointD aP = new PointD(0, 0);
-        PointD sP = new PointD(0, 0);
+        PointZ aP = new PointZ(0, 0);
+        PointZ sP = new PointZ(0, 0);
         boolean DrawShape = true, DrawFill = true, DrawOutline = false;
         Color FillColor = Color.red, OutlineColor = Color.black;
         String caption;
@@ -927,11 +927,11 @@ public class ChartColorBar extends ChartLegend {
                         switch (this.extendType) {
                             case BOTH:
                             case MIN:
-                                PointD[] Points = new PointD[4];
-                                Points[0] = new PointD(0, aP.Y + barHeight * 0.5);
-                                Points[1] = new PointD(extendLength, aP.Y);
-                                Points[2] = new PointD(extendLength, aP.Y + barHeight);
-                                Points[3] = new PointD(0, aP.Y + barHeight * 0.5);
+                                PointZ[] Points = new PointZ[4];
+                                Points[0] = new PointZ(0, aP.Y + barHeight * 0.5);
+                                Points[1] = new PointZ(extendLength, aP.Y);
+                                Points[2] = new PointZ(extendLength, aP.Y + barHeight);
+                                Points[3] = new PointZ(0, aP.Y + barHeight * 0.5);
                                 if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                                     aPGB.setDrawOutline(false);
@@ -956,11 +956,11 @@ public class ChartColorBar extends ChartLegend {
                         switch (this.extendType) {
                             case BOTH:
                             case MAX:
-                                PointD[] Points = new PointD[4];
-                                Points[0] = new PointD(legendWidth - extendLength, aP.Y + barHeight);
-                                Points[1] = new PointD(legendWidth - extendLength, aP.Y);
-                                Points[2] = new PointD(legendWidth, aP.Y + barHeight * 0.5);
-                                Points[3] = new PointD(legendWidth - extendLength, aP.Y + barHeight);
+                                PointZ[] Points = new PointZ[4];
+                                Points[0] = new PointZ(legendWidth - extendLength, aP.Y + barHeight);
+                                Points[1] = new PointZ(legendWidth - extendLength, aP.Y);
+                                Points[2] = new PointZ(legendWidth, aP.Y + barHeight * 0.5);
+                                Points[3] = new PointZ(legendWidth - extendLength, aP.Y + barHeight);
                                 if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                                     aPGB.setDrawOutline(false);
@@ -1392,8 +1392,8 @@ public class ChartColorBar extends ChartLegend {
     }
 
     private void drawVerticalBarLegend(Graphics2D g, LegendScheme aLS) {
-        PointD aP = new PointD(0, 0);
-        PointD sP = new PointD(0, 0);
+        PointZ aP = new PointZ(0, 0);
+        PointZ sP = new PointZ(0, 0);
         boolean DrawShape = true, DrawFill = true, DrawOutline = false;
         Color FillColor = Color.red, OutlineColor = Color.black;
         String caption;
@@ -1533,11 +1533,11 @@ public class ChartColorBar extends ChartLegend {
                             case BOTH:
                             case MIN:
                                 aP.Y = aP.Y - extendLength;
-                                PointD[] Points = new PointD[4];
-                                Points[0] = new PointD(aP.X + barWidth * 0.5, this.legendHeight);
-                                Points[1] = new PointD(aP.X, aP.Y);
-                                Points[2] = new PointD(aP.X + barWidth, aP.Y);
-                                Points[3] = new PointD(aP.X + barWidth * 0.5, this.legendHeight);
+                                PointZ[] Points = new PointZ[4];
+                                Points[0] = new PointZ(aP.X + barWidth * 0.5, this.legendHeight);
+                                Points[1] = new PointZ(aP.X, aP.Y);
+                                Points[2] = new PointZ(aP.X + barWidth, aP.Y);
+                                Points[3] = new PointZ(aP.X + barWidth * 0.5, this.legendHeight);
                                 if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                                     aPGB.setDrawOutline(false);
@@ -1563,11 +1563,11 @@ public class ChartColorBar extends ChartLegend {
                         switch (this.extendType) {
                             case BOTH:
                             case MAX:
-                                PointD[] Points = new PointD[4];
-                                Points[0] = new PointD(aP.X, extendLength);
-                                Points[1] = new PointD(aP.X + barWidth, extendLength);
-                                Points[2] = new PointD(aP.X + barWidth * 0.5, 0);
-                                Points[3] = new PointD(aP.X, extendLength);
+                                PointZ[] Points = new PointZ[4];
+                                Points[0] = new PointZ(aP.X, extendLength);
+                                Points[1] = new PointZ(aP.X + barWidth, extendLength);
+                                Points[2] = new PointZ(aP.X + barWidth * 0.5, 0);
+                                Points[3] = new PointZ(aP.X, extendLength);
                                 if (aLS.getShapeType() == ShapeTypes.POLYGON) {
                                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                                     aPGB.setDrawOutline(false);

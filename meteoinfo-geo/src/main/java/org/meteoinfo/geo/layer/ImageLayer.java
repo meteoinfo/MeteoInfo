@@ -23,7 +23,7 @@ import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.shape.ImageShape;
-import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import java.awt.Color;
 import java.awt.Image;

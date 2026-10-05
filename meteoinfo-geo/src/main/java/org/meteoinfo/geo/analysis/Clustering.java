@@ -4,9 +4,8 @@
  */
 package org.meteoinfo.geo.analysis;
 
-import org.locationtech.jts.io.InStream;
 import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.shape.PolylineZShape;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;

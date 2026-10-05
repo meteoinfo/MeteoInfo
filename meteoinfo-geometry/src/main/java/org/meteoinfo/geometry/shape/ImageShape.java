@@ -5,6 +5,8 @@
  */
 package org.meteoinfo.geometry.shape;
 
+import org.meteoinfo.common.PointZ;
+
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;

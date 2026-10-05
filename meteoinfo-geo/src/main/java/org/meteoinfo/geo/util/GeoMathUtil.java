@@ -1,7 +1,7 @@
 package org.meteoinfo.geo.util;
 
 import org.locationtech.proj4j.datum.Grid;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.GridDataSetting;
 import org.meteoinfo.data.StationData;
@@ -35,7 +35,7 @@ public class GeoMathUtil {
             if (yArray[i] >= aPGS.getExtent().minY && yArray[i] <= aPGS.getExtent().maxY) {
                 for (int j = 0; j < xNum; j++) {
                     if (xArray[j] >= aPGS.getExtent().minX && xArray[j] <= aPGS.getExtent().maxX) {
-                        if (GeoComputation.pointInPolygon(aPGS, new PointD(xArray[j], yArray[i]))) {
+                        if (GeoComputation.pointInPolygon(aPGS, new PointZ(xArray[j], yArray[i]))) {
                             cGrid.setValue(i, j, gridData.getDoubleValue(i, j));
                         } else {
                             cGrid.setValue(i, j, gridData.getDoubleMissingValue());
@@ -70,7 +70,7 @@ public class GeoMathUtil {
         double[] yArray = gridData.getYArray();
         for (int i = 0; i < yNum; i++) {
             for (int j = 0; j < xNum; j++) {
-                if (GeoComputation.pointInPolygons(polygons, new PointD(xArray[j], yArray[i]))) {
+                if (GeoComputation.pointInPolygons(polygons, new PointZ(xArray[j], yArray[i]))) {
                     cGrid.setValue(i, j, gridData.getDoubleValue(i, j));
                 } else {
                     cGrid.setValue(i, j, gridData.getDoubleMissingValue());
@@ -102,7 +102,7 @@ public class GeoMathUtil {
             if (yArray[i] >= maskLayer.getExtent().minY && yArray[i] <= maskLayer.getExtent().maxY) {
                 for (int j = 0; j < xNum; j++) {
                     if (xArray[j] >= maskLayer.getExtent().minX && xArray[j] <= maskLayer.getExtent().maxX) {
-                        if (GeoComputation.pointInPolygonLayer(maskLayer, new PointD(xArray[j], yArray[i]), false)) {
+                        if (GeoComputation.pointInPolygonLayer(maskLayer, new PointZ(xArray[j], yArray[i]), false)) {
                             cGrid.setValue(i, j, gridData.getDoubleValue(i, j));
                         } else {
                             cGrid.setValue(i, j, gridData.getDoubleMissingValue());
@@ -133,7 +133,7 @@ public class GeoMathUtil {
          stData.projInfo = stationData.projInfo;
          stData.missingValue = stationData.missingValue;
          for (int i = 0; i < stationData.getStNum(); i++) {
-             if (GeoComputation.pointInPolygon(polygonShape, new PointD(stationData.getX(i), stationData.getY(i)))) {
+             if (GeoComputation.pointInPolygon(polygonShape, new PointZ(stationData.getX(i), stationData.getY(i)))) {
                  stData.addData(stationData.getStid(i), stationData.getX(i), stationData.getY(i), stationData.getValue(i));
              }
          }
@@ -153,7 +153,7 @@ public class GeoMathUtil {
          stData.projInfo = stationData.projInfo;
          stData.missingValue = stationData.missingValue;
          for (int i = 0; i < stationData.getStNum(); i++) {
-             if (GeoComputation.pointInPolygons(polygonShapes, new PointD(stationData.getX(i), stationData.getY(i)))) {
+             if (GeoComputation.pointInPolygons(polygonShapes, new PointZ(stationData.getX(i), stationData.getY(i)))) {
                  stData.addData(stationData.getStid(i), stationData.getX(i), stationData.getY(i), stationData.getValue(i));
              }
          }
@@ -189,7 +189,7 @@ public class GeoMathUtil {
          stData.projInfo = stationData.projInfo;
          stData.missingValue = stationData.missingValue;
          for (int i = 0; i < stationData.getStNum(); i++) {
-             if (!GeoComputation.pointInPolygon(polygonShape, new PointD(stationData.getX(i), stationData.getY(i)))) {
+             if (!GeoComputation.pointInPolygon(polygonShape, new PointZ(stationData.getX(i), stationData.getY(i)))) {
                  stData.addData(stationData.getStid(i), stationData.getX(i), stationData.getY(i), stationData.getValue(i));
              }
          }
@@ -209,7 +209,7 @@ public class GeoMathUtil {
          stData.projInfo = stationData.projInfo;
          stData.missingValue = stationData.missingValue;
          for (int i = 0; i < stationData.getStNum(); i++) {
-             if (!GeoComputation.pointInPolygons(polygonShapes, new PointD(stationData.getX(i), stationData.getY(i)))) {
+             if (!GeoComputation.pointInPolygons(polygonShapes, new PointZ(stationData.getX(i), stationData.getY(i)))) {
                  stData.addData(stationData.getStid(i), stationData.getX(i), stationData.getY(i), stationData.getValue(i));
              }
          }

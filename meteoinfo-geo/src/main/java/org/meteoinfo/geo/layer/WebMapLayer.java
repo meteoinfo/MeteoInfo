@@ -22,7 +22,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.data.mapdata.webmap.*;
 import org.meteoinfo.data.mapdata.webmap.empty.EmptyTileFactory;
 import org.meteoinfo.projection.KnownCoordinateSystems;
@@ -613,9 +613,9 @@ public class WebMapLayer extends MapLayer {
         double maxy = center.getY() + height / 2;
         GeoPosition pos1 = GeoUtil.getPosition(new Point2D.Double(minx, miny), zoom, this.getTileFactory().getInfo());
         GeoPosition pos2 = GeoUtil.getPosition(new Point2D.Double(maxx, maxy), zoom, this.getTileFactory().getInfo());
-        PointD p1 = Reproject.reprojectPoint(new PointD(pos1.getLongitude(), pos1.getLatitude()),
+        PointZ p1 = Reproject.reprojectPoint(new PointZ(pos1.getLongitude(), pos1.getLatitude()),
                 KnownCoordinateSystems.geographic.world.WGS1984, this.getProjInfo());
-        PointD p2 = Reproject.reprojectPoint(new PointD(pos2.getLongitude(), pos2.getLatitude()),
+        PointZ p2 = Reproject.reprojectPoint(new PointZ(pos2.getLongitude(), pos2.getLatitude()),
                 KnownCoordinateSystems.geographic.world.WGS1984, this.getProjInfo());
         if (pos2.getLongitude() - pos1.getLongitude() < 360.0) {
             double xlen = p2.X - p1.X;

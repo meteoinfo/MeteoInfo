@@ -481,7 +481,7 @@ public class Draw {
      * @return WindBarb
      */
     public static WindBarb calWindBarb(float windDir, float windSpeed, double value,
-            float size, PointD sPoint) {
+            float size, PointZ sPoint) {
         WindBarb aWB = new WindBarb();
 
         windSpeed += 1;
@@ -514,7 +514,7 @@ public class Draw {
      * @return Station model shape
      */
     public static StationModelShape calStationModel(float windDir, float windSpeed, double value,
-            float size, PointD sPoint, int weather, int temp, int dewPoint, int pressure, int cloudCover) {
+            float size, PointZ sPoint, int weather, int temp, int dewPoint, int pressure, int cloudCover) {
         StationModelShape aSM = new StationModelShape();
         aSM.setPoint(sPoint);
         aSM.setValue(value);
@@ -525,7 +525,7 @@ public class Draw {
         aSM.windBarb = calWindBarb(windDir, windSpeed, value, size, sPoint);
         aSM.weatherSymbol.size = size / 4 * 3;
         //sPoint.X = sPoint.X - size / 2;
-        PointD aPoint = new PointD(sPoint.X - size / 2, sPoint.Y);
+        PointZ aPoint = new PointZ(sPoint.X - size / 2, sPoint.Y);
         aSM.weatherSymbol.setPoint(aPoint);
         aSM.weatherSymbol.weather = weather;
         aSM.cloudCoverage.cloudCover = cloudCover;
@@ -2472,7 +2472,7 @@ public class Draw {
      * @param points The points array
      * @param g Graphics2D
      */
-    public static void drawPolyline(PointD[] points, Graphics2D g) {
+    public static void drawPolyline(PointZ[] points, Graphics2D g) {
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.length);
         for (int i = 0; i < points.length; i++) {
             if (i == 0) {
@@ -2552,7 +2552,7 @@ public class Draw {
      * @param g Graphics2D
      * @param aPGB Polygon break
      */
-    public static void fillPolygon(PointD[] points, Graphics2D g, PolygonBreak aPGB) {
+    public static void fillPolygon(PointZ[] points, Graphics2D g, PolygonBreak aPGB) {
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.length);
         for (int i = 0; i < points.length; i++) {
             if (i == 0) {
@@ -2602,7 +2602,7 @@ public class Draw {
     public static void drawPolygon(Polygon aPG, PolygonBreak aPGB, Graphics2D g) {
         int len = aPG.getOutLine().size();
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, len);
-        PointD wPoint;
+        PointZ wPoint;
         for (int i = 0; i < aPG.getOutLine().size(); i++) {
             wPoint = aPG.getOutLine().get(i);
             if (i == 0) {
@@ -2612,10 +2612,10 @@ public class Draw {
             }
         }
 
-        List<PointD> newPList;
+        List<PointZ> newPList;
         if (aPG.hasHole()) {
             for (int h = 0; h < aPG.getHoleLines().size(); h++) {
-                newPList = (List<PointD>) aPG.getHoleLines().get(h);
+                newPList = aPG.getHoleLines().get(h);
                 for (int j = 0; j < newPList.size(); j++) {
                     wPoint = newPList.get(j);
                     if (j == 0) {
@@ -2677,7 +2677,7 @@ public class Draw {
      * @param aPGB The polygon break
      * @param g Graphics2D
      */
-    public static void drawPolygon(PointD[] points, PolygonBreak aPGB, Graphics2D g) {
+    public static void drawPolygon(PointZ[] points, PolygonBreak aPGB, Graphics2D g) {
         if (aPGB.isDrawFill()) {
             g.setColor(aPGB.getColor());
             fillPolygon(points, g, aPGB);
@@ -2721,7 +2721,7 @@ public class Draw {
      * @param drawOutline
      * @param g
      */
-    public static void drawPolygon(PointD[] points, Color aColor, Color outlineColor,
+    public static void drawPolygon(PointZ[] points, Color aColor, Color outlineColor,
             boolean drawFill, boolean drawOutline, Graphics2D g) {
         if (drawFill) {
             g.setColor(aColor);
@@ -4003,13 +4003,13 @@ public class Draw {
      * @param g Graphics2D
      */
     public static void drawCurveLine(PointF[] points, PolylineBreak aPLB, Graphics2D g) {
-        List<PointD> opoints = new ArrayList<>();
+        List<PointZ> opoints = new ArrayList<>();
         int i;
         for (i = 0; i < points.length; i++) {
-            opoints.add(new PointD(points[i].X, points[i].Y));
+            opoints.add(new PointZ(points[i].X, points[i].Y));
         }
 
-        PointD[] rPoints = Spline.cardinalSpline((PointD[]) opoints.toArray(new PointD[opoints.size()]), 5);
+        PointZ[] rPoints = Spline.cardinalSpline((PointZ[]) opoints.toArray(new PointZ[opoints.size()]), 5);
         PointF[] dPoints = new PointF[rPoints.length];
         for (i = 0; i < dPoints.length; i++) {
             dPoints[i] = new PointF((float) rPoints[i].X, (float) rPoints[i].Y);
@@ -4025,13 +4025,13 @@ public class Draw {
      * @param g Graphics2D
      */
     public static void drawCurveLine(List<PointF> points, Graphics2D g) {
-        PointD[] opoints = new PointD[points.size()];
+        PointZ[] opoints = new PointZ[points.size()];
         int i;
         for (i = 0; i < points.size(); i++) {
-            opoints[i] = new PointD(points.get(i).X, points.get(i).Y);
+            opoints[i] = new PointZ(points.get(i).X, points.get(i).Y);
         }
 
-        PointD[] rPoints = Spline.cardinalSpline(opoints, 5);
+        PointZ[] rPoints = Spline.cardinalSpline(opoints, 5);
         PointF[] dPoints = new PointF[rPoints.length];
         for (i = 0; i < dPoints.length; i++) {
             dPoints[i] = new PointF((float) rPoints[i].X, (float) rPoints[i].Y);
@@ -4047,13 +4047,13 @@ public class Draw {
      * @param g Graphics2D
      */
     public static void drawCurveLine(PointF[] points, Graphics2D g) {
-        List<PointD> opoints = new ArrayList<>();
+        List<PointZ> opoints = new ArrayList<>();
         int i;
         for (i = 0; i < points.length; i++) {
-            opoints.add(new PointD(points[i].X, points[i].Y));
+            opoints.add(new PointZ(points[i].X, points[i].Y));
         }
 
-        PointD[] rPoints = Spline.cardinalSpline((PointD[]) opoints.toArray(), 5);
+        PointZ[] rPoints = Spline.cardinalSpline((PointZ[]) opoints.toArray(), 5);
         PointF[] dPoints = new PointF[rPoints.length];
         for (i = 0; i < dPoints.length; i++) {
             dPoints[i] = new PointF((float) rPoints[i].X, (float) rPoints[i].Y);
@@ -4070,13 +4070,13 @@ public class Draw {
      * @param g Graphics2D
      */
     public static void drawCurvePolygon(PointF[] points, PolygonBreak aPGB, Graphics2D g) {
-        List<PointD> opoints = new ArrayList<>();
+        List<PointZ> opoints = new ArrayList<>();
         int i;
         for (i = 0; i < points.length; i++) {
-            opoints.add(new PointD(points[i].X, points[i].Y));
+            opoints.add(new PointZ(points[i].X, points[i].Y));
         }
 
-        PointD[] rPoints = Spline.cardinalSpline((PointD[]) opoints.toArray(new PointD[opoints.size()]), 5);
+        PointZ[] rPoints = Spline.cardinalSpline((PointZ[]) opoints.toArray(new PointZ[opoints.size()]), 5);
         PointF[] dPoints = new PointF[rPoints.length];
         for (i = 0; i < dPoints.length; i++) {
             dPoints[i] = new PointF((float) rPoints[i].X, (float) rPoints[i].Y);

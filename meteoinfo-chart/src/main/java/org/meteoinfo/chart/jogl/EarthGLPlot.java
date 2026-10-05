@@ -17,9 +17,10 @@ import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolygonBreak;
-import org.meteoinfo.geometry.shape.PointZ;
-import org.meteoinfo.geometry.shape.PolygonZ;
-import org.meteoinfo.geometry.shape.PolygonZShape;
+import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.shape.Polygon;
+import org.meteoinfo.geometry.shape.PointShape;
+import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.image.ImageUtil;
 import org.meteoinfo.ndarray.Array;
@@ -542,9 +543,9 @@ public class EarthGLPlot extends GLPlot {
         }
 
         // ========== 2. Extract Polygon Data (Reusing Base Class Tessellation Logic) ==========
-        PolygonZShape shape = (PolygonZShape) graphic.getShape();
+        PolygonShape shape = (PolygonShape) graphic.getShape();
         PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
-        List<PolygonZ> polygonZS = (List<PolygonZ>) shape.getPolygons();
+        List<Polygon> polygonZS = shape.getPolygons();
 
         // Apply fill color and transparency
         float[] rgba = pb.getColor().getRGBComponents(null);
@@ -557,7 +558,7 @@ public class EarthGLPlot extends GLPlot {
         gl.glPolygonOffset(-1.0f, -1.0f);
 
         for (int i = 0; i < polygonZS.size(); i++) {
-            PolygonZ polygonZ = polygonZS.get(i);
+            Polygon polygonZ = polygonZS.get(i);
 
             // Ensure the polygon is tessellated (reusing base class logic for concave/holed polygons)
             TessPolygon tessPolygon;

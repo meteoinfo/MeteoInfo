@@ -11,12 +11,12 @@ import org.meteoinfo.geometry.legend.BreakTypes;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.ColorBreakCollection;
 import org.meteoinfo.geometry.legend.LegendScheme;
-import org.meteoinfo.geometry.shape.PointZ;
-import org.meteoinfo.geometry.shape.PolygonZ;
-import org.meteoinfo.geometry.shape.PolygonZShape;
+import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.shape.Polygon;
+import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.geometry.shape.Shape;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -325,8 +325,8 @@ public class GraphicCollection3D extends GraphicCollection{
                 case POLYGON_Z:
                     sw.write("Polygon");
                     sw.newLine();
-                    PolygonZShape polygonZShape = (PolygonZShape) shape;
-                    PolygonZ polygonZ = (PolygonZ) polygonZShape.getPolygons().get(0);
+                    PolygonShape polygonShape = (PolygonShape) shape;
+                    Polygon polygonZ = polygonShape.getPolygons().get(0);
                     sw.write("Color");
                     sw.newLine();
                     Color color = g.getLegendBreak().getColor();

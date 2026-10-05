@@ -11,9 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
  * General Public License for more details.
  */
-package org.meteoinfo.geometry.shape;
-
-import org.meteoinfo.common.PointD;
+package org.meteoinfo.common;
 
 /**
  *
@@ -37,6 +35,18 @@ public class PointZ extends PointD implements Cloneable{
      * Constructor
      */
     public PointZ() {
+    }
+
+    /**
+     * Constructor
+     *
+     * @param x X
+     * @param y Y
+     */
+    public PointZ(double x, double y) {
+        X = x;
+        Y = y;
+        Z = Double.NaN;
     }
     
     /**

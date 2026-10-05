@@ -2,6 +2,7 @@ package org.meteoinfo.chart.transform;
 
 
 import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 
 /**
  * TransformWrapper: proxy wrapper for Transform instance.
@@ -68,11 +69,11 @@ public class TransformWrapper extends Transform implements TransformListener {
     }
 
     @Override
-    public PointD transform(PointD p) {
+    public PointZ transform(PointZ p) {
         if (innerTransform == null) {
             throw new IllegalStateException("TransformWrapper inner transform is null");
         }
-        PointD res = innerTransform.transform(p);
+        PointZ res = innerTransform.transform(p);
         clearInvalid();
         return res;
     }

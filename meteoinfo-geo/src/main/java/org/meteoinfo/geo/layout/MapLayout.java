@@ -20,7 +20,7 @@ import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 import org.apache.commons.imaging.ImageFormats;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.render.java2d.Draw;
@@ -191,7 +191,7 @@ import org.xml.sax.SAXException;
      private Edge _resizeSelectedEdge = Edge.NONE;
      private boolean _startNewGraphic = true;
      private List<PointF> _graphicPoints = new ArrayList<>();
-     private final List<PointD> _editingVertices = new ArrayList<>();
+     private final List<PointZ> _editingVertices = new ArrayList<>();
      private int _editingVerticeIndex;
      private boolean _dragMode = false;
      // </editor-fold>
@@ -527,7 +527,7 @@ import org.xml.sax.SAXException;
                      break;
                  case NEW_POINT:
                      PointShape aPS = new PointShape();
-                     aPS.setPoint(new PointD(pageP.x, pageP.y));
+                     aPS.setPoint(new PointZ(pageP.x, pageP.y));
                      Graphic aGraphic = new Graphic(aPS, (PointBreak) _defPointBreak.clone());
                      LayoutGraphic aLayoutGraphic = new LayoutGraphic(aGraphic, this);
                      addElement(aLayoutGraphic);
@@ -538,7 +538,7 @@ import org.xml.sax.SAXException;
                      break;
                  case NEW_LABEL:
                      aPS = new PointShape();
-                     aPS.setPoint(new PointD(pageP.x, pageP.y));
+                     aPS.setPoint(new PointZ(pageP.x, pageP.y));
                      aGraphic = new Graphic(aPS, (LabelBreak) _defLabelBreak.clone());
                      aLayoutGraphic = new LayoutGraphic(aGraphic, this);
                      addElement(aLayoutGraphic);
@@ -1010,11 +1010,11 @@ import org.xml.sax.SAXException;
 
                                      _frmMeasure.setCurrentValue(dist);
                                  } else {
-                                     List<PointD> mPoints = new ArrayList<>();
+                                     List<PointZ> mPoints = new ArrayList<>();
                                      for (int i = 0; i < points.length; i++) {
                                          aPoint = new PointF(points[i].X - mapP.X, points[i].Y - mapP.Y);
                                          pXY = _currentLayoutMap.getMapFrame().getMapView().screenToProj(aPoint.X, aPoint.Y);
-                                         mPoints.add(new PointD(pXY[0], pXY[1]));
+                                         mPoints.add(new PointZ(pXY[0], pXY[1]));
                                      }
                                      double area = GeoComputation.getArea(mPoints);
                                      if (_currentLayoutMap.getMapFrame().getMapView().getProjection().isLonLatMap()) {
@@ -1249,17 +1249,17 @@ import org.xml.sax.SAXException;
                          _graphicPoints.add(new PointF(_mouseDownPoint.x, e.getY()));
                          _graphicPoints.add(new PointF(e.getX(), e.getY()));
                          _graphicPoints.add(new PointF(e.getX(), _mouseDownPoint.y));
-                         List<PointD> points = new ArrayList<>();
+                         List<PointZ> points = new ArrayList<>();
                          for (PointF cPoint : _graphicPoints) {
                              PointF dPoint = screenToPage(cPoint.X, cPoint.Y);
-                             points.add(new PointD(dPoint.X, dPoint.Y));
+                             points.add(new PointZ(dPoint.X, dPoint.Y));
                          }
 
                          Graphic aGraphic = null;
                          switch (_mouseMode) {
                              case NEW_RECTANGLE:
                                  RectangleShape aPGS = new RectangleShape();
-                                 points.add((PointD) points.get(0).clone());
+                                 points.add((PointZ) points.get(0).clone());
                                  aPGS.setPoints(points);
                                  aGraphic = new Graphic(aPGS, (PolygonBreak) _defPolygonBreak.clone());
                                  break;
@@ -1290,10 +1290,10 @@ import org.xml.sax.SAXException;
                              break;
                          }
 
-                         List<PointD> points = new ArrayList<>();
+                         List<PointZ> points = new ArrayList<>();
                          for (PointF cPoint : _graphicPoints) {
                              PointF dPoint = screenToPage(cPoint.X, cPoint.Y);
-                             points.add(new PointD(dPoint.X, dPoint.Y));
+                             points.add(new PointZ(dPoint.X, dPoint.Y));
                          }
 
                          PolylineShape aPLS = new PolylineShape();
@@ -1321,10 +1321,10 @@ import org.xml.sax.SAXException;
                          _graphicPoints.add(new PointF(_mouseDownPoint.x, _mouseDownPoint.y - radius));
                          _graphicPoints.add(new PointF(_mouseDownPoint.x + radius, _mouseDownPoint.y));
                          _graphicPoints.add(new PointF(_mouseDownPoint.x, _mouseDownPoint.y + radius));
-                         List<PointD> points = new ArrayList<>();
+                         List<PointZ> points = new ArrayList<>();
                          for (PointF cPoint : _graphicPoints) {
                              PointF dPoint = screenToPage(cPoint.X, cPoint.Y);
-                             points.add(new PointD(dPoint.X, dPoint.Y));
+                             points.add(new PointZ(dPoint.X, dPoint.Y));
                          }
 
                          CircleShape aPGS = new CircleShape();
@@ -1661,11 +1661,11 @@ import org.xml.sax.SAXException;
 
                          if (_mouseMode == MouseMode.MAP_SELECT_FEATURES_POLYGON) {
                              PointF mapP = pageToScreen(_currentLayoutMap.getLeft(), _currentLayoutMap.getTop());
-                             List<PointD> points = new ArrayList<>();
+                             List<PointZ> points = new ArrayList<>();
                              MapView currentMapView = _currentLayoutMap.getMapFrame().getMapView();
                              for (PointF aPoint : _graphicPoints) {
                                  float[] pXY = currentMapView.screenToProj(aPoint.X - mapP.X, aPoint.Y - mapP.Y);
-                                 points.add(new PointD(pXY[0], pXY[1]));
+                                 points.add(new PointZ(pXY[0], pXY[1]));
                              }
 
                              MapLayer aMLayer = _currentLayoutMap.getMapFrame().getMapView().getSelectedLayer();
@@ -1677,7 +1677,7 @@ import org.xml.sax.SAXException;
                              }
 
                              PolygonShape aPGS = new PolygonShape();
-                             points.add((PointD) points.get(0).clone());
+                             points.add((PointZ) points.get(0).clone());
                              aPGS.setPoints(points);
                              VectorLayer aLayer = (VectorLayer) aMLayer;
                              if (!e.isControlDown() && !e.isShiftDown()) {
@@ -1686,10 +1686,10 @@ import org.xml.sax.SAXException;
                              aLayer.selectShapes(aPGS);
                              _currentLayoutMap.getMapFrame().getMapView().fireShapeSelectedEvent();
                          } else {
-                             List<PointD> points = new ArrayList<>();
+                             List<PointZ> points = new ArrayList<>();
                              for (PointF aPoint : _graphicPoints) {
                                  PointF bPoint = screenToPage(aPoint.X, aPoint.Y);
-                                 points.add(new PointD(bPoint.X, bPoint.Y));
+                                 points.add(new PointZ(bPoint.X, bPoint.Y));
                              }
 
                              Graphic aGraphic = null;
@@ -1703,7 +1703,7 @@ import org.xml.sax.SAXException;
                                  case NEW_POLYGON:
                                      if (points.size() > 2) {
                                          PolygonShape aPGS = new PolygonShape();
-                                         points.add((PointD) points.get(0).clone());
+                                         points.add((PointZ) points.get(0).clone());
                                          aPGS.setPoints(points);
                                          aGraphic = new Graphic(aPGS, (PolygonBreak) _defPolygonBreak.clone());
                                      }
@@ -1716,7 +1716,7 @@ import org.xml.sax.SAXException;
                                  case NEW_CURVE_POLYGON:
                                      if (points.size() > 2) {
                                          CurvePolygonShape aCPS = new CurvePolygonShape();
-                                         points.add((PointD) points.get(0).clone());
+                                         points.add((PointZ) points.get(0).clone());
                                          aCPS.setPoints(points);
                                          aGraphic = new Graphic(aCPS, (PolygonBreak) _defPolygonBreak.clone());
                                      }
@@ -1791,7 +1791,7 @@ import org.xml.sax.SAXException;
      private void onReverseGraphicClick(ActionEvent e) {
          LayoutElement aElement = _selectedElements.get(0);
          Graphic aGraphic = ((LayoutGraphic) aElement).getGraphic();
-         List<PointD> points = (List<PointD>) aGraphic.getShape().getPoints();
+         List<PointZ> points = (List<PointZ>) aGraphic.getShape().getPoints();
          Collections.reverse(points);
          aGraphic.getShape().setPoints(points);
 
@@ -1803,9 +1803,9 @@ import org.xml.sax.SAXException;
          LayoutElement aElement = _selectedElements.get(0);
          Graphic aGraphic = ((LayoutGraphic) aElement).getGraphic();
          List<wcontour.global.PointD> pointList = new ArrayList<>();
-         List<PointD> newPoints = new ArrayList<>();
+         List<PointZ> newPoints = new ArrayList<>();
 
-         for (PointD aP : aGraphic.getShape().getPoints()) {
+         for (PointZ aP : aGraphic.getShape().getPoints()) {
              pointList.add(new wcontour.global.PointD(aP.X, aP.Y));
          }
 
@@ -1815,7 +1815,7 @@ import org.xml.sax.SAXException;
 
          pointList = wcontour.Contour.smoothPoints(pointList);
          for (wcontour.global.PointD aP : pointList) {
-             newPoints.add(new PointD(aP.X, aP.Y));
+             newPoints.add(new PointZ(aP.X, aP.Y));
          }
          aGraphic.getShape().setPoints(newPoints);
          ((LayoutGraphic) aElement).updateControlSize();
@@ -2872,7 +2872,7 @@ import org.xml.sax.SAXException;
              if (aElement.isSelected()) {
                  if (_mouseMode == MouseMode.EDIT_VERTICES) {
                      LayoutGraphic aLG = (LayoutGraphic) aElement;
-                     List<PointD> points = (List<PointD>) aLG.getGraphic().getShape().getPoints();
+                     List<PointZ> points = aLG.getGraphic().getShape().getPoints();
                      drawSelectedVertices(g, points);
                  } else {
                      float[] dashPattern = new float[]{2.0F, 1.0F};
@@ -2965,11 +2965,11 @@ import org.xml.sax.SAXException;
          g.draw(rect);
      }
 
-     private void drawSelectedVertices(Graphics2D g, List<PointD> points) {
+     private void drawSelectedVertices(Graphics2D g, List<PointZ> points) {
          int size = 6;
          Rectangle rect = new Rectangle(0, 0, size, size);
 
-         for (PointD aPoint : points) {
+         for (PointZ aPoint : points) {
              PointF aP = pageToScreen((float) aPoint.X, (float) aPoint.Y);
              rect.x = (int) aP.X - size / 2;
              rect.y = (int) aP.Y - size / 2;
@@ -3413,7 +3413,7 @@ import org.xml.sax.SAXException;
       */
      public LayoutGraphic addText(String text, int x, int y, String fontName, float fontSize) {
          PointShape aPS = new PointShape();
-         aPS.setPoint(new PointD(x, y));
+         aPS.setPoint(new PointZ(x, y));
          LabelBreak aLB = (LabelBreak) _defLabelBreak.clone();
          aLB.setText(text);
          aLB.setFont(new Font(fontName, Font.PLAIN, (int) fontSize));
@@ -3426,7 +3426,7 @@ import org.xml.sax.SAXException;
 
      public LayoutGraphic addWindArrow(int left, int top) {
          WindArrow aWindArraw = new WindArrow();
-         //aWindArraw.setPoint(new PointD(left, top));
+         //aWindArraw.setPoint(new PointZ(left, top));
          aWindArraw.angle = 270;
          aWindArraw.length = 20;
          VectorBreak aVB = new VectorBreak();
@@ -3668,12 +3668,12 @@ import org.xml.sax.SAXException;
          return rect;
      }
 
-     private int selectEditVertices(Point aPoint, Shape aShape, List<PointD> vertices) {
-         List<PointD> points = (List<PointD>) aShape.getPoints();
+     private int selectEditVertices(Point aPoint, Shape aShape, List<PointZ> vertices) {
+         List<PointZ> points = aShape.getPoints();
          int buffer = 4;
          Rectangle rect = new Rectangle(aPoint.x - buffer / 2, aPoint.y - buffer / 2, buffer, buffer);
          vertices.clear();
-         PointD aPD;
+         PointZ aPD;
          int vIdx = -1;
          for (int i = 0; i < points.size(); i++) {
              if (MIMath.pointInRectangle(points.get(i), rect)) {

@@ -3,7 +3,7 @@ package org.meteoinfo.chart.geo;
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.chart.graphic.Graphic;
-import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.shape.PolylineZShape;
 import org.meteoinfo.projection.ProjectionInfo;
 

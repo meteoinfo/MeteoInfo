@@ -14,7 +14,7 @@
 package org.meteoinfo.projection.info;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
@@ -64,30 +64,30 @@ public class EquidistantConic extends ProjectionInfo {
         double maxLon = cenLon + 180 - epsilon;
         double minLat = -90;
         double maxLat = 90;
-        List<PointD> points = new ArrayList<>();
+        List<PointZ> points = new ArrayList<>();
         double lon = minLon;
         double lat = minLat;
         while (lon < maxLon) {
-            points.add(new PointD(lon, lat));
+            points.add(new PointZ(lon, lat));
             lon += 1;
         }
         lon = maxLon;
         while (lat < maxLat) {
-            points.add(new PointD(lon, lat));
+            points.add(new PointZ(lon, lat));
             lat += 1;
         }
         lat = maxLat;
         while (lon > minLon) {
-            points.add(new PointD(lon, lat));
+            points.add(new PointZ(lon, lat));
             lon -= 1;
         }
         lon = minLon;
         while (lat > minLat) {
-            points.add(new PointD(lon, lat));
+            points.add(new PointZ(lon, lat));
             lat -= 1;
         }
         lat = minLat;
-        points.add(new PointD(lon, lat));
+        points.add(new PointZ(lon, lat));
         PolygonShape ps = new PolygonShape();
         ps.setPoints(points);
         this.boundary = ProjectionUtil.projectPolygonShape(ps, KnownCoordinateSystems.geographic.world.WGS1984, this);

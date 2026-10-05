@@ -4,10 +4,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.AspectType;
 import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.geometry.shape.PointZ;
-
-import javax.swing.*;
-import java.nio.FloatBuffer;
+import org.meteoinfo.common.PointZ;
 
 public class Transform {
     protected AspectType aspectType = AspectType.AUTO;

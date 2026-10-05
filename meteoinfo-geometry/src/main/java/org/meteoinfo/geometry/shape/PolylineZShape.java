@@ -21,6 +21,7 @@ import org.locationtech.jts.geom.CoordinateXYZM;
 import org.locationtech.jts.geom.Geometry;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointZ;
 
  /**
  * PolylineZ shape class

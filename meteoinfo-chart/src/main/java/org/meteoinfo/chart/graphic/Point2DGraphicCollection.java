@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.graphic;
 
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.LegendType;
@@ -148,7 +148,7 @@ public class Point2DGraphicCollection extends GraphicCollection {
     protected void updateGraphics(PointBreak pointBreak) {
         this.legendBreak = pointBreak;
         this.graphics = new ArrayList<>();
-        List<PointD> points = new ArrayList<>();
+        List<PointZ> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
         double x, y;
@@ -158,14 +158,14 @@ public class Point2DGraphicCollection extends GraphicCollection {
             if (Double.isNaN(x) || Double.isNaN(y)) {
                 continue;
             }
-            PointShape shape = new PointShape(new PointD(x, y));
+            PointShape shape = new PointShape(new PointZ(x, y));
             this.add(new Point2DGraphic(shape, pointBreak));
         }
     }
 
     protected void updateGraphics(List<ColorBreak> cbs) {
         this.graphics = new ArrayList<>();
-        List<PointD> points = new ArrayList<>();
+        List<PointZ> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
         double x, y;
@@ -177,7 +177,7 @@ public class Point2DGraphicCollection extends GraphicCollection {
                 if (Double.isNaN(x) || Double.isNaN(y)) {
                     continue;
                 }
-                PointShape shape = new PointShape(new PointD(x, y));
+                PointShape shape = new PointShape(new PointZ(x, y));
                 this.add(new Point2DGraphic(shape, (PointBreak) cbs.get(i)));
                 i += 1;
             }
@@ -204,7 +204,7 @@ public class Point2DGraphicCollection extends GraphicCollection {
             int i = 0;
             while (xIter.hasNext()) {
                 ps = new PointShape();
-                ps.setPoint(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
+                ps.setPoint(new PointZ(xIter.getDoubleNext(), yIter.getDoubleNext()));
                 z = zIter.getDoubleNext();
                 ps.setValue(z);
                 cb = ls.getLegendBreak(i);
@@ -214,7 +214,7 @@ public class Point2DGraphicCollection extends GraphicCollection {
         } else {
             while (xIter.hasNext()) {
                 ps = new PointShape();
-                ps.setPoint(new PointD(xIter.getDoubleNext(), yIter.getDoubleNext()));
+                ps.setPoint(new PointZ(xIter.getDoubleNext(), yIter.getDoubleNext()));
                 z = zIter.getDoubleNext();
                 ps.setValue(z);
                 cb = ls.findLegendBreak(z);

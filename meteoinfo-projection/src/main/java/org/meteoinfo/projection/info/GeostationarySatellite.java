@@ -18,7 +18,7 @@ import org.meteoinfo.common.XAlign;
 import org.meteoinfo.common.YAlign;
 import org.meteoinfo.common.Direction;
 import org.meteoinfo.common.GridLabel;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
@@ -67,7 +67,7 @@ public class GeostationarySatellite extends ProjectionInfo {
         double max_y = h * Math.asin(b / (a + h));
         double easting = this.crs.getProjection().getFalseEasting();
         double northing = this.crs.getProjection().getFalseNorthing();
-        List<PointD> points = ellipse_boundary(max_x, max_y, easting, northing, 201);
+        List<PointZ> points = ellipse_boundary(max_x, max_y, easting, northing, 201);
         PolygonShape ps = new PolygonShape();
         ps.setPoints(points);
         this.boundary = ps;

@@ -3,8 +3,8 @@ package org.meteoinfo.chart.jogl.tessellator;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
-import org.meteoinfo.geometry.shape.PointZ;
-import org.meteoinfo.geometry.shape.PolygonZ;
+import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.shape.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class PrimitiveTessellator {
      * @return A list of Primitive objects containing the tessellated vertices.
      * @throws TesselationException If the GLU tessellator encounters an unrecoverable error.
      */
-    public List<Primitive> getPrimitives(PolygonZ polygon) throws TesselationException {
+    public List<Primitive> getPrimitives(Polygon polygon) throws TesselationException {
         // Reset callback state before starting a new tessellation
         tessCallback.reset();
 
@@ -54,7 +54,7 @@ public class PrimitiveTessellator {
      *
      * @param polygon The polygon to process.
      */
-    private void makePrimitives(PolygonZ polygon) {
+    private void makePrimitives(Polygon polygon) {
         // Register all necessary callbacks
         glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
         glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
@@ -128,7 +128,7 @@ public class PrimitiveTessellator {
      * @param polygon The polygon to compute the normal for.
      * @return A normalized double array [nx, ny, nz].
      */
-    private double[] computePolygonNormal(PolygonZ polygon) {
+    private double[] computePolygonNormal(Polygon polygon) {
         List<PointZ> outline = (List<PointZ>) polygon.getOutLine();
         if (outline.size() < 3) {
             return new double[]{0, 0, 1}; // Fallback for degenerate polygons

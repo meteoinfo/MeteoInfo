@@ -49,6 +49,16 @@ public class Extent3D extends Extent{
      *
      * @return Center point
      */
+    @Override
+    public PointZ getCenterPoint() {
+        return new PointZ((maxX - minX) / 2 + minX, (maxY - minY) / 2 + minY, (maxZ - minZ) / 2 + minZ);
+    }
+
+    /**
+     * Get center point
+     *
+     * @return Center point
+     */
     public double[] getCenter() {
         return new double[]{(maxX + minX) / 2, (maxY + minY) / 2, (maxZ + minZ) / 2};
     }

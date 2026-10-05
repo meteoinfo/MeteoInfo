@@ -6,7 +6,7 @@
 package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.geometry.legend.ChartBreak;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.shape.PointShape;
 import org.w3c.dom.*;
 
@@ -17,7 +17,7 @@ import org.w3c.dom.*;
 public class ChartGraphic extends Graphic {
 
     // <editor-fold desc="Variables">
-    private PointD startPosition;
+    private PointZ startPosition;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -36,7 +36,7 @@ public class ChartGraphic extends Graphic {
      */
     public ChartGraphic(PointShape shape, ChartBreak legend) {
         super(shape, legend);
-        startPosition = (PointD) shape.getPoint().clone();
+        startPosition = (PointZ) shape.getPoint().clone();
     }
 
     // </editor-fold>
@@ -46,7 +46,7 @@ public class ChartGraphic extends Graphic {
      *
      * @return Start position
      */
-    public PointD getStartPosition() {
+    public PointZ getStartPosition() {
         return startPosition;
     }
 
@@ -55,7 +55,7 @@ public class ChartGraphic extends Graphic {
      *
      * @param value Start position
      */
-    public void setStartPosition(PointD value) {
+    public void setStartPosition(PointZ value) {
         startPosition = value;
     }
 
@@ -66,7 +66,7 @@ public class ChartGraphic extends Graphic {
      */
     public void setShape(PointShape aShape) {
         super.setShape(aShape);
-        startPosition = (PointD) aShape.getPoint().clone();
+        startPosition = (PointZ) aShape.getPoint().clone();
     }
 
     // </editor-fold>
@@ -87,7 +87,7 @@ public class ChartGraphic extends Graphic {
         parent.appendChild(graphic);
     }
 
-    private void addStartPosition(Document doc, Element parent, PointD pos) {
+    private void addStartPosition(Document doc, Element parent, PointZ pos) {
         Element startPos = doc.createElement("StartPosition");
 
         Attr xAttr = doc.createAttribute("X");
@@ -117,19 +117,19 @@ public class ChartGraphic extends Graphic {
 
         Node startPos = graphicNode.getElementsByTagName("StartPosition").item(0);
         if (startPos != null) {
-            PointD sP = this.loadStartPosition(startPos);
+            PointZ sP = this.loadStartPosition(startPos);
             if (sP != null) {
                 this.startPosition = sP;
             }
         }
     }
 
-    private PointD loadStartPosition(Node startPosNode) {
-        PointD sP = null;
+    private PointZ loadStartPosition(Node startPosNode) {
+        PointZ sP = null;
         try {
             double x = Double.parseDouble(startPosNode.getAttributes().getNamedItem("X").getNodeValue());
             double y = Double.parseDouble(startPosNode.getAttributes().getNamedItem("Y").getNodeValue());
-            sP = new PointD(x, y);
+            sP = new PointZ(x, y);
         } catch (DOMException e) {
         } catch (NumberFormatException e) {
         }

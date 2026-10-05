@@ -14,7 +14,7 @@
 package org.meteoinfo.projection.info;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
@@ -107,11 +107,11 @@ public class StereographicAzimuthal extends ProjectionInfo {
 
     @Override
     public void updateBoundary() {
-        List<PointD> points = new ArrayList<>();
+        List<PointZ> points = new ArrayList<>();
         double lon = -180;
         double lat = this.cutoff;
         while (lon <= 180) {
-            points.add(new PointD(lon, lat));
+            points.add(new PointZ(lon, lat));
             lon += 1;
         }
         PolygonShape ps = new PolygonShape();

@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.transform;
 
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 
 // Blended Transform: Uses different transforms for X and Y axes
 // This is the key to implementing semi-log or log-log plots
@@ -12,11 +12,11 @@ public class BlendedTransform extends Transform {
     }
 
     @Override
-    public PointD transform(PointD p) {
-        PointD px = xTransform.transform(p);
-        PointD py = yTransform.transform(p);
+    public PointZ transform(PointZ p) {
+        PointZ px = xTransform.transform(p);
+        PointZ py = yTransform.transform(p);
         clearInvalid();
-        return new PointD(px.X, py.Y);
+        return new PointZ(px.X, py.Y);
     }
 
     @Override

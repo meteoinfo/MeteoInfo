@@ -279,13 +279,13 @@ public class MapGridLine extends GridLine {
             return;
         }
         for (double lon : this.longitudeLocations) {
-            List<PointD> points = new ArrayList<>();
+            List<PointZ> points = new ArrayList<>();
             double lat = latMin;
             while (lat < latMax) {
-                points.add(new PointD(lon, lat));
+                points.add(new PointZ(lon, lat));
                 lat += delta;
             }
-            points.add((new PointD(lon, latMax)));
+            points.add((new PointZ(lon, latMax)));
             PolylineShape line = new PolylineShape();
             line.setPoints(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
@@ -312,13 +312,13 @@ public class MapGridLine extends GridLine {
             return;
         }
         for (double lat : this.latitudeLocations) {
-            List<PointD> points = new ArrayList<>();
+            List<PointZ> points = new ArrayList<>();
             double lon = lonMin;
             while (lon < lonMax) {
-                points.add(new PointD(lon, lat));
+                points.add(new PointZ(lon, lat));
                 lon += delta;
             }
-            //points.add(new PointD(lonMax, lat));
+            //points.add(new PointZ(lonMax, lat));
             PolylineShape line = new PolylineShape();
             line.setPoints(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
@@ -329,8 +329,8 @@ public class MapGridLine extends GridLine {
 
             PolylineShape polylineShape = (PolylineShape) graphic.getShape();
             if (polylineShape.getPartNum() > 1) {
-                points = (List<PointD>) polylineShape.getPolylines().get(0).getPointList();
-                List<PointD> points1 = (List<PointD>) polylineShape.getPolylines().get(1).getPointList();
+                points = polylineShape.getPolylines().get(0).getPointList();
+                List<PointZ> points1 = polylineShape.getPolylines().get(1).getPointList();
                 Collections.reverse(points1);
                 points.addAll(points1);
                 line = new PolylineZShape();

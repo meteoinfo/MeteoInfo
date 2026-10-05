@@ -17,6 +17,7 @@ import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.table.DataRow;
@@ -266,11 +267,11 @@ public class MapViewUndoRedo {
     public class AddRingEdit extends FeatureUndoableEdit {
         MapView mapView;
         PolygonShape shape;
-        List<PointD> points;
+        List<PointZ> points;
         int polyIdx;
         int holeIdx;
         
-        public AddRingEdit(MapView mapView, PolygonShape shape, List<PointD> points,
+        public AddRingEdit(MapView mapView, PolygonShape shape, List<PointZ> points,
                 int polygonIdx, int holeIdx){
             this.mapView = mapView;
             this.shape = shape;
@@ -341,7 +342,7 @@ public class MapViewUndoRedo {
         public void redo(){
             super.redo();
             try {
-                shape.addHole((List<PointD>)hole.getPoints(), polyIdx);
+                shape.addHole(hole.getPoints(), polyIdx);
                 layer.editAddShape(hole);
                 mapView.paintLayers();
                 System.out.println("Redo Fill a hole");
@@ -354,11 +355,11 @@ public class MapViewUndoRedo {
     public class RemoveRingEdit extends FeatureUndoableEdit {
         MapView mapView;
         PolygonShape shape;
-        List<PointD> points;
+        List<PointZ> points;
         int polyIdx;
         int holeIdx;
         
-        public RemoveRingEdit(MapView mapView, PolygonShape shape, List<PointD> hole, int polygonIdx, int holeIdx){
+        public RemoveRingEdit(MapView mapView, PolygonShape shape, List<PointZ> hole, int polygonIdx, int holeIdx){
             this.mapView = mapView;
             this.shape = shape;
             this.points = hole;
@@ -555,9 +556,9 @@ public class MapViewUndoRedo {
         MapView mapView;
         Shape shape;
         int verticeIdx;
-        PointD vertice;
+        PointZ vertice;
         
-        public AddFeatureVerticeEdit(MapView mapView, Shape shape, int vIdx, PointD vertice){
+        public AddFeatureVerticeEdit(MapView mapView, Shape shape, int vIdx, PointZ vertice){
             this.mapView = mapView;
             this.shape = shape;            
             this.verticeIdx = vIdx;
@@ -588,7 +589,7 @@ public class MapViewUndoRedo {
         MapView mapView;
         Shape shape;
         int verticeIdx;
-        PointD vertice;
+        PointZ vertice;
         
         public RemoveFeatureVerticeEdit(MapView mapView, Shape shape, int vIdx){
             this.mapView = mapView;
@@ -780,9 +781,9 @@ public class MapViewUndoRedo {
         MapView mapView;
         Graphic graphic;
         int verticeIdx;
-        PointD vertice;
+        PointZ vertice;
         
-        public AddGraphicVerticeEdit(MapView mapView, Graphic graphic, int vIdx, PointD vertice){
+        public AddGraphicVerticeEdit(MapView mapView, Graphic graphic, int vIdx, PointZ vertice){
             this.mapView = mapView;
             this.graphic = graphic;            
             this.verticeIdx = vIdx;
@@ -813,7 +814,7 @@ public class MapViewUndoRedo {
         MapView mapView;
         Graphic graphic;
         int verticeIdx;
-        PointD vertice;
+        PointZ vertice;
         
         public RemoveGraphicVerticeEdit(MapView mapView, Graphic graphic, int vIdx){
             this.mapView = mapView;
@@ -878,14 +879,14 @@ public class MapViewUndoRedo {
     class SmoothGraphicEdit extends AbstractUndoableEdit {
         MapView mapView;
         Graphic graphic;
-        List<PointD> oldPoints;
-        List<PointD> newPoints;
+        List<PointZ> oldPoints;
+        List<PointZ> newPoints;
         
-        public SmoothGraphicEdit(MapView mapView, Graphic graphic, List<PointD> points){
+        public SmoothGraphicEdit(MapView mapView, Graphic graphic, List<PointZ> points){
             this.mapView = mapView;
             this.graphic = graphic;
             this.newPoints = points;
-            this.oldPoints = (List<PointD>)graphic.getShape().getPoints();
+            this.oldPoints = graphic.getShape().getPoints();
         }
         
         @Override
@@ -911,14 +912,14 @@ public class MapViewUndoRedo {
     class SmoothFeatureEdit extends AbstractUndoableEdit {
         MapView mapView;
         Shape shape;
-        List<PointD> oldPoints;
-        List<PointD> newPoints;
+        List<PointZ> oldPoints;
+        List<PointZ> newPoints;
         
-        public SmoothFeatureEdit(MapView mapView, Shape shape, List<PointD> points){
+        public SmoothFeatureEdit(MapView mapView, Shape shape, List<PointZ> points){
             this.mapView = mapView;
             this.shape = shape;
             this.newPoints = points;
-            this.oldPoints = (List<PointD>)shape.getPoints();
+            this.oldPoints = shape.getPoints();
         }
         
         @Override

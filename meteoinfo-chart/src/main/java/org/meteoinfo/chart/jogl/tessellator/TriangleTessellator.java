@@ -5,8 +5,8 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
 import org.meteoinfo.chart.graphic.Triangle3D;
-import org.meteoinfo.geometry.shape.PointZ;
-import org.meteoinfo.geometry.shape.PolygonZ;
+import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.shape.Polygon;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -38,7 +38,7 @@ public class TriangleTessellator {
      *             Throws {@link TesselationException} if the tessellation was
      *             unsuccessful, most commonly due to ambiguous shapes
      */
-    public List<Triangle3D> getTriangles(PolygonZ polygon)
+    public List<Triangle3D> getTriangles(Polygon polygon)
             throws TesselationException {
 
         makeTriangles(polygon);
@@ -77,7 +77,7 @@ public class TriangleTessellator {
      *            Instance of {@link TessellatorListener} that will be invoked
      *            whenever tessellation is done or fails.
      */
-    public void getTriangles(PolygonZ polygon,
+    public void getTriangles(Polygon polygon,
                              TessellatorListener listener) {
         this.listener = listener;
         makeTriangles(polygon);
@@ -114,7 +114,7 @@ public class TriangleTessellator {
      *            will be thrown.
      *
      */
-    private void makeTriangles(PolygonZ polygon) {
+    private void makeTriangles(Polygon polygon) {
         glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
         glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
         glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);

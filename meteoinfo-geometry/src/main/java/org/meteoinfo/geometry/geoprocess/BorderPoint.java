@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.geometry.geoprocess;
 
- import org.meteoinfo.common.PointD;
+ import org.meteoinfo.common.PointZ;
 
  /**
  *
@@ -35,7 +35,7 @@ public class BorderPoint {
         /// <summary>
         /// Point
         /// </summary>
-        public PointD Point;
+        public PointZ Point;
         /// <summary>
         /// Value
         /// </summary>

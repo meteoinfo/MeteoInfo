@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.geometry.shape;
 
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,11 +46,11 @@ public class RectangleShape extends PolygonShape {
      */
     public RectangleShape(double x, double y, double width, double height){
         super();
-        List<PointD> points = new ArrayList<>();
-        points.add(new PointD(x, y));
-        points.add(new PointD(x, y + height));
-        points.add(new PointD(x + width, y + height));
-        points.add(new PointD(x + width, y));
+        List<PointZ> points = new ArrayList<>();
+        points.add(new PointZ(x, y));
+        points.add(new PointZ(x, y + height));
+        points.add(new PointZ(x + width, y + height));
+        points.add(new PointZ(x + width, y));
         this.setPoints(points);
     }
     // </editor-fold>

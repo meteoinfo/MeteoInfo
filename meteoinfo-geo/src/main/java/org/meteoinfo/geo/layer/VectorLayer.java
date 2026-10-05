@@ -462,7 +462,7 @@ public class VectorLayer extends MapLayer {
     public void addCharts() {
         List<Shape> shapeList = new ArrayList<>(this.shapes);
         int shapeIdx = -1;
-        PointD aPoint = new PointD();
+        PointZ aPoint = new PointZ();
 
         List<Integer> selShapeIdx = getSelectedShapeIndexes();
         boolean isShapeSel = true;
@@ -482,13 +482,13 @@ public class VectorLayer extends MapLayer {
                 case POINT:
                 case POINT_M:
                 case POINT_Z:
-                    aPS.setPoint((PointD) ((PointShape) aShape).getPoint().clone());
+                    aPS.setPoint((PointZ) ((PointShape) aShape).getPoint().clone());
                     break;
                 case POLYLINE:
                 case POLYLINE_M:
                 case POLYLINE_Z:
                     int pIdx = ((PolylineShape) aShape).getPoints().size() / 2;
-                    aPS.setPoint((PointD) ((PolylineShape) aShape).getPoints().get(pIdx - 1).clone());
+                    aPS.setPoint((PointZ) ((PolylineShape) aShape).getPoints().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                 case POLYGON_M:
@@ -729,7 +729,7 @@ public class VectorLayer extends MapLayer {
     public List<Integer> selectShapes(Extent aExtent, List<Shape> shapes, boolean isSingleSel) {
         List<Integer> selectedShapes = new ArrayList<>();
         int i, j;
-        PointD sp = aExtent.getCenterPoint();
+        PointZ sp = aExtent.getCenterPoint();
 
         switch (this.getShapeType()) {
             case POINT:
@@ -815,8 +815,8 @@ public class VectorLayer extends MapLayer {
         List<Integer> selIdxs = new ArrayList<>();
         for (int i = 0; i < shapes.size(); i++) {
             boolean isIn = false;
-            List<PointD> points = (List<PointD>) shapes.get(i).getPoints();
-            for (PointD aPoint : points) {
+            List<PointZ> points = shapes.get(i).getPoints();
+            for (PointZ aPoint : points) {
                 if (GeoComputation.pointInPolygon(polygonShape, aPoint)) {
                     isIn = true;
                     break;
@@ -908,7 +908,7 @@ public class VectorLayer extends MapLayer {
      * @param p The point
      * @return Selected shape
      */
-    public Shape selectShape(PointD p) {
+    public Shape selectShape(PointZ p) {
         Coordinate c = new Coordinate(p.X, p.Y);
         Geometry point = new GeometryFactory().createPoint(c);
         for (Shape shape : shapes) {
@@ -925,14 +925,14 @@ public class VectorLayer extends MapLayer {
      * @param p The point
      * @return PolygonShape and polygon hole index
      */
-    public Object[] selectPolygonHole(PointD p) {
+    public Object[] selectPolygonHole(PointZ p) {
         for (Shape shape : shapes) {
             int i = 0;
             for (Polygon poly : ((PolygonShape) shape).getPolygons()) {
                 if (poly.hasHole()) {
                     if (GeoComputation.pointInPolygon(poly.getOutLine(), p)) {
                         int j = 0;
-                        for (List<? extends PointD> hole : poly.getHoleLines()) {
+                        for (List<PointZ> hole : poly.getHoleLines()) {
                             if (GeoComputation.pointInPolygon(hole, p)) {
                                 return new Object[]{shape, i, j};
                             }
@@ -2034,7 +2034,7 @@ public class VectorLayer extends MapLayer {
      */
     private void addLabelsByColor() {
         int shapeIdx = -1;
-        PointD aPoint;
+        PointZ aPoint;
 
         String dFormat = "%1$.1f";
         boolean isData = false;
@@ -2080,19 +2080,19 @@ public class VectorLayer extends MapLayer {
                 case POINT:
                 case POINT_M:
                 case POINT_Z:
-                    aPS.setPoint((PointD) ((PointShape) aShape).getPoint().clone());
+                    aPS.setPoint((PointZ) ((PointShape) aShape).getPoint().clone());
                     break;
                 case POLYLINE:
                 case POLYLINE_M:
                 case POLYLINE_Z:
                     int pIdx = ((PolylineShape) aShape).getPoints().size() / 2;
-                    aPS.setPoint((PointD) ((PolylineShape) aShape).getPoints().get(pIdx - 1).clone());
+                    aPS.setPoint((PointZ) ((PolylineShape) aShape).getPoints().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                 case POLYGON_M:
                 case POLYGON_Z:
                     Extent aExtent = aShape.getExtent();
-                    aPoint = new PointD();
+                    aPoint = new PointZ();
                     aPoint.X = ((aExtent.minX + aExtent.maxX) / 2);
                     aPoint.Y = ((aExtent.minY + aExtent.maxY) / 2);
                     aPS.setPoint(aPoint);
@@ -2452,7 +2452,7 @@ public class VectorLayer extends MapLayer {
                     handler.startElement("", "", "outerBoundaryIs", atts);
                     handler.startElement("", "", "LinearRing", atts);
                     handler.startElement("", "", "coordinates", atts);
-                    for (PointD point : polygon.getOutLine()) {
+                    for (PointZ point : polygon.getOutLine()) {
                         str = String.valueOf(point.X) + "," + String.valueOf(point.Y) + " ";
                         handler.characters(str.toCharArray(), 0, str.length());
                     }
@@ -2463,11 +2463,11 @@ public class VectorLayer extends MapLayer {
                     // If Fill=true then add innerBoundaryIs for the contour 'holes'
                     if (((PolygonBreak) this.getLegendScheme().getLegendBreaks().get(levelNum)).isDrawFill()) {
                         if (polygon.hasHole()) {
-                            for (List<? extends PointD> hole : polygon.getHoleLines()) {
+                            for (List<PointZ> hole : polygon.getHoleLines()) {
                                 handler.startElement("", "", "innerBoundaryIs", atts);
                                 handler.startElement("", "", "LinearRing", atts);
                                 handler.startElement("", "", "coordinates", atts);
-                                for (PointD point : hole) {
+                                for (PointZ point : hole) {
                                     str = String.valueOf(point.X) + "," + String.valueOf(point.Y) + " ";
                                     handler.characters(str.toCharArray(), 0, str.length());
                                 }
@@ -2628,7 +2628,7 @@ public class VectorLayer extends MapLayer {
                     handler.endElement("", "", "styleUrl");    //styleUrl
                     handler.startElement("", "", "LineString", atts);
                     handler.startElement("", "", "coordinates", atts);
-                    for (PointD point : line.getPointList()) {
+                    for (PointZ point : line.getPointList()) {
                         str = String.valueOf(point.X) + "," + String.valueOf(point.Y);
                         if (this.getShapeType() == ShapeTypes.POLYLINE_Z) {
                             str = str + "," + String.valueOf(((PolylineZShape) shp).getZArray()[i]);
@@ -2842,7 +2842,7 @@ public class VectorLayer extends MapLayer {
 
         if (xShift != 0) {
             for (Shape shape : shapes) {
-                for (PointD p : shape.getPoints()) {
+                for (PointZ p : shape.getPoints()) {
                     p.X += xShift;
                 }
                 shape.updateExtent();

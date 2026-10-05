@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.transform;
 
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,8 +31,8 @@ public class CompositeTransform extends Transform {
     }
 
     @Override
-    public PointD transform(PointD p) {
-        PointD res = p;
+    public PointZ transform(PointZ p) {
+        PointZ res = p;
         for (Transform t : children) {
             res = t.transform(res);
         }

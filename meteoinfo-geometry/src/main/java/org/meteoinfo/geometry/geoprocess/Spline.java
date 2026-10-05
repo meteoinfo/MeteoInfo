@@ -13,7 +13,8 @@
  */
 package org.meteoinfo.geometry.geoprocess;
 
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
+import org.meteoinfo.common.PointZ;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,13 +35,13 @@ import java.util.List;
              this.Y = y;
          }
 
-         public Vec2(PointD p) {
+         public Vec2(PointZ p) {
              this.X = p.X;
              this.Y = p.Y;
          }
 
-         public PointD toPointD() {
-             return new PointD(X, Y);
+         public PointZ toPointD() {
+             return new PointZ(X, Y);
          }
 
          public Vec2 add(Vec2 v) {
@@ -60,8 +61,8 @@ import java.util.List;
          }
      }
 
-     private static PointD[] interpolateBezier(PointD p0, PointD p1, PointD p2, PointD p3, int samples) {
-         PointD[] result = new PointD[samples];
+     private static PointZ[] interpolateBezier(PointZ p0, PointZ p1, PointZ p2, PointZ p3, int samples) {
+         PointZ[] result = new PointZ[samples];
          Vec2 v0 = new Vec2(p0);
          Vec2 v1 = new Vec2(p1);
          Vec2 v2 = new Vec2(p2);
@@ -76,15 +77,15 @@ import java.util.List;
          return result;
      }
 
-     private static PointD[] interpolateCardinalSpline(PointD p0, PointD p1, PointD p2, PointD p3, int samples) {
+     private static PointZ[] interpolateCardinalSpline(PointZ p0, PointZ p1, PointZ p2, PointZ p3, int samples) {
          float tension = 0.5f;
          Vec2 v0 = new Vec2(p0);
          Vec2 v1 = new Vec2(p1);
          Vec2 v2 = new Vec2(p2);
          Vec2 v3 = new Vec2(p3);
 
-         PointD u = v2.subtract(v0).multiply(tension / 3).add(v1).toPointD();
-         PointD v = v1.subtract(v3).multiply(tension / 3).add(v2).toPointD();
+         PointZ u = v2.subtract(v0).multiply(tension / 3).add(v1).toPointD();
+         PointZ v = v1.subtract(v3).multiply(tension / 3).add(v2).toPointD();
 
          return interpolateBezier(p1, u, v, p2, samples);
      }
@@ -96,11 +97,11 @@ import java.util.List;
       * @param samplesInSegment Sample in segment
       * @return Splined points
       */
-     public static PointD[] cardinalSpline(PointD[] points, int samplesInSegment) {
-         List<PointD> result = new ArrayList<>();
+     public static PointZ[] cardinalSpline(PointZ[] points, int samplesInSegment) {
+         List<PointZ> result = new ArrayList<>();
          for (int i = 0; i < points.length - 1; i++) {
              result.add(points[i]);
-             PointD[] pds = interpolateCardinalSpline(
+             PointZ[] pds = interpolateCardinalSpline(
                      points[Math.max(i - 1, 0)],
                      points[i],
                      points[i + 1],
@@ -109,6 +110,6 @@ import java.util.List;
              result.addAll(Arrays.asList(pds));
          }
          result.add(points[points.length - 1]);
-         return (PointD[]) result.toArray(new PointD[result.size()]);
+         return (PointZ[]) result.toArray(new PointZ[result.size()]);
      }
  }

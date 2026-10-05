@@ -13,6 +13,7 @@ import org.meteoinfo.chart.plot3d.Projector;
 import org.meteoinfo.common.*;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.Dataset;
+import org.meteoinfo.geometry.shape.Polygon;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
@@ -1259,13 +1260,13 @@ public class Plot3D extends Plot {
         if (extent.intersects(graphic.getExtent())) {
             PolygonZShape shape = (PolygonZShape) graphic.getShape();
             PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
-            for (PolygonZ poly : (List<PolygonZ>) shape.getPolygons()) {
+            for (Polygon poly : shape.getPolygons()) {
                 drawPolygon(g, poly, pb);
             }
         }
     }
 
-    private List<PointF> drawPolygon(Graphics2D g, PolygonZ aPG, PolygonBreak aPGB) {
+    private List<PointF> drawPolygon(Graphics2D g, Polygon aPG, PolygonBreak aPGB) {
         int len = aPG.getOutLine().size();
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, len);
         PointZ p, pp;

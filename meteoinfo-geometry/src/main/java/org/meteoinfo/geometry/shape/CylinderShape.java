@@ -2,7 +2,7 @@ package org.meteoinfo.geometry.shape;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 
 import java.util.ArrayList;
@@ -82,8 +82,8 @@ public class CylinderShape extends Shape {
      * Set vertex points
      * @param value Vertex points
      */
-    public void setPoints(List<? extends PointD> value) {
-        this.points = (List<PointZ>)value;
+    public void setPoints(List<PointZ> value) {
+        this.points = value;
         this.setExtent(GeometryUtil.getPointsExtent(this.points));
     }
 

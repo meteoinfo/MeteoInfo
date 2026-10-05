@@ -1,11 +1,11 @@
 package org.meteoinfo.chart.jogl.tessellator;
 
-import org.meteoinfo.geometry.shape.PolygonZ;
+import org.meteoinfo.geometry.shape.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class TessPolygon extends PolygonZ {
+public class TessPolygon extends Polygon {
     protected List<Primitive> primitives;
 
     /**
@@ -27,7 +27,7 @@ public class TessPolygon extends PolygonZ {
      * Constructor
      * @param polygonZ Input PolygonZ
      */
-    public TessPolygon(PolygonZ polygon) {
+    public TessPolygon(Polygon polygon) {
         this.setOutLine(polygon.getOutLine());
         this.setHoleLines(polygon.getHoleLines());
         this.setExtent(polygon.getExtent());

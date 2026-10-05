@@ -7,9 +7,9 @@ package org.meteoinfo.geometry.shape;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 
 /**
@@ -72,12 +72,12 @@ public class PolygonZShape extends PolygonShape {
     protected void updatePolygons() {
         _polygons = new ArrayList<>();
         if (_numParts == 1) {
-            PolygonZ aPolygon = new PolygonZ();
+            Polygon aPolygon = new Polygon();
             aPolygon.setOutLine(points);
-            ((List<PolygonZ>)_polygons).add(aPolygon);
+            _polygons.add(aPolygon);
         } else {
             PointZ[] Pointps;
-            PolygonZ aPolygon = null;
+            Polygon aPolygon = null;
             int numPoints = this.getPointNum();
             for (int p = 0; p < _numParts; p++) {
                 if (p == _numParts - 1) {
@@ -94,20 +94,20 @@ public class PolygonZShape extends PolygonShape {
                 
                 if (GeoComputation.isClockwise(Pointps)) {
                     if (p > 0) {
-                        ((List<PolygonZ>)_polygons).add(aPolygon);
+                        _polygons.add(aPolygon);
                     }
                     
-                    aPolygon = new PolygonZ();
+                    aPolygon = new Polygon();
                     aPolygon.setOutLine(Arrays.asList(Pointps));
                 } else if (aPolygon == null) {
                     MIMath.arrayReverse(Pointps);
-                    aPolygon = new PolygonZ();
+                    aPolygon = new Polygon();
                     aPolygon.setOutLine(Arrays.asList(Pointps));
                 } else {
                     aPolygon.addHole(Arrays.asList(Pointps));
                 }
             }
-            ((List<PolygonZ>)_polygons).add(aPolygon);
+            _polygons.add(aPolygon);
         }
     }
 

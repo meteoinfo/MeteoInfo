@@ -15,6 +15,7 @@ package org.meteoinfo.geometry.shape;
 
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 
 import java.util.ArrayList;
@@ -36,8 +37,8 @@ import org.locationtech.jts.geom.LinearRing;
 public class Polygon {
     // <editor-fold desc="Variables">
 
-    private List<? extends PointD> _outLine;
-    private List<List<? extends PointD>> _holeLines;
+    private List<PointZ> _outLine;
+    private List<List<PointZ>> _holeLines;
     private Extent _extent;
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -54,7 +55,7 @@ public class Polygon {
      *
      * @return outLine point list
      */
-    public List<? extends PointD> getOutLine() {
+    public List<PointZ> getOutLine() {
         return _outLine;
     }
 
@@ -63,7 +64,7 @@ public class Polygon {
      *
      * @param outLine outLine point list
      */
-    public void setOutLine(List<? extends PointD> outLine) {
+    public void setOutLine(List<PointZ> outLine) {
         _outLine = outLine;
         _extent = GeometryUtil.getPointsExtent(outLine);
     }
@@ -73,7 +74,7 @@ public class Polygon {
      *
      * @return hole lines
      */
-    public List<List<? extends PointD>> getHoleLines() {
+    public List<List<PointZ>> getHoleLines() {
         return this._holeLines;
     }
     
@@ -82,7 +83,7 @@ public class Polygon {
      * @param idx Index
      * @return A hole line
      */
-    public List<? extends PointD> getHoleLine(int idx) {
+    public List<PointZ> getHoleLine(int idx) {
         return this._holeLines.get(idx);
     }
 
@@ -91,7 +92,7 @@ public class Polygon {
      *
      * @param holeLines hole lines list
      */
-    public void setHoleLines(List<List<? extends PointD>> holeLines) {
+    public void setHoleLines(List<List<PointZ>> holeLines) {
         _holeLines = holeLines;
     }
     
@@ -100,7 +101,7 @@ public class Polygon {
      * @param idx Index
      * @param holeLine The hole line
      */
-    public void setHoleLine(int idx, List<? extends PointD> holeLine){
+    public void setHoleLine(int idx, List<PointZ> holeLine){
         if (GeoComputation.isClockwise(holeLine)) {
             Collections.reverse(holeLine);
         }
@@ -129,8 +130,8 @@ public class Polygon {
      *
      * @return Rings
      */
-    public List<List<? extends PointD>> getRings() {
-        List<List<? extends PointD>> rings = new ArrayList<>();
+    public List<List<PointZ>> getRings() {
+        List<List<PointZ>> rings = new ArrayList<>();
         rings.add(_outLine);
         if (hasHole()) {
             rings.addAll(getHoleLines());
@@ -172,7 +173,7 @@ public class Polygon {
      *
      * @param points point list
      */
-    public void addHole(List<? extends PointD> points) {
+    public void addHole(List<PointZ> points) {
         if (GeoComputation.isClockwise(points)) {
             Collections.reverse(points);
         }

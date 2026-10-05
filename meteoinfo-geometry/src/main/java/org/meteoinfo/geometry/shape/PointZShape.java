@@ -16,8 +16,8 @@ package org.meteoinfo.geometry.shape;
 
 import org.locationtech.jts.geom.CoordinateXYZM;
 import org.locationtech.jts.geom.Geometry;
-import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +72,6 @@ public class PointZShape extends PointShape {
      * 
      * @param aPoint point
      */
-    @Override
     public void setPoint(PointD point) {
         PointZ p;
         if (this.points == null) {

@@ -3,7 +3,7 @@ package org.meteoinfo.geo.analysis;
 import org.meteoinfo.common.Direction;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.common.GridLabel;
 import org.meteoinfo.geometry.geoprocess.BorderPoint;
@@ -28,7 +28,7 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
      */
     public static List<GridLabel> getGridLabels(Polyline inPolyLine, Extent clipExtent, boolean isVertical) {
         List<GridLabel> gridLabels = new ArrayList<>();
-        List<PointD> aPList = (List<PointD>) inPolyLine.getPointList();
+        List<PointZ> aPList = inPolyLine.getPointList();
 
         if (!isExtentCross(inPolyLine.getExtent(), clipExtent)) {
             return gridLabels;
@@ -36,8 +36,8 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
 
         int i, j;
         //Judge if all points of the polyline are in the cut polygon - outline
-        List<List<PointD>> newLines = new ArrayList<>();
-        PointD p1, p2;
+        List<List<PointZ>> newLines = new ArrayList<>();
+        PointZ p1, p2;
         boolean isReversed = false;
         if (pointInClipObj(clipExtent, aPList.get(0))) {
             boolean isAllIn = true;
@@ -52,7 +52,7 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
             if (!isAllIn) //Put start point outside of the cut polygon
             {
                 if (inPolyLine.isClosed()) {
-                    List<PointD> bPList = new ArrayList<>();
+                    List<PointZ> bPList = new ArrayList<>();
                     bPList.addAll(aPList.subList(notInIdx, aPList.size() - 1));
                     bPList.addAll(aPList.subList(1, notInIdx));
                     bPList.add(bPList.get(0));
@@ -106,8 +106,8 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
         //Prepare border point list
         List<BorderPoint> borderList = new ArrayList<>();
         BorderPoint aBP;
-        List<PointD> clipPList = getClipPointList(clipExtent);
-        for (PointD aP : clipPList) {
+        List<PointZ> clipPList = getClipPointList(clipExtent);
+        for (PointZ aP : clipPList) {
             aBP = new BorderPoint();
             aBP.Point = aP;
             aBP.Id = -1;
@@ -118,9 +118,9 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
         for (int l = 0; l < newLines.size(); l++) {
             aPList = newLines.get(l);
             boolean isInPolygon = pointInClipObj(clipExtent, aPList.get(0));
-            PointD q1, q2, IPoint = new PointD();
+            PointZ q1, q2, IPoint = new PointZ();
             Line lineA, lineB;
-            List<PointD> newPlist = new ArrayList<>();
+            List<PointZ> newPlist = new ArrayList<>();
             //Polyline bLine = new Polyline();
             p1 = aPList.get(0);
             int inIdx = -1, outIdx = -1;
@@ -269,9 +269,9 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
      */
     public static List<GridLabel> getGridLabels_StraightLine(Polyline inPolyLine, Extent clipExtent, boolean isVertical) {
         List<GridLabel> gridLabels = new ArrayList<>();
-        //List<PointD> aPList = (List<PointD>) inPolyLine.getPointList();
+        //List<PointZ> aPList = inPolyLine.getPointList();
 
-        PointD aPoint = inPolyLine.getPointList().get(0);
+        PointZ aPoint = inPolyLine.getPointList().get(0);
         if (isVertical) {
             if (aPoint.X < clipExtent.minX || aPoint.X > clipExtent.maxX) {
                 return gridLabels;
@@ -279,7 +279,7 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
 
             GridLabel aGL = new GridLabel();
             aGL.setLabDirection(Direction.South);
-            aGL.setCoord(new PointD(aPoint.X, clipExtent.minY));
+            aGL.setCoord(new PointZ(aPoint.X, clipExtent.minY));
             gridLabels.add(aGL);
         } else {
             if (aPoint.Y < clipExtent.minY || aPoint.Y > clipExtent.maxY) {
@@ -288,7 +288,7 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
 
             GridLabel aGL = new GridLabel();
             aGL.setLabDirection(Direction.Weast);
-            aGL.setCoord(new PointD(clipExtent.minX, aPoint.Y));
+            aGL.setCoord(new PointZ(clipExtent.minX, aPoint.Y));
             gridLabels.add(aGL);
         }
 
@@ -300,7 +300,7 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
 
             GridLabel aGL = new GridLabel();
             aGL.setLabDirection(Direction.North);
-            aGL.setCoord(new PointD(aPoint.X, clipExtent.maxY));
+            aGL.setCoord(new PointZ(aPoint.X, clipExtent.maxY));
             gridLabels.add(aGL);
         } else {
             if (aPoint.Y < clipExtent.minY || aPoint.Y > clipExtent.maxY) {
@@ -309,7 +309,7 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
 
             GridLabel aGL = new GridLabel();
             aGL.setLabDirection(Direction.East);
-            aGL.setCoord(new PointD(clipExtent.maxX, aPoint.Y));
+            aGL.setCoord(new PointZ(clipExtent.maxX, aPoint.Y));
             gridLabels.add(aGL);
         }
 
@@ -324,7 +324,7 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
      * @param onlySel If check only selected shapes
      * @return Inside or outside
      */
-    public static boolean pointInPolygonLayer(VectorLayer aLayer, PointD aPoint, boolean onlySel) {
+    public static boolean pointInPolygonLayer(VectorLayer aLayer, PointZ aPoint, boolean onlySel) {
         if (!MIMath.pointInExtent(aPoint, aLayer.getExtent())) {
             return false;
         }

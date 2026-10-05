@@ -8,9 +8,9 @@ import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.geometry.legend.PolygonBreak;
-import org.meteoinfo.geometry.shape.PointZ;
-import org.meteoinfo.geometry.shape.PolygonZ;
-import org.meteoinfo.geometry.shape.PolygonZShape;
+import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.shape.Polygon;
+import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.geometry.shape.Shape;
 
 import java.util.ArrayList;
@@ -140,15 +140,15 @@ public class SphericalTransform {
                     Graphic gg = graphics.getGraphicN(i);
                     Shape shape = gg.getGraphicN(0).getShape();
                     boolean isTess = false;
-                    if (shape instanceof PolygonZShape) {
+                    if (shape instanceof PolygonShape) {
                         PolygonBreak pb = (PolygonBreak) gg.getGraphicN(0).getLegendBreak();
                         isTess = pb.isDrawFill();
                     }
                     if (isTess) {
-                        PolygonZShape polygonZShape = (PolygonZShape) shape;
-                        List<PolygonZ> polygonZS = (List<PolygonZ>) polygonZShape.getPolygons();
+                        PolygonShape polygonZShape = (PolygonShape) shape;
+                        List<Polygon> polygonZS = (List<Polygon>) polygonZShape.getPolygons();
                         for (int j = 0; j < polygonZS.size(); j++) {
-                            PolygonZ polygonZ = polygonZS.get(j);
+                            Polygon polygonZ = polygonZS.get(j);
                             TessPolygon tessPolygon = new TessPolygon(polygonZ);
                             for (Primitive primitive : tessPolygon.getPrimitives()) {
                                 primitive.vertices.replaceAll(SphericalTransform::transform);
@@ -162,10 +162,10 @@ public class SphericalTransform {
                             polygonZS.set(j, tessPolygon);
                         }
                     } else {
-                        List<PointZ> points = (List<PointZ>) shape.getPoints();
+                        List<PointZ> points = shape.getPoints();
                         points.replaceAll(SphericalTransform::transform);
-                        if (shape instanceof PolygonZShape)
-                            ((PolygonZShape) shape).setPoints_keep(points);
+                        if (shape instanceof PolygonShape)
+                            ((PolygonShape) shape).setPoints_keep(points);
                         else
                             shape.setPoints(points);
                     }
@@ -183,8 +183,8 @@ public class SphericalTransform {
                 } else {
                     List<PointZ> points = (List<PointZ>) shape.getPoints();
                     points.replaceAll(SphericalTransform::transform);
-                    if (shape instanceof PolygonZShape)
-                        ((PolygonZShape) shape).setPoints_keep(points);
+                    if (shape instanceof PolygonShape)
+                        ((PolygonShape) shape).setPoints_keep(points);
                     else
                         shape.setPoints(points);
                 }

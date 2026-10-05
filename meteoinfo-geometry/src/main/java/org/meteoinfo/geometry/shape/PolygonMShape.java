@@ -11,6 +11,7 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.CoordinateXYM;
 import org.locationtech.jts.geom.Geometry;
 import org.meteoinfo.common.MIMath;
+import org.meteoinfo.common.PointZ;
 
 /**
  *
@@ -55,7 +56,7 @@ public class PolygonMShape extends PolygonShape{
     public double[] getMArray() {
         double[] mArray = new double[this.getPoints().size()];
         for (int i = 0; i < this.getPoints().size(); i++) {
-            mArray[i] = ((PointM)this.getPoints().get(i)).M;
+            mArray[i] = this.getPoints().get(i).M;
         }
 
         return mArray;

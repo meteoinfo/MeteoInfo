@@ -15,12 +15,12 @@
 package org.meteoinfo.geometry.shape;
 
 import java.util.ArrayList;
-import java.util.List;
+
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 
 /**
  * Point shape class
@@ -37,14 +37,14 @@ public class PointShape extends Shape implements Cloneable{
      * Constructor
      */
     public PointShape(){
-        this(new PointD());
+        this(new PointZ());
     }
 
     /**
      * Constructor
      * @param point The point
      */
-    public PointShape(PointD point) {
+    public PointShape(PointZ point) {
         this.setPoint(point);
     }
     
@@ -54,7 +54,7 @@ public class PointShape extends Shape implements Cloneable{
      */
     public PointShape(Geometry geometry) {
         Coordinate c = geometry.getCoordinate();
-        this.setPoint(new PointD(c.x, c.y));
+        this.setPoint(new PointZ(c.x, c.y));
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -81,7 +81,7 @@ public class PointShape extends Shape implements Cloneable{
      * 
      * @return point
      */
-    public PointD getPoint() {
+    public PointZ getPoint() {
         return this.points.get(0);
     }
 
@@ -90,9 +90,9 @@ public class PointShape extends Shape implements Cloneable{
      * 
      * @param point Point
      */
-    public void setPoint(PointD point) {
+    public void setPoint(PointZ point) {
         this.points = new ArrayList<>();
-        ((List<PointD>) this.points).add(point);
+        this.points.add(point);
         updateExtent();
     }
 
@@ -108,7 +108,7 @@ public class PointShape extends Shape implements Cloneable{
     public Object clone() {
         PointShape ps = new PointShape();
         ps.setValue(this.getValue());
-        ps.setPoint((PointD) this.getPoint().clone());
+        ps.setPoint((PointZ) this.getPoint().clone());
         ps.setVisible(this.isVisible());
         ps.setSelected(this.isSelected());
         ps.setLegendIndex(this.getLegendIndex());

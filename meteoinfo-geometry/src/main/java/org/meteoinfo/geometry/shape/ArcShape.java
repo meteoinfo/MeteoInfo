@@ -14,6 +14,7 @@
 package org.meteoinfo.geometry.shape;
 
 import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 
 import java.awt.geom.Arc2D;
 import java.util.ArrayList;
@@ -47,11 +48,11 @@ public class ArcShape extends EllipseShape {
      * @param height Height
      */
     public ArcShape(double x, double y, double width, double height) {
-        List<PointD> points = new ArrayList<>();
-        points.add(new PointD(x - width * 0.5, y - height * 0.5));
-        points.add(new PointD(x - width * 0.5, y + height * 0.5));
-        points.add(new PointD(x + width * 0.5, y + height * 0.5));
-        points.add(new PointD(x + width * 0.5, y - height * 0.5));
+        List<PointZ> points = new ArrayList<>();
+        points.add(new PointZ(x - width * 0.5, y - height * 0.5));
+        points.add(new PointZ(x - width * 0.5, y + height * 0.5));
+        points.add(new PointZ(x + width * 0.5, y + height * 0.5));
+        points.add(new PointZ(x + width * 0.5, y - height * 0.5));
         super.setPoints(points);
     }
     // </editor-fold>

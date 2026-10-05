@@ -17,7 +17,7 @@ import org.meteoinfo.chart.transform.Transform;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.ndarray.Array;
@@ -518,7 +518,7 @@ public class GraphicCollection extends Graphic implements Iterator {
     public GraphicCollection selectGraphics(Extent aExtent) {
         GraphicCollection selectedGraphics = new GraphicCollection();
         int i, j;
-        PointD aPoint = new PointD();
+        PointZ aPoint = new PointZ();
         aPoint.X = (aExtent.minX + aExtent.maxX) / 2;
         aPoint.Y = (aExtent.minY + aExtent.maxY) / 2;
 
@@ -547,7 +547,7 @@ public class GraphicCollection extends Graphic implements Iterator {
                 case RECTANGLE:
                     PolygonShape aPGS = (PolygonShape) aGraphic.getShape();
                     if (!(aPGS.getPartNum() > 1)) {
-                        if (GeoComputation.pointInPolygon((List<PointD>) aPGS.getPoints(), aPoint)) {
+                        if (GeoComputation.pointInPolygon(aPGS.getPoints(), aPoint)) {
                             selectedGraphics.add(aGraphic);
                         }
                     } else {
@@ -654,7 +654,7 @@ public class GraphicCollection extends Graphic implements Iterator {
             labelSet.setDecimalDigits(MIMath.getDecimalNum(min));
         }
         String dFormat = "%1$." + String.valueOf(labelSet.getDecimalDigits()) + "f";
-        PointD aPoint;
+        PointZ aPoint;
         for (Graphic graphic : this.graphics) {
             ColorBreak cb = graphic.getLegendBreak();
             Shape shape = graphic.getShape();
@@ -663,18 +663,18 @@ public class GraphicCollection extends Graphic implements Iterator {
                 case POINT:
                 case POINT_M:
                 case POINT_Z:
-                    aPS.setPoint((PointD) ((PointShape) shape).getPoint().clone());
+                    aPS.setPoint((PointZ) ((PointShape) shape).getPoint().clone());
                     break;
                 case POLYLINE:
                 case POLYLINE_M:
                 case POLYLINE_Z:
                     int pIdx = ((PolylineShape) shape).getPoints().size() / 2;
-                    aPS.setPoint((PointD) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
+                    aPS.setPoint((PointZ) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                 case POLYGON_M:
                     Extent aExtent = shape.getExtent();
-                    aPoint = new PointD();
+                    aPoint = new PointZ();
                     aPoint.X = ((aExtent.minX + aExtent.maxX) / 2);
                     aPoint.Y = ((aExtent.minY + aExtent.maxY) / 2);
                     aPS.setPoint(aPoint);
@@ -711,7 +711,7 @@ public class GraphicCollection extends Graphic implements Iterator {
             labelSet.setDecimalDigits(MIMath.getDecimalNum(min));
         }
         String dFormat = "%1$." + String.valueOf(labelSet.getDecimalDigits()) + "f";
-        PointD aPoint;
+        PointZ aPoint;
         IndexIterator iter = texts.getIndexIterator();
         for (Graphic graphic : this.graphics) {
             if (!iter.hasNext()) {
@@ -725,18 +725,18 @@ public class GraphicCollection extends Graphic implements Iterator {
                 case POINT:
                 case POINT_M:
                 case POINT_Z:
-                    aPS.setPoint((PointD) ((PointShape) shape).getPoint().clone());
+                    aPS.setPoint((PointZ) ((PointShape) shape).getPoint().clone());
                     break;
                 case POLYLINE:
                 case POLYLINE_M:
                 case POLYLINE_Z:
                     int pIdx = ((PolylineShape) shape).getPoints().size() / 2;
-                    aPS.setPoint((PointD) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
+                    aPS.setPoint((PointZ) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                 case POLYGON_M:
                     Extent aExtent = shape.getExtent();
-                    aPoint = new PointD();
+                    aPoint = new PointZ();
                     aPoint.X = ((aExtent.minX + aExtent.maxX) / 2);
                     aPoint.Y = ((aExtent.minY + aExtent.maxY) / 2);
                     aPS.setPoint(aPoint);
@@ -905,7 +905,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      */
     public GraphicCollection xShift(double xs) {
         for (Graphic g : this.graphics) {
-            for (PointD p : g.getShape().getPoints()) {
+            for (PointZ p : g.getShape().getPoints()) {
                 p.X += xs;
             }
             g.setExtent(g.getExtent().shift(xs, 0));
@@ -923,7 +923,7 @@ public class GraphicCollection extends Graphic implements Iterator {
         GraphicCollection graphicCollection = new GraphicCollection();
         for (Graphic g : this.graphics) {
             Shape shape = (Shape) g.getShape().clone();
-            for (PointD p : shape.getPoints()) {
+            for (PointZ p : shape.getPoints()) {
                 p.X += xs;
             }
             Graphic graphic = new Graphic(shape, g.legendBreak);

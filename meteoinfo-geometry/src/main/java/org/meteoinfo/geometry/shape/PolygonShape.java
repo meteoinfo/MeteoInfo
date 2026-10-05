@@ -16,6 +16,7 @@ package org.meteoinfo.geometry.shape;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointF;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 
 import java.util.ArrayList;
@@ -27,7 +28,6 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.MultiPolygon;
-import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 
 /**
  * PolygonShape class
@@ -37,7 +37,7 @@ import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 public class PolygonShape extends Shape implements Cloneable {
     // <editor-fold desc="Variables">
 
-    protected List<? extends Polygon> _polygons;
+    protected List<Polygon> _polygons;
     /**
      * Start value
      */
@@ -76,12 +76,12 @@ public class PolygonShape extends Shape implements Cloneable {
     public PolygonShape(Geometry geometry) {
         this();
         Coordinate[] cs = geometry.getCoordinates();
-        List<PointD> points = new ArrayList();
+        List<PointZ> points = new ArrayList();
         for (Coordinate c : cs) {
-            points.add(new PointD(c.x, c.y));
+            points.add(new PointZ(c.x, c.y, c.z));
         }
         this.points = points;
-        List<PointD> pp;
+        List<PointZ> pp;
         switch (geometry.getGeometryType()) {
             case "MultiPolygon":
                 int n = geometry.getNumGeometries();                
@@ -183,7 +183,7 @@ public class PolygonShape extends Shape implements Cloneable {
      * @param points point list
      */
     @Override
-    public void setPoints(List<? extends PointD> points) {
+    public void setPoints(List<PointZ> points) {
         this.points = points;
         this.updateExtent();
         updatePolygons();
@@ -193,7 +193,7 @@ public class PolygonShape extends Shape implements Cloneable {
      * Set points and keep the polygons
      * @param points The points
      */
-    public void setPoints_keep(List<? extends PointD> points){
+    public void setPoints_keep(List<PointZ> points){
         this.points = points;
         this.updateExtent();
         updatePolygons_keep();
@@ -204,9 +204,9 @@ public class PolygonShape extends Shape implements Cloneable {
      * @param points
      */
     public void setPoints_keep(PointF[] points){
-        List<PointD> ps = new ArrayList<>();
+        List<PointZ> ps = new ArrayList<>();
         for (int i = 0; i < points.length; i++){
-            ps.add(new PointD(points[i].X, points[i].Y));
+            ps.add(new PointZ(points[i].X, points[i].Y));
         }
         this.points = ps;
         this.updateExtent();
@@ -218,9 +218,9 @@ public class PolygonShape extends Shape implements Cloneable {
      * @param points
      */
     public void setPoints(PointF[] points){
-        List<PointD> ps = new ArrayList<>();
+        List<PointZ> ps = new ArrayList<>();
         for (PointF point : points) {
-            ps.add(new PointD(point.X, point.Y));
+            ps.add(new PointZ(point.X, point.Y));
         }
         setPoints(ps);
     }
@@ -273,7 +273,7 @@ public class PolygonShape extends Shape implements Cloneable {
      *
      * @return polygon list
      */
-    public List<? extends Polygon> getPolygons() {
+    public List<Polygon> getPolygons() {
         return _polygons;
     }
 
@@ -291,7 +291,7 @@ public class PolygonShape extends Shape implements Cloneable {
      *
      * @param polygons polygon list
      */
-    public void setPolygons(List<? extends Polygon> polygons) {
+    public void setPolygons(List<Polygon> polygons) {
         _polygons = polygons;
         updatePartsPoints();
     }
@@ -305,7 +305,7 @@ public class PolygonShape extends Shape implements Cloneable {
         double area = 0.0;
         for (Polygon aPG : _polygons) {
             area += GeoComputation.getArea(aPG.getOutLine());
-            for (List<? extends PointD> hole : aPG.getHoleLines()) {
+            for (List<PointZ> hole : aPG.getHoleLines()) {
                 area -= GeoComputation.getArea(hole);
             }
         }
@@ -322,7 +322,7 @@ public class PolygonShape extends Shape implements Cloneable {
         double area = 0.0;
         for (Polygon aPG : _polygons) {
             area += GeoComputation.sphericalPolygonArea(aPG.getOutLine());
-            for (List<? extends PointD> hole : aPG.getHoleLines()) {
+            for (List<PointZ> hole : aPG.getHoleLines()) {
                 area -= GeoComputation.sphericalPolygonArea(hole);
             }
         }
@@ -359,17 +359,17 @@ public class PolygonShape extends Shape implements Cloneable {
             aPolygon.setOutLine(points);
             ((List<Polygon>)_polygons).add(aPolygon);
         } else {
-            PointD[] Pointps;
+            PointZ[] Pointps;
             Polygon aPolygon = null;
             int numPoints = this.getPointNum();
             for (int p = 0; p < _numParts; p++) {
                 if (p == _numParts - 1) {
-                    Pointps = new PointD[numPoints - parts[p]];
+                    Pointps = new PointZ[numPoints - parts[p]];
                     for (int pp = parts[p]; pp < numPoints; pp++) {
                         Pointps[pp - parts[p]] = points.get(pp);
                     }
                 } else {
-                    Pointps = new PointD[parts[p + 1] - parts[p]];
+                    Pointps = new PointZ[parts[p + 1] - parts[p]];
                     for (int pp = parts[p]; pp < parts[p + 1]; pp++) {
                         Pointps[pp - parts[p]] = points.get(pp);
                     }
@@ -402,7 +402,7 @@ public class PolygonShape extends Shape implements Cloneable {
             _numParts += _polygons.get(i).getRingNumber();
             for (int j = 0; j < _polygons.get(i).getRingNumber(); j++) {
                 partList.add(points.size());
-                ((List<PointD>)points).addAll(_polygons.get(i).getRings().get(j));
+                points.addAll(_polygons.get(i).getRings().get(j));
             }
         }
         parts = new int[partList.size()];
@@ -418,7 +418,7 @@ public class PolygonShape extends Shape implements Cloneable {
      * @param points Hole points
      * @return Hole index
      */
-    public int addHole(List<? extends PointD> points){
+    public int addHole(List<PointZ> points){
         return addHole(points, 0);
     }
 
@@ -429,7 +429,7 @@ public class PolygonShape extends Shape implements Cloneable {
      * @param polygonIdx polygon index
      * @return Hole index
      */
-    public int addHole(List<? extends PointD> points, int polygonIdx) {
+    public int addHole(List<PointZ> points, int polygonIdx) {
         Polygon aPolygon = _polygons.get(polygonIdx);
         aPolygon.addHole(points);
         
@@ -475,13 +475,13 @@ public class PolygonShape extends Shape implements Cloneable {
      * @param vertice The vertice
      */
     @Override
-    public void addVertice(int vIdx, PointD vertice) {        
+    public void addVertice(int vIdx, PointZ vertice) {
         int partIdx = getPartIndex(vIdx);
         if (partIdx < _numParts - 1) {
             parts[partIdx + 1] += 1;
         }
         
-        ((List<PointD>) points).add(vIdx, vertice);
+        points.add(vIdx, vertice);
         this.updateExtent();
         this.updatePolygons();
     }
@@ -498,7 +498,7 @@ public class PolygonShape extends Shape implements Cloneable {
             parts[partIdx + 1] -= 1;
         }
         
-        ((List<PointD>) points).remove(vIdx);
+        points.remove(vIdx);
         this.updateExtent();
         this.updatePolygons();
     }
@@ -529,9 +529,9 @@ public class PolygonShape extends Shape implements Cloneable {
         aPGS.lowValue = lowValue;
         aPGS._numParts = _numParts;
         aPGS.parts = (int[]) parts.clone();
-        List<PointD> points = new ArrayList<>();
-        for (PointD p : this.points){
-            points.add((PointD)p.clone());
+        List<PointZ> points = new ArrayList<>();
+        for (PointZ p : this.points){
+            points.add((PointZ)p.clone());
         }
         aPGS.setPoints(points);
         aPGS.setVisible(this.isVisible());
@@ -569,9 +569,9 @@ public class PolygonShape extends Shape implements Cloneable {
         this.lowValue = o.lowValue;
         this._numParts = o._numParts;
         this.parts = (int[]) o.parts.clone();
-        List<PointD> points = new ArrayList<>();
-        for (PointD p : o.points){
-            points.add((PointD)p.clone());
+        List<PointZ> points = new ArrayList<>();
+        for (PointZ p : o.points){
+            points.add((PointZ)p.clone());
         }
         this.setPoints(points);
         this.setVisible(o.isVisible());

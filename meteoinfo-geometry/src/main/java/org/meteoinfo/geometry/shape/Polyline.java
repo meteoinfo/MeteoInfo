@@ -14,10 +14,7 @@
  */
 package org.meteoinfo.geometry.shape;
 
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointD;
-import org.meteoinfo.common.PointF;
+import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 
 import java.util.ArrayList;
@@ -32,7 +29,7 @@ public class Polyline {
     // <editor-fold desc="Variables">
 
     private Extent _extent;
-    private List<? extends PointD> _pointList;
+    private List<PointZ> _pointList;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -47,7 +44,7 @@ public class Polyline {
      * Get point list
      * @return point list
      */
-    public List<? extends PointD> getPointList() {
+    public List<PointZ> getPointList() {
         return _pointList;
     }
 
@@ -55,7 +52,7 @@ public class Polyline {
      * Set point list
      * @param points point list
      */
-    public void setPointList(List<? extends PointD> points) {
+    public void setPointList(List<PointZ> points) {
         _pointList = points;
         _extent = GeometryUtil.getPointsExtent(_pointList);
     }
@@ -76,9 +73,9 @@ public class Polyline {
      * @param points point array
      */
     public void setPoints(PointF[] points) {
-        List<PointD> pointList = new ArrayList<>();
+        List<PointZ> pointList = new ArrayList<>();
         for (PointF aP : points) {
-            pointList.add(new PointD(aP.X, aP.Y));
+            pointList.add(new PointZ(aP.X, aP.Y));
         }
         _pointList = pointList;
 

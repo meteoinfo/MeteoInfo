@@ -15,6 +15,7 @@ package org.meteoinfo.geometry.shape;
 
  import org.meteoinfo.common.MIMath;
  import org.meteoinfo.common.PointD;
+ import org.meteoinfo.common.PointZ;
 
  /**
  *
@@ -25,11 +26,11 @@ public class Line {
     /// Point 1
     /// </summary>
 
-    public PointD P1 = new PointD();
+    public PointZ P1 = new PointZ();
     /// <summary>
     /// Point 2
     /// </summary>
-    public PointD P2 = new PointD();
+    public PointZ P2 = new PointZ();
     
     /**
      * Determine if the line is horizontal

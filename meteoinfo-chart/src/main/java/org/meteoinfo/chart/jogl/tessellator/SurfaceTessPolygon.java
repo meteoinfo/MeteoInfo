@@ -3,7 +3,7 @@ package org.meteoinfo.chart.jogl.tessellator;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.geometry.geoprocess.ClipLine;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
-import org.meteoinfo.geometry.shape.PolygonZ;
+import org.meteoinfo.geometry.shape.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,14 +22,14 @@ public class SurfaceTessPolygon extends TessPolygon {
      * Constructor
      * @param polygonZ Input PolygonZ
      */
-    public SurfaceTessPolygon(PolygonZ polygon) {
+    public SurfaceTessPolygon(Polygon polygon) {
         this.setOutLine(polygon.getOutLine());
         this.setHoleLines(polygon.getHoleLines());
         this.setExtent(polygon.getExtent());
 
         PrimitiveTessellator tessellator = new PrimitiveTessellator();
 
-        List<PolygonZ> polygonZS = new ArrayList<>();
+        List<Polygon> polygonZS = new ArrayList<>();
         Extent extent = polygon.getExtent();
         if (extent.getWidth() > 1) {
             for (double min = extent.minX + 1; min < extent.maxX; min+=1) {

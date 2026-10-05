@@ -3,7 +3,7 @@ package org.meteoinfo.chart.graphic;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.shape.Shape;
@@ -164,7 +164,7 @@ public class GeoGraphicCollection extends GraphicCollection {
      */
     protected void addLabelsByColor() {
         int shapeIdx = -1;
-        PointD aPoint;
+        PointZ aPoint;
 
         String dFormat = "%1$.1f";
         boolean isData = false;
@@ -191,19 +191,19 @@ public class GeoGraphicCollection extends GraphicCollection {
                 case POINT:
                 case POINT_M:
                 case POINT_Z:
-                    aPS.setPoint((PointD) ((PointShape) shape).getPoint().clone());
+                    aPS.setPoint((PointZ) ((PointShape) shape).getPoint().clone());
                     break;
                 case POLYLINE:
                 case POLYLINE_M:
                 case POLYLINE_Z:
                     int pIdx = ((PolylineShape) shape).getPoints().size() / 2;
-                    aPS.setPoint((PointD) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
+                    aPS.setPoint((PointZ) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                 case POLYGON_M:
                 case POLYGON_Z:
                     Extent aExtent = shape.getExtent();
-                    aPoint = new PointD();
+                    aPoint = new PointZ();
                     aPoint.X = ((aExtent.minX + aExtent.maxX) / 2);
                     aPoint.Y = ((aExtent.minY + aExtent.maxY) / 2);
                     aPS.setPoint(aPoint);

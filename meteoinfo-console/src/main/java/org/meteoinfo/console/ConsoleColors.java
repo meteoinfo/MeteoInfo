@@ -15,6 +15,7 @@ public class ConsoleColors {
     private Color promptColor;
     private Color commandColor;
     private Color codeLinesColor;
+    private Color errorColor;
     
     /**
      * Constructor
@@ -36,11 +37,13 @@ public class ConsoleColors {
                 this.promptColor = new Color(255, 100, 100);
                 this.commandColor = Color.WHITE;
                 this.codeLinesColor = new Color(0, 153, 204);
+                this.errorColor = new Color(255, 102, 0);
                 break;
             default:
                 this.promptColor = Color.RED;
                 this.commandColor = Color.BLACK;
                 this.codeLinesColor = Color.BLUE;
+                this.errorColor = new Color(255, 102, 0);
                 break;
         }
     }
@@ -57,7 +60,7 @@ public class ConsoleColors {
      * Set prompt color
      * @param value Prompt color
      */
-    public void setPrompColor(Color value) {
+    public void setPromptColor(Color value) {
         this.promptColor = value;
     }
     
@@ -91,5 +94,21 @@ public class ConsoleColors {
      */
     public void setCodeLinesColor(Color value) {
         this.codeLinesColor = value;
+    }
+
+    /**
+     * Get error color
+     * @return Error color
+     */
+    public Color getErrorColor() {
+        return this.errorColor;
+    }
+
+    /**
+     * Set error color
+     * @param value Error color
+     */
+    public void setErrorColor(Color value) {
+        this.errorColor = value;
     }
 }

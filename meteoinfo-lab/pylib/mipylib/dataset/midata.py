@@ -30,6 +30,8 @@ from arldatafile import ARLDataFile
 from bufrdatafile import BUFRDataFile
 from radardatafile import RadarDataFile
 import mipylib.migl as migl
+import errno
+
 
 __all__ = [
     'addfile','addfiles','addfile_arl','addfile_ascii_grid','addfile_awx','addfile_geotiff',
@@ -63,10 +65,10 @@ def __getfilename(fname):
             if os.path.isfile(fname):
                 return fname, isweb
             else:
-                print('File not exist: ' + fname)
+                #print('File not exist: ' + fname)
                 return None, isweb
         else:
-            print('File not exist: ' + fname)
+            #print('File not exist: ' + fname)
             return None, isweb
             
 def addfiles(fnames):
@@ -99,13 +101,13 @@ def addfile(fname, access='r', dtype='netcdf', keepopen=False, **kwargs):
         fname = fname.strip()
         fname, isweb = __getfilename(fname)
         if fname is None:
-            raise IOError(fname)
+            raise OSError(errno.ENOENT, "No such file or directory", fname)
 
         if isweb:
             return addfile_nc(fname, False)
         
         if not os.path.exists(fname):
-            raise IOError(fname)
+            raise OSError(errno.ENOENT, "No such file or directory", fname)
         
         fsufix = os.path.splitext(fname)[1].lower()
         if fsufix == '.ctl':

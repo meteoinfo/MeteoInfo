@@ -88,7 +88,7 @@ def _parcel_profile_helper(pressure, temperature, dewpoint):
     # moist_lapse. unique will return remaining values sorted ascending.
     unique, indices, counts = np.unique(press_upper, return_inverse=True, return_counts=True)
     if np.any(counts > 1):
-        _warnings.warn('Duplicate pressure(s) provided. '
+        warnings.warn('Duplicate pressure(s) provided. '
                        'Output profile includes duplicate temperatures as a result.')
 
     # Find moist pseudo-adiabatic profile starting at the LCL, reversing above sorting

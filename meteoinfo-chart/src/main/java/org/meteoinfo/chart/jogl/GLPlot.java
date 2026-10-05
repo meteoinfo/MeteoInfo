@@ -37,7 +37,6 @@ import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.projection.ProjectionInfo;
-import org.meteoinfo.projection.ProjectionUtil;
 import org.scilab.forge.jlatexmath.TeXConstants;
 import org.scilab.forge.jlatexmath.TeXFormula;
 import org.scilab.forge.jlatexmath.TeXIcon;
@@ -2705,7 +2704,18 @@ public class GLPlot extends Plot {
             }
         }
 
-        if (graphic instanceof MeshGraphic) {
+        if (graphic instanceof ModelGraphic) {
+            if (!this.renderMap.containsKey(graphic)) {
+                renderMap.put(graphic, new ModelRender(gl, (ModelGraphic) graphic));
+            }
+            ModelRender modelRender = (ModelRender) renderMap.get(graphic);
+            modelRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+            modelRender.setOrthographic(this.orthographic);
+            modelRender.setLighting(this.lighting);
+            modelRender.updateMatrix();
+            modelRender.setRotateModelView(this.modelViewMatrixR);
+            modelRender.draw();
+        } else if (graphic instanceof MeshGraphic) {
             if (!this.renderMap.containsKey(graphic)) {
                 renderMap.put(graphic, new MeshRender(gl, (MeshGraphic) graphic));
             }
@@ -2726,21 +2736,6 @@ public class GLPlot extends Plot {
             pointRender.setLighting(this.lighting);
             pointRender.updateMatrix();
             pointRender.draw();
-        } else if (graphic instanceof TriMeshGraphic) {
-            if (graphic instanceof Model) {
-                if (!this.renderMap.containsKey(graphic)) {
-                    renderMap.put(graphic, new ModelRender(gl, (Model) graphic));
-                }
-                ModelRender modelRender = (ModelRender) renderMap.get(graphic);
-                modelRender.setTransform(this.transform, this.alwaysUpdateBuffers);
-                modelRender.setOrthographic(this.orthographic);
-                modelRender.setLighting(this.lighting);
-                modelRender.updateMatrix();
-                modelRender.setRotateModelView(this.modelViewMatrixR);
-                modelRender.draw();
-            } else {
-                drawTriMeshGraphic(gl, (TriMeshGraphic) graphic);
-            }
         } else if (graphic instanceof VolumeGraphic) {
             try {
                 if (this.clipPlane)

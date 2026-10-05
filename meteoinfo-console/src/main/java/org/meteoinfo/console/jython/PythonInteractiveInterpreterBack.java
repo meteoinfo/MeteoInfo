@@ -4,11 +4,7 @@
  */
 package org.meteoinfo.console.jython;
 
-import org.meteoinfo.console.ConsoleColors;
-import org.meteoinfo.console.JConsole;
-import org.meteoinfo.console.JavaCharStream;
-import org.meteoinfo.console.ConsoleExecEvent;
-import org.meteoinfo.console.IConsoleExecListener;
+import org.meteoinfo.console.*;
 import org.python.util.InteractiveConsole;
 
 import javax.swing.event.EventListenerList;
@@ -22,8 +18,11 @@ import java.util.logging.Logger;
  *
  * @author yaqiang
  */
-public class PythonInteractiveInterpreter extends InteractiveConsole implements Runnable {
+public class PythonInteractiveInterpreterBack extends InteractiveConsole implements Runnable {
 
+    //transient Reader in;
+    //transient PrintStream out;
+    //transient PrintStream err;
     private Reader in;
     private PrintStream out;
     private PrintStream err;
@@ -31,7 +30,7 @@ public class PythonInteractiveInterpreter extends InteractiveConsole implements 
     private final EventListenerList listeners = new EventListenerList();
     private ConsoleColors consoleColors;
 
-    public PythonInteractiveInterpreter(JConsole console) {
+    public PythonInteractiveInterpreterBack(JConsole console) {
         super();
 
         this.cflags.source_is_utf8 = true;
@@ -105,9 +104,19 @@ public class PythonInteractiveInterpreter extends InteractiveConsole implements 
     public void run() {
         boolean eof = false;
         JavaCharStream stream = new JavaCharStream(in, 1, 1);
+
+//        exec("_ps1 = sys.ps1");
+//        PyObject ps1Obj = get("_ps1");
+//        String ps1 = ps1Obj.toString();
         String ps1 = ">>> ";
+
+//        exec("_ps2 = sys.ps2");
+//        PyObject ps2Obj = get("_ps2");
+//        String ps2 = ps2Obj.toString();
         String ps2 = "... ";
+        //out.print(getDefaultBanner() + "\n");
         this.console.print(getDefaultBanner() + "\n", this.consoleColors.getPromptColor());
+        //out.print(ps1);
         this.console.print(ps1, this.consoleColors.getPromptColor());         
         String line;
         boolean retVal = false;
@@ -143,11 +152,18 @@ public class PythonInteractiveInterpreter extends InteractiveConsole implements 
                 if (retVal) {
                     out.print(ps2);                    
                 } else {
+                    //out.print(ps1);
+                    //this.console.print(ps1, Color.red);
                     this.fireConsoleExecEvent();
                 }
             } catch (Exception e) {
                 out.print(e.toString() + '\n');
                 this.resetbuffer();
+                try {                
+                    Thread.sleep(500);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(PythonInteractiveInterpreterBack.class.getName()).log(Level.SEVERE, null, ex);
+                }
                 this.fireConsoleExecEvent();
             }
         }
@@ -166,7 +182,7 @@ public class PythonInteractiveInterpreter extends InteractiveConsole implements 
         this.cflags.source_is_utf8 = false;
         super.execfile(fn);
         this.cflags.source_is_utf8 = true;
-        //this.fireConsoleExecEvent();
+        this.fireConsoleExecEvent();
     }
 
     public void execfile_(String fn) {
@@ -185,9 +201,11 @@ public class PythonInteractiveInterpreter extends InteractiveConsole implements 
 
     public void fireConsoleExecEvent() {
         fireConsoleExecEvent(new ConsoleExecEvent(this));
-
-        this.console.awaitPipeDrain();
-
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(PythonInteractiveInterpreterBack.class.getName()).log(Level.SEVERE, null, ex);
+        }
         this.console.print(">>> ", this.consoleColors.getPromptColor());
         this.console.setStyle(this.consoleColors.getCommandColor());
         this.console.setForeground(this.consoleColors.getCommandColor());

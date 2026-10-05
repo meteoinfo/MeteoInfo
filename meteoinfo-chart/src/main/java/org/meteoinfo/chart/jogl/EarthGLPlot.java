@@ -9,12 +9,17 @@ import org.meteoinfo.chart.ChartColorBar;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.geo.ProjectUtil;
 import org.meteoinfo.chart.graphic.GraphicFactory;
-import org.meteoinfo.chart.graphic.MeshGraphic;
+import org.meteoinfo.chart.graphic.QuadMeshGraphic;
+import org.meteoinfo.chart.jogl.tessellator.Primitive;
+import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolygonBreak;
+import org.meteoinfo.geometry.shape.PointZ;
+import org.meteoinfo.geometry.shape.PolygonZ;
+import org.meteoinfo.geometry.shape.PolygonZShape;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.image.ImageUtil;
 import org.meteoinfo.ndarray.Array;
@@ -22,19 +27,19 @@ import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
-import org.meteoinfo.projection.ProjectionUtil;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EarthGLPlot extends GLPlot {
     // <editor-fold desc="Variables">
     private float radius = 6371.f;
-    private MeshGraphic surface;
+    private QuadMeshGraphic surface;
     private Extent3D dataExtent;
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -106,6 +111,7 @@ public class EarthGLPlot extends GLPlot {
         }
         updateDataExtent();
 
+
         this.graphics.add(SphericalTransform.transform(graphic));
         Extent ex = this.graphics.getExtent();
         if (!ex.is3D()) {
@@ -176,7 +182,7 @@ public class EarthGLPlot extends GLPlot {
      * Set earth surface
      * @param n The sphere has n*n faces
      */
-    public MeshGraphic earthSurface(int n) {
+    public QuadMeshGraphic earthSurface(int n) {
         Array lon = ArrayUtil.lineSpace(-180.f, 180.f, n + 1, true);
         Array lat = ArrayUtil.lineSpace(-90.f, 90.f, n + 1, true);
         lat = lat.flip(0).copy();
@@ -519,14 +525,329 @@ public class EarthGLPlot extends GLPlot {
         this.updateMatrix(gl);
     }
 
+    /**
+     * Overrides the base class polygon drawing to ensure all polygons conform to the Earth's spherical surface.
+     *
+     * Key Modifications:
+     * 1. Disables clip planes (axis-aligned clipping incorrectly cuts spherical arcs).
+     * 2. Performs spherical midpoint subdivision on each triangle.
+     * 3. Computes accurate spherical normals for subdivided vertices.
+     * 4. Uses glPolygonOffset to resolve Z-fighting with the base globe.
+     */
     @Override
     protected void drawPolygonShape(GL2 gl, Graphic graphic) {
-        //gl.glDisable(GL2.GL_DEPTH_TEST);
-        //gl.glEnable(GL2.GL_CULL_FACE);
-        //gl.glFrontFace(GL2.GL_CW);
-        super.drawPolygonShape(gl, graphic);
-        //gl.glEnable(GL2.GL_DEPTH_TEST);
-        //gl.glDisable(GL2.GL_CULL_FACE);
+        // Early exit if the graphic is null or not visible
+        if (graphic == null || !graphic.isVisible()) {
+            return;
+        }
+
+        // ========== 2. Extract Polygon Data (Reusing Base Class Tessellation Logic) ==========
+        PolygonZShape shape = (PolygonZShape) graphic.getShape();
+        PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
+        List<PolygonZ> polygonZS = (List<PolygonZ>) shape.getPolygons();
+
+        // Apply fill color and transparency
+        float[] rgba = pb.getColor().getRGBComponents(null);
+        float alpha = rgba[3];
+
+        // ========== 3. Enable Ground-Conforming Render States ==========
+        gl.glEnable(GL2.GL_DEPTH_TEST);
+        gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
+        // Negative values push the polygon closer to the camera, ensuring it renders above the globe surface
+        gl.glPolygonOffset(-1.0f, -1.0f);
+
+        for (int i = 0; i < polygonZS.size(); i++) {
+            PolygonZ polygonZ = polygonZS.get(i);
+
+            // Ensure the polygon is tessellated (reusing base class logic for concave/holed polygons)
+            TessPolygon tessPolygon;
+            if (polygonZ instanceof TessPolygon) {
+                tessPolygon = (TessPolygon) polygonZ;
+            } else {
+                tessPolygon = new TessPolygon(polygonZ);
+                // Cache the tessellation result back into the list to avoid re-tessellating every frame
+                polygonZS.set(i, tessPolygon);
+            }
+
+            if (tessPolygon.getPrimitives() == null || tessPolygon.getPrimitives().isEmpty()) {
+                continue;
+            }
+
+            // ========== 4. Fill Rendering: Spherical Subdivision ==========
+            if (pb.isDrawFill() && pb.getColor().getAlpha() > 0) {
+                gl.glColor4f(rgba[0], rgba[1], rgba[2], alpha);
+
+                // We use a single glBegin/glEnd block for all subdivided triangles
+                // to minimize OpenGL state changes and maximize performance.
+                gl.glBegin(GL2.GL_TRIANGLES);
+
+                for (Primitive primitive : tessPolygon.getPrimitives()) {
+                    // 1. Flatten the primitive (STRIP/FAN/TRIANGLES) into independent triangles
+                    List<PointZ[]> independentTriangles = extractTriangles(primitive);
+
+                    // 2. Subdivide each independent triangle onto the sphere
+                    for (PointZ[] tri : independentTriangles) {
+                        // Recursively subdivide the triangle.
+                        // depth=2 yields 16 sub-triangles, suitable for most geo/meteo scenarios.
+                        emitSphericalTriangle(gl, tri[0], tri[1], tri[2], 2);
+                    }
+                }
+
+                gl.glEnd();
+            }
+
+            // ========== 5. Outline Rendering: Great-Circle Arc Interpolation ==========
+            if (pb.isDrawOutline()) {
+                float[] outRgba = pb.getOutlineColor().getRGBComponents(null);
+                gl.glColor4f(outRgba[0], outRgba[1], outRgba[2], outRgba[3]);
+                gl.glLineWidth(pb.getOutlineSize() * this.dpiScale);
+
+                // Draw outer boundary along great-circle arcs
+                drawSphericalOutline(gl, (List<PointZ>) tessPolygon.getOutLine());
+
+                // Draw inner hole boundaries along great-circle arcs
+                if (tessPolygon.hasHole()) {
+                    for (List<? extends PointD> holeLine : tessPolygon.getHoleLines()) {
+                        drawSphericalOutline(gl, (List<PointZ>) holeLine);
+                    }
+                }
+            }
+        }
+
+        // ========== 6. Restore GL States ==========
+        gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
+    }
+
+// =====================================================================
+//  Private Helper Methods for EarthGLPlot
+// =====================================================================
+
+    /**
+     * Extracts independent triangles from an OpenGL primitive.
+     * Handles GL_TRIANGLES, GL_TRIANGLE_STRIP, and GL_TRIANGLE_FAN.
+     * Strictly preserves vertex winding order to maintain correct face normals.
+     *
+     * @param primitive The primitive generated by the GLU Tessellator.
+     * @return A list of independent triangles, where each triangle is an array of 3 PointZ vertices.
+     */
+    private List<PointZ[]> extractTriangles(Primitive primitive) {
+        List<PointZ[]> triangles = new ArrayList<>();
+        List<PointZ> verts = primitive.vertices;
+        int n = verts.size();
+
+        switch (primitive.type) {
+            case GL2.GL_TRIANGLES:
+                // Every 3 vertices form an independent triangle
+                for (int i = 0; i + 2 < n; i += 3) {
+                    triangles.add(new PointZ[]{verts.get(i), verts.get(i + 1), verts.get(i + 2)});
+                }
+                break;
+
+            case GL2.GL_TRIANGLE_STRIP:
+                // Vertices form a continuous strip.
+                // Winding order alternates to maintain consistent face orientation.
+                for (int i = 0; i + 2 < n; i++) {
+                    if (i % 2 == 0) {
+                        // Even index: standard order (v0, v1, v2)
+                        triangles.add(new PointZ[]{verts.get(i), verts.get(i + 1), verts.get(i + 2)});
+                    } else {
+                        // Odd index: reversed order (v1, v0, v2) to flip the winding back
+                        triangles.add(new PointZ[]{verts.get(i + 1), verts.get(i), verts.get(i + 2)});
+                    }
+                }
+                break;
+
+            case GL2.GL_TRIANGLE_FAN:
+                // All triangles share the first vertex (v0).
+                if (n >= 3) {
+                    PointZ center = verts.get(0);
+                    for (int i = 1; i + 1 < n; i++) {
+                        triangles.add(new PointZ[]{center, verts.get(i), verts.get(i + 1)});
+                    }
+                }
+                break;
+
+            default:
+                // Fallback or warning for unsupported types (e.g., GL_POLYGON)
+                System.err.println("Warning: Unsupported primitive type for spherical subdivision: " + primitive.type);
+                break;
+        }
+
+        return triangles;
+    }
+
+    /**
+     * Recursively subdivides a triangle and emits vertices directly into the current glBegin/glEnd block.
+     * Uses ECEF-space great-circle midpoint interpolation to guarantee conformity to the sphere.
+     *
+     * @param gl    The OpenGL context
+     * @param a     First vertex of the triangle
+     * @param b     Second vertex of the triangle
+     * @param c     Third vertex of the triangle
+     * @param depth Remaining subdivision levels; when 0, vertices are emitted directly
+     */
+    private void emitSphericalTriangle(GL2 gl, PointZ a, PointZ b, PointZ c, int depth) {
+        if (depth <= 0) {
+            // Base case: emit the three vertices with their corresponding normals
+            emitSphericalVertex(gl, a);
+            emitSphericalVertex(gl, b);
+            emitSphericalVertex(gl, c);
+            return;
+        }
+
+        // Compute great-circle midpoints for all three edges
+        // (Midpoint in ECEF space, then re-projected onto the sphere surface)
+        PointZ ab = sphericalMidpoint(a, b);
+        PointZ bc = sphericalMidpoint(b, c);
+        PointZ ca = sphericalMidpoint(c, a);
+
+        // Recursively subdivide into 4 child triangles
+        emitSphericalTriangle(gl, a,  ab, ca, depth - 1);
+        emitSphericalTriangle(gl, ab, b,  bc, depth - 1);
+        emitSphericalTriangle(gl, ca, bc, c,  depth - 1);
+        emitSphericalTriangle(gl, ab, bc, ca, depth - 1);
+    }
+
+    /**
+     * Emits a single spherical vertex with both position and normal.
+     * On a sphere centered at the origin, the normal at any point equals the normalized ECEF coordinate.
+     *
+     * @param gl The OpenGL context
+     * @param p  The vertex to emit
+     */
+    private void emitSphericalVertex(GL2 gl, PointZ p) {
+        float x = (float) p.X;
+        float y = (float) p.Y;
+        float z = (float) p.Z;
+
+        // Normal = normalize(position), since the sphere is centered at the origin
+        float len = (float) Math.sqrt(x * x + y * y + z * z);
+        if (len > 0) {
+            gl.glNormal3f(x / len, y / len, z / len);
+        } else {
+            // Fallback normal for degenerate points
+            gl.glNormal3f(0, 0, 1);
+        }
+        gl.glVertex3f(x, y, z);
+    }
+
+    /**
+     * Computes the great-circle midpoint between two ECEF points on the sphere.
+     * Pure vector operation: average + normalize + scale to radius.
+     * No trigonometric conversions needed since vertices are already in ECEF.
+     *
+     * @param a First ECEF vertex
+     * @param b Second ECEF vertex
+     * @return Midpoint projected onto the sphere surface
+     */
+    private PointZ sphericalMidpoint(PointZ a, PointZ b) {
+        double mx = (a.X + b.X) * 0.5;
+        double my = (a.Y + b.Y) * 0.5;
+        double mz = (a.Z + b.Z) * 0.5;
+        double len = Math.sqrt(mx * mx + my * my + mz * mz);
+
+        // Degenerate case: antipodal or coincident points
+        if (len < 1e-15) {
+            return new PointZ(a.X, a.Y, a.Z);
+        }
+
+        double scale = this.radius / len;
+        return new PointZ(mx * scale, my * scale, mz * scale);
+    }
+
+    /**
+     * Draws an outline along great-circle arcs instead of straight lines in projected space.
+     * This ensures that polygon borders also conform to the spherical surface.
+     *
+     * @param gl      The OpenGL context
+     * @param outline The list of vertices defining the outline
+     */
+    private void drawSphericalOutline(GL2 gl, List<PointZ> outline) {
+        if (outline == null || outline.size() < 2) return;
+
+        gl.glBegin(GL2.GL_LINE_STRIP);
+        for (int i = 0; i < outline.size() - 1; i++) {
+            PointZ curr = outline.get(i);
+            PointZ next = outline.get(i + 1);
+
+            // Determine interpolation density based on angular distance between endpoints
+            int segments = Math.max(1, (int) (angularDistance(curr, next) / 2.0));
+            for (int s = 0; s <= segments; s++) {
+                double t = (double) s / segments;
+                PointZ interp = sphericalLerp(curr, next, t);
+                emitSphericalVertex(gl, interp);
+            }
+        }
+        gl.glEnd();
+    }
+
+    /**
+     * Spherical Linear Interpolation (Slerp) between two ECEF points.
+     * Operates entirely in Cartesian space using dot product and cross product.
+     *
+     * @param a Start ECEF vertex
+     * @param b End ECEF vertex
+     * @param t Interpolation parameter [0, 1]
+     * @return Interpolated point on the great-circle arc
+     */
+    private PointZ sphericalLerp(PointZ a, PointZ b, double t) {
+        // Dot product to find the angle between vectors
+        double dot = a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+        double rSq = this.radius * this.radius;
+        double cosOmega = Math.max(-1.0, Math.min(1.0, dot / rSq));
+        double omega = Math.acos(cosOmega);
+
+        double px, py, pz;
+        if (omega < 1e-10) {
+            // Nearly coincident: fall back to linear interpolation
+            px = a.X + t * (b.X - a.X);
+            py = a.Y + t * (b.Y - a.Y);
+            pz = a.Z + t * (b.Z - a.Z);
+        } else {
+            // Standard Slerp formula in ECEF space
+            double sinOmega = Math.sin(omega);
+            double wa = Math.sin((1.0 - t) * omega) / sinOmega;
+            double wb = Math.sin(t * omega) / sinOmega;
+            px = wa * a.X + wb * b.X;
+            py = wa * a.Y + wb * b.Y;
+            pz = wa * a.Z + wb * b.Z;
+        }
+
+        // Re-project onto exact sphere surface to prevent drift from floating-point errors
+        double len = Math.sqrt(px * px + py * py + pz * pz);
+        if (len > 1e-15) {
+            double scale = this.radius / len;
+            px *= scale;
+            py *= scale;
+            pz *= scale;
+        }
+
+        // Preserve altitude by linear interpolation of Z component
+        double z = a.Z + t * (b.Z - a.Z);
+        return new PointZ(px, py, pz);
+    }
+
+    /**
+     * Computes angular distance (degrees) between two ECEF points.
+     * Uses the numerically stable atan2(|cross|, dot) formula instead of Haversine,
+     * avoiding all lat/lon conversions.
+     *
+     * @param a First ECEF vertex
+     * @param b Second ECEF vertex
+     * @return Angular distance in degrees
+     */
+    private double angularDistance(PointZ a, PointZ b) {
+        // Cross product magnitude = |a||b|sin(theta)
+        double cx = a.Y * b.Z - a.Z * b.Y;
+        double cy = a.Z * b.X - a.X * b.Z;
+        double cz = a.X * b.Y - a.Y * b.X;
+        double crossLen = Math.sqrt(cx * cx + cy * cy + cz * cz);
+
+        // Dot product = |a||b|cos(theta)
+        double dot = a.X * b.X + a.Y * b.Y + a.Z * b.Z;
+
+        // atan2(cross, dot) is numerically stable for all angles including 0 and 180
+        return Math.toDegrees(Math.atan2(crossLen, dot));
     }
 
     // </editor-fold>

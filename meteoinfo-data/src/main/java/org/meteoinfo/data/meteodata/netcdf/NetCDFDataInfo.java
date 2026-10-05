@@ -945,11 +945,11 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
                 break;
             case 3:    //Mercator
                 projStr = "+proj=merc"
-                        + "+lat_ts=" + lat_0
+                        + "+lat_ts=" + getGlobalAttStr("TRUELAT1")
                         + "+lon_0=" + lon_0;
                 break;
         }
-        projStr += "+a=6370000+b=6370000";
+        projStr += "+R=6370000.0+units=m+no_defs";
 
         ProjectionInfo projInfo = ProjectionInfo.factory(projStr);
         //double clon = Double.parseDouble(this.getGlobalAttStr("CEN_LON"));
@@ -1390,37 +1390,38 @@ public class NetCDFDataInfo extends DataInfo implements IGridDataInfo, IStationD
             double dy = Double.parseDouble(getGlobalAttStr("DY"));
             ProjectionInfo fromProj = KnownCoordinateSystems.geographic.world.WGS1984;
             double[][] points = new double[1][];
-            if (yVar != null && xVar != null) {
-                dimLen = yNum;
+            String cenLon = getGlobalAttStr("CEN_LON");
+            String cenLat = getGlobalAttStr("CEN_LAT");
+            if (xVar != null && yVar != null) {
                 Array yarray = NCUtil.convertArray(yVar.read().reduce());
-                double[] xlat = new double[dimLen];
-                for (i = 0; i < dimLen; i++) {
-                    xlat[i] = yarray.getDouble(i);
-                }
-                orgLat = xlat[0];
+                orgLat = ArrayMath.min(yarray).doubleValue();
+                double endLat = ArrayMath.max(yarray).doubleValue();
 
-                dimLen = xNum;
                 Array xarray = NCUtil.convertArray(xVar.read().reduce());
-                double[] xlon = new double[dimLen];
-                for (i = 0; i < dimLen; i++) {
-                    xlon[i] = xarray.getDouble(i);
-                }
-                orgLon = xlon[0];
+                orgLon = ArrayMath.min(xarray).doubleValue();
+                double endLon = ArrayMath.max(xarray).doubleValue();
 
                 points[0] = new double[]{orgLon, orgLat};
                 Reproject.reprojectPoints(points, fromProj, this.getProjectionInfo(), 0, 1);
                 orgX = points[0][0];
                 orgY = points[0][1];
+                points[0] = new double[]{endLon, endLat};
+                Reproject.reprojectPoints(points, fromProj, this.getProjectionInfo(), 0, 1);
+                double endX = points[0][0];
+                double endY = points[0][1];
+                dx = (endX - orgX) / (xNum - 1);
+                dy = (endY - orgY) / (yNum - 1);
             } else {
-                double clon = Double.parseDouble(getGlobalAttStr("CEN_LON"));
-                double clat = Double.parseDouble(getGlobalAttStr("CEN_LAT"));
+                double clon = Double.parseDouble(cenLon);
+                double clat = Double.parseDouble(cenLat);
                 points[0] = new double[]{clon, clat};
                 Reproject.reprojectPoints(points, fromProj, this.getProjectionInfo(), 0, 1);
                 double cx = points[0][0];
                 double cy = points[0][1];
-                orgX = cx - dx * xNum * 0.5;
-                orgY = cy - dy * yNum * 0.5;
+                orgX = cx - dx * (xNum - 1) * 0.5;
+                orgY = cy - dy * (yNum - 1) * 0.5;
             }
+
             double[] X = new double[xNum];
             for (i = 0; i < xNum; i++) {
                 X[i] = orgX + dx * i;

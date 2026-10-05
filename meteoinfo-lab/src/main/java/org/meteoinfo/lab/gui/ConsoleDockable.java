@@ -10,24 +10,26 @@ import bibliothek.gui.dock.common.action.CAction;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.console.ConsoleColors;
 import org.meteoinfo.console.JConsole;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 import org.meteoinfo.chart.IChartPanel;
 import org.meteoinfo.console.jython.JIntrospect;
 import org.meteoinfo.console.jython.PythonInteractiveInterpreter;
 import org.python.core.Py;
+import org.python.core.PyException;
 
 /**
  *
@@ -64,39 +66,46 @@ public class ConsoleDockable extends DefaultSingleCDockable {
         this.setTitleIcon(new FlatSVGIcon("org/meteoinfo/lab/icons/console.svg"));
 
         this.getContentPane().add(console, BorderLayout.CENTER);
-        console.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent ke) {
-            }
+        // Global Ctrl+C dispatcher replacing the broken console KeyListener.
+        // Console KeyListeners only fire when JConsole has focus. This dispatcher
+        // intercepts Ctrl+C regardless of which component (editor, variable panel, etc.)
+        // currently holds focus within the application window.
+        KeyboardFocusManager.getCurrentKeyboardFocusManager()
+                .addKeyEventDispatcher(new KeyEventDispatcher() {
+                    @Override
+                    public boolean dispatchKeyEvent(KeyEvent e) {
+                        if (e.getID() == KeyEvent.KEY_PRESSED
+                                && e.getKeyCode() == KeyEvent.VK_C
+                                && e.isControlDown()) {
 
-            @Override
-            public void keyPressed(KeyEvent ke) {
-                switch (ke.getKeyCode()) {
-                    // Control-C
-                    case (KeyEvent.VK_C):
-                        if (ke.isControlDown()) {
-                            /*if (myWorker != null && !myWorker.isCancelled() && !myWorker.isDone()) {
-                                myWorker.cancel(true);
-                                myWorker = null;
-                            }*/
+                            Thread workerThread = myThread;
+                            SwingWorker<?, ?> sw = myWorker;
+                            boolean interrupted = false;
 
-                            if (myThread != null) {
-                                myThread.stop();
-                                myThread = null;
-                                parent.getProgressBar().setVisible(false);
-                                console.print("Running is stopped!");
-                                //ConsoleDockable.this.enter();
+                            // [FIX-2] Cooperative interrupt instead of Thread.stop()
+                            if (workerThread != null && workerThread.isAlive()) {
+                                workerThread.interrupt();
+                                interrupted = true;
                             }
+                            if (sw != null && !sw.isDone() && !sw.isCancelled()) {
+                                sw.cancel(true);
+                                interrupted = true;
+                            }
+
+                            if (interrupted) {
+                                // Visual feedback on EDT
+                                SwingUtilities.invokeLater(() -> {
+                                    console.print("^C\n", Color.RED);
+                                    parent.getProgressBar().setVisible(false);
+                                });
+                            }
+
+                            e.consume();
+                            return true;
                         }
-                        break;
-                }
-            }
-
-            @Override
-            public void keyReleased(KeyEvent ke) {
-            }
-
-        });
+                        return false;
+                    }
+                });
     }
     
     /**
@@ -231,123 +240,174 @@ public class ConsoleDockable extends DefaultSingleCDockable {
     }
 
     /**
-     * Run a command line
+     * Safe Jython execution wrapper that respects Thread.interrupt().
      *
-     * @param command Command line
+     * Jython does NOT automatically throw InterruptedException on interrupt().
+     * It raises KeyboardInterrupt as a PyException between bytecode instructions.
+     * All exec/execfile calls MUST go through this method for Ctrl+C to work.
+     */
+    private void safeExec(String command) {
+        if (Thread.interrupted()) {
+            SwingUtilities.invokeLater(() ->
+                    console.print("^C Execution cancelled before start.\n", consoleColors.getPromptColor()));
+            return;
+        }
+        try {
+            interp.exec(command);
+        } catch (PyException pyEx) {
+            String typeName = pyEx.type != null ? pyEx.type.getType().getName() : "";
+            if ("KeyboardInterrupt".equals(typeName)) {
+                SwingUtilities.invokeLater(() ->
+                        console.print("\nKeyboardInterrupt\n", consoleColors.getPromptColor()));
+            } else {
+                throw pyEx;
+            }
+        }
+        if (Thread.interrupted()) {
+            SwingUtilities.invokeLater(() ->
+                    console.print("\nKeyboardInterrupt (post-exec)\n", consoleColors.getPromptColor()));
+        }
+    }
+
+    /**
+     * Safe execfile wrapper with encoding support
+     */
+    private void safeExecFile(String fn) {
+        if (Thread.interrupted()) {
+            SwingUtilities.invokeLater(() ->
+                    console.print("^C Execution cancelled before start.\n", consoleColors.getPromptColor()));
+            return;
+        }
+        try {
+            interp.execfile(fn);
+        } catch (PyException pyEx) {
+            String typeName = pyEx.type != null ? pyEx.type.getType().getName() : "";
+            if ("KeyboardInterrupt".equals(typeName)) {
+                SwingUtilities.invokeLater(() ->
+                        console.print("\nKeyboardInterrupt\n", consoleColors.getPromptColor()));
+            } else {
+                throw pyEx;
+            }
+        }
+        if (Thread.interrupted()) {
+            SwingUtilities.invokeLater(() ->
+                    console.print("\nKeyboardInterrupt (post-exec)\n", consoleColors.getPromptColor()));
+        }
+    }
+
+    /**
+     * Safe execfile from InputStream
+     */
+    private void safeExecFile(java.io.InputStream is) {
+        if (Thread.interrupted()) {
+            SwingUtilities.invokeLater(() ->
+                    console.print("^C Execution cancelled before start.\n", consoleColors.getPromptColor()));
+            return;
+        }
+        try {
+            interp.execfile(is);
+        } catch (PyException pyEx) {
+            String typeName = pyEx.type != null ? pyEx.type.getType().getName() : "";
+            if ("KeyboardInterrupt".equals(typeName)) {
+                SwingUtilities.invokeLater(() ->
+                        console.print("\nKeyboardInterrupt\n", consoleColors.getPromptColor()));
+            } else {
+                throw pyEx;
+            }
+        }
+        if (Thread.interrupted()) {
+            SwingUtilities.invokeLater(() ->
+                    console.print("\nKeyboardInterrupt (post-exec)\n", consoleColors.getPromptColor()));
+        }
+    }
+
+    /**
+     * Run a command line with safe interruption support.
+     * Uses safeExec to handle KeyboardInterrupt properly.
+     * Sets myThread for Ctrl+C dispatcher visibility.
+     * All UI operations are strictly on EDT via invokeLater.
      */
     public void run(String command) {
-        myWorker = new SwingWorker<String, String>() {
+        // Use a dedicated thread instead of SwingWorker for consistency
+        // with execJythonFile/runJythonScript, ensuring interrupt() works reliably.
+        // SwingWorker.cancel(true) only sets a flag; Jython won't see it without
+        // explicit Thread.interrupt() on the actual execution thread.
+        myThread = new Thread(() -> {
+            final boolean[] interrupted = {false};
 
-            @Override
-            protected String doInBackground() throws Exception {
+            SwingUtilities.invokeLater(() -> {
                 parent.getProgressBar().setVisible(true);
-                interp.console.setStyle(consoleColors.getCommandColor());
-                interp.console.println("evaluate selection...");
-                interp.console.setStyle(consoleColors.getCodeLinesColor());
-                interp.console.println(command);
-                interp.console.setStyle(consoleColors.getCommandColor());
-                interp.console.setFocusable(true);
-                interp.console.requestFocusInWindow();
+                console.print("evaluate selection...\n", consoleColors.getCommandColor());
+                console.print(command + "\n", consoleColors.getCodeLinesColor());
+                console.setFocusable(true);
+                console.requestFocusInWindow();
+            });
+
+            try {
+                safeExec(command);
+            } catch (Exception e) {
+                interrupted[0] = true;
+                if (!(e instanceof PyException &&
+                        "KeyboardInterrupt".equals(
+                                ((PyException) e).type != null ? ((PyException) e).type.getType().getName() : ""))) {
+                    StringWriter sw = new StringWriter();
+                    e.printStackTrace(new PrintWriter(sw));
+                    final String errorText = sw.toString();
+
+                    SwingUtilities.invokeLater(() ->
+                            console.print(errorText, consoleColors.getErrorColor())
+                    );
+                }
+            } finally {
+                // 1. Flush Jython's internal Python-level buffers into the Java pipe
                 try {
-                    interp.exec(command);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    interp.fireConsoleExecEvent();
-                }
+                    interp.exec("import sys; sys.stdout.flush(); sys.stderr.flush()");
+                } catch (Exception ignored) {}
 
-                return "";
-            }
-
-            @Override
-            protected void done() {
-                interp.console.print(">>> ", consoleColors.getPromptColor());
-                interp.console.setStyle(consoleColors.getCommandColor());
-                interp.exec("mipylib.plotlib.miplot.isinteractive = True");
-                parent.getProgressBar().setVisible(false);
-            }
-        };
-        myWorker.execute();
-    }
-
-    /**
-     * Do Enter key
-     */
-    public void enter() {
-        interp.console.print(">>> ", this.consoleColors.getPromptColor());
-        interp.console.setStyle(this.consoleColors.getCommandColor());
-        interp.exec("mipylib.plotlib.miplot.isinteractive = True");
-    }
-
-    /**
-     * Run a command line
-     *
-     * @param command Command line
-     */
-    public void exec(String command) {
-        interp.console.setStyle(this.consoleColors.getCommandColor());
-        this.interp.console.println("run script...");
-        //this.interp.console.error(this.interp.err);
-        this.interp.exec(command);
-        //this.interp.push(command);
-        this.interp.console.print(">>> ", this.consoleColors.getPromptColor());
-        this.interp.console.setStyle(consoleColors.getCommandColor());
-        interp.exec("mipylib.plotlib.miplot.isinteractive = True");
-    }
-
-    /**
-     * Run a python file
-     *
-     * @param fn Python file name
-     */
-    public void execfile(final String fn) {
-        myWorker = new SwingWorker<String, String>() {
-
-            @Override
-            protected String doInBackground() throws Exception {
-                parent.getProgressBar().setVisible(true);
-
-                    interp.console.setStyle(consoleColors.getCommandColor());
-                    interp.console.println("run script...");
-                    interp.console.setFocusable(true);
-                    interp.console.requestFocusInWindow();
-
+                // 2. ALWAYS restore interactive state
                 try {
-                    interp.exec("mipylib.plotlib.miplot.set_interactive(False)");
-                    interp.exec("mipylib.plotlib.miplot.clf()");
-                    interp.execfile(fn);
-                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
+                    safeExec("mipylib.plotlib.miplot.set_interactive(True)");
+                } catch (Exception ignored) {}
+
+                // 3. Block until the inPipeWatcher thread has read all
+                // remaining bytes from the pipe AND the EDT has rendered them.
+                console.awaitPipeDrain();
+
+                // 4. Print the prompt and reset UI state
+                try {
+                    SwingUtilities.invokeAndWait(() -> {
+                        // Use printPrompt to avoid treating ">>>" as editable command history
+                        console.printPrompt(">>> ", consoleColors.getPromptColor());
+
+                        MutableAttributeSet cmdAttr = new SimpleAttributeSet();
+                        StyleConstants.setForeground(cmdAttr, consoleColors.getCommandColor());
+                        Font f = console.getTextPane().getFont();
+                        StyleConstants.setFontFamily(cmdAttr, f.getFamily());
+                        StyleConstants.setFontSize(cmdAttr, f.getSize());
+                        console.getTextPane().setCharacterAttributes(cmdAttr, true);
+
+                        IChartPanel cp = parent.getFigureDock().getCurrentFigure();
+                        if (cp != null) {
+                            cp.paintGraphics();
+                        }
+                        parent.getProgressBar().setVisible(false);
+                    });
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(PythonInteractiveInterpreter.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    interp.console.print(">>> ", consoleColors.getPromptColor());
-                    interp.console.setStyle(consoleColors.getCommandColor());
-                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
+                    Logger.getLogger(ConsoleDockable.class.getName()).log(Level.WARNING,
+                            "Prompt sync failed", e);
+                    SwingUtilities.invokeLater(() -> {
+                        if (!interrupted[0]) {
+                            console.print(">>> ", consoleColors.getPromptColor());
+                        }
+                        parent.getProgressBar().setVisible(false);
+                    });
                 }
 
-                return "";
+                myThread = null;
             }
+        }, "Jython-RunCommand");
 
-            @Override
-            protected void done() {
-                if (this.isCancelled()) {
-                    parent.getProgressBar().setVisible(false);
-                } else {
-                    IChartPanel cp = parent.getFigureDock().getCurrentFigure();
-                    if (cp != null) {
-                        cp.paintGraphics();
-                    /*if (cp instanceof GLChartPanel) {
-                        ((GLChartPanel) cp).display();
-                    }*/
-                    }
-                    parent.getProgressBar().setVisible(false);
-                }
-            }
-        };
-        myWorker.execute();
+        myThread.start();
     }
 
     /**
@@ -355,177 +415,177 @@ public class ConsoleDockable extends DefaultSingleCDockable {
      *
      * @param fn Jython file name
      */
-    public void execJythonFile(final String fn) {
+    public void runJythonFile(final String fn) {
         myThread = new Thread(new Runnable() {
+            final boolean[] interrupted = {false};
+
             @Override
             public void run() {
-                parent.getProgressBar().setVisible(true);
-
-                interp.console.setStyle(consoleColors.getCommandColor());
-                interp.console.println("run script...");
-                interp.console.setFocusable(true);
-                interp.console.requestFocusInWindow();
+                // UI updates on EDT only
+                SwingUtilities.invokeLater(() -> {
+                    parent.getProgressBar().setVisible(true);
+                    console.print("run script...\n", consoleColors.getCommandColor());
+                    console.setFocusable(true);
+                    console.requestFocusInWindow();
+                });
 
                 try {
-                    interp.exec("mipylib.plotlib.miplot.set_interactive(False)");
-                    interp.exec("mipylib.plotlib.miplot.clf()");
-                    interp.execfile(fn);
-                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
+                    safeExec("mipylib.plotlib.miplot.set_interactive(False)");
+                    safeExec("mipylib.plotlib.miplot.clf()");
+                    safeExecFile(fn);
+                    safeExec("mipylib.plotlib.miplot.set_interactive(True)");
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException ex) {
-                        Logger.getLogger(PythonInteractiveInterpreter.class.getName()).log(Level.SEVERE, null, ex);
-                    }
-                    interp.console.print(">>> ", consoleColors.getPromptColor());
-                    interp.console.setStyle(consoleColors.getCommandColor());
-                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
-                }
+                    interrupted[0] = true;
+                    if (!(e instanceof PyException &&
+                            "KeyboardInterrupt".equals(((PyException)e).type != null ?
+                                    ((PyException)e).type.getType().getName() : ""))) {
+                        StringWriter sw = new StringWriter();
+                        e.printStackTrace(new PrintWriter(sw));
+                        final String errorText = sw.toString();
 
-                if (Thread.currentThread().isInterrupted()) {
-                    parent.getProgressBar().setVisible(false);
-                } else {
-                    IChartPanel cp = parent.getFigureDock().getCurrentFigure();
-                    if (cp != null) {
-                        cp.paintGraphics();
-                    /*if (cp instanceof GLChartPanel) {
-                        ((GLChartPanel) cp).display();
-                    }*/
+                        SwingUtilities.invokeLater(() ->
+                                console.print(errorText, consoleColors.getErrorColor())
+                        );
                     }
-                    parent.getProgressBar().setVisible(false);
+                } finally {
+                    // 1. Flush Jython's internal Python-level buffers into the Java pipe
+                    try {
+                        interp.exec("import sys; sys.stdout.flush(); sys.stderr.flush()");
+                    } catch (Exception ignored) {}
+
+                    // 2. ALWAYS restore interactive state
+                    try {
+                        safeExec("mipylib.plotlib.miplot.set_interactive(True)");
+                    } catch (Exception ignored) {}
+
+                    // 3. Block until the inPipeWatcher thread has read all
+                    // remaining bytes from the pipe AND the EDT has rendered them.
+                    console.awaitPipeDrain();
+
+                    // 4. Print the prompt and reset UI state
+                    try {
+                        SwingUtilities.invokeAndWait(() -> {
+                            // Use printPrompt to avoid treating ">>>" as editable command history
+                            console.printPrompt(">>> ", consoleColors.getPromptColor());
+
+                            MutableAttributeSet cmdAttr = new SimpleAttributeSet();
+                            StyleConstants.setForeground(cmdAttr, consoleColors.getCommandColor());
+                            Font f = console.getTextPane().getFont();
+                            StyleConstants.setFontFamily(cmdAttr, f.getFamily());
+                            StyleConstants.setFontSize(cmdAttr, f.getSize());
+                            console.getTextPane().setCharacterAttributes(cmdAttr, true);
+
+                            IChartPanel cp = parent.getFigureDock().getCurrentFigure();
+                            if (cp != null) {
+                                cp.paintGraphics();
+                            }
+                            parent.getProgressBar().setVisible(false);
+                        });
+                    } catch (Exception e) {
+                        Logger.getLogger(ConsoleDockable.class.getName()).log(Level.WARNING,
+                                "Prompt sync failed", e);
+                        SwingUtilities.invokeLater(() -> {
+                            if (!interrupted[0]) {
+                                console.print(">>> ", consoleColors.getPromptColor());
+                            }
+                            parent.getProgressBar().setVisible(false);
+                        });
+                    }
+
+                    myThread = null;
                 }
             }
-        });
+        }, "Jython-ExecFile");
 
         myThread.start();
     }
 
     /**
-     * Run a Jython file text
-     *
-     * @param code Jython file text
-     */
-    public void runfile(String code) {
-        try {
-            interp.console.setStyle(consoleColors.getCommandColor());
-            this.interp.console.println("run script...");
-            this.interp.setOut(this.interp.console.getOut());
-            this.interp.setErr(this.interp.console.getErr());
-            //System.setOut(this.interp.console.getOut());
-            //System.setErr(this.interp.console.getErr());
-            String encoding = EncodingUtil.findEncoding(code);
-            if (encoding != null) {
-                try {
-                    interp.execfile(new ByteArrayInputStream(code.getBytes(encoding)));
-                } catch (Exception e) {
-                }
-            } else {
-                try {
-                    interp.execfile(new ByteArrayInputStream(code.getBytes()));
-                } catch (Exception e) {
-                }
-            }
-            this.interp.console.print(">>> ", consoleColors.getPromptColor());
-            this.interp.console.setStyle(consoleColors.getCommandColor());
-        } catch (IOException ex) {
-            Logger.getLogger(ConsoleDockable.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    /**
-     * Run Jython script
-     *
-     * @param code
-     * @throws java.lang.InterruptedException
-     */
-    public void runPythonScript(final String code) throws InterruptedException {
-
-        myWorker = new SwingWorker<String, String>() {
-
-            @Override
-            protected String doInBackground() throws Exception {
-                parent.getProgressBar().setVisible(true);
-
-                interp.console.setStyle(consoleColors.getCommandColor());
-                interp.console.println("run script...");
-                interp.console.setFocusable(true);
-                interp.console.requestFocusInWindow();
-
-                String encoding = "utf-8";
-                try {
-                    interp.exec("mipylib.plotlib.miplot.set_interactive(False)");
-                    interp.exec("mipylib.plotlib.miplot.clf()");
-                    interp.execfile(new ByteArrayInputStream(code.getBytes(encoding)));
-                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
-                    interp.fireConsoleExecEvent();
-                }
-
-                return "";
-            }
-
-            @Override
-            protected void done() {
-                IChartPanel cp = parent.getFigureDock().getCurrentFigure();
-                if (cp != null) {
-                    cp.paintGraphics();
-                }
-                parent.getProgressBar().setVisible(false);
-            }
-        };
-        myWorker.execute();
-    }
-
-    /**
-     * Run Jython script
-     *
-     * @param code
-     * @throws java.lang.InterruptedException
+     * Run Jython script with safe interruption support.
+     * Same pattern as execJythonFile: EDT-safe UI + safeExec + proper cleanup.
      */
     public void runJythonScript(final String code) throws InterruptedException {
         myThread = new Thread(new Runnable() {
+            final boolean[] interrupted = {false};
+
             @Override
             public void run() {
-                parent.getProgressBar().setVisible(true);
-
-                interp.console.setStyle(consoleColors.getCommandColor());
-                interp.console.println("run script...");
-                interp.console.setFocusable(true);
-                interp.console.requestFocusInWindow();
+                SwingUtilities.invokeLater(() -> {
+                    parent.getProgressBar().setVisible(true);
+                    console.print("run script...\n", consoleColors.getCommandColor());
+                    console.setFocusable(true);
+                    console.requestFocusInWindow();
+                });
 
                 String encoding = "utf-8";
                 try {
-                    interp.exec("mipylib.plotlib.miplot.set_interactive(False)");
-                    interp.exec("mipylib.plotlib.miplot.clf()");
-                    interp.execfile(new ByteArrayInputStream(code.getBytes(encoding)));
-                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
+                    safeExec("mipylib.plotlib.miplot.set_interactive(False)");
+                    safeExec("mipylib.plotlib.miplot.clf()");
+                    safeExecFile(new ByteArrayInputStream(code.getBytes(encoding)));
+                    safeExec("mipylib.plotlib.miplot.set_interactive(True)");
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    interp.exec("mipylib.plotlib.miplot.set_interactive(True)");
-                    interp.fireConsoleExecEvent();
-                }
+                    interrupted[0] = true;
+                    if (!(e instanceof PyException &&
+                            "KeyboardInterrupt".equals(((PyException)e).type != null ?
+                                    ((PyException)e).type.getType().getName() : ""))) {
+                        StringWriter sw = new StringWriter();
+                        e.printStackTrace(new PrintWriter(sw));
+                        final String errorText = sw.toString();
 
-                IChartPanel cp = parent.getFigureDock().getCurrentFigure();
-                if (cp != null) {
-                    cp.paintGraphics();
+                        SwingUtilities.invokeLater(() ->
+                                console.print(errorText, consoleColors.getErrorColor())
+                        );
+                    }
+                } finally {
+                    // 1. Flush Jython's internal Python-level buffers into the Java pipe
+                    try {
+                        interp.exec("import sys; sys.stdout.flush(); sys.stderr.flush()");
+                    } catch (Exception ignored) {}
+
+                    // 2. ALWAYS restore interactive state
+                    try {
+                        safeExec("mipylib.plotlib.miplot.set_interactive(True)");
+                    } catch (Exception ignored) {}
+
+                    // 3. [FIX] Block until the inPipeWatcher thread has read all
+                    // remaining bytes from the pipe AND the EDT has rendered them.
+                    console.awaitPipeDrain();
+
+                    // 4. Print the prompt and reset UI state
+                    try {
+                        SwingUtilities.invokeAndWait(() -> {
+                            // Use printPrompt to avoid treating ">>>" as editable command history
+                            console.printPrompt(">>> ", consoleColors.getPromptColor());
+
+                            MutableAttributeSet cmdAttr = new SimpleAttributeSet();
+                            StyleConstants.setForeground(cmdAttr, consoleColors.getCommandColor());
+                            Font f = console.getTextPane().getFont();
+                            StyleConstants.setFontFamily(cmdAttr, f.getFamily());
+                            StyleConstants.setFontSize(cmdAttr, f.getSize());
+                            console.getTextPane().setCharacterAttributes(cmdAttr, true);
+
+                            IChartPanel cp = parent.getFigureDock().getCurrentFigure();
+                            if (cp != null) {
+                                cp.paintGraphics();
+                            }
+                            parent.getProgressBar().setVisible(false);
+                        });
+                    } catch (Exception e) {
+                        Logger.getLogger(ConsoleDockable.class.getName()).log(Level.WARNING,
+                                "Prompt sync failed", e);
+                        SwingUtilities.invokeLater(() -> {
+                            if (!interrupted[0]) {
+                                console.print(">>> ", consoleColors.getPromptColor());
+                            }
+                            parent.getProgressBar().setVisible(false);
+                        });
+                    }
+
+                    myThread = null;
                 }
-                parent.getProgressBar().setVisible(false);
             }
-        });
+        }, "Jython-RunScript");
 
         myThread.start();
-    }
-    
-    class SmallWorker extends SwingWorker<String, String> {
-
-        @Override
-        protected String doInBackground() throws Exception {
-            interp.exec("print('Thread canceled!')");
-            return "";
-        }
-        
     }
 }

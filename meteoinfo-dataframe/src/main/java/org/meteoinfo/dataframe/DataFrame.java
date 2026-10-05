@@ -1296,6 +1296,116 @@ public class DataFrame implements Iterable {
     }
 
     /**
+     * Drop duplicate rows based on specified columns.
+     *
+     * @param subset Column names to consider for identifying duplicates.
+     *               If null or empty, all columns are used.
+     * @param keep   "first" (default), "last", or "false" (drop all duplicates).
+     * @return A new DataFrame with duplicates removed.
+     */
+    public DataFrame dropDuplicates(String[] subset, String keep) {
+        int nrows = this.length();
+        if (nrows == 0) {
+            return (DataFrame) this.clone();
+        }
+
+        // 1. Resolve column indices
+        int[] colIndices;
+        if (subset == null || subset.length == 0) {
+            colIndices = new int[this.size()];
+            for (int i = 0; i < colIndices.length; i++) {
+                colIndices[i] = i;
+            }
+        } else {
+            colIndices = new int[subset.length];
+            for (int i = 0; i < subset.length; i++) {
+                colIndices[i] = this.columns.indexOfName(subset[i]);
+                if (colIndices[i] < 0) {
+                    throw new IllegalArgumentException("Column not found: " + subset[i]);
+                }
+            }
+        }
+
+        // 2. Extract column data references ONCE to avoid repeated getValue() overhead
+        // This bypasses ArrayMath.section() and accesses the raw arrays directly
+        Array[] colArrays = new Array[colIndices.length];
+        for (int i = 0; i < colIndices.length; i++) {
+            if (this.array2D) {
+                colArrays[i] = (Array) this.data;
+            } else {
+                colArrays[i] = ((List<Array>) this.data).get(colIndices[i]);
+            }
+        }
+
+        // 3. Build row keys and determine which rows to KEEP
+        List<Integer> keepIndices = new ArrayList<>();
+        int ncols = colIndices.length;
+        int stride = this.size(); // Row stride for 2D array index calculation
+
+        if ("last".equals(keep)) {
+            Set<List<Object>> seen = new HashSet<>();
+            for (int i = nrows - 1; i >= 0; i--) {
+                List<Object> key = new ArrayList<>(ncols);
+                for (int c = 0; c < ncols; c++) {
+                    int flatIdx = this.array2D ? (i * stride + colIndices[c]) : i;
+                    key.add(colArrays[c].getObject(flatIdx));
+                }
+                if (seen.add(key)) {
+                    keepIndices.add(i);
+                }
+            }
+            Collections.reverse(keepIndices); // Restore original chronological order
+
+        } else if ("false".equals(keep)) {
+            // Count occurrences, keep only rows whose key appears exactly once
+            Map<List<Object>, Integer> counts = new HashMap<>();
+            List<List<Object>> allKeys = new ArrayList<>(nrows);
+
+            for (int i = 0; i < nrows; i++) {
+                List<Object> key = new ArrayList<>(ncols);
+                for (int c = 0; c < ncols; c++) {
+                    int flatIdx = this.array2D ? (i * stride + colIndices[c]) : i;
+                    key.add(colArrays[c].getObject(flatIdx));
+                }
+                allKeys.add(key);
+                counts.merge(key, 1, Integer::sum);
+            }
+            for (int i = 0; i < nrows; i++) {
+                if (counts.get(allKeys.get(i)) == 1) {
+                    keepIndices.add(i);
+                }
+            }
+
+        } else {
+            // Default: "first" — iterate forward; first seen is kept
+            Set<List<Object>> seen = new HashSet<>();
+            for (int i = 0; i < nrows; i++) {
+                List<Object> key = new ArrayList<>(ncols);
+                for (int c = 0; c < ncols; c++) {
+                    int flatIdx = this.array2D ? (i * stride + colIndices[c]) : i;
+                    key.add(colArrays[c].getObject(flatIdx));
+                }
+                if (seen.add(key)) {
+                    keepIndices.add(i);
+                }
+            }
+        }
+
+        // 4. Use existing row-selection infrastructure
+        // select(List<Integer>) safely handles both array2D and List<Array> data structures
+        return (DataFrame) this.select(keepIndices);
+    }
+
+    /**
+     * Drop duplicate rows based on all columns, keeping the first occurrence.
+     *
+     * @return A new DataFrame with duplicates removed.
+     */
+    public DataFrame dropDuplicates() {
+        return dropDuplicates(null, "first");
+    }
+
+    /**
      * Create a new data frame containing only the specified columns.
      *
      * <pre> {@code

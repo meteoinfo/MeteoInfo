@@ -84,8 +84,8 @@ public class SphericalTransform {
      * @return Transformed graphic
      */
     public static Graphic transform(Graphic graphic) {
-        if (graphic instanceof MeshGraphic) {
-            MeshGraphic surfaceGraphic = (MeshGraphic) graphic;
+        if (graphic instanceof QuadMeshGraphic) {
+            QuadMeshGraphic surfaceGraphic = (QuadMeshGraphic) graphic;
             float[] vertexPosition = surfaceGraphic.getVertexPosition();
             Vector3f vector3f;
             for (int i = 0; i < vertexPosition.length; i+=3) {

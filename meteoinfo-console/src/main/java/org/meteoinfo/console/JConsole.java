@@ -19,6 +19,8 @@
 package org.meteoinfo.console;
 
 import javax.swing.*;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -135,6 +137,32 @@ public class JConsole extends JScrollPane
         text.setFont(font);
         text.setMargin(new Insets(7, 5, 7, 5));
         text.addKeyListener(this);
+
+        // GLOBAL SAFETY NET: Monitor caret position changes.
+        // Whenever the caret moves into the editable command zone (>= cmdStart),
+        // force-reset Input Attributes to commandColor. This catches ALL edge cases
+        // where Swing internally resets or corrupts Input Attributes due to
+        // focus changes, L&F updates, mouse clicks on colored text, etc.
+        text.addCaretListener(new CaretListener() {
+            @Override
+            public void caretUpdate(CaretEvent e) {
+                if (e.getDot() >= cmdStart) {
+                    MutableAttributeSet normalAttr = new SimpleAttributeSet();
+                    StyleConstants.setForeground(normalAttr, commandColor);
+                    Font f = text.getFont();
+                    StyleConstants.setFontFamily(normalAttr, f.getFamily());
+                    StyleConstants.setFontSize(normalAttr, f.getSize());
+                    // Only overwrite if current foreground is NOT already commandColor,
+                    // to avoid unnecessary attribute churn and potential flicker
+                    AttributeSet current = text.getCharacterAttributes();
+                    Color currentFg = StyleConstants.getForeground(current);
+                    if (!commandColor.equals(currentFg)) {
+                        text.setCharacterAttributes(normalAttr, true);
+                    }
+                }
+            }
+        });
+
         setViewportView(text);
 
         // create popup menu
@@ -662,8 +690,26 @@ public class JConsole extends JScrollPane
             text.setText("");
             slen = 0;
         }
+
+        // [FIX-1] Force caret to end BEFORE insertion to avoid inheriting
+        // attributes from mid-document colored regions
+        text.setCaretPosition(slen);
         text.select(slen, slen);
+
+        // [FIX-2] Pre-set Input Attributes to commandColor BEFORE insertion,
+        // so replaceSelection uses the correct color regardless of surrounding context
+        MutableAttributeSet normalAttr = new SimpleAttributeSet();
+        StyleConstants.setForeground(normalAttr, commandColor);
+        Font f = text.getFont();
+        StyleConstants.setFontFamily(normalAttr, f.getFamily());
+        StyleConstants.setFontSize(normalAttr, f.getSize());
+        text.setCharacterAttributes(normalAttr, true);
+
         text.replaceSelection(string);
+
+        // [FIX-3] Post-insertion safety net: re-affirm Input Attributes
+        // in case replaceSelection internally mutated them
+        text.setCharacterAttributes(normalAttr, true);
     }
 
     private String replaceRange(Object s, int start, int end) {
@@ -749,8 +795,21 @@ public class JConsole extends JScrollPane
             showline = (String) history.elementAt(history.size() - histLine);
         }
 
+        // Set Input Attributes to commandColor BEFORE replacing,
+        // preventing inheritance of any colored attributes from the old text
+        MutableAttributeSet normalAttr = new SimpleAttributeSet();
+        StyleConstants.setForeground(normalAttr, commandColor);
+        Font f = text.getFont();
+        StyleConstants.setFontFamily(normalAttr, f.getFamily());
+        StyleConstants.setFontSize(normalAttr, f.getSize());
+        text.setCharacterAttributes(normalAttr, true);
+
         replaceRange(showline, cmdStart, textLength());
         text.setCaretPosition(textLength());
+
+        // Re-affirm after replacement as a safety net
+        text.setCharacterAttributes(normalAttr, true);
+
         text.repaint();
     }
 
@@ -853,12 +912,68 @@ public class JConsole extends JScrollPane
         invokeAndWait(new Runnable() {
             @Override
             public void run() {
-                AttributeSet old = getStyle();
-                setStyle(font, color);
-                append(String.valueOf(o));
-                resetCommandStart();
-                text.setCaretPosition(cmdStart);
-                setStyle(old, true);
+                // Build a self-contained attribute set for this specific insertion.
+                // Do NOT call setStyle() which mutates the global Input Attributes.
+                MutableAttributeSet attr = new SimpleAttributeSet();
+
+                // Inherit base attributes (font family, size, etc.) from current defaults
+                // to avoid losing basic formatting when only color is specified.
+                AttributeSet base = text.getCharacterAttributes();
+                if (base != null) {
+                    attr.addAttributes(base);
+                }
+
+                // Override only the attributes explicitly requested by the caller
+                if (color != null) {
+                    StyleConstants.setForeground(attr, color);
+                }
+                if (font != null) {
+                    StyleConstants.setFontFamily(attr, font.getFamily());
+                    StyleConstants.setFontSize(attr, font.getSize());
+                    StyleConstants.setBold(attr, font.isBold());
+                    StyleConstants.setItalic(attr, font.isItalic());
+                }
+
+                try {
+                    // Normalize unicode characters (same as original append() logic)
+                    String str = StringUtil.unicodeToString(String.valueOf(o));
+
+                    // Truncate excessively long strings to prevent UI freeze
+                    int len = str.length();
+                    if (len > 10000) {
+                        str = str.substring(0, 10000) + "\n...";
+                    }
+
+                    // Insert directly into the document with explicit attributes.
+                    // Unlike text.replaceSelection(), this does NOT alter the caret's
+                    // Input Attributes, preventing color leakage to future input.
+                    doc.insertString(doc.getLength(), str, attr);
+
+                    // Update cmdStart boundary so user cannot edit printed output
+                    resetCommandStart();
+                    text.setCaretPosition(cmdStart);
+
+                } catch (BadLocationException e) {
+                    // Fallback to plain append if document insertion fails
+                    append(String.valueOf(o));
+                }
+
+                // CRITICAL: Force-reset the Input Attributes to the normal
+                // command color after every styled print operation. This ensures that
+                // regardless of what color was just printed, the next character typed
+                // by the user or appended without explicit color will always be correct.
+                MutableAttributeSet inputAttr = new SimpleAttributeSet();
+                StyleConstants.setForeground(inputAttr, commandColor);
+
+                // Preserve the default font so the reset doesn't accidentally
+                // change font family or size for subsequent input
+                Font currentFont = text.getFont();
+                StyleConstants.setFontFamily(inputAttr, currentFont.getFamily());
+                StyleConstants.setFontSize(inputAttr, currentFont.getSize());
+
+                // overWrite=true replaces ALL existing input attributes,
+                // fully clearing any residual red/colored state
+                text.setCharacterAttributes(inputAttr, true);
             }
         });
     }
@@ -1068,6 +1183,65 @@ public class JConsole extends JScrollPane
         } else {
             run.run();
         }
+    }
+
+    /**
+     * Blocks the calling thread until all data currently sitting in the
+     * input pipe buffer has been read by the inPipeWatcher thread AND
+     * rendered on the EDT.
+     *
+     * MUST be called from a background thread (e.g., Jython-ExecFile).
+     * Calling this from the EDT will cause a deadlock.
+     */
+    public void awaitPipeDrain() {
+        if (SwingUtilities.isEventDispatchThread()) {
+            // Cannot block EDT, and inPipeWatcher runs independently anyway
+            return;
+        }
+
+        // 1. Give the inPipeWatcher thread a moment to read any remaining
+        // bytes sitting in the PipedInputStream buffer.
+        try {
+            Thread.sleep(50);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return;
+        }
+
+        // 2. Post a dummy task to the EDT using invokeAndWait.
+        // Because inPipeWatcher uses invokeAndWait() for every chunk it reads,
+        // and invokeAndWait tasks are processed sequentially by the EDT,
+        // this dummy task will ONLY execute after all previously queued
+        // text rendering tasks from the pipe have completed.
+        try {
+            SwingUtilities.invokeAndWait(() -> {
+                // No-op: just waiting for the EDT queue to drain
+            });
+        } catch (InterruptedException | InvocationTargetException e) {
+            // Ignore
+        }
+    }
+
+    /**
+     * Prints text synchronously without altering the cmdStart boundary.
+     * Used for printing prompts after script execution.
+     */
+    public void printPrompt(final String text, final Color color) {
+        invokeAndWait(() -> {
+            MutableAttributeSet attr = new SimpleAttributeSet();
+            StyleConstants.setForeground(attr, color);
+            Font f = this.text.getFont();
+            StyleConstants.setFontFamily(attr, f.getFamily());
+            StyleConstants.setFontSize(attr, f.getSize());
+
+            try {
+                doc.insertString(doc.getLength(), text, attr);
+                resetCommandStart();
+                this.text.setCaretPosition(cmdStart);
+            } catch (BadLocationException e) {
+                append(text);
+            }
+        });
     }
 
     /**

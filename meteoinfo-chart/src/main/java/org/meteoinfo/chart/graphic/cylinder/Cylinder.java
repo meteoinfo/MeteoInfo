@@ -3,7 +3,6 @@ package org.meteoinfo.chart.graphic.cylinder;
 import com.jogamp.opengl.GL2;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
-import org.meteoinfo.chart.graphic.Model;
 import org.meteoinfo.chart.graphic.TriMeshGraphic;
 
 import java.util.ArrayList;

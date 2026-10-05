@@ -273,7 +273,8 @@ class DimVariable(object):
                 else:
                     eidx = dim.value_index(float(kvalues[1]))
                     if len(kvalues) == 2:
-                        indices[i] = slice(sidx, eidx, 1)
+                        step = 1 if sidx <= eidx else -1
+                        indices[i] = slice(sidx, eidx, step)
                     else:
                         step = int(float(kvalues[2]) / dim.delta_value())
                         indices[i] = slice(sidx, eidx, step)
@@ -355,7 +356,8 @@ class DimVariable(object):
                     eidx = dim_len if k.stop is None else k.stop
                     if eidx < 0:
                         eidx = dim_len + eidx
-                    eidx -= 1
+                    if eidx > 0:
+                        eidx -= 1
                 else:
                     if k.stop is None:
                         sidx = -1
@@ -499,9 +501,13 @@ class DimVariable(object):
                 sidx = None if v.start is None else dim.value_index(v.start)
                 eidx = None if v.stop is None else dim.value_index(v.stop)
                 if sidx <= eidx:
-                    indices[idx_dim] = slice(sidx, eidx + 1)
+                    if eidx < dim.length - 1:
+                        eidx += 1
+                    indices[idx_dim] = slice(sidx, eidx)
                 else:
-                    indices[idx_dim] = slice(sidx, eidx - 1, -1)
+                    if eidx > 0:
+                        eidx -= 1
+                    indices[idx_dim] = slice(sidx, eidx, -1)
             elif isinstance(v, (list, tuple, np.NDArray)) and isinstance(v[0], bool):
                 indices[idx_dim] = v
             else:

@@ -26,10 +26,10 @@ public class GraphicProjectionUtil extends ProjectionUtil {
      * @return Projected graphic
      */
     public static Graphic projectClipGraphic(Graphic graphic, ProjectionInfo fromProj, ProjectionInfo toProj) {
-        if (graphic instanceof MeshGraphic) {
+        if (graphic instanceof QuadMeshGraphic) {
             CoordinateTransform trans = new CoordinateTransformFactory().createTransform(fromProj.getCoordinateReferenceSystem(),
                     toProj.getCoordinateReferenceSystem());
-            float[] vertex = ((MeshGraphic) graphic).getVertexPosition();
+            float[] vertex = ((QuadMeshGraphic) graphic).getVertexPosition();
             for (int i = 0; i < vertex.length; i+=3) {
                 ProjCoordinate p1 = new ProjCoordinate(vertex[i], vertex[i + 1]);
                 ProjCoordinate p2 = new ProjCoordinate();
@@ -37,7 +37,7 @@ public class GraphicProjectionUtil extends ProjectionUtil {
                 vertex[i] = (float) p2.x;
                 vertex[i + 1] = (float) p2.y;
             }
-            ((MeshGraphic) graphic).setVertexPosition(vertex);
+            ((QuadMeshGraphic) graphic).setVertexPosition(vertex);
             return graphic;
         } else if (graphic instanceof GeoGraphicCollection) {
             GeoGraphicCollection geoGraphic = (GeoGraphicCollection) graphic;

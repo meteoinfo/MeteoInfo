@@ -20,7 +20,6 @@ public class TriMeshRender extends JOGLGraphicRender {
 
     private TriMeshGraphic meshGraphic;
     private IntBuffer vbo;
-    //private IntBuffer vboNormal;
     private Program program;
     private float[] vertexPosition;
     private int sizePosition;
@@ -234,70 +233,4 @@ public class TriMeshRender extends JOGLGraphicRender {
         }
     }
 
-    public void draw_bak() {
-
-        if (useShader) {
-            program.use(gl);
-            setUniforms();
-
-            int attribVertexPosition = gl.glGetAttribLocation(program.getProgramId(), "vertexPosition");
-            int attribVertexNormal = gl.glGetAttribLocation(program.getProgramId(), "vertexNormal");
-
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
-
-            gl.glEnableVertexAttribArray(attribVertexPosition);
-            gl.glEnableVertexAttribArray(attribVertexNormal);
-
-            gl.glVertexAttribPointer(attribVertexPosition, 3, GL.GL_FLOAT, false, 0, 0);
-            gl.glVertexAttribPointer(attribVertexNormal, 3, GL.GL_FLOAT, false, 0, vertexPosition.length * Float.BYTES);
-
-            gl.glDrawArrays(GL.GL_TRIANGLES, 0, meshGraphic.getVertexNumber());
-
-            gl.glDisableVertexAttribArray(attribVertexPosition);
-            gl.glDisableVertexAttribArray(attribVertexNormal);
-
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-
-            gl.glUseProgram(0);
-        } else {
-            float[] rgba = meshGraphic.getColor().getRGBComponents(null);
-            gl.glColor4fv(rgba, 0);
-
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
-
-            // enable vertex arrays
-            gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-            gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-
-            // before draw, specify vertex and index arrays with their offsets
-            gl.glNormalPointer(GL.GL_FLOAT, 0, vertexPosition.length * Float.BYTES);
-            gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
-
-            PolygonBreak pb = (PolygonBreak) meshGraphic.getLegendBreak();
-            if (pb.isDrawFill()) {
-                gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
-                gl.glPolygonOffset(1.0f, 1.0f);
-                gl.glDrawArrays(GL.GL_TRIANGLES, 0, meshGraphic.getVertexNumber());
-            }
-            if (pb.isDrawOutline()) {
-                boolean lightEnabled = this.lighting.isEnable();
-                if (lightEnabled) {
-                    this.lighting.stop(gl);
-                }
-                rgba = pb.getOutlineColor().getRGBComponents(null);
-                gl.glColor4fv(rgba, 0);
-                gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_LINE);
-                gl.glDrawArrays(GL.GL_TRIANGLES, 0, meshGraphic.getVertexNumber());
-                gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
-                if (lightEnabled) {
-                    this.lighting.start(gl);
-                }
-            }
-
-            gl.glDisableClientState(GL2.GL_NORMAL_ARRAY);
-            gl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-
-            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        }
-    }
 }

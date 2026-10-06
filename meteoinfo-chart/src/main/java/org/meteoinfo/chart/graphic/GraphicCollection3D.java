@@ -5,8 +5,7 @@
  */
 package org.meteoinfo.chart.graphic;
 
-import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.Extent;
 import org.meteoinfo.geometry.legend.BreakTypes;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.ColorBreakCollection;
@@ -252,10 +251,10 @@ public class GraphicCollection3D extends GraphicCollection{
      */
     public GraphicCollection3D xShift(double xs) {
         for (Graphic g : this.graphics) {
-            for (PointD p : g.getShape().getPoints()) {
+            for (PointZ p : g.getShape().getPoints()) {
                 p.X += xs;
             }
-            g.setExtent(((Extent3D) g.getExtent()).shift(xs, 0, 0));
+            g.setExtent(g.getExtent().shift(xs, 0, 0));
         }
         this.extent.shift(xs, 0);
 
@@ -270,7 +269,7 @@ public class GraphicCollection3D extends GraphicCollection{
     public GraphicCollection3D xRandomShift(int exponent) {
         Random r = new Random();
         for (Graphic g : this.graphics) {
-            for (PointD p : g.getShape().getPoints()) {
+            for (PointZ p : g.getShape().getPoints()) {
                 p.X += (1 - r.nextDouble()) * Math.pow(10, exponent);
             }
         }
@@ -286,7 +285,7 @@ public class GraphicCollection3D extends GraphicCollection{
     public GraphicCollection3D yRandomShift(int exponent) {
         Random r = new Random();
         for (Graphic g : this.graphics) {
-            for (PointD p : g.getShape().getPoints()) {
+            for (PointZ p : g.getShape().getPoints()) {
                 p.Y += (1 - r.nextDouble()) * Math.pow(10, exponent);
             }
         }
@@ -322,7 +321,7 @@ public class GraphicCollection3D extends GraphicCollection{
         for (Graphic g : this.graphics) {
             Shape shape = g.getShape();
             switch (shape.getShapeType()) {
-                case POLYGON_Z:
+                case POLYGON:
                     sw.write("Polygon");
                     sw.newLine();
                     PolygonShape polygonShape = (PolygonShape) shape;

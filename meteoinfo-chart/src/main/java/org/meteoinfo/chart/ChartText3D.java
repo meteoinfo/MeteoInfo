@@ -12,7 +12,7 @@ package org.meteoinfo.chart;
 
 import java.awt.Point;
 import org.meteoinfo.chart.plot3d.Projector;
-import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.common.Extent;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.common.PointZ;
 
@@ -127,7 +127,7 @@ public class ChartText3D extends ChartText {
         this.x = x;
         this.y = y;
         this.z = z;
-        Extent3D aExtent = new Extent3D();
+        Extent aExtent = new Extent();
         aExtent.minX = x;
         aExtent.maxX = x;
         aExtent.minY = y;

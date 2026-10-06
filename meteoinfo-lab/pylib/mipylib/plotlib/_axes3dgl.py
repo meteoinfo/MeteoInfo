@@ -16,7 +16,7 @@ from org.meteoinfo.chart.graphic import Graphic, GraphicCollection, ModelGraphic
 from org.meteoinfo.chart.jogl import GLPlot, GLForm, JOGLUtil, EarthGLPlot, MapGLPlot
 from org.meteoinfo.math.interpolate import InterpolationMethod
 from org.meteoinfo.image import ImageUtil
-from org.meteoinfo.common import Extent3D
+from org.meteoinfo.common import Extent
 from org.meteoinfo.chart.transform import GeoTransform
 from javax.swing import WindowConstants
 from java.awt import Font, Color
@@ -2215,7 +2215,7 @@ class EarthAxes3D(Axes3DGL):
             ymax = limits[3]
             zmin = limits[4]
             zmax = limits[5]
-            extent = Extent3D(xmin, xmax, ymin, ymax, zmin, zmax)
+            extent = Extent(xmin, xmax, ymin, ymax, zmin, zmax)
             self._axes.setDrawExtent(extent)
             return True
         else:

@@ -3,7 +3,7 @@ package org.meteoinfo.chart.jogl;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.AspectType;
-import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointZ;
 
 public class Transform {
@@ -35,13 +35,13 @@ public class Transform {
 
     /**
      * Constructor
-     * @param extent3D Extent 3D
+     * @param extent Extent
      */
-    public Transform(Extent3D extent3D) {
-        this.setExtent(extent3D);
+    public Transform(Extent extent) {
+        this.setExtent(extent);
     }
 
-    public void setExtent(Extent3D extent3D) {
+    public void setExtent(Extent extent3D) {
         setExtent((float) extent3D.minX, (float) extent3D.maxX, (float) extent3D.minY,
                   (float) extent3D.maxY, (float) extent3D.minZ, (float) extent3D.maxZ);
     }
@@ -125,8 +125,8 @@ public class Transform {
      * Get transform extent
      * @return The extent
      */
-    public Extent3D getExtent() {
-        return new Extent3D(xmin, xmax, ymin, ymax, zmin, zmax);
+    public Extent getExtent() {
+        return new Extent(xmin, xmax, ymin, ymax, zmin, zmax);
     }
 
     /**

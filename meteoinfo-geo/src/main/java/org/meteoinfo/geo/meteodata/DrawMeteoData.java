@@ -21,6 +21,7 @@ import org.meteoinfo.common.PointZ;
 import org.meteoinfo.data.*;
 import org.meteoinfo.data.meteodata.*;
 import org.meteoinfo.dataframe.DataFrame;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.render.java2d.ContourDraw;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geo.layer.*;
@@ -77,7 +78,7 @@ public class DrawMeteoData {
      */
     public static VectorLayer createPolylineLayer(XYListDataset data, LegendScheme ls,
                                                   String layerName, String fieldName) {
-        VectorLayer layer = new VectorLayer(ShapeTypes.POLYLINE);
+        VectorLayer layer = new VectorLayer(ShapeFileType.POLYLINE);
         Field aDC = new Field(fieldName, DataType.DOUBLE);
         layer.editAddField(aDC);
         for (int i = 0; i < data.getSeriesCount(); i++) {
@@ -125,7 +126,7 @@ public class DrawMeteoData {
      */
     public static VectorLayer createPolylineLayer(List<Array> xdata, List<Array> ydata, LegendScheme ls,
                                                   String layerName, String fieldName) {
-        VectorLayer layer = new VectorLayer(ShapeTypes.POLYLINE);
+        VectorLayer layer = new VectorLayer(ShapeFileType.POLYLINE);
         Field aDC = new Field(fieldName, DataType.DOUBLE);
         layer.editAddField(aDC);
         for (int i = 0; i < xdata.size(); i++) {
@@ -178,7 +179,7 @@ public class DrawMeteoData {
      */
     public static VectorLayer createPolylineLayer(XYListDataset data, LegendScheme ls,
                                                   String layerName, String fieldName, double westLon, double eastLon) {
-        VectorLayer layer = new VectorLayer(ShapeTypes.POLYLINE);
+        VectorLayer layer = new VectorLayer(ShapeFileType.POLYLINE);
         Field aDC = new Field(fieldName, DataType.DOUBLE);
         layer.editAddField(aDC);
         for (int i = 0; i < data.getSeriesCount(); i++) {
@@ -256,7 +257,7 @@ public class DrawMeteoData {
      */
     public static VectorLayer createPolylineLayer(List<Array> xdata, List<Array> ydata, LegendScheme ls,
                                                   String layerName, String fieldName, double westLon, double eastLon) {
-        VectorLayer layer = new VectorLayer(ShapeTypes.POLYLINE);
+        VectorLayer layer = new VectorLayer(ShapeFileType.POLYLINE);
         Field aDC = new Field(fieldName, DataType.DOUBLE);
         layer.editAddField(aDC);
         for (int i = 0; i < xdata.size(); i++) {
@@ -393,7 +394,7 @@ public class DrawMeteoData {
      */
     public static VectorLayer createPolylineLayer(Array xdata, Array ydata, Array zdata, LegendScheme ls,
                                                   String layerName, String fieldName, double westLon, double eastLon) {
-        VectorLayer layer = new VectorLayer(ShapeTypes.POLYLINE_Z);
+        VectorLayer layer = new VectorLayer(ShapeFileType.POLYLINE_Z);
         Field aDC = new Field(fieldName, DataType.DOUBLE);
         layer.editAddField(aDC);
 
@@ -493,7 +494,7 @@ public class DrawMeteoData {
         }
 
         for (List<PointZ> ps : ppList) {
-            PolylineZShape aPolyline = new PolylineZShape();
+            PolylineShape aPolyline = new PolylineShape();
             aPolyline.setPoints(ps);
             aPolyline.setValue(0);
             aPolyline.setExtent(GeometryUtil.getPointsExtent(ps));
@@ -527,7 +528,7 @@ public class DrawMeteoData {
      */
     public static VectorLayer createPolylineLayer(Array xdata, Array ydata, Array zdata, LegendScheme ls,
                                                   String layerName, String fieldName) {
-        VectorLayer layer = new VectorLayer(ShapeTypes.POLYLINE_Z);
+        VectorLayer layer = new VectorLayer(ShapeFileType.POLYLINE_Z);
         Field aDC = new Field(fieldName, DataType.DOUBLE);
         layer.editAddField(aDC);
 
@@ -605,7 +606,7 @@ public class DrawMeteoData {
         }
 
         for (List<PointZ> ps : ppList) {
-            PolylineZShape aPolyline = new PolylineZShape();
+            PolylineShape aPolyline = new PolylineShape();
             aPolyline.setPoints(ps);
             aPolyline.setValue(0);
             aPolyline.setExtent(GeometryUtil.getPointsExtent(ps));
@@ -712,7 +713,7 @@ public class DrawMeteoData {
 
         PolyLine aLine;
         double aValue;
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYLINE);
         Field aDC = new Field(fieldName, DataType.DOUBLE);
         aLayer.editAddField(aDC);
 
@@ -800,7 +801,7 @@ public class DrawMeteoData {
         }
 
         double aValue;
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYLINE);
         Field aDC = new Field(fieldName, DataType.DOUBLE);
         aLayer.editAddField(aDC);
 
@@ -919,7 +920,7 @@ public class DrawMeteoData {
         List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(data, contourLines, borders, cValues);
 
         //Create contour polygon layer
-        VectorLayer layer = new VectorLayer(ShapeTypes.POLYGON);
+        VectorLayer layer = new VectorLayer(ShapeFileType.POLYGON);
         Field field = new Field(fieldName + "_Low", DataType.DOUBLE);
         layer.editAddField(field);
         field = new Field(fieldName + "_High", DataType.DOUBLE);
@@ -1112,7 +1113,7 @@ public class DrawMeteoData {
 
         double aValue;
         int valueIdx;
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYGON);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYGON);
         Field aDC = new Field(fieldName + "_Low", DataType.DOUBLE);
         aLayer.editAddField(aDC);
         aDC = new Field(fieldName + "_High", DataType.DOUBLE);
@@ -1215,7 +1216,7 @@ public class DrawMeteoData {
         PointZ aPoint;
 
         List<PointZ> PList;
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYGON);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYGON);
         Field aDC = new Field(fieldName, DataType.DOUBLE);
         aLayer.editAddField(aDC);
 
@@ -1280,7 +1281,7 @@ public class DrawMeteoData {
      * @return Vector layer
      */
     public static VectorLayer createGridFillLayer(Array x_s, Array y_s, Array a, LegendScheme ls, String lName, String fieldName) {
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYGON);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYGON);
         Field aDC = new Field(fieldName, DataType.DOUBLE);
         aLayer.editAddField(aDC);
 
@@ -1379,7 +1380,7 @@ public class DrawMeteoData {
         int i, j;
         PointZ aPoint;
 
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT);
         Field aDC = new Field(fieldName, DataType.DOUBLE);
         aLayer.editAddField(aDC);
 
@@ -1519,7 +1520,7 @@ public class DrawMeteoData {
         int YNum = uData.getYNum();
 
         String columnName = lName.split("_")[0];
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT);
         //Add data column
         if (isUV) {
             aLayer.editAddField("U", DataType.FLOAT);
@@ -1703,7 +1704,7 @@ public class DrawMeteoData {
         int YNum = windDirData.getYNum();
         String columnName = lName.split("_")[0];
 
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT);
         //Add data column
         if (isUV) {
             aLayer.editAddField("U", DataType.FLOAT);
@@ -1837,7 +1838,7 @@ public class DrawMeteoData {
                 x, y, density);
 
         PolyLine aLine;
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE_Z);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYLINE_Z);
         aLayer.editAddField("ID", DataType.INT);
 
         for (int i = 0; i < streamlines.size() - 1; i++) {
@@ -1907,13 +1908,13 @@ public class DrawMeteoData {
         int nx = u[0].length;
 
         PolyLine aLine;
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE_Z);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYLINE_Z);
         aLayer.editAddField("ID", DataType.INT);
 
         for (int i = 0; i < streamlines.size() - 1; i++) {
             aLine = streamlines.get(i);
 
-            PolylineZShape aPolyline = new PolylineZShape();
+            PolylineShape aPolyline = new PolylineShape();
             PointZ p;
             List<PointZ> pList = new ArrayList<>();
             double c = 0;
@@ -1983,7 +1984,7 @@ public class DrawMeteoData {
                 uGridData.getXArray(), vGridData.getYArray(), uGridData.getDoubleMissingValue(), density);
 
         PolyLine aLine;
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYLINE);
         aLayer.editAddField("ID", DataType.INT);
 
         for (int i = 0; i < streamlines.size() - 1; i++) {
@@ -2130,7 +2131,7 @@ public class DrawMeteoData {
     public static RasterLayer createRasterLayer(GridArray gridData, String LName, LegendScheme aLS) {
         RasterLayer aRLayer = new RasterLayer();
         aRLayer.setGridData(gridData);
-        aRLayer.setShapeType(ShapeTypes.IMAGE);
+        aRLayer.setShapeType(ShapeFileType.IMAGE);
         aRLayer.setLegendScheme(aLS.convertTo(ShapeTypes.IMAGE));
         aRLayer.setLayerName(LName);
         aRLayer.setVisible(true);
@@ -2168,7 +2169,7 @@ public class DrawMeteoData {
     public static RasterLayer createRasterLayer(GridData gridData, String LName, LegendScheme aLS) {
         RasterLayer aRLayer = new RasterLayer();
         aRLayer.setGridData(gridData.toGridArray());
-        aRLayer.setShapeType(ShapeTypes.IMAGE);
+        aRLayer.setShapeType(ShapeFileType.IMAGE);
         aRLayer.setLegendScheme(aLS.convertTo(ShapeTypes.IMAGE));
         aRLayer.setLayerName(LName);
         aRLayer.setVisible(true);
@@ -2233,7 +2234,7 @@ public class DrawMeteoData {
             y = xy[1];
         }
 
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT);
         aLayer.editAddField(fieldName, DataType.DOUBLE);
 
         IndexIterator xIter = x.getIndexIterator();
@@ -2283,7 +2284,7 @@ public class DrawMeteoData {
         int i;
         PointZ aPoint;
 
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT);
         aLayer.editAddField("Station", DataType.STRING);
         aLayer.editAddField(fieldName, DataType.DOUBLE);
 
@@ -2339,7 +2340,7 @@ public class DrawMeteoData {
             y = xy[1];
         }
 
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT);
         aLayer.editAddField("ID", DataType.INT);
         aLayer.editAddField(fieldName, DataType.DOUBLE);
 
@@ -2391,7 +2392,7 @@ public class DrawMeteoData {
         int i;
         PointZ aPoint;
 
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT);
         aLayer.editAddField("ID", DataType.INT);
         aLayer.editAddField("Stid", DataType.STRING);
         aLayer.editAddField(fieldName, DataType.DOUBLE);
@@ -2452,7 +2453,7 @@ public class DrawMeteoData {
     public static VectorLayer createSTInfoLayer(StationInfoData stInfoData, LegendScheme aLS, String layerName) {
         int i, j;
         PointZ aPoint;
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT);
 
         DataFrame dataFrame = stInfoData.getDataFrame();
         if (dataFrame == null) {
@@ -2589,7 +2590,7 @@ public class DrawMeteoData {
         PointZ aPoint;
 
         String columnName = layerName.split("_")[0];
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.WIND_ARROW);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.WIND_ARROW);
         //Add data column
         if (isUV) {
             aLayer.editAddField("U", DataType.FLOAT);
@@ -2680,7 +2681,7 @@ public class DrawMeteoData {
         PointZ aPoint;
 
         String columnName = layerName.split("_")[0];
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.WIND_ARROW);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.WIND_ARROW);
         //Add data column
         if (isUV) {
             aLayer.editAddField("U", DataType.FLOAT);
@@ -2790,7 +2791,7 @@ public class DrawMeteoData {
         PointZ aPoint;
 
         String columnName = layerName.split("_")[0];
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.WIND_ARROW);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.WIND_ARROW);
         //Add data column
         if (isUV) {
             aLayer.editAddField("U", DataType.FLOAT);
@@ -2909,7 +2910,7 @@ public class DrawMeteoData {
         PointZ aPoint;
 
         String columnName = layerName.split("_")[0];
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.WIND_ARROW);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.WIND_ARROW);
         //Add data column
         if (isUV) {
             aLayer.editAddField("U", DataType.FLOAT);
@@ -3016,7 +3017,7 @@ public class DrawMeteoData {
         PointZ aPoint;
 
         String columnName = layerName.split("_")[0];
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.WIND_BARB);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.WIND_BARB);
         //Add data column
         if (isUV) {
             aLayer.editAddField("U", DataType.FLOAT);
@@ -3127,7 +3128,7 @@ public class DrawMeteoData {
         PointZ aPoint;
 
         String columnName = layerName.split("_")[0];
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.WIND_BARB);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.WIND_BARB);
         //Add data column
         if (isUV) {
             aLayer.editAddField("U", DataType.FLOAT);
@@ -3242,7 +3243,7 @@ public class DrawMeteoData {
         int weather, cCover, temp, dewPoint, pressure;
         PointZ aPoint;
 
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT);
         aLayer.editAddField(new Field("WindDirection", DataType.FLOAT));
         aLayer.editAddField(new Field("WindSpeed", DataType.FLOAT));
         aLayer.editAddField(new Field("Weather", DataType.INT));
@@ -3364,7 +3365,7 @@ public class DrawMeteoData {
         PointZ aPoint;
 
         String columnName = "Weather";
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT);
         aLayer.editAddField(columnName, DataType.DOUBLE);
 
         for (i = 0; i < weatherData.getStNum(); i++) {
@@ -3527,7 +3528,7 @@ public class DrawMeteoData {
         y_s = y_s.copyIfView();
         a = a.copyIfView();
 
-        VectorLayer layer = new VectorLayer(ShapeTypes.POLYGON);
+        VectorLayer layer = new VectorLayer(ShapeFileType.POLYGON);
         String fieldName = "Data";
         Field aDC = new Field(fieldName, DataType.DOUBLE);
         layer.editAddField(aDC);
@@ -3591,7 +3592,7 @@ public class DrawMeteoData {
         y_s = y_s.copyIfView();
         a = a.copyIfView();
 
-        VectorLayer layer = new VectorLayer(ShapeTypes.POLYGON);
+        VectorLayer layer = new VectorLayer(ShapeFileType.POLYGON);
         String fieldName = "Data";
         Field aDC = new Field(fieldName, DataType.DOUBLE);
         layer.editAddField(aDC);
@@ -3644,7 +3645,7 @@ public class DrawMeteoData {
         String xVarName = trajDataInfo.getXVarName();
         String yVarName = trajDataInfo.getYVarName();
         String zVarName = trajDataInfo.getZVarName();
-        ShapeTypes shapeType = zVarName == null ? ShapeTypes.POLYLINE : ShapeTypes.POLYLINE_Z;
+        ShapeFileType shapeType = zVarName == null ? ShapeFileType.POLYLINE : ShapeFileType.POLYLINE_Z;
 
         VectorLayer layer = new VectorLayer(shapeType);
         layer.editAddField(new Field("TrajIndex", DataType.INT));
@@ -3657,7 +3658,7 @@ public class DrawMeteoData {
         layer.editAddField(new Field("StartHeight", DataType.DOUBLE));
 
         int trajIdx = 0;
-        if (shapeType == ShapeTypes.POLYLINE) {
+        if (shapeType == ShapeFileType.POLYLINE) {
             double x, y;
             for (DataTable dataTable : dataTables) {
                 TrajectoryInfo trajInfo = trajInfoList.get(trajIdx);
@@ -3698,7 +3699,7 @@ public class DrawMeteoData {
                     z = Double.parseDouble(dataTable.getValue(i, zVarName).toString());
                     points.add(new PointZ(x, y, z));
                 }
-                PolylineZShape polylineShape = new PolylineZShape();
+                PolylineShape polylineShape = new PolylineShape();
                 polylineShape.setPoints(points);
                 int shapeNum = layer.getShapeNum();
                 try {
@@ -3741,7 +3742,7 @@ public class DrawMeteoData {
         String yVarName = trajDataInfo.getYVarName();
         String zVarName = trajDataInfo.getZVarName();
 
-        VectorLayer layer = new VectorLayer(ShapeTypes.POLYLINE_Z);
+        VectorLayer layer = new VectorLayer(ShapeFileType.POLYLINE_Z);
         layer.editAddField(new Field("TrajIndex", DataType.INT));
         layer.editAddField(new Field("TrajName", DataType.STRING));
         layer.editAddField(new Field("TrajID", DataType.STRING));
@@ -3766,7 +3767,7 @@ public class DrawMeteoData {
                 m = Double.parseDouble(dataTable.getValue(i, varName).toString());
                 points.add(new PointZ(x, y, z, m));
             }
-            PolylineZShape polylineShape = new PolylineZShape();
+            PolylineShape polylineShape = new PolylineShape();
             polylineShape.setPoints(points);
             int shapeNum = layer.getShapeNum();
             try {
@@ -3802,7 +3803,7 @@ public class DrawMeteoData {
         String yVarName = trajDataInfo.getYVarName();
         String zVarName = trajDataInfo.getZVarName();
 
-        VectorLayer layer = new VectorLayer(ShapeTypes.POINT_Z);
+        VectorLayer layer = new VectorLayer(ShapeFileType.POINT_Z);
         layer.editAddField(new Field("TrajID", DataType.INT));
         for (Variable variable : variables) {
             layer.editAddField(new Field(variable.getName(), variable.getDataType()));
@@ -3819,7 +3820,7 @@ public class DrawMeteoData {
                 else
                     z = Double.parseDouble(dataTable.getValue(i, zVarName).toString());
                 PointZ point = new PointZ(x, y, z);
-                PointZShape pointZShape = new PointZShape();
+                PointShape pointZShape = new PointShape();
                 pointZShape.setPoint(point);
                 int shapeNum = layer.getShapeNum();
                 try {
@@ -3858,7 +3859,7 @@ public class DrawMeteoData {
         String yVarName = trajDataInfo.getYVarName();
         String zVarName = trajDataInfo.getZVarName();
 
-        VectorLayer layer = new VectorLayer(ShapeTypes.POINT_Z);
+        VectorLayer layer = new VectorLayer(ShapeFileType.POINT_Z);
         layer.editAddField(new Field("TrajIndex", DataType.INT));
         layer.editAddField(new Field("TrajName", DataType.STRING));
         layer.editAddField(new Field("TrajID", DataType.STRING));
@@ -3879,7 +3880,7 @@ public class DrawMeteoData {
                 z = 0;
             else
                 z = Double.parseDouble(dataTable.getValue(0, zVarName).toString());
-            PointZShape pointZShape = new PointZShape();
+            PointShape pointZShape = new PointShape();
             pointZShape.setPoint(new PointZ(x, y, z));
             int shapeNum = layer.getShapeNum();
             try {

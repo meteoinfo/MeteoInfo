@@ -15,7 +15,6 @@ from org.meteoinfo.geometry.legend import BreakTypes, PolylineBreak, LegendManag
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.chart.graphic import Graphic
 from org.meteoinfo.geo.layer import LayerTypes
-from org.meteoinfo.common import Extent3D
 
 from ._axes import Axes
 from mipylib.numeric.core import NDArray

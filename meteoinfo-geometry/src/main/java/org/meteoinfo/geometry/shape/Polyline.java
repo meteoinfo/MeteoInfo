@@ -88,8 +88,8 @@ public class Polyline {
      * @return boolean
      */
     public boolean isClosed() {
-        PointD sPoint = _pointList.get(0);
-        PointD ePoint = _pointList.get(_pointList.size() - 1);
+        PointZ sPoint = _pointList.get(0);
+        PointZ ePoint = _pointList.get(_pointList.size() - 1);
         if (MIMath.doubleEquals(sPoint.X, ePoint.X) && MIMath.doubleEquals(sPoint.Y, ePoint.Y)) {
             return true;
         } else {
@@ -158,8 +158,8 @@ public class Polyline {
                 sLen += lengths[j + 1];
             }
 
-            PointD aPoint = _pointList.get(idx);
-            PointD bPoint = _pointList.get(idx + 1);
+            PointZ aPoint = _pointList.get(idx);
+            PointZ bPoint = _pointList.get(idx + 1);
             x = aPoint.X + (bPoint.X - aPoint.X) * (lengths[idx] - (sLen - len)) / (lengths[idx]);
             y = aPoint.Y + (bPoint.Y - aPoint.Y) * (lengths[idx] - (sLen - len)) / (lengths[idx]);
             double U = bPoint.X - aPoint.X;

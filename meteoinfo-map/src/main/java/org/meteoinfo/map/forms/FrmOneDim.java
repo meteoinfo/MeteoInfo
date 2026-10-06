@@ -29,7 +29,7 @@ import org.meteoinfo.chart.Location;
 import org.meteoinfo.chart.plot.ChartPlotMethod;
 import org.meteoinfo.chart.plot.PlotOrientation;
 import org.meteoinfo.chart.plot.XY1DPlot;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.XYDataset;
 import org.meteoinfo.data.XYListDataset;
@@ -59,7 +59,7 @@ public class FrmOneDim extends javax.swing.JFrame {
     private org.meteoinfo.chart.ChartPanel _chartPanel;
     private PlotDimension _plotDimension;
     private String _graphType;
-    private List<PointD> _pointList = new ArrayList<>();
+    private List<PointZ> _pointList = new ArrayList<>();
     private boolean _isLoading = false;
     private boolean isSamePlotDim = false;
     private boolean _enableAnimation = true;

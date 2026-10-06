@@ -17,9 +17,10 @@ package org.meteoinfo.common;
  *
  * @author yaqiang
  */
-public class PointZ extends PointD implements Cloneable{
+public class PointZ implements Cloneable{
     // <editor-fold desc="Variables">
-
+    public double X;
+    public double Y;
     /**
      * Z coordinate
      */
@@ -90,21 +91,10 @@ public class PointZ extends PointD implements Cloneable{
     // <editor-fold desc="Get Set Methods">
     // </editor-fold>
     // <editor-fold desc="Methods">
-
-    /**
-     * Convert to PointD
-     *
-     * @return PointD
-     */
-    public PointD toPointD() {
-        return new PointD(X, Y);
-    }
-
     /**
      * To double array
      * @return Double array
      */
-    @Override
     public double[] toArray() {
         return new double[]{X, Y, Z};
     }
@@ -113,9 +103,16 @@ public class PointZ extends PointD implements Cloneable{
      * To float array
      * @return Float array
      */
-    @Override
     public float[] toFloatArray() {
         return new float[]{(float) X, (float) Y, (float) Z};
+    }
+
+    /**
+     * To PointF
+     * @return PointF object
+     */
+    public PointF toPointF() {
+        return new PointF((float) X, (float) Y);
     }
     
     /**
@@ -123,9 +120,15 @@ public class PointZ extends PointD implements Cloneable{
      * 
      * @return PointZ object
      */
-    @Override
     public Object clone() {
-        return (PointZ)super.clone();
+        PointZ o = null;
+        try {
+            o = (PointZ) super.clone();
+        } catch (CloneNotSupportedException ex) {
+            ex.printStackTrace();
+        }
+
+        return o;
     }
     // </editor-fold>
 }

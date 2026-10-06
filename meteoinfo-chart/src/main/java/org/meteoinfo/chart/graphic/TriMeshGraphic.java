@@ -3,7 +3,6 @@ package org.meteoinfo.chart.graphic;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.geometry.colors.TransferFunction;
@@ -214,7 +213,7 @@ public class TriMeshGraphic extends MeshGraphic {
             if (maxZ < zz)
                 maxZ = zz;
         }
-        this.extent = new Extent3D(minX, maxX, minY, maxY, minZ, maxZ);
+        this.extent = new Extent(minX, maxX, minY, maxY, minZ, maxZ);
 
         this.normalLoaded = true;
 

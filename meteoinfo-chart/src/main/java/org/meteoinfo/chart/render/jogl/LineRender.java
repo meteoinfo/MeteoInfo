@@ -15,7 +15,7 @@ import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.shape.Polyline;
-import org.meteoinfo.geometry.shape.PolylineZShape;
+import org.meteoinfo.geometry.shape.PolylineShape;
 import org.meteoinfo.math.Matrix4f;
 
 import java.nio.FloatBuffer;
@@ -133,7 +133,7 @@ public class LineRender extends JOGLGraphicRender {
         int i = 0;
         linePointNumbers = new ArrayList<>();
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PolylineZShape shape = (PolylineZShape) graphic.getShape();
+            PolylineShape shape = (PolylineShape) graphic.getShape();
             for (Polyline line : shape.getPolylines()) {
                 List<PointZ> ps = (List<PointZ>) line.getPointList();
                 linePointNumbers.add(ps.size());
@@ -154,7 +154,7 @@ public class LineRender extends JOGLGraphicRender {
         int i = 0;
         linePointNumbers = new ArrayList<>();
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PolylineZShape shape = (PolylineZShape) graphic.getShape();
+            PolylineShape shape = (PolylineShape) graphic.getShape();
             for (Polyline line : shape.getPolylines()) {
                 List<PointZ> ps = (List<PointZ>) line.getPointList();
                 linePointNumbers.add(ps.size());
@@ -175,7 +175,7 @@ public class LineRender extends JOGLGraphicRender {
         List<Integer> vertexIndices = new ArrayList<>();
         Cylinder cylinder = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PolylineZShape shape = (PolylineZShape) graphic.getShape();
+            PolylineShape shape = (PolylineShape) graphic.getShape();
             int pointNum = shape.getPointNum();
             List<PointZ> ps = (List<PointZ>) shape.getPoints();
             ColorBreak cb = graphic.getLegendBreak();

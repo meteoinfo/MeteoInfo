@@ -23,7 +23,6 @@ import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LineString;
 import org.locationtech.jts.geom.MultiLineString;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 
@@ -97,7 +96,7 @@ public class PolylineShape extends Shape implements Cloneable {
                     }
                     polyline.setPointList(pp);
                     idx += poly.getNumPoints();
-                    ((List<Polyline>) this._polylines).add(polyline);
+                    this._polylines.add(polyline);
                 }
                 parts = new int[n];
                 for (int i = 0; i < parts.length; i++) {
@@ -134,12 +133,12 @@ public class PolylineShape extends Shape implements Cloneable {
      */
     @Override
     public Geometry toGeometry(GeometryFactory factory) {
-        PointD p;
+        PointZ p;
         if (this.getPartNum() == 1) {
             Coordinate[] cs = new Coordinate[this.getPointNum()];
             for (int i = 0; i < cs.length; i++) {
                 p = this.points.get(i);
-                cs[i] = new Coordinate(p.X, p.Y);
+                cs[i] = new Coordinate(p.X, p.Y, p.Z);
             }
             return factory.createLineString(cs);
         } else {
@@ -149,7 +148,7 @@ public class PolylineShape extends Shape implements Cloneable {
                 Coordinate[] cs = new Coordinate[line.getPointList().size()];
                 for (int i = 0; i < cs.length; i++) {
                     p = line.getPointList().get(i);
-                    cs[i] = new Coordinate(p.X, p.Y);
+                    cs[i] = new Coordinate(p.X, p.Y, p.Z);
                 }
                 lss[j] = factory.createLineString(cs);
             }
@@ -343,6 +342,52 @@ public class PolylineShape extends Shape implements Cloneable {
     @Override
     public void reverse() {
         Collections.reverse(points);
+    }
+
+    /**
+     * Get Z Array
+     *
+     * @return Z array
+     */
+    public double[] getZArray() {
+        double[] zArray = new double[this.getPoints().size()];
+        for (int i = 0; i < this.getPoints().size(); i++) {
+            zArray[i] = (this.getPoints().get(i)).Z;
+        }
+
+        return zArray;
+    }
+
+    /**
+     * Get Z Array
+     *
+     * @return Z value array
+     */
+    public double[] getMArray() {
+        double[] mArray = new double[this.getPoints().size()];
+        for (int i = 0; i < this.getPoints().size(); i++) {
+            mArray[i] = (this.getPoints().get(i)).M;
+        }
+
+        return mArray;
+    }
+
+    /**
+     * Get Z range - min, max
+     *
+     * @return Z min, max
+     */
+    public double[] getZRange() {
+        return MIMath.arrayMinMax(getZArray());
+    }
+
+    /**
+     * Get M range - min, max
+     *
+     * @return M min, max
+     */
+    public double[] getMRange() {
+        return MIMath.arrayMinMax(getMArray());
     }
 
     /**

@@ -20,8 +20,9 @@ import javax.swing.JOptionPane;
 
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.common.util.GlobalUtil;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.geo.layer.LayerDrawType;
 import org.meteoinfo.geo.layer.VectorLayer;
@@ -294,7 +295,7 @@ public class FrmAddXYData extends javax.swing.JDialog {
                 }
 
                 //New layer
-                VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
+                VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT);
                 aLayer.setLayerDrawType(LayerDrawType.MAP);
                 aLayer.setLayerName(aFile.getName());
                 aLayer.setFileName(fileName);
@@ -321,7 +322,7 @@ public class FrmAddXYData extends javax.swing.JDialog {
                         continue;
                     }
 
-                    PointD aPoint = new PointD();
+                    PointZ aPoint = new PointZ();
                     lon = Double.parseDouble(dataArray[lonIdx].trim());
                     lat = Double.parseDouble(dataArray[latIdx].trim());
                     aPoint.X = lon;

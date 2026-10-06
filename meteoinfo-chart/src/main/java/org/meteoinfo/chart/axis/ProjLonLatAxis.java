@@ -151,7 +151,7 @@ public class ProjLonLatAxis extends LonLatAxis{
             g.setStroke(new BasicStroke(this.getTickWidth()));
             int i = 0, idx = 0;
             for (GridLabel gridLabel : lonLabels) {
-                PointD point = gridLabel.getCoord();
+                PointZ point = gridLabel.getCoord();
                 x = point.X;
                 if (x < plot.getDrawExtent().minX || x > plot.getDrawExtent().maxX) {
                     continue;
@@ -223,7 +223,7 @@ public class ProjLonLatAxis extends LonLatAxis{
             g.setColor(this.getTickColor());
             g.setStroke(new BasicStroke(this.getTickWidth()));
             for (GridLabel gridLabel : latLabels) {
-                PointD point = gridLabel.getCoord();
+                PointZ point = gridLabel.getCoord();
                 y = point.Y;
                 if (y < plot.getDrawExtent().minY || y > plot.getDrawExtent().maxY) {
                     continue;

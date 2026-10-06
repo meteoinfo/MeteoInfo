@@ -119,7 +119,7 @@ public class ShapeFileManage {
         ((Buffer)buffer).position(32);
         //br.skipBytes(32);  //先读出36个字节,紧接着是Box边界合 
         int aShapeType = buffer.getInt();
-        ShapeTypes aST = ShapeTypes.valueOf(aShapeType);
+        ShapeFileType aST = ShapeFileType.valueOf(aShapeType);
         //aLayer = new VectorLayer(aST);
         Extent aExtent = new Extent();
         aExtent.minX = buffer.getDouble();  //读出整个shp图层的边界合 
@@ -205,7 +205,7 @@ public class ShapeFileManage {
     private static VectorLayer readPointShapes(DataInputStream br, int shapeNum) throws IOException {
         int RecordNum, ContentLength, aShapeType;
         double x, y;
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT);
         byte[] bytes = new byte[28 * shapeNum];
         br.read(bytes);
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
@@ -239,7 +239,7 @@ public class ShapeFileManage {
     private static VectorLayer readPointZShapes(DataInputStream br, int shapeNum) throws IOException {
         int RecordNum, ContentLength, aShapeType;
         double x, y, z, m;
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT_Z);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT_Z);
         byte[] bytes = new byte[44 * shapeNum];
         br.read(bytes);
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
@@ -259,7 +259,7 @@ public class ShapeFileManage {
             z = buffer.getDouble();
             m = buffer.getDouble();
 
-            PointZShape aP = new PointZShape();
+            PointShape aP = new PointShape();
             PointZ aPoint = new PointZ();
             aPoint.X = x;
             aPoint.Y = y;
@@ -275,7 +275,7 @@ public class ShapeFileManage {
     }
 
     private static VectorLayer readPolylineShapes(DataInputStream br, int shapeNum) throws IOException {
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYLINE);
         int RecordNum, ContentLength, aShapeType;
         double x, y;
         byte[] bytes;
@@ -335,7 +335,7 @@ public class ShapeFileManage {
     }
 
     private static VectorLayer readPolylineZShapes(DataInputStream br, int shapeNum) throws IOException {
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE_Z);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYLINE_Z);
         int RecordNum, ContentLength, aShapeType;
         double x, y;
         byte[] bytes;
@@ -359,7 +359,7 @@ public class ShapeFileManage {
             aShapeType = buffer.getInt();
 
             //Read bounding box
-            PolylineZShape aPL = new PolylineZShape();
+            PolylineShape aPL = new PolylineShape();
             Extent extent = new Extent();
             extent.minX = buffer.getDouble();
             extent.minY = buffer.getDouble();
@@ -423,7 +423,7 @@ public class ShapeFileManage {
     }
 
     private static VectorLayer readPolygonShapes(DataInputStream br, int shapeNum) throws IOException {
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYGON);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYGON);
         int RecordNum, ContentLength, aShapeType;
         double x, y;
         byte[] bytes;
@@ -486,7 +486,7 @@ public class ShapeFileManage {
     }
     
     private static VectorLayer readPolygonMShapes(DataInputStream br, int shapeNum) throws IOException {
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYGON_M);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYGON_M);
         int RecordNum, ContentLength, aShapeType;
         double x, y;
         byte[] bytes;
@@ -506,7 +506,7 @@ public class ShapeFileManage {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             aShapeType = buffer.getInt();
 
-            PolygonMShape aSPG = new PolygonMShape();
+            PolygonShape aSPG = new PolygonShape();
             Extent extent = new Extent();
             extent.minX = buffer.getDouble();
             extent.minY = buffer.getDouble();
@@ -558,7 +558,7 @@ public class ShapeFileManage {
     }
     
     private static VectorLayer readPolygonZShapes(DataInputStream br, int shapeNum) throws IOException {
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYGON_Z);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYGON_Z);
         int RecordNum, ContentLength, aShapeType;
         double x, y;
         byte[] bytes;
@@ -578,7 +578,7 @@ public class ShapeFileManage {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             aShapeType = buffer.getInt();
 
-            PolygonZShape aSPG = new PolygonZShape();
+            PolygonShape aSPG = new PolygonShape();
             Extent extent = new Extent();
             extent.minX = buffer.getDouble();
             extent.minY = buffer.getDouble();
@@ -797,11 +797,8 @@ public class ShapeFileManage {
 
          switch (geoGraphics.getShapeType()) {
              case POINT:
-             case POINT_Z:
              case POLYLINE:
-             case POLYLINE_Z:
              case POLYGON:
-             case POLYGON_Z:
                  writeShxFile(shxFilePath, geoGraphics);
                  writeShpFile(shpFilePath, geoGraphics);
                  if (encoding == null) {
@@ -851,7 +848,7 @@ public class ShapeFileManage {
          for (int i = 0; i < graphics.getNumGraphics(); i++) {
              Shape aShape = graphics.getShapes().get(i);
              RecordNumber = i + 1;
-             writeRecord(bw, RecordNumber, aShape, graphics.getShapeType());
+             writeRecord(bw, RecordNumber, aShape, ShapeFileType.fromShapeType(graphics.getShapeType()));
          }
 
          //Close
@@ -875,14 +872,14 @@ public class ShapeFileManage {
 
          for (int i = 0; i < graphics.getNumGraphics(); i++) {
              Shape aShape = graphics.getShapes().get(i);
-             int cLen = getContentLength(aShape, graphics.getShapeType());
+             int cLen = getContentLength(aShape, ShapeFileType.fromShapeType(graphics.getShapeType()));
              fileLength += 4 + cLen;
          }
 
          return fileLength;
      }
 
-    private static int getContentLength(Shape aShape, ShapeTypes aST) {
+    private static int getContentLength(Shape aShape, ShapeFileType aST) {
         int contentLength = 0;
         switch (aST) {
             case POINT:
@@ -896,7 +893,7 @@ public class ShapeFileManage {
                 contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPLS.getPartNum() + 4 * 2 * aPLS.getPointNum();
                 break;
             case POLYLINE_Z:
-                PolylineZShape aPLZS = (PolylineZShape) aShape;
+                PolylineShape aPLZS = (PolylineShape) aShape;
                 contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPLZS.getPartNum() + 4 * 2 * aPLZS.getPointNum()
                         + 4 + 4 + 4 * aPLZS.getPointNum() + 4 + 4 + 4 * aPLZS.getPointNum();
                 break;
@@ -905,7 +902,7 @@ public class ShapeFileManage {
                 contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPGS.getPartNum() + 4 * 2 * aPGS.getPointNum();
                 break;
             case POLYGON_Z:
-                PolygonZShape aPGZS = (PolygonZShape) aShape;
+                PolygonShape aPGZS = (PolygonShape) aShape;
                 contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPGZS.getPartNum() + 4 * 2 * aPGZS.getPointNum()
                         + 4 + 4 + 4 * aPGZS.getPointNum() + 4 + 4 + 4 * aPGZS.getPointNum();
                 break;
@@ -914,7 +911,7 @@ public class ShapeFileManage {
         return contentLength;
     }
 
-    private static void writeRecord(EndianDataOutputStream bw, int RecordNumber, Shape aShape, ShapeTypes aST) throws IOException {
+    private static void writeRecord(EndianDataOutputStream bw, int RecordNumber, Shape aShape, ShapeFileType aST) throws IOException {
         int ContentLength, i;
 
         ContentLength = getContentLength(aShape, aST);
@@ -944,7 +941,7 @@ public class ShapeFileManage {
                 }
                 break;
             case POLYLINE_Z:
-                PolylineZShape aPLZS = (PolylineZShape) aShape;
+                PolylineShape aPLZS = (PolylineShape) aShape;
                 bw.writeDoubleLE(aPLZS.getExtent().minX);
                 bw.writeDoubleLE(aPLZS.getExtent().minY);
                 bw.writeDoubleLE(aPLZS.getExtent().maxX);
@@ -986,7 +983,7 @@ public class ShapeFileManage {
                 }
                 break;
             case POLYGON_Z:
-                PolygonZShape aPGZS = (PolygonZShape) aShape;
+                PolygonShape aPGZS = (PolygonShape) aShape;
                 bw.writeDoubleLE(aPGZS.getExtent().minX);
                 bw.writeDoubleLE(aPGZS.getExtent().minY);
                 bw.writeDoubleLE(aPGZS.getExtent().maxX);
@@ -1019,10 +1016,10 @@ public class ShapeFileManage {
     }
 
      private static void writeHeader(EndianDataOutputStream bw, GraphicCollection graphics, int fileLength) throws IOException {
-         writeHeader(bw, graphics.getShapeType(), graphics.getExtent(), fileLength);
+         writeHeader(bw, ShapeFileType.fromShapeType(graphics.getShapeType()), graphics.getExtent(), fileLength);
      }
 
-     private static void writeHeader(EndianDataOutputStream bw, ShapeTypes shapeType, Extent extent, int fileLength) throws IOException {
+     private static void writeHeader(EndianDataOutputStream bw, ShapeFileType shapeType, Extent extent, int fileLength) throws IOException {
          int i;
          int FileCode = 9994;
          //FileCode = swapByteOrder(FileCode);
@@ -1088,7 +1085,7 @@ public class ShapeFileManage {
 
          for (int i = 0; i < graphics.getNumGraphics(); i++) {
              Shape aShape = graphics.getShapes().get(i);
-             ContentLength = getContentLength(aShape, graphics.getShapeType());
+             ContentLength = getContentLength(aShape, ShapeFileType.fromShapeType(graphics.getShapeType()));
 
              bw.writeIntBE(OffSet);
              bw.writeIntBE(ContentLength);

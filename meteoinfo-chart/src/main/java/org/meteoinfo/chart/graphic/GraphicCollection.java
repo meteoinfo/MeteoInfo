@@ -531,7 +531,6 @@ public class GraphicCollection extends Graphic implements Iterator {
                     }
                     break;
                 case POLYLINE:
-                case POLYLINE_Z:
                     PolylineShape aPLS = (PolylineShape) aGraphic.getShape();
                     if (MIMath.isExtentCross(aExtent, aPLS.getExtent())) {
                         for (j = 0; j < aPLS.getPoints().size(); j++) {
@@ -661,18 +660,13 @@ public class GraphicCollection extends Graphic implements Iterator {
             PointShape aPS = new PointShape();
             switch (shape.getShapeType()) {
                 case POINT:
-                case POINT_M:
-                case POINT_Z:
                     aPS.setPoint((PointZ) ((PointShape) shape).getPoint().clone());
                     break;
                 case POLYLINE:
-                case POLYLINE_M:
-                case POLYLINE_Z:
                     int pIdx = ((PolylineShape) shape).getPoints().size() / 2;
                     aPS.setPoint((PointZ) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
-                case POLYGON_M:
                     Extent aExtent = shape.getExtent();
                     aPoint = new PointZ();
                     aPoint.X = ((aExtent.minX + aExtent.maxX) / 2);
@@ -723,18 +717,13 @@ public class GraphicCollection extends Graphic implements Iterator {
             PointShape aPS = new PointShape();
             switch (shape.getShapeType()) {
                 case POINT:
-                case POINT_M:
-                case POINT_Z:
                     aPS.setPoint((PointZ) ((PointShape) shape).getPoint().clone());
                     break;
                 case POLYLINE:
-                case POLYLINE_M:
-                case POLYLINE_Z:
                     int pIdx = ((PolylineShape) shape).getPoints().size() / 2;
                     aPS.setPoint((PointZ) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
-                case POLYGON_M:
                     Extent aExtent = shape.getExtent();
                     aPoint = new PointZ();
                     aPoint.X = ((aExtent.minX + aExtent.maxX) / 2);

@@ -615,111 +615,58 @@ public class ProjectionUtil {
      * @return Projected polygon shape
      */
     public static PolygonShape projectPolygonShape(PolygonShape aPGS, ProjectionInfo fromProj, ProjectionInfo toProj) {
-        if (aPGS instanceof PolygonZShape) {
-            List<Polygon> polygons = new ArrayList<>();
-            for (int i = 0; i < aPGS.getPolygons().size(); i++) {
-                Polygon aPG = aPGS.getPolygons().get(i);
-                Polygon bPG = null;
-                for (int r = 0; r < aPG.getRingNumber(); r++) {
-                    List<PointZ> pList = (List<PointZ>) aPG.getRings().get(r);
-                    List<PointZ> newPoints = new ArrayList<>();
-                    for (int j = 0; j < pList.size(); j++) {
-                        double[][] points = new double[1][];
-                        PointZ wPoint = pList.get(j);
-                        points[0] = new double[]{wPoint.X, wPoint.Y};
-                        try {
-                            Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
-                            if (!Double.isNaN(points[0][0]) || !Double.isInfinite(points[0][0]) ||
-                                    !Double.isNaN(points[0][1]) || !Double.isInfinite(points[0][1])) {
-                                PointZ nPoint = new PointZ();
-                                nPoint.X = points[0][0];
-                                nPoint.Y = points[0][1];
-                                nPoint.M = wPoint.M;
-                                nPoint.Z = wPoint.Z;
-                                newPoints.add(nPoint);
-                            }
-                        } catch (Exception e) {
-                            break;
+        List<Polygon> polygons = new ArrayList<>();
+        for (int i = 0; i < aPGS.getPolygons().size(); i++) {
+            Polygon aPG = aPGS.getPolygons().get(i);
+            Polygon bPG = null;
+            for (int r = 0; r < aPG.getRingNumber(); r++) {
+                List<PointZ> pList = (List<PointZ>) aPG.getRings().get(r);
+                List<PointZ> newPoints = new ArrayList<>();
+                for (int j = 0; j < pList.size(); j++) {
+                    double[][] points = new double[1][];
+                    PointZ wPoint = pList.get(j);
+                    points[0] = new double[]{wPoint.X, wPoint.Y};
+                    try {
+                        Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
+                        if (!Double.isNaN(points[0][0]) || !Double.isInfinite(points[0][0]) ||
+                                !Double.isNaN(points[0][1]) || !Double.isInfinite(points[0][1])) {
+                            PointZ nPoint = new PointZ();
+                            nPoint.X = points[0][0];
+                            nPoint.Y = points[0][1];
+                            nPoint.M = wPoint.M;
+                            nPoint.Z = wPoint.Z;
+                            newPoints.add(nPoint);
                         }
+                    } catch (Exception e) {
+                        break;
                     }
+                }
 
-                    if (r == 0) {
-                        if (newPoints.size() > 2) {
-                            bPG = new Polygon();
-                            bPG.setOutLine(newPoints);
-                        } else {
-                            break;
-                        }
+                if (r == 0) {
+                    if (newPoints.size() > 2) {
+                        bPG = new Polygon();
+                        bPG.setOutLine(newPoints);
                     } else {
-                        if (newPoints.size() > 2) {
-                            bPG.addHole(newPoints);
-                        }
+                        break;
+                    }
+                } else {
+                    if (newPoints.size() > 2) {
+                        bPG.addHole(newPoints);
                     }
                 }
-
-                if (bPG != null) {
-                    polygons.add(bPG);
-                }
             }
 
-            if (polygons.size() > 0) {
-                ((PolygonZShape) aPGS).setPolygons(polygons);
-
-                return aPGS.getExtent() == null ? null : aPGS;
-            } else {
-                return null;
+            if (bPG != null) {
+                polygons.add(bPG);
             }
+        }
+
+        if (polygons.size() > 0) {
+            aPGS.setPolygons(polygons);
+
+            return aPGS.getExtent() == null ? null : aPGS;
         } else {
-            List<Polygon> polygons = new ArrayList<>();
-            for (int i = 0; i < aPGS.getPolygons().size(); i++) {
-                Polygon aPG = aPGS.getPolygons().get(i);
-                Polygon bPG = null;
-                for (int r = 0; r < aPG.getRingNumber(); r++) {
-                    List<PointZ> pList = aPG.getRings().get(r);
-                    List<PointZ> newPoints = new ArrayList<>();
-                    for (int j = 0; j < pList.size(); j++) {
-                        double[][] points = new double[1][];
-                        PointZ wPoint = pList.get(j);
-                        points[0] = new double[]{wPoint.X, wPoint.Y};
-                        try {
-                            Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
-                            if (!Double.isNaN(points[0][0]) && !Double.isNaN(points[0][1])) {
-                                wPoint = new PointZ();
-                                wPoint.X = points[0][0];
-                                wPoint.Y = points[0][1];
-                                newPoints.add(wPoint);
-                            }
-                        } catch (Exception e) {
-                            break;
-                        }
-                    }
-
-                    if (r == 0) {
-                        if (newPoints.size() > 2) {
-                            bPG = new Polygon();
-                            bPG.setOutLine(newPoints);
-                        } else {
-                            break;
-                        }
-                    } else {
-                        if (newPoints.size() > 2) {
-                            bPG.addHole(newPoints);
-                        }
-                    }
-                }
-
-                if (bPG != null) {
-                    polygons.add(bPG);
-                }
-            }
-
-            if (polygons.size() > 0) {
-                aPGS.setPolygons(polygons);
-
-                return aPGS.getExtent() == null ? null : aPGS;
-            } else {
-                return null;
-            }
+            return null;
         }
     }
 
@@ -938,19 +885,15 @@ public class ProjectionUtil {
         Shape newShape;
         switch (aShape.getShapeType()) {
             case POINT:
-            case POINT_M:
                 newShape = projectPointShape((PointShape) aShape, fromProj, toProj);
                 break;
             case POLYLINE:
-            case POLYLINE_M:
                 newShape = projectPolylineShape((PolylineShape) aShape, fromProj, toProj);
                 break;
             case CURVE_LINE:
                 newShape = projectCurvelineShape((CurveLineShape) aShape, fromProj, toProj);
                 break;
             case POLYGON:
-            case POLYGON_M:
-            case POLYGON_Z:
             case RECTANGLE:
                 newShape = projectPolygonShape((PolygonShape) aShape, fromProj, toProj);
                 break;
@@ -975,8 +918,6 @@ public class ProjectionUtil {
         List<? extends Shape> shapes = null;
         switch (shape.getShapeType()) {
             case POINT:
-            case POINT_M:
-            case POINT_Z:
             case WIND_ARROW:
             case WIND_BARB:
             case STATION_MODEL:
@@ -988,16 +929,12 @@ public class ProjectionUtil {
                 }
                 break;
             case POLYLINE:
-            case POLYLINE_M:
-            case POLYLINE_Z:
                 shapes = projectClipPolylineShape((PolylineShape) shape, fromProj, toProj);
                 break;
             case CURVE_LINE:
                 //shapes = projectCurvelineShape((CurveLineShape) shape, fromProj, toProj);
                 break;
             case POLYGON:
-            case POLYGON_M:
-            case POLYGON_Z:
             case RECTANGLE:
                 shapes = projectClipPolygonShape((PolygonShape) shape, fromProj, toProj);
                 break;

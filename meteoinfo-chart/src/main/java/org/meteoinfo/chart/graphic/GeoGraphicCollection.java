@@ -56,7 +56,6 @@ public class GeoGraphicCollection extends GraphicCollection {
         ShapeTypes shapeType = graphics.getShapeType();
         switch (shapeType) {
             case POLYGON:
-            case POLYGON_Z:
                 attrTable.addField(new Field("data_Low", DataType.DOUBLE));
                 attrTable.addField(new Field("data_High", DataType.DOUBLE));
                 break;
@@ -70,7 +69,6 @@ public class GeoGraphicCollection extends GraphicCollection {
                 DataRow dataRow = dataTable.addRow();
                 switch (shapeType) {
                     case POLYGON:
-                    case POLYGON_Z:
                         dataRow.setValue("data_Low", ((PolygonShape) graphic.getShape()).lowValue);
                         dataRow.setValue("data_High", ((PolygonShape) graphic.getShape()).highValue);
                         break;
@@ -189,19 +187,13 @@ public class GeoGraphicCollection extends GraphicCollection {
             PointShape aPS = new PointShape();
             switch (this.getShapeType()) {
                 case POINT:
-                case POINT_M:
-                case POINT_Z:
                     aPS.setPoint((PointZ) ((PointShape) shape).getPoint().clone());
                     break;
                 case POLYLINE:
-                case POLYLINE_M:
-                case POLYLINE_Z:
                     int pIdx = ((PolylineShape) shape).getPoints().size() / 2;
                     aPS.setPoint((PointZ) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
-                case POLYGON_M:
-                case POLYGON_Z:
                     Extent aExtent = shape.getExtent();
                     aPoint = new PointZ();
                     aPoint.X = ((aExtent.minX + aExtent.maxX) / 2);
@@ -255,19 +247,13 @@ public class GeoGraphicCollection extends GraphicCollection {
                 float size = 1.0F;
                 switch (aST) {
                     case POINT:
-                    case POINT_M:
-                    case POINT_Z:
                         aColor = Color.black;
                         size = 5;
                         break;
                     case POLYLINE:
-                    case POLYLINE_M:
-                    case POLYLINE_Z:
                         aColor = Color.black;
                         break;
                     case POLYGON:
-                    case POLYGON_M:
-                    case POLYGON_Z:
                     case IMAGE:
                         aColor = new Color(255, 251, 195);
                         break;

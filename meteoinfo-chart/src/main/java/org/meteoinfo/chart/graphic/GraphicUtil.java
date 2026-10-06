@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.graphic;
 
-import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.common.Extent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,7 +101,7 @@ public class GraphicUtil {
      * @param vertexPosition Vertex position array
      * @return
      */
-    public static Extent3D getExtent(float[] vertexPosition) {
+    public static Extent getExtent(float[] vertexPosition) {
         float x, y, z;
         float minX = Float.MAX_VALUE, maxX = Float.MIN_VALUE, minY = minX, maxY = maxX,
                 minZ = minX, maxZ = maxX;
@@ -124,6 +124,6 @@ public class GraphicUtil {
                 maxZ = z;
         }
 
-        return new Extent3D(minX, maxX, minY, maxY, minZ, maxZ);
+        return new Extent(minX, maxX, minY, maxY, minZ, maxZ);
     }
 }

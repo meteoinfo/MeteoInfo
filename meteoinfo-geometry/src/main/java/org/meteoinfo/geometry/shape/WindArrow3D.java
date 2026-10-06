@@ -12,7 +12,7 @@ import org.meteoinfo.common.PointZ;
  *
  * @author Yaqiang Wang
  */
-public class WindArrow3D extends PointZShape {
+public class WindArrow3D extends PointShape {
     // <editor-fold desc="Variables">
     public double u;
     public double v;

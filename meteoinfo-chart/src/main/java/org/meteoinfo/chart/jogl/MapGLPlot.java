@@ -196,7 +196,7 @@ public class MapGLPlot extends GLPlot {
                 List<GridLabel> lonLabels = mapGridLine.getLongitudeLabels();
                 for (int i = 0; i < lonLabels.size(); i++) {
                     GridLabel gridLabel = lonLabels.get(i);
-                    PointD point = gridLabel.getCoord();
+                    PointZ point = gridLabel.getCoord();
                     x = (float) point.X;
                     if (x < axesExtent.minX || x > axesExtent.maxX) {
                         continue;
@@ -272,7 +272,7 @@ public class MapGLPlot extends GLPlot {
                 List<GridLabel> latLabels = mapGridLine.getLatitudeLabels();
                 for (int i = 0; i < latLabels.size(); i++) {
                     GridLabel gridLabel = latLabels.get(i);
-                    PointD point = gridLabel.getCoord();
+                    PointZ point = gridLabel.getCoord();
                     y = (float) point.Y;
                     if (y < axesExtent.minY || y > axesExtent.maxY) {
                         continue;

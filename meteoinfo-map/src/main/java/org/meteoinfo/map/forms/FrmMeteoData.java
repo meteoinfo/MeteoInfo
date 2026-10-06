@@ -28,13 +28,14 @@ import javax.swing.*;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.extras.FlatSVGUtils;
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointF;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.GridDataSetting;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.meteodata.*;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.map.config.GenericFileFilter;
 import org.meteoinfo.geo.legend.FrmLegendSet;
 import org.meteoinfo.geo.legend.LegendManage;
@@ -1349,7 +1350,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     aPB.setDrawOutline(true);
                     aPB.setDrawFill(true);
                     PointF aPoint = new PointF();
-                    PointD aPD = (PointD) pList.get(0);
+                    PointZ aPD = (PointZ) pList.get(0);
                     double[] sxy = _parent.getMapDocument().getActiveMapFrame().getMapView().lonLatToScreen(aPD.X, aPD.Y);
                     aPoint.X = (float) sxy[0];
                     aPoint.Y = (float) sxy[1];
@@ -2875,7 +2876,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
         if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
             VectorLayer aVLayer = (VectorLayer) aLayer;
             aVLayer.setMaskout(true);
-            if (aVLayer.getShapeType() == ShapeTypes.POLYGON) {
+            if (aVLayer.getShapeType() == ShapeFileType.POLYGON) {
                 _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolygonLayer(aVLayer);
             } else {
                 switch (this._meteoDataInfo.getDrawType2D()) {
@@ -3035,7 +3036,7 @@ public class FrmMeteoData extends javax.swing.JDialog {
         aLayer.setProjInfo(_meteoDataInfo.getProjectionInfo());
         if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
             if (ifAddLayer) {
-                if (aLayer.getShapeType() == ShapeTypes.POLYGON) {
+                if (aLayer.getShapeType() == ShapeFileType.POLYGON) {
                     _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolygonLayer(aLayer);
                 } else {
                     _lastAddedLayerHandle = _parent.getMapDocument().getActiveMapFrame().insertPolylineLayer((VectorLayer) aLayer);

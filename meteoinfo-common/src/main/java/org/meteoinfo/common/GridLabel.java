@@ -22,8 +22,8 @@ public class GridLabel {
 
     private Direction _labDirection;
     private String _labString;
-    private PointD _labPoint;
-    private PointD coord;
+    private PointZ _labPoint;
+    private PointZ coord;
     private boolean _isLon;
     private boolean _isBorder;
     private float _value;
@@ -83,7 +83,7 @@ public class GridLabel {
      *
      * @return Label Point
      */
-    public PointD getLabPoint() {
+    public PointZ getLabPoint() {
         return _labPoint;
     }
 
@@ -92,7 +92,7 @@ public class GridLabel {
      *
      * @param p Label Point
      */
-    public void setLabPoint(PointD p) {
+    public void setLabPoint(PointZ p) {
         _labPoint = p;
     }
     
@@ -100,7 +100,7 @@ public class GridLabel {
      * Get coordinate
      * @return Coordinate
      */
-    public PointD getCoord() {
+    public PointZ getCoord() {
         return this.coord;
     }
     
@@ -108,7 +108,7 @@ public class GridLabel {
      * Set coordinate
      * @param value Coordinate
      */
-    public void setCoord(PointD value) {
+    public void setCoord(PointZ value) {
         this.coord = value;
     }
 

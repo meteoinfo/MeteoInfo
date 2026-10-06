@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.geometry.shape;
 
- import org.meteoinfo.common.PointD;
+ import org.meteoinfo.common.PointZ;
 
  /**
  * Cloud coverage class
@@ -25,7 +25,7 @@ public class CloudCoverage {
     /**
      * Start point
      */
-    public PointD sPoint;
+    public PointZ sPoint;
     /**
      * Size
      */

@@ -21,6 +21,7 @@ import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.data.GridArray;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.LegendType;
@@ -65,7 +66,7 @@ public class RasterLayer extends ImageLayer {
      */
     public RasterLayer() {
         this._layerType = LayerTypes.RASTER_LAYER;
-        this.setShapeType(ShapeTypes.IMAGE);
+        this.setShapeType(ShapeFileType.IMAGE);
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">

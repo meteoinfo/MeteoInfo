@@ -23,6 +23,7 @@ import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointZ;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.common.util.GlobalUtil;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geo.analysis.GeoComputation;
@@ -589,7 +590,7 @@ import org.xml.sax.SAXException;
                                  if (aMLayer != null) {
                                      if (aMLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                                          VectorLayer aLayer = (VectorLayer) aMLayer;
-                                         if (aLayer.getShapeType() != ShapeTypes.POINT) {
+                                         if (aLayer.getShapeType() != ShapeFileType.POINT) {
                                              PointF mapP = pageToScreen(_currentLayoutMap.getLeft(), _currentLayoutMap.getTop());
                                              PointF aPoint = new PointF(e.getX() - mapP.X, e.getY() - mapP.Y);
                                              List<Integer> selectedShapes = _currentLayoutMap.getMapFrame().getMapView().selectShapes(aLayer, aPoint);
@@ -604,7 +605,6 @@ import org.xml.sax.SAXException;
                                                  double value = 0.0;
                                                  switch (aShape.getShapeType()) {
                                                      case POLYLINE:
-                                                     case POLYLINE_Z:
                                                          _frmMeasure.setArea(false);
                                                          if (_currentLayoutMap.getMapFrame().getMapView().getProjection().isLonLatMap()) {
                                                              value = GeoComputation.getDistance(((PolylineShape) aShape).getPoints(), true);
@@ -614,8 +614,6 @@ import org.xml.sax.SAXException;
                                                          }
                                                          break;
                                                      case POLYGON:
-                                                     case POLYGON_M:
-                                                     case POLYGON_Z:
                                                          _frmMeasure.setArea(true);
                                                          if (_currentLayoutMap.getMapFrame().getMapView().getProjection().isLonLatMap()) {
                                                              value = ((PolygonShape) aShape).getSphericalArea();

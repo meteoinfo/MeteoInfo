@@ -1146,7 +1146,6 @@ public class GeoComputation {
             case POLYLINE:
                 return clipPolylineShape((PolylineShape) aShape, clipObj);
             case POLYGON:
-            case POLYGON_M:
                 return clipPolygonShape((PolygonShape) aShape, clipObj);
             default:
                 return null;

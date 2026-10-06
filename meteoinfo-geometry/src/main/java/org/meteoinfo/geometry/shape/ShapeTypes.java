@@ -26,12 +26,6 @@ public enum ShapeTypes {
     POINT(1),
     POLYLINE(3),
     POLYGON(5),
-    POINT_Z(11),
-    POLYLINE_Z(13),
-    POLYGON_Z(15),
-    POINT_M(21),
-    POLYLINE_M(23),
-    POLYGON_M(25),
     WIND_ARROW(41),
     WIND_BARB(42),
     WEATHER_SYMBOL(43),
@@ -81,18 +75,6 @@ public enum ShapeTypes {
                 return ShapeTypes.POLYLINE;
             case 5:
                 return ShapeTypes.POLYGON;
-            case 11:
-                return ShapeTypes.POINT_Z;
-            case 13:;
-                return ShapeTypes.POLYLINE_Z;
-            case 15:
-                return ShapeTypes.POLYGON_Z;
-            case 21:
-                return ShapeTypes.POINT_M;
-            case 23:
-                return ShapeTypes.POLYLINE_M;
-            case 25:
-                return ShapeTypes.POLYGON_M;
             case 41:
                 return ShapeTypes.WIND_ARROW;
             case 42:
@@ -119,52 +101,12 @@ public enum ShapeTypes {
     }
 
     /**
-     * Get value from name - for backward compatible
-     * @param name Shape type name
-     * @return Shape type
-     */
-    public static ShapeTypes valueOfBack(String name) {
-        switch (name.toUpperCase()) {
-            case "POINTM":
-                return ShapeTypes.POINT_M;
-            case "POINTZ":
-                return ShapeTypes.POINT_Z;
-            case "POLYLINEM":
-                return ShapeTypes.POLYLINE_M;
-            case "POLYLINEZ":
-                return ShapeTypes.POLYLINE_Z;
-            case "POLYGONM":
-                return ShapeTypes.POLYGON_M;
-            case "POLYGONZ":
-                return ShapeTypes.POLYGON_Z;
-            case "CURVELINE":
-                return ShapeTypes.CURVE_LINE;
-            case "CURVEPOLYGON":
-                return ShapeTypes.CURVE_POLYGON;
-            case "POLYLINEERROR":
-                return ShapeTypes.POLYLINE_ERROR;
-            case "STATIONMODEL":
-                return ShapeTypes.STATION_MODEL;
-            case "WEATHERSYMBOL":
-                return ShapeTypes.WEATHER_SYMBOL;
-            case "WINDARROR":
-                return ShapeTypes.WIND_ARROW;
-            case "WINDBARB":
-                return ShapeTypes.WIND_BARB;
-            default:
-                return ShapeTypes.valueOf(name.toUpperCase());
-        }
-    }
-    
-    /**
      * If is point
      * @return Boolean
      */
     public boolean isPoint(){
         switch(this){
             case POINT:
-            case POINT_M:
-            case POINT_Z:
             case WIND_ARROW:
             case WIND_BARB:
             case WEATHER_SYMBOL:
@@ -181,8 +123,6 @@ public enum ShapeTypes {
     public boolean isLine(){
         switch(this){
             case POLYLINE:
-            case POLYLINE_Z:
-            case POLYLINE_M:
             case CURVE_LINE:
                 return true;
         }
@@ -196,8 +136,6 @@ public enum ShapeTypes {
     public boolean isPolygon(){
         switch(this){
             case POLYGON:
-            case POLYGON_M:
-            case POLYGON_Z:
             case RECTANGLE:
             case CURVE_POLYGON:
             case ELLIPSE:
@@ -225,19 +163,5 @@ public enum ShapeTypes {
             else
                 return false;
         }
-    }
-
-    /**
-     * Get if the shape has z coordinate
-     * @return Boolean
-     */
-    public boolean isZ() {
-        switch (this) {
-            case POINT_Z:
-            case POLYLINE_Z:
-            case POLYGON_Z:
-                return true;
-        }
-        return false;
     }
 }

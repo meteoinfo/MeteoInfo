@@ -1,7 +1,6 @@
 package org.meteoinfo.geo.io;
 
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.PointZ;
 import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geo.layer.ImageLayer;
@@ -9,6 +8,7 @@ import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.shape.*;
@@ -58,124 +58,6 @@ public class GraphicUtil {
      * Create 3D graphics from a VectorLayer.
      *
      * @param layer The layer
-     * @param xShift X shift - to shift the graphics in x direction, normally
-     * for map in 180 - 360 degree east
-     * @return Graphics
-     */
-    public static GraphicCollection layerToGraphics_back(VectorLayer layer, double xShift) {
-        GraphicCollection graphics = new GraphicCollection();
-        ShapeTypes shapeType = layer.getShapeType();
-        LegendScheme ls = layer.getLegendScheme();
-        ColorBreak cb;
-        switch (shapeType) {
-            case POINT:
-                for (PointShape shape : (List<PointShape>) layer.getShapes()) {
-                    if (shape.getLegendIndex() >= 0) {
-                        shape.getPoint().X += xShift;
-                        cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                        graphics.add(new Graphic(shape, cb));
-                    }
-                }
-                break;
-            case POLYLINE:
-                for (PolylineShape shape : (List<PolylineShape>) layer.getShapes()) {
-                    if (shape.getLegendIndex() >= 0) {
-                        cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                        for (Polyline pl : (List<Polyline>) shape.getPolylines()) {
-                            PolylineShape s = new PolylineShape();
-                            List<PointZ> plist = new ArrayList<>();
-                            for (PointZ p : pl.getPointList()) {
-                                p.X += xShift;
-                                plist.add(p);
-                            }
-                            s.setPoints(plist);
-                            graphics.add(new Graphic(s, cb));
-                        }
-                    }
-                }
-                break;
-            case POLYGON:
-                for (PolygonShape shape : (List<PolygonShape>) layer.getShapes()) {
-                    if (shape.getLegendIndex() >= 0) {
-                        PolygonShape s = new PolygonShape();
-                        List<PointZ> plist = new ArrayList<>();
-                        for (PointZ p : shape.getPoints()) {
-                            p.X += xShift;
-                            plist.add(p);
-                        }
-                        s.setPartNum(shape.getPartNum());
-                        s.setParts(shape.getParts());
-                        s.setPoints(plist);
-                        cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                        graphics.add(new Graphic(s, cb));
-                    }
-                }
-                break;
-            case POINT_Z:
-            case POLYLINE_Z:
-            case POLYGON_Z:
-                graphics = new GraphicCollection3D();
-                ((GraphicCollection3D) graphics).setFixZ(false);
-                switch (shapeType) {
-                    case POINT_Z:
-                        for (PointZShape shape : (List<PointZShape>) layer.getShapes()) {
-                            if (shape.getLegendIndex() >= 0) {
-                                ((PointZ) shape.getPoint()).X += xShift;
-                                cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                                graphics.add(new Graphic(shape, cb));
-                            }
-                        }
-                        break;
-                    case POLYLINE_Z:
-                        for (PolylineZShape shape : (List<PolylineZShape>) layer.getShapes()) {
-                            if (shape.getLegendIndex() >= 0) {
-                                cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                                for (PointZ p : (List<PointZ>) shape.getPoints()) {
-                                    p.X += xShift;
-                                }
-                                graphics.add(new Graphic(shape, cb));
-                                /*for (PolylineZ pl : (List<PolylineZ>) shape.getPolylines()) {
-                                    PolylineZShape s = new PolylineZShape();
-                                    List<PointZ> plist = new ArrayList<>();
-                                    for (PointZ p : (List<PointZ>) pl.getPointList()) {
-                                        p.X += xShift;
-                                        plist.add(p);
-                                    }
-                                    s.setPoints(plist);
-                                    graphics.add(new Graphic(s, cb));
-                                }*/
-                            }
-                        }
-                        break;
-                    case POLYGON_Z:
-                        for (PolygonZShape shape : (List<PolygonZShape>) layer.getShapes()) {
-                            if (shape.getLegendIndex() >= 0) {
-                                PolygonZShape s = new PolygonZShape();
-                                List<PointZ> plist = new ArrayList<>();
-                                for (PointZ p : (List<PointZ>) shape.getPoints()) {
-                                    p.X += xShift;
-                                    plist.add(p);
-                                }
-                                s.setPartNum(shape.getPartNum());
-                                s.setParts(shape.getParts());
-                                s.setPoints(plist);
-                                cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                                graphics.add(new Graphic(s, cb));
-                            }
-                        }
-                        break;
-                }
-                break;
-        }
-        graphics.setLegendScheme(ls);
-
-        return graphics;
-    }
-
-    /**
-     * Create 3D graphics from a VectorLayer.
-     *
-     * @param layer The layer
      * @param offset Offset of z axis.
      * @param xshift X shift - to shift the graphics in x direction, normally
      * for map in 180 - 360 degree east
@@ -185,14 +67,14 @@ public class GraphicUtil {
         GraphicCollection3D graphics = new GraphicCollection3D();
         graphics.setFixZ(true);
         graphics.setZValue(offset);
-        ShapeTypes shapeType = layer.getShapeType();
+        ShapeFileType shapeType = layer.getShapeType();
         LegendScheme ls = layer.getLegendScheme();
         PointZ pz;
         ColorBreak cb;
         switch (shapeType) {
             case POINT:
                 for (PointShape shape : (List<PointShape>) layer.getShapes()) {
-                    PointZShape s = new PointZShape();
+                    PointShape s = new PointShape();
                     PointZ pd = shape.getPoint();
                     pz = new PointZ(pd.X + xshift, pd.Y, offset);
                     s.setPoint(pz);
@@ -204,10 +86,10 @@ public class GraphicUtil {
                 for (PolylineShape shape : (List<PolylineShape>) layer.getShapes()) {
                     cb = ls.getLegendBreaks().get(shape.getLegendIndex());
                     for (Polyline pl : (List<Polyline>) shape.getPolylines()) {
-                        PolylineZShape s = new PolylineZShape();
+                        PolylineShape s = new PolylineShape();
                         List<PointZ> plist = new ArrayList<>();
                         for (PointZ pd : pl.getPointList()) {
-                            pz = new PointZ(pd.X + xshift, pd.Y, offset);
+                            pz = new PointZ(pd.X + xshift, pd.Y, pd.Z + offset);
                             plist.add(pz);
                         }
                         s.setPoints(plist);
@@ -217,7 +99,7 @@ public class GraphicUtil {
                 break;
             case POLYGON:
                 for (PolygonShape shape : (List<PolygonShape>) layer.getShapes()) {
-                    PolygonZShape s = new PolygonZShape();
+                    PolygonShape s = new PolygonShape();
                     List<PointZ> plist = new ArrayList<>();
                     for (PointZ pd : shape.getPoints()) {
                         pz = new PointZ(pd.X + xshift, pd.Y, offset);
@@ -235,21 +117,11 @@ public class GraphicUtil {
             case POLYGON_Z:
                 graphics.setFixZ(false);
                 switch (shapeType) {
-                    case POINT_Z:
-                        for (PointZShape shape : (List<PointZShape>) layer.getShapes()) {
-                            PointZShape s = new PointZShape();
-                            PointZ pd = (PointZ) shape.getPoint();
-                            pz = new PointZ(pd.X + xshift, pd.Y, pd.Z + offset, pd.M);
-                            s.setPoint(pz);
-                            cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                            graphics.add(new Graphic(s, cb));
-                        }
-                        break;
                     case POLYLINE_Z:
-                        for (PolylineZShape shape : (List<PolylineZShape>) layer.getShapes()) {
+                        for (PolylineShape shape : (List<PolylineShape>) layer.getShapes()) {
                             cb = ls.getLegendBreaks().get(shape.getLegendIndex());
                             for (Polyline pl : shape.getPolylines()) {
-                                PolylineZShape s = new PolylineZShape();
+                                PolylineShape s = new PolylineShape();
                                 List<PointZ> plist = new ArrayList<>();
                                 for (PointZ pd : (List<PointZ>) pl.getPointList()) {
                                     pz = new PointZ(pd.X + xshift, pd.Y, pd.Z + offset, pd.M);
@@ -261,8 +133,8 @@ public class GraphicUtil {
                         }
                         break;
                     case POLYGON_Z:
-                        for (PolygonZShape shape : (List<PolygonZShape>) layer.getShapes()) {
-                            PolygonZShape s = new PolygonZShape();
+                        for (PolygonShape shape : (List<PolygonShape>) layer.getShapes()) {
+                            PolygonShape s = new PolygonShape();
                             List<PointZ> plist = new ArrayList<>();
                             for (PointZ pd : (List<PointZ>) shape.getPoints()) {
                                 pz = new PointZ(pd.X + xshift, pd.Y, pd.Z + offset, pd.M);
@@ -334,7 +206,7 @@ public class GraphicUtil {
         ImageShape ishape = new ImageShape();
         ishape.setImage(layer.getImage());
         Extent extent = layer.getExtent();
-        Extent3D ex3 = new Extent3D(extent.minX + xshift, extent.maxX + xshift, extent.minY, extent.maxY, offset, offset);
+        Extent ex3 = new Extent(extent.minX + xshift, extent.maxX + xshift, extent.minY, extent.maxY, offset, offset);
         List<PointZ> coords = new ArrayList<>();
         coords.add(new PointZ(extent.minX + xshift, extent.minY, offset));
         coords.add(new PointZ(extent.maxX + xshift, extent.minY, offset));

@@ -13,6 +13,7 @@
  */
 package org.meteoinfo.geo.legend;
 
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.legend.ChartBreak;
 import org.meteoinfo.geometry.legend.Constants;
 import org.meteoinfo.geometry.legend.LegendScheme;
@@ -112,7 +113,7 @@ public class LayerNode extends ItemNode {
      *
      * @return The shape type
      */
-    public ShapeTypes getShapeType() {
+    public ShapeFileType getShapeType() {
         return this._mapLayer.getShapeType();
     }
 
@@ -191,7 +192,7 @@ public class LayerNode extends ItemNode {
                 for (int i = 0; i < aLS.getBreakNum(); i++) {
                     if (aLS.getLegendBreaks().get(i).isDrawShape()) {
                         aTN = new LegendNode();
-                        aTN.setShapeType(this.getShapeType());
+                        aTN.setShapeType(this.getShapeType().toShapeType());
                         aTN.setLegendBreak(aLS.getLegendBreaks().get(i));
                         _legendNodes.add(aTN);
                     }

@@ -80,7 +80,6 @@ import org.meteoinfo.chart.plot.AbstractPlot2D;
 import org.meteoinfo.chart.plot.Plot3D;
 import org.meteoinfo.chart.plot3d.Projector;
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
 import org.meteoinfo.image.ImageUtil;
@@ -783,7 +782,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                         Dimension size = e.getComponent().getSize();
                         float dx = (float) (x - this.mouseLastPos.x) / size.width;
                         float dy = (float) (this.mouseLastPos.y - y) / size.height;
-                        Extent3D extent = plot3DGL.getDrawExtent();
+                        Extent extent = plot3DGL.getDrawExtent();
                         float rotation = plot3DGL.getAngleY();
                         if (rotation < 90 || rotation > 270) {
                             dx = -dx;
@@ -873,7 +872,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
                                 Dimension size = e.getComponent().getSize();
                                 float dx = (float) (x - this.mouseLastPos.x) / size.width;
                                 float dy = (float) (this.mouseLastPos.y - y) / size.height;
-                                Extent3D extent = plot3DGL.getDrawExtent();
+                                Extent extent = plot3DGL.getDrawExtent();
                                 float rotation = plot3DGL.getAngleY();
                                 if (rotation < 90 || rotation > 270) {
                                     dx = -dx;

@@ -62,7 +62,6 @@ public class FrmLegendBreaks extends javax.swing.JDialog {
                 endValue = Double.parseDouble(aCB.getStartValue().toString());
                 switch (_legendScheme.getShapeType()) {
                     case POLYLINE:
-                    case POLYLINE_Z:
                         _interval = BigDecimalUtil.div((BigDecimalUtil.sub(endValue, startValue)), (bnum - 1));
                         break;
                     default:

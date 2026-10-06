@@ -309,7 +309,6 @@ public class FrmLegendSet extends JDialog {
         // TODO add your handling code here:
         switch (_legendScheme.getShapeType()) {
             case POLYLINE:
-            case POLYLINE_Z:
                 PolylineBreak aPLB = new PolylineBreak();
                 aPLB.setDrawPolyline(true);
                 aPLB.setWidth(0.1F);

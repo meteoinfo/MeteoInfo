@@ -16,7 +16,6 @@ package org.meteoinfo.geometry.shape;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 

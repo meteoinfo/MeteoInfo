@@ -2,6 +2,7 @@ package org.meteoinfo.geo.io;
 
 import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.geo.layer.VectorLayer;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.io.geojson.*;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;
@@ -52,7 +53,7 @@ public class GeoJSONReader {
      */
     public static VectorLayer read(FeatureCollection features) {
         Shape shape = GeoJSONUtil.toShape(features.getFeature(0).getGeometry());
-        VectorLayer layer = new VectorLayer(shape.getShapeType());
+        VectorLayer layer = new VectorLayer(ShapeFileType.fromShapeType(shape.getShapeType()));
         String fieldName = "title";
         layer.editAddField(fieldName, DataType.STRING);
         LegendScheme ls = new LegendScheme(shape.getShapeType());

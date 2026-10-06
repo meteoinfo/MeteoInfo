@@ -3,7 +3,6 @@ package org.meteoinfo.chart.graphic;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.math.ArrayMath;
 
@@ -43,7 +42,7 @@ public class ModelGraphic extends Graphic {
      */
     public void setMeshGraphic(MeshGraphic meshGraphic) {
         this.meshGraphic = meshGraphic;
-        Extent3D extent = (Extent3D) this.meshGraphic.getExtent();
+        Extent extent = this.meshGraphic.getExtent();
 
         float range = (float) Math.max(extent.getWidth(), extent.getHeight());
         float zRange = (float) extent.getZLength();

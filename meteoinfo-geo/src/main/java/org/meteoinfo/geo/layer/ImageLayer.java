@@ -21,6 +21,7 @@ import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.shape.ImageShape;
 import org.meteoinfo.common.PointZ;
@@ -66,7 +67,7 @@ public class ImageLayer extends MapLayer {
     public ImageLayer() {
         super();
         this._layerType = LayerTypes.IMAGE_LAYER;
-        this.setShapeType(ShapeTypes.IMAGE);
+        this.setShapeType(ShapeFileType.IMAGE);
         _isSetTransColor = false;
         _transparencyColor = Color.black;
         this.interp = RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR;

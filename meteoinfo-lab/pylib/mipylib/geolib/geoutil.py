@@ -6,7 +6,7 @@
 #-----------------------------------------------------
 
 from org.meteoinfo.geometry.shape import ShapeUtil, PointShape, ShapeTypes
-from org.meteoinfo.common import PointD
+from org.meteoinfo.common import PointZ
 import mipylib.numeric as np
 
 __all__ = [
@@ -28,7 +28,7 @@ def makeshapes(x, y, shape_type=None, z=None, m=None):
     shapes = []   
     if isinstance(x, (int, float)):
         shape = PointShape()
-        shape.setPoint(PointD(x, y))
+        shape.setPoint(PointZ(x, y))
         shapes.append(shape)    
     else:
         x = np.asarray(x)._array

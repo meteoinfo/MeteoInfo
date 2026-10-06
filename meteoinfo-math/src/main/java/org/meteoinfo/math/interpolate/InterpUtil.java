@@ -9,7 +9,6 @@ import org.apache.commons.math4.legacy.analysis.BivariateFunction;
 import org.apache.commons.math4.legacy.analysis.UnivariateFunction;
 import org.apache.commons.math4.legacy.analysis.interpolation.*;
 import org.apache.commons.math4.legacy.analysis.polynomials.PolynomialSplineFunction;
-import org.meteoinfo.common.PointD;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 import org.meteoinfo.math.spatial.KDTree;

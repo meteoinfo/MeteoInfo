@@ -730,7 +730,7 @@ public class LegendManage {
         }
 
         LegendScheme aLS = createUniqValueLegendScheme(CValues, newcolors,
-                aLayer.getShapeType(), min, max, false, -9999);
+                aLayer.getShapeType().toShapeType(), min, max, false, -9999);
 
         return aLS;
     }

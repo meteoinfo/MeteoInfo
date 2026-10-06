@@ -6,7 +6,7 @@ package org.meteoinfo.geo.analysis;
 
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.common.PointZ;
-import org.meteoinfo.geometry.shape.PolylineZShape;
+import org.meteoinfo.geometry.shape.PolylineShape;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.math.ArrayUtil;
@@ -135,7 +135,7 @@ public class Clustering {
                 aLine = format.format(aDate);
                 String height = layer.getCellValue("Height", i).toString();
                 flags.add(aLine + "," + height);
-                PolylineZShape aPLZ = (PolylineZShape) layer.getShapes().get(i);
+                PolylineShape aPLZ = (PolylineShape) layer.getShapes().get(i);
                 col = 0;
                 for (j = 0; j < aPLZ.getPointNum(); j++) {
                     if (j % interval == 0) {
@@ -192,7 +192,7 @@ public class Clustering {
                 aLine = format.format(aDate);
                 String height = layer.getCellValue("Height", i).toString();
                 flags.add(aLine + "," + height);
-                PolylineZShape aPLZ = (PolylineZShape) layer.getShapes().get(i);
+                PolylineShape aPLZ = (PolylineShape) layer.getShapes().get(i);
                 col = 0;
                 for (j = 0; j < aPLZ.getPointNum(); j++) {
                     if (j % interval == 0) {

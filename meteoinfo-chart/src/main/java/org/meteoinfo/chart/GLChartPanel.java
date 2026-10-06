@@ -23,7 +23,6 @@ import org.meteoinfo.chart.jogl.*;
 import org.meteoinfo.chart.plot.*;
 import org.meteoinfo.chart.plot3d.Projector;
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
 import org.meteoinfo.image.ImageUtil;
@@ -810,7 +809,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
                         Dimension size = e.getComponent().getSize();
                         float dx = (float) (x - this.mouseLastPos.x) / size.width;
                         float dy = (float) (this.mouseLastPos.y - y) / size.height;
-                        Extent3D extent = glPlot.getDrawExtent();
+                        Extent extent = glPlot.getDrawExtent();
                         float rotation = glPlot.getAngleY();
                         if (rotation < 90 || rotation > 270) {
                             dx = -dx;
@@ -900,7 +899,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
                                 Dimension size = e.getComponent().getSize();
                                 float dx = (float) (x - this.mouseLastPos.x) / size.width;
                                 float dy = (float) (this.mouseLastPos.y - y) / size.height;
-                                Extent3D extent = glPlot.getDrawExtent();
+                                Extent extent = glPlot.getDrawExtent();
                                 float rotation = glPlot.getAngleY();
                                 if (rotation < 90 || rotation > 270) {
                                     dx = -dx;
@@ -1163,7 +1162,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
             }
         } else if (plot instanceof GLPlot) {
             GLPlot glPlot = (GLPlot) plot;
-            Extent3D extent = glPlot.getDrawExtent();
+            Extent extent = glPlot.getDrawExtent();
             //float zoomF = 1 + e.getWheelRotation() / 10.0f;
             float zoomF = e.getWheelRotation() / 10.0f;
             double dx = extent.getWidth() * zoomF;

@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.chart.graphic;
 
-import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
@@ -51,7 +51,7 @@ public class IsosurfaceGraphics extends GraphicCollection3D {
      */
     public void addTriangle(PointZ[] triangle) {
         this.triangles.add(triangle);
-        Extent3D extent = GeometryUtil.getExtent(triangle);
+        Extent extent = GeometryUtil.getExtent(triangle);
         if (this.triangles.size() == 1)
             this.setExtent(extent);
         else
@@ -62,7 +62,7 @@ public class IsosurfaceGraphics extends GraphicCollection3D {
      * Update extent
      */
     public void updateExtent() {
-        Extent3D extent;
+        Extent extent;
         for (int i = 0; i < this.triangles.size(); i++) {
             extent = GeometryUtil.getExtent(this.triangles.get(i));
             if (i == 0)

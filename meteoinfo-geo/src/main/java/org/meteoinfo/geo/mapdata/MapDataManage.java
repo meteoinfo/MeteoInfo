@@ -256,7 +256,7 @@ public class MapDataManage {
         PointZ aPoint;
         List<PointZ> pList = new ArrayList<>();
 
-        VectorLayer aLayer = new VectorLayer(ShapeTypes.POLYLINE);
+        VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYLINE);
         String columnName = "Value";
         Field aDC = new Field(columnName, DataType.INT);
         aLayer.editAddField(aDC);
@@ -480,14 +480,14 @@ public class MapDataManage {
             PointZ aPoint;
             boolean IsTrue;
             String columnName = "Value";
-            VectorLayer aLayer = new VectorLayer(ShapeTypes.POINT);
+            VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT);
             //Read shape type
             shapeType = sr.readLine().trim().toLowerCase();
             //Read shape number
             shapeNum = Integer.parseInt(sr.readLine());
             switch (shapeType) {
                 case "point":
-                    aLayer = new VectorLayer(ShapeTypes.POINT);
+                    aLayer = new VectorLayer(ShapeFileType.POINT);
                     aLayer.editAddField(columnName, DataType.INT);
                     for (i = 0; i < shapeNum; i++) {
                         aLine = sr.readLine();
@@ -513,7 +513,7 @@ public class MapDataManage {
                     IsTrue = true;
                     break;
                 case "polyline":
-                    aLayer = new VectorLayer(ShapeTypes.POLYLINE);
+                    aLayer = new VectorLayer(ShapeFileType.POLYLINE);
                     aLayer.editAddField(columnName, DataType.INT);
                     for (i = 0; i < shapeNum; i++) {
                         pNum = Integer.parseInt(sr.readLine());
@@ -544,7 +544,7 @@ public class MapDataManage {
                     IsTrue = true;
                     break;
                 case "polygon":
-                    aLayer = new VectorLayer(ShapeTypes.POLYGON);
+                    aLayer = new VectorLayer(ShapeFileType.POLYGON);
                     aLayer.editAddField(columnName, DataType.INT);
                     //ArrayList polygons = new ArrayList();
                     for (i = 0; i < shapeNum; i++) {
@@ -631,7 +631,6 @@ public class MapDataManage {
                     }
                     break;
                 case POLYLINE:
-                case POLYLINE_Z:
                     sw.write("Polyline");
                     sw.newLine();
                     int shapeNum = 0;

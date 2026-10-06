@@ -14,7 +14,6 @@ import java.util.logging.Logger;
 import javax.swing.undo.AbstractUndoableEdit;
 
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointD;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.common.PointZ;

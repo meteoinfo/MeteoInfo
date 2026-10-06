@@ -38,8 +38,8 @@ public class Plot3D extends Plot {
 
     // <editor-fold desc="Variables">
     private final GraphicCollection3D graphics;
-    private Extent3D extent;
-    private Extent3D axesExtent;
+    private Extent extent;
+    private Extent axesExtent;
     private ChartText title;
     private List<ChartLegend> legends;
     private Axis xAxis;
@@ -525,7 +525,7 @@ public class Plot3D extends Plot {
      *
      * @return Extent
      */
-    public Extent3D getExtent() {
+    public Extent getExtent() {
         return this.extent;
     }
 
@@ -534,7 +534,7 @@ public class Plot3D extends Plot {
      *
      * @param value Extent
      */
-    public void setExtent(Extent3D value) {
+    public void setExtent(Extent value) {
         this.extent = value;
         xmin = (float) extent.minX;
         xmax = (float) extent.maxX;
@@ -555,7 +555,7 @@ public class Plot3D extends Plot {
      * Get axes extent
      * @return Axes extent
      */
-    public Extent3D getAxesExtent() {
+    public Extent getAxesExtent() {
         return this.axesExtent;
     }
 
@@ -563,19 +563,19 @@ public class Plot3D extends Plot {
      * Set axes extent
      * @param value Axes extent
      */
-    public void setAxesExtent(Extent3D value) {
+    public void setAxesExtent(Extent value) {
         this.axesExtent = value;
     }
 
     @Override
     public void setDrawExtent(Extent extent) {
-        this.axesExtent = (Extent3D) extent;
+        this.axesExtent = extent;
     }
 
     // </editor-fold>
     // <editor-fold desc="Methods">    
     private void updateExtent() {
-        this.extent = new Extent3D(xmin, xmax, ymin, ymax, zmin, zmax);
+        this.extent = new Extent(xmin, xmax, ymin, ymax, zmin, zmax);
     }
     
     /**
@@ -597,10 +597,7 @@ public class Plot3D extends Plot {
     public void addGraphic(Graphic g) {
         this.graphics.add(g);
         Extent ex = this.graphics.getExtent();
-        if (!ex.is3D()){
-            ex = ex.to3D();
-        }
-        this.setExtent((Extent3D)ex);
+        this.setExtent(ex);
     }
     
     /**
@@ -779,18 +776,15 @@ public class Plot3D extends Plot {
         Shape shape = graphic.getGraphicN(0).getShape();
         switch (shape.getShapeType()) {
             case POINT:
-            case POINT_Z:
                 this.drawPoint(g, graphic);
                 break;
             case TEXT:
                 this.drawText((ChartText3D) shape, g);
                 break;
             case POLYLINE:
-            case POLYLINE_Z:
                 this.drawLineString(g, graphic);
                 break;
             case POLYGON:
-            case POLYGON_Z:
                 this.drawPolygonShape(g, graphic);
                 break;
             case WIND_ARROW:
@@ -969,7 +963,7 @@ public class Plot3D extends Plot {
             if (xdir) {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
-                    PointZShape shape = (PointZShape) gg.getShape();
+                    PointShape shape = (PointShape) gg.getShape();
                     p = (PointZ) shape.getPoint();
                     d = p.X * projector.getSinRotationAngle();
                     isIn = false;
@@ -989,7 +983,7 @@ public class Plot3D extends Plot {
             } else {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
-                    PointZShape shape = (PointZShape) gg.getShape();
+                    PointShape shape = (PointShape) gg.getShape();
                     p = (PointZ) shape.getPoint();
                     d = p.Y * projector.getCosRotationAngle();
                     isIn = false;
@@ -1100,7 +1094,7 @@ public class Plot3D extends Plot {
 
     private void drawPoint(Graphics2D g, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
-            PointZShape shape = (PointZShape) graphic.getShape();
+            PointShape shape = (PointShape) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             PointZ p = (PointZ) shape.getPoint();
             /*PointZ pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
@@ -1178,7 +1172,7 @@ public class Plot3D extends Plot {
 
     private void drawLineString(Graphics2D g, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
-            PolylineZShape shape = (PolylineZShape) graphic.getShape();
+            PolylineShape shape = (PolylineShape) graphic.getShape();
             ColorBreak pb = graphic.getLegendBreak();
             for (Polyline line : shape.getPolylines()){
                 List<PointZ> ps = (List<PointZ>)line.getPointList();
@@ -1258,7 +1252,7 @@ public class Plot3D extends Plot {
 
     private void drawPolygonShape(Graphics2D g, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
-            PolygonZShape shape = (PolygonZShape) graphic.getShape();
+            PolygonShape shape = (PolygonShape) graphic.getShape();
             PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
             for (Polygon poly : shape.getPolygons()) {
                 drawPolygon(g, poly, pb);
@@ -1333,7 +1327,7 @@ public class Plot3D extends Plot {
     private void drawImage(Graphics2D g, Graphic igraphic, String zdir, float zValue) {
         ImageShape ishape = (ImageShape) igraphic.getShape();
         BufferedImage image = ishape.getImage();
-        Extent3D ext = (Extent3D) ishape.getExtent();
+        Extent ext = ishape.getExtent();
         Point p1, p2, p3, p4;
         AffineTransform transform = new AffineTransform();
         transform.setToIdentity();

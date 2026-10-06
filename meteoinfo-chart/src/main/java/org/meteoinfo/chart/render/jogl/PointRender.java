@@ -15,7 +15,7 @@ import org.meteoinfo.chart.jogl.Utils;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.common.PointZ;
-import org.meteoinfo.geometry.shape.PointZShape;
+import org.meteoinfo.geometry.shape.PointShape;
 import org.meteoinfo.math.Matrix4f;
 
 import java.nio.FloatBuffer;
@@ -143,7 +143,7 @@ public class PointRender extends JOGLGraphicRender {
                 }
             } else {
                 for (Graphic graphic : this.graphics.getGraphics()) {
-                    PointZShape shape = (PointZShape) graphic.getShape();
+                    PointShape shape = (PointShape) graphic.getShape();
                     PointZ p = (PointZ) shape.getPoint();
                     vertexPosition[i] = (float) p.X;
                     vertexPosition[i + 1] = (float) p.Y;
@@ -166,7 +166,7 @@ public class PointRender extends JOGLGraphicRender {
         float size = -1;
         Sphere sphere = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PointZShape shape = (PointZShape) graphic.getShape();
+            PointShape shape = (PointShape) graphic.getShape();
             PointZ p = (PointZ) shape.getPoint();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             if (size != pb.getSize()) {
@@ -231,7 +231,7 @@ public class PointRender extends JOGLGraphicRender {
         float size = -1;
         Sphere sphere = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PointZShape shape = (PointZShape) graphic.getShape();
+            PointShape shape = (PointShape) graphic.getShape();
             PointZ p = (PointZ) shape.getPoint();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             if (size != pb.getSize()) {

@@ -5,7 +5,7 @@
 # Note: Jython
 # -----------------------------------------------------
 
-from org.meteoinfo.common import PointD
+from org.meteoinfo.common import PointZ
 from org.meteoinfo.common.util import JDateUtil
 from org.meteoinfo.ndarray import Complex
 from org.meteoinfo.geometry.shape import PointShape, ShapeUtil
@@ -256,7 +256,7 @@ def makeshapes(x, y, type=None, z=None, m=None):
     shapes = []
     if isinstance(x, (int, float)):
         shape = PointShape()
-        shape.setPoint(PointD(x, y))
+        shape.setPoint(PointZ(x, y))
         shapes.append(shape)
     else:
         if not isinstance(x, list):

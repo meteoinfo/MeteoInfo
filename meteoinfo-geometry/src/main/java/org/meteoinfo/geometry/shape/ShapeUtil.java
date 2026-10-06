@@ -69,12 +69,12 @@ public class ShapeUtil {
      * @param m M coordinates
      * @return PointZ shapes
      */
-    public static List<PointZShape> createPointShapes(Array x, Array y, Array z, Array m) {
+    public static List<PointShape> createPointShapes(Array x, Array y, Array z, Array m) {
         double xx, yy;
-        PointZShape ps;
-        List<PointZShape> shapes = new ArrayList<>();
+        PointShape ps;
+        List<PointShape> shapes = new ArrayList<>();
         for (int i = 0; i < x.getSize(); i++) {
-            ps = new PointZShape();
+            ps = new PointShape();
             xx = x.getDouble(i);
             yy = y.getDouble(i);
             
@@ -187,17 +187,17 @@ public class ShapeUtil {
      * @param m M coordinates
      * @return PolylineZ shapes
      */
-    public static List<PolylineZShape> createPolylineShapes(Array x, Array y, Array z, Array m) {
+    public static List<PolylineShape> createPolylineShapes(Array x, Array y, Array z, Array m) {
         double xx, yy;
         List<PointZ> points = new ArrayList<>();
-        PolylineZShape pls;
-        List<PolylineZShape> shapes = new ArrayList<>();
+        PolylineShape pls;
+        List<PolylineShape> shapes = new ArrayList<>();
         for (int i = 0; i < x.getSize(); i++) {
             xx = x.getDouble(i);
             yy = y.getDouble(i);
             if (Double.isNaN(xx)) {
                 if (points.size() >= 2) {
-                    pls = new PolylineZShape();
+                    pls = new PolylineShape();
                     pls.setPoints(points);
                     shapes.add(pls);
                 }
@@ -207,7 +207,7 @@ public class ShapeUtil {
             }
         }
         if (points.size() >= 2) {
-            pls = new PolylineZShape();
+            pls = new PolylineShape();
             pls.setPoints(points);
             shapes.add(pls);
         }

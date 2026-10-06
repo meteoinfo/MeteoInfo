@@ -7,6 +7,7 @@ import org.meteoinfo.data.GridDataSetting;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.geo.analysis.GeoComputation;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.geo.analysis.InterpolationSetting;
@@ -89,7 +90,7 @@ public class GeoMathUtil {
      * @return Maskouted grid data
      */
     public static GridData maskout(GridData gridData, VectorLayer maskLayer) {
-        if (maskLayer.getShapeType() != ShapeTypes.POLYGON) {
+        if (maskLayer.getShapeType() != ShapeFileType.POLYGON) {
             return gridData;
         }
 
@@ -169,7 +170,7 @@ public class GeoMathUtil {
       * @return Result station data
       */
      public static StationData maskout(StationData stationData, VectorLayer maskLayer) {
-         if (maskLayer.getShapeType() != ShapeTypes.POLYGON) {
+         if (maskLayer.getShapeType() != ShapeFileType.POLYGON) {
              return stationData;
          }
 
@@ -225,7 +226,7 @@ public class GeoMathUtil {
       * @return Result station data
       */
      public static StationData maskin(StationData stationData, VectorLayer maskLayer) {
-         if (maskLayer.getShapeType() != ShapeTypes.POLYGON) {
+         if (maskLayer.getShapeType() != ShapeFileType.POLYGON) {
              return stationData;
          }
 

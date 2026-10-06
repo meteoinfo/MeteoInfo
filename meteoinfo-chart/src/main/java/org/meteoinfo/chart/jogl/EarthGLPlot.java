@@ -41,7 +41,7 @@ public class EarthGLPlot extends GLPlot {
     // <editor-fold desc="Variables">
     private float radius = 6371.f;
     private QuadMeshGraphic surface;
-    private Extent3D dataExtent;
+    private Extent dataExtent;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
@@ -86,7 +86,7 @@ public class EarthGLPlot extends GLPlot {
 
     @Override
     public void setDrawExtent(Extent value) {
-        this.drawExtent = (Extent3D) value;
+        this.drawExtent = value;
         this.transform.setExtent(this.drawExtent);
     }
 
@@ -106,20 +106,17 @@ public class EarthGLPlot extends GLPlot {
     @Override
     public void addGraphic(Graphic graphic) {
         if (this.dataExtent == null) {
-            this.dataExtent = (Extent3D) graphic.getExtent();
+            this.dataExtent = graphic.getExtent();
         } else {
-            this.dataExtent = this.dataExtent.union((Extent3D) graphic.getExtent());
+            this.dataExtent = this.dataExtent.union(graphic.getExtent());
         }
         updateDataExtent();
 
 
         this.graphics.add(SphericalTransform.transform(graphic));
         Extent ex = this.graphics.getExtent();
-        if (!ex.is3D()) {
-            ex = ex.to3D();
-        }
-        this.graphicExtent = (Extent3D) ex;
-        this.setDrawExtent((Extent3D) this.graphicExtent.clone());
+        this.graphicExtent = ex;
+        this.setDrawExtent((Extent) this.graphicExtent.clone());
     }
 
     /**
@@ -131,19 +128,16 @@ public class EarthGLPlot extends GLPlot {
     @Override
     public void addGraphic(int index, Graphic graphic) {
         if (this.dataExtent == null) {
-            this.dataExtent = (Extent3D) graphic.getExtent();
+            this.dataExtent = graphic.getExtent();
         } else {
-            this.dataExtent = this.dataExtent.union((Extent3D) graphic.getExtent());
+            this.dataExtent = this.dataExtent.union(graphic.getExtent());
         }
         updateDataExtent();
 
         this.graphics.add(index, SphericalTransform.transform(graphic));
         Extent ex = this.graphics.getExtent();
-        if (!ex.is3D()) {
-            ex = ex.to3D();
-        }
-        this.graphicExtent = (Extent3D) ex;
-        this.setDrawExtent((Extent3D) this.graphicExtent.clone());
+        this.graphicExtent = ex;
+        this.setDrawExtent((Extent) this.graphicExtent.clone());
     }
 
     /**
@@ -608,8 +602,8 @@ public class EarthGLPlot extends GLPlot {
 
                 // Draw inner hole boundaries along great-circle arcs
                 if (tessPolygon.hasHole()) {
-                    for (List<? extends PointD> holeLine : tessPolygon.getHoleLines()) {
-                        drawSphericalOutline(gl, (List<PointZ>) holeLine);
+                    for (List<PointZ> holeLine : tessPolygon.getHoleLines()) {
+                        drawSphericalOutline(gl, holeLine);
                     }
                 }
             }

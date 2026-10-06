@@ -25,6 +25,7 @@ import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.PointZ;
 import org.meteoinfo.data.mapdata.webmap.*;
 import org.meteoinfo.data.mapdata.webmap.empty.EmptyTileFactory;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.Reproject;
 import org.meteoinfo.geometry.shape.ShapeTypes;
@@ -146,7 +147,7 @@ public class WebMapLayer extends MapLayer {
     public WebMapLayer() {
         super();
         this._layerType = LayerTypes.WEB_MAP_LAYER;
-        this.setShapeType(ShapeTypes.IMAGE);
+        this.setShapeType(ShapeFileType.IMAGE);
         this.setLayerDrawType(LayerDrawType.IMAGE);
         this.setLayerName("OpenStreetMap");
         this.setExtent(new Extent(-2.0037508342789244E7, 2.0037508342789244E7, -1.8375854901481014E7, 1.8375854901481014E7));

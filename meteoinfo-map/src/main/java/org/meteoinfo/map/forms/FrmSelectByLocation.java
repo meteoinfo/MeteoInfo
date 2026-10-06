@@ -9,8 +9,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geo.analysis.GeoComputation;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.geoprocess.SpatialQueryTypes;
 import org.meteoinfo.geo.layer.LayerTypes;
 import org.meteoinfo.geo.layer.MapLayer;
@@ -211,8 +212,8 @@ public class FrmSelectByLocation extends javax.swing.JDialog {
                 } else {
                     for (Shape aShape : fromLayer.getShapes()) {
                         boolean isIn = true;
-                        List<PointD> points = (List<PointD>) aShape.getPoints();
-                        for (PointD aPoint : points) {
+                        List<PointZ> points = aShape.getPoints();
+                        for (PointZ aPoint : points) {
                             if (!GeoComputation.pointInPolygonLayer(relatedLayer, aPoint, onlySel)) {
                                 isIn = false;
                                 break;
@@ -227,7 +228,7 @@ public class FrmSelectByLocation extends javax.swing.JDialog {
                 }
                 break;
             case Contain:
-                if (fromLayer.getShapeType() != ShapeTypes.POLYGON) {
+                if (fromLayer.getShapeType() != ShapeFileType.POLYGON) {
                     JOptionPane.showMessageDialog(null, "The first layer must be polygon layer for 'Within' case!");
                     this.setCursor(Cursor.getDefaultCursor());
                     return;
@@ -248,8 +249,8 @@ public class FrmSelectByLocation extends javax.swing.JDialog {
                         PolygonShape aPolygon = (PolygonShape) aShape;
                         for (Shape bShape : shapes) {
                             boolean isIn = true;
-                            List<PointD> points = (List<PointD>) bShape.getPoints();
-                            for (PointD aPoint : points) {
+                            List<PointZ> points = bShape.getPoints();
+                            for (PointZ aPoint : points) {
                                 if (!GeoComputation.pointInPolygon(aPolygon, aPoint)) {
                                     isIn = false;
                                     break;

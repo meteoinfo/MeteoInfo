@@ -263,18 +263,12 @@ package org.meteoinfo.geometry.legend;
          BreakTypes breakType = BreakTypes.COLOR_BREAK;
          switch (this.shapeType) {
              case POINT:
-             case POINT_M:
-             case POINT_Z:
                  breakType = BreakTypes.POINT_BREAK;
                  break;
              case POLYLINE:
-             case POLYLINE_M:
-             case POLYLINE_Z:
                  breakType = BreakTypes.POLYLINE_BREAK;
                  break;
              case POLYGON:
-             case POLYGON_M:
-             case POLYGON_Z:
                  breakType = BreakTypes.POLYGON_BREAK;
                  break;
          }
@@ -1097,7 +1091,6 @@ package org.meteoinfo.geometry.legend;
          Attr tagAttr;
          switch (this.shapeType) {
              case POINT:
-             case POINT_Z:
                  Attr isNoData;
                  for (ColorBreak aCB : this.legendBreaks) {
                      PointBreak aPB = (PointBreak) aCB;
@@ -1163,7 +1156,6 @@ package org.meteoinfo.geometry.legend;
                  }
                  break;
              case POLYLINE:
-             case POLYLINE_Z:
                  for (ColorBreak aCB : this.legendBreaks) {
                      PolylineBreak aPLB = (PolylineBreak) aCB;
                      brk = doc.createElement("Break");
@@ -1219,8 +1211,6 @@ package org.meteoinfo.geometry.legend;
                  }
                  break;
              case POLYGON:
-             case POLYGON_M:
-             case POLYGON_Z:
                  for (ColorBreak aCB : this.legendBreaks) {
                      PolygonBreak aPGB = (PolygonBreak) aCB;
                      brk = doc.createElement("Break");
@@ -1362,7 +1352,7 @@ package org.meteoinfo.geometry.legend;
              fieldName = LSNode.getAttributes().getNamedItem("FieldName").getNodeValue();
          }
          legendType = LegendType.valueOfBack(LSNode.getAttributes().getNamedItem("LegendType").getNodeValue());
-         ShapeTypes aShapeType = ShapeTypes.valueOfBack(LSNode.getAttributes().getNamedItem("ShapeType").getNodeValue());
+         ShapeTypes aShapeType = ShapeTypes.valueOf(LSNode.getAttributes().getNamedItem("ShapeType").getNodeValue());
 
          //BreakNum = Convert.ToInt32(LSNode.Attributes["BreakNum"].InnerText);
          hasNoData = Boolean.parseBoolean(LSNode.getAttributes().getNamedItem("HasNoData").getNodeValue());
@@ -1415,7 +1405,6 @@ package org.meteoinfo.geometry.legend;
                      }
                      break;
                  case POLYLINE:
-                 case POLYLINE_Z:
                      for (int i = 0; i < breaks.getLength(); i++) {
                          Node brk = breaks.item(i);
                          PolylineBreak aPLB = new PolylineBreak();
@@ -1446,8 +1435,6 @@ package org.meteoinfo.geometry.legend;
                      }
                      break;
                  case POLYGON:
-                 case POLYGON_M:
-                 case POLYGON_Z:
                      for (int i = 0; i < breaks.getLength(); i++) {
                          Node brk = breaks.item(i);
                          PolygonBreak aPGB = new PolygonBreak();
@@ -1510,7 +1497,6 @@ package org.meteoinfo.geometry.legend;
                      }
                      break;
                  case POLYLINE:
-                 case POLYLINE_Z:
                      for (int i = 0; i < breaks.getLength(); i++) {
                          Node brk = breaks.item(i);
                          PolylineBreak aPLB = new PolylineBreak();

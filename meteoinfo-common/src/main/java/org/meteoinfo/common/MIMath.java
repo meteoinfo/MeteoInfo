@@ -318,13 +318,13 @@ public class MIMath {
      *
      * @param points PointD array
      */
-    public static void arrayReverse(PointD[] points) {
+    public static void arrayReverse(PointZ[] points) {
         int left = 0;          // index of leftmost element
         int right = points.length - 1; // index of rightmost element
 
         while (left < right) {
             // exchange the left and right elements
-            PointD temp = points[left];
+            PointZ temp = points[left];
             points[left] = points[right];
             points[right] = temp;
 
@@ -477,37 +477,21 @@ public class MIMath {
      * @return Maximum extent
      */
     public static Extent getLagerExtent(Extent aET, Extent bET) {
-        if (aET.is3D() && bET.is3D()){
-            Extent3D cET = new Extent3D();
-            if (aET.isNaN()) {
-                return bET;
-            } else if (bET.isNaN()) {
-                return aET;
-            }
-
-            cET.minX = Math.min(aET.minX, bET.minX);
-            cET.minY = Math.min(aET.minY, bET.minY);
-            cET.maxX = Math.max(aET.maxX, bET.maxX);
-            cET.maxY = Math.max(aET.maxY, bET.maxY);
-            cET.minZ = Math.min(((Extent3D)aET).minZ, ((Extent3D)bET).minZ);
-            cET.maxZ = Math.max(((Extent3D)aET).maxZ, ((Extent3D)bET).maxZ);
-
-            return cET;
-        } else {
-            Extent cET = new Extent();
-            if (aET.isNaN()) {
-                return bET;
-            } else if (bET.isNaN()) {
-                return aET;
-            }
-
-            cET.minX = Math.min(aET.minX, bET.minX);
-            cET.minY = Math.min(aET.minY, bET.minY);
-            cET.maxX = Math.max(aET.maxX, bET.maxX);
-            cET.maxY = Math.max(aET.maxY, bET.maxY);
-
-            return cET;
+        Extent cET = new Extent();
+        if (aET.isNaN()) {
+            return bET;
+        } else if (bET.isNaN()) {
+            return aET;
         }
+
+        cET.minX = Math.min(aET.minX, bET.minX);
+        cET.minY = Math.min(aET.minY, bET.minY);
+        cET.maxX = Math.max(aET.maxX, bET.maxX);
+        cET.maxY = Math.max(aET.maxY, bET.maxY);
+        cET.minZ = Math.min(aET.minZ, bET.minZ);
+        cET.maxZ = Math.max(aET.maxZ, bET.maxZ);
+
+        return cET;
     }
 
     /**
@@ -549,7 +533,7 @@ public class MIMath {
      * @param aET The extent
      * @return Boolean
      */
-    public static boolean pointInExtent(PointD aP, Extent aET) {
+    public static boolean pointInExtent(PointZ aP, Extent aET) {
         if (aP.X >= aET.minX && aP.X <= aET.maxX && aP.Y >= aET.minY && aP.Y <= aET.maxY) {
             return true;
         } else {
@@ -609,7 +593,7 @@ public class MIMath {
      * @param aRect The rectangel
      * @return Boolean
      */
-    public static boolean pointInRectangle(PointD aP, Rectangle aRect) {
+    public static boolean pointInRectangle(PointZ aP, Rectangle aRect) {
         if (aP.X > aRect.x && aP.X < aRect.x + aRect.width && aP.Y > aRect.y && aP.Y < aRect.y + aRect.height) {
             return true;
         } else {

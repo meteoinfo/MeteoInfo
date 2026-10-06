@@ -13,7 +13,6 @@
   */
  package org.meteoinfo.geometry.shape;
 
- import org.meteoinfo.common.PointD;
  import org.meteoinfo.common.PointZ;
 
  import java.util.ArrayList;
@@ -124,8 +123,8 @@
       * @param p Point
       * @return Contains a point or not
       */
-     public boolean contains(PointD p){
-         PointD center = this.getCenter();
+     public boolean contains(PointZ p){
+         PointZ center = this.getCenter();
          double a = this.getA();
          double b = this.getB();
 

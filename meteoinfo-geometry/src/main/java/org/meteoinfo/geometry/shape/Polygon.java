@@ -14,7 +14,6 @@
 package org.meteoinfo.geometry.shape;
 
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 
@@ -195,7 +194,7 @@ public class Polygon {
      * @return Geometry
      */
     public Geometry toGeometry(GeometryFactory factory) {
-        PointD p;
+        PointZ p;
         Coordinate[] cs = new Coordinate[_outLine.size()];
         for (int i = 0; i < cs.length; i++) {
             p = _outLine.get(i);
@@ -208,7 +207,7 @@ public class Polygon {
         LinearRing shell = factory.createLinearRing(cs);
         LinearRing[] holes = new LinearRing[this._holeLines.size()];
         for (int j = 0; j < holes.length; j++) {
-            List<? extends PointD> hole = this._holeLines.get(j);
+            List<PointZ> hole = this._holeLines.get(j);
             cs = new Coordinate[hole.size()];
             for (int i = 0; i < hole.size(); i++) {
                 p = hole.get(i);

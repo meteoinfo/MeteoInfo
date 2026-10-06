@@ -4,6 +4,7 @@
  */
 package org.meteoinfo.geo.layer;
 
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.legend.AlignType;
 import org.meteoinfo.geometry.legend.LabelBreak;
 import org.meteoinfo.geo.mapview.MapView;
@@ -507,7 +508,7 @@ public class FrmLabelSet extends javax.swing.JDialog {
 
         //Set contour dynamic label
         this.jCheckBox_ContourDynamic.setSelected(labelSet.isDynamicContourLabel());
-        if (_layer.getShapeType() == ShapeTypes.POLYLINE) {
+        if (_layer.getShapeType() == ShapeFileType.POLYLINE) {
             this.jCheckBox_ContourDynamic.setEnabled(true);
         } else {
             this.jCheckBox_ContourDynamic.setEnabled(false);

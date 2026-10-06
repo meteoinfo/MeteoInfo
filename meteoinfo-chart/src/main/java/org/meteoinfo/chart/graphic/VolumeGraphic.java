@@ -4,7 +4,6 @@ import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.geometry.colors.OpacityTransferFunction;
 import org.meteoinfo.chart.render.jogl.RayCastingType;
-import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.geometry.legend.LegendManage;
@@ -57,7 +56,7 @@ public class VolumeGraphic extends GraphicCollection3D {
         //this.buffer = Buffers.newDirectByteBuffer(this.data);
         this.colors = colors;
 
-        Extent3D extent = new Extent3D();
+        Extent extent = new Extent();
         extent.maxX = width;
         extent.maxY = height;
         extent.maxZ = depth;
@@ -173,7 +172,7 @@ public class VolumeGraphic extends GraphicCollection3D {
     public void setExtent(Extent value) {
         super.setExtent(value);
 
-        Extent3D extent = (Extent3D) this.getExtent();
+        Extent extent = this.getExtent();
         float xMin = (float) extent.minX;
         float xMax = (float) extent.maxX;
         float yMin = (float) extent.minY;
@@ -555,7 +554,7 @@ public class VolumeGraphic extends GraphicCollection3D {
     }
 
     public float[] getVertexBufferData(Transform transform) {
-        Extent3D extent = (Extent3D) this.getExtent();
+        Extent extent = this.getExtent();
         float xMin = (float) extent.minX;
         float xMax = (float) extent.maxX;
         float yMin = (float) extent.minY;

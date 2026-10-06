@@ -76,9 +76,9 @@ public class GLPlot extends Plot {
     protected final GLUT glut = new GLUT();
     protected int startList = 2;
     protected GraphicCollection3D graphics;
-    protected Extent3D graphicExtent;
-    protected Extent3D drawExtent;
-    protected Extent3D axesExtent;
+    protected Extent graphicExtent;
+    protected Extent drawExtent;
+    protected Extent axesExtent;
     protected boolean fixExtent;
     protected TextRenderer textRenderer;
     protected ChartText title;
@@ -158,11 +158,11 @@ public class GLPlot extends Plot {
         this.distance = 5.f;
         this.fieldOfView = 45.f;
         this.initAngles();
-        this.graphicExtent = new Extent3D();
-        Extent3D extent3D = new Extent3D(-1, 1, -1, 1, -1, 1);
-        this.drawExtent = (Extent3D) extent3D.clone();
+        this.graphicExtent = new Extent();
+        Extent extent = new Extent(-1, 1, -1, 1, -1, 1);
+        this.drawExtent = (Extent) extent.clone();
         this.transform.setExtent(this.drawExtent);
-        this.setAxesExtent((Extent3D) this.drawExtent.clone());
+        this.setAxesExtent((Extent) this.drawExtent.clone());
     }
 
     /**
@@ -293,7 +293,7 @@ public class GLPlot extends Plot {
      * Get extent of all graphics
      * @return Extent of all graphics
      */
-    public Extent3D getGraphicExtent() {
+    public Extent getGraphicExtent() {
         return this.graphicExtent;
     }
 
@@ -307,7 +307,7 @@ public class GLPlot extends Plot {
      *
      * @return Extent
      */
-    public Extent3D getDrawExtent() {
+    public Extent getDrawExtent() {
         return this.drawExtent;
     }
 
@@ -318,11 +318,11 @@ public class GLPlot extends Plot {
      */
     @Override
     public void setDrawExtent(Extent extent) {
-        this.drawExtent = (Extent3D) extent;
+        this.drawExtent = extent;
         this.transform.setExtent(this.drawExtent);
 
         if (!this.axesZoom) {
-            setAxesExtent((Extent3D) drawExtent.clone());
+            setAxesExtent((Extent) drawExtent.clone());
         }
     }
 
@@ -330,7 +330,7 @@ public class GLPlot extends Plot {
      * Get axes extent (axes boundary extent)
      * @return Axes extent
      */
-    public Extent3D getAxesExtent() {
+    public Extent getAxesExtent() {
         return this.axesExtent;
     }
 
@@ -338,7 +338,7 @@ public class GLPlot extends Plot {
      * Set axes extent
      * @param value Axes extent
      */
-    public void setAxesExtent(Extent3D value) {
+    public void setAxesExtent(Extent value) {
         this.axesExtent = value;
         xAxis.setMinMaxValue(axesExtent.minX, axesExtent.maxX);
         yAxis.setMinMaxValue(axesExtent.minY, axesExtent.maxY);
@@ -1106,7 +1106,7 @@ public class GLPlot extends Plot {
 
     protected void updateExtent() {
         this.transform.setExtent(this.drawExtent);
-        this.setAxesExtent((Extent3D) this.drawExtent.clone());
+        this.setAxesExtent((Extent) this.drawExtent.clone());
     }
 
     /**
@@ -1129,14 +1129,11 @@ public class GLPlot extends Plot {
         graphic.doTransform();
         this.graphics.add(graphic);
         Extent ex = this.graphics.getExtent();
-        if (!ex.is3D()) {
-            ex = ex.to3D();
-        }
         ex.asNonZero();
-        this.graphicExtent = (Extent3D) ex;
+        this.graphicExtent = ex;
         if (!fixExtent) {
-            this.setAxesExtent((Extent3D) graphicExtent.clone());
-            this.setDrawExtent((Extent3D) this.graphicExtent.clone());
+            this.setAxesExtent((Extent) graphicExtent.clone());
+            this.setDrawExtent((Extent) this.graphicExtent.clone());
         }
     }
 
@@ -1150,14 +1147,11 @@ public class GLPlot extends Plot {
         graphic.doTransform();
         this.graphics.add(index, graphic);
         Extent ex = this.graphics.getExtent();
-        if (!ex.is3D()) {
-            ex = ex.to3D();
-        }
         ex.asNonZero();
-        this.graphicExtent = (Extent3D) ex;
+        this.graphicExtent = ex;
         if (!fixExtent) {
-            this.setAxesExtent((Extent3D) graphicExtent.clone());
-            this.setDrawExtent((Extent3D) this.graphicExtent.clone());
+            this.setAxesExtent((Extent) graphicExtent.clone());
+            this.setDrawExtent((Extent) this.graphicExtent.clone());
         }
     }
 
@@ -2772,7 +2766,7 @@ public class GLPlot extends Plot {
             }
             if (isDraw) {
                 switch (graphic.getGraphicN(0).getShapeType()) {
-                    case POINT_Z:
+                    case POINT:
                         if (!this.renderMap.containsKey(graphic)) {
                             renderMap.put(graphic, new PointRender(gl, (GraphicCollection3D) graphic));
                         }
@@ -2784,7 +2778,7 @@ public class GLPlot extends Plot {
                         pointRender.setRotateModelView(this.modelViewMatrixR);
                         pointRender.draw();
                         break;
-                    case POLYLINE_Z:
+                    case POLYLINE:
                         if (graphic.getGraphicN(0).getShape() instanceof PipeShape) {
                             if (!this.renderMap.containsKey(graphic)) {
                                 renderMap.put(graphic, new PipeRender(gl, (GraphicCollection3D) graphic));
@@ -2846,7 +2840,6 @@ public class GLPlot extends Plot {
         Shape shape = graphic.getGraphicN(0).getShape();
         switch (shape.getShapeType()) {
             case POINT:
-            case POINT_Z:
                 this.drawPoint(gl, graphic);
                 break;
             case TEXT:
@@ -2857,7 +2850,6 @@ public class GLPlot extends Plot {
                     this.enableClipPlane(gl);
                 break;
             case POLYLINE:
-            case POLYLINE_Z:
                 /*ColorBreak cb = graphic.getLegend();
                 if (cb instanceof StreamlineBreak) {
                     if (shape instanceof PipeShape) {
@@ -2888,7 +2880,6 @@ public class GLPlot extends Plot {
                 }*/
                 break;
             case POLYGON:
-            case POLYGON_Z:
                 this.drawPolygonShape(gl, graphic);
                 break;
             case WIND_ARROW:
@@ -2930,7 +2921,7 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            PointZShape shape = (PointZShape) graphic.getShape();
+            PointShape shape = (PointShape) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -2947,7 +2938,7 @@ public class GLPlot extends Plot {
         gl.glPointSize(pb.getSize() * this.dpiScale);
         gl.glBegin(GL2.GL_POINTS);
         for (Graphic gg : ((GraphicCollection) graphic).getGraphics()) {
-            PointZShape shape = (PointZShape) gg.getShape();
+            PointShape shape = (PointShape) gg.getShape();
             pb = (PointBreak) gg.getLegendBreak();
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -2963,7 +2954,7 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            PointZShape shape = (PointZShape) graphic.getShape();
+            PointShape shape = (PointShape) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4fv(rgba, 0);
@@ -3129,7 +3120,7 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            PolylineZShape shape = (PolylineZShape) graphic.getShape();
+            PolylineShape shape = (PolylineShape) graphic.getShape();
             ColorBreak cb = graphic.getLegendBreak();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;
@@ -3228,7 +3219,7 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            PolygonZShape shape = (PolygonZShape) graphic.getShape();
+            PolygonShape shape = (PolygonShape) graphic.getShape();
             PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
             java.util.List<Polygon> polygonZS = shape.getPolygons();
             for (int i = 0; i < polygonZS.size(); i++) {
@@ -3387,7 +3378,7 @@ public class GLPlot extends Plot {
                 isDraw = drawExtent.intersects(gg.getExtent());
 
             if (isDraw) {
-                PolygonZShape shape = (PolygonZShape) gg.getShape();
+                PolygonShape shape = (PolygonShape) gg.getShape();
                 PolygonBreak pb = (PolygonBreak) gg.getLegendBreak();
                 for (Polygon poly : shape.getPolygons()) {
                     drawQuads(gl, poly, pb);
@@ -3431,7 +3422,7 @@ public class GLPlot extends Plot {
                 isDraw = drawExtent.intersects(gg.getExtent());
 
             if (isDraw) {
-                PolygonZShape shape = (PolygonZShape) gg.getShape();
+                PolygonShape shape = (PolygonShape) gg.getShape();
                 PolygonBreak pb = (PolygonBreak) gg.getLegendBreak();
                 for (Polygon poly : shape.getPolygons()) {
                     drawTriangle(gl, poly, pb);
@@ -4293,7 +4284,7 @@ public class GLPlot extends Plot {
         plot3DGL.dpiScale = this.dpiScale;
         plot3DGL.drawBase = this.drawBase;
         plot3DGL.drawBoundingBox = this.drawBoundingBox;
-        plot3DGL.setDrawExtent((Extent3D) this.drawExtent.clone());
+        plot3DGL.setDrawExtent((Extent) this.drawExtent.clone());
         plot3DGL.gridLine = this.gridLine;
         plot3DGL.legends = this.legends;
         plot3DGL.hideOnDrag = this.hideOnDrag;

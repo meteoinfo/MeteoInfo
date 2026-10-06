@@ -1214,18 +1214,15 @@ public class ProjectionSet {
         Shape newShape;
         switch (aShape.getShapeType()) {
             case POINT:
-            case POINT_M:
                 newShape = projectPointShape((PointShape) aShape, fromProj, toProj);
                 break;
             case POLYLINE:
-            case POLYLINE_M:
                 newShape = projectPolylineShape((PolylineShape) aShape, fromProj, toProj);
                 break;
             case CURVE_LINE:
                 newShape = projectCurvelineShape((CurveLineShape) aShape, fromProj, toProj);
                 break;
             case POLYGON:
-            case POLYGON_M:
             case RECTANGLE:
                 newShape = projectPolygonShape((PolygonShape) aShape, fromProj, toProj);
                 break;

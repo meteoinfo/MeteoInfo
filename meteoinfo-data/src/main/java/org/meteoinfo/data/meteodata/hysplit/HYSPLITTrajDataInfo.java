@@ -14,7 +14,7 @@
 package org.meteoinfo.data.meteodata.hysplit;
 
 import org.meteoinfo.common.DataConvert;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.meteodata.*;
 import org.meteoinfo.data.dimarray.Dimension;
@@ -508,13 +508,13 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
 
             //Record #6
             int TrajIdx;
-            List<PointD> pList;
-            List<List<PointD>> PointList = new ArrayList<>();
+            List<PointZ> pList;
+            List<List<PointZ>> PointList = new ArrayList<>();
             for (i = 0; i < trajNum; i++) {
                 pList = new ArrayList<>();
                 PointList.add(pList);
             }
-            PointD aPoint;
+            PointZ aPoint;
             //ArrayList polylines = new ArrayList();
             int dn = 12 + this.varNum;
             while (true) {
@@ -547,7 +547,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
                 tt = LocalDateTime.of(y, Integer.parseInt(dataArray[3]),
                         Integer.parseInt(dataArray[4]), Integer.parseInt(dataArray[5]), 0, 0);
 
-                aPoint = new PointD();
+                aPoint = new PointZ();
                 aPoint.X = JDateUtil.toOADate(tt);
                 aPoint.Y = Double.parseDouble(dataArray[varIndex]);
                 PointList.get(TrajIdx).add(aPoint);
@@ -608,13 +608,13 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
 
             //Record #6
             int TrajIdx;
-            List<PointD> pList;
-            List<List<PointD>> PointList = new ArrayList<>();
+            List<PointZ> pList;
+            List<List<PointZ>> PointList = new ArrayList<>();
             for (i = 0; i < trajNum; i++) {
                 pList = new ArrayList<>();
                 PointList.add(pList);
             }
-            PointD aPoint;
+            PointZ aPoint;
             int dn = 12 + this.varNum;
             while (true) {
                 aLine = sr.readLine();
@@ -646,7 +646,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
                 tt = LocalDateTime.of(y, Integer.parseInt(dataArray[3]),
                         Integer.parseInt(dataArray[4]), Integer.parseInt(dataArray[5]), 0, 0);
 
-                aPoint = new PointD();
+                aPoint = new PointZ();
                 aPoint.X = JDateUtil.toOADate(tt);
                 aPoint.Y = Double.parseDouble(dataArray[varIndex]);
                 PointList.get(TrajIdx).add(aPoint);

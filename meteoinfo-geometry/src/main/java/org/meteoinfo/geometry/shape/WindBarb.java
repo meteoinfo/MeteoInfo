@@ -15,7 +15,6 @@ package org.meteoinfo.geometry.shape;
 
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
-import org.meteoinfo.common.PointD;
 
 /**
  *

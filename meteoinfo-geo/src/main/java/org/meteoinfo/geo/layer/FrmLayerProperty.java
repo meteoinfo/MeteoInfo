@@ -8,6 +8,7 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.geo.legend.LegendView;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.geo.legend.FrmLegendBreaks;
@@ -845,7 +846,6 @@ public class FrmLayerProperty extends javax.swing.JDialog {
         // TODO add your handling code here:
         switch (_legendScheme.getShapeType()) {
             case POLYLINE:
-            case POLYLINE_Z:
                 PolylineBreak aPLB = new PolylineBreak();
                 aPLB.setDrawPolyline(true);
                 aPLB.setWidth(0.1F);
@@ -1106,12 +1106,9 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                             aColor = Color.black;
                             break;
                         case POLYLINE:
-                        case POLYLINE_Z:
                             aColor = Color.black;
                             break;
                         case POLYGON:
-                        case POLYGON_M:
-                        case POLYGON_Z:
                         case IMAGE:
                             aColor = new Color(255, 251, 195);
                             break;
@@ -1361,7 +1358,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                         //this.jTabbedPane1.setEnabledAt(2, true);
                         this.jTabbedPane1.addTab("Chart", jPanel_Chart);
                         VectorLayer aLayer = (VectorLayer) _mapLayer;
-                        if (_mapLayer.getShapeType() == ShapeTypes.POLYGON) {
+                        if (_mapLayer.getShapeType() == ShapeFileType.POLYGON) {
                             this.jComboBox_ChartType.removeAllItems();
                             this.jComboBox_ChartType.addItem(ChartTypes.BAR_CHART.toString());
                             this.jComboBox_ChartType.addItem(ChartTypes.PIE_CHART.toString());

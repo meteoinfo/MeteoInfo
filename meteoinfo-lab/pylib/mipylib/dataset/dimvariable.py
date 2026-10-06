@@ -7,7 +7,7 @@
 from org.meteoinfo.ndarray import Range, Array, MAMath
 from org.meteoinfo.data.dimarray import DimensionType
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
-from org.meteoinfo.common import PointD
+from org.meteoinfo.common import PointZ
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from org.meteoinfo.data.meteodata import Attribute
 from ucar.nc2 import Attribute as NCAttribute
@@ -238,13 +238,13 @@ class DimVariable(object):
                         yidx = i
             if not xlim is None and not ylim is None:                
                 fromproj=KnownCoordinateSystems.geographic.world.WGS1984
-                inpt = PointD(xlim[0], ylim[0])
+                inpt = PointZ(xlim[0], ylim[0])
                 outpt1 = Reproject.reprojectPoint(inpt, fromproj, self.proj)
                 if len(xlim) == 1:
                     xlim = [outpt1.X]
                     ylim = [outpt1.Y]
                 else:
-                    inpt = PointD(xlim[1], ylim[1])
+                    inpt = PointZ(xlim[1], ylim[1])
                     outpt2 = Reproject.reprojectPoint(inpt, fromproj, self.proj)
                     xlim = [outpt1.X, outpt2.X]
                     ylim = [outpt1.Y, outpt2.Y]

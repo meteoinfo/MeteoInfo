@@ -340,15 +340,12 @@ public class Plot2D extends AbstractPlot2D {
         Shape shape = graphic.getShape();
         switch (shape.getShapeType()) {
             case POINT:
-            case POINT_M:
-            case POINT_Z:
                 this.drawPoint(g, graphic, (PointBreak) cb);
                 break;
             case TEXT:
                 this.drawText((ChartText)shape, g);
                 break;
             case POLYLINE:
-            case POLYLINE_Z:
                 if (shape instanceof CapPolylineShape){
                     this.drawCapPolyline(g, (CapPolylineShape) shape, (PolylineBreak) cb);
                 } else {
@@ -376,7 +373,6 @@ public class Plot2D extends AbstractPlot2D {
                 }
                 break;
             case POLYGON:
-            case POLYGON_Z:
                 for (Polygon poly : ((PolygonShape) shape).getPolygons()) {
                     drawPolygon(g, poly, (PolygonBreak) cb, false);
                 }
@@ -1177,7 +1173,6 @@ public class Plot2D extends AbstractPlot2D {
         float aX, aY;
         switch (aGraphic.getShape().getShapeType()) {
             case POINT:
-            case POINT_M:
                 PointShape aPS = (PointShape) aGraphic.getShape();
                 PointZ sp = this.transData.transform(aPS.getPoint());
                 aX = (float) sp.X;
@@ -1253,7 +1248,6 @@ public class Plot2D extends AbstractPlot2D {
         float aX, aY;
         switch (aGraphic.getShape().getShapeType()) {
             case POINT:
-            case POINT_M:
                 PointShape aPS = (PointShape) aGraphic.getShape();
                 sXY = projToScreen(aPS.getPoint().X, aPS.getPoint().Y, area);
                 aX = (float) sXY[0];

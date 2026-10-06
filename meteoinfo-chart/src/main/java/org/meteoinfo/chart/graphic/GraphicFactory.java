@@ -442,7 +442,7 @@ public class GraphicFactory {
      */
     public static GraphicCollection createLineString3D(Array xdata, Array ydata, Array zdata, ColorBreak cb) {
         GraphicCollection3D gc = new GraphicCollection3D();
-        PolylineZShape pls;
+        PolylineShape pls;
         List<PointZ> points = new ArrayList<>();
         double x, y, z = 0;
         IndexIterator xIter = xdata.getIndexIterator();
@@ -467,7 +467,7 @@ public class GraphicFactory {
                     if (points.size() == 1) {
                         points.add((PointZ) points.get(0).clone());
                     }
-                    pls = new PolylineZShape();
+                    pls = new PolylineShape();
                     pls.setPoints(points);
                     gc.add(new Graphic(pls, cb));
                     points = new ArrayList<>();
@@ -476,7 +476,7 @@ public class GraphicFactory {
                 }
             }
             if (points.size() > 1) {
-                pls = new PolylineZShape();
+                pls = new PolylineShape();
                 pls.setPoints(points);
                 gc.add(new Graphic(pls, cb));
             }
@@ -501,7 +501,7 @@ public class GraphicFactory {
                         if (points.size() == 1) {
                             points.add((PointZ) points.get(0).clone());
                         }
-                        pls = new PolylineZShape();
+                        pls = new PolylineShape();
                         pls.setPoints(points);
                         gc.add(new Graphic(pls, cb));
                         points = new ArrayList<>();
@@ -510,7 +510,7 @@ public class GraphicFactory {
                     }
                 }
                 if (points.size() > 1) {
-                    pls = new PolylineZShape();
+                    pls = new PolylineShape();
                     pls.setPoints(points);
                     gc.add(new Graphic(pls, cb));
                     points = new ArrayList<>();
@@ -532,7 +532,7 @@ public class GraphicFactory {
      */
     public static GraphicCollection createLineString3D(Array xdata, Array ydata, Array zdata, List<ColorBreak> cbs) {
         GraphicCollection3D gc = new GraphicCollection3D();
-        PolylineZShape pls;
+        PolylineShape pls;
         List<PointZ> points = new ArrayList<>();
         double x, y, z = 0;
         IndexIterator xIter = xdata.getIndexIterator();
@@ -559,7 +559,7 @@ public class GraphicFactory {
                     if (points.size() == 1) {
                         points.add((PointZ) points.get(0).clone());
                     }
-                    pls = new PolylineZShape();
+                    pls = new PolylineShape();
                     pls.setPoints(points);
                     cb = cbs.get(i);
                     gc.add(new Graphic(pls, cb));
@@ -570,7 +570,7 @@ public class GraphicFactory {
                 }
             }
             if (points.size() > 1) {
-                pls = new PolylineZShape();
+                pls = new PolylineShape();
                 pls.setPoints(points);
                 cb = cbs.get(i);
                 gc.add(new Graphic(pls, cb));
@@ -597,7 +597,7 @@ public class GraphicFactory {
                         if (points.size() == 1) {
                             points.add((PointZ) points.get(0).clone());
                         }
-                        pls = new PolylineZShape();
+                        pls = new PolylineShape();
                         pls.setPoints(points);
                         gc.add(new Graphic(pls, cb));
                         points = new ArrayList<>();
@@ -606,7 +606,7 @@ public class GraphicFactory {
                     }
                 }
                 if (points.size() > 1) {
-                    pls = new PolylineZShape();
+                    pls = new PolylineShape();
                     pls.setPoints(points);
                     gc.add(new Graphic(pls, cb));
                     points = new ArrayList<>();
@@ -627,7 +627,7 @@ public class GraphicFactory {
     public static GraphicCollection3D lineString3DToPipe(GraphicCollection3D lines, float radius,
                                                          int steps) {
         for (Graphic graphic : lines.getGraphics()) {
-            PolylineZShape shape = (PolylineZShape) graphic.getShape();
+            PolylineShape shape = (PolylineShape) graphic.getShape();
             PipeShape pipeShape = new PipeShape(shape, radius, steps);
             graphic.setShape(pipeShape);
         }
@@ -647,7 +647,7 @@ public class GraphicFactory {
     public static GraphicCollection createLineString3D(Array xdata, Array ydata, Array zdata, Array mdata,
             LegendScheme ls) {
         GraphicCollection3D gc = new GraphicCollection3D();
-        PolylineZShape pls;
+        PolylineShape pls;
         List<PointZ> points = new ArrayList<>();
         double x, y, z = 0, m;
         IndexIterator xIter = xdata.getIndexIterator();
@@ -678,7 +678,7 @@ public class GraphicFactory {
                     if (points.size() == 1) {
                         points.add((PointZ) points.get(0).clone());
                     }
-                    pls = new PolylineZShape();
+                    pls = new PolylineShape();
                     pls.setPoints(points);
                     gc.add(new Graphic(pls, cbs));
                     points = new ArrayList<>();
@@ -689,7 +689,7 @@ public class GraphicFactory {
                 }
             }
             if (points.size() > 1) {
-                pls = new PolylineZShape();
+                pls = new PolylineShape();
                 pls.setPoints(points);
                 gc.add(new Graphic(pls, cbs));
             }
@@ -718,7 +718,7 @@ public class GraphicFactory {
                         if (points.size() == 1) {
                             points.add((PointZ) points.get(0).clone());
                         }
-                        pls = new PolylineZShape();
+                        pls = new PolylineShape();
                         pls.setPoints(points);
                         gc.add(new Graphic(pls, cbs));
                         points = new ArrayList<>();
@@ -729,7 +729,7 @@ public class GraphicFactory {
                     }
                 }
                 if (points.size() > 1) {
-                    pls = new PolylineZShape();
+                    pls = new PolylineShape();
                     pls.setPoints(points);
                     gc.add(new Graphic(pls, cbs));
                     points = new ArrayList<>();
@@ -1262,7 +1262,7 @@ public class GraphicFactory {
         if (cbs.size() == xdata.getSize()) {
             int i = 0;
             while (xIter.hasNext()) {
-                ps = new PointZShape();
+                ps = new PointShape();
                 if (fixZ) {
                     ps.setPoint(new PointZ(xIter.getDoubleNext(), yIter.getDoubleNext(), z));
                 } else {
@@ -1279,7 +1279,7 @@ public class GraphicFactory {
             graphics.setLegendScheme(ls);
         } else {
             while (xIter.hasNext()) {
-                ps = new PointZShape();
+                ps = new PointShape();
                 if (fixZ) {
                     ps.setPoint(new PointZ(xIter.getDoubleNext(), yIter.getDoubleNext(), z));
                 } else {
@@ -1332,7 +1332,7 @@ public class GraphicFactory {
                 continue;
             }
 
-            ps = new PointZShape();
+            ps = new PointShape();
             ps.setPoint(new PointZ(x, y, z));
             cb = ls.findLegendBreak(c);
             graphics.add(new Graphic(ps, cb));
@@ -1398,7 +1398,7 @@ public class GraphicFactory {
             z0 = zdata.getDouble(0);
         }
         List<PointZ> pzs;
-        PolylineZShape pls;
+        PolylineShape pls;
         IndexIterator xIter = xdata.getIndexIterator();
         IndexIterator yIter = ydata.getIndexIterator();
         IndexIterator zIter = zdata.getIndexIterator();
@@ -1410,7 +1410,7 @@ public class GraphicFactory {
                 if (Double.isNaN(x) || Double.isNaN(y)) {
                     continue;
                 }
-                ps = new PointZShape();
+                ps = new PointShape();
                 pzs = new ArrayList<>();
                 if (fixZ) {
                     ps.setPoint(new PointZ(x, y, z0));
@@ -1426,7 +1426,7 @@ public class GraphicFactory {
                     pzs.add(new PointZ(x, y, z));
                 }
                 graphics.add(new Graphic(ps, cbs.get(i)));
-                pls = new PolylineZShape();
+                pls = new PolylineShape();
                 pls.setPoints(pzs);
                 if (sameStemColor) {
                     PolylineBreak nplb = (PolylineBreak) plb.clone();
@@ -1445,7 +1445,7 @@ public class GraphicFactory {
             graphics.setLegendScheme(ls);
         } else {
             while (xIter.hasNext()) {
-                ps = new PointZShape();
+                ps = new PointShape();
                 pzs = new ArrayList<>();
                 x = xIter.getDoubleNext();
                 y = yIter.getDoubleNext();
@@ -1460,7 +1460,7 @@ public class GraphicFactory {
                     pzs.add(new PointZ(x, y, z));
                 }
                 graphics.add(new Graphic(ps, cbs.get(0)));
-                pls = new PolylineZShape();
+                pls = new PolylineShape();
                 pls.setPoints(pzs);
                 if (sameStemColor) {
                     PolylineBreak nplb = (PolylineBreak) plb.clone();
@@ -1506,7 +1506,7 @@ public class GraphicFactory {
             z0 = zdata.getDouble(0);
         }
         List<PointZ> pzs;
-        PolylineZShape pls;
+        PolylineShape pls;
         IndexIterator xIter = xdata.getIndexIterator();
         IndexIterator yIter = ydata.getIndexIterator();
         IndexIterator zIter = zdata.getIndexIterator();
@@ -1517,7 +1517,7 @@ public class GraphicFactory {
             if (Double.isNaN(x) || Double.isNaN(y)) {
                 continue;
             }
-            ps = new PointZShape();
+            ps = new PointShape();
             pzs = new ArrayList<>();
             if (fixZ) {
                 ps.setPoint(new PointZ(x, y, z0));
@@ -1535,7 +1535,7 @@ public class GraphicFactory {
             c = cIter.getDoubleNext();
             cb = ls.findLegendBreak(c);
             graphics.add(new Graphic(ps, cb));
-            pls = new PolylineZShape();
+            pls = new PolylineShape();
             pls.setPoints(pzs);
             if (sameStemColor) {
                 PolylineBreak nplb = (PolylineBreak) plb.clone();
@@ -1692,7 +1692,7 @@ public class GraphicFactory {
         GraphicCollection3D graphics = new GraphicCollection3D();
         double x, y, z;
         int n = (int) xa.getSize();
-        PolygonZShape pgs;
+        PolygonShape pgs;
         PointZ p;
         List<PointZ> points = new ArrayList<>();
         if (xa.getRank() == 1) {
@@ -1706,7 +1706,7 @@ public class GraphicFactory {
                 points.add(new PointZ(x, y, z));
             }
             if (points.size() > 2) {
-                pgs = new PolygonZShape();
+                pgs = new PolygonShape();
                 pgs.setPoints(points);
                 Graphic aGraphic = new Graphic(pgs, pgb);
                 graphics.add(aGraphic);
@@ -1725,7 +1725,7 @@ public class GraphicFactory {
                     z = za.getDouble(idx);
                     points.add(new PointZ(x, y, z));
                 }
-                pgs = new PolygonZShape();
+                pgs = new PolygonShape();
                 pgs.setPoints(points);
                 graphics.add(new Graphic(pgs, pgb));
             }
@@ -1750,7 +1750,7 @@ public class GraphicFactory {
         GraphicCollection3D graphics = new GraphicCollection3D();
         double x, y, z;
         int n = (int) xa.getSize();
-        PolygonZShape pgs;
+        PolygonShape pgs;
         PointZ p;
         List<PointZ> points = new ArrayList<>();
         if (xa.getRank() == 1) {
@@ -1766,7 +1766,7 @@ public class GraphicFactory {
             }
             if (points.size() > 2) {
                 points.add((PointZ) points.get(0).clone());
-                pgs = new PolygonZShape();
+                pgs = new PolygonShape();
                 pgs.setPoints(points);
                 Graphic aGraphic = new Graphic(pgs, pgbs.get(ii));
                 graphics.add(aGraphic);
@@ -1787,7 +1787,7 @@ public class GraphicFactory {
                     points.add(new PointZ(x, y, z));
                 }
                 points.add((PointZ) points.get(0).clone());
-                pgs = new PolygonZShape();
+                pgs = new PolygonShape();
                 pgs.setPoints(points);
                 graphics.add(new Graphic(pgs, pgbs.get(i)));
             }
@@ -1810,7 +1810,7 @@ public class GraphicFactory {
         GraphicCollection3D graphics = new GraphicCollection3D();
         int vIdx;
         double x, y, z;
-        PolygonZShape pgs;
+        PolygonShape pgs;
         PointZ p;
         List<PointZ> points = new ArrayList<>();
         if (faces.getRank() == 1) {
@@ -1826,7 +1826,7 @@ public class GraphicFactory {
             }
             if (points.size() > 2) {
                 points.add((PointZ) points.get(0).clone());
-                pgs = new PolygonZShape();
+                pgs = new PolygonShape();
                 pgs.setPoints(points);
                 Graphic aGraphic = new Graphic(pgs, polygonBreak);
                 graphics.add(aGraphic);
@@ -1850,7 +1850,7 @@ public class GraphicFactory {
                     points.add(new PointZ(x, y, z));
                 }
                 points.add((PointZ) points.get(0).clone());
-                pgs = new PolygonZShape();
+                pgs = new PolygonShape();
                 pgs.setPoints(points);
                 graphics.add(new Graphic(pgs, polygonBreak));
             }
@@ -1950,7 +1950,7 @@ public class GraphicFactory {
                 z3 = za.getDouble(idx3);
                 z4 = za.getDouble(idx4);
                 z = (z1 + z2 + z3 + z4) / 4.0;
-                PolylineZShape ps = new PolylineZShape();
+                PolylineShape ps = new PolylineShape();
                 List<PointZ> points = new ArrayList<>();
                 points.add(new PointZ(xa.getDouble(idx1), ya.getDouble(idx1), z1));
                 points.add(new PointZ(xa.getDouble(idx3), ya.getDouble(idx3), z3));
@@ -1983,7 +1983,7 @@ public class GraphicFactory {
         double z1, z2, z3, z4, z;
         int idx1, idx2, idx3, idx4;
         PolylineBreak pb;
-        PolylineZShape ps;
+        PolylineShape ps;
         Graphic graphic;
         List<PointZ> points;
         if (!xa.getIndexPrivate().isFastIterator())
@@ -2002,7 +2002,7 @@ public class GraphicFactory {
                 z2 = za.getDouble(idx2);
                 z3 = za.getDouble(idx3);
                 z4 = za.getDouble(idx4);
-                ps = new PolylineZShape();
+                ps = new PolylineShape();
                 points = new ArrayList<>();
                 points.add(new PointZ(xa.getDouble(idx1), ya.getDouble(idx1), z1));
                 points.add(new PointZ(xa.getDouble(idx3), ya.getDouble(idx3), z3));
@@ -2012,7 +2012,7 @@ public class GraphicFactory {
                 pb = (PolylineBreak) ls.findLegendBreak(z);
                 graphic = new Graphic(ps, pb);
                 graphics.add(graphic);
-                ps = new PolylineZShape();
+                ps = new PolylineShape();
                 points = new ArrayList<>();
                 points.add(new PointZ(xa.getDouble(idx3), ya.getDouble(idx3), z3));
                 points.add(new PointZ(xa.getDouble(idx4), ya.getDouble(idx4), z4));
@@ -2022,7 +2022,7 @@ public class GraphicFactory {
                 pb = (PolylineBreak) ls.findLegendBreak(z);
                 graphic = new Graphic(ps, pb);
                 graphics.add(graphic);
-                ps = new PolylineZShape();
+                ps = new PolylineShape();
                 points = new ArrayList<>();
                 points.add(new PointZ(xa.getDouble(idx4), ya.getDouble(idx4), z4));
                 points.add(new PointZ(xa.getDouble(idx2), ya.getDouble(idx2), z2));
@@ -2032,7 +2032,7 @@ public class GraphicFactory {
                 pb = (PolylineBreak) ls.findLegendBreak(z);
                 graphic = new Graphic(ps, pb);
                 graphics.add(graphic);
-                ps = new PolylineZShape();
+                ps = new PolylineShape();
                 points = new ArrayList<>();
                 points.add(new PointZ(xa.getDouble(idx2), ya.getDouble(idx2), z2));
                 points.add(new PointZ(xa.getDouble(idx1), ya.getDouble(idx1), z1));
@@ -2081,7 +2081,7 @@ public class GraphicFactory {
                 z3 = za.getDouble(idx3);
                 z4 = za.getDouble(idx4);
                 z = (z1 + z2 + z3 + z4) / 4.0;
-                PolygonZShape ps = new PolygonZShape();
+                PolygonShape ps = new PolygonShape();
                 List<PointZ> points = new ArrayList<>();
                 points.add(new PointZ(xa.getDouble(idx1), ya.getDouble(idx1), z1));
                 points.add(new PointZ(xa.getDouble(idx3), ya.getDouble(idx3), z3));
@@ -3158,25 +3158,25 @@ public class GraphicFactory {
         ImageShape shape = (ImageShape)gg.getShape();
         Extent extent = new Extent(x.getDouble(0), x.getDouble((int) x.getSize() - 1),
                 y.getDouble(0), y.getDouble((int) y.getSize() - 1));
-        Extent3D ex3 = new Extent3D();
+        Extent ex3 = new Extent();
         List<PointZ> coords = new ArrayList<>();
         switch (zdir.toLowerCase()) {
             case "x":
-                ex3 = new Extent3D(offset, offset, extent.minX, extent.maxX, extent.minY, extent.maxY);
+                ex3 = new Extent(offset, offset, extent.minX, extent.maxX, extent.minY, extent.maxY);
                 coords.add(new PointZ(offset, extent.minX, extent.minY));
                 coords.add(new PointZ(offset, extent.maxX, extent.minY));
                 coords.add(new PointZ(offset, extent.maxX, extent.maxY));
                 coords.add(new PointZ(offset, extent.minX, extent.maxY));
                 break;
             case "y":
-                ex3 = new Extent3D(extent.minX, extent.maxX, offset, offset, extent.minY, extent.maxY);
+                ex3 = new Extent(extent.minX, extent.maxX, offset, offset, extent.minY, extent.maxY);
                 coords.add(new PointZ(extent.minX, offset, extent.minY));
                 coords.add(new PointZ(extent.maxX, offset, extent.minY));
                 coords.add(new PointZ(extent.maxX, offset, extent.maxY));
                 coords.add(new PointZ(extent.minX, offset, extent.maxY));
                 break;
             case "z":
-                ex3 = new Extent3D(extent.minX, extent.maxX, extent.minY, extent.maxY, offset, offset);
+                ex3 = new Extent(extent.minX, extent.maxX, extent.minY, extent.maxY, offset, offset);
                 coords.add(new PointZ(extent.minX, extent.minY, offset));
                 coords.add(new PointZ(extent.maxX, extent.minY, offset));
                 coords.add(new PointZ(extent.maxX, extent.maxY, offset));
@@ -3657,25 +3657,25 @@ public class GraphicFactory {
         }
         ImageShape shape = (ImageShape) gg.getShape();
         Extent extent = shape.getExtent();
-        Extent3D ex3 = new Extent3D();
+        Extent ex3 = new Extent();
         List<PointZ> coords = new ArrayList<>();
         switch (zdir.toLowerCase()) {
             case "x":
-                ex3 = new Extent3D(offset, offset, extent.minX, extent.maxX, extent.minY, extent.maxY);
+                ex3 = new Extent(offset, offset, extent.minX, extent.maxX, extent.minY, extent.maxY);
                 coords.add(new PointZ(offset, extent.minX, extent.minY));
                 coords.add(new PointZ(offset, extent.maxX, extent.minY));
                 coords.add(new PointZ(offset, extent.maxX, extent.maxY));
                 coords.add(new PointZ(offset, extent.minX, extent.maxY));
                 break;
             case "y":
-                ex3 = new Extent3D(extent.minX, extent.maxX, offset, offset, extent.minY, extent.maxY);
+                ex3 = new Extent(extent.minX, extent.maxX, offset, offset, extent.minY, extent.maxY);
                 coords.add(new PointZ(extent.minX, offset, extent.minY));
                 coords.add(new PointZ(extent.maxX, offset, extent.minY));
                 coords.add(new PointZ(extent.maxX, offset, extent.maxY));
                 coords.add(new PointZ(extent.minX, offset, extent.maxY));
                 break;
             case "xy":
-                ex3 = new Extent3D(sePoint.get(0).doubleValue(), sePoint.get(2).doubleValue(),
+                ex3 = new Extent(sePoint.get(0).doubleValue(), sePoint.get(2).doubleValue(),
                         sePoint.get(1).doubleValue(), sePoint.get(3).doubleValue(), extent.minY, extent.maxY);
                 coords.add(new PointZ(sePoint.get(0).doubleValue(), sePoint.get(1).doubleValue(), extent.minY));
                 coords.add(new PointZ(sePoint.get(2).doubleValue(), sePoint.get(1).doubleValue(), extent.minY));
@@ -3683,7 +3683,7 @@ public class GraphicFactory {
                 coords.add(new PointZ(sePoint.get(0).doubleValue(), sePoint.get(3).doubleValue(), extent.maxY));
                 break;
             case "z":
-                ex3 = new Extent3D(extent.minX, extent.maxX, extent.minY, extent.maxY, offset, offset);
+                ex3 = new Extent(extent.minX, extent.maxX, extent.minY, extent.maxY, offset, offset);
                 coords.add(new PointZ(extent.minX, extent.minY, offset));
                 coords.add(new PointZ(extent.maxX, extent.minY, offset));
                 coords.add(new PointZ(extent.maxX, extent.maxY, offset));
@@ -3723,7 +3723,7 @@ public class GraphicFactory {
         TextureShape ishape = new TextureShape();
         ishape.setFileName(fileName);
         ishape.setImage(image);
-        Extent3D ex3 = new Extent3D(extent.minX + xshift, extent.maxX + xshift, extent.minY, extent.maxY, offset, offset);
+        Extent ex3 = new Extent(extent.minX + xshift, extent.maxX + xshift, extent.minY, extent.maxY, offset, offset);
         List<PointZ> coords = new ArrayList<>();
         coords.add(new PointZ(extent.minX + xshift, extent.minY, offset));
         coords.add(new PointZ(extent.maxX + xshift, extent.minY, offset));
@@ -3891,7 +3891,7 @@ public class GraphicFactory {
             aLine = ContourLines.get(i);
             v = aLine.Value;
 
-            PolylineZShape aPolyline = new PolylineZShape();
+            PolylineShape aPolyline = new PolylineShape();
             PointZ aPoint;
             List<PointZ> pList = new ArrayList<>();
             switch (zdir) {
@@ -3989,7 +3989,7 @@ public class GraphicFactory {
             aLine = ContourLines.get(i);
             v = aLine.Value;
 
-            PolylineZShape aPolyline = new PolylineZShape();
+            PolylineShape aPolyline = new PolylineShape();
             PointZ aPoint;
             List<PointZ> pList = new ArrayList<>();
             for (int j = 0; j < aLine.PointList.size(); j++) {
@@ -4073,7 +4073,7 @@ public class GraphicFactory {
             aLine = ContourLines.get(i);
             v = aLine.Value;
 
-            PolylineZShape aPolyline = new PolylineZShape();
+            PolylineShape aPolyline = new PolylineShape();
             PointZ aPoint;
             List<PointZ> pList = new ArrayList<>();
             switch (zdir) {
@@ -4269,7 +4269,7 @@ public class GraphicFactory {
             aLine = ContourLines.get(i);
             v = aLine.Value;
 
-            PolylineZShape aPolyline = new PolylineZShape();
+            PolylineShape aPolyline = new PolylineShape();
             PointZ aPoint;
             List<PointZ> pList = new ArrayList<>();
             switch (zdir) {
@@ -4371,7 +4371,7 @@ public class GraphicFactory {
             aLine = ContourLines.get(i);
             v = aLine.Value;
 
-            PolylineZShape aPolyline = new PolylineZShape();
+            PolylineShape aPolyline = new PolylineShape();
             PointZ aPoint;
             List<PointZ> pList = new ArrayList<>();
             switch (zdir) {
@@ -4483,7 +4483,7 @@ public class GraphicFactory {
                 GraphicCollection3D graphics = new GraphicCollection3D();
                 ColorBreak cb;
                 for (PolyLine line : contourLines) {
-                    PolylineZShape shape = new PolylineZShape();
+                    PolylineShape shape = new PolylineShape();
                     List<PointZ> points = new ArrayList<>();
                     for (wcontour.global.PointD p : line.PointList) {
                         points.add(new PointZ(x, p.X, p.Y));
@@ -4523,7 +4523,7 @@ public class GraphicFactory {
                 GraphicCollection3D graphics = new GraphicCollection3D();
                 ColorBreak cb;
                 for (PolyLine line : contourLines) {
-                    PolylineZShape shape = new PolylineZShape();
+                    PolylineShape shape = new PolylineShape();
                     List<PointZ> points = new ArrayList<>();
                     for (wcontour.global.PointD p : line.PointList) {
                         points.add(new PointZ(p.X, y, p.Y));
@@ -4563,7 +4563,7 @@ public class GraphicFactory {
                 GraphicCollection3D graphics = new GraphicCollection3D();
                 ColorBreak cb;
                 for (PolyLine line : contourLines) {
-                    PolylineZShape shape = new PolylineZShape();
+                    PolylineShape shape = new PolylineShape();
                     List<PointZ> points = new ArrayList<>();
                     for (wcontour.global.PointD p : line.PointList) {
                         points.add(new PointZ(p.X, p.Y, z));
@@ -4640,7 +4640,7 @@ public class GraphicFactory {
         GraphicCollection3D graphics = new GraphicCollection3D();
         ColorBreak cb;
         for (PolyLine line : contourLines) {
-            PolylineZShape pls = new PolylineZShape();
+            PolylineShape pls = new PolylineShape();
             List<PointZ> points = new ArrayList<>();
             for (wcontour.global.PointD p : line.PointList) {
                 points.add(new PointZ(p.X, p.Y, interpolator.value(p.X, p.Y)));
@@ -4714,7 +4714,7 @@ public class GraphicFactory {
                 ColorBreak cb;
                 PointZ pz;
                 for (PolyLine line : contourLines) {
-                    PolylineZShape shape = new PolylineZShape();
+                    PolylineShape shape = new PolylineShape();
                     List<PointZ> points = new ArrayList<>();
                     for (wcontour.global.PointD p : line.PointList) {
                         x = p.X;
@@ -4801,7 +4801,7 @@ public class GraphicFactory {
                 GraphicCollection3D graphics = new GraphicCollection3D();
                 ColorBreak cb;
                 for (wcontour.global.Polygon polygon : contourPolygons) {
-                    PolygonZShape shape = new PolygonZShape();
+                    PolygonShape shape = new PolygonShape();
                     List<PointZ> points = new ArrayList<>();
                     for (wcontour.global.PointD p : polygon.OutLine.PointList) {
                         points.add(new PointZ(x, p.X, p.Y));
@@ -4877,7 +4877,7 @@ public class GraphicFactory {
                 GraphicCollection3D graphics = new GraphicCollection3D();
                 ColorBreak cb;
                 for (wcontour.global.Polygon polygon : contourPolygons) {
-                    PolygonZShape shape = new PolygonZShape();
+                    PolygonShape shape = new PolygonShape();
                     List<PointZ> points = new ArrayList<>();
                     for (wcontour.global.PointD p : polygon.OutLine.PointList) {
                         points.add(new PointZ(p.X, y, p.Y));
@@ -4953,7 +4953,7 @@ public class GraphicFactory {
                 GraphicCollection3D graphics = new GraphicCollection3D();
                 ColorBreak cb;
                 for (wcontour.global.Polygon polygon : contourPolygons) {
-                    PolygonZShape shape = new PolygonZShape();
+                    PolygonShape shape = new PolygonShape();
                     List<PointZ> points = new ArrayList<>();
                     for (wcontour.global.PointD p : polygon.OutLine.PointList) {
                         points.add(new PointZ(p.X, p.Y, z));
@@ -5065,7 +5065,7 @@ public class GraphicFactory {
                 ColorBreak cb;
                 PointZ pz;
                 for (wcontour.global.Polygon polygon : contourPolygons) {
-                    PolygonZShape shape = new PolygonZShape();
+                    PolygonShape shape = new PolygonShape();
                     List<PointZ> points = new ArrayList<>();
                     for (wcontour.global.PointD p : polygon.OutLine.PointList) {
                         x = p.X;
@@ -5671,7 +5671,7 @@ public class GraphicFactory {
             if (!GeoComputation.isClockwise(pList)) {
                 Collections.reverse(pList);
             }
-            PolygonZShape aPolygonShape = new PolygonZShape();
+            PolygonShape aPolygonShape = new PolygonShape();
             aPolygonShape.setPoints(pList);
             aPolygonShape.setExtent(GeometryUtil.getPointsExtent(pList));
             aPolygonShape.lowValue = v;
@@ -5855,7 +5855,7 @@ public class GraphicFactory {
             if (!GeoComputation.isClockwise(pList)) {
                 Collections.reverse(pList);
             }
-            PolygonZShape aPolygonShape = new PolygonZShape();
+            PolygonShape aPolygonShape = new PolygonShape();
             aPolygonShape.setPoints(pList);
             aPolygonShape.setExtent(GeometryUtil.getPointsExtent(pList));
             aPolygonShape.lowValue = v;
@@ -6020,7 +6020,7 @@ public class GraphicFactory {
             if (!GeoComputation.isClockwise(pList)) {
                 Collections.reverse(pList);
             }
-            PolygonZShape aPolygonShape = new PolygonZShape();
+            PolygonShape aPolygonShape = new PolygonShape();
             aPolygonShape.setPoints(pList);
             aPolygonShape.setExtent(GeometryUtil.getPointsExtent(pList));
             aPolygonShape.lowValue = v;
@@ -6203,7 +6203,7 @@ public class GraphicFactory {
             if (!GeoComputation.isClockwise(pList)) {
                 Collections.reverse(pList);
             }
-            PolygonZShape aPolygonShape = new PolygonZShape();
+            PolygonShape aPolygonShape = new PolygonShape();
             aPolygonShape.setPoints(pList);
             aPolygonShape.setExtent(GeometryUtil.getPointsExtent(pList));
             aPolygonShape.lowValue = v;
@@ -6720,7 +6720,7 @@ public class GraphicFactory {
             }
         }
         if (where == null) {
-            PolygonZShape pgs = new PolygonZShape();
+            PolygonShape pgs = new PolygonShape();
             List<PointZ> points = new ArrayList<>();
             switch (zdir) {
                 case "x":
@@ -6772,7 +6772,7 @@ public class GraphicFactory {
             for (List<Integer> index : idxs) {
                 int nn = index.size();
                 if (nn >= 2) {
-                    PolygonZShape pgs = new PolygonZShape();
+                    PolygonShape pgs = new PolygonShape();
                     List<PointZ> points = new ArrayList<>();
                     int ii;
                     switch (zdir) {
@@ -6844,7 +6844,7 @@ public class GraphicFactory {
         if (!y2data.getIndexPrivate().isFastIterator())
             y2data = y2data.copy();
         if (where == null) {
-            PolygonZShape pgs = new PolygonZShape();
+            PolygonShape pgs = new PolygonShape();
             List<PointZ> points = new ArrayList<>();
             switch (zdir) {
                 case "x":
@@ -6903,7 +6903,7 @@ public class GraphicFactory {
             for (List<Integer> index : idxs) {
                 int nn = index.size();
                 if (nn >= 2) {
-                    PolygonZShape pgs = new PolygonZShape();
+                    PolygonShape pgs = new PolygonShape();
                     List<PointZ> points = new ArrayList<>();
                     int ii;
                     switch (zdir) {
@@ -7341,7 +7341,7 @@ public class GraphicFactory {
                     if (line.PointList.size() < minPoints)
                         continue;
 
-                    PolylineZShape shape = new PolylineZShape();
+                    PolylineShape shape = new PolylineShape();
                     List<PointZ> points = new ArrayList<>();
                     for (Point3D point : line.PointList) {
                         points.add(new PointZ(point.X, point.Y, point.Z));
@@ -7358,7 +7358,7 @@ public class GraphicFactory {
                     if (line.PointList.size() < minPoints)
                         continue;
 
-                    PolylineZShape shape = new PolylineZShape();
+                    PolylineShape shape = new PolylineShape();
                     List<PointZ> points = new ArrayList<>();
                     ColorBreakCollection cbs = new ColorBreakCollection();
                     for (Point3D point : line.PointList) {
@@ -7382,7 +7382,7 @@ public class GraphicFactory {
                     if (line.PointList.size() < minPoints)
                         continue;
 
-                    PolylineZShape shape = new PolylineZShape();
+                    PolylineShape shape = new PolylineShape();
                     List<PointZ> points = new ArrayList<>();
                     for (Point3D point : line.PointList) {
                         points.add(new PointZ(point.X, point.Y, point.Z));
@@ -7399,7 +7399,7 @@ public class GraphicFactory {
                     if (line.PointList.size() < minPoints)
                         continue;
 
-                    PolylineZShape shape = new PolylineZShape();
+                    PolylineShape shape = new PolylineShape();
                     List<PointZ> points = new ArrayList<>();
                     ColorBreakCollection cbs = new ColorBreakCollection();
                     for (Point3D point : line.PointList) {
@@ -7460,7 +7460,7 @@ public class GraphicFactory {
                     if (line.PointList.size() < minPoints)
                         continue;
 
-                    PolylineZShape shape = new PolylineZShape();
+                    PolylineShape shape = new PolylineShape();
                     List<PointZ> points = new ArrayList<>();
                     for (Point3D point : line.PointList) {
                         points.add(new PointZ(point.X, point.Y, point.Z));
@@ -7478,7 +7478,7 @@ public class GraphicFactory {
                     if (line.PointList.size() < minPoints)
                         continue;
 
-                    PolylineZShape shape = new PolylineZShape();
+                    PolylineShape shape = new PolylineShape();
                     List<PointZ> points = new ArrayList<>();
                     ColorBreakCollection cbs = new ColorBreakCollection();
                     for (Point3D point : line.PointList) {
@@ -7503,7 +7503,7 @@ public class GraphicFactory {
                     if (line.PointList.size() < minPoints)
                         continue;
 
-                    PolylineZShape shape = new PolylineZShape();
+                    PolylineShape shape = new PolylineShape();
                     List<PointZ> points = new ArrayList<>();
                     for (Point3D point : line.PointList) {
                         points.add(new PointZ(point.X, point.Y, point.Z));
@@ -7521,7 +7521,7 @@ public class GraphicFactory {
                     if (line.PointList.size() < minPoints)
                         continue;
 
-                    PolylineZShape shape = new PolylineZShape();
+                    PolylineShape shape = new PolylineShape();
                     List<PointZ> points = new ArrayList<>();
                     ColorBreakCollection cbs = new ColorBreakCollection();
                     for (Point3D point : line.PointList) {
@@ -7585,7 +7585,7 @@ public class GraphicFactory {
         ColorBreak cb = ls.getLegendBreak(0);
         if (cdata == null) {
             for (PolyLine line : streamlines) {
-                PolylineZShape shape = new PolylineZShape();
+                PolylineShape shape = new PolylineShape();
                 List<PointZ> points = new ArrayList<>();
                 PointZ p;
                 if (zdir.equals("x")) {
@@ -7619,7 +7619,7 @@ public class GraphicFactory {
         } else {
             cdata = cdata.copyIfView();
             for (PolyLine line : streamlines) {
-                PolylineZShape shape = new PolylineZShape();
+                PolylineShape shape = new PolylineShape();
                 List<PointZ> points = new ArrayList<>();
                 PointZ p;
                 ColorBreakCollection cbs = new ColorBreakCollection();
@@ -7851,7 +7851,7 @@ public class GraphicFactory {
         ColorBreak cb = ls.getLegendBreak(0);
         if (data == null) {
             for (PolyLine line : streamlines) {
-                PolylineZShape shape = new PolylineZShape();
+                PolylineShape shape = new PolylineShape();
                 List<PointZ> points = new ArrayList<>();
                 PointZ p;
                 if (zDir.equals("x")) {
@@ -7885,7 +7885,7 @@ public class GraphicFactory {
         } else {
             data = data.copyIfView();
             for (PolyLine line : streamlines) {
-                PolylineZShape shape = new PolylineZShape();
+                PolylineShape shape = new PolylineShape();
                 List<PointZ> points = new ArrayList<>();
                 PointZ p;
                 ColorBreakCollection cbs = new ColorBreakCollection();
@@ -7988,7 +7988,7 @@ public class GraphicFactory {
         double y2 = xySlice.get(3).doubleValue();
         if (data == null) {
             for (PolyLine line : streamlines) {
-                PolylineZShape shape = new PolylineZShape();
+                PolylineShape shape = new PolylineShape();
                 List<PointZ> points = new ArrayList<>();
                 PointZ p;
                 for (int j = 0; j < line.PointList.size(); j++) {
@@ -8004,7 +8004,7 @@ public class GraphicFactory {
         } else {
             data = data.copyIfView();
             for (PolyLine line : streamlines) {
-                PolylineZShape shape = new PolylineZShape();
+                PolylineShape shape = new PolylineShape();
                 List<PointZ> points = new ArrayList<>();
                 PointZ p;
                 ColorBreakCollection cbs = new ColorBreakCollection();
@@ -8070,7 +8070,7 @@ public class GraphicFactory {
         ColorBreak cb = ls.getLegendBreak(0);
         if (data == null) {
             for (PolyLine line : streamlines) {
-                PolylineZShape shape = new PolylineZShape();
+                PolylineShape shape = new PolylineShape();
                 List<PointZ> points = new ArrayList<>();
                 PointZ p;
                 for (int j = 0; j < line.PointList.size(); j++) {
@@ -8091,7 +8091,7 @@ public class GraphicFactory {
         } else {
             data = data.copyIfView();
             for (PolyLine line : streamlines) {
-                PolylineZShape shape = new PolylineZShape();
+                PolylineShape shape = new PolylineShape();
                 List<PointZ> points = new ArrayList<>();
                 PointZ p;
                 ColorBreakCollection cbs = new ColorBreakCollection();
@@ -9953,7 +9953,7 @@ public class GraphicFactory {
         graphics.setAlphaMax(alphaMax);
         graphics.updateColors();
 
-        Extent3D extent3D = new Extent3D();
+        Extent extent3D = new Extent();
         extent3D.minX = xa.getDouble(0);
         extent3D.maxX = xa.getDouble((int) xa.getSize() - 1);
         extent3D.minY = ya.getDouble(0);
@@ -9989,7 +9989,7 @@ public class GraphicFactory {
         graphics.setAlphaMax(alphaMax);
         graphics.updateColors();
 
-        Extent3D extent3D = new Extent3D();
+        Extent extent3D = new Extent();
         extent3D.minX = xa.getDouble(0);
         extent3D.maxX = xa.getDouble((int) xa.getSize() - 1);
         extent3D.minY = ya.getDouble(0);
@@ -10059,7 +10059,7 @@ public class GraphicFactory {
         graphics.setOpacityTransferFunction(opacityTransferFunction);
         graphics.updateColors();
 
-        Extent3D extent3D = new Extent3D();
+        Extent extent3D = new Extent();
         extent3D.minX = xa.getDouble(0);
         extent3D.maxX = xa.getDouble((int) xa.getSize() - 1);
         extent3D.minY = ya.getDouble(0);
@@ -10095,7 +10095,7 @@ public class GraphicFactory {
         graphics.setAlphaMax(alphaMax);
         graphics.updateColors();
 
-        Extent3D extent3D = new Extent3D();
+        Extent extent3D = new Extent();
         extent3D.minX = xa.getDouble(0);
         extent3D.maxX = xa.getDouble((int) xa.getSize() - 1);
         extent3D.minY = ya.getDouble(0);
@@ -10216,7 +10216,7 @@ public class GraphicFactory {
             }
         }
 
-        Extent3D extent3D = new Extent3D();
+        Extent extent3D = new Extent();
         extent3D.minX = xa.getDouble(0);
         extent3D.maxX = xa.getDouble((int) xa.getSize() - 1);
         extent3D.minY = ya.getDouble(0);

@@ -16,6 +16,7 @@ package org.meteoinfo.geo.layer;
 import org.meteoinfo.common.*;
 import org.meteoinfo.chart.graphic.GeoGraphicCollection;
 import org.meteoinfo.geo.mapdata.ShapeFileManage;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.common.colors.ColorUtil;
@@ -100,7 +101,7 @@ public class VectorLayer extends MapLayer {
      *
      * @param shapeType Shape type
      */
-    public VectorLayer(ShapeTypes shapeType) {
+    public VectorLayer(ShapeFileType shapeType) {
         super();
         this._layerType = LayerTypes.VECTOR_LAYER;
         this.setShapeType(shapeType);
@@ -111,7 +112,7 @@ public class VectorLayer extends MapLayer {
         _chartSet = new ChartSet();
         _chartPoints = new ArrayList<>();
         shapes = new ArrayList<>();
-        LegendScheme ls = LegendManage.createSingleSymbolLegendScheme(shapeType);
+        LegendScheme ls = LegendManage.createSingleSymbolLegendScheme(shapeType.toShapeType());
         super.setLegendScheme(ls);
         //_isEditing = false;
     }
@@ -1516,7 +1517,7 @@ public class VectorLayer extends MapLayer {
             shapes = (List<Shape>) this.shapes;
         }
 
-        VectorLayer newLayer = new VectorLayer(ShapeTypes.POLYGON);
+        VectorLayer newLayer = new VectorLayer(ShapeFileType.POLYGON);
         newLayer.setProjInfo(this.getProjInfo());
 
         if (isMerge) {
@@ -1564,7 +1565,7 @@ public class VectorLayer extends MapLayer {
             shapes = (List<Shape>) this.shapes;
         }
 
-        VectorLayer newLayer = new VectorLayer(ShapeTypes.POLYGON);
+        VectorLayer newLayer = new VectorLayer(ShapeFileType.POLYGON);
         newLayer.setProjInfo(this.getProjInfo());
 
         if (shapes.size() == 1) {
@@ -2630,9 +2631,7 @@ public class VectorLayer extends MapLayer {
                     handler.startElement("", "", "coordinates", atts);
                     for (PointZ point : line.getPointList()) {
                         str = String.valueOf(point.X) + "," + String.valueOf(point.Y);
-                        if (this.getShapeType() == ShapeTypes.POLYLINE_Z) {
-                            str = str + "," + String.valueOf(((PolylineZShape) shp).getZArray()[i]);
-                        }
+                        str = str + "," + String.valueOf(point.Z);
                         str = str + " ";
                         handler.characters(str.toCharArray(), 0, str.length());
                         i += 1;
@@ -2791,9 +2790,7 @@ public class VectorLayer extends MapLayer {
                 handler.startElement("", "", "Point", atts);
                 handler.startElement("", "", "coordinates", atts);
                 str = String.valueOf(pgs.getPoint().X) + "," + String.valueOf(pgs.getPoint().Y);
-                if (this.getShapeType() == ShapeTypes.POINT_Z) {
-                    str = str + "," + String.valueOf(((PointZShape) shp).getZ());
-                }
+                str = str + "," + String.valueOf(pgs.getPoint().Z);
                 handler.characters(str.toCharArray(), 0, str.length());
                 handler.endElement("", "", "coordinates");    //coordinates                    
                 handler.endElement("", "", "Point");    //Point
@@ -2982,8 +2979,8 @@ public class VectorLayer extends MapLayer {
      */
     public LegendScheme createLegendScheme(LegendType aLT, String fieldName) {
         double min, max;
-        ShapeTypes aST = this.getShapeType();
-        LegendScheme aLS = new LegendScheme(this.getShapeType());
+        ShapeFileType aST = this.getShapeType();
+        LegendScheme aLS = new LegendScheme(aST.toShapeType());
 
         min = aLS.getMinValue();
         max = aLS.getMaxValue();
@@ -3011,7 +3008,7 @@ public class VectorLayer extends MapLayer {
                         break;
                 }
 
-                aLS = LegendManage.createSingleSymbolLegendScheme(aST, aColor, size);
+                aLS = LegendManage.createSingleSymbolLegendScheme(aST.toShapeType(), aColor, size);
                 break;
             case UNIQUE_VALUE:
                 Color[] colors;
@@ -3051,11 +3048,11 @@ public class VectorLayer extends MapLayer {
                 }
 
                 if (isDateField) {
-                    aLS = LegendManage.createUniqValueLegendScheme(valueList, captions, newcolors, aST, min,
+                    aLS = LegendManage.createUniqValueLegendScheme(valueList, captions, newcolors, aST.toShapeType(), min,
                             max, aLS.getHasNoData(), aLS.getUndefValue());
                 } else {
                     aLS = LegendManage.createUniqValueLegendScheme(valueList, newcolors,
-                            aST, min, max, aLS.getHasNoData(), aLS.getUndefValue());
+                            aST.toShapeType(), min, max, aLS.getHasNoData(), aLS.getUndefValue());
                 }
 
                 aLS.setFieldName(fieldName);
@@ -3079,7 +3076,7 @@ public class VectorLayer extends MapLayer {
                 colors = LegendManage.createRainBowColors(CValues.length + 1);
 
                 aLS = LegendManage.createGraduatedLegendScheme(CValues, colors,
-                        aST, min, max, aLS.getHasNoData(), aLS.getUndefValue());
+                        aST.toShapeType(), min, max, aLS.getHasNoData(), aLS.getUndefValue());
                 aLS.setFieldName(fieldName);
                 break;
         }

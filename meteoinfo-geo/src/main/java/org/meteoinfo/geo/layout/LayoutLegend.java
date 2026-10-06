@@ -612,7 +612,6 @@ public class LayoutLegend extends LayoutElement {
                         Draw.drawPoint((PointF) aP.clone(), aPB, g);
                         break;
                     case POLYLINE:
-                    case POLYLINE_Z:
                         PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
                         caption = aPLB.getCaption();
                         Draw.drawPolylineSymbol((PointF) aP.clone(), width, height, aPLB, g);
@@ -727,7 +726,6 @@ public class LayoutLegend extends LayoutElement {
                     }
                     break;
                 case POLYLINE:
-                case POLYLINE_Z:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
@@ -921,7 +919,6 @@ public class LayoutLegend extends LayoutElement {
                     FillColor = aPB.getColor();
                     break;
                 case POLYLINE:
-                case POLYLINE_Z:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
@@ -1115,7 +1112,6 @@ public class LayoutLegend extends LayoutElement {
                     }
                     break;
                 case POLYLINE:
-                case POLYLINE_Z:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
@@ -1286,7 +1282,6 @@ public class LayoutLegend extends LayoutElement {
                     FillColor = aPB.getColor();
                     break;
                 case POLYLINE:
-                case POLYLINE_Z:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();

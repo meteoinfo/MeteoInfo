@@ -17,9 +17,9 @@ package org.meteoinfo.geometry.shape;
 import java.util.ArrayList;
 
 import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.CoordinateXYZM;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointZ;
 
 /**
@@ -54,7 +54,7 @@ public class PointShape extends Shape implements Cloneable{
      */
     public PointShape(Geometry geometry) {
         Coordinate c = geometry.getCoordinate();
-        this.setPoint(new PointZ(c.x, c.y));
+        this.setPoint(new PointZ(c.x, c.y, c.getZ()));
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -71,8 +71,8 @@ public class PointShape extends Shape implements Cloneable{
      */
     @Override
     public Geometry toGeometry(GeometryFactory factory){
-        PointD point = this.getPoint();
-        Coordinate c = new Coordinate(point.X, point.Y);        
+        PointZ point = this.getPoint();
+        Coordinate c = new Coordinate(point.X, point.Y, point.Z);
         return factory.createPoint(c);
     };
 
@@ -94,6 +94,22 @@ public class PointShape extends Shape implements Cloneable{
         this.points = new ArrayList<>();
         this.points.add(point);
         updateExtent();
+    }
+
+    /**
+     * Get M value
+     * @return M value
+     */
+    public double getM(){
+        return (this.getPoint()).M;
+    }
+
+    /**
+     * Get Z value
+     * @return Z value
+     */
+    public double getZ(){
+        return (this.getPoint()).Z;
     }
 
     // </editor-fold>

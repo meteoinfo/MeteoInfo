@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.geo.mapview;
 
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 
 /**
  *
@@ -147,7 +147,7 @@ public class FrmVerticeEdit extends javax.swing.JDialog {
      * Set point
      * @param point Point
      */
-    public void setPoint(PointD point) {
+    public void setPoint(PointZ point) {
         this.jTextField_X.setText(String.valueOf(point.X));
         this.jTextField_Y.setText(String.valueOf(point.Y));
     }

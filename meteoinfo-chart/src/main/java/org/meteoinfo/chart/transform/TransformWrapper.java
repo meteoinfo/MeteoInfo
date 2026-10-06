@@ -1,7 +1,5 @@
 package org.meteoinfo.chart.transform;
 
-
-import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointZ;
 
 /**

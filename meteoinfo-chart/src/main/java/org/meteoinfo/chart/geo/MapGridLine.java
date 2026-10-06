@@ -8,7 +8,6 @@ import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.shape.Polyline;
 import org.meteoinfo.geometry.shape.PolylineShape;
-import org.meteoinfo.geometry.shape.PolylineZShape;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
 import org.meteoinfo.projection.ProjectionUtil;
@@ -333,7 +332,7 @@ public class MapGridLine extends GridLine {
                 List<PointZ> points1 = polylineShape.getPolylines().get(1).getPointList();
                 Collections.reverse(points1);
                 points.addAll(points1);
-                line = new PolylineZShape();
+                line = new PolylineShape();
                 line.setPoints(points);
                 graphic = new Graphic(line, this.lineBreak);
             }

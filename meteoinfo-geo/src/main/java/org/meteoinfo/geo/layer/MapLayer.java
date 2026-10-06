@@ -14,6 +14,7 @@
 package org.meteoinfo.geo.layer;
 
 import org.meteoinfo.common.Extent;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
@@ -28,7 +29,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
      // <editor-fold desc="Variables">
  
      protected LayerTypes _layerType;
-     protected ShapeTypes _shapeType;
+     protected ShapeFileType _shapeType;
      protected int _handle;
      protected String _layerName;
      protected String _fileName;
@@ -79,7 +80,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
       *
       * @return Shape type
       */
-     public ShapeTypes getShapeType() {
+     public ShapeFileType getShapeType() {
          return _shapeType;
      }
  
@@ -88,7 +89,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
       *
       * @param st Shape type
       */
-     public void setShapeType(ShapeTypes st) {
+     public void setShapeType(ShapeFileType st) {
          _shapeType = st;
      }
  

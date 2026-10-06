@@ -5,7 +5,7 @@ import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.GraphicFactory;
 import org.meteoinfo.chart.jogl.GLPlot;
 import org.meteoinfo.chart.jogl.Lighting;
-import org.meteoinfo.common.Extent3D;
+import org.meteoinfo.common.Extent;
 import org.meteoinfo.geometry.legend.PointBreak;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.math.ArrayMath;
@@ -53,7 +53,7 @@ public class SphereTest1 {
         SphereTest1 test = new SphereTest1();
         GraphicCollection3D graphics = test.createSpheres();
         plot.addGraphic(graphics);
-        plot.setDrawExtent(new Extent3D(-2, 2, -2, 2, -2, 2));
+        plot.setDrawExtent(new Extent(-2, 2, -2, 2, -2, 2));
         plot.setAntialias(true);
         Lighting lighting = plot.getLighting();
         lighting.setEnable(true);

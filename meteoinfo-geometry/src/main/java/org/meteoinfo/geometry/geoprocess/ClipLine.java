@@ -14,7 +14,7 @@
 package org.meteoinfo.geometry.geoprocess;
 
  import org.meteoinfo.common.Extent;
- import org.meteoinfo.common.PointD;
+ import org.meteoinfo.common.PointZ;
 
  /**
  *
@@ -101,7 +101,7 @@ public class ClipLine {
      * @param aPoint The Point
      * @return If is inside
      */
-    public boolean isInside(PointD aPoint) {
+    public boolean isInside(PointZ aPoint) {
         boolean isIn = false;
         if (_isLon) {
             if (_isLeftOrTop) {
@@ -128,10 +128,10 @@ public class ClipLine {
      */
     public boolean isExtentCross(Extent aExtent) {
         if (_isLeftOrTop) {
-            PointD aPoint = new PointD(aExtent.minX, aExtent.maxY);
+            PointZ aPoint = new PointZ(aExtent.minX, aExtent.maxY);
             return isInside(aPoint);
         } else {
-            PointD aPoint = new PointD(aExtent.maxX, aExtent.minY);
+            PointZ aPoint = new PointZ(aExtent.maxX, aExtent.minY);
             return isInside(aPoint);
         }
     }
@@ -144,10 +144,10 @@ public class ClipLine {
      */
     public boolean isExtentInside(Extent aExtent) {
         if (_isLeftOrTop) {
-            PointD aPoint = new PointD(aExtent.maxX, aExtent.minY);
+            PointZ aPoint = new PointZ(aExtent.maxX, aExtent.minY);
             return isInside(aPoint);
         } else {
-            PointD aPoint = new PointD(aExtent.minX, aExtent.maxY);
+            PointZ aPoint = new PointZ(aExtent.minX, aExtent.maxY);
             return isInside(aPoint);
         }
     }

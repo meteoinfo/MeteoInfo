@@ -11,6 +11,7 @@ import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.*;
 import org.meteoinfo.geo.layout.*;
 import org.meteoinfo.geo.legend.LayersLegend;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geo.meteodata.*;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.LegendType;
@@ -1737,7 +1738,7 @@ public class FrmSectionPlot extends javax.swing.JFrame {
         }
 
         if (aLayer != null) {
-            if (aLayer.getShapeType() == ShapeTypes.POLYGON) {
+            if (aLayer.getShapeType() == ShapeFileType.POLYGON) {
                 _lastAddedLayerHandle = this.layersLegend1.getActiveMapFrame().insertPolygonLayer(aLayer);
             } else {
                 _lastAddedLayerHandle = this.layersLegend1.getActiveMapFrame().insertPolylineLayer(aLayer);

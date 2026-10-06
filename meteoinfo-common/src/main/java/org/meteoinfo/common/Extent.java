@@ -23,23 +23,12 @@ import java.awt.geom.Rectangle2D;
  */
 public class Extent implements Cloneable {
     // <editor-fold desc="Variables">
-    /// <summary>
-    /// minimun x
-    /// </summary>
-
     public double minX;
-    /// <summary>
-    /// maximum x
-    /// </summary>
     public double maxX;
-    /// <summary>
-    /// minimum y
-    /// </summary>
     public double minY;
-    /// <summary>
-    /// maximum y
-    /// </summary>
     public double maxY;
+    public double minZ;
+    public double maxZ;
 
     public static Extent Identity = new Extent(0, 1, 0, 1);
     // </editor-fold>
@@ -80,6 +69,42 @@ public class Extent implements Cloneable {
     /**
      * Constructor
      *
+     * @param xMin Minimum X
+     * @param xMax Maximum X
+     * @param yMin Minimum Y
+     * @param yMax Maximum Y
+     * @param zMin Minimum Z
+     * @param zMax Maximum Z
+     */
+    public Extent(double xMin, double xMax, double yMin, double yMax, double zMin, double zMax) {
+        if (xMin > xMax) {
+            minX = xMax;
+            maxX = xMin;
+        } else {
+            minX = xMin;
+            maxX = xMax;
+        }
+
+        if (yMin > yMax) {
+            minY = yMax;
+            maxY = yMin;
+        } else {
+            minY = yMin;
+            maxY = yMax;
+        }
+
+        if (zMin > zMax) {
+            minZ = zMax;
+            maxZ = zMin;
+        } else {
+            minZ = zMin;
+            maxZ = zMax;
+        }
+    }
+
+    /**
+     * Constructor
+     *
      * @param aExtent The extent
      */
     public Extent(Extent aExtent) {
@@ -87,6 +112,8 @@ public class Extent implements Cloneable {
         this.maxX = aExtent.maxX;
         this.minY = aExtent.minY;
         this.maxY = aExtent.maxY;
+        this.minZ = aExtent.minZ;
+        this.maxZ = aExtent.maxZ;
     }
 
     /**
@@ -108,6 +135,14 @@ public class Extent implements Cloneable {
 
     public double getHeight() {
         return maxY - minY;
+    }
+
+    /**
+     * Get Z axis length
+     * @return Z axis length
+     */
+    public double getZLength() {
+        return this.maxZ - this.minZ;
     }
     // </editor-fold>
     // <editor-fold desc="Methods">
@@ -133,11 +168,12 @@ public class Extent implements Cloneable {
      * @return Boolean
      */
     public boolean intersects(Extent bET) {
-        return !(maxX < bET.minX || maxY < bET.minY || bET.maxX < minX || bET.maxY < minY);
+        return !(maxX < bET.minX || maxY < bET.minY || maxZ < bET.minZ ||
+                bET.maxX < minX || bET.maxY < minY || bET.maxZ < minZ);
     }
 
-    public boolean contains(PointD p) {
-        return (p.X >= minX && p.X <= maxX && p.Y >= minY && p.Y <= maxY);
+    public boolean contains(PointZ p) {
+        return (p.X >= minX && p.X <= maxX && p.Y >= minY && p.Y <= maxY && p.Z >= minZ && p.Z <= maxZ);
     }
 
     /**
@@ -164,7 +200,28 @@ public class Extent implements Cloneable {
      * @return Center point
      */
     public PointZ getCenterPoint() {
-        return new PointZ((maxX - minX) / 2 + minX, (maxY - minY) / 2 + minY);
+        return new PointZ((maxX - minX) / 2 + minX, (maxY - minY) / 2 + minY, (maxZ - minZ) / 2 + minZ);
+    }
+
+    /**
+     * Get center point
+     *
+     * @return Center point
+     */
+    public double[] getCenter() {
+        return new double[]{(maxX + minX) / 2, (maxY + minY) / 2, (maxZ + minZ) / 2};
+    }
+
+    /**
+     * Shift extent
+     *
+     * @param dx X shift value
+     * @param dy Y shift value
+     * @param dz Z shift value
+     * @return Shifted extent
+     */
+    public Extent shift(double dx, double dy, double dz) {
+        return new Extent(minX + dx, maxX + dx, minY + dy, maxY + dy, minZ + dz, maxZ + dz);
     }
 
     /**
@@ -186,7 +243,8 @@ public class Extent implements Cloneable {
     public Extent extend(double ratio) {
         double dx = this.getWidth() * ratio;
         double dy = this.getHeight() * ratio;
-        return extend(dx, dy);
+        double dz = (maxZ - minZ) * ratio;
+        return extend(dx, dy, dz);
     }
 
     /**
@@ -201,6 +259,18 @@ public class Extent implements Cloneable {
     }
 
     /**
+     * Extends extent
+     *
+     * @param dx X delta
+     * @param dy Y delta
+     * @param dz Z delta
+     * @return Extended extent
+     */
+    public Extent extend(double dx, double dy, double dz) {
+        return new Extent(minX - dx, maxX + dx, minY - dy, maxY + dy, minZ - dz, maxZ + dz);
+    }
+
+    /**
      * Get is NaN or not
      *
      * @return Boolean
@@ -210,37 +280,26 @@ public class Extent implements Cloneable {
     }
 
     /**
-     * Get is 3D or not
-     *
-     * @return false
-     */
-    public boolean is3D() {
-        return false;
-    }
-    
-    /**
-     * Convert to Extent3D
-     * @return Extent3D
-     */
-    public Extent3D to3D() {
-        Extent3D ex3d = new Extent3D(this.minX, this.maxX, this.minY, this.maxY, 0, 0);
-        return ex3d;
-    }
-
-    /**
      * Make the extent with non-zero length of the dimensions
      */
     public void asNonZero() {
         double width = this.getWidth();
         double height = this.getHeight();
+        double zLength = this.getZLength();
+        double v = Math.max(width, height);
+        v = Math.max(v, zLength);
+        v = v / 2.;
         if (width == 0) {
-            double v = height / 2.;
             this.minX -= v;
             this.maxX += v;
-        } else if (height == 0) {
-            double v = width / 2.;
+        }
+        if (height == 0) {
             this.minY -= v;
             this.maxY += v;
+        }
+        if (zLength == 0) {
+            this.minZ -= v;
+            this.maxZ += v;
         }
     }
 
@@ -262,6 +321,8 @@ public class Extent implements Cloneable {
         cET.minY = Math.min(this.minY, ex.minY);
         cET.maxX = Math.max(this.maxX, ex.maxX);
         cET.maxY = Math.max(this.maxY, ex.maxY);
+        cET.minZ = Math.min(this.minZ, ex.minZ);
+        cET.maxZ = Math.max(this.maxZ, ex.maxZ);
 
         return cET;
     }
@@ -273,7 +334,7 @@ public class Extent implements Cloneable {
      */
     @Override
     public Object clone() {
-        return new Extent(minX, maxX, minY, maxY);
+        return new Extent(minX, maxX, minY, maxY, minZ, maxZ);
     }
     // </editor-fold>
 }

@@ -61,6 +61,7 @@ import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.data.mapdata.webmap.WebMapProvider;
+import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.map.config.GenericFileFilter;
 import org.meteoinfo.map.config.Options;
 import org.meteoinfo.map.config.Plugin;
@@ -2695,11 +2696,11 @@ public class FrmMain extends JFrame implements IApplication {
         String option = (String) JOptionPane.showInputDialog(this, "Select Layer Type:",
                 "Select", JOptionPane.PLAIN_MESSAGE, null, options, "Point Layer");
         if (option != null) {
-            ShapeTypes type = ShapeTypes.POINT;
+            ShapeFileType type = ShapeFileType.POINT;
             if (option.equals("Polyline Layer")) {
-                type = ShapeTypes.POLYLINE;
+                type = ShapeFileType.POLYLINE;
             } else if (option.equals("Polygon Layer")) {
-                type = ShapeTypes.POLYGON;
+                type = ShapeFileType.POLYGON;
             }
             VectorLayer layer = new VectorLayer(type);
             layer.setLayerName("New " + option);

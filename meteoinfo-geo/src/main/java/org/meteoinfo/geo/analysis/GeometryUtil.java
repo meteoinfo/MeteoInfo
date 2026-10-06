@@ -9,7 +9,6 @@ import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
 import org.meteoinfo.common.PointZ;
 import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geo.layer.VectorLayer;
@@ -36,65 +35,38 @@ public class GeometryUtil {
      * @return extent
      */
     public static Extent getPointsExtent(List<PointZ> PList) {
-        if (PList.get(0) instanceof PointZ){
-            Extent3D cET = new Extent3D();
-            for (int i = 0; i < PList.size(); i++) {
-                PointZ aP = (PointZ)PList.get(i);
-                if (i == 0) {
+        Extent cET = new Extent();
+        for (int i = 0; i < PList.size(); i++) {
+            PointZ aP = (PointZ)PList.get(i);
+            if (i == 0) {
+                cET.minX = aP.X;
+                cET.maxX = aP.X;
+                cET.minY = aP.Y;
+                cET.maxY = aP.Y;
+                cET.minZ = aP.Z;
+                cET.maxZ = aP.Z;
+            } else {
+                if (cET.minX > aP.X) {
                     cET.minX = aP.X;
+                } else if (cET.maxX < aP.X) {
                     cET.maxX = aP.X;
+                }
+
+                if (cET.minY > aP.Y) {
                     cET.minY = aP.Y;
+                } else if (cET.maxY < aP.Y) {
                     cET.maxY = aP.Y;
+                }
+
+                if (cET.minZ > aP.Z) {
                     cET.minZ = aP.Z;
+                } else if (cET.maxZ < aP.Z) {
                     cET.maxZ = aP.Z;
-                } else {
-                    if (cET.minX > aP.X) {
-                        cET.minX = aP.X;
-                    } else if (cET.maxX < aP.X) {
-                        cET.maxX = aP.X;
-                    }
-
-                    if (cET.minY > aP.Y) {
-                        cET.minY = aP.Y;
-                    } else if (cET.maxY < aP.Y) {
-                        cET.maxY = aP.Y;
-                    }
-
-                    if (cET.minZ > aP.Z) {
-                        cET.minZ = aP.Z;
-                    } else if (cET.maxZ < aP.Z) {
-                        cET.maxZ = aP.Z;
-                    }
                 }
             }
-
-            return cET;
-        } else {
-            Extent cET = new Extent();
-            for (int i = 0; i < PList.size(); i++) {
-                PointZ aP = PList.get(i);
-                if (i == 0) {
-                    cET.minX = aP.X;
-                    cET.maxX = aP.X;
-                    cET.minY = aP.Y;
-                    cET.maxY = aP.Y;
-                } else {
-                    if (cET.minX > aP.X) {
-                        cET.minX = aP.X;
-                    } else if (cET.maxX < aP.X) {
-                        cET.maxX = aP.X;
-                    }
-
-                    if (cET.minY > aP.Y) {
-                        cET.minY = aP.Y;
-                    } else if (cET.maxY < aP.Y) {
-                        cET.maxY = aP.Y;
-                    }
-                }
-            }
-
-            return cET;
         }
+
+        return cET;
     }
 
     /**
@@ -140,7 +112,7 @@ public class GeometryUtil {
      * @param points
      * @return Extent
      */
-    public static Extent3D getExtent(PointZ[] points) {
+    public static Extent getExtent(PointZ[] points) {
         PointZ p = points[0];
         double minx = p.X;
         double maxx = p.X;
@@ -169,7 +141,7 @@ public class GeometryUtil {
             }
         }
 
-        Extent3D extent = new Extent3D();
+        Extent extent = new Extent();
         extent.minX = minx;
         extent.maxX = maxx;
         extent.minY = miny;
@@ -761,13 +733,8 @@ public class GeometryUtil {
         int[] shape = new int[]{n};
         Array xArray = Array.factory(DataType.DOUBLE, shape);
         Array yArray = Array.factory(DataType.DOUBLE, shape);
-        Array zArray = null;
-        Array mArray = null;
-        boolean isZ = pgs instanceof PolygonZShape ? true : false;
-        if (isZ) {
-            zArray = Array.factory(DataType.DOUBLE, shape);
-            mArray = Array.factory(DataType.DOUBLE, shape);
-        }
+        Array zArray = Array.factory(DataType.DOUBLE, shape);
+        Array mArray = Array.factory(DataType.DOUBLE, shape);
         int i = 0;
         for (Polygon polygon : pgs.getPolygons()) {
             for (List<PointZ> points : polygon.getRings()) {
@@ -788,11 +755,7 @@ public class GeometryUtil {
             }
         }
 
-        if (isZ) {
-            return new Array[]{xArray, yArray, zArray, mArray};
-        } else {
-            return new Array[]{xArray, yArray};
-        }
+        return new Array[]{xArray, yArray, zArray, mArray};
     }
 
     /**
@@ -805,48 +768,27 @@ public class GeometryUtil {
         int[] shape = new int[]{n};
         Array xArray = Array.factory(DataType.DOUBLE, shape);
         Array yArray = Array.factory(DataType.DOUBLE, shape);
-        Array zArray = null;
-        Array mArray = null;
-        boolean isZ = pls instanceof PolylineZShape ? true : false;
-        if (isZ) {
-            zArray = Array.factory(DataType.DOUBLE, shape);
-            mArray = Array.factory(DataType.DOUBLE, shape);
-        }
+        Array zArray = Array.factory(DataType.DOUBLE, shape);
+        Array mArray = Array.factory(DataType.DOUBLE, shape);
         int i = 0;
         for (Polyline polyline : pls.getPolylines()) {
-            if (isZ) {
-                for (PointZ p : (List<PointZ>) polyline.getPointList()) {
-                    xArray.setDouble(i, p.X);
-                    yArray.setDouble(i, p.Y);
-                    zArray.setDouble(i, p.Z);
-                    mArray.setDouble(i, p.M);
-                    i += 1;
-                }
-                if (i < n) {
-                    xArray.setDouble(i, Double.NaN);
-                    yArray.setDouble(i, Double.NaN);
-                    zArray.setDouble(i, Double.NaN);
-                    mArray.setDouble(i, Double.NaN);
-                }
-            } else {
-                for (PointZ p : polyline.getPointList()) {
-                    xArray.setDouble(i, p.X);
-                    yArray.setDouble(i, p.Y);
-                    i += 1;
-                }
-                if (i < n) {
-                    xArray.setDouble(i, Double.NaN);
-                    yArray.setDouble(i, Double.NaN);
-                }
+            for (PointZ p : (List<PointZ>) polyline.getPointList()) {
+                xArray.setDouble(i, p.X);
+                yArray.setDouble(i, p.Y);
+                zArray.setDouble(i, p.Z);
+                mArray.setDouble(i, p.M);
+                i += 1;
+            }
+            if (i < n) {
+                xArray.setDouble(i, Double.NaN);
+                yArray.setDouble(i, Double.NaN);
+                zArray.setDouble(i, Double.NaN);
+                mArray.setDouble(i, Double.NaN);
             }
             i += 1;
         }
 
-        if (isZ) {
-            return new Array[]{xArray, yArray, zArray, mArray};
-        } else {
-            return new Array[]{xArray, yArray};
-        }
+        return new Array[]{xArray, yArray, zArray, mArray};
     }
 
     /**

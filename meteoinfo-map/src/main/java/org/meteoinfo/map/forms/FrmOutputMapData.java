@@ -21,7 +21,7 @@ import javax.swing.SwingWorker;
 
 import org.meteoinfo.common.Extent;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointD;
+import org.meteoinfo.common.PointZ;
 import org.meteoinfo.data.GridDataSetting;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.geo.layer.LayerTypes;
@@ -325,22 +325,22 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                                 continue;
                             }
                         }
-                        PointD[] Pointps;
+                        PointZ[] Pointps;
                         for (int p = 0; p < aPLS.getPartNum(); p++) {
                             if (p == aPLS.getPartNum() - 1) {
-                                Pointps = new PointD[aPLS.getPointNum() - aPLS.parts[p]];
+                                Pointps = new PointZ[aPLS.getPointNum() - aPLS.parts[p]];
                                 for (int pp = aPLS.parts[p]; pp < aPLS.getPointNum(); pp++) {
-                                    Pointps[pp - aPLS.parts[p]] = (PointD) aPLS.getPoints().get(pp);
+                                    Pointps[pp - aPLS.parts[p]] = aPLS.getPoints().get(pp);
                                 }
                             } else {
-                                Pointps = new PointD[aPLS.parts[p + 1] - aPLS.parts[p]];
+                                Pointps = new PointZ[aPLS.parts[p + 1] - aPLS.parts[p]];
                                 for (int pp = aPLS.parts[p]; pp < aPLS.parts[p + 1]; pp++) {
-                                    Pointps[pp - aPLS.parts[p]] = (PointD) aPLS.getPoints().get(pp);
+                                    Pointps[pp - aPLS.parts[p]] = aPLS.getPoints().get(pp);
                                 }
                             }
                             sw.write(String.valueOf(Pointps.length));
                             sw.newLine();
-                            for (PointD aPoint : Pointps) {
+                            for (PointZ aPoint : Pointps) {
                                 sw.write(String.valueOf(aPoint.X) + "," + String.valueOf(aPoint.Y));
                                 sw.newLine();
                             }
@@ -375,22 +375,22 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                             }
                         }
 
-                        PointD[] Pointps;
+                        PointZ[] Pointps;
                         for (int p = 0; p < aPGS.getPartNum(); p++) {
                             if (p == aPGS.getPartNum() - 1) {
-                                Pointps = new PointD[aPGS.getPointNum() - aPGS.parts[p]];
+                                Pointps = new PointZ[aPGS.getPointNum() - aPGS.parts[p]];
                                 for (int pp = aPGS.parts[p]; pp < aPGS.getPointNum(); pp++) {
-                                    Pointps[pp - aPGS.parts[p]] = (PointD) aPGS.getPoints().get(pp);
+                                    Pointps[pp - aPGS.parts[p]] = aPGS.getPoints().get(pp);
                                 }
                             } else {
-                                Pointps = new PointD[aPGS.parts[p + 1] - aPGS.parts[p]];
+                                Pointps = new PointZ[aPGS.parts[p + 1] - aPGS.parts[p]];
                                 for (int pp = aPGS.parts[p]; pp < aPGS.parts[p + 1]; pp++) {
-                                    Pointps[pp - aPGS.parts[p]] = (PointD) aPGS.getPoints().get(pp);
+                                    Pointps[pp - aPGS.parts[p]] = aPGS.getPoints().get(pp);
                                 }
                             }
                             sw.write(String.valueOf(Pointps.length));
                             sw.newLine();
-                            for (PointD aPoint : Pointps) {
+                            for (PointZ aPoint : Pointps) {
                                 sw.write(String.valueOf(aPoint.X) + "," + String.valueOf(aPoint.Y));
                                 sw.newLine();
                             }
@@ -480,7 +480,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                 //Get grid data
                 double[][] gridData = new double[aGDP.yNum][aGDP.xNum];
                 int j, p;
-                PointD aPoint = new PointD();
+                PointZ aPoint = new PointZ();
                 double xSize, ySize;
                 xSize = (aGDP.dataExtent.maxX - aGDP.dataExtent.minX) / (aGDP.xNum - 1);
                 ySize = (aGDP.dataExtent.maxY - aGDP.dataExtent.minY) / (aGDP.yNum - 1);

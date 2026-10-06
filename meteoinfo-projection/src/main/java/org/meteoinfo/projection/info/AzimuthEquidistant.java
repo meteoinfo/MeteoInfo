@@ -14,7 +14,6 @@
 package org.meteoinfo.projection.info;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
-import org.meteoinfo.common.PointD;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;

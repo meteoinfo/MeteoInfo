@@ -14,7 +14,6 @@
 package org.meteoinfo.geometry.shape;
 
  import org.meteoinfo.common.MIMath;
- import org.meteoinfo.common.PointD;
  import org.meteoinfo.common.PointZ;
 
  /**

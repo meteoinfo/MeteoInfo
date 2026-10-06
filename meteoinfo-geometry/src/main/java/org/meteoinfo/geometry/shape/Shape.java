@@ -25,8 +25,6 @@ import org.locationtech.jts.operation.polygonize.Polygonizer;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
 import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.Extent3D;
-import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointZ;
 import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 
@@ -42,7 +40,7 @@ public abstract class Shape implements Cloneable{
     protected boolean visible;
     protected boolean selected;
     private boolean editing;
-    protected Extent3D extent = new Extent3D();
+    protected Extent extent = new Extent();
     protected int legendIndex = 0;
     protected double value;
 
@@ -72,16 +70,10 @@ public abstract class Shape implements Cloneable{
         switch (shapeType) {
             case POINT:
                 return new PointShape();
-            case POINT_Z:
-                return new PointZShape();
             case POLYLINE:
                 return new PolylineShape();
-            case POLYLINE_Z:
-                return new PolylineZShape();
             case POLYGON:
                 return new PolygonShape();
-            case POLYGON_Z:
-                return new PolygonZShape();
             default:
                 throw new IllegalArgumentException("Shape type not supported");
         }
@@ -173,7 +165,7 @@ public abstract class Shape implements Cloneable{
      *
      * @return extent Extent
      */
-    public Extent3D getExtent() {
+    public Extent getExtent() {
         return extent;
     }
 
@@ -182,17 +174,8 @@ public abstract class Shape implements Cloneable{
      *
      * @param aExtent Extent
      */
-    public void setExtent(Extent3D aExtent) {
-        extent = aExtent;
-    }
-
-    /**
-     * Set extent
-     *
-     * @param aExtent Extent
-     */
     public void setExtent(Extent aExtent) {
-        extent = aExtent.to3D();
+        extent = aExtent;
     }
 
     /**
@@ -236,7 +219,7 @@ public abstract class Shape implements Cloneable{
      */
     public void updateExtent() {
         if (this.points != null) {
-            this.extent = (Extent3D) GeometryUtil.getPointsExtent(points);
+            this.extent = GeometryUtil.getPointsExtent(points);
         }
     }
 
@@ -295,10 +278,9 @@ public abstract class Shape implements Cloneable{
             }
         }
 
-        PointD aP = points.get(vIdx);
+        PointZ aP = points.get(vIdx);
         aP.X = newX;
         aP.Y = newY;
-        //points.set(vIdx, aP);
         setPoints(points);
     }
     

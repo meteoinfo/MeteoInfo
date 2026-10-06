@@ -1,6 +1,5 @@
 package org.meteoinfo.geometry.io.geojson;
 
-import org.meteoinfo.common.PointD;
 import org.meteoinfo.common.PointZ;
 import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.geometry.legend.ColorBreak;
@@ -64,7 +63,7 @@ public class GeoJSONUtil {
      * @return GeoJSON Point object
      */
     public static Point fromShape(PointShape pointShape) {
-        PointD p = pointShape.getPoint();
+        PointZ p = pointShape.getPoint();
 
         return new Point(p.toArray());
     }
@@ -80,7 +79,7 @@ public class GeoJSONUtil {
         if (coordinates.length == 2) {
             return new PointShape(new PointZ(coordinates[0], coordinates[1]));
         } else {
-            return new PointZShape(new PointZ(coordinates[0], coordinates[1], coordinates[2]));
+            return new PointShape(new PointZ(coordinates[0], coordinates[1], coordinates[2]));
         }
     }
 
@@ -139,7 +138,7 @@ public class GeoJSONUtil {
                 points.add(new PointZ(coordinates[i][0], coordinates[i][1], coordinates[i][2]));
             }
 
-            return new PolylineZShape(points);
+            return new PolylineShape(points);
         }
     }
 
@@ -169,7 +168,7 @@ public class GeoJSONUtil {
 
             return polylineShape;
         } else {
-            PolylineZShape polylineZShape = new PolylineZShape();
+            PolylineShape polylineZShape = new PolylineShape();
             polylineZShape.setPartNum(lineNum);
             polylineZShape.parts = new int[lineNum];
             List<PointZ> points = new ArrayList<>();
@@ -272,7 +271,7 @@ public class GeoJSONUtil {
 
             return polygonShape;
         } else {
-            PolygonZShape polygonZShape = new PolygonZShape();
+            PolygonShape polygonZShape = new PolygonShape();
             polygonZShape.setPartNum(ringNum);
             polygonZShape.parts = new int[ringNum];
             List<PointZ> points = new ArrayList<>();
@@ -342,7 +341,7 @@ public class GeoJSONUtil {
                 }
                 polygons.add(polygon);
             }
-            PolygonZShape polygonZShape = new PolygonZShape();
+            PolygonShape polygonZShape = new PolygonShape();
             polygonZShape.setPolygons(polygons);
 
             return polygonZShape;

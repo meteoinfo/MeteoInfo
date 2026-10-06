@@ -1,4 +1,4 @@
-package org.meteoinfo.geometry;
+package org.meteoinfo.geometry.geom;
 
 public class Point extends Geometry {
 

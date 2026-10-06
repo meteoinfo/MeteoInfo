@@ -1,9 +1,11 @@
 package org.meteoinfo.chart.geo;
 
-import org.meteoinfo.chart.plot.GridLabelPosition;
-import org.meteoinfo.chart.plot.GridLine;
+import org.meteoinfo.projection.GridLabel;
+import org.meteoinfo.chart.GridLabelPosition;
+import org.meteoinfo.chart.GridLine;
 import org.meteoinfo.common.*;
-import org.meteoinfo.geometry.geoprocess.GeoComputation;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.shape.Polyline;
@@ -278,13 +280,13 @@ public class MapGridLine extends GridLine {
             return;
         }
         for (double lon : this.longitudeLocations) {
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
             double lat = latMin;
             while (lat < latMax) {
-                points.add(new PointZ(lon, lat));
+                points.add(new Coordinate(lon, lat));
                 lat += delta;
             }
-            points.add((new PointZ(lon, latMax)));
+            points.add((new Coordinate(lon, latMax)));
             PolylineShape line = new PolylineShape();
             line.setPoints(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
@@ -311,13 +313,13 @@ public class MapGridLine extends GridLine {
             return;
         }
         for (double lat : this.latitudeLocations) {
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
             double lon = lonMin;
             while (lon < lonMax) {
-                points.add(new PointZ(lon, lat));
+                points.add(new Coordinate(lon, lat));
                 lon += delta;
             }
-            //points.add(new PointZ(lonMax, lat));
+            //points.add(new Coordinate(lonMax, lat));
             PolylineShape line = new PolylineShape();
             line.setPoints(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
@@ -329,7 +331,7 @@ public class MapGridLine extends GridLine {
             PolylineShape polylineShape = (PolylineShape) graphic.getShape();
             if (polylineShape.getPartNum() > 1) {
                 points = polylineShape.getPolylines().get(0).getPointList();
-                List<PointZ> points1 = polylineShape.getPolylines().get(1).getPointList();
+                List<Coordinate> points1 = polylineShape.getPolylines().get(1).getPointList();
                 Collections.reverse(points1);
                 points.addAll(points1);
                 line = new PolylineShape();
@@ -366,7 +368,7 @@ public class MapGridLine extends GridLine {
 
             List<GridLabel> gLabels = new ArrayList<>();
             for (Polyline aPL : line.getPolylines()) {
-                gLabels.addAll(GeoComputation.getGridLabels(aPL, extent, true));
+                gLabels.addAll(GridLine.getGridLabels(aPL, extent, true));
             }
 
             for (GridLabel gLabel : gLabels) {
@@ -398,7 +400,7 @@ public class MapGridLine extends GridLine {
 
             List<GridLabel> gLabels = new ArrayList<>();
             for (Polyline aPL : line.getPolylines()) {
-                gLabels.addAll(GeoComputation.getGridLabels(aPL, extent, false));
+                gLabels.addAll(GridLine.getGridLabels(aPL, extent, false));
             }
 
             for (GridLabel gLabel : gLabels) {
@@ -423,12 +425,12 @@ public class MapGridLine extends GridLine {
                                 continue;
                             }
 
-                            if (aGL.getCoord().Y > 0 && Math.abs(aGL.getCoord().X) < 1000) {
+                            if (aGL.getCoord().y > 0 && Math.abs(aGL.getCoord().x) < 1000) {
                                 continue;
                             }
 
                             if (MIMath.lonDistance(aGL.getValue(), (float) projInfo.getCenterLon()) > 60) {
-                                if (aGL.getCoord().X < 0) {
+                                if (aGL.getCoord().x < 0) {
                                     aGL.setLabDirection(Direction.Weast);
                                 } else {
                                     aGL.setLabDirection(Direction.East);
@@ -448,12 +450,12 @@ public class MapGridLine extends GridLine {
                         if (!aGL.isLongitude()) {
                             aGL.setLabDirection(Direction.North);
                         } else {
-                            if (aGL.getCoord().Y > 7000000 && Math.abs(aGL.getCoord().X) < 5000000) {
+                            if (aGL.getCoord().y > 7000000 && Math.abs(aGL.getCoord().x) < 5000000) {
                                 continue;
                             }
 
                             if (MIMath.lonDistance(aGL.getValue(), (float) projInfo.getCenterLon()) > 60) {
-                                if (aGL.getCoord().X < 0) {
+                                if (aGL.getCoord().x < 0) {
                                     aGL.setLabDirection(Direction.Weast);
                                 } else {
                                     aGL.setLabDirection(Direction.East);
@@ -470,7 +472,7 @@ public class MapGridLine extends GridLine {
                 for (GridLabel gl : tLabels) {
                     if (!gl.isBorder()) {
                         if (gl.isLongitude()) {
-                            if (gl.getCoord().Y > 1000) {
+                            if (gl.getCoord().y > 1000) {
                                 gl.setLabDirection(Direction.North);
                             }
                         }
@@ -483,7 +485,7 @@ public class MapGridLine extends GridLine {
                 for (GridLabel aGL : tLabels) {
                     if (!aGL.isBorder()) {
                         if (aGL.isLongitude()) {
-                            if (Math.abs(aGL.getCoord().X) < 100000 && Math.abs(aGL.getCoord().Y) < 100000) {
+                            if (Math.abs(aGL.getCoord().x) < 100000 && Math.abs(aGL.getCoord().y) < 100000) {
                                 continue;
                             }
 
@@ -502,7 +504,7 @@ public class MapGridLine extends GridLine {
                                     } else {
                                         aGL.setLabDirection(Direction.South);
                                     }
-                                } else if (aGL.getCoord().X < 0) {
+                                } else if (aGL.getCoord().x < 0) {
                                     aGL.setLabDirection(Direction.Weast);
                                 } else {
                                     aGL.setLabDirection(Direction.East);
@@ -520,12 +522,12 @@ public class MapGridLine extends GridLine {
                 for (GridLabel aGL : tLabels) {
                     if (!aGL.isBorder()) {
                         if (aGL.isLongitude()) {
-                            if (aGL.getCoord().Y < 0) {
+                            if (aGL.getCoord().y < 0) {
                                 aGL.setLabDirection(Direction.South);
                             } else {
                                 aGL.setLabDirection(Direction.North);
                             }
-                        } else if (aGL.getCoord().X < 0) {
+                        } else if (aGL.getCoord().x < 0) {
                             aGL.setLabDirection(Direction.Weast);
                         } else {
                             aGL.setLabDirection(Direction.East);
@@ -541,7 +543,7 @@ public class MapGridLine extends GridLine {
                     if (!aGL.isBorder()) {
                         if (aGL.isLongitude()) {
                             continue;
-                        } else if (aGL.getCoord().X < 0) {
+                        } else if (aGL.getCoord().x < 0) {
                             aGL.setLabDirection(Direction.Weast);
                         } else {
                             aGL.setLabDirection(Direction.East);
@@ -557,7 +559,7 @@ public class MapGridLine extends GridLine {
                     if (!aGL.isBorder()) {
                         if (aGL.isLongitude()) {
                             continue;
-                        } else if (aGL.getCoord().X < 0) {
+                        } else if (aGL.getCoord().x < 0) {
                             aGL.setLabDirection(Direction.Weast);
                         } else {
                             aGL.setLabDirection(Direction.East);

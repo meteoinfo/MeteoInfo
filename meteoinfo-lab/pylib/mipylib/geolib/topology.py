@@ -6,7 +6,7 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.geometry.geoprocess import GeometryUtil
+from org.meteoinfo.geometry import GeometryUtil
 from org.meteoinfo.chart.graphic import Graphic
 
 __all__ = [

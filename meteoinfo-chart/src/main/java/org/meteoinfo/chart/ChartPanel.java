@@ -79,7 +79,7 @@ import org.meteoinfo.chart.plot.XY1DPlot;
 import org.meteoinfo.chart.plot.AbstractPlot2D;
 import org.meteoinfo.chart.plot.Plot3D;
 import org.meteoinfo.chart.plot3d.Projector;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
 import org.meteoinfo.image.ImageUtil;

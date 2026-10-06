@@ -1,28 +1,12 @@
-/* Copyright 2012 Yaqiang Wang,
- * yaqiang.wang@gmail.com
- * 
- * This library is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or (at
- * your option) any later version.
- * 
- * This library is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
- * General Public License for more details.
- */
-package org.meteoinfo.geometry;
+package org.meteoinfo.geometry.geom;
 
-import org.meteoinfo.common.PointF;
 import org.meteoinfo.common.util.MathUtil;
 import org.meteoinfo.common.util.NumberUtil;
 
-/**
- *
- * @author yaqiang
- */
-public class Coordinate implements Comparable<Coordinate>,  Cloneable{
-    // <editor-fold desc="Variables">
+import java.io.Serializable;
+
+public class Coordinate implements Comparable<Coordinate>, Cloneable, Serializable {
+
     private static final long serialVersionUID = 6683108902428366910L;
 
     /**
@@ -67,45 +51,30 @@ public class Coordinate implements Comparable<Coordinate>,  Cloneable{
     public double y;
 
     /**
-     * Z coordinate
+     * The z-ordinate.
+     * <p>
+     * Direct access to this field is discouraged; use {@link #getZ()}.
      */
-    public double z = Double.NaN;
+    public double z;
 
     /**
-     * Measure
-     */
-    public double m = Double.NaN;
-    // </editor-fold>
-    // <editor-fold desc="Constructor">
-
-    /**
-     * Constructor
-     */
-    public Coordinate() {
-    }
-
-    /**
-     * Constructor
+     *  Constructs a <code>Coordinate</code> at (x,y,z).
      *
-     * @param x X
-     * @param y Y
-     */
-    public Coordinate(double x, double y) {
-        this.x = x;
-        this.y = y;
-    }
-    
-    /**
-     * Constructor
-     *
-     * @param x X
-     * @param y Y
-     * @param z Z
+     *@param  x  the x-ordinate
+     *@param  y  the y-ordinate
+     *@param  z  the z-ordinate
      */
     public Coordinate(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
+    }
+
+    /**
+     *  Constructs a <code>Coordinate</code> at (0,0,NaN).
+     */
+    public Coordinate() {
+        this(0.0, 0.0);
     }
 
     /**
@@ -115,35 +84,30 @@ public class Coordinate implements Comparable<Coordinate>,  Cloneable{
      *@param  c  the <code>Coordinate</code> to copy.
      */
     public Coordinate(Coordinate c) {
-        this(c.x, c.y, c.z);
+        this(c.x, c.y, c.getZ());
     }
 
     /**
-     * Constructor
-     * @param coord Coordinate array
-     */
-    public Coordinate(double[] coord) {
-        x = coord[0];
-        y = coord[1];
-        z = coord[2];
-    }
-
-    /**
-     * Constructor
+     *  Constructs a <code>Coordinate</code> at (x,y,NaN).
      *
-     * @param x X
-     * @param y Y
-     * @param z Z
-     * @param m M
+     *@param  x  the x-value
+     *@param  y  the y-value
      */
-    public Coordinate(double x, double y, double z, double m) {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-        this.m = m;
+    public Coordinate(double x, double y) {
+        this(x, y, NULL_ORDINATE);
     }
-    // </editor-fold>
-    // <editor-fold desc="Get Set Methods">
+
+    /**
+     *  Sets this <code>Coordinate</code>s (x,y,z) values to that of <code>other</code>.
+     *
+     *@param  other  the <code>Coordinate</code> to copy
+     */
+    public void setCoordinate(Coordinate other) {
+        x = other.x;
+        y = other.y;
+        z = other.getZ();
+    }
+
     /**
      *  Retrieves the value of the X ordinate.
      *
@@ -206,7 +170,7 @@ public class Coordinate implements Comparable<Coordinate>,  Cloneable{
      *  @return the value of the measure, or <tt>NaN</tt>
      */
     public double getM() {
-        return m;
+        return Double.NaN;
     }
 
     /**
@@ -215,17 +179,7 @@ public class Coordinate implements Comparable<Coordinate>,  Cloneable{
      * @param m the value to set as M
      */
     public void setM(double m) {
-        this.m = m;
-    }
-    // </editor-fold>
-    // <editor-fold desc="Methods">
-
-    /**
-     * Get whether the coordinate is 2D
-     * @return 2D or not
-     */
-    public boolean is2D() {
-        return Double.isNaN(z);
+        throw new IllegalArgumentException("Invalid ordinate index: " + M);
     }
 
     /**
@@ -368,7 +322,7 @@ public class Coordinate implements Comparable<Coordinate>,  Cloneable{
     }
 
     /**
-     *  Compares this {@link org.meteoinfo.geometry.geom.Coordinate} with the specified {@link org.meteoinfo.geometry.geom.Coordinate} for order.
+     *  Compares this {@link Coordinate} with the specified {@link Coordinate} for order.
      *  This method ignores the z value when making the comparison.
      *  Returns:
      *  <UL>
@@ -405,35 +359,6 @@ public class Coordinate implements Comparable<Coordinate>,  Cloneable{
         return "(" + x + ", " + y + ", " + getZ() + ")";
     }
 
-    /**
-     * To double array
-     * @return Double array
-     */
-    public double[] toArray() {
-        return new double[]{x, y, z};
-    }
-
-    /**
-     * To float array
-     * @return Float array
-     */
-    public float[] toFloatArray() {
-        return new float[]{(float) x, (float) y, (float) z};
-    }
-
-    /**
-     * To PointF
-     * @return PointF object
-     */
-    public PointF toPointF() {
-        return new PointF((float) x, (float) y);
-    }
-    
-    /**
-     * Clone
-     * 
-     * @return Coordinate object
-     */
     public Object clone() {
         try {
             Coordinate coord = (Coordinate) super.clone();
@@ -528,6 +453,4 @@ public class Coordinate implements Comparable<Coordinate>,  Cloneable{
         long f = Double.doubleToLongBits(x);
         return (int)(f^(f>>>32));
     }
-
-    // </editor-fold>
 }

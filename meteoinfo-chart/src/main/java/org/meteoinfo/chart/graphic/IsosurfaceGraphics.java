@@ -5,10 +5,9 @@
  */
 package org.meteoinfo.chart.graphic;
 
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointZ;
-import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.GeometryUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,7 @@ import java.util.List;
  * @author yaqiang
  */
 public class IsosurfaceGraphics extends GraphicCollection3D {
-    private List<PointZ[]> triangles = new ArrayList<>();
+    private List<Coordinate[]> triangles = new ArrayList<>();
     
     /**
      * Constructor
@@ -32,7 +31,7 @@ public class IsosurfaceGraphics extends GraphicCollection3D {
      * Get triangles
      * @return Triangles
      */
-    public List<PointZ[]> getTriangles() {
+    public List<Coordinate[]> getTriangles() {
         return this.triangles;
     }
     
@@ -40,7 +39,7 @@ public class IsosurfaceGraphics extends GraphicCollection3D {
      * Set triangles
      * @param value Triangles 
      */
-    public void setTriangles(List<PointZ[]> value) {
+    public void setTriangles(List<Coordinate[]> value) {
         this.triangles = value;
         updateExtent();
     }
@@ -49,13 +48,13 @@ public class IsosurfaceGraphics extends GraphicCollection3D {
      * Add a triangle
      * @param triangle Triangle 
      */
-    public void addTriangle(PointZ[] triangle) {
+    public void addTriangle(Coordinate[] triangle) {
         this.triangles.add(triangle);
         Extent extent = GeometryUtil.getExtent(triangle);
         if (this.triangles.size() == 1)
             this.setExtent(extent);
         else
-            this.setExtent(MIMath.getLagerExtent(extent, this.getExtent()));
+            this.setExtent(GeometryUtil.getLagerExtent(extent, this.getExtent()));
     }
 
     /**
@@ -68,7 +67,7 @@ public class IsosurfaceGraphics extends GraphicCollection3D {
             if (i == 0)
                 this.setExtent(extent);
             else
-                this.setExtent(MIMath.getLagerExtent(extent, this.getExtent()));
+                this.setExtent(GeometryUtil.getLagerExtent(extent, this.getExtent()));
         }
     }
 }

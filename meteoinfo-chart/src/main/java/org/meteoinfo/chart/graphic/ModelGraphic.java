@@ -2,9 +2,7 @@ package org.meteoinfo.chart.graphic;
 
 import org.joml.Vector3f;
 import org.meteoinfo.chart.jogl.Transform;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.ndarray.Array;
-import org.meteoinfo.ndarray.math.ArrayMath;
+import org.meteoinfo.geometry.Extent;
 
 import java.util.List;
 

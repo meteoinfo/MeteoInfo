@@ -2,15 +2,15 @@ package org.meteoinfo.geometry.shape;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.meteoinfo.common.PointZ;
-import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.GeometryUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CubicShape extends Shape{
 
-    private List<PointZ> points;
+    private List<Coordinate> points;
     private int[][] index = new int[][]{
         {0, 2, 3, 1},
         {0, 4, 6, 2},
@@ -39,7 +39,7 @@ public class CubicShape extends Shape{
         super();
         this.points = new ArrayList<>();
         for (int i = 0; i < 8; i++) {
-            this.points.add(new PointZ());
+            this.points.add(new Coordinate());
         }
         this.setExtent(GeometryUtil.getPointsExtent(this.points));
     }
@@ -47,7 +47,7 @@ public class CubicShape extends Shape{
     /**
      * Constructor
      */
-    public CubicShape(List<PointZ> points) {
+    public CubicShape(List<Coordinate> points) {
         super();
         this.points = points;
         this.setExtent(GeometryUtil.getPointsExtent(this.points));
@@ -67,7 +67,7 @@ public class CubicShape extends Shape{
      * Get vertex points
      * @return Vertex points
      */
-    public List<PointZ> getPoints() {
+    public List<Coordinate> getPoints() {
         return this.points;
     }
 
@@ -75,8 +75,8 @@ public class CubicShape extends Shape{
      * Set vertex points
      * @param value Vertex points
      */
-    public void setPoints(List<PointZ> value) {
-        this.points = (List<PointZ>)value;
+    public void setPoints(List<Coordinate> value) {
+        this.points = (List<Coordinate>)value;
         this.setExtent(GeometryUtil.getPointsExtent(this.points));
     }
 

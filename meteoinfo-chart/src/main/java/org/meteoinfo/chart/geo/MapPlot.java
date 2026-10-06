@@ -18,6 +18,9 @@ import org.meteoinfo.data.mapdata.webmap.GeoPosition;
 import org.meteoinfo.data.mapdata.webmap.GeoUtil;
 import org.meteoinfo.data.mapdata.webmap.IWebMapPanel;
 import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.GeometryUtil;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.projection.*;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.chart.graphic.GeoGraphicCollection;
@@ -371,8 +374,8 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      *
      * @return Geographic center
      */
-    public PointZ getGeoCenter() {
-        PointZ viewCenter = this.getViewCenter();
+    public Coordinate getGeoCenter() {
+        Coordinate viewCenter = this.getViewCenter();
         return Reproject.reprojectPoint(viewCenter, this.projInfo,
                 KnownCoordinateSystems.geographic.world.WGS1984);
     }
@@ -382,7 +385,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      *
      * @return The view center point
      */
-    public PointZ getViewCenter() {
+    public Coordinate getViewCenter() {
         return this.drawExtent.getCenterPoint();
     }
 
@@ -391,10 +394,10 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      *
      * @param center The view center point
      */
-    public void setViewCenter(PointZ center) {
-        PointZ oldCenter = this.getViewCenter();
-        double dx = center.X - oldCenter.X;
-        double dy = center.Y - oldCenter.Y;
+    public void setViewCenter(Coordinate center) {
+        Coordinate oldCenter = this.getViewCenter();
+        double dx = center.x - oldCenter.x;
+        double dy = center.y - oldCenter.y;
         Extent extent = this.drawExtent.shift(dx, dy);
         this.drawExtent = extent;
     }
@@ -524,14 +527,14 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         PointBreak pointBreak = (PointBreak) ls.getLegendBreak(0);
         for (Graphic graphic : graphics.getGraphics()) {
             StationModelShape shape = (StationModelShape) graphic.getShape();
-            PointZ p = shape.getPoint();
-            if (p.X < drawExtent.minX || p.X > drawExtent.maxX
-                    || p.Y < drawExtent.minY || p.Y > drawExtent.maxY) {
+            Coordinate p = shape.getPoint();
+            if (p.x < drawExtent.minX || p.x > drawExtent.maxX
+                    || p.y < drawExtent.minY || p.y > drawExtent.maxY) {
                 continue;
             }
 
             if (pointBreak.isDrawShape()) {
-                PointZ sp = this.transData.transform(p);
+                Coordinate sp = this.transData.transform(p);
                 pointF = sp.toPointF();
                 boolean isDraw = true;
                 if (graphics.isAvoidCollision()) {
@@ -544,19 +547,19 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
                     if (extentList.isEmpty()) {
                         maxExtent = (Extent) aExtent.clone();
                         extentList.add(aExtent);
-                    } else if (!MIMath.isExtentCross(aExtent, maxExtent)) {
+                    } else if (!GeometryUtil.isExtentCross(aExtent, maxExtent)) {
                         extentList.add(aExtent);
-                        maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                        maxExtent = GeometryUtil.getLagerExtent(maxExtent, aExtent);
                     } else {
                         for (Extent extent : extentList) {
-                            if (MIMath.isExtentCross(aExtent, extent)) {
+                            if (GeometryUtil.isExtentCross(aExtent, extent)) {
                                 isDraw = false;
                                 break;
                             }
                         }
                         if (isDraw) {
                             extentList.add(aExtent);
-                            maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                            maxExtent = GeometryUtil.getLagerExtent(maxExtent, aExtent);
                         }
                     }
                 }
@@ -578,15 +581,15 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         PointBreak pointBreak = (PointBreak) ls.getLegendBreak(0);
         for (Graphic graphic : graphics.getGraphics()) {
             StationModelShape shape = (StationModelShape) graphic.getShape();
-            PointZ p = shape.getPoint();
-            if (p.X < drawExtent.minX || p.X > drawExtent.maxX
-                    || p.Y < drawExtent.minY || p.Y > drawExtent.maxY) {
+            Coordinate p = shape.getPoint();
+            if (p.x < drawExtent.minX || p.x > drawExtent.maxX
+                    || p.y < drawExtent.minY || p.y > drawExtent.maxY) {
                 continue;
             }
 
             if (pointBreak.isDrawShape()) {
                 double[] screenXY;
-                screenXY = projToScreen(p.X, p.Y, area);
+                screenXY = projToScreen(p.x, p.y, area);
                 pointF.X = (float) screenXY[0];
                 pointF.Y = (float) screenXY[1];
                 boolean isDraw = true;
@@ -600,19 +603,19 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
                     if (extentList.isEmpty()) {
                         maxExtent = (Extent) aExtent.clone();
                         extentList.add(aExtent);
-                    } else if (!MIMath.isExtentCross(aExtent, maxExtent)) {
+                    } else if (!GeometryUtil.isExtentCross(aExtent, maxExtent)) {
                         extentList.add(aExtent);
-                        maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                        maxExtent = GeometryUtil.getLagerExtent(maxExtent, aExtent);
                     } else {
                         for (Extent extent : extentList) {
-                            if (MIMath.isExtentCross(aExtent, extent)) {
+                            if (GeometryUtil.isExtentCross(aExtent, extent)) {
                                 isDraw = false;
                                 break;
                             }
                         }
                         if (isDraw) {
                             extentList.add(aExtent);
-                            maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                            maxExtent = GeometryUtil.getLagerExtent(maxExtent, aExtent);
                         }
                     }
                 }
@@ -633,15 +636,15 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         double maxy = center.getY() + height / 2.;
         GeoPosition pos1 = GeoUtil.getPosition(new Point2D.Double(minx, miny), zoom, graphic.getTileFactory().getInfo());
         GeoPosition pos2 = GeoUtil.getPosition(new Point2D.Double(maxx, maxy), zoom, graphic.getTileFactory().getInfo());
-        PointZ p1 = Reproject.reprojectPoint(new PointZ(pos1.getLongitude(), pos1.getLatitude()),
+        Coordinate p1 = Reproject.reprojectPoint(new Coordinate(pos1.getLongitude(), pos1.getLatitude()),
                 KnownCoordinateSystems.geographic.world.WGS1984, this.projInfo);
-        PointZ p2 = Reproject.reprojectPoint(new PointZ(pos2.getLongitude(), pos2.getLatitude()),
+        Coordinate p2 = Reproject.reprojectPoint(new Coordinate(pos2.getLongitude(), pos2.getLatitude()),
                 KnownCoordinateSystems.geographic.world.WGS1984, this.projInfo);
         if (pos2.getLongitude() - pos1.getLongitude() < 360.0 && pos2.getLongitude() <= 180) {
-            double xlen = Math.abs(p2.X - p1.X);
+            double xlen = Math.abs(p2.x - p1.x);
             return (double) width / xlen;
         } else {
-            double ylen = Math.abs(p2.Y - p1.Y);
+            double ylen = Math.abs(p2.y - p1.y);
             return (double) height / ylen;
         }
     }
@@ -649,13 +652,13 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     private void setScale(double scale, double width, double height) {
         this.xScale = scale;
         this.yScale = scale;
-        PointZ center = (PointZ)this.drawExtent.getCenterPoint().clone();
+        Coordinate center = (Coordinate)this.drawExtent.getCenterPoint().clone();
         double xlen = width / scale * 0.5;
         double ylen = height / scale * 0.5;
-        this.drawExtent.minX = center.X - xlen;
-        this.drawExtent.maxX = center.X + xlen;
-        this.drawExtent.minY = center.Y - ylen;
-        this.drawExtent.maxY = center.Y + ylen;
+        this.drawExtent.minX = center.x - xlen;
+        this.drawExtent.maxX = center.x + xlen;
+        this.drawExtent.minY = center.y - ylen;
+        this.drawExtent.maxY = center.y + ylen;
     }
 
     private void updateXYScale(double width, double height) {
@@ -721,8 +724,8 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         AffineTransform oldTransform = g.getTransform();
         g.translate(area.getX(), area.getY());
 
-        PointZ geoCenter = this.getGeoCenter();
-        graphic.setAddressLocation(new GeoPosition(geoCenter.Y, geoCenter.X));
+        Coordinate geoCenter = this.getGeoCenter();
+        graphic.setAddressLocation(new GeoPosition(geoCenter.y, geoCenter.x));
         double webMapScale = graphic.getWebMapScale();
         if (!MIMath.doubleEquals(this.xScale, webMapScale)) {
             int minZoom = graphic.getTileFactory().getInfo().getMinimumZoomLevel();
@@ -791,10 +794,10 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     public void addText(ChartText text, boolean isLonLat) {
         if (isLonLat) {
             if (!this.projInfo.isLonLat()) {
-                PointZ xyp = Reproject.reprojectPoint(text.getX(), text.getY(), KnownCoordinateSystems.geographic.world.WGS1984,
+                Coordinate xyp = Reproject.reprojectPoint(text.getX(), text.getY(), KnownCoordinateSystems.geographic.world.WGS1984,
                         this.projInfo);
-                text.setX(xyp.X);
-                text.setY(xyp.Y);
+                text.setX(xyp.x);
+                text.setY(xyp.y);
             }
         }
         super.addText(text);
@@ -889,11 +892,11 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      */
     public void addPoint(double lat, double lon, PointBreak pb) {
         PointShape ps = new PointShape();
-        PointZ lonlatp = new PointZ(lon, lat);
+        Coordinate lonlatp = new Coordinate(lon, lat);
         if (this.isLonLatMap()) {
             ps.setPoint(lonlatp);
         } else {
-            PointZ xyp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
+            Coordinate xyp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
                     this.getProjInfo());
             ps.setPoint(xyp);
         }
@@ -912,12 +915,12 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     public Graphic addPoint(List<Number> lat, List<Number> lon, PointBreak pb) {
         double x, y;
         PointShape ps;
-        PointZ lonlatp, xyp;
+        Coordinate lonlatp, xyp;
         for (int i = 0; i < lat.size(); i++) {
             ps = new PointShape();
             x = lon.get(i).doubleValue();
             y = lat.get(i).doubleValue();
-            lonlatp = new PointZ(x, y);
+            lonlatp = new Coordinate(x, y);
             if (this.isLonLatMap()) {
                 ps.setPoint(lonlatp);
             } else {
@@ -943,8 +946,8 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     public Graphic addPolyline(List<Number> lat, List<Number> lon, PolylineBreak plb) {
         double x, y;
         PolylineShape pls;
-        PointZ lonlatp;
-        List<PointZ> points = new ArrayList<>();
+        Coordinate lonlatp;
+        List<Coordinate> points = new ArrayList<>();
         for (int i = 0; i < lat.size(); i++) {
             x = lon.get(i).doubleValue();
             y = lat.get(i).doubleValue();
@@ -957,7 +960,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
                 }
                 points = new ArrayList<>();
             } else {
-                lonlatp = new PointZ(x, y);
+                lonlatp = new Coordinate(x, y);
                 if (!this.isLonLatMap()) {
                     lonlatp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
                             this.projInfo);
@@ -987,8 +990,8 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     public Graphic addPolyline(List<Number> lat, List<Number> lon, PolylineBreak plb, boolean iscurve) {
         double x, y;
         PolylineShape pls;
-        PointZ lonlatp;
-        List<PointZ> points = new ArrayList<>();
+        Coordinate lonlatp;
+        List<Coordinate> points = new ArrayList<>();
         for (int i = 0; i < lat.size(); i++) {
             x = lon.get(i).doubleValue();
             y = lat.get(i).doubleValue();
@@ -1005,7 +1008,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
                 }
                 points = new ArrayList<>();
             } else {
-                lonlatp = new PointZ(x, y);
+                lonlatp = new Coordinate(x, y);
                 if (!this.projInfo.isLonLat()) {
                     lonlatp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
                             this.projInfo);
@@ -1038,8 +1041,8 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
     public Graphic addPolygon(List<Number> lat, List<Number> lon, PolygonBreak pgb) {
         double x, y;
         PolygonShape pgs;
-        PointZ lonlatp;
-        List<PointZ> points = new ArrayList<>();
+        Coordinate lonlatp;
+        List<Coordinate> points = new ArrayList<>();
         for (int i = 0; i < lat.size(); i++) {
             x = lon.get(i).doubleValue();
             y = lat.get(i).doubleValue();
@@ -1052,7 +1055,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
                 }
                 points = new ArrayList<>();
             } else {
-                lonlatp = new PointZ(x, y);
+                lonlatp = new Coordinate(x, y);
                 if (!this.projInfo.isLonLat()) {
                     lonlatp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
                             this.projInfo);
@@ -1194,8 +1197,8 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
                             break;
                     }
 
-                    labX = aGL.getCoord().X;
-                    labY = aGL.getCoord().Y;
+                    labX = aGL.getCoord().x;
+                    labY = aGL.getCoord().y;
                     xy = projToScreen(labX, labY, area);
                     labX = xy[0] + xMin;
                     labY = xy[1] + yMin;
@@ -1222,19 +1225,19 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
                     if (extentList.isEmpty()) {
                         maxExtent = (Extent) aExtent.clone();
                         extentList.add((Extent) aExtent.clone());
-                    } else if (!MIMath.isExtentCross(aExtent, maxExtent)) {
+                    } else if (!GeometryUtil.isExtentCross(aExtent, maxExtent)) {
                         extentList.add((Extent) aExtent.clone());
-                        maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                        maxExtent = GeometryUtil.getLagerExtent(maxExtent, aExtent);
                     } else {
                         for (int j = 0; j < extentList.size(); j++) {
-                            if (MIMath.isExtentCross(aExtent, extentList.get(j))) {
+                            if (GeometryUtil.isExtentCross(aExtent, extentList.get(j))) {
                                 ifDraw = false;
                                 break;
                             }
                         }
                         if (ifDraw) {
                             extentList.add(aExtent);
-                            maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                            maxExtent = GeometryUtil.getLagerExtent(maxExtent, aExtent);
                         }
                     }
                     if (ifDraw) {

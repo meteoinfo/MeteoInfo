@@ -13,7 +13,7 @@ import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.WindArrow3D;
 import org.meteoinfo.math.Matrix4f;
 
@@ -86,11 +86,11 @@ public class QuiverRender extends JOGLGraphicRender {
             Graphic graphic = graphics.getGraphicN(i);
             WindArrow3D shape = (WindArrow3D) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
-            PointZ sp = (PointZ) shape.getPoint();
-            PointZ ep = (PointZ) shape.getEndPoint();
+            Coordinate sp = (Coordinate) shape.getPoint();
+            Coordinate ep = (Coordinate) shape.getEndPoint();
 
-            Vector3f v1 = transform.transform((float) sp.X, (float) sp.Y, (float) sp.Z);
-            Vector3f v2 = transform.transform((float) ep.X, (float) ep.Y, (float) ep.Z);
+            Vector3f v1 = transform.transform((float) sp.x, (float) sp.y, (float) sp.z);
+            Vector3f v2 = transform.transform((float) ep.x, (float) ep.y, (float) ep.z);
             //Vector3f v1 = new Vector3f((float) sp.X, (float) sp.Y, (float) sp.Z);
             //Vector3f v2 = new Vector3f((float) ep.X, (float) ep.Y, (float) ep.Z);
             float[] color = pb.getColor().getRGBComponents(null);

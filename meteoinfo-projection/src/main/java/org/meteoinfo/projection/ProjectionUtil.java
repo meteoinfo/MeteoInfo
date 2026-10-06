@@ -13,9 +13,8 @@
  */
 package org.meteoinfo.projection;
 
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointZ;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.ndarray.Array;
@@ -109,10 +108,10 @@ public class ProjectionUtil {
      * @return To extent
      */
     public static Extent getProjectionExtent(ProjectionInfo fromProj, ProjectionInfo toProj, Extent fromExtent) {
-        PointZ pll = Reproject.reprojectPoint(fromExtent.minX, fromExtent.minY, fromProj, toProj);
-        PointZ pur = Reproject.reprojectPoint(fromExtent.maxX, fromExtent.maxY, fromProj, toProj);
+        Coordinate pll = Reproject.reprojectPoint(fromExtent.minX, fromExtent.minY, fromProj, toProj);
+        Coordinate pur = Reproject.reprojectPoint(fromExtent.maxX, fromExtent.maxY, fromProj, toProj);
 
-        return new Extent(pll.X, pur.X, pll.Y, pur.Y);
+        return new Extent(pll.x, pur.x, pll.y, pur.y);
     }
 
     /**
@@ -183,7 +182,7 @@ public class ProjectionUtil {
 
     public static Extent getLonLatExtent(ProjectionInfo fromProj, ProjectionInfo toProj, double[] X, double[] Y) {
         double x, y, minX = 180, minY = 90, maxX = -180, maxY = -90;
-        PointZ p;
+        Coordinate p;
         for (int i = 0; i < Y.length; i++) {
             for (int j = 0; j < X.length; j++) {
                 try {
@@ -192,21 +191,21 @@ public class ProjectionUtil {
                     continue;
                 }
 
-                if (Double.isNaN(p.X) || Double.isNaN(p.Y)) {
+                if (Double.isNaN(p.x) || Double.isNaN(p.y)) {
                     continue;
                 }
 
-                if (p.X < minX) {
-                    minX = p.X;
+                if (p.x < minX) {
+                    minX = p.x;
                 }
-                if (p.Y < minY) {
-                    minY = p.Y;
+                if (p.y < minY) {
+                    minY = p.y;
                 }
-                if (p.X > maxX) {
-                    maxX = p.X;
+                if (p.x > maxX) {
+                    maxX = p.x;
                 }
-                if (p.Y > maxY) {
-                    maxY = p.Y;
+                if (p.y > maxY) {
+                    maxY = p.y;
                 }
             }
         }
@@ -441,16 +440,16 @@ public class ProjectionUtil {
     public static PointShape projectPointShape(PointShape aPS, ProjectionInfo fromProj, ProjectionInfo toProj) {
         PointShape newPS = (PointShape) aPS.clone();
         double[][] points = new double[1][];
-        PointZ oP = newPS.getPoint();
-        points[0] = new double[]{oP.X, oP.Y};
-        double[] fromP = new double[]{oP.X, oP.Y};
+        Coordinate oP = newPS.getPoint();
+        points[0] = new double[]{oP.x, oP.y};
+        double[] fromP = new double[]{oP.x, oP.y};
         try {
             Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
             if (!Double.isNaN(points[0][0]) && !Double.isNaN(points[0][1])) {
                 double[] toP = points[0];
-                PointZ rp = (PointZ) oP.clone();
-                rp.X = points[0][0];
-                rp.Y = points[0][1];
+                Coordinate rp = (Coordinate) oP.clone();
+                rp.x = points[0][0];
+                rp.y = points[0][1];
                 newPS.setPoint(rp);
                 switch (aPS.getShapeType()) {
                     case WIND_BARB:
@@ -475,14 +474,14 @@ public class ProjectionUtil {
     public static PolylineShape projectPolylineShape(PolylineShape aPLS, ProjectionInfo fromProj, ProjectionInfo toProj) {
         List<Polyline> polyLines = new ArrayList<>();
         for (int i = 0; i < aPLS.getPolylines().size(); i++) {
-            List<PointZ> newPoints = new ArrayList<>();
+            List<Coordinate> newPoints = new ArrayList<>();
             Polyline aPL = aPLS.getPolylines().get(i);
             Polyline bPL;
             double x;
             for (int j = 0; j < aPL.getPointList().size(); j++) {
                 double[][] points = new double[1][];
-                PointZ wPoint = aPL.getPointList().get(j);
-                x = wPoint.X;
+                Coordinate wPoint = aPL.getPointList().get(j);
+                x = wPoint.x;
                 if (fromProj.isLonLat()) {
                     if (x > 180) {
                         x -= 360;
@@ -490,13 +489,12 @@ public class ProjectionUtil {
                         x += 360;
                     }
                 }
-                points[0] = new double[]{x, wPoint.Y};
+                points[0] = new double[]{x, wPoint.y};
                 try {
                     Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
                     if (!Double.isNaN(points[0][0]) && !Double.isNaN(points[0][1])) {
-                        //wPoint = new PointZ();
-                        wPoint.X = points[0][0];
-                        wPoint.Y = points[0][1];
+                        wPoint.x = points[0][0];
+                        wPoint.y = points[0][1];
                         newPoints.add(wPoint);
                     }
                 } catch (Exception e) {
@@ -620,21 +618,21 @@ public class ProjectionUtil {
             Polygon aPG = aPGS.getPolygons().get(i);
             Polygon bPG = null;
             for (int r = 0; r < aPG.getRingNumber(); r++) {
-                List<PointZ> pList = (List<PointZ>) aPG.getRings().get(r);
-                List<PointZ> newPoints = new ArrayList<>();
+                List<Coordinate> pList = (List<Coordinate>) aPG.getRings().get(r);
+                List<Coordinate> newPoints = new ArrayList<>();
                 for (int j = 0; j < pList.size(); j++) {
                     double[][] points = new double[1][];
-                    PointZ wPoint = pList.get(j);
-                    points[0] = new double[]{wPoint.X, wPoint.Y};
+                    Coordinate wPoint = pList.get(j);
+                    points[0] = new double[]{wPoint.x, wPoint.y};
                     try {
                         Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
                         if (!Double.isNaN(points[0][0]) || !Double.isInfinite(points[0][0]) ||
                                 !Double.isNaN(points[0][1]) || !Double.isInfinite(points[0][1])) {
-                            PointZ nPoint = new PointZ();
-                            nPoint.X = points[0][0];
-                            nPoint.Y = points[0][1];
-                            nPoint.M = wPoint.M;
-                            nPoint.Z = wPoint.Z;
+                            Coordinate nPoint = new Coordinate();
+                            nPoint.x = points[0][0];
+                            nPoint.y = points[0][1];
+                            nPoint.m = wPoint.m;
+                            nPoint.z = wPoint.z;
                             newPoints.add(nPoint);
                         }
                     } catch (Exception e) {
@@ -691,24 +689,24 @@ public class ProjectionUtil {
         if (fromProj.getProjectionName() == ProjectionNames.LongLat) {
             switch (toProj.getProjectionName()) {
                 case Lambert_Conformal_Conic:
-                    if (pointShape.getPoint().Y < cutoff) {
+                    if (pointShape.getPoint().y < cutoff) {
                         return null;
                     }
                     break;
                 case North_Polar_Stereographic_Azimuthal:
-                    if (pointShape.getPoint().Y < cutoff) {
+                    if (pointShape.getPoint().y < cutoff) {
                         return null;
                     }
                     break;
                 case South_Polar_Stereographic_Azimuthal:
-                    if (pointShape.getPoint().Y > cutoff) {
+                    if (pointShape.getPoint().y > cutoff) {
                         return null;
                     }
                     break;
                 case Mercator:
                 case Transverse_Mercator:
                 case UTM:
-                    if (pointShape.getPoint().Y > cutoff || pointShape.getPoint().Y < -cutoff) {
+                    if (pointShape.getPoint().y > cutoff || pointShape.getPoint().y < -cutoff) {
                         return null;
                     }
                     break;
@@ -955,19 +953,19 @@ public class ProjectionUtil {
     private static CurveLineShape projectCurvelineShape(CurveLineShape aPLS, ProjectionInfo fromProj, ProjectionInfo toProj) {
         List<Polyline> polyLines = new ArrayList<>();
         for (int i = 0; i < aPLS.getPolylines().size(); i++) {
-            List<PointZ> newPoints = new ArrayList<>();
+            List<Coordinate> newPoints = new ArrayList<>();
             Polyline aPL = aPLS.getPolylines().get(i);
             Polyline bPL;
             for (int j = 0; j < aPL.getPointList().size(); j++) {
                 double[][] points = new double[1][];
-                PointZ wPoint = aPL.getPointList().get(j);
-                points[0] = new double[]{wPoint.X, wPoint.Y};
+                Coordinate wPoint = aPL.getPointList().get(j);
+                points[0] = new double[]{wPoint.x, wPoint.y};
                 try {
                     Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
                     if (!Double.isNaN(points[0][0]) && !Double.isNaN(points[0][1])) {
-                        wPoint = new PointZ();
-                        wPoint.X = points[0][0];
-                        wPoint.Y = points[0][1];
+                        wPoint = new Coordinate();
+                        wPoint.x = points[0][0];
+                        wPoint.y = points[0][1];
                         newPoints.add(wPoint);
                     }
                 } catch (Exception e) {
@@ -997,18 +995,18 @@ public class ProjectionUtil {
             Polygon aPG = aPGS.getPolygons().get(i);
             Polygon bPG = null;
             for (int r = 0; r < aPG.getRingNumber(); r++) {
-                List<PointZ> pList = aPG.getRings().get(r);
-                List<PointZ> newPoints = new ArrayList<>();
+                List<Coordinate> pList = aPG.getRings().get(r);
+                List<Coordinate> newPoints = new ArrayList<>();
                 for (int j = 0; j < pList.size(); j++) {
                     double[][] points = new double[1][];
-                    PointZ wPoint = pList.get(j);
-                    points[0] = new double[]{wPoint.X, wPoint.Y};
+                    Coordinate wPoint = pList.get(j);
+                    points[0] = new double[]{wPoint.x, wPoint.y};
                     try {
                         Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
                         if (!Double.isNaN(points[0][0]) && !Double.isNaN(points[0][1])) {
-                            wPoint = new PointZ();
-                            wPoint.X = points[0][0];
-                            wPoint.Y = points[0][1];
+                            wPoint = new Coordinate();
+                            wPoint.x = points[0][0];
+                            wPoint.y = points[0][1];
                             newPoints.add(wPoint);
                         }
                     } catch (Exception e) {
@@ -1045,15 +1043,15 @@ public class ProjectionUtil {
     }
 
     private static CircleShape projectCircleShape(CircleShape aCS, ProjectionInfo fromProj, ProjectionInfo toProj) {
-        double radius = Math.abs(aCS.getPoints().get(1).X - aCS.getPoints().get(0).X);
+        double radius = Math.abs(aCS.getPoints().get(1).x - aCS.getPoints().get(0).x);
         double[][] points = new double[1][];
-        PointZ centerPoint = new PointZ(aCS.getPoints().get(0).X + radius, aCS.getPoints().get(0).Y);
-        points[0] = new double[]{centerPoint.X, centerPoint.Y};
+        Coordinate centerPoint = new Coordinate(aCS.getPoints().get(0).x + radius, aCS.getPoints().get(0).y);
+        points[0] = new double[]{centerPoint.x, centerPoint.y};
         try {
             Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
             if (!Double.isNaN(points[0][0]) && !Double.isNaN(points[0][1])) {
-                centerPoint.X = points[0][0];
-                centerPoint.Y = points[0][1];
+                centerPoint.x = points[0][0];
+                centerPoint.y = points[0][1];
             } else {
                 return null;
             }
@@ -1062,13 +1060,13 @@ public class ProjectionUtil {
         }
 
         points = new double[1][];
-        PointZ leftPoint = aCS.getPoints().get(0);
-        points[0] = new double[]{leftPoint.X, leftPoint.Y};
+        Coordinate leftPoint = aCS.getPoints().get(0);
+        points[0] = new double[]{leftPoint.x, leftPoint.y};
         try {
             Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
             if (!Double.isNaN(points[0][0]) && !Double.isNaN(points[0][1])) {
-                leftPoint.X = points[0][0];
-                leftPoint.Y = points[0][1];
+                leftPoint.x = points[0][0];
+                leftPoint.y = points[0][1];
             } else {
                 return null;
             }
@@ -1076,12 +1074,12 @@ public class ProjectionUtil {
             return null;
         }
 
-        radius = Math.abs(centerPoint.X - leftPoint.X);
-        List<PointZ> newPoints = new ArrayList<>();
-        newPoints.add(new PointZ(centerPoint.X - radius, centerPoint.Y));
-        newPoints.add(new PointZ(centerPoint.X, centerPoint.Y - radius));
-        newPoints.add(new PointZ(centerPoint.X + radius, centerPoint.Y));
-        newPoints.add(new PointZ(centerPoint.X, centerPoint.Y + radius));
+        radius = Math.abs(centerPoint.x - leftPoint.x);
+        List<Coordinate> newPoints = new ArrayList<>();
+        newPoints.add(new Coordinate(centerPoint.x - radius, centerPoint.y));
+        newPoints.add(new Coordinate(centerPoint.x, centerPoint.y - radius));
+        newPoints.add(new Coordinate(centerPoint.x + radius, centerPoint.y));
+        newPoints.add(new Coordinate(centerPoint.x, centerPoint.y + radius));
         CircleShape newCS = new CircleShape();
         newCS.setPoints(newPoints);
 
@@ -1089,16 +1087,16 @@ public class ProjectionUtil {
     }
 
     private static EllipseShape projectEllipseShape(EllipseShape aES, ProjectionInfo fromProj, ProjectionInfo toProj) {
-        double xRadius = Math.abs(aES.getPoints().get(2).X - aES.getPoints().get(0).X) / 2;
-        double yRadius = Math.abs(aES.getPoints().get(2).Y - aES.getPoints().get(0).Y) / 2;
+        double xRadius = Math.abs(aES.getPoints().get(2).x - aES.getPoints().get(0).x) / 2;
+        double yRadius = Math.abs(aES.getPoints().get(2).y - aES.getPoints().get(0).y) / 2;
         double[][] points = new double[1][];
-        PointZ centerPoint = new PointZ(aES.getExtent().minX + xRadius, aES.getExtent().minY + yRadius);
-        points[0] = new double[]{centerPoint.X, centerPoint.Y};
+        Coordinate centerPoint = new Coordinate(aES.getExtent().minX + xRadius, aES.getExtent().minY + yRadius);
+        points[0] = new double[]{centerPoint.x, centerPoint.y};
         try {
             Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
             if (!Double.isNaN(points[0][0]) && !Double.isNaN(points[0][1])) {
-                centerPoint.X = points[0][0];
-                centerPoint.Y = points[0][1];
+                centerPoint.x = points[0][0];
+                centerPoint.y = points[0][1];
             } else {
                 return null;
             }
@@ -1107,13 +1105,13 @@ public class ProjectionUtil {
         }
 
         points = new double[1][];
-        PointZ lbPoint = new PointZ(aES.getExtent().minX, aES.getExtent().minY);
-        points[0] = new double[]{lbPoint.X, lbPoint.Y};
+        Coordinate lbPoint = new Coordinate(aES.getExtent().minX, aES.getExtent().minY);
+        points[0] = new double[]{lbPoint.x, lbPoint.y};
         try {
             Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
             if (!Double.isNaN(points[0][0]) && !Double.isNaN(points[0][1])) {
-                lbPoint.X = points[0][0];
-                lbPoint.Y = points[0][1];
+                lbPoint.x = points[0][0];
+                lbPoint.y = points[0][1];
             } else {
                 return null;
             }
@@ -1121,13 +1119,13 @@ public class ProjectionUtil {
             return null;
         }
 
-        xRadius = Math.abs(centerPoint.X - lbPoint.X);
-        yRadius = Math.abs(centerPoint.Y - lbPoint.Y);
-        List<PointZ> newPoints = new ArrayList<>();
-        newPoints.add(new PointZ(centerPoint.X - xRadius, centerPoint.Y - yRadius));
-        newPoints.add(new PointZ(centerPoint.X - xRadius, centerPoint.Y + yRadius));
-        newPoints.add(new PointZ(centerPoint.X + xRadius, centerPoint.Y + yRadius));
-        newPoints.add(new PointZ(centerPoint.X + xRadius, centerPoint.Y - yRadius));
+        xRadius = Math.abs(centerPoint.x - lbPoint.x);
+        yRadius = Math.abs(centerPoint.y - lbPoint.y);
+        List<Coordinate> newPoints = new ArrayList<>();
+        newPoints.add(new Coordinate(centerPoint.x - xRadius, centerPoint.y - yRadius));
+        newPoints.add(new Coordinate(centerPoint.x - xRadius, centerPoint.y + yRadius));
+        newPoints.add(new Coordinate(centerPoint.x + xRadius, centerPoint.y + yRadius));
+        newPoints.add(new Coordinate(centerPoint.x + xRadius, centerPoint.y - yRadius));
         EllipseShape newES = new EllipseShape();
         newES.setPoints(newPoints);
 

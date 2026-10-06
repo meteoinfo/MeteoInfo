@@ -6,7 +6,7 @@
 package org.meteoinfo.geometry.shape;
 
 import org.locationtech.jts.geom.Geometry;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 
 /**
  *
@@ -74,12 +74,12 @@ public class WindArrow3D extends PointShape {
      * Get arrow end point
      * @return End point
      */
-    public PointZ getEndPoint() {
-        PointZ sp = (PointZ)this.getPoint();
-        PointZ ed = new PointZ();
-        ed.X = sp.X + u * scale;
-        ed.Y = sp.Y + v * scale;
-        ed.Z = sp.Z + w * scale;
+    public Coordinate getEndPoint() {
+        Coordinate sp = (Coordinate)this.getPoint();
+        Coordinate ed = new Coordinate();
+        ed.x = sp.x + u * scale;
+        ed.y = sp.y + v * scale;
+        ed.z = sp.z + w * scale;
         return ed;
     }
 

@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geo.analysis.GeoComputation;
 import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.geoprocess.SpatialQueryTypes;
@@ -18,7 +18,6 @@ import org.meteoinfo.geo.layer.MapLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.geometry.shape.Shape;
-import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
  *
@@ -212,8 +211,8 @@ public class FrmSelectByLocation extends javax.swing.JDialog {
                 } else {
                     for (Shape aShape : fromLayer.getShapes()) {
                         boolean isIn = true;
-                        List<PointZ> points = aShape.getPoints();
-                        for (PointZ aPoint : points) {
+                        List<Coordinate> points = aShape.getPoints();
+                        for (Coordinate aPoint : points) {
                             if (!GeoComputation.pointInPolygonLayer(relatedLayer, aPoint, onlySel)) {
                                 isIn = false;
                                 break;
@@ -249,8 +248,8 @@ public class FrmSelectByLocation extends javax.swing.JDialog {
                         PolygonShape aPolygon = (PolygonShape) aShape;
                         for (Shape bShape : shapes) {
                             boolean isIn = true;
-                            List<PointZ> points = bShape.getPoints();
-                            for (PointZ aPoint : points) {
+                            List<Coordinate> points = bShape.getPoints();
+                            for (Coordinate aPoint : points) {
                                 if (!GeoComputation.pointInPolygon(aPolygon, aPoint)) {
                                     isIn = false;
                                     break;

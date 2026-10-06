@@ -14,7 +14,7 @@
 package org.meteoinfo.data.meteodata.hysplit;
 
 import org.meteoinfo.common.DataConvert;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.meteodata.*;
 import org.meteoinfo.data.dimarray.Dimension;
@@ -508,13 +508,13 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
 
             //Record #6
             int TrajIdx;
-            List<PointZ> pList;
-            List<List<PointZ>> PointList = new ArrayList<>();
+            List<Coordinate> pList;
+            List<List<Coordinate>> PointList = new ArrayList<>();
             for (i = 0; i < trajNum; i++) {
                 pList = new ArrayList<>();
                 PointList.add(pList);
             }
-            PointZ aPoint;
+            Coordinate aPoint;
             //ArrayList polylines = new ArrayList();
             int dn = 12 + this.varNum;
             while (true) {
@@ -547,9 +547,9 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
                 tt = LocalDateTime.of(y, Integer.parseInt(dataArray[3]),
                         Integer.parseInt(dataArray[4]), Integer.parseInt(dataArray[5]), 0, 0);
 
-                aPoint = new PointZ();
-                aPoint.X = JDateUtil.toOADate(tt);
-                aPoint.Y = Double.parseDouble(dataArray[varIndex]);
+                aPoint = new Coordinate();
+                aPoint.x = JDateUtil.toOADate(tt);
+                aPoint.y = Double.parseDouble(dataArray[varIndex]);
                 PointList.get(TrajIdx).add(aPoint);
             }
 
@@ -558,8 +558,8 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
                 double[] xvs = new double[n];
                 double[] yvs = new double[n];
                 for (int j = 0; j < n; j++) {
-                    xvs[j] = PointList.get(i).get(j).X;
-                    yvs[j] = PointList.get(i).get(j).Y;
+                    xvs[j] = PointList.get(i).get(j).x;
+                    yvs[j] = PointList.get(i).get(j).y;
                 }
                 dataset.addSeries("Traj_" + String.valueOf(trajNum), xvs, yvs);
             }
@@ -608,13 +608,13 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
 
             //Record #6
             int TrajIdx;
-            List<PointZ> pList;
-            List<List<PointZ>> PointList = new ArrayList<>();
+            List<Coordinate> pList;
+            List<List<Coordinate>> PointList = new ArrayList<>();
             for (i = 0; i < trajNum; i++) {
                 pList = new ArrayList<>();
                 PointList.add(pList);
             }
-            PointZ aPoint;
+            Coordinate aPoint;
             int dn = 12 + this.varNum;
             while (true) {
                 aLine = sr.readLine();
@@ -646,9 +646,9 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
                 tt = LocalDateTime.of(y, Integer.parseInt(dataArray[3]),
                         Integer.parseInt(dataArray[4]), Integer.parseInt(dataArray[5]), 0, 0);
 
-                aPoint = new PointZ();
-                aPoint.X = JDateUtil.toOADate(tt);
-                aPoint.Y = Double.parseDouble(dataArray[varIndex]);
+                aPoint = new Coordinate();
+                aPoint.x = JDateUtil.toOADate(tt);
+                aPoint.y = Double.parseDouble(dataArray[varIndex]);
                 PointList.get(TrajIdx).add(aPoint);
             }
 
@@ -658,14 +658,14 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
                 double[] yvs = new double[n];
                 LocalDateTime cdate, sdate = LocalDateTime.now();
                 for (int j = 0; j < n; j++) {
-                    cdate = JDateUtil.fromOADate(PointList.get(i).get(j).X);
+                    cdate = JDateUtil.fromOADate(PointList.get(i).get(j).x);
                     if (j == 0) {
                         sdate = cdate;
                         xvs[j] = 0;
                     } else {
                         xvs[j] = Duration.between(sdate, cdate).toHours();
                     }
-                    yvs[j] = PointList.get(i).get(j).Y;
+                    yvs[j] = PointList.get(i).get(j).y;
                 }
                 dataset.addSeries("Traj_" + String.valueOf(trajNum), xvs, yvs);
             }

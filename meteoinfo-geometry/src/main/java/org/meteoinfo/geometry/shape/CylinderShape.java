@@ -2,15 +2,15 @@ package org.meteoinfo.geometry.shape;
 
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.meteoinfo.common.PointZ;
-import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.GeometryUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CylinderShape extends Shape {
 
-    private List<PointZ> points;
+    private List<Coordinate> points;
     double radius = 1.;
 
     /**
@@ -19,8 +19,8 @@ public class CylinderShape extends Shape {
     public CylinderShape() {
         super();
         this.points = new ArrayList<>();
-        this.points.add(new PointZ());
-        this.points.add(new PointZ());
+        this.points.add(new Coordinate());
+        this.points.add(new Coordinate());
         this.setExtent(GeometryUtil.getPointsExtent(this.points));
     }
 
@@ -29,7 +29,7 @@ public class CylinderShape extends Shape {
      * @param points Points
      * @param radius Radius
      */
-    public CylinderShape(List<PointZ> points, double radius) {
+    public CylinderShape(List<Coordinate> points, double radius) {
         super();
         this.points = points;
         this.radius = radius;
@@ -42,7 +42,7 @@ public class CylinderShape extends Shape {
      * @param p2 Point 2
      * @param radius Radius
      */
-    public CylinderShape(PointZ p1, PointZ p2, double radius) {
+    public CylinderShape(Coordinate p1, Coordinate p2, double radius) {
         super();
         this.points = new ArrayList<>();
         this.points.add(p1);
@@ -65,7 +65,7 @@ public class CylinderShape extends Shape {
      * Get vertex points
      * @return Vertex points
      */
-    public List<PointZ> getPoints() {
+    public List<Coordinate> getPoints() {
         return this.points;
     }
 
@@ -74,7 +74,7 @@ public class CylinderShape extends Shape {
      * @param i The index
      * @return A vertex point
      */
-    public PointZ getPoint(int i) {
+    public Coordinate getPoint(int i) {
         return this.points.get(i);
     }
 
@@ -82,7 +82,7 @@ public class CylinderShape extends Shape {
      * Set vertex points
      * @param value Vertex points
      */
-    public void setPoints(List<PointZ> value) {
+    public void setPoints(List<Coordinate> value) {
         this.points = value;
         this.setExtent(GeometryUtil.getPointsExtent(this.points));
     }
@@ -116,6 +116,6 @@ public class CylinderShape extends Shape {
      * @return Cylinder height
      */
     public double getHeight() {
-        return this.points.get(1).Z - this.points.get(0).Z;
+        return this.points.get(1).z - this.points.get(0).z;
     }
 }

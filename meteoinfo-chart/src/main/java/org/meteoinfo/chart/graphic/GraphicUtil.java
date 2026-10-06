@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.graphic;
 
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 
 import java.util.ArrayList;
 import java.util.List;

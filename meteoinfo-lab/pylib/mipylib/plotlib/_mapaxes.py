@@ -11,7 +11,7 @@ import numbers
 import functools
 
 from org.meteoinfo.chart import ChartScaleBar, ChartNorthArrow
-from org.meteoinfo.chart.plot import GridLabelPosition
+from org.meteoinfo.chart import GridLabelPosition
 from org.meteoinfo.chart.geo import MapPlot
 from org.meteoinfo.chart.graphic import GraphicFactory, WebMapImage
 from org.meteoinfo.geo.meteodata import DrawMeteoData
@@ -22,14 +22,14 @@ from org.meteoinfo.geometry.shape import Shape, PolylineShape, PolygonShape, Sha
 from org.meteoinfo.chart.graphic import Graphic
 from org.meteoinfo.chart.transform import GeoTransform
 from org.meteoinfo.projection import ProjectionInfo
-from org.meteoinfo.common import Extent
+from org.meteoinfo.geometry import Extent
 from org.meteoinfo.geo.layer import LayerTypes, WebMapLayer
 from org.meteoinfo.data.mapdata.webmap import WebMapProvider, DefaultTileFactory, TileFactoryInfo
 
 from java.awt import Font, Color
 
 from ._axes import Axes
-from .graphic import Point2DCollection, Line2D, LineCollection
+from .graphic import PointCollection, Line, LineCollection
 import mipylib.numeric as np
 from mipylib.numeric.core import NDArray
 from mipylib.dataset import DimArray
@@ -743,7 +743,7 @@ class MapAxes(Axes):
                             kwargs['cmap'] = 'matlab_jet'
                         graphics = LineCollection(None, xydata=[xdata, ydata], **kwargs)
                     else:
-                        graphics = Line2D(xdata, ydata, legend=lines[0], curve=iscurve)
+                        graphics = Line(xdata, ydata, legend=lines[0], curve=iscurve)
                 else:
                     if not kwargs.has_key('cmap'):
                         kwargs['cmap'] = 'matlab_jet'
@@ -756,7 +756,7 @@ class MapAxes(Axes):
                     label = kwargs.pop('label', 'S_' + str(i + 1))
                     xdata = np.asarray(xdatalist[i])
                     ydata = np.asarray(ydatalist[i])
-                    graphic = Line2D(xdata, ydata, legend=lines[i], curve=iscurve)
+                    graphic = Line(xdata, ydata, legend=lines[i], curve=iscurve)
                     graphic.transform = transform
                     graphic = self.add_graphic(graphic)
                     graphics.append(graphic)
@@ -771,7 +771,7 @@ class MapAxes(Axes):
                     cdata = np.split_array_by_nan(cdata)
                     graphics = LineCollection(None, xydata=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
                 else:
-                    graphics = Line2D(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
+                    graphics = Line(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
             else:
                 graphics = LineCollection(None, xydata=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
             #graphic = GraphicFactory.createLineString(xdata._array, ydata._array, cdata._array, ls, iscurve)
@@ -865,10 +865,10 @@ class MapAxes(Axes):
         # Create graphics
         if a.ndim == 0:
             #graphics = GraphicFactory.createPoints(x._array, y._array, ls.getLegendBreak(0))
-            graphics = Point2DCollection(x._array, y._array, legend=ls.getLegendBreak(0))
+            graphics = PointCollection(x._array, y._array, legend=ls.getLegendBreak(0))
         else:
             #graphics = GraphicFactory.createPoints(x._array, y._array, a._array, ls)
-            graphics = Point2DCollection(x._array, y._array, a._array, ls)
+            graphics = PointCollection(x._array, y._array, a._array, ls)
 
         transform = kwargs.pop('transform', None)
         graphics.transform = transform

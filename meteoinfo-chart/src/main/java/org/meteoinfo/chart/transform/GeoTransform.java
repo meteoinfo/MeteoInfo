@@ -3,7 +3,7 @@ package org.meteoinfo.chart.transform;
 import org.locationtech.proj4j.BasicCoordinateTransform;
 import org.locationtech.proj4j.CoordinateTransform;
 import org.locationtech.proj4j.ProjCoordinate;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.chart.geo.ProjectUtil;
@@ -48,12 +48,12 @@ public class GeoTransform extends Transform {
     }
 
     @Override
-    public PointZ transform(PointZ point) {
-        ProjCoordinate s = new ProjCoordinate(point.X, point.Y);
+    public Coordinate transform(Coordinate point) {
+        ProjCoordinate s = new ProjCoordinate(point.x, point.y);
         ProjCoordinate t = new ProjCoordinate();
         this.coordinateTransform.transform(s, t);
         clearInvalid();
-        return new PointZ(t.x, t.y);
+        return new Coordinate(t.x, t.y);
     }
 
     @Override

@@ -5,12 +5,11 @@
  */
 package org.meteoinfo.chart.graphic;
 
-import org.meteoinfo.common.Extent;
 import org.meteoinfo.geometry.legend.BreakTypes;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.ColorBreakCollection;
 import org.meteoinfo.geometry.legend.LegendScheme;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.Polygon;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.geometry.shape.Shape;
@@ -234,8 +233,8 @@ public class GraphicCollection3D extends GraphicCollection{
                 for (Graphic graphic : this.graphics) {
                     ColorBreakCollection cbs = new ColorBreakCollection();
                     Shape shape = graphic.getShape();
-                    for (PointZ pointZ : (List<PointZ>) shape.getPoints()) {
-                        ColorBreak cb = this.legendScheme.findLegendBreak(pointZ.M);
+                    for (Coordinate pointZ : (List<Coordinate>) shape.getPoints()) {
+                        ColorBreak cb = this.legendScheme.findLegendBreak(pointZ.m);
                         cbs.add(cb);
                     }
                     graphic.setLegendBreak(cbs);
@@ -251,8 +250,8 @@ public class GraphicCollection3D extends GraphicCollection{
      */
     public GraphicCollection3D xShift(double xs) {
         for (Graphic g : this.graphics) {
-            for (PointZ p : g.getShape().getPoints()) {
-                p.X += xs;
+            for (Coordinate p : g.getShape().getPoints()) {
+                p.x += xs;
             }
             g.setExtent(g.getExtent().shift(xs, 0, 0));
         }
@@ -269,8 +268,8 @@ public class GraphicCollection3D extends GraphicCollection{
     public GraphicCollection3D xRandomShift(int exponent) {
         Random r = new Random();
         for (Graphic g : this.graphics) {
-            for (PointZ p : g.getShape().getPoints()) {
-                p.X += (1 - r.nextDouble()) * Math.pow(10, exponent);
+            for (Coordinate p : g.getShape().getPoints()) {
+                p.x += (1 - r.nextDouble()) * Math.pow(10, exponent);
             }
         }
 
@@ -285,8 +284,8 @@ public class GraphicCollection3D extends GraphicCollection{
     public GraphicCollection3D yRandomShift(int exponent) {
         Random r = new Random();
         for (Graphic g : this.graphics) {
-            for (PointZ p : g.getShape().getPoints()) {
-                p.Y += (1 - r.nextDouble()) * Math.pow(10, exponent);
+            for (Coordinate p : g.getShape().getPoints()) {
+                p.y += (1 - r.nextDouble()) * Math.pow(10, exponent);
             }
         }
 
@@ -335,23 +334,23 @@ public class GraphicCollection3D extends GraphicCollection{
                     sw.newLine();
                     sw.write(String.valueOf(polygonZ.getOutLine().size()));
                     sw.newLine();
-                    for (PointZ p : (List<PointZ>)polygonZ.getOutLine()) {
-                        sw.write(String.valueOf(p.X) + "," + String.valueOf(p.Y) +
-                                "," + String.valueOf(p.Z));
+                    for (Coordinate p : (List<Coordinate>)polygonZ.getOutLine()) {
+                        sw.write(String.valueOf(p.x) + "," + String.valueOf(p.y) +
+                                "," + String.valueOf(p.z));
                         sw.newLine();
                     }
                     sw.write(String.valueOf(polygonZ.getHoleLineNumber()));
                     sw.newLine();
                     if (polygonZ.hasHole()) {
                         for (int i = 0; i < polygonZ.getHoleLineNumber(); i++) {
-                            List<PointZ> pointZS = (List<PointZ>) polygonZ.getHoleLine(i);
+                            List<Coordinate> pointZS = (List<Coordinate>) polygonZ.getHoleLine(i);
                             sw.write("Hole");
                             sw.newLine();
                             sw.write(String.valueOf(pointZS.size()));
                             sw.newLine();
-                            for (PointZ p : pointZS) {
-                                sw.write(String.valueOf(p.X) + "," + String.valueOf(p.Y) +
-                                        "," + String.valueOf(p.Z));
+                            for (Coordinate p : pointZS) {
+                                sw.write(String.valueOf(p.x) + "," + String.valueOf(p.y) +
+                                        "," + String.valueOf(p.z));
                                 sw.newLine();
                             }
                         }

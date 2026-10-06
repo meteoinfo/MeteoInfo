@@ -14,7 +14,7 @@
 package org.meteoinfo.projection.info;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
@@ -73,12 +73,12 @@ public class UTM extends ProjectionInfo {
         double x1 = 2e7;
         double y0 = -1e7;
         double y1 = 1e7;
-        List<PointZ> points = new ArrayList<>();
-        points.add(new PointZ(x0, y0));
-        points.add(new PointZ(x1, y0));
-        points.add(new PointZ(x1, y1));
-        points.add(new PointZ(x0, y1));
-        points.add(new PointZ(x0, y0));
+        List<Coordinate> points = new ArrayList<>();
+        points.add(new Coordinate(x0, y0));
+        points.add(new Coordinate(x1, y0));
+        points.add(new Coordinate(x1, y1));
+        points.add(new Coordinate(x0, y1));
+        points.add(new Coordinate(x0, y0));
         PolygonShape ps = new PolygonShape();
         ps.setPoints(points);
         this.boundary = ps;

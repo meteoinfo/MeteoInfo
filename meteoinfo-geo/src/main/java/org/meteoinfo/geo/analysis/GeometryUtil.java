@@ -5,12 +5,10 @@
  */
 package org.meteoinfo.geo.analysis;
 
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointZ;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.ndarray.Array;
@@ -34,34 +32,34 @@ public class GeometryUtil {
      * @param PList point list
      * @return extent
      */
-    public static Extent getPointsExtent(List<PointZ> PList) {
+    public static Extent getPointsExtent(List<Coordinate> PList) {
         Extent cET = new Extent();
         for (int i = 0; i < PList.size(); i++) {
-            PointZ aP = (PointZ)PList.get(i);
+            Coordinate aP = (Coordinate)PList.get(i);
             if (i == 0) {
-                cET.minX = aP.X;
-                cET.maxX = aP.X;
-                cET.minY = aP.Y;
-                cET.maxY = aP.Y;
-                cET.minZ = aP.Z;
-                cET.maxZ = aP.Z;
+                cET.minX = aP.x;
+                cET.maxX = aP.x;
+                cET.minY = aP.y;
+                cET.maxY = aP.y;
+                cET.minZ = aP.z;
+                cET.maxZ = aP.z;
             } else {
-                if (cET.minX > aP.X) {
-                    cET.minX = aP.X;
-                } else if (cET.maxX < aP.X) {
-                    cET.maxX = aP.X;
+                if (cET.minX > aP.x) {
+                    cET.minX = aP.x;
+                } else if (cET.maxX < aP.x) {
+                    cET.maxX = aP.x;
                 }
 
-                if (cET.minY > aP.Y) {
-                    cET.minY = aP.Y;
-                } else if (cET.maxY < aP.Y) {
-                    cET.maxY = aP.Y;
+                if (cET.minY > aP.y) {
+                    cET.minY = aP.y;
+                } else if (cET.maxY < aP.y) {
+                    cET.maxY = aP.y;
                 }
 
-                if (cET.minZ > aP.Z) {
-                    cET.minZ = aP.Z;
-                } else if (cET.maxZ < aP.Z) {
-                    cET.maxZ = aP.Z;
+                if (cET.minZ > aP.z) {
+                    cET.minZ = aP.z;
+                } else if (cET.maxZ < aP.z) {
+                    cET.maxZ = aP.z;
                 }
             }
         }
@@ -112,32 +110,32 @@ public class GeometryUtil {
      * @param points
      * @return Extent
      */
-    public static Extent getExtent(PointZ[] points) {
-        PointZ p = points[0];
-        double minx = p.X;
-        double maxx = p.X;
-        double miny = p.Y;
-        double maxy = p.Y;
-        double minz = p.Z;
-        double maxz = p.Z;
+    public static Extent getExtent(Coordinate[] points) {
+        Coordinate p = points[0];
+        double minx = p.x;
+        double maxx = p.x;
+        double miny = p.y;
+        double maxy = p.y;
+        double minz = p.z;
+        double maxz = p.z;
         for (int i = 1; i < points.length; i++) {
-            if (minx > p.X) {
-                minx = p.M;
+            if (minx > p.x) {
+                minx = p.m;
             }
-            if (maxx < p.X) {
-                maxx = p.M;
+            if (maxx < p.x) {
+                maxx = p.m;
             }
-            if (miny > p.Y) {
-                miny = p.Y;
+            if (miny > p.y) {
+                miny = p.y;
             }
-            if (maxy < p.Y) {
-                maxy = p.Y;
+            if (maxy < p.y) {
+                maxy = p.y;
             }
-            if (minz > p.Z) {
-                minz = p.Z;
+            if (minz > p.z) {
+                minz = p.z;
             }
-            if (maxz < p.Z) {
-                maxz = p.Z;
+            if (maxz < p.z) {
+                maxz = p.z;
             }
         }
 
@@ -161,7 +159,7 @@ public class GeometryUtil {
      * @param angle Angle
      * @return Coordinate on the ellipse
      */
-    public static PointZ getEllipseXY(double x0, double y0, double a, double b, double angle) {
+    public static Coordinate getEllipseXY(double x0, double y0, double a, double b, double angle) {
         double rangle = Math.toRadians(angle);
         double x = (a * b) / Math.sqrt(b * b + a * a * Math.tan(rangle) * Math.tan(rangle));
         if (angle > 90 && angle < 270){
@@ -172,7 +170,7 @@ public class GeometryUtil {
             y = -Math.abs(y);
         }
         
-        return new PointZ(x + x0, y + y0);
+        return new Coordinate(x + x0, y + y0);
     }
     
     /**
@@ -184,8 +182,8 @@ public class GeometryUtil {
      * @param deltaAngle Delta angle
      * @return Coordinate on the ellipse
      */
-    public static List<PointZ> getEllipseCoordinates(double x0, double y0, double a, double b, double deltaAngle) {
-        List<PointZ> points = new ArrayList<>();
+    public static List<Coordinate> getEllipseCoordinates(double x0, double y0, double a, double b, double deltaAngle) {
+        List<Coordinate> points = new ArrayList<>();
         for (double angle = 0; angle <= 360; angle += deltaAngle){
             points.add(getEllipseXY(x0, y0, a, b, angle));
         }
@@ -201,8 +199,8 @@ public class GeometryUtil {
      * @param b Minor axis
      * @return Coordinate on the ellipse
      */
-    public static List<PointZ> getEllipseCoordinates(double x0, double y0, double a, double b) {
-        List<PointZ> points = new ArrayList<>();
+    public static List<Coordinate> getEllipseCoordinates(double x0, double y0, double a, double b) {
+        List<Coordinate> points = new ArrayList<>();
         double deltaAngle = 1;
         for (double angle = 0; angle <= 360; angle += deltaAngle){
             points.add(getEllipseXY(x0, y0, a, b, angle));
@@ -230,7 +228,7 @@ public class GeometryUtil {
             xx = xIter.getDoubleNext();
             yy = yIter.getDoubleNext();
             if (!Double.isNaN(xx) && !Double.isNaN(yy)) {
-                Coordinate c = new Coordinate(xx, yy);
+                org.locationtech.jts.geom.Coordinate c = new org.locationtech.jts.geom.Coordinate(xx, yy);
                 geos.add(factory.createPoint(c));
             }
         }
@@ -288,7 +286,7 @@ public class GeometryUtil {
             Array r = Array.factory(DataType.INT, a.getShape());
             for (int i = 0; i < yNum; i++) {
                 for (int j = 0; j < xNum; j++) {
-                    if (GeoComputation.pointInPolygons(polygons, new PointZ(x.get(j).doubleValue(), y.get(i).doubleValue()))) {
+                    if (GeoComputation.pointInPolygons(polygons, new Coordinate(x.get(j).doubleValue(), y.get(i).doubleValue()))) {
                         r.setInt(i * xNum + j, 1);
                     } else {
                         r.setInt(i * xNum + j, -1);
@@ -301,7 +299,7 @@ public class GeometryUtil {
             int n = x.size();
             Array r = Array.factory(DataType.INT, a.getShape());
             for (int i = 0; i < n; i++) {
-                if (GeoComputation.pointInPolygons(polygons, new PointZ(x.get(i).doubleValue(), y.get(i).doubleValue()))) {
+                if (GeoComputation.pointInPolygons(polygons, new Coordinate(x.get(i).doubleValue(), y.get(i).doubleValue()))) {
                     r.setInt(i, 1);
                 } else {
                     r.setInt(i, -1);
@@ -328,7 +326,7 @@ public class GeometryUtil {
         IndexIterator yIter = y.getIndexIterator();
         IndexIterator rIter = r.getIndexIterator();
         while (rIter.hasNext()){
-            if (GeoComputation.pointInPolygons(polygons, new PointZ(xIter.getDoubleNext(),
+            if (GeoComputation.pointInPolygons(polygons, new Coordinate(xIter.getDoubleNext(),
                     yIter.getDoubleNext()))) {
                 rIter.setBooleanNext(true);
             } else {
@@ -352,9 +350,9 @@ public class GeometryUtil {
      */
     public static Array inPolygon(Array a, List<Number> x, List<Number> y, List<Number> x_p, List<Number> y_p) {
         PolygonShape ps = new PolygonShape();
-        List<PointZ> points = new ArrayList<>();
+        List<Coordinate> points = new ArrayList<>();
         for (int i = 0; i < x_p.size(); i++) {
-            points.add(new PointZ(x_p.get(i).doubleValue(), y_p.get(i).doubleValue()));
+            points.add(new Coordinate(x_p.get(i).doubleValue(), y_p.get(i).doubleValue()));
         }
         ps.setPoints(points);
         List<PolygonShape> shapes = new ArrayList<>();
@@ -374,11 +372,11 @@ public class GeometryUtil {
      */
     public static Array inPolygon(Array x, Array y, Array x_p, Array y_p) {
         PolygonShape ps = new PolygonShape();
-        List<PointZ> points = new ArrayList<>();
+        List<Coordinate> points = new ArrayList<>();
         IndexIterator xIter = x_p.getIndexIterator();
         IndexIterator yIter = y_p.getIndexIterator();
         while (xIter.hasNext()) {
-            points.add(new PointZ(xIter.getDoubleNext(), yIter.getDoubleNext()));
+            points.add(new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext()));
         }
         ps.setPoints(points);
         List<PolygonShape> shapes = new ArrayList<>();
@@ -434,7 +432,7 @@ public class GeometryUtil {
         IndexIterator yIter = y.getIndexIterator();
         int i = 0;
         while (aIter.hasNext()){
-            if (GeoComputation.pointInPolygons(polygons, new PointZ(xIter.getDoubleNext(),
+            if (GeoComputation.pointInPolygons(polygons, new Coordinate(xIter.getDoubleNext(),
                     yIter.getDoubleNext()))) {
                 r.setObject(i, aIter.getObjectNext());
             } else {
@@ -462,7 +460,7 @@ public class GeometryUtil {
         IndexIterator yIter = y.getIndexIterator();
         int i = 0;
         while(aIter.hasNext()) {
-            if (GeoComputation.pointInPolygons(polygons, new PointZ(xIter.getDoubleNext(),
+            if (GeoComputation.pointInPolygons(polygons, new Coordinate(xIter.getDoubleNext(),
                     yIter.getDoubleNext()))) {
                 r.setObject(i, Double.NaN);
                 aIter.next();
@@ -495,7 +493,7 @@ public class GeometryUtil {
             va = aIter.getDoubleNext();
             vx = xIter.getDoubleNext();
             vy = yIter.getDoubleNext();
-            if (GeoComputation.pointInPolygons(polygons, new PointZ(vx, vy))) {
+            if (GeoComputation.pointInPolygons(polygons, new Coordinate(vx, vy))) {
                 rdata.add(va);
                 rxdata.add(vx);
                 rydata.add(vy);
@@ -538,7 +536,7 @@ public class GeometryUtil {
             va = aIter.getDoubleNext();
             vx = xIter.getDoubleNext();
             vy = yIter.getDoubleNext();
-            if (!GeoComputation.pointInPolygons(polygons, new PointZ(vx, vy))) {
+            if (!GeoComputation.pointInPolygons(polygons, new Coordinate(vx, vy))) {
                 rdata.add(va);
                 rxdata.add(vx);
                 rydata.add(vy);
@@ -592,7 +590,7 @@ public class GeometryUtil {
         if (a.getRank() == 1) {
             int i = 0;
             while (iter.hasNext()) {
-                if (GeoComputation.pointInPolygons(polygons, new PointZ(x.get(i).doubleValue(), y.get(i).doubleValue()))) {
+                if (GeoComputation.pointInPolygons(polygons, new Coordinate(x.get(i).doubleValue(), y.get(i).doubleValue()))) {
                     r.setObject(i, iter.getObjectNext());
                 } else {
                     r.setObject(i, missingValue);
@@ -605,7 +603,7 @@ public class GeometryUtil {
             for (int i = 0; i < yNum; i++) {
                 for (int j = 0; j < xNum; j++) {
                     idx = i * xNum + j;
-                    if (GeoComputation.pointInPolygons(polygons, new PointZ(x.get(j).doubleValue(), y.get(i).doubleValue()))) {
+                    if (GeoComputation.pointInPolygons(polygons, new Coordinate(x.get(j).doubleValue(), y.get(i).doubleValue()))) {
                         r.setObject(idx, iter.getObjectNext());
                     } else {
                         r.setObject(idx, missingValue);
@@ -689,20 +687,20 @@ public class GeometryUtil {
      * @param points Outline point of the polygon
      * @return Is convex or not
      */
-    public static boolean isConvex(List<PointZ> points) {
+    public static boolean isConvex(List<Coordinate> points) {
         if (points.size() <= 5)
             return true;
         
-        PointZ p0, p1, p2;
+        Coordinate p0, p1, p2;
         int sign = 0;
         for (int i = 0; i < points.size() - 1; i++) {
             p0 = points.get(i == 0 ? points.size() - 2 : i - 1);
             p1 = points.get(i);
             p2 = points.get(i + 1);
-            double dx1 = p1.X - p0.X;
-            double dy1 = p1.Y - p0.Y;
-            double dx2 = p2.X - p1.X;
-            double dy2 = p2.Y - p2.Y;
+            double dx1 = p1.x - p0.x;
+            double dy1 = p1.y - p0.y;
+            double dx2 = p2.x - p1.x;
+            double dy2 = p2.y - p2.y;
             double z = dx1 * dy2 - dy1 * dx2;
             int s = z >= 0.0 ? 1 : -1;
             if(sign == 0) {
@@ -737,12 +735,12 @@ public class GeometryUtil {
         Array mArray = Array.factory(DataType.DOUBLE, shape);
         int i = 0;
         for (Polygon polygon : pgs.getPolygons()) {
-            for (List<PointZ> points : polygon.getRings()) {
-                for (PointZ p : (List<PointZ>) points) {
-                    xArray.setDouble(i, p.X);
-                    yArray.setDouble(i, p.Y);
-                    zArray.setDouble(i, p.Z);
-                    mArray.setDouble(i, p.M);
+            for (List<Coordinate> points : polygon.getRings()) {
+                for (Coordinate p : (List<Coordinate>) points) {
+                    xArray.setDouble(i, p.x);
+                    yArray.setDouble(i, p.y);
+                    zArray.setDouble(i, p.z);
+                    mArray.setDouble(i, p.m);
                     i += 1;
                 }
                 if (i < n) {
@@ -772,11 +770,11 @@ public class GeometryUtil {
         Array mArray = Array.factory(DataType.DOUBLE, shape);
         int i = 0;
         for (Polyline polyline : pls.getPolylines()) {
-            for (PointZ p : (List<PointZ>) polyline.getPointList()) {
-                xArray.setDouble(i, p.X);
-                yArray.setDouble(i, p.Y);
-                zArray.setDouble(i, p.Z);
-                mArray.setDouble(i, p.M);
+            for (Coordinate p : (List<Coordinate>) polyline.getPointList()) {
+                xArray.setDouble(i, p.x);
+                yArray.setDouble(i, p.y);
+                zArray.setDouble(i, p.z);
+                mArray.setDouble(i, p.m);
                 i += 1;
             }
             if (i < n) {
@@ -808,22 +806,22 @@ public class GeometryUtil {
                 zArray = Array.factory(DataType.DOUBLE, new int[]{n});
                 mArray = Array.factory(DataType.DOUBLE, new int[]{n});
                 int i = 0;
-                PointZ p;
+                Coordinate p;
                 for (PointShape shape : (List<PointShape>) layer.getShapes()) {
-                    p = (PointZ) shape.getPoint();
-                    xArray.setDouble(i, p.X);
-                    yArray.setDouble(i, p.Y);
-                    zArray.setDouble(i, p.Z);
-                    mArray.setDouble(i, p.M);
+                    p = (Coordinate) shape.getPoint();
+                    xArray.setDouble(i, p.x);
+                    yArray.setDouble(i, p.y);
+                    zArray.setDouble(i, p.z);
+                    mArray.setDouble(i, p.m);
                 }
                 return new Array[]{xArray, yArray, zArray, mArray};
             } else {
                 int i = 0;
-                PointZ p;
+                Coordinate p;
                 for (PointShape shape : (List<PointShape>) layer.getShapes()) {
                     p = shape.getPoint();
-                    xArray.setDouble(i, p.X);
-                    yArray.setDouble(i, p.Y);
+                    xArray.setDouble(i, p.x);
+                    yArray.setDouble(i, p.y);
                 }
                 return new Array[]{xArray, yArray};
             }

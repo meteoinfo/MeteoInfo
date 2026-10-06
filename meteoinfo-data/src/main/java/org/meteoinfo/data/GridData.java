@@ -17,7 +17,7 @@ import java.io.BufferedReader;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.meteoinfo.common.DataConvert;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.MIMath;
 
 import java.io.BufferedWriter;
@@ -34,11 +34,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.IntStream;
 
 import org.meteoinfo.common.ResampleMethods;
 import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.data.dimarray.DimensionType;
+import org.meteoinfo.geometry.GeometryUtil;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.ndarray.Array;
@@ -992,7 +992,7 @@ public class GridData {
     public GridData setValue(GridData bGrid) {
         Extent aExtent = this.getExtent();
         Extent bExtent = bGrid.getExtent();
-        if (!MIMath.isExtentCross(aExtent, bExtent)) {
+        if (!GeometryUtil.isExtentCross(aExtent, bExtent)) {
             return this;
         }
 
@@ -1048,7 +1048,7 @@ public class GridData {
     public GridData setValue(GridData bGrid, boolean useMissingData) {
         Extent aExtent = this.getExtent();
         Extent bExtent = bGrid.getExtent();
-        if (!MIMath.isExtentCross(aExtent, bExtent)) {
+        if (!GeometryUtil.isExtentCross(aExtent, bExtent)) {
             return this;
         }
 

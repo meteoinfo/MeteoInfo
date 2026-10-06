@@ -27,9 +27,9 @@ import javax.swing.*;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import com.formdev.flatlaf.extras.FlatSVGUtils;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.GridDataSetting;
@@ -1350,8 +1350,8 @@ public class FrmMeteoData extends javax.swing.JDialog {
                     aPB.setDrawOutline(true);
                     aPB.setDrawFill(true);
                     PointF aPoint = new PointF();
-                    PointZ aPD = (PointZ) pList.get(0);
-                    double[] sxy = _parent.getMapDocument().getActiveMapFrame().getMapView().lonLatToScreen(aPD.X, aPD.Y);
+                    Coordinate aPD = (Coordinate) pList.get(0);
+                    double[] sxy = _parent.getMapDocument().getActiveMapFrame().getMapView().lonLatToScreen(aPD.x, aPD.y);
                     aPoint.X = (float) sxy[0];
                     aPoint.Y = (float) sxy[1];
 

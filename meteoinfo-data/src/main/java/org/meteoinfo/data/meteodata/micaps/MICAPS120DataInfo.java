@@ -13,8 +13,7 @@
  */
 package org.meteoinfo.data.meteodata.micaps;
 
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.util.JDateUtil;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.ndarray.math.ArrayMath;

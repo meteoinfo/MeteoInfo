@@ -17,16 +17,16 @@ package org.meteoinfo.geometry.shape;
 import java.util.ArrayList;
 
 import java.util.List;
-import org.locationtech.jts.geom.Coordinate;
+
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
 import org.locationtech.jts.operation.polygonize.Polygonizer;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointZ;
-import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.GeometryUtil;
 
 /**
  * Shape class
@@ -36,7 +36,7 @@ import org.meteoinfo.geometry.geoprocess.GeometryUtil;
 public abstract class Shape implements Cloneable{
     // <editor-fold desc="Variables">
 
-    protected List<PointZ> points;
+    protected List<Coordinate> points;
     protected boolean visible;
     protected boolean selected;
     private boolean editing;
@@ -110,7 +110,7 @@ public abstract class Shape implements Cloneable{
      * Get points
      * @return The points
      */
-    public List<PointZ> getPoints() {
+    public List<Coordinate> getPoints() {
         return this.points;
     }
 
@@ -119,7 +119,7 @@ public abstract class Shape implements Cloneable{
      *
      * @param points point list
      */
-    public void setPoints(List<PointZ> points) {
+    public void setPoints(List<Coordinate> points) {
         this.points = points;
         this.updateExtent();
     }
@@ -244,7 +244,7 @@ public abstract class Shape implements Cloneable{
      * @param vIdx Vertice index
      * @param vertice The vertice
      */
-    public void addVertice(int vIdx, PointZ vertice){
+    public void addVertice(int vIdx, Coordinate vertice){
     }
     
     /**
@@ -262,25 +262,25 @@ public abstract class Shape implements Cloneable{
      * @param newY New Y
      */
     public void moveVertice(int vIdx, double newX, double newY) {
-        List<PointZ> points = getPoints();
+        List<Coordinate> points = getPoints();
         if (this.getShapeType().isPolygon()) {
             int last = points.size() - 1;
             if (vIdx == 0) {
-                if (points.get(0).X == points.get(last).X && points.get(0).Y == points.get(last).Y) {
-                    points.get(last).X = newX;
-                    points.get(last).Y = newY;
+                if (points.get(0).x == points.get(last).x && points.get(0).y == points.get(last).y) {
+                    points.get(last).x = newX;
+                    points.get(last).y = newY;
                 }
             } else if (vIdx == last) {
-                if (points.get(0).X == points.get(last).X && points.get(0).Y == points.get(last).Y) {
-                    points.get(0).X = newX;
-                    points.get(0).Y = newY;
+                if (points.get(0).x == points.get(last).x && points.get(0).y == points.get(last).y) {
+                    points.get(0).x = newX;
+                    points.get(0).y = newY;
                 }
             }
         }
 
-        PointZ aP = points.get(vIdx);
-        aP.X = newX;
-        aP.Y = newY;
+        Coordinate aP = points.get(vIdx);
+        aP.x = newX;
+        aP.y = newY;
         setPoints(points);
     }
     
@@ -290,10 +290,10 @@ public abstract class Shape implements Cloneable{
      * @param yShift Y shift
      */
     public void move(double xShift, double yShift){
-        List<PointZ> points = this.getPoints();
-        for (PointZ aPoint : points) {
-            aPoint.X += xShift;
-            aPoint.Y += yShift;
+        List<Coordinate> points = this.getPoints();
+        for (Coordinate aPoint : points) {
+            aPoint.x += xShift;
+            aPoint.y += yShift;
         }
 
         this.setPoints(points);
@@ -494,8 +494,8 @@ public abstract class Shape implements Cloneable{
             List<Geometry> geos = new ArrayList<>();
             for (int i = 0; i < ugeo.getNumGeometries(); i++){
                 Geometry geo = ugeo.getGeometryN(i);
-                Coordinate c1 = geo.getCoordinates()[0];
-                Coordinate c2 = geo.getCoordinates()[geo.getNumPoints() - 1];
+                org.locationtech.jts.geom.Coordinate c1 = geo.getCoordinates()[0];
+                org.locationtech.jts.geom.Coordinate c2 = geo.getCoordinates()[geo.getNumPoints() - 1];
                 if (c1.equals2D(g1.getCoordinates()[0]) ||
                     c1.equals2D(g1.getCoordinates()[g1.getNumPoints() - 1]) ||
                     c2.equals2D(g1.getCoordinates()[0]) ||

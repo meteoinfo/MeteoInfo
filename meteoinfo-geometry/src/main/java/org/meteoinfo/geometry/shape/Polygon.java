@@ -13,17 +13,16 @@
  */
 package org.meteoinfo.geometry.shape;
 
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+import org.meteoinfo.geometry.GeometryUtil;
 import org.meteoinfo.common.DataConvert;
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
@@ -36,8 +35,8 @@ import org.locationtech.jts.geom.LinearRing;
 public class Polygon {
     // <editor-fold desc="Variables">
 
-    private List<PointZ> _outLine;
-    private List<List<PointZ>> _holeLines;
+    private List<Coordinate> _outLine;
+    private List<List<Coordinate>> _holeLines;
     private Extent _extent;
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -54,7 +53,7 @@ public class Polygon {
      *
      * @return outLine point list
      */
-    public List<PointZ> getOutLine() {
+    public List<Coordinate> getOutLine() {
         return _outLine;
     }
 
@@ -63,7 +62,7 @@ public class Polygon {
      *
      * @param outLine outLine point list
      */
-    public void setOutLine(List<PointZ> outLine) {
+    public void setOutLine(List<Coordinate> outLine) {
         _outLine = outLine;
         _extent = GeometryUtil.getPointsExtent(outLine);
     }
@@ -73,7 +72,7 @@ public class Polygon {
      *
      * @return hole lines
      */
-    public List<List<PointZ>> getHoleLines() {
+    public List<List<Coordinate>> getHoleLines() {
         return this._holeLines;
     }
     
@@ -82,7 +81,7 @@ public class Polygon {
      * @param idx Index
      * @return A hole line
      */
-    public List<PointZ> getHoleLine(int idx) {
+    public List<Coordinate> getHoleLine(int idx) {
         return this._holeLines.get(idx);
     }
 
@@ -91,7 +90,7 @@ public class Polygon {
      *
      * @param holeLines hole lines list
      */
-    public void setHoleLines(List<List<PointZ>> holeLines) {
+    public void setHoleLines(List<List<Coordinate>> holeLines) {
         _holeLines = holeLines;
     }
     
@@ -100,7 +99,7 @@ public class Polygon {
      * @param idx Index
      * @param holeLine The hole line
      */
-    public void setHoleLine(int idx, List<PointZ> holeLine){
+    public void setHoleLine(int idx, List<Coordinate> holeLine){
         if (GeoComputation.isClockwise(holeLine)) {
             Collections.reverse(holeLine);
         }
@@ -129,8 +128,8 @@ public class Polygon {
      *
      * @return Rings
      */
-    public List<List<PointZ>> getRings() {
-        List<List<PointZ>> rings = new ArrayList<>();
+    public List<List<Coordinate>> getRings() {
+        List<List<Coordinate>> rings = new ArrayList<>();
         rings.add(_outLine);
         if (hasHole()) {
             rings.addAll(getHoleLines());
@@ -172,7 +171,7 @@ public class Polygon {
      *
      * @param points point list
      */
-    public void addHole(List<PointZ> points) {
+    public void addHole(List<Coordinate> points) {
         if (GeoComputation.isClockwise(points)) {
             Collections.reverse(points);
         }
@@ -194,28 +193,28 @@ public class Polygon {
      * @return Geometry
      */
     public Geometry toGeometry(GeometryFactory factory) {
-        PointZ p;
-        Coordinate[] cs = new Coordinate[_outLine.size()];
+        Coordinate p;
+        org.locationtech.jts.geom.Coordinate[] cs = new org.locationtech.jts.geom.Coordinate[_outLine.size()];
         for (int i = 0; i < cs.length; i++) {
             p = _outLine.get(i);
-            cs[i] = new Coordinate(p.X, p.Y);
+            cs[i] = new org.locationtech.jts.geom.Coordinate(p.x, p.y);
         }
         if (!cs[0].equals(cs[cs.length - 1])){
-            cs = (Coordinate[])DataConvert.resizeArray(cs, cs.length + 1);
-            cs[cs.length - 1] = (Coordinate) cs[0].clone();
+            cs = (org.locationtech.jts.geom.Coordinate[])DataConvert.resizeArray(cs, cs.length + 1);
+            cs[cs.length - 1] = (org.locationtech.jts.geom.Coordinate) cs[0].clone();
         }
         LinearRing shell = factory.createLinearRing(cs);
         LinearRing[] holes = new LinearRing[this._holeLines.size()];
         for (int j = 0; j < holes.length; j++) {
-            List<PointZ> hole = this._holeLines.get(j);
-            cs = new Coordinate[hole.size()];
+            List<Coordinate> hole = this._holeLines.get(j);
+            cs = new org.locationtech.jts.geom.Coordinate[hole.size()];
             for (int i = 0; i < hole.size(); i++) {
                 p = hole.get(i);
-                cs[i] = new Coordinate(p.X, p.Y);
+                cs[i] = new org.locationtech.jts.geom.Coordinate(p.x, p.y);
             }      
             if (!cs[0].equals(cs[cs.length - 1])){
-                cs = (Coordinate[])DataConvert.resizeArray(cs, cs.length + 1);
-                cs[cs.length - 1] = (Coordinate) cs[0].clone();
+                cs = (org.locationtech.jts.geom.Coordinate[])DataConvert.resizeArray(cs, cs.length + 1);
+                cs[cs.length - 1] = (org.locationtech.jts.geom.Coordinate) cs[0].clone();
             }
             holes[j] = factory.createLinearRing(cs);
         }

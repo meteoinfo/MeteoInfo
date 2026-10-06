@@ -1,5 +1,5 @@
-from org.meteoinfo.chart.graphic import GraphicCollection, Point2DGraphicCollection, \
-    Line2DGraphicCollection, PolygonGraphicCollection
+from org.meteoinfo.chart.graphic import GraphicCollection, PointGraphicCollection, \
+    LineGraphicCollection, PolygonGraphicCollection
 from java.awt import Font
 
 from .. import plotutil
@@ -7,7 +7,7 @@ from ... import miutil
 from artist import Artist
 import mipylib.numeric as np
 
-__all__ = ['Point2DCollection','LineCollection','PolyCollection']
+__all__ = ['PointCollection','LineCollection','PolyCollection']
 
 
 class Collection(Artist):
@@ -65,7 +65,7 @@ class Collection(Artist):
             self.addLabels(texts._array)
 
 
-class Point2DCollection(Collection, Point2DGraphicCollection):
+class PointCollection(Collection, PointGraphicCollection):
 
     def __init__(self, xdata, ydata, cdata=None, legend=None, **kwargs):
         """
@@ -86,9 +86,9 @@ class Point2DCollection(Collection, Point2DGraphicCollection):
         self._cdata = np.asarray(cdata)
 
         if cdata is None:
-            Point2DGraphicCollection.__init__(self, self._x._array, self._y._array, legend)
+            PointGraphicCollection.__init__(self, self._x._array, self._y._array, legend)
         else:
-            Point2DGraphicCollection.__init__(self, self._x._array, self._y._array, self._cdata._array, legend)
+            PointGraphicCollection.__init__(self, self._x._array, self._y._array, self._cdata._array, legend)
 
     @property
     def visible(self):
@@ -172,7 +172,7 @@ class Point2DCollection(Collection, Point2DGraphicCollection):
         self.stale = True
 
 
-class LineCollection(Collection, Line2DGraphicCollection):
+class LineCollection(Collection, LineGraphicCollection):
 
     def __init__(self, segments, legend=None, **kwargs):
         """
@@ -254,21 +254,21 @@ class LineCollection(Collection, Line2DGraphicCollection):
                 legend = plotutil.getlegendbreak('line', **kwargs)[0]
                 kwargs['ncolors'] = len(self._segments)
                 legend = plotutil.getlegendbreaks(legend, **kwargs)
-            Line2DGraphicCollection.__init__(self, data, legend)
+            LineGraphicCollection.__init__(self, data, legend)
         else:
             if self._array is not None:
                 if legend is None:
                     legend = plotutil.getlegendscheme([len(self._segments)], self._array.min(), self._array.max(), **kwargs)
                     legend = plotutil.setlegendscheme_line(legend, **kwargs)
-                Line2DGraphicCollection.__init__(self, data, self._array._array, legend)
+                LineGraphicCollection.__init__(self, data, self._array._array, legend)
             else:
                 if legend is None:
                     legend = plotutil.getlegendscheme([], self._cdata.min(), self._cdata.max(), **kwargs)
                     legend = plotutil.setlegendscheme_line(legend, **kwargs)
                 if isinstance(self._cdata, np.NDArray):
-                    Line2DGraphicCollection.__init__(self, data, self._cdata._array, legend)
+                    LineGraphicCollection.__init__(self, data, self._cdata._array, legend)
                 else:
-                    Line2DGraphicCollection.__init__(self, data, [arr._array for arr in self._cdata], legend)
+                    LineGraphicCollection.__init__(self, data, [arr._array for arr in self._cdata], legend)
 
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:

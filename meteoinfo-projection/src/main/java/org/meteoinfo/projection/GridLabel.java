@@ -11,7 +11,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
  * General Public License for more details.
  */
-package org.meteoinfo.common;
+package org.meteoinfo.projection;
+
+ import org.meteoinfo.common.Direction;
+ import org.meteoinfo.geometry.Coordinate;
 
  /**
  *
@@ -22,8 +25,8 @@ public class GridLabel {
 
     private Direction _labDirection;
     private String _labString;
-    private PointZ _labPoint;
-    private PointZ coord;
+    private Coordinate _labPoint;
+    private Coordinate coord;
     private boolean _isLon;
     private boolean _isBorder;
     private float _value;
@@ -83,7 +86,7 @@ public class GridLabel {
      *
      * @return Label Point
      */
-    public PointZ getLabPoint() {
+    public Coordinate getLabPoint() {
         return _labPoint;
     }
 
@@ -92,7 +95,7 @@ public class GridLabel {
      *
      * @param p Label Point
      */
-    public void setLabPoint(PointZ p) {
+    public void setLabPoint(Coordinate p) {
         _labPoint = p;
     }
     
@@ -100,7 +103,7 @@ public class GridLabel {
      * Get coordinate
      * @return Coordinate
      */
-    public PointZ getCoord() {
+    public Coordinate getCoord() {
         return this.coord;
     }
     
@@ -108,7 +111,7 @@ public class GridLabel {
      * Set coordinate
      * @param value Coordinate
      */
-    public void setCoord(PointZ value) {
+    public void setCoord(Coordinate value) {
         this.coord = value;
     }
 

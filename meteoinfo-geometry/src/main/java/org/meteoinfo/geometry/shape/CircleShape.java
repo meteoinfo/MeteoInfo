@@ -16,7 +16,7 @@ package org.meteoinfo.geometry.shape;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 
  /**
@@ -43,11 +43,11 @@ public class CircleShape extends PolygonShape {
      * @param radius Radius
      */
     public CircleShape(double x, double y, double radius) {
-        List<PointZ> points = new ArrayList<>();
-        points.add(new PointZ(x - radius, y));
-        points.add(new PointZ(x, y -radius));
-        points.add(new PointZ(x + radius, y));
-        points.add(new PointZ(x, y + radius));
+        List<Coordinate> points = new ArrayList<>();
+        points.add(new Coordinate(x - radius, y));
+        points.add(new Coordinate(x, y -radius));
+        points.add(new Coordinate(x + radius, y));
+        points.add(new Coordinate(x, y + radius));
         super.setPoints(points);
     }
     // </editor-fold>
@@ -62,7 +62,7 @@ public class CircleShape extends PolygonShape {
      * Get circle center point
      * @return Center point
      */
-    public PointZ getCenter() {
+    public Coordinate getCenter() {
         return this.getExtent().getCenterPoint();
     }
     
@@ -84,10 +84,10 @@ public class CircleShape extends PolygonShape {
         if (other instanceof PointShape) {
             return this.contains(((PointShape)other).getPoint());
         } else {
-            PointZ center = this.getCenter();
+            Coordinate center = this.getCenter();
             double radius = this.getRadius();
             boolean isIn = true;
-            for (PointZ p : other.getPoints()){
+            for (Coordinate p : other.getPoints()){
                 if (GeoComputation.distance(p, center) > radius) {
                     isIn = false;
                     break;
@@ -102,8 +102,8 @@ public class CircleShape extends PolygonShape {
      * @param p Point
      * @return Contains a point or not
      */
-    public boolean contains(PointZ p){
-        PointZ center = this.getCenter();
+    public boolean contains(Coordinate p){
+        Coordinate center = this.getCenter();
         double radius = this.getRadius();
         return GeoComputation.distance(p, center) <= radius;
     }

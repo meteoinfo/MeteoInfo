@@ -17,8 +17,8 @@ import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.meteoinfo.common.XAlign;
 import org.meteoinfo.common.YAlign;
 import org.meteoinfo.common.Direction;
-import org.meteoinfo.common.GridLabel;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.projection.GridLabel;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
@@ -68,30 +68,30 @@ public class Robinson extends ProjectionInfo {
         double maxLon = cenLon + 180 - epsilon;
         double minLat = -90;
         double maxLat = 90;
-        List<PointZ> points = new ArrayList<>();
+        List<Coordinate> points = new ArrayList<>();
         double lon = minLon;
         double lat = minLat;
         while (lon < maxLon) {
-            points.add(new PointZ(lon, lat));
+            points.add(new Coordinate(lon, lat));
             lon += 1;
         }
         lon = maxLon;
         while (lat < maxLat) {
-            points.add(new PointZ(lon, lat));
+            points.add(new Coordinate(lon, lat));
             lat += 1;
         }
         lat = maxLat;
         while (lon > minLon) {
-            points.add(new PointZ(lon, lat));
+            points.add(new Coordinate(lon, lat));
             lon -= 1;
         }
         lon = minLon;
         while (lat > minLat) {
-            points.add(new PointZ(lon, lat));
+            points.add(new Coordinate(lon, lat));
             lat -= 1;
         }
         lat = minLat;
-        points.add(new PointZ(lon, lat));
+        points.add(new Coordinate(lon, lat));
         PolygonShape ps = new PolygonShape();
         ps.setPoints(points);
         this.boundary = ProjectionUtil.projectPolygonShape(ps, KnownCoordinateSystems.geographic.world.WGS1984, this);

@@ -8,7 +8,7 @@ import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.geometry.legend.PolygonBreak;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.Polygon;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.geometry.shape.Shape;
@@ -57,10 +57,10 @@ public class SphericalTransform {
      * @param p Input PointZ
      * @return Transformed PointZ
      */
-    public static PointZ transform(PointZ p) {
-        Vector3f xyz = transform((float)p.X, (float)p.Y, (float)p.Z);
+    public static Coordinate transform(Coordinate p) {
+        Vector3f xyz = transform((float)p.x, (float)p.y, (float)p.z);
 
-        return new PointZ(xyz.x, xyz.y, xyz.z);
+        return new Coordinate(xyz.x, xyz.y, xyz.z);
     }
 
     /**
@@ -100,9 +100,9 @@ public class SphericalTransform {
             return surfaceGraphic;
         } else if (graphic instanceof IsosurfaceGraphics) {
             IsosurfaceGraphics isosurfaceGraphics = (IsosurfaceGraphics) graphic;
-            List<PointZ[]> triangles = new ArrayList<>();
-            for (PointZ[] triangle : isosurfaceGraphics.getTriangles()) {
-                PointZ[] t = new PointZ[3];
+            List<Coordinate[]> triangles = new ArrayList<>();
+            for (Coordinate[] triangle : isosurfaceGraphics.getTriangles()) {
+                Coordinate[] t = new Coordinate[3];
                 for (int i = 0; i < 3; i++) {
                     t[i] = transform(triangle[i]);
                 }
@@ -153,16 +153,16 @@ public class SphericalTransform {
                             for (Primitive primitive : tessPolygon.getPrimitives()) {
                                 primitive.vertices.replaceAll(SphericalTransform::transform);
                             }
-                            List<PointZ> outLine = (List<PointZ>) tessPolygon.getOutLine();
+                            List<Coordinate> outLine = (List<Coordinate>) tessPolygon.getOutLine();
                             outLine.replaceAll(SphericalTransform::transform);
                             for (int k = 0; k < tessPolygon.getHoleLineNumber(); k++) {
-                                List<PointZ> holeLine = (List<PointZ>) tessPolygon.getHoleLine(k);
+                                List<Coordinate> holeLine = (List<Coordinate>) tessPolygon.getHoleLine(k);
                                 holeLine.replaceAll(SphericalTransform::transform);
                             }
                             polygonZS.set(j, tessPolygon);
                         }
                     } else {
-                        List<PointZ> points = shape.getPoints();
+                        List<Coordinate> points = shape.getPoints();
                         points.replaceAll(SphericalTransform::transform);
                         if (shape instanceof PolygonShape)
                             ((PolygonShape) shape).setPoints_keep(points);
@@ -178,10 +178,10 @@ public class SphericalTransform {
                 Graphic gg = graphic.getGraphicN(0);
                 Shape shape = gg.getShape();
                 if (shape instanceof ChartText3D) {
-                    PointZ p = ((ChartText3D) shape).getPoint();
+                    Coordinate p = ((ChartText3D) shape).getPoint();
                     ((ChartText3D) shape).setPoint(SphericalTransform.transform(p));
                 } else {
-                    List<PointZ> points = (List<PointZ>) shape.getPoints();
+                    List<Coordinate> points = (List<Coordinate>) shape.getPoints();
                     points.replaceAll(SphericalTransform::transform);
                     if (shape instanceof PolygonShape)
                         ((PolygonShape) shape).setPoints_keep(points);

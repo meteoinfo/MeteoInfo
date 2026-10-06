@@ -13,8 +13,8 @@
  */
 package org.meteoinfo.geometry.geoprocess;
 
- import org.meteoinfo.common.Extent;
- import org.meteoinfo.common.PointZ;
+ import org.meteoinfo.geometry.Extent;
+ import org.meteoinfo.geometry.Coordinate;
 
  /**
  *
@@ -101,19 +101,19 @@ public class ClipLine {
      * @param aPoint The Point
      * @return If is inside
      */
-    public boolean isInside(PointZ aPoint) {
+    public boolean isInside(Coordinate aPoint) {
         boolean isIn = false;
         if (_isLon) {
             if (_isLeftOrTop) {
-                isIn = (aPoint.X <= _value);
+                isIn = (aPoint.x <= _value);
             } else {
-                isIn = (aPoint.X >= _value);
+                isIn = (aPoint.x >= _value);
             }
         } else {
             if (_isLeftOrTop) {
-                isIn = (aPoint.Y >= _value);
+                isIn = (aPoint.y >= _value);
             } else {
-                isIn = (aPoint.Y <= _value);
+                isIn = (aPoint.y <= _value);
             }
         }
 
@@ -128,10 +128,10 @@ public class ClipLine {
      */
     public boolean isExtentCross(Extent aExtent) {
         if (_isLeftOrTop) {
-            PointZ aPoint = new PointZ(aExtent.minX, aExtent.maxY);
+            Coordinate aPoint = new Coordinate(aExtent.minX, aExtent.maxY);
             return isInside(aPoint);
         } else {
-            PointZ aPoint = new PointZ(aExtent.maxX, aExtent.minY);
+            Coordinate aPoint = new Coordinate(aExtent.maxX, aExtent.minY);
             return isInside(aPoint);
         }
     }
@@ -144,10 +144,10 @@ public class ClipLine {
      */
     public boolean isExtentInside(Extent aExtent) {
         if (_isLeftOrTop) {
-            PointZ aPoint = new PointZ(aExtent.maxX, aExtent.minY);
+            Coordinate aPoint = new Coordinate(aExtent.maxX, aExtent.minY);
             return isInside(aPoint);
         } else {
-            PointZ aPoint = new PointZ(aExtent.minX, aExtent.maxY);
+            Coordinate aPoint = new Coordinate(aExtent.minX, aExtent.maxY);
             return isInside(aPoint);
         }
     }

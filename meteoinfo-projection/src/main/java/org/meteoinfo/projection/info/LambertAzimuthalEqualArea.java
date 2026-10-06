@@ -14,7 +14,7 @@
 package org.meteoinfo.projection.info;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
@@ -66,12 +66,12 @@ public class LambertAzimuthalEqualArea extends ProjectionInfo {
         if (sign == 0)
             sign = 1;
         double lat = -cenLat + sign * 0.01;        
-        PointZ p = Reproject.reprojectPoint(lon, lat, KnownCoordinateSystems.geographic.world.WGS1984, this);
-        double x = p.X;
-        double max_y = p.Y;
+        Coordinate p = Reproject.reprojectPoint(lon, lat, KnownCoordinateSystems.geographic.world.WGS1984, this);
+        double x = p.x;
+        double max_y = p.y;
         double easting = this.crs.getProjection().getFalseEasting();
         double northing = this.crs.getProjection().getFalseNorthing();
-        List<PointZ> points = this.ellipse_boundary(a * 1.9999, max_y - northing, easting, northing, 61);
+        List<Coordinate> points = this.ellipse_boundary(a * 1.9999, max_y - northing, easting, northing, 61);
         PolygonShape ps = new PolygonShape();
         ps.setPoints(points);
         this.boundary = ps;

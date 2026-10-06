@@ -1,7 +1,7 @@
 package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.chart.jogl.Transform;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geometry.colors.OpacityTransferFunction;
 import org.meteoinfo.chart.render.jogl.RayCastingType;
 import org.meteoinfo.common.MIMath;

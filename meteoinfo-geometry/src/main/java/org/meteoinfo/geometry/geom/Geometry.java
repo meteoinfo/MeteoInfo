@@ -1,6 +1,6 @@
-package org.meteoinfo.geometry;
+package org.meteoinfo.geometry.geom;
 
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 
 import java.io.Serializable;
 

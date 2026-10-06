@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.transform;
 
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 
 import java.awt.geom.AffineTransform;
 

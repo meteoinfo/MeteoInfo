@@ -14,8 +14,8 @@
 package org.meteoinfo.geo.mapdata;
 
 import org.meteoinfo.common.DataConvert;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.common.io.IOUtil;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.data.GridArray;
@@ -33,7 +33,7 @@ import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.LegendType;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.geometry.shape.*;
-import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+import org.meteoinfo.geometry.GeometryUtil;
 import org.meteoinfo.image.ImageUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
@@ -41,7 +41,6 @@ import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.table.Field;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -253,8 +252,8 @@ public class MapDataManage {
         double lon, lat;
         byte[] bytes;
 
-        PointZ aPoint;
-        List<PointZ> pList = new ArrayList<>();
+        Coordinate aPoint;
+        List<Coordinate> pList = new ArrayList<>();
 
         VectorLayer aLayer = new VectorLayer(ShapeFileType.POLYLINE);
         String columnName = "Value";
@@ -291,9 +290,9 @@ public class MapDataManage {
                 }
                 lat = val / 10000.0 - 90.0;
 
-                aPoint = new PointZ();
-                aPoint.X = lon;
-                aPoint.Y = lat;
+                aPoint = new Coordinate();
+                aPoint.x = lon;
+                aPoint.y = lat;
                 pList.add(aPoint);
             }
             if (pList.size() > 1) {
@@ -476,8 +475,8 @@ public class MapDataManage {
             String[] dataArray;
             int shapeNum;
             int i, j, pNum;
-            List<PointZ> pList = new ArrayList<>();
-            PointZ aPoint;
+            List<Coordinate> pList = new ArrayList<>();
+            Coordinate aPoint;
             boolean IsTrue;
             String columnName = "Value";
             VectorLayer aLayer = new VectorLayer(ShapeFileType.POINT);
@@ -492,9 +491,9 @@ public class MapDataManage {
                     for (i = 0; i < shapeNum; i++) {
                         aLine = sr.readLine();
                         dataArray = aLine.split(",");
-                        aPoint = new PointZ();
-                        aPoint.X = Double.parseDouble(dataArray[0]);
-                        aPoint.Y = Double.parseDouble(dataArray[1]);
+                        aPoint = new Coordinate();
+                        aPoint.x = Double.parseDouble(dataArray[0]);
+                        aPoint.y = Double.parseDouble(dataArray[1]);
                         pList.add(aPoint);
                         PointShape aPS = new PointShape();
                         aPS.setValue(i);
@@ -521,9 +520,9 @@ public class MapDataManage {
                         for (j = 0; j < pNum; j++) {
                             aLine = sr.readLine();
                             dataArray = aLine.split(",");
-                            aPoint = new PointZ();
-                            aPoint.X = Double.parseDouble(dataArray[0]);
-                            aPoint.Y = Double.parseDouble(dataArray[1]);
+                            aPoint = new Coordinate();
+                            aPoint.x = Double.parseDouble(dataArray[0]);
+                            aPoint.y = Double.parseDouble(dataArray[1]);
                             pList.add(aPoint);
                         }
                         PolylineShape aPLS = new PolylineShape();
@@ -553,9 +552,9 @@ public class MapDataManage {
                         for (j = 0; j < pNum; j++) {
                             aLine = sr.readLine();
                             dataArray = aLine.split(",");
-                            aPoint = new PointZ();
-                            aPoint.X = Double.parseDouble(dataArray[0]);
-                            aPoint.Y = Double.parseDouble(dataArray[1]);
+                            aPoint = new Coordinate();
+                            aPoint.x = Double.parseDouble(dataArray[0]);
+                            aPoint.y = Double.parseDouble(dataArray[1]);
                             pList.add(aPoint);
                         }
                         PolygonShape aPGS = new PolygonShape();
@@ -625,7 +624,7 @@ public class MapDataManage {
                     for (i = 0; i < shpNum; i++) {
                         aPS = (PointShape) shapes.get(i);
                         if (aPS.isSelected()) {
-                            sw.write(String.valueOf(aPS.getPoint().X) + "," + String.valueOf(aPS.getPoint().Y));
+                            sw.write(String.valueOf(aPS.getPoint().x) + "," + String.valueOf(aPS.getPoint().y));
                             sw.newLine();
                         }
                     }
@@ -645,23 +644,23 @@ public class MapDataManage {
                     shapeNum = 0;
                     for (i = 0; i < shpNum; i++) {
                         aPLS = (PolylineShape) shapes.get(i);
-                        PointZ[] Pointps;
+                        Coordinate[] Pointps;
                         for (int p = 0; p < aPLS.getPartNum(); p++) {
                             if (p == aPLS.getPartNum() - 1) {
-                                Pointps = new PointZ[aPLS.getPointNum() - aPLS.parts[p]];
+                                Pointps = new Coordinate[aPLS.getPointNum() - aPLS.parts[p]];
                                 for (int pp = aPLS.parts[p]; pp < aPLS.getPointNum(); pp++) {
-                                    Pointps[pp - aPLS.parts[p]] = (PointZ) aPLS.getPoints().get(pp);
+                                    Pointps[pp - aPLS.parts[p]] = (Coordinate) aPLS.getPoints().get(pp);
                                 }
                             } else {
-                                Pointps = new PointZ[aPLS.parts[p + 1] - aPLS.parts[p]];
+                                Pointps = new Coordinate[aPLS.parts[p + 1] - aPLS.parts[p]];
                                 for (int pp = aPLS.parts[p]; pp < aPLS.parts[p + 1]; pp++) {
-                                    Pointps[pp - aPLS.parts[p]] = (PointZ) aPLS.getPoints().get(pp);
+                                    Pointps[pp - aPLS.parts[p]] = (Coordinate) aPLS.getPoints().get(pp);
                                 }
                             }
                             sw.write(String.valueOf(Pointps.length));
                             sw.newLine();
-                            for (PointZ aPoint : Pointps) {
-                                sw.write(String.valueOf(aPoint.X) + "," + String.valueOf(aPoint.Y));
+                            for (Coordinate aPoint : Pointps) {
+                                sw.write(String.valueOf(aPoint.x) + "," + String.valueOf(aPoint.y));
                                 sw.newLine();
                             }
                             shapeNum += 1;
@@ -684,23 +683,23 @@ public class MapDataManage {
                     for (i = 0; i < shpNum; i++) {
                         aPGS = (PolygonShape) shapes.get(i);
 
-                        PointZ[] Pointps;
+                        Coordinate[] Pointps;
                         for (int p = 0; p < aPGS.getPartNum(); p++) {
                             if (p == aPGS.getPartNum() - 1) {
-                                Pointps = new PointZ[aPGS.getPointNum() - aPGS.parts[p]];
+                                Pointps = new Coordinate[aPGS.getPointNum() - aPGS.parts[p]];
                                 for (int pp = aPGS.parts[p]; pp < aPGS.getPointNum(); pp++) {
-                                    Pointps[pp - aPGS.parts[p]] = (PointZ) aPGS.getPoints().get(pp);
+                                    Pointps[pp - aPGS.parts[p]] = (Coordinate) aPGS.getPoints().get(pp);
                                 }
                             } else {
-                                Pointps = new PointZ[aPGS.parts[p + 1] - aPGS.parts[p]];
+                                Pointps = new Coordinate[aPGS.parts[p + 1] - aPGS.parts[p]];
                                 for (int pp = aPGS.parts[p]; pp < aPGS.parts[p + 1]; pp++) {
-                                    Pointps[pp - aPGS.parts[p]] = (PointZ) aPGS.getPoints().get(pp);
+                                    Pointps[pp - aPGS.parts[p]] = (Coordinate) aPGS.getPoints().get(pp);
                                 }
                             }
                             sw.write(String.valueOf(Pointps.length));
                             sw.newLine();
-                            for (PointZ aPoint : Pointps) {
-                                sw.write(String.valueOf(aPoint.X) + "," + String.valueOf(aPoint.Y));
+                            for (Coordinate aPoint : Pointps) {
+                                sw.write(String.valueOf(aPoint.x) + "," + String.valueOf(aPoint.y));
                                 sw.newLine();
                             }
                             shapeNum += 1;

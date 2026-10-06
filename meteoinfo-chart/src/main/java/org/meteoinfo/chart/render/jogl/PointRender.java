@@ -14,7 +14,7 @@ import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.PointShape;
 import org.meteoinfo.math.Matrix4f;
 
@@ -144,10 +144,10 @@ public class PointRender extends JOGLGraphicRender {
             } else {
                 for (Graphic graphic : this.graphics.getGraphics()) {
                     PointShape shape = (PointShape) graphic.getShape();
-                    PointZ p = (PointZ) shape.getPoint();
-                    vertexPosition[i] = (float) p.X;
-                    vertexPosition[i + 1] = (float) p.Y;
-                    vertexPosition[i + 2] = (float) p.Z;
+                    Coordinate p = (Coordinate) shape.getPoint();
+                    vertexPosition[i] = (float) p.x;
+                    vertexPosition[i + 1] = (float) p.y;
+                    vertexPosition[i + 2] = (float) p.z;
                     /*vertexPosition[i] = transform.transform_x((float) p.X);
                     vertexPosition[i + 1] = transform.transform_y((float) p.Y);
                     vertexPosition[i + 2] = transform.transform_z((float) p.Z);*/
@@ -167,13 +167,13 @@ public class PointRender extends JOGLGraphicRender {
         Sphere sphere = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
             PointShape shape = (PointShape) graphic.getShape();
-            PointZ p = (PointZ) shape.getPoint();
+            Coordinate p = (Coordinate) shape.getPoint();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             if (size != pb.getSize()) {
                 size = pb.getSize();
                 sphere = new Sphere(size * sphereScale * dpiScale, 36, 18);
             }
-            vp = transform.transform((float) p.X, (float) p.Y, (float) p.Z);
+            vp = transform.transform((float) p.x, (float) p.y, (float) p.z);
             //vp = new Vector3f((float) p.X, (float) p.Y, (float) p.Z);
             Matrix4f matrix = new Matrix4f();
             matrix.translate(vp);
@@ -232,13 +232,13 @@ public class PointRender extends JOGLGraphicRender {
         Sphere sphere = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
             PointShape shape = (PointShape) graphic.getShape();
-            PointZ p = (PointZ) shape.getPoint();
+            Coordinate p = (Coordinate) shape.getPoint();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             if (size != pb.getSize()) {
                 size = pb.getSize();
                 sphere = new Sphere(size * sphereScale * dpiScale, 36, 18);
             }
-            vp = transform.transform((float) p.X, (float) p.Y, (float) p.Z);
+            vp = transform.transform((float) p.x, (float) p.y, (float) p.z);
             //vp = new Vector3f((float) p.X, (float) p.Y, (float) p.Z);
             Matrix4f matrix = new Matrix4f();
             matrix.translate(vp);

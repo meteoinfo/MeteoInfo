@@ -16,7 +16,7 @@ from org.meteoinfo.chart.graphic import Graphic, GraphicCollection, ModelGraphic
 from org.meteoinfo.chart.jogl import GLPlot, GLForm, JOGLUtil, EarthGLPlot, MapGLPlot
 from org.meteoinfo.math.interpolate import InterpolationMethod
 from org.meteoinfo.image import ImageUtil
-from org.meteoinfo.common import Extent
+from org.meteoinfo.geometry import Extent
 from org.meteoinfo.chart.transform import GeoTransform
 from javax.swing import WindowConstants
 from java.awt import Font, Color

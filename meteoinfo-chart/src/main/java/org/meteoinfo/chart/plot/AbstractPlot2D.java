@@ -11,8 +11,8 @@ import org.meteoinfo.chart.axis.LogAxis;
 import org.meteoinfo.chart.axis.LonLatAxis;
 import org.meteoinfo.chart.axis.TimeAxis;
 import org.meteoinfo.chart.transform.*;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.render.java2d.Draw;
 
@@ -1131,9 +1131,9 @@ public abstract class AbstractPlot2D extends Plot {
     public void updateTransLimits() {
         Extent bBox = (Extent) drawExtent.clone();
         if (!(this.transScale.getInnerTransform() instanceof IdentityTransform)) {
-            PointZ ll = this.transScale.transform(new PointZ(bBox.minX, bBox.minY));
-            PointZ tr = this.transScale.transform(new PointZ(bBox.maxX, bBox.maxY));
-            bBox = new Extent(ll.X, tr.X, ll.Y, tr.Y);
+            Coordinate ll = this.transScale.transform(new Coordinate(bBox.minX, bBox.minY));
+            Coordinate tr = this.transScale.transform(new Coordinate(bBox.maxX, bBox.maxY));
+            bBox = new Extent(ll.x, tr.x, ll.y, tr.y);
         }
         this.transLimits.setBbox(bBox, this.isXInverted(), this.isYInverted());
     }
@@ -1527,9 +1527,9 @@ public abstract class AbstractPlot2D extends Plot {
                     continue;
                 }
                 sv = value;
-                PointZ sp = this.transData.transform(new PointZ(value, this.drawExtent.minY));
-                PointZ ep = this.transData.transform(new PointZ(value, this.drawExtent.maxY));
-                g.draw(new Line2D.Double(sp.X, sp.Y, ep.X, ep.Y));
+                Coordinate sp = this.transData.transform(new Coordinate(value, this.drawExtent.minY));
+                Coordinate ep = this.transData.transform(new Coordinate(value, this.drawExtent.maxY));
+                g.draw(new Line2D.Double(sp.x, sp.y, ep.x, ep.y));
                 n += gap;
             }
 
@@ -1537,9 +1537,9 @@ public abstract class AbstractPlot2D extends Plot {
                 double dx = values[gap] - values[0];
                 for (int i = 1; i < 10; i++) {
                     double value = sv - i * dx;
-                    PointZ sp = this.transData.transform(new PointZ(value, this.drawExtent.minY));
-                    PointZ ep = this.transData.transform(new PointZ(value, this.drawExtent.maxY));
-                    g.draw(new Line2D.Double(sp.X, sp.Y, ep.X, ep.Y));
+                    Coordinate sp = this.transData.transform(new Coordinate(value, this.drawExtent.minY));
+                    Coordinate ep = this.transData.transform(new Coordinate(value, this.drawExtent.maxY));
+                    g.draw(new Line2D.Double(sp.x, sp.y, ep.x, ep.y));
                 }
             }
         }
@@ -1555,9 +1555,9 @@ public abstract class AbstractPlot2D extends Plot {
                     n += yAxis.getTickLabelGap();
                     continue;
                 }
-                PointZ sp = this.transData.transform(new PointZ(this.drawExtent.minX, value));
-                if (sp.Y > miny && sp.Y < maxy) {
-                    g.draw(new Line2D.Double(minx, sp.Y, maxx, sp.Y));
+                Coordinate sp = this.transData.transform(new Coordinate(this.drawExtent.minX, value));
+                if (sp.y > miny && sp.y < maxy) {
+                    g.draw(new Line2D.Double(minx, sp.y, maxx, sp.y));
                 }
                 n += yAxis.getTickLabelGap();
             }

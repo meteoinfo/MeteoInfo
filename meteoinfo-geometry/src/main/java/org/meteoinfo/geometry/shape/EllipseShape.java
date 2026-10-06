@@ -13,7 +13,7 @@
   */
  package org.meteoinfo.geometry.shape;
 
- import org.meteoinfo.common.PointZ;
+ import org.meteoinfo.geometry.Coordinate;
 
  import java.util.ArrayList;
  import java.util.List;
@@ -43,11 +43,11 @@
       * @param height Height
       */
      public EllipseShape(double x, double y, double width, double height) {
-         List<PointZ> points = new ArrayList<>();
-         points.add(new PointZ(x - width * 0.5, y - height * 0.5));
-         points.add(new PointZ(x - width * 0.5, y + height * 0.5));
-         points.add(new PointZ(x + width * 0.5, y + height * 0.5));
-         points.add(new PointZ(x + width * 0.5, y - height * 0.5));
+         List<Coordinate> points = new ArrayList<>();
+         points.add(new Coordinate(x - width * 0.5, y - height * 0.5));
+         points.add(new Coordinate(x - width * 0.5, y + height * 0.5));
+         points.add(new Coordinate(x + width * 0.5, y + height * 0.5));
+         points.add(new Coordinate(x + width * 0.5, y - height * 0.5));
          super.setPoints(points);
      }
 
@@ -62,7 +62,7 @@
       * Get center point
       * @return Center point
       */
-     public PointZ getCenter() {
+     public Coordinate getCenter() {
          return this.getExtent().getCenterPoint();
      }
 
@@ -123,16 +123,16 @@
       * @param p Point
       * @return Contains a point or not
       */
-     public boolean contains(PointZ p){
-         PointZ center = this.getCenter();
+     public boolean contains(Coordinate p){
+         Coordinate center = this.getCenter();
          double a = this.getA();
          double b = this.getB();
 
          // checking the equation of
          // ellipse with the given point
-         double r = ((double)Math.pow((p.X - center.X), 2)
+         double r = ((double)Math.pow((p.x - center.x), 2)
                  / (double)Math.pow(a, 2))
-                 + ((double)Math.pow((p.Y - center.Y), 2)
+                 + ((double)Math.pow((p.y - center.y), 2)
                  / (double)Math.pow(b, 2));
 
          return r <= 1;

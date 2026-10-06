@@ -14,10 +14,11 @@
 package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.chart.transform.Transform;
+import org.meteoinfo.geometry.GeometryUtil;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.ndarray.Array;
@@ -269,7 +270,7 @@ public class GraphicCollection extends Graphic implements Iterator {
             if (i == 0) {
                 this.extent = extent;
             } else {
-                this.extent = MIMath.getLagerExtent(this.extent, extent);
+                this.extent = GeometryUtil.getLagerExtent(this.extent, extent);
             }
 
             i += 1;
@@ -299,7 +300,7 @@ public class GraphicCollection extends Graphic implements Iterator {
         if (this.graphics.size() == 1) {
             extent = graphic.getExtent();
         } else {
-            extent = MIMath.getLagerExtent(extent, graphic.getExtent());
+            extent = GeometryUtil.getLagerExtent(extent, graphic.getExtent());
         }
 
         return istrue;
@@ -319,7 +320,7 @@ public class GraphicCollection extends Graphic implements Iterator {
         if (this.graphics.size() == 1) {
             extent = graphic.getExtent();
         } else {
-            extent = MIMath.getLagerExtent(extent, graphic.getExtent());
+            extent = GeometryUtil.getLagerExtent(extent, graphic.getExtent());
         }
     }
 
@@ -450,7 +451,7 @@ public class GraphicCollection extends Graphic implements Iterator {
             if (i == 0) {
                 this.extent = extent;
             } else {
-                this.extent = MIMath.getLagerExtent(this.extent, extent);
+                this.extent = GeometryUtil.getLagerExtent(this.extent, extent);
             }
 
             i += 1;
@@ -468,7 +469,7 @@ public class GraphicCollection extends Graphic implements Iterator {
             if (this.isEmpty()) {
                 extent = graphic.getExtent();
             } else {
-                extent = MIMath.getLagerExtent(extent, graphic.getExtent());
+                extent = GeometryUtil.getLagerExtent(extent, graphic.getExtent());
             }
             for (int i = 0; i < graphic.getNumGraphics(); i++) {
                 ((List<Graphic>) this.graphics).add(graphic.getGraphicN(i));
@@ -518,24 +519,24 @@ public class GraphicCollection extends Graphic implements Iterator {
     public GraphicCollection selectGraphics(Extent aExtent) {
         GraphicCollection selectedGraphics = new GraphicCollection();
         int i, j;
-        PointZ aPoint = new PointZ();
-        aPoint.X = (aExtent.minX + aExtent.maxX) / 2;
-        aPoint.Y = (aExtent.minY + aExtent.maxY) / 2;
+        Coordinate aPoint = new Coordinate();
+        aPoint.x = (aExtent.minX + aExtent.maxX) / 2;
+        aPoint.y = (aExtent.minY + aExtent.maxY) / 2;
 
         for (Graphic aGraphic : this.graphics) {
             switch (aGraphic.getShape().getShapeType()) {
                 case POINT:
                     PointShape aPS = (PointShape) aGraphic.getShape();
-                    if (MIMath.pointInExtent(aPS.getPoint(), aExtent)) {
+                    if (aExtent.contains(aPS.getPoint())) {
                         selectedGraphics.add(aGraphic);
                     }
                     break;
                 case POLYLINE:
                     PolylineShape aPLS = (PolylineShape) aGraphic.getShape();
-                    if (MIMath.isExtentCross(aExtent, aPLS.getExtent())) {
+                    if (GeometryUtil.isExtentCross(aExtent, aPLS.getExtent())) {
                         for (j = 0; j < aPLS.getPoints().size(); j++) {
                             aPoint = aPLS.getPoints().get(j);
-                            if (MIMath.pointInExtent(aPoint, aExtent)) {
+                            if (aExtent.contains(aPoint)) {
                                 selectedGraphics.add(aGraphic);
                                 break;
                             }
@@ -653,24 +654,24 @@ public class GraphicCollection extends Graphic implements Iterator {
             labelSet.setDecimalDigits(MIMath.getDecimalNum(min));
         }
         String dFormat = "%1$." + String.valueOf(labelSet.getDecimalDigits()) + "f";
-        PointZ aPoint;
+        Coordinate aPoint;
         for (Graphic graphic : this.graphics) {
             ColorBreak cb = graphic.getLegendBreak();
             Shape shape = graphic.getShape();
             PointShape aPS = new PointShape();
             switch (shape.getShapeType()) {
                 case POINT:
-                    aPS.setPoint((PointZ) ((PointShape) shape).getPoint().clone());
+                    aPS.setPoint((Coordinate) ((PointShape) shape).getPoint().clone());
                     break;
                 case POLYLINE:
                     int pIdx = ((PolylineShape) shape).getPoints().size() / 2;
-                    aPS.setPoint((PointZ) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
+                    aPS.setPoint((Coordinate) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                     Extent aExtent = shape.getExtent();
-                    aPoint = new PointZ();
-                    aPoint.X = ((aExtent.minX + aExtent.maxX) / 2);
-                    aPoint.Y = ((aExtent.minY + aExtent.maxY) / 2);
+                    aPoint = new Coordinate();
+                    aPoint.x = ((aExtent.minX + aExtent.maxX) / 2);
+                    aPoint.y = ((aExtent.minY + aExtent.maxY) / 2);
                     aPS.setPoint(aPoint);
                     break;
             }
@@ -705,7 +706,7 @@ public class GraphicCollection extends Graphic implements Iterator {
             labelSet.setDecimalDigits(MIMath.getDecimalNum(min));
         }
         String dFormat = "%1$." + String.valueOf(labelSet.getDecimalDigits()) + "f";
-        PointZ aPoint;
+        Coordinate aPoint;
         IndexIterator iter = texts.getIndexIterator();
         for (Graphic graphic : this.graphics) {
             if (!iter.hasNext()) {
@@ -717,17 +718,17 @@ public class GraphicCollection extends Graphic implements Iterator {
             PointShape aPS = new PointShape();
             switch (shape.getShapeType()) {
                 case POINT:
-                    aPS.setPoint((PointZ) ((PointShape) shape).getPoint().clone());
+                    aPS.setPoint((Coordinate) ((PointShape) shape).getPoint().clone());
                     break;
                 case POLYLINE:
                     int pIdx = ((PolylineShape) shape).getPoints().size() / 2;
-                    aPS.setPoint((PointZ) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
+                    aPS.setPoint((Coordinate) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                     Extent aExtent = shape.getExtent();
-                    aPoint = new PointZ();
-                    aPoint.X = ((aExtent.minX + aExtent.maxX) / 2);
-                    aPoint.Y = ((aExtent.minY + aExtent.maxY) / 2);
+                    aPoint = new Coordinate();
+                    aPoint.x = ((aExtent.minX + aExtent.maxX) / 2);
+                    aPoint.y = ((aExtent.minY + aExtent.maxY) / 2);
                     aPS.setPoint(aPoint);
                     break;
             }
@@ -894,8 +895,8 @@ public class GraphicCollection extends Graphic implements Iterator {
      */
     public GraphicCollection xShift(double xs) {
         for (Graphic g : this.graphics) {
-            for (PointZ p : g.getShape().getPoints()) {
-                p.X += xs;
+            for (Coordinate p : g.getShape().getPoints()) {
+                p.x += xs;
             }
             g.setExtent(g.getExtent().shift(xs, 0));
         }
@@ -912,8 +913,8 @@ public class GraphicCollection extends Graphic implements Iterator {
         GraphicCollection graphicCollection = new GraphicCollection();
         for (Graphic g : this.graphics) {
             Shape shape = (Shape) g.getShape().clone();
-            for (PointZ p : shape.getPoints()) {
-                p.X += xs;
+            for (Coordinate p : shape.getPoints()) {
+                p.x += xs;
             }
             Graphic graphic = new Graphic(shape, g.legendBreak);
             graphic.setExtent(graphic.getExtent().shift(xs, 0));

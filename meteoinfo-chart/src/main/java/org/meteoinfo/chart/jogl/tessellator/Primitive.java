@@ -1,13 +1,13 @@
 package org.meteoinfo.chart.jogl.tessellator;
 
 import com.jogamp.opengl.GL2;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 
 import java.util.ArrayList;
 
 public class Primitive {
     public final int type;
-    public final ArrayList<PointZ> vertices = new ArrayList<>();
+    public final ArrayList<Coordinate> vertices = new ArrayList<>();
 
     public Primitive(int type) {
         this.type = type;

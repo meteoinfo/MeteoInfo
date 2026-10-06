@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.data.meteodata.micaps;
 
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.data.StationData;
 import org.meteoinfo.data.dimarray.Dimension;
 import org.meteoinfo.data.dimarray.DimensionType;

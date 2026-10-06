@@ -13,12 +13,10 @@
  */
 package org.meteoinfo.data.meteodata.netcdf;
 
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.StationData;
-import org.meteoinfo.data.dimarray.DimArray;
 import org.meteoinfo.data.meteodata.DataInfo;
 import org.meteoinfo.ndarray.math.ArrayMath;
 import org.meteoinfo.ndarray.math.ArrayUtil;

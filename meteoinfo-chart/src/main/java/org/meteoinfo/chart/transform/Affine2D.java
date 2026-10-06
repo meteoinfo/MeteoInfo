@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.transform;
 
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
@@ -23,10 +23,10 @@ public class Affine2D extends Transform {
     }
 
     @Override
-    public PointZ transform(PointZ p) {
-        Point2D dP = this.affineTransform.transform(new Point2D.Double(p.X, p.Y), null);
+    public Coordinate transform(Coordinate p) {
+        Point2D dP = this.affineTransform.transform(new Point2D.Double(p.x, p.y), null);
         clearInvalid();
-        return new PointZ(dP.getX(), dP.getY());
+        return new Coordinate(dP.getX(), dP.getY());
     }
 
     /** Apply translation (tx, ty) */

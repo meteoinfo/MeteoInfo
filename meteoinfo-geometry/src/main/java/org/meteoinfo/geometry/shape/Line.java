@@ -14,7 +14,7 @@
 package org.meteoinfo.geometry.shape;
 
  import org.meteoinfo.common.MIMath;
- import org.meteoinfo.common.PointZ;
+ import org.meteoinfo.geometry.Coordinate;
 
  /**
  *
@@ -25,18 +25,18 @@ public class Line {
     /// Point 1
     /// </summary>
 
-    public PointZ P1 = new PointZ();
+    public Coordinate P1 = new Coordinate();
     /// <summary>
     /// Point 2
     /// </summary>
-    public PointZ P2 = new PointZ();
+    public Coordinate P2 = new Coordinate();
     
     /**
      * Determine if the line is horizontal
      * @return Boolean
      */
     public boolean isHorizontal(){
-        return (MIMath.doubleEquals(P1.Y, P2.Y));
+        return (MIMath.doubleEquals(P1.y, P2.y));
     }
     
     /**
@@ -44,6 +44,6 @@ public class Line {
      * @return Boolean
      */
     public boolean isVertical(){
-        return (MIMath.doubleEquals(P1.X, P2.X));
+        return (MIMath.doubleEquals(P1.x, P2.x));
     }
 }

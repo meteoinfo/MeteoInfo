@@ -11,7 +11,7 @@ import org.meteoinfo.chart.GLChart;
 import org.meteoinfo.chart.GLChartPanel;
 import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.geometry.colors.OpacityTransferFunction;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.chart.graphic.GraphicCollection;

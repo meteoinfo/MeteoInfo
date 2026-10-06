@@ -12,7 +12,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -21,14 +20,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.imageio.ImageIO;
 
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.data.mapdata.webmap.*;
 import org.meteoinfo.data.mapdata.webmap.empty.EmptyTileFactory;
 import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.Reproject;
-import org.meteoinfo.geometry.shape.ShapeTypes;
 
 /**
  *
@@ -614,17 +612,17 @@ public class WebMapLayer extends MapLayer {
         double maxy = center.getY() + height / 2;
         GeoPosition pos1 = GeoUtil.getPosition(new Point2D.Double(minx, miny), zoom, this.getTileFactory().getInfo());
         GeoPosition pos2 = GeoUtil.getPosition(new Point2D.Double(maxx, maxy), zoom, this.getTileFactory().getInfo());
-        PointZ p1 = Reproject.reprojectPoint(new PointZ(pos1.getLongitude(), pos1.getLatitude()),
+        Coordinate p1 = Reproject.reprojectPoint(new Coordinate(pos1.getLongitude(), pos1.getLatitude()),
                 KnownCoordinateSystems.geographic.world.WGS1984, this.getProjInfo());
-        PointZ p2 = Reproject.reprojectPoint(new PointZ(pos2.getLongitude(), pos2.getLatitude()),
+        Coordinate p2 = Reproject.reprojectPoint(new Coordinate(pos2.getLongitude(), pos2.getLatitude()),
                 KnownCoordinateSystems.geographic.world.WGS1984, this.getProjInfo());
         if (pos2.getLongitude() - pos1.getLongitude() < 360.0) {
-            double xlen = p2.X - p1.X;
+            double xlen = p2.x - p1.x;
 //        if (pos2.getLongitude() - pos1.getLongitude() > 360)
 //            xlen += 2.0037497210840166E7 * 2;
             return (double) width / xlen;
         } else {
-            double ylen = Math.abs(p2.Y - p1.Y);
+            double ylen = Math.abs(p2.y - p1.y);
             return (double) height / ylen;
         }
     }

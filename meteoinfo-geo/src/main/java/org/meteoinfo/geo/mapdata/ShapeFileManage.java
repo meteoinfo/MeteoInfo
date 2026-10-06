@@ -14,8 +14,8 @@
 package org.meteoinfo.geo.mapdata;
 
  import org.meteoinfo.chart.graphic.GeoGraphicCollection;
- import org.meteoinfo.common.Extent;
- import org.meteoinfo.common.PointZ;
+ import org.meteoinfo.geometry.Extent;
+ import org.meteoinfo.geometry.Coordinate;
  import org.meteoinfo.common.io.EndianDataOutputStream;
  import org.meteoinfo.geo.layer.LayerDrawType;
  import org.meteoinfo.geo.layer.VectorLayer;
@@ -224,9 +224,9 @@ public class ShapeFileManage {
             y = buffer.getDouble();
 
             PointShape aP = new PointShape();
-            PointZ aPoint = new PointZ();
-            aPoint.X = x;
-            aPoint.Y = y;
+            Coordinate aPoint = new Coordinate();
+            aPoint.x = x;
+            aPoint.y = y;
             aP.setPoint(aPoint);
             aLayer.addShape(aP);
         }
@@ -260,11 +260,11 @@ public class ShapeFileManage {
             m = buffer.getDouble();
 
             PointShape aP = new PointShape();
-            PointZ aPoint = new PointZ();
-            aPoint.X = x;
-            aPoint.Y = y;
-            aPoint.Z = z;
-            aPoint.M = m;
+            Coordinate aPoint = new Coordinate();
+            aPoint.x = x;
+            aPoint.y = y;
+            aPoint.z = z;
+            aPoint.m = m;
             aP.setPoint(aPoint);
             aLayer.addShape(aP);
         }
@@ -308,7 +308,7 @@ public class ShapeFileManage {
             aPL.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
             aPL.parts = new int[aPL.getPartNum()];
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
 
             //firstly read out parts begin pos in file 
             for (int j = 0; j < aPL.getPartNum(); j++) {
@@ -319,9 +319,9 @@ public class ShapeFileManage {
             for (int j = 0; j < numPoints; j++) {
                 x = buffer.getDouble();
                 y = buffer.getDouble();
-                PointZ aPoint = new PointZ();
-                aPoint.X = x;
-                aPoint.Y = y;
+                Coordinate aPoint = new Coordinate();
+                aPoint.x = x;
+                aPoint.y = y;
                 points.add(aPoint);
             }
             aPL.setPoints(points);
@@ -370,7 +370,7 @@ public class ShapeFileManage {
             aPL.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
             aPL.parts = new int[aPL.getPartNum()];
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
 
             //firstly read out parts begin position in file 
             for (int j = 0; j < aPL.getPartNum(); j++) {
@@ -381,9 +381,9 @@ public class ShapeFileManage {
             for (int j = 0; j < numPoints; j++) {
                 x = buffer.getDouble();
                 y = buffer.getDouble();
-                PointZ aPoint = new PointZ();
-                aPoint.X = x;
-                aPoint.Y = y;
+                Coordinate aPoint = new Coordinate();
+                aPoint.x = x;
+                aPoint.y = y;
                 points.add(aPoint);
             }
             //aPL.Points = points;
@@ -407,9 +407,9 @@ public class ShapeFileManage {
             }
 
             //Get pointZ list
-            List<PointZ> pointZs = new ArrayList<>();
+            List<Coordinate> pointZs = new ArrayList<>();
             for (int j = 0; j < numPoints; j++) {
-                pointZs.add(new PointZ(points.get(j).X, points.get(j).Y, zArray[j], mArray[j]));
+                pointZs.add(new Coordinate(points.get(j).x, points.get(j).y, zArray[j], mArray[j]));
             }
 
             aPL.setPoints(pointZs);
@@ -459,7 +459,7 @@ public class ShapeFileManage {
             aSPG.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
             aSPG.parts = new int[aSPG.getPartNum()];
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
 
             //firstly read out parts begin pos in file 
             for (int j = 0; j < aSPG.getPartNum(); j++) {
@@ -470,9 +470,9 @@ public class ShapeFileManage {
             for (int j = 0; j < numPoints; j++) {
                 x = buffer.getDouble();
                 y = buffer.getDouble();
-                PointZ aPoint = new PointZ();
-                aPoint.X = x;
-                aPoint.Y = y;
+                Coordinate aPoint = new Coordinate();
+                aPoint.x = x;
+                aPoint.y = y;
                 points.add(aPoint);
             }
             aSPG.setPoints(points);
@@ -516,7 +516,7 @@ public class ShapeFileManage {
             aSPG.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
             aSPG.parts = new int[aSPG.getPartNum()];
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
 
             //firstly read out parts begin pos in file 
             for (int j = 0; j < aSPG.getPartNum(); j++) {
@@ -527,9 +527,9 @@ public class ShapeFileManage {
             for (int j = 0; j < numPoints; j++) {
                 x = buffer.getDouble();
                 y = buffer.getDouble();
-                PointZ aPoint = new PointZ();
-                aPoint.X = x;
-                aPoint.Y = y;
+                Coordinate aPoint = new Coordinate();
+                aPoint.x = x;
+                aPoint.y = y;
                 points.add(aPoint);
             }
             
@@ -542,9 +542,9 @@ public class ShapeFileManage {
             }
             
             //Get pointM list
-            List<PointZ> pointMs = new ArrayList<>();
+            List<Coordinate> pointMs = new ArrayList<>();
             for (int j = 0; j < numPoints; j++) {
-                pointMs.add(new PointZ(points.get(j).X, points.get(j).Y, Double.NaN, mArray[j]));
+                pointMs.add(new Coordinate(points.get(j).x, points.get(j).y, Double.NaN, mArray[j]));
             }
             
             aSPG.setPoints(pointMs);
@@ -588,7 +588,7 @@ public class ShapeFileManage {
             aSPG.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
             aSPG.parts = new int[aSPG.getPartNum()];
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
 
             //firstly read out parts begin pos in file 
             for (int j = 0; j < aSPG.getPartNum(); j++) {
@@ -599,9 +599,9 @@ public class ShapeFileManage {
             for (int j = 0; j < numPoints; j++) {
                 x = buffer.getDouble();
                 y = buffer.getDouble();
-                PointZ aPoint = new PointZ();
-                aPoint.X = x;
-                aPoint.Y = y;
+                Coordinate aPoint = new Coordinate();
+                aPoint.x = x;
+                aPoint.y = y;
                 points.add(aPoint);
             }
             
@@ -624,9 +624,9 @@ public class ShapeFileManage {
             }
             
             //Get pointZ list
-            List<PointZ> pointZs = new ArrayList<>();
+            List<Coordinate> pointZs = new ArrayList<>();
             for (int j = 0; j < numPoints; j++) {
-                pointZs.add(new PointZ(points.get(j).X, points.get(j).Y, zArray[j], mArray[j]));
+                pointZs.add(new Coordinate(points.get(j).x, points.get(j).y, zArray[j], mArray[j]));
             }
             
             aSPG.setPoints(pointZs);
@@ -921,8 +921,8 @@ public class ShapeFileManage {
         switch (aST) {
             case POINT:
                 PointShape aPS = (PointShape) aShape;
-                bw.writeDoubleLE(aPS.getPoint().X);
-                bw.writeDoubleLE(aPS.getPoint().Y);
+                bw.writeDoubleLE(aPS.getPoint().x);
+                bw.writeDoubleLE(aPS.getPoint().y);
                 break;
             case POLYLINE:
                 PolylineShape aPLS = (PolylineShape) aShape;
@@ -936,8 +936,8 @@ public class ShapeFileManage {
                     bw.writeIntLE(aPLS.parts[i]);
                 }
                 for (i = 0; i < aPLS.getPointNum(); i++) {
-                    bw.writeDoubleLE((aPLS.getPoints().get(i)).X);
-                    bw.writeDoubleLE((aPLS.getPoints().get(i)).Y);
+                    bw.writeDoubleLE((aPLS.getPoints().get(i)).x);
+                    bw.writeDoubleLE((aPLS.getPoints().get(i)).y);
                 }
                 break;
             case POLYLINE_Z:
@@ -952,8 +952,8 @@ public class ShapeFileManage {
                     bw.writeIntLE(aPLZS.parts[i]);
                 }
                 for (i = 0; i < aPLZS.getPointNum(); i++) {
-                    bw.writeDoubleLE((aPLZS.getPoints().get(i)).X);
-                    bw.writeDoubleLE((aPLZS.getPoints().get(i)).Y);
+                    bw.writeDoubleLE((aPLZS.getPoints().get(i)).x);
+                    bw.writeDoubleLE((aPLZS.getPoints().get(i)).y);
                 }
                 bw.writeDoubleLE(aPLZS.getZRange()[0]);
                 bw.writeDoubleLE(aPLZS.getZRange()[1]);
@@ -978,8 +978,8 @@ public class ShapeFileManage {
                     bw.writeIntLE(aPGS.parts[i]);
                 }
                 for (i = 0; i < aPGS.getPointNum(); i++) {
-                    bw.writeDoubleLE((aPGS.getPoints().get(i)).X);
-                    bw.writeDoubleLE((aPGS.getPoints().get(i)).Y);
+                    bw.writeDoubleLE((aPGS.getPoints().get(i)).x);
+                    bw.writeDoubleLE((aPGS.getPoints().get(i)).y);
                 }
                 break;
             case POLYGON_Z:
@@ -994,8 +994,8 @@ public class ShapeFileManage {
                     bw.writeIntLE(aPGZS.parts[i]);
                 }
                 for (i = 0; i < aPGZS.getPointNum(); i++) {
-                    bw.writeDoubleLE((aPGZS.getPoints().get(i)).X);
-                    bw.writeDoubleLE((aPGZS.getPoints().get(i)).Y);
+                    bw.writeDoubleLE((aPGZS.getPoints().get(i)).x);
+                    bw.writeDoubleLE((aPGZS.getPoints().get(i)).y);
                 }
                 bw.writeDoubleLE(aPGZS.getZRange()[0]);
                 bw.writeDoubleLE(aPGZS.getZRange()[1]);

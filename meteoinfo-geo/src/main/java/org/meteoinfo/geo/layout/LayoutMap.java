@@ -16,10 +16,10 @@ package org.meteoinfo.geo.layout;
 import com.l2fprod.common.beans.BaseBeanInfo;
 import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.MIMath;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.chart.graphic.ResizeAbility;
+import org.meteoinfo.geometry.GeometryUtil;
 import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.ui.event.ILayersUpdatedListener;
 import org.meteoinfo.ui.event.IMapViewUpdatedListener;
@@ -27,7 +27,7 @@ import org.meteoinfo.ui.event.LayersUpdatedEvent;
 import org.meteoinfo.ui.event.MapViewUpdatedEvent;
 import org.meteoinfo.geo.legend.GridLabelPosition;
 import org.meteoinfo.geo.legend.MapFrame;
-import org.meteoinfo.common.GridLabel;
+import org.meteoinfo.projection.GridLabel;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -860,8 +860,8 @@ public class LayoutMap extends LayoutElement {
                             break;
                     }
 
-                    labX = (float) aGL.getLabPoint().X;
-                    labY = (float) aGL.getLabPoint().Y;
+                    labX = (float) aGL.getLabPoint().x;
+                    labY = (float) aGL.getLabPoint().y;
                     labX = labX + this.getLeft() * zoom + pageLocation.X;
                     labY = labY + this.getTop() * zoom + pageLocation.Y;
                     sP.X = labX;
@@ -935,19 +935,19 @@ public class LayoutMap extends LayoutElement {
                         maxExtent = (Extent) aExtent.clone();
                         extentList.add((Extent) aExtent.clone());
                     } else {
-                        if (!MIMath.isExtentCross(aExtent, maxExtent)) {
+                        if (!GeometryUtil.isExtentCross(aExtent, maxExtent)) {
                             extentList.add((Extent) aExtent.clone());
-                            maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                            maxExtent = GeometryUtil.getLagerExtent(maxExtent, aExtent);
                         } else {
                             for (int j = 0; j < extentList.size(); j++) {
-                                if (MIMath.isExtentCross(aExtent, extentList.get(j))) {
+                                if (GeometryUtil.isExtentCross(aExtent, extentList.get(j))) {
                                     ifDraw = false;
                                     break;
                                 }
                             }
                             if (ifDraw) {
                                 extentList.add(aExtent);
-                                maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                                maxExtent = GeometryUtil.getLagerExtent(maxExtent, aExtent);
                             }
                         }
                     }

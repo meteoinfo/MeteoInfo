@@ -7,9 +7,8 @@
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject, ProjectionInfo
 from org.meteoinfo.data import GridData, GridArray
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
-from org.meteoinfo.geometry.geoprocess import GeometryUtil
+from org.meteoinfo.geometry import GeometryUtil, Coordinate
 from org.meteoinfo.common import ResampleMethods
-from org.meteoinfo.common import PointZ
 from org.meteoinfo.common.util import JDateUtil
 from org.meteoinfo.ndarray import Array, Range, MAMath, DataType
 from org.meteoinfo.data.dimarray import DimensionType
@@ -199,9 +198,9 @@ class DimArray(NDArray):
                         yidx = i
             if not xlim is None and not ylim is None:                
                 fromproj = KnownCoordinateSystems.geographic.world.WGS1984
-                inpt = PointZ(xlim[0], ylim[0])
+                inpt = Coordinate(xlim[0], ylim[0])
                 outpt1 = Reproject.reprojectPoint(inpt, fromproj, self.proj)
-                inpt = PointZ(xlim[1], ylim[1])
+                inpt = Coordinate(xlim[1], ylim[1])
                 outpt2 = Reproject.reprojectPoint(inpt, fromproj, self.proj)
                 xlim = [outpt1.X, outpt2.X]
                 ylim = [outpt1.Y, outpt2.Y]

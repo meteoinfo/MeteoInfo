@@ -17,6 +17,9 @@ import org.meteoinfo.common.*;
 import org.meteoinfo.chart.graphic.GeoGraphicCollection;
 import org.meteoinfo.geo.mapdata.ShapeFileManage;
 import org.meteoinfo.geo.mapdata.ShapeFileType;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.GeometryUtil;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.common.colors.ColorUtil;
@@ -49,7 +52,6 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
@@ -463,7 +465,7 @@ public class VectorLayer extends MapLayer {
     public void addCharts() {
         List<Shape> shapeList = new ArrayList<>(this.shapes);
         int shapeIdx = -1;
-        PointZ aPoint = new PointZ();
+        Coordinate aPoint = new Coordinate();
 
         List<Integer> selShapeIdx = getSelectedShapeIndexes();
         boolean isShapeSel = true;
@@ -483,20 +485,20 @@ public class VectorLayer extends MapLayer {
                 case POINT:
                 case POINT_M:
                 case POINT_Z:
-                    aPS.setPoint((PointZ) ((PointShape) aShape).getPoint().clone());
+                    aPS.setPoint((Coordinate) ((PointShape) aShape).getPoint().clone());
                     break;
                 case POLYLINE:
                 case POLYLINE_M:
                 case POLYLINE_Z:
                     int pIdx = ((PolylineShape) aShape).getPoints().size() / 2;
-                    aPS.setPoint((PointZ) ((PolylineShape) aShape).getPoints().get(pIdx - 1).clone());
+                    aPS.setPoint((Coordinate) ((PolylineShape) aShape).getPoints().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                 case POLYGON_M:
                 case POLYGON_Z:
                     Extent aExtent = aShape.getExtent();
-                    aPoint.X = (aExtent.minX + aExtent.maxX) / 2;
-                    aPoint.Y = (aExtent.minY + aExtent.maxY) / 2;
+                    aPoint.x = (aExtent.minX + aExtent.maxX) / 2;
+                    aPoint.y = (aExtent.minY + aExtent.maxY) / 2;
                     aPS.setPoint(aPoint);
                     break;
             }
@@ -730,7 +732,7 @@ public class VectorLayer extends MapLayer {
     public List<Integer> selectShapes(Extent aExtent, List<Shape> shapes, boolean isSingleSel) {
         List<Integer> selectedShapes = new ArrayList<>();
         int i, j;
-        PointZ sp = aExtent.getCenterPoint();
+        Coordinate sp = aExtent.getCenterPoint();
 
         switch (this.getShapeType()) {
             case POINT:
@@ -742,7 +744,7 @@ public class VectorLayer extends MapLayer {
             case STATION_MODEL:
                 for (i = 0; i < shapes.size(); i++) {
                     PointShape aPS = (PointShape) shapes.get(i);
-                    if (MIMath.pointInExtent(aPS.getPoint(), aExtent)) {
+                    if (aExtent.contains(aPS.getPoint())) {
                         selectedShapes.add(shapes.indexOf(aPS));
                         if (isSingleSel) {
                             break;
@@ -757,7 +759,7 @@ public class VectorLayer extends MapLayer {
                 List<Double> dislist = new ArrayList<>();
                 for (i = 0; i < shapes.size(); i++) {
                     PolylineShape aPLS = (PolylineShape) shapes.get(i);
-                    if (MIMath.isExtentCross(aExtent, aPLS.getExtent())) {
+                    if (GeometryUtil.isExtentCross(aExtent, aPLS.getExtent())) {
                         sel = GeoComputation.selectPolylineShape(sp, aPLS, aExtent.getWidth() / 2);
                         if (sel != null) {
                             if (dislist.size() > 0) {
@@ -791,9 +793,9 @@ public class VectorLayer extends MapLayer {
                         }
                     } else if (GeoComputation.pointInPolygon(aPGS, sp)) {
                         selectedShapes.add(shapes.indexOf(aPGS));
-                    } else if (MIMath.isExtentCross(aExtent, aPGS.getExtent())) {
+                    } else if (GeometryUtil.isExtentCross(aExtent, aPGS.getExtent())) {
                         for (j = 0; j < aPGS.getPolygons().get(0).getOutLine().size(); j++) {
-                            if (MIMath.pointInExtent(aPGS.getPolygons().get(0).getOutLine().get(j), aExtent)) {
+                            if (GeometryUtil.pointInExtent(aPGS.getPolygons().get(0).getOutLine().get(j), aExtent)) {
                                 selectedShapes.add(shapes.indexOf(aPGS));
                                 break;
                             }
@@ -816,8 +818,8 @@ public class VectorLayer extends MapLayer {
         List<Integer> selIdxs = new ArrayList<>();
         for (int i = 0; i < shapes.size(); i++) {
             boolean isIn = false;
-            List<PointZ> points = shapes.get(i).getPoints();
-            for (PointZ aPoint : points) {
+            List<Coordinate> points = shapes.get(i).getPoints();
+            for (Coordinate aPoint : points) {
                 if (GeoComputation.pointInPolygon(polygonShape, aPoint)) {
                     isIn = true;
                     break;
@@ -909,8 +911,8 @@ public class VectorLayer extends MapLayer {
      * @param p The point
      * @return Selected shape
      */
-    public Shape selectShape(PointZ p) {
-        Coordinate c = new Coordinate(p.X, p.Y);
+    public Shape selectShape(Coordinate p) {
+        org.locationtech.jts.geom.Coordinate c = new org.locationtech.jts.geom.Coordinate(p.x, p.y);
         Geometry point = new GeometryFactory().createPoint(c);
         for (Shape shape : shapes) {
             if (point.within(shape.toGeometry())) {
@@ -926,14 +928,14 @@ public class VectorLayer extends MapLayer {
      * @param p The point
      * @return PolygonShape and polygon hole index
      */
-    public Object[] selectPolygonHole(PointZ p) {
+    public Object[] selectPolygonHole(Coordinate p) {
         for (Shape shape : shapes) {
             int i = 0;
             for (Polygon poly : ((PolygonShape) shape).getPolygons()) {
                 if (poly.hasHole()) {
                     if (GeoComputation.pointInPolygon(poly.getOutLine(), p)) {
                         int j = 0;
-                        for (List<PointZ> hole : poly.getHoleLines()) {
+                        for (List<Coordinate> hole : poly.getHoleLines()) {
                             if (GeoComputation.pointInPolygon(hole, p)) {
                                 return new Object[]{shape, i, j};
                             }
@@ -1422,7 +1424,7 @@ public class VectorLayer extends MapLayer {
         if (this.getShapeNum() == 1) {
             this.setExtent((Extent) aShape.getExtent().clone());
         } else {
-            this.setExtent(MIMath.getLagerExtent(this.getExtent(), aShape.getExtent()));
+            this.setExtent(GeometryUtil.getLagerExtent(this.getExtent(), aShape.getExtent()));
         }
     }
 
@@ -1432,7 +1434,7 @@ public class VectorLayer extends MapLayer {
         } else {
             this.setExtent((Extent) shapes.get(0).getExtent().clone());
             for (int i = 1; i < this.getShapeNum(); i++) {
-                this.setExtent(MIMath.getLagerExtent(this.getExtent(), shapes.get(i).getExtent()));
+                this.setExtent(GeometryUtil.getLagerExtent(this.getExtent(), shapes.get(i).getExtent()));
             }
 
         }
@@ -2035,7 +2037,7 @@ public class VectorLayer extends MapLayer {
      */
     private void addLabelsByColor() {
         int shapeIdx = -1;
-        PointZ aPoint;
+        Coordinate aPoint;
 
         String dFormat = "%1$.1f";
         boolean isData = false;
@@ -2081,21 +2083,21 @@ public class VectorLayer extends MapLayer {
                 case POINT:
                 case POINT_M:
                 case POINT_Z:
-                    aPS.setPoint((PointZ) ((PointShape) aShape).getPoint().clone());
+                    aPS.setPoint((Coordinate) ((PointShape) aShape).getPoint().clone());
                     break;
                 case POLYLINE:
                 case POLYLINE_M:
                 case POLYLINE_Z:
                     int pIdx = ((PolylineShape) aShape).getPoints().size() / 2;
-                    aPS.setPoint((PointZ) ((PolylineShape) aShape).getPoints().get(pIdx - 1).clone());
+                    aPS.setPoint((Coordinate) ((PolylineShape) aShape).getPoints().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                 case POLYGON_M:
                 case POLYGON_Z:
                     Extent aExtent = aShape.getExtent();
-                    aPoint = new PointZ();
-                    aPoint.X = ((aExtent.minX + aExtent.maxX) / 2);
-                    aPoint.Y = ((aExtent.minY + aExtent.maxY) / 2);
+                    aPoint = new Coordinate();
+                    aPoint.x = ((aExtent.minX + aExtent.maxX) / 2);
+                    aPoint.y = ((aExtent.minY + aExtent.maxY) / 2);
                     aPS.setPoint(aPoint);
                     break;
             }
@@ -2453,8 +2455,8 @@ public class VectorLayer extends MapLayer {
                     handler.startElement("", "", "outerBoundaryIs", atts);
                     handler.startElement("", "", "LinearRing", atts);
                     handler.startElement("", "", "coordinates", atts);
-                    for (PointZ point : polygon.getOutLine()) {
-                        str = String.valueOf(point.X) + "," + String.valueOf(point.Y) + " ";
+                    for (Coordinate point : polygon.getOutLine()) {
+                        str = String.valueOf(point.x) + "," + String.valueOf(point.y) + " ";
                         handler.characters(str.toCharArray(), 0, str.length());
                     }
                     handler.endElement("", "", "coordinates");    //coordinates
@@ -2464,12 +2466,12 @@ public class VectorLayer extends MapLayer {
                     // If Fill=true then add innerBoundaryIs for the contour 'holes'
                     if (((PolygonBreak) this.getLegendScheme().getLegendBreaks().get(levelNum)).isDrawFill()) {
                         if (polygon.hasHole()) {
-                            for (List<PointZ> hole : polygon.getHoleLines()) {
+                            for (List<Coordinate> hole : polygon.getHoleLines()) {
                                 handler.startElement("", "", "innerBoundaryIs", atts);
                                 handler.startElement("", "", "LinearRing", atts);
                                 handler.startElement("", "", "coordinates", atts);
-                                for (PointZ point : hole) {
-                                    str = String.valueOf(point.X) + "," + String.valueOf(point.Y) + " ";
+                                for (Coordinate point : hole) {
+                                    str = String.valueOf(point.x) + "," + String.valueOf(point.y) + " ";
                                     handler.characters(str.toCharArray(), 0, str.length());
                                 }
                                 handler.endElement("", "", "coordinates");    //coordinates
@@ -2629,9 +2631,9 @@ public class VectorLayer extends MapLayer {
                     handler.endElement("", "", "styleUrl");    //styleUrl
                     handler.startElement("", "", "LineString", atts);
                     handler.startElement("", "", "coordinates", atts);
-                    for (PointZ point : line.getPointList()) {
-                        str = String.valueOf(point.X) + "," + String.valueOf(point.Y);
-                        str = str + "," + String.valueOf(point.Z);
+                    for (Coordinate point : line.getPointList()) {
+                        str = String.valueOf(point.x) + "," + String.valueOf(point.y);
+                        str = str + "," + String.valueOf(point.z);
                         str = str + " ";
                         handler.characters(str.toCharArray(), 0, str.length());
                         i += 1;
@@ -2789,8 +2791,8 @@ public class VectorLayer extends MapLayer {
                 handler.endElement("", "", "styleUrl");    //sytleUrl
                 handler.startElement("", "", "Point", atts);
                 handler.startElement("", "", "coordinates", atts);
-                str = String.valueOf(pgs.getPoint().X) + "," + String.valueOf(pgs.getPoint().Y);
-                str = str + "," + String.valueOf(pgs.getPoint().Z);
+                str = String.valueOf(pgs.getPoint().x) + "," + String.valueOf(pgs.getPoint().y);
+                str = str + "," + String.valueOf(pgs.getPoint().z);
                 handler.characters(str.toCharArray(), 0, str.length());
                 handler.endElement("", "", "coordinates");    //coordinates                    
                 handler.endElement("", "", "Point");    //Point
@@ -2839,8 +2841,8 @@ public class VectorLayer extends MapLayer {
 
         if (xShift != 0) {
             for (Shape shape : shapes) {
-                for (PointZ p : shape.getPoints()) {
-                    p.X += xShift;
+                for (Coordinate p : shape.getPoints()) {
+                    p.x += xShift;
                 }
                 shape.updateExtent();
             }
@@ -2849,8 +2851,8 @@ public class VectorLayer extends MapLayer {
         if (this.legendScheme.isGeometry()) {
             for (Shape shape : this.shapes) {
                 ColorBreakCollection cbs = new ColorBreakCollection();
-                for (PointZ p : (List<PointZ>) shape.getPoints()) {
-                    cb = legendScheme.findLegendBreak(p.Z);
+                for (Coordinate p : (List<Coordinate>) shape.getPoints()) {
+                    cb = legendScheme.findLegendBreak(p.z);
                     cbs.add(cb);
                 }
                 graphics.add(new Graphic(shape, cbs));
@@ -2880,7 +2882,7 @@ public class VectorLayer extends MapLayer {
             if (i == 0) {
                 this.setExtent((Extent) shapes.get(i).getExtent().clone());
             } else {
-                this.setExtent(MIMath.getLagerExtent(this.getExtent(), shapes.get(i).getExtent()));
+                this.setExtent(GeometryUtil.getLagerExtent(this.getExtent(), shapes.get(i).getExtent()));
             }
         }
     }

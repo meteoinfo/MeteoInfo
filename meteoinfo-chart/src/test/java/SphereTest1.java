@@ -5,7 +5,7 @@ import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.GraphicFactory;
 import org.meteoinfo.chart.jogl.GLPlot;
 import org.meteoinfo.chart.jogl.Lighting;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geometry.legend.PointBreak;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.math.ArrayMath;

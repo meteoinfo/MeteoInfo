@@ -1,7 +1,7 @@
 package org.meteoinfo.chart.graphic.pipe;
 
 import org.meteoinfo.chart.jogl.Transform;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.PolylineShape;
 import org.joml.Vector3f;
 
@@ -66,8 +66,8 @@ public class PipeShape extends PolylineShape {
 
     void generatePipe() {
         List<Vector3f> path = new ArrayList<>();
-        for (PointZ p : (List<PointZ>) this.getPoints()) {
-            path.add(new Vector3f((float)p.X, (float)p.Y, (float)p.Z));
+        for (Coordinate p : (List<Coordinate>) this.getPoints()) {
+            path.add(new Vector3f((float)p.x, (float)p.y, (float)p.z));
         }
         this.pipe = new Pipe(path, this.radius, this.steps);
     }
@@ -84,9 +84,9 @@ public class PipeShape extends PolylineShape {
         this.transform = (Transform) transform.clone();
 
         List<Vector3f> path = new ArrayList<>();
-        for (PointZ p : (List<PointZ>) this.getPoints()) {
-            path.add(new Vector3f(transform.transform_x((float)p.X), transform.transform_y((float)p.Y),
-                    transform.transform_z((float)p.Z)));
+        for (Coordinate p : (List<Coordinate>) this.getPoints()) {
+            path.add(new Vector3f(transform.transform_x((float)p.x), transform.transform_y((float)p.y),
+                    transform.transform_z((float)p.z)));
         }
         this.pipe = new Pipe(path, this.radius, this.steps);
     }

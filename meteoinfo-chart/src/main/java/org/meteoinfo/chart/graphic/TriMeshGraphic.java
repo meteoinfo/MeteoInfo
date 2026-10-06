@@ -1,12 +1,7 @@
 package org.meteoinfo.chart.graphic;
 
 import org.joml.Vector3f;
-import org.meteoinfo.chart.jogl.Transform;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.geometry.legend.ColorBreak;
-import org.meteoinfo.geometry.legend.LegendManage;
-import org.meteoinfo.geometry.colors.TransferFunction;
-import org.meteoinfo.geometry.legend.LegendScheme;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.Index;
 import org.meteoinfo.ndarray.math.ArrayUtil;

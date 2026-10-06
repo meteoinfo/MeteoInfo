@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.transform;
 
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 
 /**
  * TransformWrapper: proxy wrapper for Transform instance.
@@ -67,11 +67,11 @@ public class TransformWrapper extends Transform implements TransformListener {
     }
 
     @Override
-    public PointZ transform(PointZ p) {
+    public Coordinate transform(Coordinate p) {
         if (innerTransform == null) {
             throw new IllegalStateException("TransformWrapper inner transform is null");
         }
-        PointZ res = innerTransform.transform(p);
+        Coordinate res = innerTransform.transform(p);
         clearInvalid();
         return res;
     }

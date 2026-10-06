@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.transform;
 
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 
 // Logarithmic Transform
 public class LogTransform extends Transform {
@@ -13,12 +13,12 @@ public class LogTransform extends Transform {
     }
 
     @Override
-    public PointZ transform(PointZ p) {
-        double x = p.X, y = p.Y;
+    public Coordinate transform(Coordinate p) {
+        double x = p.x, y = p.y;
         if (doX && x > 0) x = Math.log(x) / Math.log(base);
         if (doY && y > 0) y = Math.log(y) / Math.log(base);
         clearInvalid();
-        return new PointZ(x, y);
+        return new Coordinate(x, y);
     }
 
     @Override

@@ -13,7 +13,7 @@ import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.Polyline;
 import org.meteoinfo.geometry.shape.PolylineShape;
 import org.meteoinfo.math.Matrix4f;
@@ -135,12 +135,12 @@ public class LineRender extends JOGLGraphicRender {
         for (Graphic graphic : this.graphics.getGraphics()) {
             PolylineShape shape = (PolylineShape) graphic.getShape();
             for (Polyline line : shape.getPolylines()) {
-                List<PointZ> ps = (List<PointZ>) line.getPointList();
+                List<Coordinate> ps = (List<Coordinate>) line.getPointList();
                 linePointNumbers.add(ps.size());
-                for (PointZ p : ps) {
-                    vertexPosition[i] = (float) p.X;
-                    vertexPosition[i + 1] = (float) p.Y;
-                    vertexPosition[i + 2] = (float) p.Z;
+                for (Coordinate p : ps) {
+                    vertexPosition[i] = (float) p.x;
+                    vertexPosition[i + 1] = (float) p.y;
+                    vertexPosition[i + 2] = (float) p.z;
                     i += 3;
                 }
             }
@@ -156,12 +156,12 @@ public class LineRender extends JOGLGraphicRender {
         for (Graphic graphic : this.graphics.getGraphics()) {
             PolylineShape shape = (PolylineShape) graphic.getShape();
             for (Polyline line : shape.getPolylines()) {
-                List<PointZ> ps = (List<PointZ>) line.getPointList();
+                List<Coordinate> ps = (List<Coordinate>) line.getPointList();
                 linePointNumbers.add(ps.size());
-                for (PointZ p : ps) {
-                    vertexPosition[i] = transform.transform_x((float) p.X);
-                    vertexPosition[i + 1] = transform.transform_y((float) p.Y);
-                    vertexPosition[i + 2] = transform.transform_z((float) p.Z);
+                for (Coordinate p : ps) {
+                    vertexPosition[i] = transform.transform_x((float) p.x);
+                    vertexPosition[i + 1] = transform.transform_y((float) p.y);
+                    vertexPosition[i + 2] = transform.transform_z((float) p.z);
                     i += 3;
                 }
             }
@@ -177,7 +177,7 @@ public class LineRender extends JOGLGraphicRender {
         for (Graphic graphic : this.graphics.getGraphics()) {
             PolylineShape shape = (PolylineShape) graphic.getShape();
             int pointNum = shape.getPointNum();
-            List<PointZ> ps = (List<PointZ>) shape.getPoints();
+            List<Coordinate> ps = (List<Coordinate>) shape.getPoints();
             ColorBreak cb = graphic.getLegendBreak();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;
@@ -186,10 +186,10 @@ public class LineRender extends JOGLGraphicRender {
                 Vector3f v1, v2;
                 for (int i = 1; i < pointNum; i++) {
                     if (i % interval == 0) {
-                        PointZ p2 = ps.get(i);
-                        PointZ p1 = ps.get(i - 1);
-                        v1 = transform.transform((float) p1.X, (float) p1.Y, (float) p1.Z);
-                        v2 = transform.transform((float) p2.X, (float) p2.Y, (float) p2.Z);
+                        Coordinate p2 = ps.get(i);
+                        Coordinate p1 = ps.get(i - 1);
+                        v1 = transform.transform((float) p1.x, (float) p1.y, (float) p1.z);
+                        v2 = transform.transform((float) p2.x, (float) p2.y, (float) p2.z);
                         //v1 = new Vector3f((float) p1.X, (float) p1.Y, (float) p1.Z);
                         //v2 = new Vector3f((float) p2.X, (float) p2.Y, (float) p2.Z);
                         slb = (StreamlineBreak) cbc.get(i);
@@ -227,10 +227,10 @@ public class LineRender extends JOGLGraphicRender {
                 Vector3f v1, v2;
                 for (int i = 1; i < pointNum; i++) {
                     if (i % interval == 0) {
-                        PointZ p2 = ps.get(i);
-                        PointZ p1 = ps.get(i - 1);
-                        v1 = transform.transform((float) p1.X, (float) p1.Y, (float) p1.Z);
-                        v2 = transform.transform((float) p2.X, (float) p2.Y, (float) p2.Z);
+                        Coordinate p2 = ps.get(i);
+                        Coordinate p1 = ps.get(i - 1);
+                        v1 = transform.transform((float) p1.x, (float) p1.y, (float) p1.z);
+                        v2 = transform.transform((float) p2.x, (float) p2.y, (float) p2.z);
                         //v1 = new Vector3f((float) p1.X, (float) p1.Y, (float) p1.Z);
                         //v2 = new Vector3f((float) p2.X, (float) p2.Y, (float) p2.Z);
                         if (cylinder == null) {

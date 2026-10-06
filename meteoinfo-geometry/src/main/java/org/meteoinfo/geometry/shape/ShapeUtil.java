@@ -8,7 +8,7 @@ package org.meteoinfo.geometry.shape;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.IndexIterator;
 
@@ -33,7 +33,7 @@ public class ShapeUtil {
             ps = new PointShape();
             xx = x.get(i).doubleValue();
             yy = y.get(i).doubleValue();
-            ps.setPoint(new PointZ(xx, yy));
+            ps.setPoint(new Coordinate(xx, yy));
             shapes.add(ps);
         }
         return shapes;
@@ -54,7 +54,7 @@ public class ShapeUtil {
             ps = new PointShape();
             xx = x.getDouble(i);
             yy = y.getDouble(i);
-            ps.setPoint(new PointZ(xx, yy));
+            ps.setPoint(new Coordinate(xx, yy));
             shapes.add(ps);
         }
         return shapes;
@@ -78,7 +78,7 @@ public class ShapeUtil {
             xx = x.getDouble(i);
             yy = y.getDouble(i);
             
-            ps.setPoint(new PointZ(xx, yy, z.getDouble(i), m.getDouble(i)));
+            ps.setPoint(new Coordinate(xx, yy, z.getDouble(i), m.getDouble(i)));
             shapes.add(ps);
         }
         return shapes;
@@ -93,7 +93,7 @@ public class ShapeUtil {
      */
     public static List<PolylineShape> createPolylineShapes(List<Number> x, List<Number> y) {
         double xx, yy;
-        List<PointZ> points = new ArrayList<>();
+        List<Coordinate> points = new ArrayList<>();
         PolylineShape pls;
         List<PolylineShape> shapes = new ArrayList<>();
         for (int i = 0; i < x.size(); i++) {
@@ -107,7 +107,7 @@ public class ShapeUtil {
                 }
                 points = new ArrayList<>();
             } else {
-                points.add(new PointZ(xx, yy));
+                points.add(new Coordinate(xx, yy));
             }
         }
         if (points.size() >= 2) {
@@ -128,14 +128,14 @@ public class ShapeUtil {
      */
     public static PolylineShape createPolylineShape(Array x, Array y) {
         double xx, yy;
-        List<PointZ> points = new ArrayList<>();
+        List<Coordinate> points = new ArrayList<>();
         PolylineShape pls;
         IndexIterator xIter = x.getIndexIterator();
         IndexIterator yIter = y.getIndexIterator();
         while (xIter.hasNext()){
             xx = xIter.getDoubleNext();
             yy = yIter.getDoubleNext();
-            points.add(new PointZ(xx, yy));
+            points.add(new Coordinate(xx, yy));
         }
         pls = new PolylineShape();
         pls.setPoints(points);
@@ -152,7 +152,7 @@ public class ShapeUtil {
      */
     public static List<PolylineShape> createPolylineShapes(Array x, Array y) {
         double xx, yy;
-        List<PointZ> points = new ArrayList<>();
+        List<Coordinate> points = new ArrayList<>();
         PolylineShape pls;
         List<PolylineShape> shapes = new ArrayList<>();
         for (int i = 0; i < x.getSize(); i++) {
@@ -166,7 +166,7 @@ public class ShapeUtil {
                 }
                 points = new ArrayList<>();
             } else {
-                points.add(new PointZ(xx, yy));
+                points.add(new Coordinate(xx, yy));
             }
         }
         if (points.size() >= 2) {
@@ -189,7 +189,7 @@ public class ShapeUtil {
      */
     public static List<PolylineShape> createPolylineShapes(Array x, Array y, Array z, Array m) {
         double xx, yy;
-        List<PointZ> points = new ArrayList<>();
+        List<Coordinate> points = new ArrayList<>();
         PolylineShape pls;
         List<PolylineShape> shapes = new ArrayList<>();
         for (int i = 0; i < x.getSize(); i++) {
@@ -203,7 +203,7 @@ public class ShapeUtil {
                 }
                 points = new ArrayList<>();
             } else {
-                points.add(new PointZ(xx, yy, z.getDouble(i), m.getDouble(i)));
+                points.add(new Coordinate(xx, yy, z.getDouble(i), m.getDouble(i)));
             }
         }
         if (points.size() >= 2) {
@@ -224,7 +224,7 @@ public class ShapeUtil {
      */
     public static List<PolygonShape> createPolygonShapes(List<Number> x, List<Number> y) {
         double xx, yy;
-        List<PointZ> points = new ArrayList<>();
+        List<Coordinate> points = new ArrayList<>();
         PolygonShape pls;
         List<PolygonShape> shapes = new ArrayList<>();
         for (int i = 0; i < x.size(); i++) {
@@ -238,7 +238,7 @@ public class ShapeUtil {
                 }
                 points = new ArrayList<>();
             } else {
-                points.add(new PointZ(xx, yy));
+                points.add(new Coordinate(xx, yy));
             }
         }
         if (points.size() > 2) {
@@ -259,7 +259,7 @@ public class ShapeUtil {
      */
     public static List<PolygonShape> createPolygonShapes(Array x, Array y) {
         double xx, yy;
-        List<PointZ> points = new ArrayList<>();
+        List<Coordinate> points = new ArrayList<>();
         PolygonShape pls;
         List<PolygonShape> shapes = new ArrayList<>();
         for (int i = 0; i < x.getSize(); i++) {
@@ -273,7 +273,7 @@ public class ShapeUtil {
                 }
                 points = new ArrayList<>();
             } else {
-                points.add(new PointZ(xx, yy));
+                points.add(new Coordinate(xx, yy));
             }
         }
         if (points.size() > 2) {
@@ -294,12 +294,12 @@ public class ShapeUtil {
      */
     public static PolygonShape createPolygonShape(List<Number> x_p, List<Number> y_p) {
         PolygonShape ps = new PolygonShape();
-        List<PointZ> points = new ArrayList<>();
+        List<Coordinate> points = new ArrayList<>();
         for (int i = 0; i < x_p.size(); i++) {
-            points.add(new PointZ(x_p.get(i).doubleValue(), y_p.get(i).doubleValue()));
+            points.add(new Coordinate(x_p.get(i).doubleValue(), y_p.get(i).doubleValue()));
         }
         if (!points.get(points.size() - 1).equals(points.get(0))) {
-            points.add((PointZ) points.get(0).clone());
+            points.add((Coordinate) points.get(0).clone());
         }
         ps.setPoints(points);
 
@@ -314,12 +314,12 @@ public class ShapeUtil {
      */
     public static PolygonShape createPolygonShape(List<List<Number>> xy) {
         PolygonShape ps = new PolygonShape();
-        List<PointZ> points = new ArrayList<>();
+        List<Coordinate> points = new ArrayList<>();
         for (List<Number> xy1 : xy) {
-            points.add(new PointZ(xy1.get(0).doubleValue(), xy1.get(1).doubleValue()));
+            points.add(new Coordinate(xy1.get(0).doubleValue(), xy1.get(1).doubleValue()));
         }
         if (!points.get(points.size() - 1).equals(points.get(0))) {
-            points.add((PointZ) points.get(0).clone());
+            points.add((Coordinate) points.get(0).clone());
         }
         ps.setPoints(points);
 
@@ -337,14 +337,14 @@ public class ShapeUtil {
         double x, y;
         int n = (int) xa.getSize();
         PolygonShape pgs;
-        PointZ p;
-        List<PointZ> points = new ArrayList<>();
+        Coordinate p;
+        List<Coordinate> points = new ArrayList<>();
         IndexIterator xIter = xa.getIndexIterator();
         IndexIterator yIter = ya.getIndexIterator();
         while (xIter.hasNext()){
             x = xIter.getDoubleNext();
             y = yIter.getDoubleNext();
-            p = new PointZ(x, y);
+            p = new Coordinate(x, y);
             points.add(p);
         }
         if (points.size() > 2) {
@@ -366,13 +366,13 @@ public class ShapeUtil {
         double x, y;
         int n = xy.getShape()[0];
         PolygonShape pgs;
-        PointZ p;
-        List<PointZ> points = new ArrayList<>();
+        Coordinate p;
+        List<Coordinate> points = new ArrayList<>();
         IndexIterator iter = xy.getIndexIterator();
         while (iter.hasNext()){
             x = iter.getDoubleNext();
             y = iter.getDoubleNext();
-            p = new PointZ(x, y);
+            p = new Coordinate(x, y);
             points.add(p);
         }
         if (points.size() > 2) {
@@ -392,11 +392,11 @@ public class ShapeUtil {
      * @return Graphic
      */
     public static CircleShape createCircleShape(float x, float y, float radius) {
-        List<PointZ> points = new ArrayList<>();
-        points.add(new PointZ(x - radius, y));
-        points.add(new PointZ(x, y -  radius));
-        points.add(new PointZ(x + radius, y));
-        points.add(new PointZ(x, y + radius));
+        List<Coordinate> points = new ArrayList<>();
+        points.add(new Coordinate(x - radius, y));
+        points.add(new Coordinate(x, y -  radius));
+        points.add(new Coordinate(x + radius, y));
+        points.add(new Coordinate(x, y + radius));
         
         CircleShape aPGS = new CircleShape();
         aPGS.setPoints(points);

@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.geometry.shape;
 
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -20,7 +20,7 @@ public class ImageShape extends PointShape {
     // <editor-fold desc="Variables">
     protected BufferedImage image;
     protected Object interp;
-    protected List<PointZ> coords;
+    protected List<Coordinate> coords;
     // </editor-fold>
     // <editor-fold desc="Constructor">
     /**
@@ -92,7 +92,7 @@ public class ImageShape extends PointShape {
      * Get coordinates - lower left, lower right, upper right, upper left
      * @return Coordinates
      */
-    public List<PointZ> getCoords() {
+    public List<Coordinate> getCoords() {
         return this.coords;
     }
     
@@ -100,7 +100,7 @@ public class ImageShape extends PointShape {
      * Set coordinates
      * @param value Coordinates
      */
-    public void setCoords(List<PointZ> value) {
+    public void setCoords(List<Coordinate> value) {
         this.coords = value;
     }
     

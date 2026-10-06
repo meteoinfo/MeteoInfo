@@ -14,8 +14,8 @@
 package org.meteoinfo.projection;
 
 import org.locationtech.proj4j.*;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.common.ResampleMethods;
 import org.meteoinfo.ndarray.*;
 import org.meteoinfo.ndarray.math.ArrayUtil;
@@ -40,11 +40,11 @@ public class Reproject {
      * @param dest Destination projection info
      * @return Projected point
      */
-    public static PointZ reprojectPoint(double x, double y, ProjectionInfo source, ProjectionInfo dest) {
+    public static Coordinate reprojectPoint(double x, double y, ProjectionInfo source, ProjectionInfo dest) {
         double[][] points = new double[1][];
         points[0] = new double[]{x, y};
         Reproject.reprojectPoints(points, source, dest, 0, points.length);
-        PointZ rPoint = new PointZ(points[0][0], points[0][1]);
+        Coordinate rPoint = new Coordinate(points[0][0], points[0][1]);
         
         return rPoint;
     }
@@ -56,8 +56,8 @@ public class Reproject {
      * @param dest Destination projection info
      * @return Projected point
      */
-    public static PointZ reprojectPoint(PointZ point, ProjectionInfo source, ProjectionInfo dest) {
-        return reprojectPoint(point.X, point.Y, source, dest);
+    public static Coordinate reprojectPoint(Coordinate point, ProjectionInfo source, ProjectionInfo dest) {
+        return reprojectPoint(point.x, point.y, source, dest);
     }
     
     /**

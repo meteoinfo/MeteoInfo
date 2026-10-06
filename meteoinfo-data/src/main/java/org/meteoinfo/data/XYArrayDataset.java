@@ -5,7 +5,7 @@
  */
 package org.meteoinfo.data;
 
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.MIMath;
 
 import java.util.ArrayList;

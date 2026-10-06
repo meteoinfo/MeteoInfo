@@ -15,8 +15,8 @@ package org.meteoinfo.chart.graphic;
 
  import org.meteoinfo.chart.transform.Transform;
  import org.meteoinfo.geometry.legend.*;
- import org.meteoinfo.common.Extent;
- import org.meteoinfo.common.PointZ;
+ import org.meteoinfo.geometry.Extent;
+ import org.meteoinfo.geometry.Coordinate;
  import org.meteoinfo.common.colors.ColorUtil;
  import org.meteoinfo.geometry.shape.*;
  import org.meteoinfo.geometry.shape.Polygon;
@@ -164,14 +164,14 @@ package org.meteoinfo.chart.graphic;
                  for (PolygonShape aPGS : (List<PolygonShape>) ((GraphicCollection) graphic).getShapes()) {
                      for (Polygon aPolygon : aPGS.getPolygons()) {
                          GeneralPath aPath = new GeneralPath();
-                         PointZ wPoint;
+                         Coordinate wPoint;
                          double[] sXY;
                          for (int i = 0; i < aPolygon.getOutLine().size(); i++) {
                              wPoint = aPolygon.getOutLine().get(i);
                              if (i == 0) {
-                                 aPath.moveTo(wPoint.X, wPoint.Y);
+                                 aPath.moveTo(wPoint.x, wPoint.y);
                              } else {
-                                 aPath.lineTo(wPoint.X, wPoint.Y);
+                                 aPath.lineTo(wPoint.x, wPoint.y);
                              }
                          }
                          this.clipPath.append(aPath, false);
@@ -181,14 +181,14 @@ package org.meteoinfo.chart.graphic;
                  this.clipPath = new GeneralPath();
                  for (Polygon aPolygon : ((PolygonShape) graphic.getShape()).getPolygons()) {
                      GeneralPath aPath = new GeneralPath();
-                     PointZ wPoint;
+                     Coordinate wPoint;
                      double[] sXY;
                      for (int i = 0; i < aPolygon.getOutLine().size(); i++) {
                          wPoint = aPolygon.getOutLine().get(i);
                          if (i == 0) {
-                             aPath.moveTo(wPoint.X, wPoint.Y);
+                             aPath.moveTo(wPoint.x, wPoint.y);
                          } else {
-                             aPath.lineTo(wPoint.X, wPoint.Y);
+                             aPath.lineTo(wPoint.x, wPoint.y);
                          }
                      }
                      this.clipPath.append(aPath, false);
@@ -340,29 +340,29 @@ package org.meteoinfo.chart.graphic;
       * @param newY New Y
       */
      public void verticeMoveUpdate(int vIdx, double newX, double newY) {
-         List<PointZ> points = (List<PointZ>) shape.getPoints();
+         List<Coordinate> points = (List<Coordinate>) shape.getPoints();
          switch (shape.getShapeType()){
              case POLYGON:
              case CURVE_POLYGON:
              case RECTANGLE:
                  int last = points.size() - 1;
                  if (vIdx == 0) {
-                     if (points.get(0).X == points.get(last).X && points.get(0).Y == points.get(last).Y) {
-                         points.get(last).X = newX;
-                         points.get(last).Y = newY;
+                     if (points.get(0).x == points.get(last).x && points.get(0).y == points.get(last).y) {
+                         points.get(last).x = newX;
+                         points.get(last).y = newY;
                      }
                  } else if (vIdx == last){
-                     if (points.get(0).X == points.get(last).X && points.get(0).Y == points.get(last).Y) {
-                         points.get(0).X = newX;
-                         points.get(0).Y = newY;
+                     if (points.get(0).x == points.get(last).x && points.get(0).y == points.get(last).y) {
+                         points.get(0).x = newX;
+                         points.get(0).y = newY;
                      }
                  }
                  break;
          }
 
-         PointZ aP = points.get(vIdx);
-         aP.X = newX;
-         aP.Y = newY;
+         Coordinate aP = points.get(vIdx);
+         aP.x = newX;
+         aP.y = newY;
          //points.set(vIdx, aP);
          shape.setPoints(points);
      }
@@ -373,8 +373,8 @@ package org.meteoinfo.chart.graphic;
       * @param vIdx Vertice index
       * @param point The add vertice
       */
-     public void verticeAddUpdate(int vIdx, PointZ point) {
-         List<PointZ> points = shape.getPoints();
+     public void verticeAddUpdate(int vIdx, Coordinate point) {
+         List<Coordinate> points = shape.getPoints();
          points.add(vIdx, point);
          shape.setPoints(points);
      }
@@ -385,7 +385,7 @@ package org.meteoinfo.chart.graphic;
       * @param vIdx Vertice index
       */
      public void verticeRemoveUpdate(int vIdx) {
-         List<PointZ> points = shape.getPoints();
+         List<Coordinate> points = shape.getPoints();
          points.remove(vIdx);
          shape.setPoints(points);
      }
@@ -435,13 +435,13 @@ package org.meteoinfo.chart.graphic;
 
          //Add points
          Element points = doc.createElement("Points");
-         List<PointZ> pointList = aShape.getPoints();
-         for (PointZ aPoint : pointList) {
+         List<Coordinate> pointList = aShape.getPoints();
+         for (Coordinate aPoint : pointList) {
              Element point = doc.createElement("Point");
              Attr x = doc.createAttribute("X");
              Attr y = doc.createAttribute("Y");
-             x.setValue(String.valueOf(aPoint.X));
-             y.setValue(String.valueOf(aPoint.Y));
+             x.setValue(String.valueOf(aPoint.x));
+             y.setValue(String.valueOf(aPoint.y));
              point.setAttributeNode(x);
              point.setAttributeNode(y);
 
@@ -701,12 +701,12 @@ package org.meteoinfo.chart.graphic;
                      ((EllipseShape)aShape).setAngle(Float.parseFloat(angleNode.getNodeValue()));
              }
 
-             List<PointZ> pointList = new ArrayList<>();
+             List<Coordinate> pointList = new ArrayList<>();
              Node pointsNode = ((Element)shapeNode).getElementsByTagName("Points").item(0);
              NodeList nl = ((Element)pointsNode).getElementsByTagName("Point");
              for (int i = 0; i < nl.getLength(); i++) {
                  Node pNode = nl.item(i);
-                 PointZ aPoint = new PointZ(Double.parseDouble(pNode.getAttributes().getNamedItem("X").getNodeValue()),
+                 Coordinate aPoint = new Coordinate(Double.parseDouble(pNode.getAttributes().getNamedItem("X").getNodeValue()),
                          Double.parseDouble(pNode.getAttributes().getNamedItem("Y").getNodeValue()));
                  pointList.add(aPoint);
              }

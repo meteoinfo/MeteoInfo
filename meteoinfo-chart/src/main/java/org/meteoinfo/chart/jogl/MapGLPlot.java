@@ -4,12 +4,15 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.ChartText;
+import org.meteoinfo.projection.GridLabel;
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.chart.graphic.GraphicProjectionUtil;
 import org.meteoinfo.chart.geo.MapGridLine;
 import org.meteoinfo.chart.geo.MapGridLine3D;
 import org.meteoinfo.common.*;
 import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.projection.ProjectionInfo;
 
 import java.awt.geom.Rectangle2D;
@@ -196,8 +199,8 @@ public class MapGLPlot extends GLPlot {
                 List<GridLabel> lonLabels = mapGridLine.getLongitudeLabels();
                 for (int i = 0; i < lonLabels.size(); i++) {
                     GridLabel gridLabel = lonLabels.get(i);
-                    PointZ point = gridLabel.getCoord();
-                    x = (float) point.X;
+                    Coordinate point = gridLabel.getCoord();
+                    x = (float) point.x;
                     if (x < axesExtent.minX || x > axesExtent.maxX) {
                         continue;
                     }
@@ -272,8 +275,8 @@ public class MapGLPlot extends GLPlot {
                 List<GridLabel> latLabels = mapGridLine.getLatitudeLabels();
                 for (int i = 0; i < latLabels.size(); i++) {
                     GridLabel gridLabel = latLabels.get(i);
-                    PointZ point = gridLabel.getCoord();
-                    y = (float) point.Y;
+                    Coordinate point = gridLabel.getCoord();
+                    y = (float) point.y;
                     if (y < axesExtent.minY || y > axesExtent.maxY) {
                         continue;
                     }

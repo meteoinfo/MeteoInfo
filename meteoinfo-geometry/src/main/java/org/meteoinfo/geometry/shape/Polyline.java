@@ -15,7 +15,9 @@
 package org.meteoinfo.geometry.shape;
 
 import org.meteoinfo.common.*;
-import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.GeometryUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,7 @@ public class Polyline {
     // <editor-fold desc="Variables">
 
     private Extent _extent;
-    private List<PointZ> _pointList;
+    private List<Coordinate> _pointList;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -44,7 +46,7 @@ public class Polyline {
      * Get point list
      * @return point list
      */
-    public List<PointZ> getPointList() {
+    public List<Coordinate> getPointList() {
         return _pointList;
     }
 
@@ -52,7 +54,7 @@ public class Polyline {
      * Set point list
      * @param points point list
      */
-    public void setPointList(List<PointZ> points) {
+    public void setPointList(List<Coordinate> points) {
         _pointList = points;
         _extent = GeometryUtil.getPointsExtent(_pointList);
     }
@@ -73,9 +75,9 @@ public class Polyline {
      * @param points point array
      */
     public void setPoints(PointF[] points) {
-        List<PointZ> pointList = new ArrayList<>();
+        List<Coordinate> pointList = new ArrayList<>();
         for (PointF aP : points) {
-            pointList.add(new PointZ(aP.X, aP.Y));
+            pointList.add(new Coordinate(aP.X, aP.Y));
         }
         _pointList = pointList;
 
@@ -88,9 +90,9 @@ public class Polyline {
      * @return boolean
      */
     public boolean isClosed() {
-        PointZ sPoint = _pointList.get(0);
-        PointZ ePoint = _pointList.get(_pointList.size() - 1);
-        if (MIMath.doubleEquals(sPoint.X, ePoint.X) && MIMath.doubleEquals(sPoint.Y, ePoint.Y)) {
+        Coordinate sPoint = _pointList.get(0);
+        Coordinate ePoint = _pointList.get(_pointList.size() - 1);
+        if (MIMath.doubleEquals(sPoint.x, ePoint.x) && MIMath.doubleEquals(sPoint.y, ePoint.y)) {
             return true;
         } else {
             return false;
@@ -106,8 +108,8 @@ public class Polyline {
         double length = 0.0;
         double dx, dy;
         for (int i = 0; i < _pointList.size() - 1; i++) {
-            dx = _pointList.get(i + 1).X - _pointList.get(i).X;
-            dy = _pointList.get(i + 1).Y - _pointList.get(i).Y;
+            dx = _pointList.get(i + 1).x - _pointList.get(i).x;
+            dy = _pointList.get(i + 1).y - _pointList.get(i).y;
             length += Math.sqrt(dx * dx + dy * dy);
         }
 
@@ -123,8 +125,8 @@ public class Polyline {
         double[] lengths = new double[_pointList.size() - 1];
         double dx, dy;
         for (int i = 0; i < _pointList.size() - 1; i++) {
-            dx = _pointList.get(i + 1).X - _pointList.get(i).X;
-            dy = _pointList.get(i + 1).Y - _pointList.get(i).Y;
+            dx = _pointList.get(i + 1).x - _pointList.get(i).x;
+            dy = _pointList.get(i + 1).y - _pointList.get(i).y;
             lengths[i] = Math.sqrt(dx * dx + dy * dy);
         }
 
@@ -158,12 +160,12 @@ public class Polyline {
                 sLen += lengths[j + 1];
             }
 
-            PointZ aPoint = _pointList.get(idx);
-            PointZ bPoint = _pointList.get(idx + 1);
-            x = aPoint.X + (bPoint.X - aPoint.X) * (lengths[idx] - (sLen - len)) / (lengths[idx]);
-            y = aPoint.Y + (bPoint.Y - aPoint.Y) * (lengths[idx] - (sLen - len)) / (lengths[idx]);
-            double U = bPoint.X - aPoint.X;
-            double V = bPoint.Y - aPoint.Y;
+            Coordinate aPoint = _pointList.get(idx);
+            Coordinate bPoint = _pointList.get(idx + 1);
+            x = aPoint.x + (bPoint.x - aPoint.x) * (lengths[idx] - (sLen - len)) / (lengths[idx]);
+            y = aPoint.y + (bPoint.y - aPoint.y) * (lengths[idx] - (sLen - len)) / (lengths[idx]);
+            double U = bPoint.x - aPoint.x;
+            double V = bPoint.y - aPoint.y;
             angle = Math.atan((V) / (U)) * 180 / Math.PI;
             if (U < 0) {
                 angle += 180;

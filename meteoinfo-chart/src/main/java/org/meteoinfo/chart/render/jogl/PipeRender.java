@@ -15,7 +15,7 @@ import org.meteoinfo.chart.graphic.pipe.Pipe;
 import org.meteoinfo.chart.graphic.pipe.PipeShape;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.PolylineShape;
 import org.meteoinfo.math.Matrix4f;
 
@@ -210,7 +210,7 @@ public class PipeRender extends JOGLGraphicRender{
         for (Graphic graphic : this.graphics.getGraphics()) {
             PolylineShape shape = (PolylineShape) graphic.getShape();
             int pointNum = shape.getPointNum();
-            List<PointZ> ps = (List<PointZ>) shape.getPoints();
+            List<Coordinate> ps = (List<Coordinate>) shape.getPoints();
             ColorBreak cb = graphic.getLegendBreak();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;
@@ -219,10 +219,10 @@ public class PipeRender extends JOGLGraphicRender{
                 Vector3f v1, v2;
                 for (int i = 1; i < pointNum; i++) {
                     if (i % interval == 0) {
-                        PointZ p2 = ps.get(i);
-                        PointZ p1 = ps.get(i - 1);
-                        v1 = transform.transform((float) p1.X, (float) p1.Y, (float) p1.Z);
-                        v2 = transform.transform((float) p2.X, (float) p2.Y, (float) p2.Z);
+                        Coordinate p2 = ps.get(i);
+                        Coordinate p1 = ps.get(i - 1);
+                        v1 = transform.transform((float) p1.x, (float) p1.y, (float) p1.z);
+                        v2 = transform.transform((float) p2.x, (float) p2.y, (float) p2.z);
                         slb = (StreamlineBreak) cbc.get(i);
                         if (cylinder == null) {
                             cylinder = new Cylinder(slb.getArrowHeadWidth() * 0.02f,
@@ -260,10 +260,10 @@ public class PipeRender extends JOGLGraphicRender{
                 Vector3f v1, v2;
                 for (int i = 1; i < pointNum; i++) {
                     if (i % interval == 0) {
-                        PointZ p2 = ps.get(i);
-                        PointZ p1 = ps.get(i - 1);
-                        v1 = transform.transform((float) p1.X, (float) p1.Y, (float) p1.Z);
-                        v2 = transform.transform((float) p2.X, (float) p2.Y, (float) p2.Z);
+                        Coordinate p2 = ps.get(i);
+                        Coordinate p1 = ps.get(i - 1);
+                        v1 = transform.transform((float) p1.x, (float) p1.y, (float) p1.z);
+                        v2 = transform.transform((float) p2.x, (float) p2.y, (float) p2.z);
                         if (cylinder == null) {
                             cylinder = new Cylinder(slb.getArrowHeadWidth() * 0.02f,
                                     0, slb.getArrowHeadLength() * 0.02f, 8, 1, true);

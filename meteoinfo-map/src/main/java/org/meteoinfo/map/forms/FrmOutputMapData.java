@@ -19,9 +19,9 @@ import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.GeometryUtil;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.data.GridDataSetting;
 import org.meteoinfo.data.meteodata.Variable;
 import org.meteoinfo.geo.layer.LayerTypes;
@@ -286,7 +286,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                         for (i = 0; i < currentLayer.getShapeNum(); i++) {
                             aPS = (PointShape) currentLayer.getShapes().get(i);
                             if (aPS.isSelected()) {
-                                sw.write(String.valueOf(aPS.getPoint().X) + "," + String.valueOf(aPS.getPoint().Y));
+                                sw.write(String.valueOf(aPS.getPoint().x) + "," + String.valueOf(aPS.getPoint().y));
                                 sw.newLine();
                             }
                             this.jProgressBar1.setValue((i + 1) * 100 / currentLayer.getShapeNum());
@@ -294,7 +294,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                     } else {
                         for (i = 0; i < currentLayer.getShapeNum(); i++) {
                             aPS = (PointShape) currentLayer.getShapes().get(i);
-                            sw.write(String.valueOf(aPS.getPoint().X) + "," + String.valueOf(aPS.getPoint().Y));
+                            sw.write(String.valueOf(aPS.getPoint().x) + "," + String.valueOf(aPS.getPoint().y));
                             sw.newLine();
                             this.jProgressBar1.setValue((i + 1) * 100 / currentLayer.getShapeNum());
                         }
@@ -325,23 +325,23 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                                 continue;
                             }
                         }
-                        PointZ[] Pointps;
+                        Coordinate[] Pointps;
                         for (int p = 0; p < aPLS.getPartNum(); p++) {
                             if (p == aPLS.getPartNum() - 1) {
-                                Pointps = new PointZ[aPLS.getPointNum() - aPLS.parts[p]];
+                                Pointps = new Coordinate[aPLS.getPointNum() - aPLS.parts[p]];
                                 for (int pp = aPLS.parts[p]; pp < aPLS.getPointNum(); pp++) {
                                     Pointps[pp - aPLS.parts[p]] = aPLS.getPoints().get(pp);
                                 }
                             } else {
-                                Pointps = new PointZ[aPLS.parts[p + 1] - aPLS.parts[p]];
+                                Pointps = new Coordinate[aPLS.parts[p + 1] - aPLS.parts[p]];
                                 for (int pp = aPLS.parts[p]; pp < aPLS.parts[p + 1]; pp++) {
                                     Pointps[pp - aPLS.parts[p]] = aPLS.getPoints().get(pp);
                                 }
                             }
                             sw.write(String.valueOf(Pointps.length));
                             sw.newLine();
-                            for (PointZ aPoint : Pointps) {
-                                sw.write(String.valueOf(aPoint.X) + "," + String.valueOf(aPoint.Y));
+                            for (Coordinate aPoint : Pointps) {
+                                sw.write(String.valueOf(aPoint.x) + "," + String.valueOf(aPoint.y));
                                 sw.newLine();
                             }
                             shapeNum += 1;
@@ -375,23 +375,23 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                             }
                         }
 
-                        PointZ[] Pointps;
+                        Coordinate[] Pointps;
                         for (int p = 0; p < aPGS.getPartNum(); p++) {
                             if (p == aPGS.getPartNum() - 1) {
-                                Pointps = new PointZ[aPGS.getPointNum() - aPGS.parts[p]];
+                                Pointps = new Coordinate[aPGS.getPointNum() - aPGS.parts[p]];
                                 for (int pp = aPGS.parts[p]; pp < aPGS.getPointNum(); pp++) {
                                     Pointps[pp - aPGS.parts[p]] = aPGS.getPoints().get(pp);
                                 }
                             } else {
-                                Pointps = new PointZ[aPGS.parts[p + 1] - aPGS.parts[p]];
+                                Pointps = new Coordinate[aPGS.parts[p + 1] - aPGS.parts[p]];
                                 for (int pp = aPGS.parts[p]; pp < aPGS.parts[p + 1]; pp++) {
                                     Pointps[pp - aPGS.parts[p]] = aPGS.getPoints().get(pp);
                                 }
                             }
                             sw.write(String.valueOf(Pointps.length));
                             sw.newLine();
-                            for (PointZ aPoint : Pointps) {
-                                sw.write(String.valueOf(aPoint.X) + "," + String.valueOf(aPoint.Y));
+                            for (Coordinate aPoint : Pointps) {
+                                sw.write(String.valueOf(aPoint.x) + "," + String.valueOf(aPoint.y));
                                 sw.newLine();
                             }
                             shapeNum += 1;
@@ -452,7 +452,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                 if (n == 0) {
                     aExtent = aPGS.getExtent();
                 } else {
-                    aExtent = MIMath.getLagerExtent(aExtent, aPGS.getExtent());
+                    aExtent = GeometryUtil.getLagerExtent(aExtent, aPGS.getExtent());
                 }
                 n += 1;
             }
@@ -480,15 +480,15 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                 //Get grid data
                 double[][] gridData = new double[aGDP.yNum][aGDP.xNum];
                 int j, p;
-                PointZ aPoint = new PointZ();
+                Coordinate aPoint = new Coordinate();
                 double xSize, ySize;
                 xSize = (aGDP.dataExtent.maxX - aGDP.dataExtent.minX) / (aGDP.xNum - 1);
                 ySize = (aGDP.dataExtent.maxY - aGDP.dataExtent.minY) / (aGDP.yNum - 1);
                 boolean isIn;
                 for (i = 0; i < aGDP.yNum; i++) {
-                    aPoint.Y = aGDP.dataExtent.minY + i * ySize;
+                    aPoint.y = aGDP.dataExtent.minY + i * ySize;
                     for (j = 0; j < aGDP.xNum; j++) {
-                        aPoint.X = aGDP.dataExtent.minX + j * xSize;
+                        aPoint.x = aGDP.dataExtent.minX + j * xSize;
                         isIn = false;
                         for (p = 0; p < currentLayer.getShapeNum(); p++) {
                             aPGS = (PolygonShape) currentLayer.getShapes().get(p);

@@ -33,7 +33,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.ui.CheckBoxListEntry;
 import org.xml.sax.SAXException;
@@ -1186,14 +1186,14 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                     List<Double> S  = new ArrayList<>();
                     if (fieldName.equals("Geometry_M")){
                         for (Shape shape : aLayer.getShapes()){
-                            for (PointZ p : (List<PointZ>)shape.getPoints()){
-                                S.add(p.M);
+                            for (Coordinate p : (List<Coordinate>)shape.getPoints()){
+                                S.add(p.m);
                             }
                         }
                     } else if (fieldName.equals("Geometry_Z")){
                         for (Shape shape : aLayer.getShapes()){
-                            for (PointZ p : (List<PointZ>)shape.getPoints()){
-                                S.add(p.Z);
+                            for (Coordinate p : (List<Coordinate>)shape.getPoints()){
+                                S.add(p.z);
                             }
                         }
                     } else {

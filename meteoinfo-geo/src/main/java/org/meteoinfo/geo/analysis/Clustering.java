@@ -5,7 +5,7 @@
 package org.meteoinfo.geo.analysis;
 
 import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.PolylineShape;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
@@ -126,7 +126,7 @@ public class Clustering {
         row = 0;
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHH");
         for (VectorLayer layer : trajLayers) {
-            PointZ aPoint;
+            Coordinate aPoint;
             int sNum = layer.getShapeNum();
             for (i = 0; i < sNum; i++) {
                 aDate = (LocalDateTime) layer.getCellValue("Date", i);
@@ -139,10 +139,10 @@ public class Clustering {
                 col = 0;
                 for (j = 0; j < aPLZ.getPointNum(); j++) {
                     if (j % interval == 0) {
-                        aPoint = (PointZ) aPLZ.getPoints().get(j);
-                        DATA[row][col] = aPoint.X;
+                        aPoint = (Coordinate) aPLZ.getPoints().get(j);
+                        DATA[row][col] = aPoint.x;
                         col += 1;
-                        DATA[row][col] = aPoint.Y;
+                        DATA[row][col] = aPoint.y;
                         col += 1;
                     }
                 }
@@ -183,7 +183,7 @@ public class Clustering {
         row = 0;
         DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyyMMddHH");
         for (VectorLayer layer : trajLayers) {
-            PointZ aPoint;
+            Coordinate aPoint;
             int sNum = layer.getShapeNum();
             for (i = 0; i < sNum; i++) {
                 aDate = (LocalDateTime) layer.getCellValue("Date", i);
@@ -196,12 +196,12 @@ public class Clustering {
                 col = 0;
                 for (j = 0; j < aPLZ.getPointNum(); j++) {
                     if (j % interval == 0) {
-                        aPoint = (PointZ) aPLZ.getPoints().get(j);
-                        DATA[row][col] = aPoint.X;
+                        aPoint = (Coordinate) aPLZ.getPoints().get(j);
+                        DATA[row][col] = aPoint.x;
                         col += 1;
-                        DATA[row][col] = aPoint.Y;
+                        DATA[row][col] = aPoint.y;
                         col += 1;
-                        DATA[row][col] = aPoint.Z;
+                        DATA[row][col] = aPoint.z;
                         col += 1;
                     }
                 }

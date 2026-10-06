@@ -14,15 +14,14 @@
 package org.meteoinfo.geo.util;
 
 import org.meteoinfo.chart.geo.ProjectUtil;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.geo.layer.RasterLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
-import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+import org.meteoinfo.geometry.GeometryUtil;
 import org.meteoinfo.math.interpolate.InterpUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
@@ -89,11 +88,11 @@ public class GeoProjectionUtil {
         Array r = InterpUtil.interpolation_Nearest(px, py, data, rx, ry, Double.POSITIVE_INFINITY);
 
         //Convexhull maskout
-        PolygonShape polyshape = org.meteoinfo.geometry.geoprocess.GeometryUtil.convexHull(px, py);
+        PolygonShape polyshape = GeometryUtil.convexHull(px, py);
         Array[] rxy = ArrayUtil.meshgrid(rx, ry);
         List<PolygonShape> pss = new ArrayList<>();
         pss.add(polyshape);
-        r = org.meteoinfo.geometry.geoprocess.GeometryUtil.maskout(r, rxy[0], rxy[1], pss);
+        r = GeometryUtil.maskout(r, rxy[0], rxy[1], pss);
 
         return new Object[]{r, rx, ry};
     }
@@ -202,22 +201,22 @@ public class GeoProjectionUtil {
                     if (fromProj.getProjectionName() == ProjectionNames.LongLat) {
                         switch (toProj.getProjectionName()) {
                             case Lambert_Conformal_Conic:
-                                if (aPS.getPoint().Y < cutoff) {
+                                if (aPS.getPoint().y < cutoff) {
                                     continue;
                                 }
                                 break;
                             case North_Polar_Stereographic_Azimuthal:
-                                if (aPS.getPoint().Y < cutoff) {
+                                if (aPS.getPoint().y < cutoff) {
                                     continue;
                                 }
                                 break;
                             case South_Polar_Stereographic_Azimuthal:
-                                if (aPS.getPoint().Y > cutoff) {
+                                if (aPS.getPoint().y > cutoff) {
                                     continue;
                                 }
                                 break;
                             case Mercator:
-                                if (aPS.getPoint().Y > cutoff || aPS.getPoint().Y < -cutoff) {
+                                if (aPS.getPoint().y > cutoff || aPS.getPoint().y < -cutoff) {
                                     continue;
                                 }
                                 break;
@@ -317,7 +316,7 @@ public class GeoProjectionUtil {
                             if (s == 0 && i == 0) {
                                 lExtent = (Extent) aPLS.getExtent().clone();
                             } else {
-                                lExtent = MIMath.getLagerExtent(lExtent, aPLS.getExtent());
+                                lExtent = GeometryUtil.getLagerExtent(lExtent, aPLS.getExtent());
                             }
                         }
                     }
@@ -393,7 +392,7 @@ public class GeoProjectionUtil {
                             if (s == 0) {
                                 lExtent = (Extent) aPGS.getExtent().clone();
                             } else {
-                                lExtent = MIMath.getLagerExtent(lExtent, aPGS.getExtent());
+                                lExtent = GeometryUtil.getLagerExtent(lExtent, aPGS.getExtent());
                             }
                         }
                     }
@@ -499,18 +498,18 @@ public class GeoProjectionUtil {
                 switch (toProj.getProjectionName()) {
                     case Lambert_Conformal_Conic:
                     case North_Polar_Stereographic_Azimuthal:
-                        if (aPS.getPoint().X < -89) {
+                        if (aPS.getPoint().x < -89) {
                             continue;
                         }
                         break;
                     case South_Polar_Stereographic_Azimuthal:
-                        if (aPS.getPoint().Y > 89) {
+                        if (aPS.getPoint().y > 89) {
                             continue;
                         }
                         break;
                 }
             }
-            double[] fromP = new double[]{aPS.getPoint().X, aPS.getPoint().Y};
+            double[] fromP = new double[]{aPS.getPoint().x, aPS.getPoint().y};
             double[] toP;
             double[][] points = new double[1][];
             points[0] = (double[]) fromP.clone();
@@ -576,8 +575,8 @@ public class GeoProjectionUtil {
         //coordinate transform process
         int s;
         //PointZ wPoint = new PointZ();
-        PointZ aPoint;
-        List<PointZ> newPoints = new ArrayList<>();
+        Coordinate aPoint;
+        List<Coordinate> newPoints = new ArrayList<>();
         //Extent lExtent = new Extent();
 
         DataTable aTable = new DataTable();
@@ -594,27 +593,27 @@ public class GeoProjectionUtil {
                 switch (toProj.getProjectionName()) {
                     case Lambert_Conformal_Conic:
                     case North_Polar_Stereographic_Azimuthal:
-                        if (aPS.getPoint().Y < -89) {
+                        if (aPS.getPoint().y < -89) {
                             continue;
                         }
                         break;
                     case South_Polar_Stereographic_Azimuthal:
-                        if (aPS.getPoint().Y > 89) {
+                        if (aPS.getPoint().y > 89) {
                             continue;
                         }
                         break;
                 }
             }
-            double[] fromP = new double[]{aPS.getPoint().X, aPS.getPoint().Y};
+            double[] fromP = new double[]{aPS.getPoint().x, aPS.getPoint().y};
             double[] toP;
             double[][] points = new double[1][];
             points[0] = (double[]) fromP.clone();
             try {
                 Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
                 toP = points[0];
-                aPoint = new PointZ();
-                aPoint.X = (float) toP[0];
-                aPoint.Y = (float) toP[1];
+                aPoint = new Coordinate();
+                aPoint.x = (float) toP[0];
+                aPoint.y = (float) toP[1];
                 aPS.setPoint(aPoint);
                 if (IfReprojectAngle) {
                     switch (oLayer.getLayerDrawType()) {

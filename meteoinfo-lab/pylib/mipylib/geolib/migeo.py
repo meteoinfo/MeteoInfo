@@ -12,7 +12,8 @@ from org.meteoinfo.data.mapdata.geotiff import GeoTiff
 from org.meteoinfo.geometry.shape import ShapeUtil, PolygonShape
 from org.meteoinfo.chart.graphic import Graphic
 from org.meteoinfo.geometry.legend import BreakTypes
-from org.meteoinfo.geometry.geoprocess import GeoComputation, GeometryUtil
+from org.meteoinfo.geometry import GeometryUtil, Coordinate
+from org.meteoinfo.geometry.geoprocess import GeoComputation
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.geo.mapdata import MapDataManage, ShapeFileManage
 from org.meteoinfo.geo.util import GeoIOUtil
@@ -20,7 +21,6 @@ from org.meteoinfo.geo.io import GeoJSONWriter
 from org.meteoinfo.table import AttributeTable
 from org.meteoinfo.projection import KnownCoordinateSystems, Reproject
 from org.meteoinfo.projection import ProjectionInfo
-from org.meteoinfo.common import PointZ
 from org.meteoinfo.common.io import IOUtil
 from org.meteoinfo.common import ResampleMethods
 
@@ -594,7 +594,7 @@ def project(x, y, fromproj=KnownCoordinateSystems.geographic.world.WGS1984,
         outxy = Reproject.reproject(x.asarray(), y.asarray(), fromproj, toproj)
         return NDArray(outxy[0]), NDArray(outxy[1])
     else:
-        inpt = PointZ(x, y)
+        inpt = Coordinate(x, y)
         outpt = Reproject.reprojectPoint(inpt, fromproj, toproj)
         return outpt.X, outpt.Y
 

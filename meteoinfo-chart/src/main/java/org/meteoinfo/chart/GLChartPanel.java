@@ -22,7 +22,7 @@ import org.meteoinfo.chart.geo.MapPlot;
 import org.meteoinfo.chart.jogl.*;
 import org.meteoinfo.chart.plot.*;
 import org.meteoinfo.chart.plot3d.Projector;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
 import org.meteoinfo.image.ImageUtil;

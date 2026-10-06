@@ -5,11 +5,12 @@
  */
 package org.meteoinfo.chart.axis;
 
-import org.meteoinfo.chart.ChartText;
+import org.meteoinfo.projection.GridLabel;
 import org.meteoinfo.chart.Location;
 import org.meteoinfo.chart.plot.AbstractPlot2D;
 import org.meteoinfo.chart.geo.MapGridLine;
 import org.meteoinfo.common.*;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.projection.ProjectionInfo;
 
@@ -151,8 +152,8 @@ public class ProjLonLatAxis extends LonLatAxis{
             g.setStroke(new BasicStroke(this.getTickWidth()));
             int i = 0, idx = 0;
             for (GridLabel gridLabel : lonLabels) {
-                PointZ point = gridLabel.getCoord();
-                x = point.X;
+                Coordinate point = gridLabel.getCoord();
+                x = point.x;
                 if (x < plot.getDrawExtent().minX || x > plot.getDrawExtent().maxX) {
                     continue;
                 }
@@ -223,8 +224,8 @@ public class ProjLonLatAxis extends LonLatAxis{
             g.setColor(this.getTickColor());
             g.setStroke(new BasicStroke(this.getTickWidth()));
             for (GridLabel gridLabel : latLabels) {
-                PointZ point = gridLabel.getCoord();
-                y = point.Y;
+                Coordinate point = gridLabel.getCoord();
+                y = point.y;
                 if (y < plot.getDrawExtent().minY || y > plot.getDrawExtent().maxY) {
                     continue;
                 }

@@ -15,7 +15,7 @@ package org.meteoinfo.geo.layer;
 
 import com.l2fprod.common.beans.BaseBeanInfo;
 import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.colors.ColorMap;

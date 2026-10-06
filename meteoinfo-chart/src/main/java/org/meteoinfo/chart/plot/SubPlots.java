@@ -1,7 +1,7 @@
 package org.meteoinfo.chart.plot;
 
 import org.meteoinfo.chart.Margin;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.data.Dataset;
 
 import java.awt.*;

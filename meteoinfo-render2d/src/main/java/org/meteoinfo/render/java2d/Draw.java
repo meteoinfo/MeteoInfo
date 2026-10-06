@@ -14,7 +14,7 @@
 package org.meteoinfo.render.java2d;
 
 import org.meteoinfo.common.*;
-import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.geoprocess.Spline;
 import org.meteoinfo.common.colors.ColorUtil;
@@ -481,7 +481,7 @@ public class Draw {
      * @return WindBarb
      */
     public static WindBarb calWindBarb(float windDir, float windSpeed, double value,
-            float size, PointZ sPoint) {
+            float size, Coordinate sPoint) {
         WindBarb aWB = new WindBarb();
 
         windSpeed += 1;
@@ -514,7 +514,7 @@ public class Draw {
      * @return Station model shape
      */
     public static StationModelShape calStationModel(float windDir, float windSpeed, double value,
-            float size, PointZ sPoint, int weather, int temp, int dewPoint, int pressure, int cloudCover) {
+                                                    float size, Coordinate sPoint, int weather, int temp, int dewPoint, int pressure, int cloudCover) {
         StationModelShape aSM = new StationModelShape();
         aSM.setPoint(sPoint);
         aSM.setValue(value);
@@ -525,7 +525,7 @@ public class Draw {
         aSM.windBarb = calWindBarb(windDir, windSpeed, value, size, sPoint);
         aSM.weatherSymbol.size = size / 4 * 3;
         //sPoint.X = sPoint.X - size / 2;
-        PointZ aPoint = new PointZ(sPoint.X - size / 2, sPoint.Y);
+        Coordinate aPoint = new Coordinate(sPoint.x - size / 2, sPoint.y);
         aSM.weatherSymbol.setPoint(aPoint);
         aSM.weatherSymbol.weather = weather;
         aSM.cloudCoverage.cloudCover = cloudCover;
@@ -2472,13 +2472,13 @@ public class Draw {
      * @param points The points array
      * @param g Graphics2D
      */
-    public static void drawPolyline(PointZ[] points, Graphics2D g) {
+    public static void drawPolyline(Coordinate[] points, Graphics2D g) {
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.length);
         for (int i = 0; i < points.length; i++) {
             if (i == 0) {
-                path.moveTo(points[i].X, points[i].Y);
+                path.moveTo(points[i].x, points[i].y);
             } else {
-                path.lineTo(points[i].X, points[i].Y);
+                path.lineTo(points[i].x, points[i].y);
             }
         }
 
@@ -2552,13 +2552,13 @@ public class Draw {
      * @param g Graphics2D
      * @param aPGB Polygon break
      */
-    public static void fillPolygon(PointZ[] points, Graphics2D g, PolygonBreak aPGB) {
+    public static void fillPolygon(Coordinate[] points, Graphics2D g, PolygonBreak aPGB) {
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, points.length);
         for (int i = 0; i < points.length; i++) {
             if (i == 0) {
-                path.moveTo(points[i].X, points[i].Y);
+                path.moveTo(points[i].x, points[i].y);
             } else {
-                path.lineTo(points[i].X, points[i].Y);
+                path.lineTo(points[i].x, points[i].y);
             }
         }
         path.closePath();
@@ -2602,26 +2602,26 @@ public class Draw {
     public static void drawPolygon(Polygon aPG, PolygonBreak aPGB, Graphics2D g) {
         int len = aPG.getOutLine().size();
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, len);
-        PointZ wPoint;
+        Coordinate wPoint;
         for (int i = 0; i < aPG.getOutLine().size(); i++) {
             wPoint = aPG.getOutLine().get(i);
             if (i == 0) {
-                path.moveTo(wPoint.X, wPoint.Y);
+                path.moveTo(wPoint.x, wPoint.y);
             } else {
-                path.lineTo(wPoint.X, wPoint.Y);
+                path.lineTo(wPoint.x, wPoint.y);
             }
         }
 
-        List<PointZ> newPList;
+        List<Coordinate> newPList;
         if (aPG.hasHole()) {
             for (int h = 0; h < aPG.getHoleLines().size(); h++) {
                 newPList = aPG.getHoleLines().get(h);
                 for (int j = 0; j < newPList.size(); j++) {
                     wPoint = newPList.get(j);
                     if (j == 0) {
-                        path.moveTo(wPoint.X, wPoint.Y);
+                        path.moveTo(wPoint.x, wPoint.y);
                     } else {
-                        path.lineTo(wPoint.X, wPoint.Y);
+                        path.lineTo(wPoint.x, wPoint.y);
                     }
                 }
             }
@@ -2677,7 +2677,7 @@ public class Draw {
      * @param aPGB The polygon break
      * @param g Graphics2D
      */
-    public static void drawPolygon(PointZ[] points, PolygonBreak aPGB, Graphics2D g) {
+    public static void drawPolygon(Coordinate[] points, PolygonBreak aPGB, Graphics2D g) {
         if (aPGB.isDrawFill()) {
             g.setColor(aPGB.getColor());
             fillPolygon(points, g, aPGB);
@@ -2721,8 +2721,8 @@ public class Draw {
      * @param drawOutline
      * @param g
      */
-    public static void drawPolygon(PointZ[] points, Color aColor, Color outlineColor,
-            boolean drawFill, boolean drawOutline, Graphics2D g) {
+    public static void drawPolygon(Coordinate[] points, Color aColor, Color outlineColor,
+                                   boolean drawFill, boolean drawOutline, Graphics2D g) {
         if (drawFill) {
             g.setColor(aColor);
             fillPolygon(points, g, null);
@@ -4003,16 +4003,16 @@ public class Draw {
      * @param g Graphics2D
      */
     public static void drawCurveLine(PointF[] points, PolylineBreak aPLB, Graphics2D g) {
-        List<PointZ> opoints = new ArrayList<>();
+        List<Coordinate> opoints = new ArrayList<>();
         int i;
         for (i = 0; i < points.length; i++) {
-            opoints.add(new PointZ(points[i].X, points[i].Y));
+            opoints.add(new Coordinate(points[i].X, points[i].Y));
         }
 
-        PointZ[] rPoints = Spline.cardinalSpline((PointZ[]) opoints.toArray(new PointZ[opoints.size()]), 5);
+        Coordinate[] rPoints = Spline.cardinalSpline((Coordinate[]) opoints.toArray(new Coordinate[opoints.size()]), 5);
         PointF[] dPoints = new PointF[rPoints.length];
         for (i = 0; i < dPoints.length; i++) {
-            dPoints[i] = new PointF((float) rPoints[i].X, (float) rPoints[i].Y);
+            dPoints[i] = new PointF((float) rPoints[i].x, (float) rPoints[i].y);
         }
 
         drawPolyline(dPoints, aPLB, g);
@@ -4025,16 +4025,16 @@ public class Draw {
      * @param g Graphics2D
      */
     public static void drawCurveLine(List<PointF> points, Graphics2D g) {
-        PointZ[] opoints = new PointZ[points.size()];
+        Coordinate[] opoints = new Coordinate[points.size()];
         int i;
         for (i = 0; i < points.size(); i++) {
-            opoints[i] = new PointZ(points.get(i).X, points.get(i).Y);
+            opoints[i] = new Coordinate(points.get(i).X, points.get(i).Y);
         }
 
-        PointZ[] rPoints = Spline.cardinalSpline(opoints, 5);
+        Coordinate[] rPoints = Spline.cardinalSpline(opoints, 5);
         PointF[] dPoints = new PointF[rPoints.length];
         for (i = 0; i < dPoints.length; i++) {
-            dPoints[i] = new PointF((float) rPoints[i].X, (float) rPoints[i].Y);
+            dPoints[i] = new PointF((float) rPoints[i].x, (float) rPoints[i].y);
         }
 
         drawPolyline(dPoints, g);
@@ -4047,16 +4047,16 @@ public class Draw {
      * @param g Graphics2D
      */
     public static void drawCurveLine(PointF[] points, Graphics2D g) {
-        List<PointZ> opoints = new ArrayList<>();
+        List<Coordinate> opoints = new ArrayList<>();
         int i;
         for (i = 0; i < points.length; i++) {
-            opoints.add(new PointZ(points[i].X, points[i].Y));
+            opoints.add(new Coordinate(points[i].X, points[i].Y));
         }
 
-        PointZ[] rPoints = Spline.cardinalSpline((PointZ[]) opoints.toArray(), 5);
+        Coordinate[] rPoints = Spline.cardinalSpline((Coordinate[]) opoints.toArray(), 5);
         PointF[] dPoints = new PointF[rPoints.length];
         for (i = 0; i < dPoints.length; i++) {
-            dPoints[i] = new PointF((float) rPoints[i].X, (float) rPoints[i].Y);
+            dPoints[i] = new PointF((float) rPoints[i].x, (float) rPoints[i].y);
         }
 
         drawPolyline(dPoints, g);
@@ -4070,16 +4070,16 @@ public class Draw {
      * @param g Graphics2D
      */
     public static void drawCurvePolygon(PointF[] points, PolygonBreak aPGB, Graphics2D g) {
-        List<PointZ> opoints = new ArrayList<>();
+        List<Coordinate> opoints = new ArrayList<>();
         int i;
         for (i = 0; i < points.length; i++) {
-            opoints.add(new PointZ(points[i].X, points[i].Y));
+            opoints.add(new Coordinate(points[i].X, points[i].Y));
         }
 
-        PointZ[] rPoints = Spline.cardinalSpline((PointZ[]) opoints.toArray(new PointZ[opoints.size()]), 5);
+        Coordinate[] rPoints = Spline.cardinalSpline((Coordinate[]) opoints.toArray(new Coordinate[opoints.size()]), 5);
         PointF[] dPoints = new PointF[rPoints.length];
         for (i = 0; i < dPoints.length; i++) {
-            dPoints[i] = new PointF((float) rPoints[i].X, (float) rPoints[i].Y);
+            dPoints[i] = new PointF((float) rPoints[i].x, (float) rPoints[i].y);
         }
 
         drawPolygon(dPoints, aPGB, g);

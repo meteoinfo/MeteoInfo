@@ -17,7 +17,8 @@ from org.meteoinfo.geometry.legend import BarBreak, PolygonBreak, PolylineBreak,
 from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.chart.graphic import Graphic, GraphicCollection, ImageGraphic
 from org.meteoinfo.geometry.colors import ExtendType
-from org.meteoinfo.common import MIMath, Extent
+from org.meteoinfo.common import MIMath
+from org.meteoinfo.geometry import Extent
 from org.meteoinfo.geo.layer import MapLayer
 
 from java.awt import Font, Color, BasicStroke
@@ -35,7 +36,7 @@ from mipylib.geolib.milayer import MILayer, MIXYListData
 import plotutil
 import colors
 import mipylib.miutil as miutil
-from .graphic import Line2D, Artist, Polygon, Point2DCollection, LineCollection, PolyCollection
+from .graphic import Line, Artist, Polygon, PointCollection, LineCollection, PolyCollection
 
 __all__ = ['Axes', 'PolarAxes']
 
@@ -1743,7 +1744,7 @@ class Axes(object):
                             kwargs['cmap'] = 'matlab_jet'
                         graphics = LineCollection(None, xydata=[xdata, ydata], **kwargs)
                     else:
-                        graphics = Line2D(xdata, ydata, legend=lines[0], curve=iscurve)
+                        graphics = Line(xdata, ydata, legend=lines[0], curve=iscurve)
                 else:
                     if kwargs.has_key('color'):
                         kwargs['colors'] = kwargs['color']
@@ -1756,7 +1757,7 @@ class Axes(object):
                     label = kwargs.pop('label', 'S_' + str(i + 1))
                     xdata = np.asarray(xdatalist[i])
                     ydata = np.asarray(ydatalist[i])
-                    graphic = Line2D(xdata, ydata, legend=lines[i], curve=iscurve)
+                    graphic = Line(xdata, ydata, legend=lines[i], curve=iscurve)
                     graphics.append(graphic)
         else:
             xdata = np.asarray(xdatalist[0])
@@ -1769,7 +1770,7 @@ class Axes(object):
                     cdata = np.split_array_by_nan(cdata)
                     graphics = LineCollection(None, xydata=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
                 else:
-                    graphics = Line2D(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
+                    graphics = Line(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
             else:
                 graphics = LineCollection(None, xydata=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
 
@@ -1905,7 +1906,7 @@ class Axes(object):
                         ls.getLegendBreaks()[i].setSize(s[i])
             # Create graphics
             #graphics = GraphicFactory.createPoints(xdata, ydata, c.asarray(), ls)
-            graphics = Point2DCollection(xdata, ydata, c, legend=ls)
+            graphics = PointCollection(xdata, ydata, c, legend=ls)
         else:
             alpha = kwargs.pop('alpha', None)
             colors = plotutil.getcolors(c, alpha)
@@ -1941,7 +1942,7 @@ class Axes(object):
                     pbs.append(npb)
             # Create graphics
             #graphics = GraphicFactory.createPoints(xdata, ydata, pbs)
-            graphics = Point2DCollection(xdata, ydata, legend=pbs)
+            graphics = PointCollection(xdata, ydata, legend=pbs)
 
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:
@@ -4180,17 +4181,6 @@ class Axes(object):
             clegend = self._axes.getLegend()
 
         ls = kwargs.pop('legend', None)
-        # if len(args) > 0:
-        #     if isinstance(args[0], MILayer):
-        #         ls = args[0].legend()
-        #         args = args[1:]
-        #     elif isinstance(args[0], LegendScheme):
-        #         ls = args[0]
-        #         args = args[1:]
-        #     elif isinstance(args[0], GraphicCollection):
-        #         if not args[0].isSingleLegend():
-        #             ls = args[0].getLegendScheme()
-        #             args = args[1:]
 
         if ls is None:
             if len(args) > 0:

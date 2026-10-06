@@ -1,6 +1,6 @@
 package org.meteoinfo.geometry.io.geojson;
 
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.PointBreak;
@@ -63,7 +63,7 @@ public class GeoJSONUtil {
      * @return GeoJSON Point object
      */
     public static Point fromShape(PointShape pointShape) {
-        PointZ p = pointShape.getPoint();
+        Coordinate p = pointShape.getPoint();
 
         return new Point(p.toArray());
     }
@@ -77,9 +77,9 @@ public class GeoJSONUtil {
     public static PointShape toShape(Point point) {
         double[] coordinates = point.getCoordinates();
         if (coordinates.length == 2) {
-            return new PointShape(new PointZ(coordinates[0], coordinates[1]));
+            return new PointShape(new Coordinate(coordinates[0], coordinates[1]));
         } else {
-            return new PointShape(new PointZ(coordinates[0], coordinates[1], coordinates[2]));
+            return new PointShape(new Coordinate(coordinates[0], coordinates[1], coordinates[2]));
         }
     }
 
@@ -126,16 +126,16 @@ public class GeoJSONUtil {
         double[][] coordinates = lineString.getCoordinates();
         int pNum = coordinates.length;
         if (coordinates[0].length == 2) {
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
             for (int i = 0; i < pNum; i++) {
-                points.add(new PointZ(coordinates[i][0], coordinates[i][1]));
+                points.add(new Coordinate(coordinates[i][0], coordinates[i][1]));
             }
 
             return new PolylineShape(points);
         } else {
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
             for (int i = 0; i < pNum; i++) {
-                points.add(new PointZ(coordinates[i][0], coordinates[i][1], coordinates[i][2]));
+                points.add(new Coordinate(coordinates[i][0], coordinates[i][1], coordinates[i][2]));
             }
 
             return new PolylineShape(points);
@@ -156,12 +156,12 @@ public class GeoJSONUtil {
             PolylineShape polylineShape = new PolylineShape();
             polylineShape.setPartNum(lineNum);
             polylineShape.parts = new int[lineNum];
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
             for (int j = 0; j < lineNum; j++) {
                 int pNum = coordinates[j].length;
                 polylineShape.parts[j] = pNum;
                 for (int i = 0; i < pNum; i++) {
-                    points.add(new PointZ(coordinates[j][i][0], coordinates[j][i][1]));
+                    points.add(new Coordinate(coordinates[j][i][0], coordinates[j][i][1]));
                 }
             }
             polylineShape.setPoints(points);
@@ -171,12 +171,12 @@ public class GeoJSONUtil {
             PolylineShape polylineZShape = new PolylineShape();
             polylineZShape.setPartNum(lineNum);
             polylineZShape.parts = new int[lineNum];
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
             for (int j = 0; j < lineNum; j++) {
                 int pNum = coordinates[j].length;
                 polylineZShape.parts[j] = pNum;
                 for (int i = 0; i < pNum; i++) {
-                    points.add(new PointZ(coordinates[j][i][0], coordinates[j][i][1], coordinates[j][i][2]));
+                    points.add(new Coordinate(coordinates[j][i][0], coordinates[j][i][1], coordinates[j][i][2]));
                 }
             }
             polylineZShape.setPoints(points);
@@ -259,12 +259,12 @@ public class GeoJSONUtil {
             PolygonShape polygonShape = new PolygonShape();
             polygonShape.setPartNum(ringNum);
             polygonShape.parts = new int[ringNum];
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
             for (int j = 0; j < ringNum; j++) {
                 int pNum = coordinates[j].length;
                 polygonShape.parts[j] = pNum;
                 for (int i = 0; i < pNum; i++) {
-                    points.add(new PointZ(coordinates[j][i][0], coordinates[j][i][1]));
+                    points.add(new Coordinate(coordinates[j][i][0], coordinates[j][i][1]));
                 }
             }
             polygonShape.setPoints(points);
@@ -274,12 +274,12 @@ public class GeoJSONUtil {
             PolygonShape polygonZShape = new PolygonShape();
             polygonZShape.setPartNum(ringNum);
             polygonZShape.parts = new int[ringNum];
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
             for (int j = 0; j < ringNum; j++) {
                 int pNum = coordinates[j].length;
                 polygonZShape.parts[j] = pNum;
                 for (int i = 0; i < pNum; i++) {
-                    points.add(new PointZ(coordinates[j][i][0], coordinates[j][i][1], coordinates[j][i][2]));
+                    points.add(new Coordinate(coordinates[j][i][0], coordinates[j][i][1], coordinates[j][i][2]));
                 }
             }
             polygonZShape.setPoints(points);
@@ -304,10 +304,10 @@ public class GeoJSONUtil {
                 int ringNum = coordinates[k].length;
                 org.meteoinfo.geometry.shape.Polygon polygon = new org.meteoinfo.geometry.shape.Polygon();
                 for (int j = 0; j < ringNum; j++) {
-                    List<PointZ> points = new ArrayList<>();
+                    List<Coordinate> points = new ArrayList<>();
                     int pNum = coordinates[k][j].length;
                     for (int i = 0; i < pNum; i++) {
-                        points.add(new PointZ(coordinates[k][j][i][0], coordinates[k][j][i][1]));
+                        points.add(new Coordinate(coordinates[k][j][i][0], coordinates[k][j][i][1]));
                     }
                     if (j == 0) {
                         polygon.setOutLine(points);
@@ -327,10 +327,10 @@ public class GeoJSONUtil {
                 int ringNum = coordinates[k].length;
                 org.meteoinfo.geometry.shape.Polygon polygon = new org.meteoinfo.geometry.shape.Polygon();
                 for (int j = 0; j < ringNum; j++) {
-                    List<PointZ> points = new ArrayList<>();
+                    List<Coordinate> points = new ArrayList<>();
                     int pNum = coordinates[k][j].length;
                     for (int i = 0; i < pNum; i++) {
-                        points.add(new PointZ(coordinates[k][j][i][0], coordinates[k][j][i][1],
+                        points.add(new Coordinate(coordinates[k][j][i][0], coordinates[k][j][i][1],
                                 coordinates[k][j][i][2]));
                     }
                     if (j == 0) {

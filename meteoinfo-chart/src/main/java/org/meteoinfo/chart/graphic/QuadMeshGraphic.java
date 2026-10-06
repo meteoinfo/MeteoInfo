@@ -1,15 +1,7 @@
 package org.meteoinfo.chart.graphic;
 
 import org.joml.Vector3f;
-import org.meteoinfo.chart.jogl.Transform;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.geometry.legend.LegendManage;
-import org.meteoinfo.geometry.colors.TransferFunction;
-import org.meteoinfo.geometry.legend.LegendScheme;
-import org.meteoinfo.chart.transform.GeoTransform;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 

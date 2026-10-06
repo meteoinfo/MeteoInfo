@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.transform;
 
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
@@ -12,19 +12,19 @@ public abstract class Transform extends TransformNode {
     };
 
     // Forward transformation
-    public abstract PointZ transform(PointZ p);
+    public abstract Coordinate transform(Coordinate p);
 
     public Array[] transform(Array xa, Array ya) {
         xa = xa.copyIfView();
         ya = ya.copyIfView();
         Array xr = Array.factory(DataType.DOUBLE, xa.getShape());
         Array yr = Array.factory(DataType.DOUBLE, ya.getShape());
-        PointZ p;
+        Coordinate p;
         for (int i = 0; i < xa.getSize(); i++) {
-            p = new PointZ(xa.getDouble(i), ya.getDouble(i));
+            p = new Coordinate(xa.getDouble(i), ya.getDouble(i));
             p = transform(p);
-            xr.setDouble(i, p.X);
-            yr.setDouble(i, p.Y);
+            xr.setDouble(i, p.x);
+            yr.setDouble(i, p.y);
         }
 
         return new Array[]{xr, yr};

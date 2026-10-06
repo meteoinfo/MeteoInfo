@@ -14,7 +14,7 @@
 package org.meteoinfo.data.meteodata.grads;
 
 import org.meteoinfo.common.DataConvert;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.arl.ARLDataInfo;

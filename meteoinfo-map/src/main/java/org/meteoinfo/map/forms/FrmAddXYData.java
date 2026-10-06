@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
 
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.ndarray.DataType;
@@ -322,11 +322,11 @@ public class FrmAddXYData extends javax.swing.JDialog {
                         continue;
                     }
 
-                    PointZ aPoint = new PointZ();
+                    Coordinate aPoint = new Coordinate();
                     lon = Double.parseDouble(dataArray[lonIdx].trim());
                     lat = Double.parseDouble(dataArray[latIdx].trim());
-                    aPoint.X = lon;
-                    aPoint.Y = lat;
+                    aPoint.x = lon;
+                    aPoint.y = lat;
 
                     //Add shape
                     PointShape aPS = new PointShape();

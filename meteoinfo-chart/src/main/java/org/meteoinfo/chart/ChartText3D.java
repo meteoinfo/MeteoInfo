@@ -12,9 +12,9 @@ package org.meteoinfo.chart;
 
 import java.awt.Point;
 import org.meteoinfo.chart.plot3d.Projector;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.data.DataMath;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 
 /**
  *
@@ -23,7 +23,7 @@ import org.meteoinfo.common.PointZ;
  */
 public class ChartText3D extends ChartText {
     private double z;
-    private PointZ zdir = null;
+    private Coordinate zdir = null;
     private boolean draw3D = false;
     
     /**
@@ -46,7 +46,7 @@ public class ChartText3D extends ChartText {
      * Get zdir point
      * @return ZDir point
      */
-    public PointZ getZDir(){
+    public Coordinate getZDir(){
         return zdir;
     }
     
@@ -54,7 +54,7 @@ public class ChartText3D extends ChartText {
      * Set zdir point
      * @param value ZDir point
      */
-    public void setZDir(PointZ value){
+    public void setZDir(Coordinate value){
         this.zdir = value;
     }
     
@@ -68,7 +68,7 @@ public class ChartText3D extends ChartText {
         if (x == 0 && y == 0 && z == 0)
             this.zdir = null;
         else
-            this.zdir = new PointZ(x, y, z);
+            this.zdir = new Coordinate(x, y, z);
     }
     
     /**
@@ -112,8 +112,8 @@ public class ChartText3D extends ChartText {
      *
      * @return The point coordinates
      */
-    public PointZ getPoint() {
-        return new PointZ(x, y, z);
+    public Coordinate getPoint() {
+        return new Coordinate(x, y, z);
     }
     
     /**
@@ -142,8 +142,8 @@ public class ChartText3D extends ChartText {
      *
      * @param point The point
      */
-    public void setPoint(PointZ point) {
-        setPoint(point.X, point.Y, point.Z);
+    public void setPoint(Coordinate point) {
+        setPoint(point.x, point.y, point.z);
     }
     
     /**
@@ -155,7 +155,7 @@ public class ChartText3D extends ChartText {
             return;
         
         Point p0 = projector.project(0, 0, 0);
-        Point p1 = projector.project((float)this.zdir.X, (float)this.zdir.Y, (float)this.zdir.Z);
+        Point p1 = projector.project((float)this.zdir.x, (float)this.zdir.y, (float)this.zdir.z);
         double[] value = DataMath.getDSFromUV(p1.x - p0.x, p1.y - p0.y);
         this.angle = (float)value[0];
     }

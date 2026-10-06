@@ -16,11 +16,9 @@ package org.meteoinfo.geometry.shape;
 
 import java.util.ArrayList;
 
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.CoordinateXYZM;
 import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 
 /**
  * Point shape class
@@ -37,14 +35,14 @@ public class PointShape extends Shape implements Cloneable{
      * Constructor
      */
     public PointShape(){
-        this(new PointZ());
+        this(new Coordinate());
     }
 
     /**
      * Constructor
      * @param point The point
      */
-    public PointShape(PointZ point) {
+    public PointShape(Coordinate point) {
         this.setPoint(point);
     }
     
@@ -53,8 +51,8 @@ public class PointShape extends Shape implements Cloneable{
      * @param geometry Geometry
      */
     public PointShape(Geometry geometry) {
-        Coordinate c = geometry.getCoordinate();
-        this.setPoint(new PointZ(c.x, c.y, c.getZ()));
+        org.locationtech.jts.geom.Coordinate c = geometry.getCoordinate();
+        this.setPoint(new Coordinate(c.x, c.y, c.getZ()));
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -71,8 +69,8 @@ public class PointShape extends Shape implements Cloneable{
      */
     @Override
     public Geometry toGeometry(GeometryFactory factory){
-        PointZ point = this.getPoint();
-        Coordinate c = new Coordinate(point.X, point.Y, point.Z);
+        Coordinate point = this.getPoint();
+        org.locationtech.jts.geom.Coordinate c = new org.locationtech.jts.geom.Coordinate(point.x, point.y, point.z);
         return factory.createPoint(c);
     };
 
@@ -81,7 +79,7 @@ public class PointShape extends Shape implements Cloneable{
      * 
      * @return point
      */
-    public PointZ getPoint() {
+    public Coordinate getPoint() {
         return this.points.get(0);
     }
 
@@ -90,7 +88,7 @@ public class PointShape extends Shape implements Cloneable{
      * 
      * @param point Point
      */
-    public void setPoint(PointZ point) {
+    public void setPoint(Coordinate point) {
         this.points = new ArrayList<>();
         this.points.add(point);
         updateExtent();
@@ -101,7 +99,7 @@ public class PointShape extends Shape implements Cloneable{
      * @return M value
      */
     public double getM(){
-        return (this.getPoint()).M;
+        return (this.getPoint()).m;
     }
 
     /**
@@ -109,7 +107,7 @@ public class PointShape extends Shape implements Cloneable{
      * @return Z value
      */
     public double getZ(){
-        return (this.getPoint()).Z;
+        return (this.getPoint()).z;
     }
 
     // </editor-fold>
@@ -124,7 +122,7 @@ public class PointShape extends Shape implements Cloneable{
     public Object clone() {
         PointShape ps = new PointShape();
         ps.setValue(this.getValue());
-        ps.setPoint((PointZ) this.getPoint().clone());
+        ps.setPoint((Coordinate) this.getPoint().clone());
         ps.setVisible(this.isVisible());
         ps.setSelected(this.isSelected());
         ps.setLegendIndex(this.getLegendIndex());

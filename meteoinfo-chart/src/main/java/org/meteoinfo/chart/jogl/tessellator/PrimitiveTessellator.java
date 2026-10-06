@@ -3,7 +3,7 @@ package org.meteoinfo.chart.jogl.tessellator;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.Polygon;
 
 import java.util.ArrayList;
@@ -79,13 +79,13 @@ public class PrimitiveTessellator {
 
         // 1. Process the outer boundary
         glu.gluTessBeginContour(tobj);
-        List<PointZ> outline = (List<PointZ>) polygon.getOutLine();
+        List<Coordinate> outline = (List<Coordinate>) polygon.getOutLine();
         for (int i = 0; i < outline.size(); i++) {
-            PointZ p = outline.get(i);
+            Coordinate p = outline.get(i);
             // Skip the last point if it's identical to the first point (closed loop redundancy)
             if (i == outline.size() - 1 && i > 0) {
-                PointZ first = outline.get(0);
-                if (p.X == first.X && p.Y == first.Y && p.Z == first.Z) {
+                Coordinate first = outline.get(0);
+                if (p.x == first.x && p.y == first.y && p.z == first.z) {
                     continue;
                 }
             }
@@ -98,13 +98,13 @@ public class PrimitiveTessellator {
         if (polygon.hasHole()) {
             for (int i = 0; i < polygon.getHoleLineNumber(); i++) {
                 glu.gluTessBeginContour(tobj);
-                List<PointZ> holeLine = (List<PointZ>) polygon.getHoleLine(i);
+                List<Coordinate> holeLine = (List<Coordinate>) polygon.getHoleLine(i);
                 for (int j = 0; j < holeLine.size(); j++) {
-                    PointZ p = holeLine.get(j);
+                    Coordinate p = holeLine.get(j);
                     // Skip redundant closing point
                     if (j == holeLine.size() - 1 && j > 0) {
-                        PointZ first = holeLine.get(0);
-                        if (p.X == first.X && p.Y == first.Y && p.Z == first.Z) {
+                        Coordinate first = holeLine.get(0);
+                        if (p.x == first.x && p.y == first.y && p.z == first.z) {
                             continue;
                         }
                     }
@@ -129,7 +129,7 @@ public class PrimitiveTessellator {
      * @return A normalized double array [nx, ny, nz].
      */
     private double[] computePolygonNormal(Polygon polygon) {
-        List<PointZ> outline = (List<PointZ>) polygon.getOutLine();
+        List<Coordinate> outline = (List<Coordinate>) polygon.getOutLine();
         if (outline.size() < 3) {
             return new double[]{0, 0, 1}; // Fallback for degenerate polygons
         }
@@ -137,12 +137,12 @@ public class PrimitiveTessellator {
         // Use Newell's method for a more robust normal calculation on non-planar polygons
         double nx = 0, ny = 0, nz = 0;
         for (int i = 0; i < outline.size(); i++) {
-            PointZ current = outline.get(i);
-            PointZ next = outline.get((i + 1) % outline.size());
+            Coordinate current = outline.get(i);
+            Coordinate next = outline.get((i + 1) % outline.size());
 
-            nx += (current.Y - next.Y) * (current.Z + next.Z);
-            ny += (current.Z - next.Z) * (current.X + next.X);
-            nz += (current.X - next.X) * (current.Y + next.Y);
+            nx += (current.y - next.y) * (current.z + next.z);
+            ny += (current.z - next.z) * (current.x + next.x);
+            nz += (current.x - next.x) * (current.y + next.y);
         }
 
         double length = Math.sqrt(nx * nx + ny * ny + nz * nz);
@@ -200,8 +200,8 @@ public class PrimitiveTessellator {
         public void vertex(Object vertexData) {
             if (vertexData instanceof double[]) {
                 double[] coords = (double[]) vertexData;
-                // Create a PointZ from the 3D coordinates
-                PointZ p = new PointZ(coords[0], coords[1], coords[2]);
+                // Create a Coordinate from the 3D coordinates
+                Coordinate p = new Coordinate(coords[0], coords[1], coords[2]);
                 this.getLastPrimitive().vertices.add(p);
             }
         }

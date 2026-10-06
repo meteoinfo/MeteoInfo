@@ -3,8 +3,8 @@ package org.meteoinfo.chart.jogl;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.meteoinfo.chart.AspectType;
-import org.meteoinfo.common.Extent;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
 
 public class Transform {
     protected AspectType aspectType = AspectType.AUTO;
@@ -259,12 +259,12 @@ public class Transform {
         return new Vector3f(transform_x(x), transform_y(y), transform_z(z));
     }
 
-    public float[] transformf(PointZ p) {
-        return new float[]{transform_x((float) p.X), transform_y((float) p.Y), transform_z((float) p.Z)};
+    public float[] transformf(Coordinate p) {
+        return new float[]{transform_x((float) p.x), transform_y((float) p.y), transform_z((float) p.z)};
     }
 
-    public double[] transform(PointZ p) {
-        return new double[]{transform_x(p.X), transform_y(p.Y), transform_z(p.Z)};
+    public double[] transform(Coordinate p) {
+        return new double[]{transform_x(p.x), transform_y(p.y), transform_z(p.z)};
     }
 
     public Vector3f transform(Vector3f p) {

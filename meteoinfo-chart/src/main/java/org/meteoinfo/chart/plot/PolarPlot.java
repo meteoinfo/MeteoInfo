@@ -6,9 +6,11 @@
 package org.meteoinfo.chart.plot;
 
 import org.meteoinfo.chart.AspectType;
+import org.meteoinfo.chart.GridLine;
 import org.meteoinfo.chart.Margin;
 import org.meteoinfo.chart.graphic.GraphicFactory;
 import org.meteoinfo.common.*;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.LineStyles;

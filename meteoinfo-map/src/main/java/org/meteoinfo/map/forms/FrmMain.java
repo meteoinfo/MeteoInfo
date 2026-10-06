@@ -56,7 +56,7 @@ import javax.swing.undo.UndoableEdit;
 import javax.xml.parsers.ParserConfigurationException;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.common.util.GlobalUtil;
@@ -114,7 +114,6 @@ import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
 import org.meteoinfo.projection.Reproject;
 import org.meteoinfo.geometry.shape.Shape;
-import org.meteoinfo.geometry.shape.ShapeTypes;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.geo.mapdata.ShapeFileManage;
 import org.locationtech.jts.geom.Geometry;

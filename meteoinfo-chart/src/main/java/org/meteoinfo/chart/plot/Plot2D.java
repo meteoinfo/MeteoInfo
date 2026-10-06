@@ -20,21 +20,21 @@ import org.meteoinfo.chart.axis.LogAxis;
 import org.meteoinfo.chart.axis.TimeAxis;
 import org.meteoinfo.chart.graphic.WebMapImage;
 import org.meteoinfo.chart.transform.Transform;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.data.Dataset;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.chart.graphic.ImageGraphic;
-import org.meteoinfo.chart.graphic.Line2DGraphic;
+import org.meteoinfo.chart.graphic.LineGraphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.Polygon;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.geometry.shape.*;
-import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+import org.meteoinfo.geometry.GeometryUtil;
 import org.meteoinfo.chart.shape.PolylineErrorShape;
 
 import java.awt.*;
@@ -260,7 +260,7 @@ public class Plot2D extends AbstractPlot2D {
                 List<Extent> extentList = new ArrayList<>();
                 Extent maxExtent = new Extent();
                 Extent ext = new Extent();
-                PointZ sp;
+                Coordinate sp;
                 float size;
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
@@ -272,29 +272,29 @@ public class Plot2D extends AbstractPlot2D {
                         PointBreak pointBreak = (PointBreak) cb;
                         sp = this.transData.transform(shape.getPoint());
                         size = pointBreak.getSize() / 2;
-                        ext.minX = sp.X - size;
-                        ext.maxX = sp.X + size;
-                        ext.minY = sp.Y - size;
-                        ext.maxY = sp.Y + size;
+                        ext.minX = sp.x - size;
+                        ext.maxX = sp.x + size;
+                        ext.minY = sp.y - size;
+                        ext.maxY = sp.y + size;
                         if (extentList.isEmpty()) {
                             maxExtent = (Extent) ext.clone();
                             extentList.add((Extent) ext.clone());
                             drawGraphic(g, gg, cb);
-                        } else if (!MIMath.isExtentCross(ext, maxExtent)) {
+                        } else if (!GeometryUtil.isExtentCross(ext, maxExtent)) {
                             extentList.add((Extent) ext.clone());
-                            maxExtent = MIMath.getLagerExtent(maxExtent, ext);
+                            maxExtent = GeometryUtil.getLagerExtent(maxExtent, ext);
                             drawGraphic(g, gg, cb);
                         } else {
                             boolean ifDraw = true;
                             for (int j = 0; j < extentList.size(); j++) {
-                                if (MIMath.isExtentCross(ext, extentList.get(j))) {
+                                if (GeometryUtil.isExtentCross(ext, extentList.get(j))) {
                                     ifDraw = false;
                                     break;
                                 }
                             }
                             if (ifDraw) {
                                 extentList.add((Extent) ext.clone());
-                                maxExtent = MIMath.getLagerExtent(maxExtent, ext);
+                                maxExtent = GeometryUtil.getLagerExtent(maxExtent, ext);
                                 drawGraphic(g, gg, cb);
                             }
                         }
@@ -332,8 +332,8 @@ public class Plot2D extends AbstractPlot2D {
     }
 
     protected void drawGraphic(Graphics2D g, Graphic graphic, ColorBreak cb) {
-        if (graphic instanceof Line2DGraphic) {
-            this.drawLine2D(g, (Line2DGraphic) graphic);
+        if (graphic instanceof LineGraphic) {
+            this.drawLine2D(g, (LineGraphic) graphic);
             return;
         }
 
@@ -407,14 +407,14 @@ public class Plot2D extends AbstractPlot2D {
             for (PolygonShape aPGS : (List<PolygonShape>) ((GraphicCollection) graphic).getShapes()) {
                 for (Polygon aPolygon : aPGS.getPolygons()) {
                     GeneralPath path = new GeneralPath();
-                    PointZ wPoint, p;
+                    Coordinate wPoint, p;
                     for (int i = 0; i < aPolygon.getOutLine().size(); i++) {
                         wPoint = aPolygon.getOutLine().get(i);
                         p = this.transData.transform(wPoint);
                         if (i == 0) {
-                            path.moveTo(p.X, p.Y);
+                            path.moveTo(p.x, p.y);
                         } else {
-                            path.lineTo(p.X, p.Y);
+                            path.lineTo(p.x, p.y);
                         }
                     }
                     clipPath.append(path, false);
@@ -423,14 +423,14 @@ public class Plot2D extends AbstractPlot2D {
         } else {
             for (Polygon aPolygon : ((PolygonShape) graphic.getShape()).getPolygons()) {
                 GeneralPath path = new GeneralPath();
-                PointZ wPoint, p;
+                Coordinate wPoint, p;
                 for (int i = 0; i < aPolygon.getOutLine().size(); i++) {
                     wPoint = aPolygon.getOutLine().get(i);
                     p = this.transData.transform(wPoint);
                     if (i == 0) {
-                        path.moveTo(p.X, p.Y);
+                        path.moveTo(p.x, p.y);
                     } else {
-                        path.lineTo(p.X, p.Y);
+                        path.lineTo(p.x, p.y);
                     }
                 }
                 clipPath.append(path, false);
@@ -447,10 +447,10 @@ public class Plot2D extends AbstractPlot2D {
             for (PolygonShape aPGS : (List<PolygonShape>) ((GraphicCollection) graphic).getShapes()) {
                 for (Polygon aPolygon : aPGS.getPolygons()) {
                     GeneralPath path = new GeneralPath();
-                    PointZ wPoint;
+                    Coordinate wPoint;
                     for (int i = 0; i < aPolygon.getOutLine().size(); i++) {
                         wPoint = aPolygon.getOutLine().get(i);
-                        xy = projToScreen(wPoint.X, wPoint.Y, area);
+                        xy = projToScreen(wPoint.x, wPoint.y, area);
                         if (i == 0) {
                             path.moveTo(xy[0], xy[1]);
                         } else {
@@ -463,10 +463,10 @@ public class Plot2D extends AbstractPlot2D {
         } else {
             for (Polygon aPolygon : ((PolygonShape) graphic.getShape()).getPolygons()) {
                 GeneralPath path = new GeneralPath();
-                PointZ wPoint;
+                Coordinate wPoint;
                 for (int i = 0; i < aPolygon.getOutLine().size(); i++) {
                     wPoint = aPolygon.getOutLine().get(i);
-                    xy = projToScreen(wPoint.X, wPoint.Y, area);
+                    xy = projToScreen(wPoint.x, wPoint.y, area);
                     if (i == 0) {
                         path.moveTo(xy[0], xy[1]);
                     } else {
@@ -482,8 +482,8 @@ public class Plot2D extends AbstractPlot2D {
 
     void drawPoint(Graphics2D g, Graphic graphic, PointBreak aPB) {
         PointShape pointShape = (PointShape) graphic.getShape();
-        PointZ p = pointShape.getPoint();
-        PointZ sp = graphic.getTransform().transform(p);
+        Coordinate p = pointShape.getPoint();
+        Coordinate sp = graphic.getTransform().transform(p);
         PointF pf = sp.toPointF();
         RenderingHints rend = g.getRenderingHints();
         boolean rc = false;
@@ -498,8 +498,8 @@ public class Plot2D extends AbstractPlot2D {
     }
 
     void drawPoint(Graphics2D g, PointShape aPS, PointBreak aPB) {
-        PointZ p = aPS.getPoint();
-        PointZ sp = this.transData.transform(p);
+        Coordinate p = aPS.getPoint();
+        Coordinate sp = this.transData.transform(p);
         PointF pf = sp.toPointF();
         RenderingHints rend = g.getRenderingHints();
         boolean rc = false;
@@ -529,9 +529,9 @@ public class Plot2D extends AbstractPlot2D {
                 this.drawText(g, text, x, y);
                 break;
             case DATA:
-                PointZ sp = this.transData.transform(new PointZ(text.getX(), text.getY()));
-                x = (float) sp.X;
-                y = (float) sp.Y;
+                Coordinate sp = this.transData.transform(new Coordinate(text.getX(), text.getY()));
+                x = (float) sp.x;
+                y = (float) sp.y;
                 this.drawText(g, text, x, y);
                 break;
         }
@@ -584,42 +584,42 @@ public class Plot2D extends AbstractPlot2D {
 
     void drawWindBarb(Graphics2D g, Graphic graphic, PointBreak aPB) {
         WindBarb barb = (WindBarb) graphic.getShape();
-        PointZ sp = graphic.getTransform().transform(barb.getPoint());
+        Coordinate sp = graphic.getTransform().transform(barb.getPoint());
         PointF pf = sp.toPointF();
         Draw.drawWindBarb(pf, barb, aPB, g);
     }
 
     void drawWindBarb(Graphics2D g, WindBarb aPS, PointBreak aPB) {
-        PointZ p = aPS.getPoint();
-        PointZ sp = this.transData.transform(p);
+        Coordinate p = aPS.getPoint();
+        Coordinate sp = this.transData.transform(p);
         PointF pf = sp.toPointF();
         Draw.drawWindBarb(pf, aPS, aPB, g);
     }
 
     void drawWindBarb(Graphics2D g, WindBarb aPS, PointBreak aPB, Rectangle2D area) {
-        PointZ p = aPS.getPoint();
-        double[] sXY = projToScreen(p.X, p.Y, area);
+        Coordinate p = aPS.getPoint();
+        double[] sXY = projToScreen(p.x, p.y, area);
         PointF pf = new PointF((float) sXY[0], (float) sXY[1]);
         Draw.drawWindBarb(pf, aPS, aPB, g);
     }
 
     void drawWindArrow(Graphics2D g, WindArrow aPS, ArrowBreak aPB) {
-        PointZ p = aPS.getPoint();
-        PointZ sp = this.transData.transform(p);
+        Coordinate p = aPS.getPoint();
+        Coordinate sp = this.transData.transform(p);
         PointF pf = sp.toPointF();
         float zoom = aPB.getSize() / 10;
         Draw.drawArrow(pf, aPS, aPB, g, zoom);
     }
 
     void drawWindArrow(Graphics2D g, WindArrow aPS, ArrowBreak aPB, Rectangle2D area) {
-        PointZ p = aPS.getPoint();
-        double[] sXY = projToScreen(p.X, p.Y, area);
+        Coordinate p = aPS.getPoint();
+        double[] sXY = projToScreen(p.x, p.y, area);
         PointF pf = new PointF((float) sXY[0], (float) sXY[1]);
         float zoom = aPB.getSize() / 10;
         Draw.drawArrow(pf, aPS, aPB, g, zoom);
     }
 
-    void drawLine2D(Graphics2D g, Line2DGraphic line2D) {
+    void drawLine2D(Graphics2D g, LineGraphic line2D) {
         if (line2D.isCurve()) {
             drawCurveline(g, (PolylineShape) line2D.getShape(), (PolylineBreak) line2D.getLegendBreak());
         } else {
@@ -642,8 +642,8 @@ public class Plot2D extends AbstractPlot2D {
         for (Polyline aline : aPLS.getPolylines()) {
             PointF p;
             for (int i = 0; i < aline.getPointList().size(); i++) {
-                PointZ wPoint = aline.getPointList().get(i);
-                PointZ sp = this.transData.transform(wPoint);
+                Coordinate wPoint = aline.getPointList().get(i);
+                Coordinate sp = this.transData.transform(wPoint);
                 p = sp.toPointF();
                 Draw.drawPoint(p, aPB, g);
             }
@@ -655,8 +655,8 @@ public class Plot2D extends AbstractPlot2D {
             double[] sXY;
             PointF p;
             for (int i = 0; i < aline.getPointList().size(); i++) {
-                PointZ wPoint = aline.getPointList().get(i);
-                sXY = projToScreen(wPoint.X, wPoint.Y, area);
+                Coordinate wPoint = aline.getPointList().get(i);
+                sXY = projToScreen(wPoint.x, wPoint.y, area);
                 p = new PointF((float) sXY[0], (float) sXY[1]);
                 Draw.drawPoint(p, aPB, g);
             }
@@ -667,9 +667,9 @@ public class Plot2D extends AbstractPlot2D {
         for (Polyline aline : aPLS.getPolylines()) {
             PointF[] points = new PointF[aline.getPointList().size()];
             for (int i = 0; i < aline.getPointList().size(); i++) {
-                PointZ wPoint = aline.getPointList().get(i);
-                PointZ p = this.transData.transform(wPoint);
-                points[i] = new PointF((float) p.X, (float) p.Y);
+                Coordinate wPoint = aline.getPointList().get(i);
+                Coordinate p = this.transData.transform(wPoint);
+                points[i] = new PointF((float) p.x, (float) p.y);
             }
             Draw.drawPolyline(points, aPLB, g);
         }
@@ -680,8 +680,8 @@ public class Plot2D extends AbstractPlot2D {
             double[] sXY;
             PointF[] points = new PointF[aline.getPointList().size()];
             for (int i = 0; i < aline.getPointList().size(); i++) {
-                PointZ wPoint = aline.getPointList().get(i);
-                sXY = projToScreen(wPoint.X, wPoint.Y, area);
+                Coordinate wPoint = aline.getPointList().get(i);
+                sXY = projToScreen(wPoint.x, wPoint.y, area);
                 points[i] = new PointF((float) sXY[0], (float) sXY[1]);
             }
             Draw.drawPolyline(points, aPLB, g);
@@ -692,8 +692,8 @@ public class Plot2D extends AbstractPlot2D {
         for (Polyline aline : aPLS.getPolylines()) {
             PointF[] points = new PointF[aline.getPointList().size()];
             for (int i = 0; i < aline.getPointList().size(); i++) {
-                PointZ wPoint = aline.getPointList().get(i);
-                PointZ sp =  this.transData.transform(wPoint);
+                Coordinate wPoint = aline.getPointList().get(i);
+                Coordinate sp =  this.transData.transform(wPoint);
                 points[i] = sp.toPointF();
             }
             if (cpc.get(0) instanceof StreamlineBreak) {
@@ -709,8 +709,8 @@ public class Plot2D extends AbstractPlot2D {
             double[] sXY;
             PointF[] points = new PointF[aline.getPointList().size()];
             for (int i = 0; i < aline.getPointList().size(); i++) {
-                PointZ wPoint = aline.getPointList().get(i);
-                sXY = projToScreen(wPoint.X, wPoint.Y, area);
+                Coordinate wPoint = aline.getPointList().get(i);
+                sXY = projToScreen(wPoint.x, wPoint.y, area);
                 points[i] = new PointF((float) sXY[0], (float) sXY[1]);
             }
             if (cpc.get(0) instanceof StreamlineBreak) {
@@ -725,8 +725,8 @@ public class Plot2D extends AbstractPlot2D {
         for (Polyline aline : aPLS.getPolylines()) {
             PointF[] points = new PointF[aline.getPointList().size()];
             for (int i = 0; i < aline.getPointList().size(); i++) {
-                PointZ wPoint = aline.getPointList().get(i);
-                PointZ sp =  this.transData.transform(wPoint);
+                Coordinate wPoint = aline.getPointList().get(i);
+                Coordinate sp =  this.transData.transform(wPoint);
                 points[i] = sp.toPointF();
             }
             Draw.drawPolyline(points, aPLB, g);
@@ -759,8 +759,8 @@ public class Plot2D extends AbstractPlot2D {
             double[] sXY;
             PointF[] points = new PointF[aline.getPointList().size()];
             for (int i = 0; i < aline.getPointList().size(); i++) {
-                PointZ wPoint = aline.getPointList().get(i);
-                sXY = projToScreen(wPoint.X, wPoint.Y, area);
+                Coordinate wPoint = aline.getPointList().get(i);
+                sXY = projToScreen(wPoint.x, wPoint.y, area);
                 points[i] = new PointF((float) sXY[0], (float) sXY[1]);
             }
             Draw.drawPolyline(points, aPLB, g);
@@ -792,8 +792,8 @@ public class Plot2D extends AbstractPlot2D {
         for (Polyline aline : aPLS.getPolylines()) {
             PointF[] points = new PointF[aline.getPointList().size()];
             for (int i = 0; i < aline.getPointList().size(); i++) {
-                PointZ wPoint = aline.getPointList().get(i);
-                PointZ sp = this.transData.transform(wPoint);
+                Coordinate wPoint = aline.getPointList().get(i);
+                Coordinate sp = this.transData.transform(wPoint);
                 points[i] = sp.toPointF();
             }
             Draw.drawCurveLine(points, aPLB, g);
@@ -805,8 +805,8 @@ public class Plot2D extends AbstractPlot2D {
             double[] sXY;
             PointF[] points = new PointF[aline.getPointList().size()];
             for (int i = 0; i < aline.getPointList().size(); i++) {
-                PointZ wPoint = aline.getPointList().get(i);
-                sXY = projToScreen(wPoint.X, wPoint.Y, area);
+                Coordinate wPoint = aline.getPointList().get(i);
+                sXY = projToScreen(wPoint.x, wPoint.y, area);
                 points[i] = new PointF((float) sXY[0], (float) sXY[1]);
             }
             Draw.drawCurveLine(points, aPLB, g);
@@ -820,8 +820,8 @@ public class Plot2D extends AbstractPlot2D {
             double elen = 6;
             g.setColor(aPB.getColor());
             for (int i = 0; i < aline.getPointList().size(); i++) {
-                PointZ wPoint = aline.getPointList().get(i);
-                PointZ sp = this.transData.transform(wPoint);
+                Coordinate wPoint = aline.getPointList().get(i);
+                Coordinate sp = this.transData.transform(wPoint);
                 p = sp.toPointF();
                 if (aPLS.getYerror() != null) {
                     error = aPLS.getYerror(i);
@@ -850,8 +850,8 @@ public class Plot2D extends AbstractPlot2D {
             double elen = 6;
             g.setColor(aPB.getColor());
             for (int i = 0; i < aline.getPointList().size(); i++) {
-                PointZ wPoint = aline.getPointList().get(i);
-                sXY = projToScreen(wPoint.X, wPoint.Y, area);
+                Coordinate wPoint = aline.getPointList().get(i);
+                sXY = projToScreen(wPoint.x, wPoint.y, area);
                 p = new PointF((float) sXY[0], (float) sXY[1]);
                 if (aPLS.getYerror() != null) {
                     error = aPLS.getYerror(i);
@@ -880,8 +880,8 @@ public class Plot2D extends AbstractPlot2D {
             double elen = 6;
             g.setColor(aPLB.getColor());
             for (int i = 0; i < aline.getPointList().size(); i++) {
-                PointZ wPoint = aline.getPointList().get(i);
-                PointZ sp = this.transData.transform(wPoint);
+                Coordinate wPoint = aline.getPointList().get(i);
+                Coordinate sp = this.transData.transform(wPoint);
                 p = sp.toPointF();
                 points[i] = p;
                 if (aPLS.getYerror() != null) {
@@ -912,8 +912,8 @@ public class Plot2D extends AbstractPlot2D {
             double elen = 6;
             g.setColor(aPLB.getColor());
             for (int i = 0; i < aline.getPointList().size(); i++) {
-                PointZ wPoint = aline.getPointList().get(i);
-                sXY = projToScreen(wPoint.X, wPoint.Y, area);
+                Coordinate wPoint = aline.getPointList().get(i);
+                sXY = projToScreen(wPoint.x, wPoint.y, area);
                 p = new PointF((float) sXY[0], (float) sXY[1]);
                 points[i] = p;
                 if (aPLS.getYerror() != null) {
@@ -938,7 +938,7 @@ public class Plot2D extends AbstractPlot2D {
     void drawLabels(Graphics2D g, GraphicCollection graphics) {
         Extent lExtent = graphics.getExtent();
         Extent drawExtent = this.getDrawExtent();
-        if (!MIMath.isExtentCross(lExtent, drawExtent)) {
+        if (!GeometryUtil.isExtentCross(lExtent, drawExtent)) {
             return;
         }
 
@@ -957,24 +957,24 @@ public class Plot2D extends AbstractPlot2D {
             LabelBreak aLB = (LabelBreak) aLP.getLegendBreak();
             aPS.setVisible(true);
             LabelStr = aLB.getText();
-            aPoint.X = (float) aPS.getPoint().X;
-            aPoint.Y = (float) aPS.getPoint().Y;
+            aPoint.X = (float) aPS.getPoint().x;
+            aPoint.Y = (float) aPS.getPoint().y;
             drawFont = aLB.getFont();
             if (aPoint.X < drawExtent.minX || aPoint.X > drawExtent.maxX
                     || aPoint.Y < drawExtent.minY || aPoint.Y > drawExtent.maxY) {
                 continue;
             }
-            PointZ sp = this.transData.transform(aPS.getPoint());
-            aPoint.X = (float) sp.X;
-            aPoint.Y = (float) sp.Y;
+            Coordinate sp = this.transData.transform(aPS.getPoint());
+            aPoint.X = (float) sp.x;
+            aPoint.Y = (float) sp.y;
             FontMetrics metrics = g.getFontMetrics(drawFont);
             Dimension labSize = new Dimension(metrics.stringWidth(LabelStr), metrics.getHeight());
             switch (aLB.getAlignType()) {
                 case CENTER:
-                    aPoint.X = (float) sp.X - labSize.width / 2;
+                    aPoint.X = (float) sp.x - labSize.width / 2;
                     break;
                 case LEFT:
-                    aPoint.X = (float) sp.X - labSize.width;
+                    aPoint.X = (float) sp.x - labSize.width;
                     break;
             }
             aPoint.Y += labSize.height / 2;
@@ -1004,19 +1004,19 @@ public class Plot2D extends AbstractPlot2D {
                 if (extentList.isEmpty()) {
                     maxExtent = (Extent) aExtent.clone();
                     extentList.add(aExtent);
-                } else if (!MIMath.isExtentCross(aExtent, maxExtent)) {
+                } else if (!GeometryUtil.isExtentCross(aExtent, maxExtent)) {
                     extentList.add(aExtent);
-                    maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                    maxExtent = GeometryUtil.getLagerExtent(maxExtent, aExtent);
                 } else {
                     for (j = 0; j < extentList.size(); j++) {
-                        if (MIMath.isExtentCross(aExtent, extentList.get(j))) {
+                        if (GeometryUtil.isExtentCross(aExtent, extentList.get(j))) {
                             ifDraw = false;
                             break;
                         }
                     }
                     if (ifDraw) {
                         extentList.add(aExtent);
-                        maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                        maxExtent = GeometryUtil.getLagerExtent(maxExtent, aExtent);
                     } else {
                         aPS.setVisible(false);
                     }
@@ -1051,7 +1051,7 @@ public class Plot2D extends AbstractPlot2D {
     void drawLabels(Graphics2D g, GraphicCollection graphics, Rectangle2D area) {
         Extent lExtent = graphics.getExtent();
         Extent drawExtent = this.getDrawExtent();
-        if (!MIMath.isExtentCross(lExtent, drawExtent)) {
+        if (!GeometryUtil.isExtentCross(lExtent, drawExtent)) {
             return;
         }
 
@@ -1070,8 +1070,8 @@ public class Plot2D extends AbstractPlot2D {
             LabelBreak aLB = (LabelBreak) aLP.getLegendBreak();
             aPS.setVisible(true);
             LabelStr = aLB.getText();
-            aPoint.X = (float) aPS.getPoint().X;
-            aPoint.Y = (float) aPS.getPoint().Y;
+            aPoint.X = (float) aPS.getPoint().x;
+            aPoint.Y = (float) aPS.getPoint().y;
             drawFont = aLB.getFont();
             if (aPoint.X < drawExtent.minX || aPoint.X > drawExtent.maxX
                     || aPoint.Y < drawExtent.minY || aPoint.Y > drawExtent.maxY) {
@@ -1117,19 +1117,19 @@ public class Plot2D extends AbstractPlot2D {
                 if (extentList.isEmpty()) {
                     maxExtent = (Extent) aExtent.clone();
                     extentList.add(aExtent);
-                } else if (!MIMath.isExtentCross(aExtent, maxExtent)) {
+                } else if (!GeometryUtil.isExtentCross(aExtent, maxExtent)) {
                     extentList.add(aExtent);
-                    maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                    maxExtent = GeometryUtil.getLagerExtent(maxExtent, aExtent);
                 } else {
                     for (j = 0; j < extentList.size(); j++) {
-                        if (MIMath.isExtentCross(aExtent, extentList.get(j))) {
+                        if (GeometryUtil.isExtentCross(aExtent, extentList.get(j))) {
                             ifDraw = false;
                             break;
                         }
                     }
                     if (ifDraw) {
                         extentList.add(aExtent);
-                        maxExtent = MIMath.getLagerExtent(maxExtent, aExtent);
+                        maxExtent = GeometryUtil.getLagerExtent(maxExtent, aExtent);
                     } else {
                         aPS.setVisible(false);
                     }
@@ -1174,9 +1174,9 @@ public class Plot2D extends AbstractPlot2D {
         switch (aGraphic.getShape().getShapeType()) {
             case POINT:
                 PointShape aPS = (PointShape) aGraphic.getShape();
-                PointZ sp = this.transData.transform(aPS.getPoint());
-                aX = (float) sp.X;
-                aY = (float) sp.Y;
+                Coordinate sp = this.transData.transform(aPS.getPoint());
+                aX = (float) sp.x;
+                aY = (float) sp.y;
                 switch (aGraphic.getLegendBreak().getBreakType()) {
                     case POINT_BREAK:
                         PointBreak aPB = (PointBreak) aGraphic.getLegendBreak();
@@ -1217,10 +1217,10 @@ public class Plot2D extends AbstractPlot2D {
             case ELLIPSE:
             case CIRCLE:
             case CURVE_POLYGON:
-                List<PointZ> newPList = aGraphic.getShape().getPoints();
-                List<PointZ> points = new ArrayList<>();
-                for (PointZ wPoint : newPList) {
-                    PointZ ps = this.transData.transform(wPoint);
+                List<Coordinate> newPList = aGraphic.getShape().getPoints();
+                List<Coordinate> points = new ArrayList<>();
+                for (Coordinate wPoint : newPList) {
+                    Coordinate ps = this.transData.transform(wPoint);
                     points.add(ps);
                 }
                 Extent aExtent = GeometryUtil.getPointsExtent(points);
@@ -1249,7 +1249,7 @@ public class Plot2D extends AbstractPlot2D {
         switch (aGraphic.getShape().getShapeType()) {
             case POINT:
                 PointShape aPS = (PointShape) aGraphic.getShape();
-                sXY = projToScreen(aPS.getPoint().X, aPS.getPoint().Y, area);
+                sXY = projToScreen(aPS.getPoint().x, aPS.getPoint().y, area);
                 aX = (float) sXY[0];
                 aY = (float) sXY[1];
                 switch (aGraphic.getLegendBreak().getBreakType()) {
@@ -1292,13 +1292,13 @@ public class Plot2D extends AbstractPlot2D {
             case ELLIPSE:
             case CIRCLE:
             case CURVE_POLYGON:
-                List<PointZ> newPList = aGraphic.getShape().getPoints();
-                List<PointZ> points = new ArrayList<>();
-                for (PointZ wPoint : newPList) {
-                    sXY = projToScreen(wPoint.X, wPoint.Y, area);
+                List<Coordinate> newPList = aGraphic.getShape().getPoints();
+                List<Coordinate> points = new ArrayList<>();
+                for (Coordinate wPoint : newPList) {
+                    sXY = projToScreen(wPoint.x, wPoint.y, area);
                     aX = (float) sXY[0];
                     aY = (float) sXY[1];
-                    points.add(new PointZ(aX, aY));
+                    points.add(new Coordinate(aX, aY));
                 }
                 Extent aExtent = GeometryUtil.getPointsExtent(points);
                 rect.x = (int) aExtent.minX;
@@ -1315,20 +1315,20 @@ public class Plot2D extends AbstractPlot2D {
                              boolean isSelected) {
         int len = aPG.getOutLine().size();
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, len);
-        PointZ wPoint, sp;
+        Coordinate wPoint, sp;
         List<PointF> rPoints = new ArrayList<>();
         for (int i = 0; i < aPG.getOutLine().size(); i++) {
             wPoint = aPG.getOutLine().get(i);
             sp = this.transData.transform(wPoint);
             if (i == 0) {
-                path.moveTo(sp.X, sp.Y);
+                path.moveTo(sp.x, sp.y);
             } else {
-                path.lineTo(sp.X, sp.Y);
+                path.lineTo(sp.x, sp.y);
             }
             rPoints.add(sp.toPointF());
         }
 
-        List<PointZ> newPList;
+        List<Coordinate> newPList;
         if (aPG.hasHole()) {
             for (int h = 0; h < aPG.getHoleLines().size(); h++) {
                 newPList = aPG.getHoleLines().get(h);
@@ -1336,9 +1336,9 @@ public class Plot2D extends AbstractPlot2D {
                     wPoint = newPList.get(j);
                     sp = this.transData.transform(wPoint);
                     if (j == 0) {
-                        path.moveTo(sp.X, sp.Y);
+                        path.moveTo(sp.x, sp.y);
                     } else {
-                        path.lineTo(sp.X, sp.Y);
+                        path.lineTo(sp.x, sp.y);
                     }
                 }
             }
@@ -1380,12 +1380,12 @@ public class Plot2D extends AbstractPlot2D {
                                      boolean isSelected, Rectangle2D area) {
         int len = aPG.getOutLine().size();
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, len);
-        PointZ wPoint;
+        Coordinate wPoint;
         double[] sXY;
         List<PointF> rPoints = new ArrayList<>();
         for (int i = 0; i < aPG.getOutLine().size(); i++) {
             wPoint = aPG.getOutLine().get(i);
-            sXY = projToScreen(wPoint.X, wPoint.Y, area);
+            sXY = projToScreen(wPoint.x, wPoint.y, area);
             if (i == 0) {
                 path.moveTo(sXY[0], sXY[1]);
             } else {
@@ -1394,13 +1394,13 @@ public class Plot2D extends AbstractPlot2D {
             rPoints.add(new PointF((float) sXY[0], (float) sXY[1]));
         }
 
-        List<PointZ> newPList;
+        List<Coordinate> newPList;
         if (aPG.hasHole()) {
             for (int h = 0; h < aPG.getHoleLines().size(); h++) {
                 newPList = aPG.getHoleLines().get(h);
                 for (int j = 0; j < newPList.size(); j++) {
                     wPoint = newPList.get(j);
-                    sXY = projToScreen(wPoint.X, wPoint.Y, area);
+                    sXY = projToScreen(wPoint.x, wPoint.y, area);
                     if (j == 0) {
                         path.moveTo(sXY[0], sXY[1]);
                     } else {
@@ -1447,18 +1447,18 @@ public class Plot2D extends AbstractPlot2D {
     void drawRectangle(Graphics2D g, RectangleShape rs, PolygonBreak aPGB,
                        boolean isSelected) {
         Extent extent = rs.getExtent();
-        PointZ sp = this.transData.transform(new PointZ(extent.minX, extent.maxY));
-        double x = sp.X;
-        double y = sp.Y;
-        sp = this.transData.transform(new PointZ(extent.maxX, extent.minY));
-        double width = sp.X - x;
+        Coordinate sp = this.transData.transform(new Coordinate(extent.minX, extent.maxY));
+        double x = sp.x;
+        double y = sp.y;
+        sp = this.transData.transform(new Coordinate(extent.maxX, extent.minY));
+        double width = sp.x - x;
         if (width < 0) {
-            x = sp.X;
+            x = sp.x;
             width = -width;
         }
-        double height = sp.Y - y;
+        double height = sp.y - y;
         if (height < 0) {
-            y = sp.Y;
+            y = sp.y;
             height = -height;
         }
         RectangularShape rshape;
@@ -1551,9 +1551,9 @@ public class Plot2D extends AbstractPlot2D {
     void drawCircle(Graphics2D g, CircleShape rs, PolygonBreak aPGB,
                     boolean isSelected) {
         Extent extent = rs.getExtent();
-        PointZ sp = this.transData.transform(new PointZ(extent.minX, extent.minY + extent.getHeight()));
-        double x = sp.X;
-        double y = sp.Y;
+        Coordinate sp = this.transData.transform(new Coordinate(extent.minX, extent.minY + extent.getHeight()));
+        double x = sp.x;
+        double y = sp.y;
         double width = this.projXLength(extent.getWidth());
         java.awt.Shape shape = new Ellipse2D.Double(x, y, width, width);
 
@@ -1628,9 +1628,9 @@ public class Plot2D extends AbstractPlot2D {
     void drawEllipse(Graphics2D g, EllipseShape rs, PolygonBreak aPGB,
                      boolean isSelected) {
         Extent extent = rs.getExtent();
-        PointZ sp = this.transData.transform(new PointZ(extent.minX, extent.minY + extent.getHeight()));
-        double x = sp.X;
-        double y = sp.Y;
+        Coordinate sp = this.transData.transform(new Coordinate(extent.minX, extent.minY + extent.getHeight()));
+        double x = sp.x;
+        double y = sp.y;
         double width = this.projXLength(extent.getWidth());
         double height = this.projYLength(extent.getHeight());
         java.awt.Shape shape = new Ellipse2D.Double(x, y, width, height);
@@ -1793,9 +1793,9 @@ public class Plot2D extends AbstractPlot2D {
         float startAngle = aShape.getStartAngle();
         float sweepAngle = aShape.getSweepAngle();
         Extent extent = aShape.getExtent();
-        PointZ sp = this.transData.transform(new PointZ(extent.minX, extent.minY + extent.getHeight()));
-        double x = sp.X;
-        double y = sp.Y;
+        Coordinate sp = this.transData.transform(new Coordinate(extent.minX, extent.minY + extent.getHeight()));
+        double x = sp.x;
+        double y = sp.y;
         double width = this.projXLength(extent.getWidth());
         double height = this.projYLength(extent.getHeight());
         Float wedgeWidth = aShape.getWedgeWidth();
@@ -1836,7 +1836,7 @@ public class Plot2D extends AbstractPlot2D {
         xy = this.projToScreen(0, 0, area);
         float y0 = (float) xy[1];
         width = (float) this.projXLength(width, area);
-        xy = projToScreen(bar.getPoint().X, bar.getPoint().Y, area);
+        xy = projToScreen(bar.getPoint().x, bar.getPoint().y, area);
         double x = xy[0];
         double y = xy[1];
         float height;
@@ -1860,8 +1860,8 @@ public class Plot2D extends AbstractPlot2D {
 
     protected void drawBars(Graphics2D g, GraphicCollection bars, int barIdx) {
         Transform transform = bars.getTransform();
-        PointZ sp = transform.transform(new PointZ(0, 0));
-        float y0 = (float) sp.Y;
+        Coordinate sp = transform.transform(new Coordinate(0, 0));
+        float y0 = (float) sp.y;
         int len = bars.getNumGraphics();
         PointF[] points = new PointF[len];
         for (int i = 0; i < len; i++) {
@@ -1886,8 +1886,8 @@ public class Plot2D extends AbstractPlot2D {
                 height = Math.abs((float) (points[i].Y - y0));
                 float yBottom = y0;
                 if (bs.isDrawBottom()) {
-                    sp = transform.transform(new PointZ(bs.getPoint().X, bs.getBottom()));
-                    yBottom = (float) sp.Y;
+                    sp = transform.transform(new Coordinate(bs.getPoint().x, bs.getBottom()));
+                    yBottom = (float) sp.y;
                 }
                 float yb = yBottom;
                 if (points[i].Y >= y0) {
@@ -1919,8 +1919,8 @@ public class Plot2D extends AbstractPlot2D {
                 height = Math.abs((float) (points[i].Y - y0));
                 float yBottom = y0;
                 if (bs.isDrawBottom()) {
-                    sp = transform.transform(new PointZ(bs.getPoint().X, bs.getBottom()));
-                    yBottom = (float) sp.Y;
+                    sp = transform.transform(new Coordinate(bs.getPoint().x, bs.getBottom()));
+                    yBottom = (float) sp.y;
                 }
                 float yb = yBottom;
                 if (points[i].Y >= y0) {
@@ -1953,14 +1953,14 @@ public class Plot2D extends AbstractPlot2D {
     double getBarXInterval(int idx) {
         Graphic gg = this.graphics.get(idx);
         if (gg.getNumGraphics() == 1) {
-            if (gg.getGraphicN(0).getShape().getPoints().get(0).X == 0) {
+            if (gg.getGraphicN(0).getShape().getPoints().get(0).x == 0) {
                 return 1;
             } else {
-                return gg.getGraphicN(0).getShape().getPoints().get(0).X / 10;
+                return gg.getGraphicN(0).getShape().getPoints().get(0).x / 10;
             }
         } else {
-            return gg.getGraphicN(1).getShape().getPoints().get(0).X
-                    - gg.getGraphicN(0).getShape().getPoints().get(0).X;
+            return gg.getGraphicN(1).getShape().getPoints().get(0).x
+                    - gg.getGraphicN(0).getShape().getPoints().get(0).x;
         }
     }
 
@@ -1997,13 +1997,13 @@ public class Plot2D extends AbstractPlot2D {
         BufferedImage image = ishape.getImage();
         Extent extent = ishape.getExtent();
         double sx = extent.minX, sy = extent.maxY;
-        PointZ sp1 = this.transData.transform(new PointZ(sx, sy));
+        Coordinate sp1 = this.transData.transform(new Coordinate(sx, sy));
         double ex = extent.maxX, ey = extent.minY;
-        PointZ sp2 = this.transData.transform(new PointZ(ex, ey));
-        int x = (int) sp1.X;
-        int y = (int) sp1.Y;
-        int width = (int) (sp2.X - sp1.X);
-        int height = (int) (sp2.Y - sp1.Y);
+        Coordinate sp2 = this.transData.transform(new Coordinate(ex, ey));
+        int x = (int) sp1.x;
+        int y = (int) sp1.y;
+        int width = (int) (sp2.x - sp1.x);
+        int height = (int) (sp2.y - sp1.y);
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, ishape.getInterpolation());
         g.drawImage(image, x, y, width, height, null);
     }

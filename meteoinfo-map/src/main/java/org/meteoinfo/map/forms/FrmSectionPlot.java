@@ -5,7 +5,7 @@
 package org.meteoinfo.map.forms;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.data.GridData;
 import org.meteoinfo.data.meteodata.*;

@@ -9,7 +9,8 @@
 from org.meteoinfo.math.interpolate import InterpUtil, RectLinearInterpolator, RectNearestInterpolator, \
     RectNearestInterpolator3D, RectLinearInterpolator3D
 from org.meteoinfo.ndarray.math import ArrayUtil
-from org.meteoinfo.geometry.geoprocess import GeometryUtil, GeoComputation
+from org.meteoinfo.geometry import GeometryUtil
+from org.meteoinfo.geometry.geoprocess import GeoComputation
 
 from ..core import NDArray
 from ..core import numeric as np

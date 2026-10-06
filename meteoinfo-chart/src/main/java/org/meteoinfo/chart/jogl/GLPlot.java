@@ -17,7 +17,7 @@ import org.meteoinfo.chart.graphic.pipe.Pipe;
 import org.meteoinfo.chart.graphic.pipe.PipeShape;
 import org.meteoinfo.chart.jogl.tessellator.Primitive;
 import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
-import org.meteoinfo.chart.plot.GridLine;
+import org.meteoinfo.chart.GridLine;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.chart.plot.PlotType;
 import org.meteoinfo.chart.render.jogl.*;
@@ -25,6 +25,8 @@ import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.data.Dataset;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.Polygon;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.render.java2d.StringType;
@@ -2927,8 +2929,8 @@ public class GLPlot extends Plot {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glPointSize(pb.getSize() * this.dpiScale);
             gl.glBegin(GL2.GL_POINTS);
-            PointZ p = (PointZ) shape.getPoint();
-            gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+            Coordinate p = (Coordinate) shape.getPoint();
+            gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
             gl.glEnd();
         }
     }
@@ -2942,8 +2944,8 @@ public class GLPlot extends Plot {
             pb = (PointBreak) gg.getLegendBreak();
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            PointZ p = (PointZ) shape.getPoint();
-            gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+            Coordinate p = (Coordinate) shape.getPoint();
+            gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
         }
         gl.glEnd();
     }
@@ -2959,8 +2961,8 @@ public class GLPlot extends Plot {
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4fv(rgba, 0);
             gl.glPushMatrix();
-            PointZ p = (PointZ) shape.getPoint();
-            Vector3f xyz = new Vector3f((float) p.X, (float) p.Y, (float) p.Z);
+            Coordinate p = (Coordinate) shape.getPoint();
+            Vector3f xyz = new Vector3f((float) p.x, (float) p.y, (float) p.z);
             gl.glTranslated(xyz.x, xyz.y, xyz.z);
             GLUquadric sphere = glu.gluNewQuadric();
             glu.gluQuadricDrawStyle(sphere, GLU.GLU_FILL);
@@ -3125,9 +3127,9 @@ public class GLPlot extends Plot {
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;
                 Polyline line = shape.getPolylines().get(0);
-                java.util.List<PointZ> ps = (java.util.List<PointZ>) line.getPointList();
+                java.util.List<Coordinate> ps = (java.util.List<Coordinate>) line.getPointList();
                 float[] rgba;
-                PointZ p;
+                Coordinate p;
                 gl.glLineWidth(((PolylineBreak) cbc.get(0)).getWidth() * this.dpiScale);
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 for (int i = 0; i < ps.size(); i++) {
@@ -3136,7 +3138,7 @@ public class GLPlot extends Plot {
                     gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                     gl.glLineWidth(plb.getWidth() * this.dpiScale);
                     p = ps.get(i);
-                    gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                    gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
                 }
                 gl.glEnd();
             } else {
@@ -3146,9 +3148,9 @@ public class GLPlot extends Plot {
                 gl.glLineWidth(pb.getWidth() * this.dpiScale);
                 for (Polyline line : shape.getPolylines()) {
                     gl.glBegin(GL2.GL_LINE_STRIP);
-                    java.util.List<PointZ> ps = (java.util.List<PointZ>) line.getPointList();
-                    for (PointZ p : ps) {
-                        gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                    java.util.List<Coordinate> ps = (java.util.List<Coordinate>) line.getPointList();
+                    for (Coordinate p : ps) {
+                        gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
                     }
                     gl.glEnd();
                 }
@@ -3255,8 +3257,8 @@ public class GLPlot extends Plot {
                 try {
                     for (Primitive primitive : tessPolygon.getPrimitives()) {
                         gl.glBegin(primitive.type);
-                        for (PointZ p : primitive.vertices) {
-                            gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                        for (Coordinate p : primitive.vertices) {
+                            gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
                         }
                         gl.glEnd();
                     }
@@ -3270,21 +3272,21 @@ public class GLPlot extends Plot {
             gl.glLineWidth(aPGB.getOutlineSize() * this.dpiScale);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_LINE_STRIP);
-            PointZ p;
+            Coordinate p;
             for (int i = 0; i < tessPolygon.getOutLine().size(); i++) {
-                p = ((java.util.List<PointZ>) tessPolygon.getOutLine()).get(i);
-                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                p = ((java.util.List<Coordinate>) tessPolygon.getOutLine()).get(i);
+                gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
             }
             gl.glEnd();
 
             if (tessPolygon.hasHole()) {
-                java.util.List<PointZ> newPList;
+                java.util.List<Coordinate> newPList;
                 for (int h = 0; h < tessPolygon.getHoleLines().size(); h++) {
                     gl.glBegin(GL2.GL_LINE_STRIP);
-                    newPList = (java.util.List<PointZ>) tessPolygon.getHoleLines().get(h);
+                    newPList = (java.util.List<Coordinate>) tessPolygon.getHoleLines().get(h);
                     for (int j = 0; j < newPList.size(); j++) {
                         p = newPList.get(j);
-                        gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                        gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
                     }
                     gl.glEnd();
                 }
@@ -3305,8 +3307,8 @@ public class GLPlot extends Plot {
                 TessPolygon tessPolygon = new TessPolygon(aPG);
                 for (Primitive primitive : tessPolygon.getPrimitives()) {
                     gl.glBegin(primitive.type);
-                    for (PointZ p : primitive.vertices) {
-                        gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                    for (Coordinate p : primitive.vertices) {
+                        gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
                     }
                     gl.glEnd();
                 }
@@ -3320,21 +3322,21 @@ public class GLPlot extends Plot {
             gl.glLineWidth(aPGB.getOutlineSize() * this.dpiScale);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_LINE_STRIP);
-            PointZ p;
+            Coordinate p;
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                p = ((java.util.List<Coordinate>) aPG.getOutLine()).get(i);
+                gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
             }
             gl.glEnd();
 
             if (aPG.hasHole()) {
-                java.util.List<PointZ> newPList;
+                java.util.List<Coordinate> newPList;
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 for (int h = 0; h < aPG.getHoleLines().size(); h++) {
-                    newPList = (java.util.List<PointZ>) aPG.getHoleLines().get(h);
+                    newPList = (java.util.List<Coordinate>) aPG.getHoleLines().get(h);
                     for (int j = 0; j < newPList.size(); j++) {
                         p = newPList.get(j);
-                        gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                        gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
                     }
                 }
                 gl.glEnd();
@@ -3344,14 +3346,14 @@ public class GLPlot extends Plot {
     }
 
     private void drawConvexPolygon(GL2 gl, Polygon aPG, PolygonBreak aPGB) {
-        PointZ p;
+        Coordinate p;
         if (aPGB.isDrawFill()) {
             float[] rgba = aPGB.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_POLYGON);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                p = ((java.util.List<Coordinate>) aPG.getOutLine()).get(i);
+                gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
             }
             gl.glEnd();
         }
@@ -3362,15 +3364,15 @@ public class GLPlot extends Plot {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                p = ((java.util.List<Coordinate>) aPG.getOutLine()).get(i);
+                gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
             }
             gl.glEnd();
         }
     }
 
     private void drawQuadsPolygons(GL2 gl, GraphicCollection3D graphic) {
-        PointZ p;
+        Coordinate p;
         for (int i = 0; i < graphic.getNumGraphics(); i++) {
             Graphic gg = graphic.getGraphicN(i);
             boolean isDraw = true;
@@ -3388,14 +3390,14 @@ public class GLPlot extends Plot {
     }
 
     private void drawQuads(GL2 gl, Polygon aPG, PolygonBreak aPGB) {
-        PointZ p;
+        Coordinate p;
         float[] rgba = aPGB.getColor().getRGBComponents(null);
         if (aPGB.isDrawFill()) {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_QUADS);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                p = ((java.util.List<Coordinate>) aPG.getOutLine()).get(i);
+                gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
             }
             gl.glEnd();
         }
@@ -3406,15 +3408,15 @@ public class GLPlot extends Plot {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                p = ((java.util.List<Coordinate>) aPG.getOutLine()).get(i);
+                gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
             }
             gl.glEnd();
         }
     }
 
     private void drawTrianglePolygons(GL2 gl, GraphicCollection3D graphic) {
-        PointZ p;
+        Coordinate p;
         for (int i = 0; i < graphic.getNumGraphics(); i++) {
             Graphic gg = graphic.getGraphicN(i);
             boolean isDraw = true;
@@ -3432,14 +3434,14 @@ public class GLPlot extends Plot {
     }
 
     private void drawTriangle(GL2 gl, Polygon aPG, PolygonBreak aPGB) {
-        PointZ p;
+        Coordinate p;
         float[] rgba = aPGB.getColor().getRGBComponents(null);
         if (aPGB.isDrawFill()) {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_TRIANGLES);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                p = ((java.util.List<Coordinate>) aPG.getOutLine()).get(i);
+                gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
             }
             gl.glEnd();
         }
@@ -3450,15 +3452,15 @@ public class GLPlot extends Plot {
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < aPG.getOutLine().size(); i++) {
-                p = ((java.util.List<PointZ>) aPG.getOutLine()).get(i);
-                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                p = ((java.util.List<Coordinate>) aPG.getOutLine()).get(i);
+                gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
             }
             gl.glEnd();
         }
     }
 
-    private void drawTriangle(GL2 gl, PointZ[] points, PolygonBreak aPGB) {
-        PointZ p;
+    private void drawTriangle(GL2 gl, Coordinate[] points, PolygonBreak aPGB) {
+        Coordinate p;
         float[] rgba = aPGB.getColor().getRGBComponents(null);
         if (aPGB.isDrawFill()) {
             gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
@@ -3485,16 +3487,16 @@ public class GLPlot extends Plot {
             gl.glBegin(GL2.GL_LINE_STRIP);
             for (int i = 0; i < 3; i++) {
                 p = points[i];
-                gl.glVertex3f((float) p.X, (float) p.Y, (float) p.Z);
+                gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
             }
             gl.glEnd();
         }
     }
 
     private void drawIsosurface(GL2 gl, IsosurfaceGraphics isosurface) {
-        java.util.List<PointZ[]> triangles = isosurface.getTriangles();
+        java.util.List<Coordinate[]> triangles = isosurface.getTriangles();
         PolygonBreak pgb = (PolygonBreak) isosurface.getLegendBreak();
-        for (PointZ[] triangle : triangles) {
+        for (Coordinate[] triangle : triangles) {
             this.drawTriangle(gl, triangle, pgb);
         }
     }
@@ -3505,7 +3507,7 @@ public class GLPlot extends Plot {
         Texture texture = AWTTextureIO.newTexture(gl.getGLProfile(), image, true);
         //Texture texture = this.imageCache.get(image);
         int idTexture = texture.getTextureObject();
-        java.util.List<PointZ> coords = ishape.getCoords();
+        java.util.List<Coordinate> coords = ishape.getCoords();
 
         gl.glEnable(GL2.GL_TEXTURE_2D);
         gl.glColor3f(1f, 1f, 1f);
@@ -3520,16 +3522,16 @@ public class GLPlot extends Plot {
         // Front Face
         //gl.glTexCoord2f(0.0f, 0.0f);
         gl.glTexCoord2f(0.0f, 1.0f);
-        gl.glVertex3f((float) coords.get(0).X, (float) coords.get(0).Y, (float) coords.get(0).Z);
+        gl.glVertex3f((float) coords.get(0).x, (float) coords.get(0).y, (float) coords.get(0).z);
         //gl.glTexCoord2f(1.0f, 0.0f);
         gl.glTexCoord2f(1.0f, 1.0f);
-        gl.glVertex3f((float) coords.get(1).X, (float) coords.get(1).Y, (float) coords.get(1).Z);
+        gl.glVertex3f((float) coords.get(1).x, (float) coords.get(1).y, (float) coords.get(1).z);
         //gl.glTexCoord2f(1.0f, 1.0f);
         gl.glTexCoord2f(1.0f, 0.0f);
-        gl.glVertex3f((float) coords.get(2).X, (float) coords.get(2).Y, (float) coords.get(2).Z);
+        gl.glVertex3f((float) coords.get(2).x, (float) coords.get(2).y, (float) coords.get(2).z);
         //gl.glTexCoord2f(0.0f, 1.0f);
         gl.glTexCoord2f(0.0f, 0.0f);
-        gl.glVertex3f((float) coords.get(3).X, (float) coords.get(3).Y, (float) coords.get(3).Z);
+        gl.glVertex3f((float) coords.get(3).x, (float) coords.get(3).y, (float) coords.get(3).z);
         gl.glEnd();
 
         // Unbinding the texture
@@ -3572,11 +3574,11 @@ public class GLPlot extends Plot {
         TextureShape ishape = (TextureShape) graphic.getShape();
         ishape.updateTexture(gl);
         int idTexture = ishape.getTextureID();
-        java.util.List<PointZ> coords = ishape.getCoords();
+        java.util.List<Coordinate> coords = ishape.getCoords();
         int xRepeat = ishape.getXRepeat();
         int yRepeat = ishape.getYRepeat();
-        float width = (float) (coords.get(1).X - coords.get(0).X);
-        float height = (float) (coords.get(1).Y - coords.get(2).Y);
+        float width = (float) (coords.get(1).x - coords.get(0).x);
+        float height = (float) (coords.get(1).y - coords.get(2).y);
         width = width * (xRepeat - 1);
         height = height * (yRepeat - 1);
 
@@ -3596,16 +3598,16 @@ public class GLPlot extends Plot {
         // Front Face
         //gl.glTexCoord2f(0.0f, 0.0f);
         gl.glTexCoord2f(0.0f, 1.0f * yRepeat);
-        gl.glVertex3f((float) coords.get(0).X, (float) coords.get(0).Y + height, (float) coords.get(0).Z);
+        gl.glVertex3f((float) coords.get(0).x, (float) coords.get(0).y + height, (float) coords.get(0).z);
         //gl.glTexCoord2f(1.0f, 0.0f);
         gl.glTexCoord2f(1.0f * xRepeat, 1.0f * yRepeat);
-        gl.glVertex3f((float) coords.get(1).X + width, (float) coords.get(1).Y + height, (float) coords.get(1).Z);
+        gl.glVertex3f((float) coords.get(1).x + width, (float) coords.get(1).y + height, (float) coords.get(1).z);
         //gl.glTexCoord2f(1.0f, 1.0f);
         gl.glTexCoord2f(1.0f * xRepeat, 0.0f);
-        gl.glVertex3f((float) coords.get(2).X + width, (float) coords.get(2).Y, (float) coords.get(2).Z);
+        gl.glVertex3f((float) coords.get(2).x + width, (float) coords.get(2).y, (float) coords.get(2).z);
         //gl.glTexCoord2f(0.0f, 1.0f);
         gl.glTexCoord2f(0.0f, 0.0f);
-        gl.glVertex3f((float) coords.get(3).X, (float) coords.get(3).Y, (float) coords.get(3).Z);
+        gl.glVertex3f((float) coords.get(3).x, (float) coords.get(3).y, (float) coords.get(3).z);
         gl.glEnd();
         gl.glFlush();
 
@@ -3710,10 +3712,10 @@ public class GLPlot extends Plot {
         if (isDraw) {
             CubicShape cubic = (CubicShape) graphic.getShape();
             BarBreak bb = (BarBreak) graphic.getLegendBreak();
-            java.util.List<PointZ> ps = cubic.getPoints();
+            java.util.List<Coordinate> ps = cubic.getPoints();
             java.util.List<float[]> vertex = new ArrayList<>();
-            for (PointZ p : ps) {
-                vertex.add(new float[]{(float) p.X, (float) p.Y, (float) p.Z});
+            for (Coordinate p : ps) {
+                vertex.add(new float[]{(float) p.x, (float) p.y, (float) p.z});
             }
 
             gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
@@ -3757,10 +3759,10 @@ public class GLPlot extends Plot {
         if (isDraw) {
             CylinderShape cylinder = (CylinderShape) graphic.getShape();
             BarBreak bb = (BarBreak) graphic.getLegendBreak();
-            java.util.List<PointZ> ps = cylinder.getPoints();
+            java.util.List<Coordinate> ps = cylinder.getPoints();
             java.util.List<float[]> vertex = new ArrayList<>();
-            for (PointZ p : ps) {
-                vertex.add(new float[]{(float) p.X, (float) p.Y, (float) p.Z});
+            for (Coordinate p : ps) {
+                vertex.add(new float[]{(float) p.x, (float) p.y, (float) p.z});
             }
             double height = vertex.get(1)[2] - vertex.get(0)[2];
 

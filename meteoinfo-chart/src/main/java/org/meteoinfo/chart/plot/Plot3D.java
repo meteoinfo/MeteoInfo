@@ -13,6 +13,8 @@ import org.meteoinfo.chart.plot3d.Projector;
 import org.meteoinfo.common.*;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.Dataset;
+import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.Polygon;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.chart.graphic.Graphic;
@@ -908,7 +910,7 @@ public class Plot3D extends Plot {
             int n = graphic.getNumGraphics();
             double[] dds = new double[n];
             int[] order = new int[n];
-            PointZ p;
+            Coordinate p;
             double d;
             float angle = projector.getRotationAngle();
             boolean xdir = true;
@@ -920,8 +922,8 @@ public class Plot3D extends Plot {
                 for (int i = 0; i < n; i++) {
                     Graphic gg = graphic.getGraphicN(i);
                     Shape shape = gg.getShape();
-                    p = (PointZ) shape.getPoints().get(0);
-                    d = p.X * projector.getSinRotationAngle();
+                    p = (Coordinate) shape.getPoints().get(0);
+                    d = p.x * projector.getSinRotationAngle();
                     dds[i] = d;
                     order[i] = i;
                 }
@@ -929,8 +931,8 @@ public class Plot3D extends Plot {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
                     Shape shape = gg.getShape();
-                    p = (PointZ) shape.getPoints().get(0);
-                    d = p.Y * projector.getCosRotationAngle();
+                    p = (Coordinate) shape.getPoints().get(0);
+                    d = p.y * projector.getCosRotationAngle();
                     dds[i] = d;
                     order[i] = i;
                 }
@@ -952,7 +954,7 @@ public class Plot3D extends Plot {
         } else {
             List<Double> dds = new ArrayList<>();
             List<Integer> order = new ArrayList<>();
-            PointZ p;
+            Coordinate p;
             double d;
             boolean isIn;
             float angle = projector.getRotationAngle();
@@ -964,8 +966,8 @@ public class Plot3D extends Plot {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
                     PointShape shape = (PointShape) gg.getShape();
-                    p = (PointZ) shape.getPoint();
-                    d = p.X * projector.getSinRotationAngle();
+                    p = (Coordinate) shape.getPoint();
+                    d = p.x * projector.getSinRotationAngle();
                     isIn = false;
                     for (int j = 0; j < dds.size(); j++) {
                         if (d < dds.get(j)) {
@@ -984,8 +986,8 @@ public class Plot3D extends Plot {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
                     PointShape shape = (PointShape) gg.getShape();
-                    p = (PointZ) shape.getPoint();
-                    d = p.Y * projector.getCosRotationAngle();
+                    p = (Coordinate) shape.getPoint();
+                    d = p.y * projector.getCosRotationAngle();
                     isIn = false;
                     for (int j = 0; j < dds.size(); j++) {
                         if (d < dds.get(j)) {
@@ -1096,11 +1098,11 @@ public class Plot3D extends Plot {
         if (extent.intersects(graphic.getExtent())) {
             PointShape shape = (PointShape) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
-            PointZ p = (PointZ) shape.getPoint();
+            Coordinate p = (Coordinate) shape.getPoint();
             /*PointZ pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
                     (p.Z - this.zmin) * zfactor - 10);
             projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);*/
-            projection = this.project((float)p.X, (float)p.Y, (float)p.Z);
+            projection = this.project((float)p.x, (float)p.y, (float)p.z);
             PointF pf = new PointF(projection.x, projection.y);
             Draw.drawPoint(pf, pb, g);
         }
@@ -1113,7 +1115,7 @@ public class Plot3D extends Plot {
         } else {
             List<Double> dds = new ArrayList<>();
             List<Integer> order = new ArrayList<>();
-            PointZ p;
+            Coordinate p;
             double d;
             boolean isIn;
             float angle = projector.getRotationAngle();
@@ -1125,8 +1127,8 @@ public class Plot3D extends Plot {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
                     Shape shape = gg.getShape();
-                    p = (PointZ) shape.getPoints().get(0);
-                    d = p.X * projector.getSinRotationAngle();
+                    p = (Coordinate) shape.getPoints().get(0);
+                    d = p.x * projector.getSinRotationAngle();
                     isIn = false;
                     for (int j = 0; j < dds.size(); j++) {
                         if (d < dds.get(j)) {
@@ -1145,8 +1147,8 @@ public class Plot3D extends Plot {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
                     Shape shape = gg.getShape();
-                    p = (PointZ) shape.getPoints().get(0);
-                    d = p.Y * projector.getCosRotationAngle();
+                    p = (Coordinate) shape.getPoints().get(0);
+                    d = p.y * projector.getCosRotationAngle();
                     isIn = false;
                     for (int j = 0; j < dds.size(); j++) {
                         if (d < dds.get(j)) {
@@ -1175,12 +1177,12 @@ public class Plot3D extends Plot {
             PolylineShape shape = (PolylineShape) graphic.getShape();
             ColorBreak pb = graphic.getLegendBreak();
             for (Polyline line : shape.getPolylines()){
-                List<PointZ> ps = (List<PointZ>)line.getPointList();
+                List<Coordinate> ps = (List<Coordinate>)line.getPointList();
                 PointF[] points = new PointF[ps.size()];
-                PointZ p, pp;
+                Coordinate p, pp;
                 for (int i = 0; i < ps.size(); i++) {
                     p = ps.get(i);
-                    projection = this.project((float)p.X, (float)p.Y, (float)p.Z);
+                    projection = this.project((float)p.x, (float)p.y, (float)p.z);
                     points[i] = new PointF(projection.x, projection.y);
                 }
                 if (pb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION)
@@ -1194,7 +1196,7 @@ public class Plot3D extends Plot {
     private void drawPolygons(Graphics2D g, Graphic graphic) {
         List<Double> dds = new ArrayList<>();
         List<Integer> order = new ArrayList<>();
-        PointZ p;
+        Coordinate p;
         double d;
         boolean isIn;
         float angle = projector.getRotationAngle();
@@ -1206,8 +1208,8 @@ public class Plot3D extends Plot {
             for (int i = 0; i < graphic.getNumGraphics(); i++) {
                 Graphic gg = graphic.getGraphicN(i);
                 Shape shape = gg.getShape();
-                p = (PointZ) shape.getPoints().get(0);
-                d = p.X * projector.getSinRotationAngle();
+                p = (Coordinate) shape.getPoints().get(0);
+                d = p.x * projector.getSinRotationAngle();
                 isIn = false;
                 for (int j = 0; j < dds.size(); j++) {
                     if (d < dds.get(j)) {
@@ -1226,8 +1228,8 @@ public class Plot3D extends Plot {
             for (int i = 0; i < graphic.getNumGraphics(); i++) {
                 Graphic gg = graphic.getGraphicN(i);
                 Shape shape = gg.getShape();
-                p = (PointZ) shape.getPoints().get(0);
-                d = p.Y * projector.getCosRotationAngle();
+                p = (Coordinate) shape.getPoints().get(0);
+                d = p.y * projector.getCosRotationAngle();
                 isIn = false;
                 for (int j = 0; j < dds.size(); j++) {
                     if (d < dds.get(j)) {
@@ -1263,14 +1265,14 @@ public class Plot3D extends Plot {
     private List<PointF> drawPolygon(Graphics2D g, Polygon aPG, PolygonBreak aPGB) {
         int len = aPG.getOutLine().size();
         GeneralPath path = new GeneralPath(GeneralPath.WIND_EVEN_ODD, len);
-        PointZ p, pp;
+        Coordinate p, pp;
         List<PointF> rPoints = new ArrayList<>();
         for (int i = 0; i < aPG.getOutLine().size(); i++) {
-            p = ((List<PointZ>) aPG.getOutLine()).get(i);
+            p = ((List<Coordinate>) aPG.getOutLine()).get(i);
 //            pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
 //                    (p.Z - this.zmin) * zfactor - 10);
 //            projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);
-            projection = this.project((float)p.X, (float)p.Y, (float)p.Z);
+            projection = this.project((float)p.x, (float)p.y, (float)p.z);
             if (i == 0) {
                 path.moveTo(projection.x, projection.y);
             } else {
@@ -1279,16 +1281,16 @@ public class Plot3D extends Plot {
             rPoints.add(new PointF(projection.x, projection.y));
         }
 
-        List<PointZ> newPList;
+        List<Coordinate> newPList;
         if (aPG.hasHole()) {
             for (int h = 0; h < aPG.getHoleLines().size(); h++) {
-                newPList = (List<PointZ>) aPG.getHoleLines().get(h);
+                newPList = (List<Coordinate>) aPG.getHoleLines().get(h);
                 for (int j = 0; j < newPList.size(); j++) {
                     p = newPList.get(j);
 //                    pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
 //                            (p.Z - this.zmin) * zfactor - 10);
 //                    projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);
-                    projection = this.project((float)p.X, (float)p.Y, (float)p.Z);
+                    projection = this.project((float)p.x, (float)p.y, (float)p.z);
                     if (j == 0) {
                         path.moveTo(projection.x, projection.y);
                     } else {
@@ -1458,17 +1460,17 @@ public class Plot3D extends Plot {
         if (extent.intersects(graphic.getExtent())) {
             WindArrow3D shape = (WindArrow3D) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
-            PointZ p = (PointZ) shape.getPoint();
+            Coordinate p = (Coordinate) shape.getPoint();
             /*PointZ pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
                     (p.Z - this.zmin) * zfactor - 10);
             projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);*/
-            projection = this.project((float)p.X, (float)p.Y, (float)p.Z);
+            projection = this.project((float)p.x, (float)p.y, (float)p.z);
             PointF pf = new PointF(projection.x, projection.y);
-            p = (PointZ)shape.getEndPoint();
+            p = (Coordinate)shape.getEndPoint();
             /*pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
                     (p.Z - this.zmin) * zfactor - 10);
             projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);*/
-            projection = this.project((float)p.X, (float)p.Y, (float)p.Z);
+            projection = this.project((float)p.x, (float)p.y, (float)p.z);
             PointF epf = new PointF(projection.x, projection.y);
             PointF[] points = new PointF[]{pf, epf};
             Draw.drawArrow(points, pb, 4, g);

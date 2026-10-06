@@ -5,7 +5,7 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
 import org.meteoinfo.chart.graphic.Triangle3D;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.Polygon;
 import org.joml.Vector3f;
 
@@ -126,9 +126,9 @@ public class TriangleTessellator {
         glu.gluTessBeginContour(tobj);
 
         double[] v;
-        PointZ p;
+        Coordinate p;
         for (int i = 0; i < polygon.getOutLine().size() - 1; i++) {
-            p = ((List<PointZ>) polygon.getOutLine()).get(i);
+            p = ((List<Coordinate>) polygon.getOutLine()).get(i);
             v = p.toArray();
             glu.gluTessVertex(tobj, v, 0, v);
         }
@@ -139,7 +139,7 @@ public class TriangleTessellator {
             for (int i = 0; i < polygon.getHoleLineNumber(); i++) {
                 glu.gluTessBeginContour(tobj);
                 for (int j = 0; j < polygon.getHoleLine(i).size() - 1; j++) {
-                    p = ((List<PointZ>) polygon.getHoleLine(i)).get(j);
+                    p = ((List<Coordinate>) polygon.getHoleLine(i)).get(j);
                     v = p.toArray();
                     glu.gluTessVertex(tobj, v, 0, v);
                 }

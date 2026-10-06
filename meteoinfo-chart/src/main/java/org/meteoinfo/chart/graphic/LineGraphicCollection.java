@@ -8,7 +8,7 @@ import org.meteoinfo.ndarray.IndexIterator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Line2DGraphicCollection extends GraphicCollection {
+public class LineGraphicCollection extends GraphicCollection {
     private Array cData;
     private List<Array> data;
     private boolean curve = false;
@@ -16,15 +16,16 @@ public class Line2DGraphicCollection extends GraphicCollection {
     /**
      * Constructor
      */
-    public Line2DGraphicCollection() {
-        this(new ArrayList<Line2DGraphic>());
+    public LineGraphicCollection() {
+        super();
+        this.graphics = new ArrayList<LineGraphic>();
     }
 
     /**
      * Constructor
      * @param graphics Graphics
      */
-    public Line2DGraphicCollection(List<Line2DGraphic> graphics) {
+    public LineGraphicCollection(List<LineGraphic> graphics) {
         super();
         this.graphics = graphics;
         this.legendBreak = new PolylineBreak();
@@ -35,7 +36,7 @@ public class Line2DGraphicCollection extends GraphicCollection {
      * @param data Data list
      * @param lineBreak Polyline break
      */
-    public Line2DGraphicCollection(List<Array> data, PolylineBreak lineBreak) {
+    public LineGraphicCollection(List<Array> data, PolylineBreak lineBreak) {
         super();
 
         updateGraphics(data, lineBreak);
@@ -46,7 +47,7 @@ public class Line2DGraphicCollection extends GraphicCollection {
      * @param data Data list
      * @param lineBreaks Polyline break list
      */
-    public Line2DGraphicCollection(List<Array> data, List<PolylineBreak> lineBreaks) {
+    public LineGraphicCollection(List<Array> data, List<PolylineBreak> lineBreaks) {
         super();
 
         updateGraphics(data, lineBreaks);
@@ -58,7 +59,7 @@ public class Line2DGraphicCollection extends GraphicCollection {
      * @param cdata Color data
      * @param ls Legend scheme
      */
-    public Line2DGraphicCollection(List<Array> data, Array cData, LegendScheme ls) {
+    public LineGraphicCollection(List<Array> data, Array cData, LegendScheme ls) {
         this.legendScheme = ls;
         this.setSingleLegend(false);
         if (cData.getSize() == data.size()) {
@@ -79,7 +80,7 @@ public class Line2DGraphicCollection extends GraphicCollection {
      * @param cdata Color data
      * @param ls Legend scheme
      */
-    public Line2DGraphicCollection(List<Array> data, List<Array> cData, LegendScheme ls) {
+    public LineGraphicCollection(List<Array> data, List<Array> cData, LegendScheme ls) {
         this.legendScheme = ls;
         this.setSingleLegend(false);
         updateGraphics(data, cData, ls);
@@ -98,7 +99,7 @@ public class Line2DGraphicCollection extends GraphicCollection {
                 x = array.section(origin, shape);
                 origin = new int[]{0, 1};
                 y = array.section(origin, shape);
-                this.add(new Line2DGraphic(x, y, lineBreak));
+                this.add(new LineGraphic(x, y, lineBreak));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,7 +124,7 @@ public class Line2DGraphicCollection extends GraphicCollection {
                 if (i >= lineBreaks.size()) {
                     i = 0;
                 }
-                this.add(new Line2DGraphic(x, y, lineBreaks.get(i)));
+                this.add(new LineGraphic(x, y, lineBreaks.get(i)));
                 i += 1;
             }
         } catch (Exception e) {
@@ -146,7 +147,7 @@ public class Line2DGraphicCollection extends GraphicCollection {
                 x = array.section(origin, shape);
                 origin = new int[]{0, 1};
                 y = array.section(origin, shape);
-                this.add(new Line2DGraphic(x, y, cData.get(i), ls));
+                this.add(new LineGraphic(x, y, cData.get(i), ls));
                 i += 1;
             }
         } catch (Exception e) {
@@ -172,7 +173,7 @@ public class Line2DGraphicCollection extends GraphicCollection {
                 y = array.section(origin, shape);
                 origin = new int[]{0, i};
                 c = cData.section(origin, shape);
-                this.add(new Line2DGraphic(x, y, c, ls));
+                this.add(new LineGraphic(x, y, c, ls));
                 i += 1;
             }
         } catch (Exception e) {

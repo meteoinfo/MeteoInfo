@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.map.forms;
 
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geo.mapview.MapView;
 import javax.swing.JOptionPane;
 

@@ -22,7 +22,7 @@
  import java.util.logging.Level;
  import java.util.logging.Logger;
 
- import org.meteoinfo.common.PointZ;
+ import org.meteoinfo.geometry.Coordinate;
  import org.meteoinfo.common.util.JDateUtil;
  import org.meteoinfo.data.dimarray.Dimension;
  import org.meteoinfo.data.dimarray.DimensionType;
@@ -415,7 +415,7 @@
              String[] dataArray;
              //
              int TrajIdx = -1;
-             PointZ aPoint;
+             Coordinate aPoint;
              sr.readLine();
              aLine = sr.readLine();
              while (aLine != null) {
@@ -437,9 +437,9 @@
                              List<Object> dList = new ArrayList<>();
                              LocalDateTime tt = LocalDateTime.of(Integer.parseInt(dataArray[0]), Integer.parseInt(dataArray[1]),
                                      Integer.parseInt(dataArray[2]), Integer.parseInt(dataArray[3]), 0, 0);
-                             aPoint = new PointZ();
-                             aPoint.X = Double.parseDouble(dataArray[5]);
-                             aPoint.Y = Double.parseDouble(dataArray[6]);
+                             aPoint = new Coordinate();
+                             aPoint.x = Double.parseDouble(dataArray[5]);
+                             aPoint.y = Double.parseDouble(dataArray[6]);
                              dList.add(aPoint);
                              dList.add(tt);
                              dList.add(Double.parseDouble(dataArray[7]));

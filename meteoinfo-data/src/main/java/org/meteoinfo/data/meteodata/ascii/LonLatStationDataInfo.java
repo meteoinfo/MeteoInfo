@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.data.meteodata.ascii;
 
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.data.StationData;

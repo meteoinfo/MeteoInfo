@@ -19,7 +19,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.meteoinfo.common.DataConvert;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.MIMath;
 //import org.meteoinfo.geoprocess.analysis.InterpolationSetting;
 
@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 //import org.meteoinfo.geoprocess.GeoComputation;
+import org.meteoinfo.geometry.GeometryUtil;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.projection.Reproject;
@@ -216,7 +217,7 @@ import org.meteoinfo.projection.Reproject;
       * @return Result station data
       */
      public StationData add(StationData bStData) {
-         if (!MIMath.isExtentCross(this.dataExtent, bStData.dataExtent)) {
+         if (!GeometryUtil.isExtentCross(this.dataExtent, bStData.dataExtent)) {
              return null;
          }
 
@@ -286,7 +287,7 @@ import org.meteoinfo.projection.Reproject;
       * @return Result station data
       */
      public StationData sub(StationData bStData) {
-         if (!MIMath.isExtentCross(this.dataExtent, bStData.dataExtent)) {
+         if (!GeometryUtil.isExtentCross(this.dataExtent, bStData.dataExtent)) {
              return null;
          }
 
@@ -354,7 +355,7 @@ import org.meteoinfo.projection.Reproject;
       * @return Result station data
       */
      public StationData mul(StationData bStData) {
-         if (!MIMath.isExtentCross(this.dataExtent, bStData.dataExtent)) {
+         if (!GeometryUtil.isExtentCross(this.dataExtent, bStData.dataExtent)) {
              return null;
          }
 
@@ -422,7 +423,7 @@ import org.meteoinfo.projection.Reproject;
       * @return Result station data
       */
      public StationData div(StationData bStData) {
-         if (!MIMath.isExtentCross(this.dataExtent, bStData.dataExtent)) {
+         if (!GeometryUtil.isExtentCross(this.dataExtent, bStData.dataExtent)) {
              return null;
          }
 

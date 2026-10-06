@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.graphic;
 
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.data.mapdata.webmap.*;
 import org.meteoinfo.data.mapdata.webmap.empty.EmptyTileFactory;
 

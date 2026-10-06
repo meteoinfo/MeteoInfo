@@ -14,7 +14,7 @@
 package org.meteoinfo.projection.info;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
@@ -77,12 +77,12 @@ public class Mercator extends ProjectionInfo {
         double maxLon = cenLon + 180 - epsilon;
         double minLat = -this.cutoff;
         double maxLat = this.cutoff;
-        List<PointZ> points = new ArrayList<>();
-        points.add(new PointZ(minLon, minLat));
-        points.add(new PointZ(maxLon, minLat));
-        points.add(new PointZ(maxLon, maxLat));
-        points.add(new PointZ(minLon, maxLat));
-        points.add(new PointZ(minLon, minLat));
+        List<Coordinate> points = new ArrayList<>();
+        points.add(new Coordinate(minLon, minLat));
+        points.add(new Coordinate(maxLon, minLat));
+        points.add(new Coordinate(maxLon, maxLat));
+        points.add(new Coordinate(minLon, maxLat));
+        points.add(new Coordinate(minLon, minLat));
         PolygonShape ps = new PolygonShape();
         ps.setPoints(points);
         this.boundary = ProjectionUtil.projectPolygonShape(ps, KnownCoordinateSystems.geographic.world.WGS1984, this);

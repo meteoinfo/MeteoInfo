@@ -11,7 +11,7 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
  * General Public License for more details.
  */
-package org.meteoinfo.common;
+package org.meteoinfo.geometry;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
@@ -172,8 +172,18 @@ public class Extent implements Cloneable {
                 bET.maxX < minX || bET.maxY < minY || bET.maxZ < minZ);
     }
 
-    public boolean contains(PointZ p) {
-        return (p.X >= minX && p.X <= maxX && p.Y >= minY && p.Y <= maxY && p.Z >= minZ && p.Z <= maxZ);
+    /**
+     * Tests if the extent contains the point
+     *
+     * @param p The point
+     * @return Contains or not
+     */
+    public boolean contains(Coordinate p) {
+        if (p.is2D()) {
+            return (p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY);
+        } else {
+            return (p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY && p.z >= minZ && p.z <= maxZ);
+        }
     }
 
     /**
@@ -199,8 +209,8 @@ public class Extent implements Cloneable {
      *
      * @return Center point
      */
-    public PointZ getCenterPoint() {
-        return new PointZ((maxX - minX) / 2 + minX, (maxY - minY) / 2 + minY, (maxZ - minZ) / 2 + minZ);
+    public Coordinate getCenterPoint() {
+        return new Coordinate((maxX - minX) / 2 + minX, (maxY - minY) / 2 + minY, (maxZ - minZ) / 2 + minZ);
     }
 
     /**

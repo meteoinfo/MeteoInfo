@@ -1,9 +1,9 @@
 package org.meteoinfo.chart.geo;
 
 import org.meteoinfo.chart.graphic.GraphicCollection3D;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.chart.graphic.Graphic;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.PolylineShape;
 import org.meteoinfo.projection.ProjectionInfo;
 
@@ -40,10 +40,10 @@ public class MapGridLine3D extends MapGridLine {
         double delta = this.lonLatExtent.getHeight() / (this.nPoints - 1);
         double z = this.extent.minZ;
         for (double lon : this.longitudeLocations) {
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
             double lat = latMin;
             while (lat <= latMax) {
-                points.add(new PointZ(lon, lat, z));
+                points.add(new Coordinate(lon, lat, z));
                 lat += delta;
             }
             PolylineShape line = new PolylineShape();
@@ -69,10 +69,10 @@ public class MapGridLine3D extends MapGridLine {
         double delta = (lonMax - lonMin) / (this.nPoints - 1);
         double z = this.extent.minZ;
         for (double lat : this.latitudeLocations) {
-            List<PointZ> points = new ArrayList<>();
+            List<Coordinate> points = new ArrayList<>();
             double lon = lonMin;
             while (lon <= lonMax) {
-                points.add(new PointZ(lon, lat, z));
+                points.add(new Coordinate(lon, lat, z));
                 lon += delta;
             }
             PolylineShape line = new PolylineShape();
@@ -84,8 +84,8 @@ public class MapGridLine3D extends MapGridLine {
             }
 
             if (graphic.getShape().getPartNum() > 1) {
-                points = (List<PointZ>) ((PolylineShape) graphic.getShape()).getPolylines().get(0).getPointList();
-                List<PointZ> points1 = (List<PointZ>) ((PolylineShape) graphic.getShape()).getPolylines().
+                points = (List<Coordinate>) ((PolylineShape) graphic.getShape()).getPolylines().get(0).getPointList();
+                List<Coordinate> points1 = (List<Coordinate>) ((PolylineShape) graphic.getShape()).getPolylines().
                         get(1).getPointList();
                 Collections.reverse(points1);
                 points.addAll(points1);

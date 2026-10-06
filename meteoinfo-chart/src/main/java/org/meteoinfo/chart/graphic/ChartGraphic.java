@@ -6,7 +6,7 @@
 package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.geometry.legend.ChartBreak;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.PointShape;
 import org.w3c.dom.*;
 
@@ -17,7 +17,7 @@ import org.w3c.dom.*;
 public class ChartGraphic extends Graphic {
 
     // <editor-fold desc="Variables">
-    private PointZ startPosition;
+    private Coordinate startPosition;
 
     // </editor-fold>
     // <editor-fold desc="Constructor">
@@ -36,7 +36,7 @@ public class ChartGraphic extends Graphic {
      */
     public ChartGraphic(PointShape shape, ChartBreak legend) {
         super(shape, legend);
-        startPosition = (PointZ) shape.getPoint().clone();
+        startPosition = (Coordinate) shape.getPoint().clone();
     }
 
     // </editor-fold>
@@ -46,7 +46,7 @@ public class ChartGraphic extends Graphic {
      *
      * @return Start position
      */
-    public PointZ getStartPosition() {
+    public Coordinate getStartPosition() {
         return startPosition;
     }
 
@@ -55,7 +55,7 @@ public class ChartGraphic extends Graphic {
      *
      * @param value Start position
      */
-    public void setStartPosition(PointZ value) {
+    public void setStartPosition(Coordinate value) {
         startPosition = value;
     }
 
@@ -66,7 +66,7 @@ public class ChartGraphic extends Graphic {
      */
     public void setShape(PointShape aShape) {
         super.setShape(aShape);
-        startPosition = (PointZ) aShape.getPoint().clone();
+        startPosition = (Coordinate) aShape.getPoint().clone();
     }
 
     // </editor-fold>
@@ -87,14 +87,14 @@ public class ChartGraphic extends Graphic {
         parent.appendChild(graphic);
     }
 
-    private void addStartPosition(Document doc, Element parent, PointZ pos) {
+    private void addStartPosition(Document doc, Element parent, Coordinate pos) {
         Element startPos = doc.createElement("StartPosition");
 
         Attr xAttr = doc.createAttribute("X");
         Attr yAttr = doc.createAttribute("Y");
 
-        xAttr.setValue(String.valueOf(pos.X));
-        yAttr.setValue(String.valueOf(pos.Y));
+        xAttr.setValue(String.valueOf(pos.x));
+        yAttr.setValue(String.valueOf(pos.y));
 
         startPos.setAttributeNode(xAttr);
         startPos.setAttributeNode(yAttr);
@@ -117,19 +117,19 @@ public class ChartGraphic extends Graphic {
 
         Node startPos = graphicNode.getElementsByTagName("StartPosition").item(0);
         if (startPos != null) {
-            PointZ sP = this.loadStartPosition(startPos);
+            Coordinate sP = this.loadStartPosition(startPos);
             if (sP != null) {
                 this.startPosition = sP;
             }
         }
     }
 
-    private PointZ loadStartPosition(Node startPosNode) {
-        PointZ sP = null;
+    private Coordinate loadStartPosition(Node startPosNode) {
+        Coordinate sP = null;
         try {
             double x = Double.parseDouble(startPosNode.getAttributes().getNamedItem("X").getNodeValue());
             double y = Double.parseDouble(startPosNode.getAttributes().getNamedItem("Y").getNodeValue());
-            sP = new PointZ(x, y);
+            sP = new Coordinate(x, y);
         } catch (DOMException e) {
         } catch (NumberFormatException e) {
         }

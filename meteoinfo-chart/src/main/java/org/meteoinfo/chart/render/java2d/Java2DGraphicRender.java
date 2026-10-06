@@ -2,10 +2,10 @@ package org.meteoinfo.chart.render.java2d;
 
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.render.GraphicRender;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.geometry.geoprocess.GeometryUtil;
+import org.meteoinfo.geometry.GeometryUtil;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.shape.ArcShape;
 import org.meteoinfo.geometry.shape.EllipseShape;
@@ -26,7 +26,7 @@ public class Java2DGraphicRender implements GraphicRender {
      */
     public static void drawGraphic(PointF[] points, Graphic aGraphic, Graphics2D g, boolean isEditingVertices) {
         Rectangle rect = new Rectangle();
-        Extent aExtent = MIMath.getPointFsExtent(points);
+        Extent aExtent = org.meteoinfo.geometry.GeometryUtil.getPointFsExtent(points);
         rect.x = (int) aExtent.minX;
         rect.y = (int) aExtent.minY;
         rect.width = (int) aExtent.getWidth();

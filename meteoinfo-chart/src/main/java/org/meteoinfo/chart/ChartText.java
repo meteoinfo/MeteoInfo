@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.XAlign;
 import org.meteoinfo.common.YAlign;
 import org.meteoinfo.render.java2d.Draw;

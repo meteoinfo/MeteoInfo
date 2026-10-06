@@ -13,10 +13,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.undo.AbstractUndoableEdit;
 
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.chart.graphic.Graphic;
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.shape.PolygonShape;
 import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.table.DataRow;
@@ -266,11 +266,11 @@ public class MapViewUndoRedo {
     public class AddRingEdit extends FeatureUndoableEdit {
         MapView mapView;
         PolygonShape shape;
-        List<PointZ> points;
+        List<Coordinate> points;
         int polyIdx;
         int holeIdx;
         
-        public AddRingEdit(MapView mapView, PolygonShape shape, List<PointZ> points,
+        public AddRingEdit(MapView mapView, PolygonShape shape, List<Coordinate> points,
                 int polygonIdx, int holeIdx){
             this.mapView = mapView;
             this.shape = shape;
@@ -354,11 +354,11 @@ public class MapViewUndoRedo {
     public class RemoveRingEdit extends FeatureUndoableEdit {
         MapView mapView;
         PolygonShape shape;
-        List<PointZ> points;
+        List<Coordinate> points;
         int polyIdx;
         int holeIdx;
         
-        public RemoveRingEdit(MapView mapView, PolygonShape shape, List<PointZ> hole, int polygonIdx, int holeIdx){
+        public RemoveRingEdit(MapView mapView, PolygonShape shape, List<Coordinate> hole, int polygonIdx, int holeIdx){
             this.mapView = mapView;
             this.shape = shape;
             this.points = hole;
@@ -527,8 +527,8 @@ public class MapViewUndoRedo {
             this.verticeIdx = vIdx;
             this.newX = newX;
             this.newY = newY;
-            this.oldX = shape.getPoints().get(vIdx).X;
-            this.oldY = shape.getPoints().get(vIdx).Y;
+            this.oldX = shape.getPoints().get(vIdx).x;
+            this.oldY = shape.getPoints().get(vIdx).y;
         }
         
         @Override
@@ -555,9 +555,9 @@ public class MapViewUndoRedo {
         MapView mapView;
         Shape shape;
         int verticeIdx;
-        PointZ vertice;
+        Coordinate vertice;
         
-        public AddFeatureVerticeEdit(MapView mapView, Shape shape, int vIdx, PointZ vertice){
+        public AddFeatureVerticeEdit(MapView mapView, Shape shape, int vIdx, Coordinate vertice){
             this.mapView = mapView;
             this.shape = shape;            
             this.verticeIdx = vIdx;
@@ -588,7 +588,7 @@ public class MapViewUndoRedo {
         MapView mapView;
         Shape shape;
         int verticeIdx;
-        PointZ vertice;
+        Coordinate vertice;
         
         public RemoveFeatureVerticeEdit(MapView mapView, Shape shape, int vIdx){
             this.mapView = mapView;
@@ -752,8 +752,8 @@ public class MapViewUndoRedo {
             this.verticeIdx = vIdx;
             this.newX = newX;
             this.newY = newY;
-            this.oldX = graphic.getShape().getPoints().get(vIdx).X;
-            this.oldY = graphic.getShape().getPoints().get(vIdx).Y;
+            this.oldX = graphic.getShape().getPoints().get(vIdx).x;
+            this.oldY = graphic.getShape().getPoints().get(vIdx).y;
         }
         
         @Override
@@ -780,9 +780,9 @@ public class MapViewUndoRedo {
         MapView mapView;
         Graphic graphic;
         int verticeIdx;
-        PointZ vertice;
+        Coordinate vertice;
         
-        public AddGraphicVerticeEdit(MapView mapView, Graphic graphic, int vIdx, PointZ vertice){
+        public AddGraphicVerticeEdit(MapView mapView, Graphic graphic, int vIdx, Coordinate vertice){
             this.mapView = mapView;
             this.graphic = graphic;            
             this.verticeIdx = vIdx;
@@ -813,7 +813,7 @@ public class MapViewUndoRedo {
         MapView mapView;
         Graphic graphic;
         int verticeIdx;
-        PointZ vertice;
+        Coordinate vertice;
         
         public RemoveGraphicVerticeEdit(MapView mapView, Graphic graphic, int vIdx){
             this.mapView = mapView;
@@ -878,10 +878,10 @@ public class MapViewUndoRedo {
     class SmoothGraphicEdit extends AbstractUndoableEdit {
         MapView mapView;
         Graphic graphic;
-        List<PointZ> oldPoints;
-        List<PointZ> newPoints;
+        List<Coordinate> oldPoints;
+        List<Coordinate> newPoints;
         
-        public SmoothGraphicEdit(MapView mapView, Graphic graphic, List<PointZ> points){
+        public SmoothGraphicEdit(MapView mapView, Graphic graphic, List<Coordinate> points){
             this.mapView = mapView;
             this.graphic = graphic;
             this.newPoints = points;
@@ -911,10 +911,10 @@ public class MapViewUndoRedo {
     class SmoothFeatureEdit extends AbstractUndoableEdit {
         MapView mapView;
         Shape shape;
-        List<PointZ> oldPoints;
-        List<PointZ> newPoints;
+        List<Coordinate> oldPoints;
+        List<Coordinate> newPoints;
         
-        public SmoothFeatureEdit(MapView mapView, Shape shape, List<PointZ> points){
+        public SmoothFeatureEdit(MapView mapView, Shape shape, List<Coordinate> points){
             this.mapView = mapView;
             this.shape = shape;
             this.newPoints = points;

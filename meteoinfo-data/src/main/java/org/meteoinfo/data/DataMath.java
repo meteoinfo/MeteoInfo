@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.meteoinfo.common.MIMath;
+import org.meteoinfo.geometry.GeometryUtil;
 import org.meteoinfo.table.ColumnData;
 
 /**
@@ -1039,7 +1040,7 @@ public abstract class DataMath {
      * @return Magnitude station data
      */
     public static StationData magnitude(StationData uData, StationData vData) {
-        if (!MIMath.isExtentCross(uData.dataExtent, vData.dataExtent)) {
+        if (!GeometryUtil.isExtentCross(uData.dataExtent, vData.dataExtent)) {
             return null;
         }
 

@@ -1,9 +1,8 @@
 package org.meteoinfo.chart.transform;
 
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
 
 public class IdentityTransform extends Affine2D {
 
@@ -12,7 +11,7 @@ public class IdentityTransform extends Affine2D {
     }
 
     @Override
-    public PointZ transform(PointZ p) {
+    public Coordinate transform(Coordinate p) {
         return p;
     }
 }

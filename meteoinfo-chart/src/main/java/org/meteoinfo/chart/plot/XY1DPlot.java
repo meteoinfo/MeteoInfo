@@ -8,7 +8,7 @@ package org.meteoinfo.chart.plot;
 import org.meteoinfo.chart.ChartLegend;
 import org.meteoinfo.chart.Location;
 import org.meteoinfo.chart.axis.TimeAxis;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.common.colors.ColorUtil;

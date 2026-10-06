@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.graphic;
 
-import org.meteoinfo.common.PointZ;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.ColorBreakCollection;
 import org.meteoinfo.geometry.legend.LegendScheme;
@@ -12,7 +12,7 @@ import org.meteoinfo.ndarray.IndexIterator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Line2DGraphic extends Graphic {
+public class LineGraphic extends Graphic {
     private Array xData;
     private Array yData;
     private Array cData;
@@ -25,7 +25,7 @@ public class Line2DGraphic extends Graphic {
      * @param polylineShape Polyline shape
      * @param polylineBreak Polyline break
      */
-    public Line2DGraphic(PolylineShape polylineShape, PolylineBreak polylineBreak) {
+    public LineGraphic(PolylineShape polylineShape, PolylineBreak polylineBreak) {
         this.shape = polylineShape;
         this.legendBreak = polylineBreak;
     }
@@ -36,7 +36,7 @@ public class Line2DGraphic extends Graphic {
      * @param yData Y data
      * @param polylineBreak Polyline break
      */
-    public Line2DGraphic(Array xData, Array yData, PolylineBreak polylineBreak) {
+    public LineGraphic(Array xData, Array yData, PolylineBreak polylineBreak) {
         this.xData = xData;
         this.yData = yData;
 
@@ -52,7 +52,7 @@ public class Line2DGraphic extends Graphic {
      * @param xData X data
      * @param yData Y data
      */
-    public Line2DGraphic(Array xData, Array yData) {
+    public LineGraphic(Array xData, Array yData) {
         this(xData, yData, new PolylineBreak());
     }
 
@@ -63,7 +63,7 @@ public class Line2DGraphic extends Graphic {
      * @param cData Color data
      * @param legendScheme Legend scheme
      */
-    public Line2DGraphic(Array xData, Array yData, Array cData, LegendScheme legendScheme) {
+    public LineGraphic(Array xData, Array yData, Array cData, LegendScheme legendScheme) {
         this.xData = xData;
         this.yData = yData;
         this.cData = cData;
@@ -72,7 +72,7 @@ public class Line2DGraphic extends Graphic {
     }
 
     protected void updateShape() {
-        List<PointZ> points = new ArrayList<>();
+        List<Coordinate> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
         double x, y;
@@ -82,7 +82,7 @@ public class Line2DGraphic extends Graphic {
             if (Double.isNaN(x) || Double.isNaN(y)) {
                 continue;
             }
-            points.add(new PointZ(x, y));
+            points.add(new Coordinate(x, y));
         }
         if (this.shape == null) {
             this.shape = new PolylineShape();
@@ -92,7 +92,7 @@ public class Line2DGraphic extends Graphic {
 
     protected void updateShapeLegend(LegendScheme legendScheme) {
         this.legendScheme = legendScheme;
-        List<PointZ> points = new ArrayList<>();
+        List<Coordinate> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
         IndexIterator cIter = this.cData.getIndexIterator();
@@ -106,7 +106,7 @@ public class Line2DGraphic extends Graphic {
             if (Double.isNaN(x) || Double.isNaN(y)) {
                 continue;
             }
-            points.add(new PointZ(x, y));
+            points.add(new Coordinate(x, y));
             cb = legendScheme.findLegendBreakAlways(c);
             cbc.add(cb);
         }
@@ -121,7 +121,7 @@ public class Line2DGraphic extends Graphic {
 
     protected void updateShapeLegend(List<ColorBreak> cbs) {
         this.legendScheme = new LegendScheme(cbs);
-        List<PointZ> points = new ArrayList<>();
+        List<Coordinate> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
         ColorBreakCollection cbc = new ColorBreakCollection();
@@ -135,7 +135,7 @@ public class Line2DGraphic extends Graphic {
             if (Double.isNaN(x) || Double.isNaN(y)) {
                 continue;
             }
-            points.add(new PointZ(x, y));
+            points.add(new Coordinate(x, y));
             cbc.add(cb);
             i += 1;
         }

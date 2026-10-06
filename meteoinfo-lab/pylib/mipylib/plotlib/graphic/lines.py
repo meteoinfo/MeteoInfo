@@ -1,4 +1,4 @@
-from org.meteoinfo.chart.graphic import Line2DGraphic
+from org.meteoinfo.chart.graphic import LineGraphic
 from org.meteoinfo.geometry.legend import PolylineBreak
 
 from .. import plotutil
@@ -6,9 +6,9 @@ from artist import Artist
 import mipylib.numeric as np
 
 
-__all__ = ['Line2D']
+__all__ = ['Line']
 
-class Line2D(Line2DGraphic, Artist):
+class Line(LineGraphic, Artist):
     """
     A line - the line can have both a solid linestyle connecting all
     the vertices, and a marker at each vertex.  Additionally, the
@@ -33,9 +33,9 @@ class Line2D(Line2DGraphic, Artist):
         self._cdata = np.asarray(cdata)
 
         if cdata is None:
-            Line2DGraphic.__init__(self, self._x._array, self._y._array, legend)
+            LineGraphic.__init__(self, self._x._array, self._y._array, legend)
         else:
-            Line2DGraphic.__init__(self, self._x._array, self._y._array, self._cdata._array, legend)
+            LineGraphic.__init__(self, self._x._array, self._y._array, self._cdata._array, legend)
 
         if curve:
             self.setCurve(curve)

@@ -1,22 +1,22 @@
 package org.meteoinfo.chart.graphic;
 
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.legend.PointBreak;
 import org.meteoinfo.geometry.shape.PointShape;
 
-public class Point2DGraphic extends Graphic {
+public class PointGraphic extends Graphic {
 
-    double x, y;
+    private Coordinate coordinate;
 
     /**
      * Constructor
      * @param pointShape Point shape
      * @param pointBreak Point break
      */
-    public Point2DGraphic(PointShape pointShape, PointBreak pointBreak) {
+    public PointGraphic(PointShape pointShape, PointBreak pointBreak) {
         this.shape = pointShape;
         this.legendBreak = pointBreak;
-        this.x = pointShape.getPoint().X;
-        this.y = pointShape.getPoint().Y;
+        this.coordinate = pointShape.getPoint();
     }
 
     /**
@@ -24,7 +24,7 @@ public class Point2DGraphic extends Graphic {
      * @return X
      */
     public double getX() {
-        return this.x;
+        return this.coordinate.x;
     }
 
     /**
@@ -32,8 +32,7 @@ public class Point2DGraphic extends Graphic {
      * @param value X
      */
     public void setX(double value) {
-        this.x = value;
-        ((PointShape) this.shape).getPoint().X = value;
+        this.coordinate.x = value;
     }
 
     /**
@@ -41,7 +40,7 @@ public class Point2DGraphic extends Graphic {
      * @return Y
      */
     public double getY() {
-        return this.y;
+        return this.coordinate.y;
     }
 
     /**
@@ -49,7 +48,22 @@ public class Point2DGraphic extends Graphic {
      * @param value Y
      */
     public void setY(double value) {
-        this.y = value;
-        ((PointShape) this.shape).getPoint().Y = value;
+        this.coordinate.y = value;
+    }
+
+    /**
+     * Get z
+     * @return Z
+     */
+    public double getZ() {
+        return this.coordinate.z;
+    }
+
+    /**
+     * Set z
+     * @param value Z
+     */
+    public void setZ(double value) {
+        this.coordinate.z = value;
     }
 }

@@ -14,7 +14,7 @@
 package org.meteoinfo.geo.legend;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import org.meteoinfo.common.Extent;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.geo.mapdata.MapDataManage;

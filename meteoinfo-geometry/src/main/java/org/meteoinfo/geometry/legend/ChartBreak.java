@@ -13,7 +13,7 @@
  */
 package org.meteoinfo.geometry.legend;
 
- import org.meteoinfo.common.Extent;
+ import org.meteoinfo.geometry.Extent;
  import org.meteoinfo.common.PointF;
  import org.meteoinfo.geometry.shape.ShapeTypes;
 

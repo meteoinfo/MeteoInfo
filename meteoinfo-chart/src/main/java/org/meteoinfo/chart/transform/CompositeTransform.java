@@ -32,7 +32,7 @@ public class CompositeTransform extends Transform {
 
     @Override
     public Coordinate transform(Coordinate p) {
-        Coordinate res = p;
+        Coordinate res = p.copy();
         for (Transform t : children) {
             res = t.transform(res);
         }

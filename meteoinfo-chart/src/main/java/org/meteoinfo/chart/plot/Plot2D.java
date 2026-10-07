@@ -483,7 +483,7 @@ public class Plot2D extends AbstractPlot2D {
     void drawPoint(Graphics2D g, Graphic graphic, PointBreak aPB) {
         PointShape pointShape = (PointShape) graphic.getShape();
         Coordinate p = pointShape.getPoint();
-        Coordinate sp = graphic.getTransform().transform(p);
+        Coordinate sp = this.transData.transform(p);
         PointF pf = sp.toPointF();
         RenderingHints rend = g.getRenderingHints();
         boolean rc = false;

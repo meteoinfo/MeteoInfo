@@ -38,6 +38,7 @@ public class Extent implements Cloneable {
      * Constructor
      */
     public Extent() {
+        this(0, 1, 0, 1);
     }
 
     /**
@@ -64,6 +65,9 @@ public class Extent implements Cloneable {
             minY = yMin;
             maxY = yMax;
         }
+
+        minZ = Double.NaN;
+        maxZ = Double.NaN;
     }
 
     /**
@@ -121,10 +125,7 @@ public class Extent implements Cloneable {
      * @param rec The rectangle
      */
     public Extent(Rectangle2D rec) {
-        this.minX = rec.getMinX();
-        this.maxX = rec.getMaxX();
-        this.minY = rec.getMinY();
-        this.maxY = rec.getMaxY();
+        this(rec.getMinX(), rec.getMaxX(), rec.getMinY(), rec.getMaxY());
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -144,6 +145,14 @@ public class Extent implements Cloneable {
     public double getZLength() {
         return this.maxZ - this.minZ;
     }
+
+    /**
+     * Check whether the extent is 2D or not
+     * @return 2D or not
+     */
+    public boolean is2D() {
+        return Double.isNaN(minZ) || Double.isNaN(maxZ);
+    }
     // </editor-fold>
     // <editor-fold desc="Methods">
 
@@ -154,10 +163,12 @@ public class Extent implements Cloneable {
      * @return is included
      */
     public boolean include(Extent bExtent) {
-        if (minX <= bExtent.minX && maxX >= bExtent.maxX && minY <= bExtent.minY && maxY >= bExtent.maxY) {
-            return true;
+        if (this.is2D() || bExtent.is2D()) {
+            return minX <= bExtent.minX && maxX >= bExtent.maxX && minY <= bExtent.minY &&
+                    maxY >= bExtent.maxY;
         } else {
-            return false;
+            return minX <= bExtent.minX && maxX >= bExtent.maxX && minY <= bExtent.minY &&
+                    maxY >= bExtent.maxY && minZ <= bExtent.minZ && maxZ >= bExtent.maxZ;
         }
     }
 
@@ -168,6 +179,10 @@ public class Extent implements Cloneable {
      * @return Boolean
      */
     public boolean intersects(Extent bET) {
+        if (this.is2D() || bET.is2D()) {
+            return !(maxX < bET.minX || maxY < bET.minY ||
+                    bET.maxX < minX || bET.maxY < minY);
+        }
         return !(maxX < bET.minX || maxY < bET.minY || maxZ < bET.minZ ||
                 bET.maxX < minX || bET.maxY < minY || bET.maxZ < minZ);
     }
@@ -179,7 +194,7 @@ public class Extent implements Cloneable {
      * @return Contains or not
      */
     public boolean contains(Coordinate p) {
-        if (p.is2D()) {
+        if (this.is2D() || p.is2D()) {
             return (p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY);
         } else {
             return (p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY && p.z >= minZ && p.z <= maxZ);

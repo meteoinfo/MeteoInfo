@@ -14,7 +14,7 @@ import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.geo.legend.FrmLegendBreaks;
 import org.meteoinfo.geo.legend.LegendManage;
 import org.meteoinfo.geo.legend.MapFrame;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 import com.l2fprod.common.model.DefaultBeanInfoResolver;
 import com.l2fprod.common.propertysheet.PropertySheet;
 import com.l2fprod.common.propertysheet.PropertySheetPanel;
@@ -34,7 +34,7 @@ import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.Geometry;
 import org.meteoinfo.ui.CheckBoxListEntry;
 import org.xml.sax.SAXException;
 
@@ -746,11 +746,11 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                 switch (aLT) {
                     case UNIQUE_VALUE:
                         List<Number> values = ((RasterLayer) _mapLayer).getGridData().getUniqueValues();
-                        this._legendScheme = LegendManage.createUniqValueLegendScheme(values, ShapeTypes.IMAGE);
+                        this._legendScheme = LegendManage.createUniqValueLegendScheme(values, GeometryType.IMAGE);
                         break;
                     case GRADUATED_COLOR:
                         if (this._legendScheme == null || this._legendScheme.getLegendType() != LegendType.GRADUATED_COLOR)
-                            this._legendScheme = LegendManage.createLegendSchemeFromGridData(((RasterLayer) _mapLayer).getGridData(), LegendType.GRADUATED_COLOR, ShapeTypes.POLYGON);
+                            this._legendScheme = LegendManage.createLegendSchemeFromGridData(((RasterLayer) _mapLayer).getGridData(), LegendType.GRADUATED_COLOR, GeometryType.POLYGON);
                         break;
                 }
                 this.legendView1.setLegendScheme(_legendScheme);
@@ -845,7 +845,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
     private void jButton_AddBreakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_AddBreakActionPerformed
         // TODO add your handling code here:
         switch (_legendScheme.getShapeType()) {
-            case POLYLINE:
+            case LINESTRING:
                 PolylineBreak aPLB = new PolylineBreak();
                 aPLB.setDrawPolyline(true);
                 aPLB.setWidth(0.1F);
@@ -911,7 +911,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
         int oldIdx, newIdx;
         oldIdx = legendView1.getSelectedRows().get(0);
         if (oldIdx > 0) {
-            if (_legendScheme.getShapeType() == ShapeTypes.POINT) {
+            if (_legendScheme.getShapeType() == GeometryType.POINT) {
                 PointBreak aPB = (PointBreak) _legendScheme.getLegendBreaks().get(oldIdx);
                 if (aPB.isNoData()) {
                     return;
@@ -931,7 +931,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
         int oldIdx, newIdx, endIdx;
         oldIdx = legendView1.getSelectedRows().get(0);
         endIdx = legendView1.getLegendScheme().getBreakNum() - 1;
-        if (_legendScheme.getShapeType() == ShapeTypes.POINT) {
+        if (_legendScheme.getShapeType() == GeometryType.POINT) {
             PointBreak aPB = (PointBreak) _legendScheme.getLegendBreaks().get(oldIdx);
             if (aPB.isNoData()) {
                 endIdx = endIdx - 1;
@@ -1094,7 +1094,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
     private void createLegendScheme(LegendType aLT, String fieldName) {
         if (_ifCreateLegendScheme) {
             double min, max;
-            ShapeTypes aST = _legendScheme.getShapeType();
+            GeometryType aST = _legendScheme.getShapeType();
 
             min = _legendScheme.getMinValue();
             max = _legendScheme.getMaxValue();
@@ -1105,7 +1105,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                         case POINT:
                             aColor = Color.black;
                             break;
-                        case POLYLINE:
+                        case LINESTRING:
                             aColor = Color.black;
                             break;
                         case POLYGON:
@@ -1114,7 +1114,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                             break;
                     }
                     float size = 1.0F;
-                    if (_legendScheme.getShapeType() == ShapeTypes.POINT) {
+                    if (_legendScheme.getShapeType() == GeometryType.POINT) {
                         size = 5;
                     }
                     _legendScheme = LegendManage.createSingleSymbolLegendScheme(_legendScheme.getShapeType(), aColor,
@@ -1185,14 +1185,14 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                     aLayer = (VectorLayer) _mapLayer;
                     List<Double> S  = new ArrayList<>();
                     if (fieldName.equals("Geometry_M")){
-                        for (Shape shape : aLayer.getShapes()){
-                            for (Coordinate p : (List<Coordinate>)shape.getPoints()){
+                        for (Geometry shape : aLayer.getShapes()){
+                            for (Coordinate p : (List<Coordinate>)shape.getCoordinates()){
                                 S.add(p.m);
                             }
                         }
                     } else if (fieldName.equals("Geometry_Z")){
-                        for (Shape shape : aLayer.getShapes()){
-                            for (Coordinate p : (List<Coordinate>)shape.getPoints()){
+                        for (Geometry shape : aLayer.getShapes()){
+                            for (Coordinate p : (List<Coordinate>)shape.getCoordinates()){
                                 S.add(p.z);
                             }
                         }

@@ -15,10 +15,13 @@ package org.meteoinfo.render.java2d;
 
 import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.LineString;
+import org.meteoinfo.geometry.Polygon;
+import org.meteoinfo.geometry.MultiPolygon;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.geoprocess.Spline;
 import org.meteoinfo.common.colors.ColorUtil;
-import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.geometry.special.*;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -489,7 +492,7 @@ public class Draw {
         aWB.angle = windDir;
         aWB.setValue(value);
         aWB.size = size;
-        aWB.setPoint(sPoint);
+        aWB.setCoordinate(sPoint);
         aWB.windSpeesLine.W20 = (int) (windSpeed / 20);
         aWB.windSpeesLine.W4 = (int) ((windSpeed - aWB.windSpeesLine.W20 * 20) / 4);
         aWB.windSpeesLine.W2 = (int) ((windSpeed - aWB.windSpeesLine.W20 * 20
@@ -513,10 +516,10 @@ public class Draw {
      * @param cloudCover Cloud cover
      * @return Station model shape
      */
-    public static StationModelShape calStationModel(float windDir, float windSpeed, double value,
-                                                    float size, Coordinate sPoint, int weather, int temp, int dewPoint, int pressure, int cloudCover) {
-        StationModelShape aSM = new StationModelShape();
-        aSM.setPoint(sPoint);
+    public static StationModel calStationModel(float windDir, float windSpeed, double value,
+                                               float size, Coordinate sPoint, int weather, int temp, int dewPoint, int pressure, int cloudCover) {
+        StationModel aSM = new StationModel();
+        aSM.setCoordinate(sPoint);
         aSM.setValue(value);
         aSM.size = size;
         aSM.temperature = temp;
@@ -526,7 +529,7 @@ public class Draw {
         aSM.weatherSymbol.size = size / 4 * 3;
         //sPoint.X = sPoint.X - size / 2;
         Coordinate aPoint = new Coordinate(sPoint.x - size / 2, sPoint.y);
-        aSM.weatherSymbol.setPoint(aPoint);
+        aSM.weatherSymbol.setCoordinate(aPoint);
         aSM.weatherSymbol.weather = weather;
         aSM.cloudCoverage.cloudCover = cloudCover;
         aSM.cloudCoverage.size = size / 4 * 3;
@@ -2336,8 +2339,8 @@ public class Draw {
      * @param size Size
      * @param cut Cut
      */
-    public static void drawStationModel(Color aColor, Color foreColor, PointF sP, StationModelShape aSM, Graphics2D g,
-            float size, float cut) {
+    public static void drawStationModel(Color aColor, Color foreColor, PointF sP, StationModel aSM, Graphics2D g,
+                                        float size, float cut) {
         PointF sPoint = new PointF(0, 0);
         g.setColor(aColor);
         Font wFont;
@@ -2586,7 +2589,7 @@ public class Draw {
      * @param pgb Polygon break
      * @param g Graphics2D
      */
-    public static void drawPolygonShape(PolygonShape pgs, PolygonBreak pgb, Graphics2D g) {
+    public static void drawPolygonShape(MultiPolygon pgs, PolygonBreak pgb, Graphics2D g) {
         for (Polygon polygon : pgs.getPolygons()) {
             drawPolygon(polygon, pgb, g);
         }
@@ -3073,7 +3076,7 @@ public class Draw {
                     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, rend);
                 }
             } else {
-                Polyline aPLine = new Polyline();
+                LineString aPLine = new LineString();
                 aPLine.setPoints(points);
                 List<double[]> pos = aPLine.getPositions(30);
                 float aSize = 16;
@@ -3313,7 +3316,7 @@ public class Draw {
                 g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, rend);
             }
         } else {
-            Polyline aPLine = new Polyline();
+            LineString aPLine = new LineString();
             aPLine.setPoints(points);
             List<double[]> pos = aPLine.getPositions(30);
             float aSize = 16;
@@ -4256,7 +4259,7 @@ public class Draw {
      * @param g Graphics2D
      * @param type Closure type
      */
-    public static void drawArc(PointF[] points, ArcShape arcShape,
+    public static void drawArc(PointF[] points, Arc arcShape,
                                PolygonBreak legend, Graphics2D g) {
         float sx = Math.min(points[0].X, points[2].X);
         float sy = Math.min(points[0].Y, points[2].Y);

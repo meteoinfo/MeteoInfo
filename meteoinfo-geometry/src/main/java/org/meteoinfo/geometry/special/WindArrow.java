@@ -1,0 +1,94 @@
+ /* Copyright 2012 Yaqiang Wang,
+ * yaqiang.wang@gmail.com
+ * 
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2.1 of the License, or (at
+ * your option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser
+ * General Public License for more details.
+ */
+package org.meteoinfo.geometry.special;
+
+ import org.meteoinfo.geometry.Geometry;
+ import org.meteoinfo.geometry.GeometryType;
+ import org.meteoinfo.geometry.Point;
+
+ /**
+ * Wind arraw class
+ *
+ * @author Yaqiang
+ */
+public class WindArrow extends Point {
+    // <editor-fold desc="Variables">
+
+    /**
+     * Size
+     */
+    public float size = 6;
+    /**
+     * Length
+     */
+    public float length = 20;
+    /**
+     * Angle
+     */
+    public double angle = 270;
+    // </editor-fold>
+    // <editor-fold desc="Constructor">
+
+    /**
+     * Constructor
+     */
+    public WindArrow() {
+
+    }
+    // </editor-fold>
+    // <editor-fold desc="Get Set Methods">
+    @Override
+    public GeometryType getGeometryType(){
+        return GeometryType.WIND_ARROW;
+    }
+    // </editor-fold>
+    // <editor-fold desc="Methods">
+
+     /**
+      * Get intersection shape
+      * @param b Other shape
+      * @return Intersection shape
+      */
+     @Override
+     public Geometry intersection(Geometry b){
+         org.locationtech.jts.geom.Geometry g1 = this.toJTSGeometry();
+         org.locationtech.jts.geom.Geometry g2 = b.toJTSGeometry();
+         org.locationtech.jts.geom.Geometry g3 = g1.intersection(g2);
+
+         if (g3.getNumPoints() < 1)
+             return null;
+         else {
+             return (WindArrow) this.clone();
+         }
+     }
+
+    /**
+     * Clone
+     *
+     * @return WindArraw object
+     */
+    @Override
+    public Object clone() {
+        WindArrow aWA = new WindArrow();
+        aWA.size = size;
+        aWA.length = length;
+        aWA.angle = angle;
+        aWA.setCoordinate(this.getCoordinate());
+        aWA.setValue(this.getValue());
+        aWA.setLegendIndex(this.getLegendIndex());
+        
+        return aWA;
+    }
+    // </editor-fold>
+}

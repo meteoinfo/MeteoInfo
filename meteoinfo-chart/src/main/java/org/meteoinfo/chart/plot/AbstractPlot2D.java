@@ -1599,7 +1599,7 @@ public abstract class AbstractPlot2D extends Plot {
 
     void drawPlotText(ChartText text, Graphics2D g, Rectangle2D area) {
         float x, y;
-        switch (text.getCoordinates()) {
+        switch (text.getCoordinateType()) {
             case AXES:
                 AffineTransform oldMatrix = g.getTransform();
                 Rectangle oldRegion = g.getClipBounds();

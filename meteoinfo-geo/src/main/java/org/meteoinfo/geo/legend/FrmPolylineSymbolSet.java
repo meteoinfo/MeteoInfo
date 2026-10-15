@@ -16,7 +16,7 @@ package org.meteoinfo.geo.legend;
 import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.geometry.legend.PointStyle;
 import org.meteoinfo.geometry.legend.PolylineBreak;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 import org.meteoinfo.ui.event.ISelectedCellChangedListener;
 import org.meteoinfo.ui.event.SelectedCellChangedEvent;
 import org.meteoinfo.geo.layout.MapLayout;
@@ -148,7 +148,7 @@ import javax.swing.JColorChooser;
 
          symbolControl1.setCellSize(new Dimension(50, 40));
          symbolControl1.setPreferredSize(new Dimension(200, 50));
-         symbolControl1.setShapeType(ShapeTypes.POLYLINE);
+         symbolControl1.setShapeType(GeometryType.LINESTRING);
 
          jLabel1.setText("Size:");
 

@@ -16,7 +16,7 @@ import java.util.List;
  *
  * @author yaqiang
  */
-public class IsosurfaceGraphics extends GraphicCollection3D {
+public class IsosurfaceGraphics extends GraphicCollection {
     private List<Coordinate[]> triangles = new ArrayList<>();
     
     /**

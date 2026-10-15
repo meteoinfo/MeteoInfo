@@ -6,7 +6,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.chart.graphic.cylinder.Cylinder;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
@@ -16,7 +16,7 @@ import org.meteoinfo.chart.graphic.pipe.PipeShape;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.MultiLineString;
 import org.meteoinfo.math.Matrix4f;
 
 import java.nio.FloatBuffer;
@@ -26,7 +26,7 @@ import java.util.List;
 
 public class PipeRender extends JOGLGraphicRender{
 
-    private GraphicCollection3D graphics;
+    private GraphicCollection graphics;
     private IntBuffer vbo;
     private Program program;
     private int vertexNum;
@@ -71,7 +71,7 @@ public class PipeRender extends JOGLGraphicRender{
      * @param gl The JOGL GL2 object
      * @param graphics Linestring 3D graphics
      */
-    public PipeRender(GL2 gl, GraphicCollection3D graphics) {
+    public PipeRender(GL2 gl, GraphicCollection graphics) {
         this(gl);
 
         this.graphics = graphics;
@@ -208,9 +208,9 @@ public class PipeRender extends JOGLGraphicRender{
         List<Integer> vertexIndices = new ArrayList<>();
         Cylinder cylinder = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PolylineShape shape = (PolylineShape) graphic.getShape();
-            int pointNum = shape.getPointNum();
-            List<Coordinate> ps = (List<Coordinate>) shape.getPoints();
+            MultiLineString shape = (MultiLineString) graphic.getShape();
+            int pointNum = shape.getNumPoints();
+            List<Coordinate> ps = (List<Coordinate>) shape.getCoordinates();
             ColorBreak cb = graphic.getLegendBreak();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;

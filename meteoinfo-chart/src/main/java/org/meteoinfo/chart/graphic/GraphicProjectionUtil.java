@@ -4,7 +4,7 @@ import org.locationtech.proj4j.CoordinateTransform;
 import org.locationtech.proj4j.CoordinateTransformFactory;
 import org.locationtech.proj4j.ProjCoordinate;
 import org.meteoinfo.chart.geo.ProjectUtil;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.Geometry;
 import org.meteoinfo.projection.*;
 import org.meteoinfo.table.DataColumn;
 import org.meteoinfo.table.DataRow;
@@ -50,7 +50,7 @@ public class GraphicProjectionUtil extends ProjectionUtil {
                 }
                 int idx = 0;
                 for (Graphic aGraphic : geoGraphic.getGraphics()) {
-                    List<? extends Shape> shapes = org.meteoinfo.projection.ProjectionUtil.projectClipShape(aGraphic.getShape(), fromProj, toProj);
+                    List<? extends Geometry> shapes = org.meteoinfo.projection.ProjectionUtil.projectClipShape(aGraphic.getShape(), fromProj, toProj);
                     if (shapes != null && shapes.size() > 0) {
                         aGraphic.setShape(shapes.get(0));
                         newGCollection.add(aGraphic);

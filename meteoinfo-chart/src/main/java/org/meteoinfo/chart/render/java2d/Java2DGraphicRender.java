@@ -3,13 +3,12 @@ package org.meteoinfo.chart.render.java2d;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.render.GraphicRender;
 import org.meteoinfo.geometry.Extent;
-import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.geometry.GeometryUtil;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.geometry.shape.ArcShape;
-import org.meteoinfo.geometry.shape.EllipseShape;
-import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.special.Arc;
+import org.meteoinfo.geometry.special.Ellipse;
+import org.meteoinfo.geometry.MultiPolygon;
 import org.meteoinfo.render.java2d.Draw;
 
 import java.awt.*;
@@ -32,7 +31,7 @@ public class Java2DGraphicRender implements GraphicRender {
         rect.width = (int) aExtent.getWidth();
         rect.height = (int) aExtent.getHeight();
 
-        switch (aGraphic.getShape().getShapeType()) {
+        switch (aGraphic.getShape().getGeometryType()) {
             case POINT:
                 switch (aGraphic.getLegendBreak().getBreakType()) {
                     case POINT_BREAK:
@@ -48,7 +47,7 @@ public class Java2DGraphicRender implements GraphicRender {
                         break;
                 }
                 break;
-            case POLYLINE:
+            case LINESTRING:
                 if (aGraphic.getLegendBreak().getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                     Draw.drawPolyline(points, (ColorBreakCollection) aGraphic.getLegendBreak(), g);
                 } else {
@@ -56,7 +55,7 @@ public class Java2DGraphicRender implements GraphicRender {
                 }
                 break;
             case POLYGON:
-                PolygonShape pgs = (PolygonShape) aGraphic.getShape().clone();
+                MultiPolygon pgs = (MultiPolygon) aGraphic.getShape().clone();
                 pgs.setPoints_keep(points);
                 Draw.drawPolygonShape(pgs, (PolygonBreak) aGraphic.getLegendBreak(), g);
                 break;
@@ -77,11 +76,11 @@ public class Java2DGraphicRender implements GraphicRender {
                 Draw.drawCircle(points, (PolygonBreak) aGraphic.getLegendBreak(), g);
                 break;
             case ELLIPSE:
-                EllipseShape eshape = (EllipseShape) aGraphic.getShape();
+                Ellipse eshape = (Ellipse) aGraphic.getShape();
                 Draw.drawEllipse(points, eshape.getAngle(), (PolygonBreak) aGraphic.getLegendBreak(), g);
                 break;
             case ARC:
-                ArcShape arcShape = (ArcShape) aGraphic.getShape();
+                Arc arcShape = (Arc) aGraphic.getShape();
                 Draw.drawArc(points, arcShape, (PolygonBreak) aGraphic.getLegendBreak(), g);
                 break;
         }
@@ -95,13 +94,13 @@ public class Java2DGraphicRender implements GraphicRender {
                 g.setColor(Color.cyan);
                 g.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, dashPattern, 0.0f));
                 g.draw(rect);
-                switch (aGraphic.getShape().getShapeType()) {
+                switch (aGraphic.getShape().getGeometryType()) {
                     case POINT:
                         if (aGraphic.getLegendBreak().getBreakType() == BreakTypes.POINT_BREAK) {
                             Draw.drawSelectedCorners(g, rect);
                         }
                         break;
-                    case POLYLINE:
+                    case LINESTRING:
                     case CURVE_LINE:
                     case POLYGON:
                     case RECTANGLE:

@@ -14,20 +14,22 @@
 package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.chart.transform.Transform;
-import org.meteoinfo.geometry.GeometryUtil;
+import org.meteoinfo.geometry.*;
+import org.meteoinfo.geometry.Point;
+import org.meteoinfo.geometry.Polygon;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.IndexIterator;
 
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.awt.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
 import java.util.List;
-import java.util.NoSuchElementException;
 
 /**
  *
@@ -44,6 +46,16 @@ public class GraphicCollection extends Graphic implements Iterator {
     protected List<Graphic> labelPoints;
     protected LegendScheme legendScheme;
     protected boolean avoidCollision = false;
+
+    private boolean fixZ;
+    private double zValue;
+    private String zdir;
+    private List<Number> sePoint;
+    protected boolean allQuads;
+    protected boolean allTriangle;
+    protected boolean allConvexPolygon;
+    protected boolean usingLight;
+    protected boolean sphere;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -54,6 +66,15 @@ public class GraphicCollection extends Graphic implements Iterator {
         this.index = 0;
         labelSet = new LabelSet();
         labelPoints = new ArrayList<>();
+
+        fixZ = false;
+        zdir = "z";
+        sePoint = null;
+        allQuads = false;
+        allTriangle = false;
+        allConvexPolygon = false;
+        usingLight = true;
+        sphere = false;
     }
 
     // </editor-fold>
@@ -64,7 +85,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      * @return Shape
      */
     @Override
-    public Shape getShape() {
+    public Geometry getShape() {
         if (this.graphics.isEmpty()) {
             return null;
         } else {
@@ -77,7 +98,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      * @param index The index
      * @return Shape
      */
-    public Shape getShape(int index) {
+    public Geometry getShape(int index) {
         if (this.graphics.isEmpty()) {
             return null;
         } else {
@@ -206,6 +227,20 @@ public class GraphicCollection extends Graphic implements Iterator {
      */
     public void setLegendScheme(LegendScheme value) {
         this.legendScheme = value;
+
+        if (!this.graphics.isEmpty()) {
+            if (this.getGraphicN(0).getLegendBreak().getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
+                for (Graphic graphic : this.graphics) {
+                    ColorBreakCollection cbs = new ColorBreakCollection();
+                    Geometry shape = graphic.getShape();
+                    for (Coordinate pointZ : (List<Coordinate>) shape.getCoordinates()) {
+                        ColorBreak cb = this.legendScheme.findLegendBreak(pointZ.m);
+                        cbs.add(cb);
+                    }
+                    graphic.setLegendBreak(cbs);
+                }
+            }
+        }
     }
 
     /**
@@ -255,6 +290,154 @@ public class GraphicCollection extends Graphic implements Iterator {
      */
     public void setAvoidCollision(boolean value) {
         this.avoidCollision = value;
+    }
+
+    /**
+     * Get if is fixed z graphics
+     * @return Boolean
+     */
+    public boolean isFixZ(){
+        return this.fixZ;
+    }
+
+    /**
+     * Set if is fixed z graphics
+     * @param value Boolean
+     */
+    public void setFixZ(boolean value){
+        this.fixZ = value;
+    }
+
+    /**
+     * Get fixed z value
+     * @return Fixed z value
+     */
+    public double getZValue(){
+        return this.zValue;
+    }
+
+    /**
+     * Set fixed z value
+     * @param value Fixed z value
+     */
+    public void setZValue(double value){
+        this.zValue = value;
+    }
+
+    /**
+     * Get z direction - x, y or z
+     * @return Z direction
+     */
+    public String getZDir(){
+        return this.zdir;
+    }
+
+    /**
+     * Set z direction - x, y or z
+     * @param value Z direction
+     */
+    public void setZDir(String value){
+        this.zdir = value;
+    }
+
+    /**
+     * Get start and end points [xstart, ystart, xend, yend]
+     * @return Start and end points
+     */
+    public List<Number> getSEPoint(){
+        return this.sePoint;
+    }
+
+    /**
+     * Set start and end points
+     * @param value Start and end points
+     */
+    public void setSEPoint(List<Number> value){
+        this.sePoint = value;
+    }
+
+    /**
+     * Get is all quads or not
+     * @return All quads or not
+     */
+    public boolean isAllQuads() {
+        return this.allQuads;
+    }
+
+    /**
+     * Set is all quads or not
+     * @param value All quads or not
+     */
+    public void setAllQuads(boolean value) {
+        this.allQuads = value;
+    }
+
+    /**
+     * Get is all triangle or not
+     * @return All triangle or not
+     */
+    public boolean isAllTriangle() {
+        return this.allTriangle;
+    }
+
+    /**
+     * Set is all triangle or not
+     * @param value All triangle or not
+     */
+    public void setAllTriangle(boolean value) {
+        this.allTriangle = value;
+    }
+
+    /**
+     * Get is all convex polygon or not
+     * @return All convex polygon or not
+     */
+    public boolean isAllConvexPolygon() {
+        if (this.allConvexPolygon) {
+            return true;
+        } else {
+            return this.allQuads || this.allTriangle;
+        }
+    }
+
+    /**
+     * Set is all convex polygon or not
+     * @param value All convex polygon or not
+     */
+    public void setAllConvexPolygon(boolean value) {
+        this.allConvexPolygon = value;
+    }
+
+    /**
+     * Get using light or not
+     * @return Boolean
+     */
+    public boolean isUsingLight() {
+        return this.usingLight;
+    }
+
+    /**
+     * Set using light or not
+     * @param value Boolean
+     */
+    public void setUsingLight(boolean value) {
+        this.usingLight = value;
+    }
+
+    /**
+     * Get is render point as sphere or not
+     * @return Render point as sphere or not
+     */
+    public boolean isSphere() {
+        return this.sphere;
+    }
+
+    /**
+     * Set is render point as sphere or not
+     * @param value Render point as sphere or not
+     */
+    public void setSphere(boolean value) {
+        this.sphere = value;
     }
 
     // </editor-fold>
@@ -524,18 +707,18 @@ public class GraphicCollection extends Graphic implements Iterator {
         aPoint.y = (aExtent.minY + aExtent.maxY) / 2;
 
         for (Graphic aGraphic : this.graphics) {
-            switch (aGraphic.getShape().getShapeType()) {
+            switch (aGraphic.getShape().getGeometryType()) {
                 case POINT:
-                    PointShape aPS = (PointShape) aGraphic.getShape();
-                    if (aExtent.contains(aPS.getPoint())) {
+                    Point aPS = (Point) aGraphic.getShape();
+                    if (aExtent.contains(aPS.getCoordinate())) {
                         selectedGraphics.add(aGraphic);
                     }
                     break;
-                case POLYLINE:
-                    PolylineShape aPLS = (PolylineShape) aGraphic.getShape();
+                case LINESTRING:
+                    MultiLineString aPLS = (MultiLineString) aGraphic.getShape();
                     if (GeometryUtil.isExtentCross(aExtent, aPLS.getExtent())) {
-                        for (j = 0; j < aPLS.getPoints().size(); j++) {
-                            aPoint = aPLS.getPoints().get(j);
+                        for (j = 0; j < aPLS.getCoordinates().size(); j++) {
+                            aPoint = aPLS.getCoordinates().get(j);
                             if (aExtent.contains(aPoint)) {
                                 selectedGraphics.add(aGraphic);
                                 break;
@@ -545,21 +728,21 @@ public class GraphicCollection extends Graphic implements Iterator {
                     break;
                 case POLYGON:
                 case RECTANGLE:
-                    PolygonShape aPGS = (PolygonShape) aGraphic.getShape();
-                    if (!(aPGS.getPartNum() > 1)) {
-                        if (GeoComputation.pointInPolygon(aPGS.getPoints(), aPoint)) {
+                    MultiPolygon aPGS = (MultiPolygon) aGraphic.getShape();
+                    if (!(aPGS.getNumParts() > 1)) {
+                        if (GeoComputation.pointInPolygon(aPGS.getCoordinates(), aPoint)) {
                             selectedGraphics.add(aGraphic);
                         }
                     } else {
-                        for (int p = 0; p < aPGS.getPartNum(); p++) {
+                        for (int p = 0; p < aPGS.getNumParts(); p++) {
                             ArrayList pList = new ArrayList();
-                            if (p == aPGS.getPartNum() - 1) {
-                                for (int pp = aPGS.parts[p]; pp < aPGS.getPointNum(); pp++) {
-                                    pList.add(aPGS.getPoints().get(pp));
+                            if (p == aPGS.getNumParts() - 1) {
+                                for (int pp = aPGS.parts[p]; pp < aPGS.getNumPoints(); pp++) {
+                                    pList.add(aPGS.getCoordinates().get(pp));
                                 }
                             } else {
                                 for (int pp = aPGS.parts[p]; pp < aPGS.parts[p + 1]; pp++) {
-                                    pList.add(aPGS.getPoints().get(pp));
+                                    pList.add(aPGS.getCoordinates().get(pp));
                                 }
                             }
                             if (GeoComputation.pointInPolygon(pList, aPoint)) {
@@ -612,8 +795,8 @@ public class GraphicCollection extends Graphic implements Iterator {
      *
      * @return Shapes
      */
-    public List<? extends Shape> getShapes() {
-        List<Shape> shapes = new ArrayList<>();
+    public List<? extends Geometry> getShapes() {
+        List<Geometry> shapes = new ArrayList<>();
         for (Graphic g : this.graphics) {
             shapes.add(g.getShape());
         }
@@ -626,18 +809,18 @@ public class GraphicCollection extends Graphic implements Iterator {
      * @return Shape type
      */
     @Override
-    public ShapeTypes getShapeType() {
+    public GeometryType getShapeType() {
         if (this.graphics.isEmpty()) {
             return null;
         } else {
-            return this.graphics.get(0).getShape().getShapeType();
+            return this.graphics.get(0).getShape().getGeometryType();
         }
     }
 
     private double getMinValue() {
         double min = Double.MAX_VALUE;
         for (Graphic graphic : this.graphics) {
-            Shape shape = graphic.getShape();
+            Geometry shape = graphic.getShape();
             if (min > shape.getValue()) {
                 min = shape.getValue();
             }
@@ -657,22 +840,22 @@ public class GraphicCollection extends Graphic implements Iterator {
         Coordinate aPoint;
         for (Graphic graphic : this.graphics) {
             ColorBreak cb = graphic.getLegendBreak();
-            Shape shape = graphic.getShape();
-            PointShape aPS = new PointShape();
-            switch (shape.getShapeType()) {
+            Geometry shape = graphic.getShape();
+            Point aPS = new Point();
+            switch (shape.getGeometryType()) {
                 case POINT:
-                    aPS.setPoint((Coordinate) ((PointShape) shape).getPoint().clone());
+                    aPS.setCoordinate((Coordinate) ((Point) shape).getCoordinate().clone());
                     break;
-                case POLYLINE:
-                    int pIdx = ((PolylineShape) shape).getPoints().size() / 2;
-                    aPS.setPoint((Coordinate) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
+                case LINESTRING:
+                    int pIdx = ((MultiLineString) shape).getCoordinates().size() / 2;
+                    aPS.setCoordinate((Coordinate) ((MultiLineString) shape).getCoordinates().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                     Extent aExtent = shape.getExtent();
                     aPoint = new Coordinate();
                     aPoint.x = ((aExtent.minX + aExtent.maxX) / 2);
                     aPoint.y = ((aExtent.minY + aExtent.maxY) / 2);
-                    aPS.setPoint(aPoint);
+                    aPS.setCoordinate(aPoint);
                     break;
             }
 
@@ -714,22 +897,22 @@ public class GraphicCollection extends Graphic implements Iterator {
             }
 
             ColorBreak cb = graphic.getLegendBreak();
-            Shape shape = graphic.getShape();
-            PointShape aPS = new PointShape();
-            switch (shape.getShapeType()) {
+            Geometry shape = graphic.getShape();
+            Point aPS = new Point();
+            switch (shape.getGeometryType()) {
                 case POINT:
-                    aPS.setPoint((Coordinate) ((PointShape) shape).getPoint().clone());
+                    aPS.setCoordinate((Coordinate) ((Point) shape).getCoordinate().clone());
                     break;
-                case POLYLINE:
-                    int pIdx = ((PolylineShape) shape).getPoints().size() / 2;
-                    aPS.setPoint((Coordinate) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
+                case LINESTRING:
+                    int pIdx = ((MultiLineString) shape).getCoordinates().size() / 2;
+                    aPS.setCoordinate((Coordinate) ((MultiLineString) shape).getCoordinates().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                     Extent aExtent = shape.getExtent();
                     aPoint = new Coordinate();
                     aPoint.x = ((aExtent.minX + aExtent.maxX) / 2);
                     aPoint.y = ((aExtent.minY + aExtent.maxY) / 2);
-                    aPS.setPoint(aPoint);
+                    aPS.setCoordinate(aPoint);
                     break;
             }
 
@@ -771,17 +954,17 @@ public class GraphicCollection extends Graphic implements Iterator {
         String dFormat = "%1$." + String.valueOf(labelSet.getDecimalDigits()) + "f";
         String text;
         for (Graphic graphic : this.graphics) {
-            Shape shape = graphic.getShape();
+            Geometry shape = graphic.getShape();
             ColorBreak cb = graphic.getLegendBreak();
-            PolylineShape aPLS = (PolylineShape) shape;
+            MultiLineString aPLS = (MultiLineString) shape;
             Extent IExtent = aPLS.getExtent();
             if (IExtent.maxX - IExtent.minX > (sExtent.maxX - sExtent.minX) / 10
                     || IExtent.maxY - IExtent.minY > (sExtent.maxY - sExtent.minY) / 10) {
                 LabelBreak aLP = new LabelBreak();
-                int pIdx = aPLS.getPoints().size() / 2;
+                int pIdx = aPLS.getCoordinates().size() / 2;
                 //PointF aPoint = new PointF(0, 0);
-                PointShape aPS = new PointShape();
-                aPS.setPoint(aPLS.getPoints().get(pIdx - 1));
+                Point aPS = new Point();
+                aPS.setCoordinate(aPLS.getCoordinates().get(pIdx - 1));
                 //text = DataConvert.removeTailingZeros(String.valueOf(aPLS.getValue()));
                 text = String.format(dFormat, aPLS.getValue());
                 aLP.setText(text);
@@ -872,12 +1055,12 @@ public class GraphicCollection extends Graphic implements Iterator {
      * @param clipPolys Clipping polygons
      * @return Clipped graphics
      */
-    public GraphicCollection clip(List<PolygonShape> clipPolys) {
+    public GraphicCollection clip(List<MultiPolygon> clipPolys) {
         GraphicCollection cgraphics = new GraphicCollection();
-        for (PolygonShape aPGS : clipPolys) {
+        for (MultiPolygon aPGS : clipPolys) {
             for (int i = 0; i < this.graphics.size(); i++) {
-                Shape bShape = this.graphics.get(i).getShape();
-                Shape clipShape = bShape.intersection(aPGS);
+                Geometry bShape = this.graphics.get(i).getShape();
+                Geometry clipShape = bShape.intersection(aPGS);
                 if (clipShape != null) {
                     cgraphics.add(new Graphic(clipShape, this.graphics.get(i).getLegendBreak()));
                 }
@@ -895,7 +1078,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      */
     public GraphicCollection xShift(double xs) {
         for (Graphic g : this.graphics) {
-            for (Coordinate p : g.getShape().getPoints()) {
+            for (Coordinate p : g.getShape().getCoordinates()) {
                 p.x += xs;
             }
             g.setExtent(g.getExtent().shift(xs, 0));
@@ -912,8 +1095,8 @@ public class GraphicCollection extends Graphic implements Iterator {
     public GraphicCollection xShiftCopy(double xs) {
         GraphicCollection graphicCollection = new GraphicCollection();
         for (Graphic g : this.graphics) {
-            Shape shape = (Shape) g.getShape().clone();
-            for (Coordinate p : shape.getPoints()) {
+            Geometry shape = (Geometry) g.getShape().clone();
+            for (Coordinate p : shape.getCoordinates()) {
                 p.x += xs;
             }
             Graphic graphic = new Graphic(shape, g.legendBreak);
@@ -922,6 +1105,110 @@ public class GraphicCollection extends Graphic implements Iterator {
         }
 
         return graphicCollection;
+    }
+
+    /**
+     * X random shift
+     * @param exponent Exponent
+     * @return Shifted result
+     */
+    public GraphicCollection xRandomShift(int exponent) {
+        Random r = new Random();
+        for (Graphic g : this.graphics) {
+            for (Coordinate p : g.getShape().getCoordinates()) {
+                p.x += (1 - r.nextDouble()) * Math.pow(10, exponent);
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * Y random shift
+     * @param exponent Exponent
+     * @return Shifted result
+     */
+    public GraphicCollection yRandomShift(int exponent) {
+        Random r = new Random();
+        for (Graphic g : this.graphics) {
+            for (Coordinate p : g.getShape().getCoordinates()) {
+                p.y += (1 - r.nextDouble()) * Math.pow(10, exponent);
+            }
+        }
+
+        return this;
+    }
+
+    /**
+     * X or Y random shift
+     * @param exponent Exponent
+     * @return Shifted result
+     */
+    public GraphicCollection randomShift(int exponent) {
+        if (this.zdir.equals("x")) {
+            return this.xRandomShift(exponent);
+        } else {
+            return this.yRandomShift(exponent);
+        }
+    }
+
+    /**
+     * Save to file
+     * @param fileName The file name
+     * @throws IOException
+     */
+    public void saveFile(String fileName) throws IOException {
+        File file = new File(fileName);
+        BufferedWriter sw = new BufferedWriter(new FileWriter(file));
+        sw.write("Polygons");
+        sw.newLine();
+        sw.write(String.valueOf(this.graphics.size()));
+        sw.newLine();
+        for (Graphic g : this.graphics) {
+            Geometry shape = g.getShape();
+            switch (shape.getGeometryType()) {
+                case POLYGON:
+                case MULTI_POLYGON:
+                    sw.write("Polygon");
+                    sw.newLine();
+                    MultiPolygon polygonShape = (MultiPolygon) shape;
+                    Polygon polygonZ = polygonShape.getPolygons().get(0);
+                    sw.write("Color");
+                    sw.newLine();
+                    Color color = g.getLegendBreak().getColor();
+                    sw.write(String.valueOf(color.getRGB()));
+                    sw.newLine();
+                    sw.write("Outline");
+                    sw.newLine();
+                    sw.write(String.valueOf(polygonZ.getOutLine().size()));
+                    sw.newLine();
+                    for (Coordinate p : (List<Coordinate>)polygonZ.getOutLine()) {
+                        sw.write(String.valueOf(p.x) + "," + String.valueOf(p.y) +
+                                "," + String.valueOf(p.z));
+                        sw.newLine();
+                    }
+                    sw.write(String.valueOf(polygonZ.getNumInteriorRing()));
+                    sw.newLine();
+                    if (polygonZ.hasHole()) {
+                        for (int i = 0; i < polygonZ.getNumInteriorRing(); i++) {
+                            List<Coordinate> pointZS = (List<Coordinate>) polygonZ.getHoleLine(i);
+                            sw.write("Hole");
+                            sw.newLine();
+                            sw.write(String.valueOf(pointZS.size()));
+                            sw.newLine();
+                            for (Coordinate p : pointZS) {
+                                sw.write(String.valueOf(p.x) + "," + String.valueOf(p.y) +
+                                        "," + String.valueOf(p.z));
+                                sw.newLine();
+                            }
+                        }
+                    }
+                    break;
+            }
+        }
+
+        sw.flush();
+        sw.close();
     }
     // </editor-fold>
 }

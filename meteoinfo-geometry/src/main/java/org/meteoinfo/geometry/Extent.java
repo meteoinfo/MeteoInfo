@@ -107,6 +107,14 @@ public class Extent implements Cloneable {
     }
 
     /**
+     * Constructors
+     * @param coordinate The coordinate
+     */
+    public Extent(Coordinate coordinate) {
+        this(coordinate.x, coordinate.x, coordinate.y, coordinate.y, coordinate.z, coordinate.z);
+    }
+
+    /**
      * Constructor
      *
      * @param aExtent The extent
@@ -126,6 +134,17 @@ public class Extent implements Cloneable {
      */
     public Extent(Rectangle2D rec) {
         this(rec.getMinX(), rec.getMaxX(), rec.getMinY(), rec.getMaxY());
+    }
+
+    /**
+     *  Makes this <code>Extent</code> a "null" extent, that is, the extent
+     *  of the empty geometry.
+     */
+    public void setToNull() {
+        minX = 0;
+        maxX = -1;
+        minY = 0;
+        maxY = -1;
     }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
@@ -173,6 +192,53 @@ public class Extent implements Cloneable {
     }
 
     /**
+     *  Check if the point <code>(x, y)</code>
+     *  intersects (lies inside) the region of this <code>Envelope</code>.
+     *
+     *@param  x  the x-ordinate of the point
+     *@param  y  the y-ordinate of the point
+     *@return        <code>true</code> if the point overlaps this <code>Envelope</code>
+     */
+    public boolean intersects(double x, double y) {
+        if (isNull()) return false;
+
+        return !(x > maxX ||
+                x < minX ||
+                y > maxY ||
+                y < minY);
+    }
+
+    /**
+     * Tests if the point <code>p</code>
+     * intersects (lies inside) the region of this <code>Envelope</code>.
+     *
+     *@param  p  the <code>Coordinate</code> to be tested
+     *@return <code>true</code> if the point intersects this <code>Envelope</code>
+     */
+    public boolean intersects(Coordinate p) {
+        return intersects(p.x, p.y, p.z);
+    }
+
+    /**
+     *  Check if the point <code>(x, y)</code>
+     *  intersects (lies inside) the region of this <code>Envelope</code>.
+     *
+     *@param  x  the x-ordinate of the point
+     *@param  y  the y-ordinate of the point
+     *@return        <code>true</code> if the point overlaps this <code>Envelope</code>
+     */
+    public boolean intersects(double x, double y, double z) {
+        if (isNull()) return false;
+
+        return !(x > maxX ||
+                x < minX ||
+                y > maxY ||
+                y < minY ||
+                z > maxZ ||
+                z < minZ);
+    }
+
+    /**
      * Tests whether this extent intersects the second extent.
      *
      * @param bET The second extent
@@ -198,6 +264,138 @@ public class Extent implements Cloneable {
             return (p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY);
         } else {
             return (p.x >= minX && p.x <= maxX && p.y >= minY && p.y <= maxY && p.z >= minZ && p.z <= maxZ);
+        }
+    }
+
+    /**
+     *  Returns <code>true</code> if this <code>Envelope</code> is a "null"
+     *  envelope.
+     *
+     *@return    <code>true</code> if this <code>Envelope</code> is uninitialized
+     *      or is the envelope of the empty geometry.
+     */
+    public boolean isNull() {
+        return maxX < minX;
+    }
+
+    /**
+     *  Enlarges this <code>Envelope</code> so that it contains
+     *  the given point.
+     *  Has no effect if the point is already on or within the envelope.
+     *
+     * @param  x  the value to lower the minimum x to or to raise the maximum x to
+     * @param  y  the value to lower the minimum y to or to raise the maximum y to
+     */
+    public void expandToInclude(double x, double y) {
+        if (isNull()) {
+            minX = x;
+            maxX = x;
+            minY = y;
+            maxY = y;
+        } else {
+            if (x < minX) {
+                minX = x;
+            }
+            if (x > maxX) {
+                maxX = x;
+            }
+            if (y < minY) {
+                minY = y;
+            }
+            if (y > maxY) {
+                maxY = y;
+            }
+        }
+    }
+
+    /**
+     *  Enlarges this <code>Envelope</code> so that it contains
+     *  the given point.
+     *  Has no effect if the point is already on or within the envelope.
+     *
+     * @param  x  the value to lower the minimum x to or to raise the maximum x to
+     * @param  y  the value to lower the minimum y to or to raise the maximum y to
+     * @param  z  the value to lower the minimum z to or to raise the maximum z to
+     */
+    public void expandToInclude(double x, double y, double z) {
+        if (isNull()) {
+            minX = x;
+            maxX = x;
+            minY = y;
+            maxY = y;
+            minZ = z;
+            maxZ = z;
+        } else {
+            if (x < minX) {
+                minX = x;
+            }
+            if (x > maxX) {
+                maxX = x;
+            }
+            if (y < minY) {
+                minY = y;
+            }
+            if (y > maxY) {
+                maxY = y;
+            }
+            if (z < minZ) {
+                minZ = z;
+            }
+            if (z > maxZ) {
+                maxZ = z;
+            }
+        }
+    }
+
+    /**
+     *  Enlarges this <code>Envelope</code> so that it contains
+     *  the given {@link Coordinate}.
+     *  Has no effect if the point is already on or within the envelope.
+     *
+     *@param  p  the Coordinate to expand to include
+     */
+    public void expandToInclude(Coordinate p)
+    {
+        expandToInclude(p.x, p.y, p.z);
+    }
+
+    /**
+     *  Enlarges this <code>Envelope</code> so that it contains
+     *  the <code>other</code> Envelope.
+     *  Has no effect if <code>other</code> is wholly on or
+     *  within the envelope.
+     *
+     *@param  other  the <code>Envelope</code> to expand to include
+     */
+    public void expandToInclude(Extent other) {
+        if (other.isNull()) {
+            return;
+        }
+
+        if (isNull()) {
+            minX = other.minX;
+            maxX = other.maxX;
+            minY = other.minY;
+            maxY = other.maxY;
+        } else {
+            if (other.minX < minX) {
+                minX = other.minX;
+            }
+            if (other.maxX > maxX) {
+                maxX = other.maxX;
+            }
+            if (other.minY < minY) {
+                minY = other.minY;
+            }
+            if (other.maxY > maxY) {
+                maxY = other.maxY;
+            }
+            if (other.minZ < minZ) {
+                minZ = other.minZ;
+            }
+            if (other.maxZ > maxZ) {
+                maxZ = other.maxZ;
+            }
         }
     }
 

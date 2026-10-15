@@ -1,10 +1,10 @@
 package org.meteoinfo.chart.geo;
 
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.MultiLineString;
 import org.meteoinfo.projection.ProjectionInfo;
 
 import java.util.ArrayList;
@@ -33,8 +33,8 @@ public class MapGridLine3D extends MapGridLine {
     }
 
     protected void updateLongitudeLines() {
-        this.longitudeLines = new GraphicCollection3D();
-        ((GraphicCollection3D) this.longitudeLines).setUsingLight(false);
+        this.longitudeLines = new GraphicCollection();
+        ((GraphicCollection) this.longitudeLines).setUsingLight(false);
         double latMin = this.lonLatExtent.minY;
         double latMax = this.lonLatExtent.maxY;
         double delta = this.lonLatExtent.getHeight() / (this.nPoints - 1);
@@ -46,8 +46,8 @@ public class MapGridLine3D extends MapGridLine {
                 points.add(new Coordinate(lon, lat, z));
                 lat += delta;
             }
-            PolylineShape line = new PolylineShape();
-            line.setPoints(points);
+            MultiLineString line = new MultiLineString();
+            line.setCoordinates(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
             graphic = ProjectUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
             graphic.getShape().setValue(lon);
@@ -56,8 +56,8 @@ public class MapGridLine3D extends MapGridLine {
     }
 
     protected void updateLatitudeLines() {
-        this.latitudeLines = new GraphicCollection3D();
-        ((GraphicCollection3D) this.latitudeLines).setUsingLight(false);
+        this.latitudeLines = new GraphicCollection();
+        ((GraphicCollection) this.latitudeLines).setUsingLight(false);
         double lonMin = this.lonLatExtent.minX;
         double lonMax = this.lonLatExtent.maxX;
         if (lonMin < - 170) {
@@ -75,22 +75,22 @@ public class MapGridLine3D extends MapGridLine {
                 points.add(new Coordinate(lon, lat, z));
                 lon += delta;
             }
-            PolylineShape line = new PolylineShape();
-            line.setPoints(points);
+            MultiLineString line = new MultiLineString();
+            line.setCoordinates(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
             graphic = ProjectUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
             if (graphic == null) {
                 continue;
             }
 
-            if (graphic.getShape().getPartNum() > 1) {
-                points = (List<Coordinate>) ((PolylineShape) graphic.getShape()).getPolylines().get(0).getPointList();
-                List<Coordinate> points1 = (List<Coordinate>) ((PolylineShape) graphic.getShape()).getPolylines().
-                        get(1).getPointList();
+            if (graphic.getShape().getNumParts() > 1) {
+                points = (List<Coordinate>) ((MultiLineString) graphic.getShape()).getPolylines().get(0).getCoordinates();
+                List<Coordinate> points1 = (List<Coordinate>) ((MultiLineString) graphic.getShape()).getPolylines().
+                        get(1).getCoordinates();
                 Collections.reverse(points1);
                 points.addAll(points1);
-                line = new PolylineShape();
-                line.setPoints(points);
+                line = new MultiLineString();
+                line.setCoordinates(points);
                 graphic = new Graphic(line, this.lineBreak);
             }
             graphic.getShape().setValue(lat);

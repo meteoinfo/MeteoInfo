@@ -13,10 +13,9 @@
  */
 package org.meteoinfo.projection;
 
-import org.meteoinfo.geometry.Extent;
-import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
-import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.geometry.special.*;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.math.ArrayUtil;
 
@@ -437,10 +436,10 @@ public class ProjectionUtil {
         return aExtent;
     }
 
-    public static PointShape projectPointShape(PointShape aPS, ProjectionInfo fromProj, ProjectionInfo toProj) {
-        PointShape newPS = (PointShape) aPS.clone();
+    public static Point projectPointShape(Point aPS, ProjectionInfo fromProj, ProjectionInfo toProj) {
+        Point newPS = (Point) aPS.clone();
         double[][] points = new double[1][];
-        Coordinate oP = newPS.getPoint();
+        Coordinate oP = newPS.getCoordinate();
         points[0] = new double[]{oP.x, oP.y};
         double[] fromP = new double[]{oP.x, oP.y};
         try {
@@ -450,8 +449,8 @@ public class ProjectionUtil {
                 Coordinate rp = (Coordinate) oP.clone();
                 rp.x = points[0][0];
                 rp.y = points[0][1];
-                newPS.setPoint(rp);
-                switch (aPS.getShapeType()) {
+                newPS.setCoordinate(rp);
+                switch (aPS.getGeometryType()) {
                     case WIND_BARB:
                         ((WindBarb) newPS).angle = projectAngle(((WindBarb) newPS).angle, fromP, toP, fromProj, toProj);
                         break;
@@ -459,7 +458,7 @@ public class ProjectionUtil {
                         ((WindArrow) newPS).angle = projectAngle(((WindArrow) newPS).angle, fromP, toP, fromProj, toProj);
                         break;
                     case STATION_MODEL:
-                        ((StationModelShape) newPS).windBarb.angle = projectAngle(((StationModelShape) newPS).windBarb.angle, fromP, toP, fromProj, toProj);
+                        ((StationModel) newPS).windBarb.angle = projectAngle(((StationModel) newPS).windBarb.angle, fromP, toP, fromProj, toProj);
                         break;
                 }
                 return newPS;
@@ -471,16 +470,16 @@ public class ProjectionUtil {
         }
     }
 
-    public static PolylineShape projectPolylineShape(PolylineShape aPLS, ProjectionInfo fromProj, ProjectionInfo toProj) {
-        List<Polyline> polyLines = new ArrayList<>();
+    public static MultiLineString projectPolylineShape(MultiLineString aPLS, ProjectionInfo fromProj, ProjectionInfo toProj) {
+        List<LineString> polyLines = new ArrayList<>();
         for (int i = 0; i < aPLS.getPolylines().size(); i++) {
             List<Coordinate> newPoints = new ArrayList<>();
-            Polyline aPL = aPLS.getPolylines().get(i);
-            Polyline bPL;
+            LineString aPL = aPLS.getPolylines().get(i);
+            LineString bPL;
             double x;
-            for (int j = 0; j < aPL.getPointList().size(); j++) {
+            for (int j = 0; j < aPL.getCoordinates().size(); j++) {
                 double[][] points = new double[1][];
-                Coordinate wPoint = aPL.getPointList().get(j);
+                Coordinate wPoint = aPL.getCoordinates().get(j);
                 x = wPoint.x;
                 if (fromProj.isLonLat()) {
                     if (x > 180) {
@@ -503,8 +502,8 @@ public class ProjectionUtil {
             }
 
             if (newPoints.size() > 1) {
-                bPL = new Polyline();
-                bPL.setPointList(newPoints);
+                bPL = new LineString();
+                bPL.setCoordinates(newPoints);
                 polyLines.add(bPL);
             }
         }
@@ -612,7 +611,7 @@ public class ProjectionUtil {
      * @param toProj To projection
      * @return Projected polygon shape
      */
-    public static PolygonShape projectPolygonShape(PolygonShape aPGS, ProjectionInfo fromProj, ProjectionInfo toProj) {
+    public static MultiPolygon projectPolygonShape(MultiPolygon aPGS, ProjectionInfo fromProj, ProjectionInfo toProj) {
         List<Polygon> polygons = new ArrayList<>();
         for (int i = 0; i < aPGS.getPolygons().size(); i++) {
             Polygon aPG = aPGS.getPolygons().get(i);
@@ -676,7 +675,7 @@ public class ProjectionUtil {
      * @param toProj To projection
      * @return Projected point shape
      */
-    public static PointShape projectClipPointShape(PointShape pointShape, ProjectionInfo fromProj, ProjectionInfo toProj) {
+    public static Point projectClipPointShape(Point pointShape, ProjectionInfo fromProj, ProjectionInfo toProj) {
         double refLon = toProj.getCoordinateReferenceSystem().getProjection().getProjectionLongitudeDegrees();
         refLon += 180;
         if (refLon > 180) {
@@ -689,24 +688,24 @@ public class ProjectionUtil {
         if (fromProj.getProjectionName() == ProjectionNames.LongLat) {
             switch (toProj.getProjectionName()) {
                 case Lambert_Conformal_Conic:
-                    if (pointShape.getPoint().y < cutoff) {
+                    if (pointShape.getCoordinate().y < cutoff) {
                         return null;
                     }
                     break;
                 case North_Polar_Stereographic_Azimuthal:
-                    if (pointShape.getPoint().y < cutoff) {
+                    if (pointShape.getCoordinate().y < cutoff) {
                         return null;
                     }
                     break;
                 case South_Polar_Stereographic_Azimuthal:
-                    if (pointShape.getPoint().y > cutoff) {
+                    if (pointShape.getCoordinate().y > cutoff) {
                         return null;
                     }
                     break;
                 case Mercator:
                 case Transverse_Mercator:
                 case UTM:
-                    if (pointShape.getPoint().y > cutoff || pointShape.getPoint().y < -cutoff) {
+                    if (pointShape.getCoordinate().y > cutoff || pointShape.getCoordinate().y < -cutoff) {
                         return null;
                     }
                     break;
@@ -725,7 +724,7 @@ public class ProjectionUtil {
      * @param toProj To projection
      * @return Projected polyline shape
      */
-    public static List<PolylineShape> projectClipPolylineShape(PolylineShape lineShape, ProjectionInfo fromProj, ProjectionInfo toProj) {
+    public static List<MultiLineString> projectClipPolylineShape(MultiLineString lineShape, ProjectionInfo fromProj, ProjectionInfo toProj) {
         double refLon = toProj.getCoordinateReferenceSystem().getProjection().getProjectionLongitudeDegrees();
         refLon += 180;
         if (refLon > 180) {
@@ -735,7 +734,7 @@ public class ProjectionUtil {
         }
         float cutoff = toProj.getCutoff();
 
-        List<PolylineShape> lineShapes = new ArrayList<>();
+        List<MultiLineString> lineShapes = new ArrayList<>();
         if (fromProj.getProjectionName() == ProjectionNames.LongLat) {
             switch (toProj.getProjectionName()) {
                 case Lambert_Conformal_Conic:
@@ -785,7 +784,7 @@ public class ProjectionUtil {
             lineShapes.add(lineShape);
         }
 
-        List<PolylineShape> newPolylines = new ArrayList<>();
+        List<MultiLineString> newPolylines = new ArrayList<>();
         for (int i = 0; i < lineShapes.size(); i++) {
             lineShape = lineShapes.get(i);
             lineShape = ProjectionUtil.projectPolylineShape(lineShape, fromProj, toProj);
@@ -805,7 +804,7 @@ public class ProjectionUtil {
      * @param toProj To projection
      * @return Projected polygon shape
      */
-    public static List<PolygonShape> projectClipPolygonShape(PolygonShape aPGS, ProjectionInfo fromProj, ProjectionInfo toProj) {
+    public static List<MultiPolygon> projectClipPolygonShape(MultiPolygon aPGS, ProjectionInfo fromProj, ProjectionInfo toProj) {
         double refLon = toProj.getCoordinateReferenceSystem().getProjection().getProjectionLongitudeDegrees();
         refLon += 180;
         if (refLon > 180) {
@@ -815,7 +814,7 @@ public class ProjectionUtil {
         }
         float cutoff = toProj.getCutoff();
 
-        List<PolygonShape> pgsList = new ArrayList<>();
+        List<MultiPolygon> pgsList = new ArrayList<>();
         if (fromProj.getProjectionName() == ProjectionNames.LongLat) {
             switch (toProj.getProjectionName()) {
                 case Lambert_Conformal_Conic:
@@ -867,7 +866,7 @@ public class ProjectionUtil {
             pgsList.add(aPGS);
         }
 
-        List<PolygonShape> newPolygons = new ArrayList<>();
+        List<MultiPolygon> newPolygons = new ArrayList<>();
         for (int i = 0; i < pgsList.size(); i++) {
             aPGS = pgsList.get(i);
             aPGS = projectPolygonShape(aPGS, fromProj, toProj);
@@ -879,30 +878,30 @@ public class ProjectionUtil {
         return newPolygons;
     }
 
-    public static Shape projectShape(Shape aShape, ProjectionInfo fromProj, ProjectionInfo toProj) {
-        Shape newShape;
-        switch (aShape.getShapeType()) {
+    public static Geometry projectShape(Geometry aShape, ProjectionInfo fromProj, ProjectionInfo toProj) {
+        Geometry newShape;
+        switch (aShape.getGeometryType()) {
             case POINT:
-                newShape = projectPointShape((PointShape) aShape, fromProj, toProj);
+                newShape = projectPointShape((Point) aShape, fromProj, toProj);
                 break;
-            case POLYLINE:
-                newShape = projectPolylineShape((PolylineShape) aShape, fromProj, toProj);
+            case LINESTRING:
+                newShape = projectPolylineShape((MultiLineString) aShape, fromProj, toProj);
                 break;
             case CURVE_LINE:
-                newShape = projectCurvelineShape((CurveLineShape) aShape, fromProj, toProj);
+                newShape = projectCurvelineShape((CurveLineString) aShape, fromProj, toProj);
                 break;
             case POLYGON:
             case RECTANGLE:
-                newShape = projectPolygonShape((PolygonShape) aShape, fromProj, toProj);
+                newShape = projectPolygonShape((MultiPolygon) aShape, fromProj, toProj);
                 break;
             case CURVE_POLYGON:
-                newShape = projectCurvePolygonShape((CurvePolygonShape) aShape, fromProj, toProj);
+                newShape = projectCurvePolygonShape((CurvePolygon) aShape, fromProj, toProj);
                 break;
             case CIRCLE:
-                newShape = projectCircleShape((CircleShape) aShape, fromProj, toProj);
+                newShape = projectCircleShape((Circle) aShape, fromProj, toProj);
                 break;
             case ELLIPSE:
-                newShape = projectEllipseShape((EllipseShape) aShape, fromProj, toProj);
+                newShape = projectEllipseShape((Ellipse) aShape, fromProj, toProj);
                 break;
             default:
                 newShape = null;
@@ -912,29 +911,29 @@ public class ProjectionUtil {
         return newShape;
     }
 
-    public static List<? extends Shape> projectClipShape(Shape shape, ProjectionInfo fromProj, ProjectionInfo toProj) {
-        List<? extends Shape> shapes = null;
-        switch (shape.getShapeType()) {
+    public static List<? extends Geometry> projectClipShape(Geometry shape, ProjectionInfo fromProj, ProjectionInfo toProj) {
+        List<? extends Geometry> shapes = null;
+        switch (shape.getGeometryType()) {
             case POINT:
             case WIND_ARROW:
             case WIND_BARB:
             case STATION_MODEL:
-                PointShape pointShape = projectClipPointShape((PointShape) shape, fromProj, toProj);
+                Point pointShape = projectClipPointShape((Point) shape, fromProj, toProj);
                 if (pointShape != null) {
-                    List<PointShape> pointShapes = new ArrayList<PointShape>();
+                    List<Point> pointShapes = new ArrayList<Point>();
                     pointShapes.add(pointShape);
                     shapes = pointShapes;
                 }
                 break;
-            case POLYLINE:
-                shapes = projectClipPolylineShape((PolylineShape) shape, fromProj, toProj);
+            case LINESTRING:
+                shapes = projectClipPolylineShape((MultiLineString) shape, fromProj, toProj);
                 break;
             case CURVE_LINE:
                 //shapes = projectCurvelineShape((CurveLineShape) shape, fromProj, toProj);
                 break;
             case POLYGON:
             case RECTANGLE:
-                shapes = projectClipPolygonShape((PolygonShape) shape, fromProj, toProj);
+                shapes = projectClipPolygonShape((MultiPolygon) shape, fromProj, toProj);
                 break;
             case CURVE_POLYGON:
                 //shapes = projectCurvePolygonShape((CurvePolygonShape) shape, fromProj, toProj);
@@ -950,15 +949,15 @@ public class ProjectionUtil {
         return shapes;
     }
 
-    private static CurveLineShape projectCurvelineShape(CurveLineShape aPLS, ProjectionInfo fromProj, ProjectionInfo toProj) {
-        List<Polyline> polyLines = new ArrayList<>();
+    private static CurveLineString projectCurvelineShape(CurveLineString aPLS, ProjectionInfo fromProj, ProjectionInfo toProj) {
+        List<LineString> polyLines = new ArrayList<>();
         for (int i = 0; i < aPLS.getPolylines().size(); i++) {
             List<Coordinate> newPoints = new ArrayList<>();
-            Polyline aPL = aPLS.getPolylines().get(i);
-            Polyline bPL;
-            for (int j = 0; j < aPL.getPointList().size(); j++) {
+            LineString aPL = aPLS.getPolylines().get(i);
+            LineString bPL;
+            for (int j = 0; j < aPL.getCoordinates().size(); j++) {
                 double[][] points = new double[1][];
-                Coordinate wPoint = aPL.getPointList().get(j);
+                Coordinate wPoint = aPL.getCoordinates().get(j);
                 points[0] = new double[]{wPoint.x, wPoint.y};
                 try {
                     Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
@@ -974,8 +973,8 @@ public class ProjectionUtil {
             }
 
             if (newPoints.size() > 1) {
-                bPL = new Polyline();
-                bPL.setPointList(newPoints);
+                bPL = new LineString();
+                bPL.setCoordinates(newPoints);
                 polyLines.add(bPL);
             }
         }
@@ -989,7 +988,7 @@ public class ProjectionUtil {
         }
     }
 
-    private static CurvePolygonShape projectCurvePolygonShape(CurvePolygonShape aPGS, ProjectionInfo fromProj, ProjectionInfo toProj) {
+    private static CurvePolygon projectCurvePolygonShape(CurvePolygon aPGS, ProjectionInfo fromProj, ProjectionInfo toProj) {
         List<Polygon> polygons = new ArrayList<>();
         for (int i = 0; i < aPGS.getPolygons().size(); i++) {
             Polygon aPG = aPGS.getPolygons().get(i);
@@ -1042,10 +1041,10 @@ public class ProjectionUtil {
         }
     }
 
-    private static CircleShape projectCircleShape(CircleShape aCS, ProjectionInfo fromProj, ProjectionInfo toProj) {
-        double radius = Math.abs(aCS.getPoints().get(1).x - aCS.getPoints().get(0).x);
+    private static Circle projectCircleShape(Circle aCS, ProjectionInfo fromProj, ProjectionInfo toProj) {
+        double radius = Math.abs(aCS.getCoordinates().get(1).x - aCS.getCoordinates().get(0).x);
         double[][] points = new double[1][];
-        Coordinate centerPoint = new Coordinate(aCS.getPoints().get(0).x + radius, aCS.getPoints().get(0).y);
+        Coordinate centerPoint = new Coordinate(aCS.getCoordinates().get(0).x + radius, aCS.getCoordinates().get(0).y);
         points[0] = new double[]{centerPoint.x, centerPoint.y};
         try {
             Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
@@ -1060,7 +1059,7 @@ public class ProjectionUtil {
         }
 
         points = new double[1][];
-        Coordinate leftPoint = aCS.getPoints().get(0);
+        Coordinate leftPoint = aCS.getCoordinates().get(0);
         points[0] = new double[]{leftPoint.x, leftPoint.y};
         try {
             Reproject.reprojectPoints(points, fromProj, toProj, 0, points.length);
@@ -1080,15 +1079,15 @@ public class ProjectionUtil {
         newPoints.add(new Coordinate(centerPoint.x, centerPoint.y - radius));
         newPoints.add(new Coordinate(centerPoint.x + radius, centerPoint.y));
         newPoints.add(new Coordinate(centerPoint.x, centerPoint.y + radius));
-        CircleShape newCS = new CircleShape();
-        newCS.setPoints(newPoints);
+        Circle newCS = new Circle();
+        newCS.setCoordinates(newPoints);
 
         return newCS;
     }
 
-    private static EllipseShape projectEllipseShape(EllipseShape aES, ProjectionInfo fromProj, ProjectionInfo toProj) {
-        double xRadius = Math.abs(aES.getPoints().get(2).x - aES.getPoints().get(0).x) / 2;
-        double yRadius = Math.abs(aES.getPoints().get(2).y - aES.getPoints().get(0).y) / 2;
+    private static Ellipse projectEllipseShape(Ellipse aES, ProjectionInfo fromProj, ProjectionInfo toProj) {
+        double xRadius = Math.abs(aES.getCoordinates().get(2).x - aES.getCoordinates().get(0).x) / 2;
+        double yRadius = Math.abs(aES.getCoordinates().get(2).y - aES.getCoordinates().get(0).y) / 2;
         double[][] points = new double[1][];
         Coordinate centerPoint = new Coordinate(aES.getExtent().minX + xRadius, aES.getExtent().minY + yRadius);
         points[0] = new double[]{centerPoint.x, centerPoint.y};
@@ -1126,8 +1125,8 @@ public class ProjectionUtil {
         newPoints.add(new Coordinate(centerPoint.x - xRadius, centerPoint.y + yRadius));
         newPoints.add(new Coordinate(centerPoint.x + xRadius, centerPoint.y + yRadius));
         newPoints.add(new Coordinate(centerPoint.x + xRadius, centerPoint.y - yRadius));
-        EllipseShape newES = new EllipseShape();
-        newES.setPoints(newPoints);
+        Ellipse newES = new Ellipse();
+        newES.setCoordinates(newPoints);
 
         return newES;
     }

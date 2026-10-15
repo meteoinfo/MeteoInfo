@@ -25,19 +25,18 @@ import org.meteoinfo.chart.shape.TextureShape;
 import org.meteoinfo.common.*;
 import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.data.Dataset;
-import org.meteoinfo.geometry.Extent;
-import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.Polygon;
+import org.meteoinfo.geometry.*;
+import org.meteoinfo.geometry.Point;
+import org.meteoinfo.geometry.Polygon;
+import org.meteoinfo.geometry.special.Image;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.render.java2d.StringType;
 import org.meteoinfo.geometry.colors.BoundaryNorm;
 import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.geometry.shape.*;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.special.*;
 import org.meteoinfo.math.meteo.MeteoMath;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.scilab.forge.jlatexmath.TeXConstants;
@@ -77,7 +76,7 @@ public class GLPlot extends Plot {
     protected GLU glu = new GLU();
     protected final GLUT glut = new GLUT();
     protected int startList = 2;
-    protected GraphicCollection3D graphics;
+    protected GraphicCollection graphics;
     protected Extent graphicExtent;
     protected Extent drawExtent;
     protected Extent axesExtent;
@@ -146,7 +145,7 @@ public class GLPlot extends Plot {
         this.zAxis.setTickLength(8);
         this.zAxisLocations = new ArrayList<>();
         this.fixExtent = false;
-        this.graphics = new GraphicCollection3D();
+        this.graphics = new GraphicCollection();
         this.hideOnDrag = false;
         this.boxed = true;
         this.gridLine = new GridLine(true);
@@ -246,7 +245,7 @@ public class GLPlot extends Plot {
      * Get graphics
      * @return The graphics
      */
-    public GraphicCollection3D getGraphics() {
+    public GraphicCollection getGraphics() {
         return this.graphics;
     }
 
@@ -254,7 +253,7 @@ public class GLPlot extends Plot {
      * Set graphics
      * @param value The graphics
      */
-    public void setGraphics(GraphicCollection3D value) {
+    public void setGraphics(GraphicCollection value) {
         this.graphics = value;
     }
 
@@ -2695,8 +2694,8 @@ public class GLPlot extends Plot {
 
     protected void drawGraphics(GL2 gl, Graphic graphic) {
         boolean lightEnabled = this.lighting.isEnable();
-        if (graphic instanceof GraphicCollection3D) {
-            if (lightEnabled && !((GraphicCollection3D)graphic).isUsingLight()) {
+        if (graphic instanceof GraphicCollection) {
+            if (lightEnabled && !((GraphicCollection)graphic).isUsingLight()) {
                 this.lighting.stop(gl);
             }
         }
@@ -2725,7 +2724,7 @@ public class GLPlot extends Plot {
         } else if (graphic instanceof ParticleGraphics) {
             //this.drawParticles(gl, (ParticleGraphics) graphic);
             if (!this.renderMap.containsKey(graphic)) {
-                renderMap.put(graphic, new PointRender(gl, (GraphicCollection3D) graphic));
+                renderMap.put(graphic, new PointRender(gl, (GraphicCollection) graphic));
             }
             PointRender pointRender = (PointRender) renderMap.get(graphic);
             pointRender.setTransform(this.transform, this.alwaysUpdateBuffers);
@@ -2752,11 +2751,11 @@ public class GLPlot extends Plot {
             }
         } else {
             boolean isDraw = true;
-            if (graphic instanceof GraphicCollection3D) {
+            if (graphic instanceof GraphicCollection) {
                 if (graphic.getNumGraphics() == 0) {
                     isDraw = false;
                 } else {
-                    GraphicCollection3D gg = (GraphicCollection3D) graphic;
+                    GraphicCollection gg = (GraphicCollection) graphic;
                     if (gg.isAllQuads()) {
                         this.drawQuadsPolygons(gl, gg);
                         isDraw = false;
@@ -2770,7 +2769,7 @@ public class GLPlot extends Plot {
                 switch (graphic.getGraphicN(0).getShapeType()) {
                     case POINT:
                         if (!this.renderMap.containsKey(graphic)) {
-                            renderMap.put(graphic, new PointRender(gl, (GraphicCollection3D) graphic));
+                            renderMap.put(graphic, new PointRender(gl, (GraphicCollection) graphic));
                         }
                         PointRender pointRender = (PointRender) renderMap.get(graphic);
                         pointRender.setTransform(this.transform, this.alwaysUpdateBuffers);
@@ -2780,10 +2779,11 @@ public class GLPlot extends Plot {
                         pointRender.setRotateModelView(this.modelViewMatrixR);
                         pointRender.draw();
                         break;
-                    case POLYLINE:
+                    case LINESTRING:
+                    case MULTI_LINESTRING:
                         if (graphic.getGraphicN(0).getShape() instanceof PipeShape) {
                             if (!this.renderMap.containsKey(graphic)) {
-                                renderMap.put(graphic, new PipeRender(gl, (GraphicCollection3D) graphic));
+                                renderMap.put(graphic, new PipeRender(gl, (GraphicCollection) graphic));
                             }
                             PipeRender pipeRender = (PipeRender) renderMap.get(graphic);
                             pipeRender.setTransform(this.transform, this.alwaysUpdateBuffers);
@@ -2794,7 +2794,7 @@ public class GLPlot extends Plot {
                             pipeRender.draw();
                         } else {
                             if (!this.renderMap.containsKey(graphic)) {
-                                renderMap.put(graphic, new LineRender(gl, (GraphicCollection3D) graphic));
+                                renderMap.put(graphic, new LineRender(gl, (GraphicCollection) graphic));
                             }
                             LineRender lineRender = (LineRender) renderMap.get(graphic);
                             lineRender.setTransform(this.transform, this.alwaysUpdateBuffers);
@@ -2805,9 +2805,22 @@ public class GLPlot extends Plot {
                             lineRender.draw();
                         }
                         break;
+                    /*case POLYGON:
+                    case MUlTI_POLYGON:
+                        if (!this.renderMap.containsKey(graphic)) {
+                            renderMap.put(graphic, new PolygonRender(gl, (PolygonGraphic) graphic));
+                        }
+                        PolygonRender polygonRender = (PolygonRender) renderMap.get(graphic);
+                        polygonRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                        polygonRender.setOrthographic(this.orthographic);
+                        polygonRender.setLighting(this.lighting);
+                        polygonRender.updateMatrix();
+                        polygonRender.setRotateModelView(this.modelViewMatrixR);
+                        polygonRender.draw();
+                        break;*/
                     case WIND_ARROW:
                         if (!this.renderMap.containsKey(graphic)) {
-                            renderMap.put(graphic, new QuiverRender(gl, (GraphicCollection3D) graphic));
+                            renderMap.put(graphic, new QuiverRender(gl, (GraphicCollection) graphic));
                         }
                         QuiverRender quiverRender = (QuiverRender) renderMap.get(graphic);
                         quiverRender.setTransform(this.transform, this.alwaysUpdateBuffers);
@@ -2831,17 +2844,18 @@ public class GLPlot extends Plot {
             }
         }
 
-        if (graphic instanceof GraphicCollection3D) {
-            if (lightEnabled && !((GraphicCollection3D)graphic).isUsingLight()) {
+        if (graphic instanceof GraphicCollection) {
+            if (lightEnabled && !((GraphicCollection)graphic).isUsingLight()) {
                 this.lighting.start(gl);
             }
         }
     }
 
     protected void drawGraphic(GL2 gl, Graphic graphic) {
-        Shape shape = graphic.getGraphicN(0).getShape();
-        switch (shape.getShapeType()) {
+        Geometry shape = graphic.getGraphicN(0).getShape();
+        switch (shape.getGeometryType()) {
             case POINT:
+            case MULTI_POINT:
                 this.drawPoint(gl, graphic);
                 break;
             case TEXT:
@@ -2851,7 +2865,8 @@ public class GLPlot extends Plot {
                 if (this.clipPlane)
                     this.enableClipPlane(gl);
                 break;
-            case POLYLINE:
+            case LINESTRING:
+            case MULTI_LINESTRING:
                 /*ColorBreak cb = graphic.getLegend();
                 if (cb instanceof StreamlineBreak) {
                     if (shape instanceof PipeShape) {
@@ -2882,6 +2897,7 @@ public class GLPlot extends Plot {
                 }*/
                 break;
             case POLYGON:
+            case MULTI_POLYGON:
                 this.drawPolygonShape(gl, graphic);
                 break;
             case WIND_ARROW:
@@ -2923,13 +2939,13 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            PointShape shape = (PointShape) graphic.getShape();
+            Point shape = (Point) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
             gl.glPointSize(pb.getSize() * this.dpiScale);
             gl.glBegin(GL2.GL_POINTS);
-            Coordinate p = (Coordinate) shape.getPoint();
+            Coordinate p = (Coordinate) shape.getCoordinate();
             gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
             gl.glEnd();
         }
@@ -2940,11 +2956,11 @@ public class GLPlot extends Plot {
         gl.glPointSize(pb.getSize() * this.dpiScale);
         gl.glBegin(GL2.GL_POINTS);
         for (Graphic gg : ((GraphicCollection) graphic).getGraphics()) {
-            PointShape shape = (PointShape) gg.getShape();
+            Point shape = (Point) gg.getShape();
             pb = (PointBreak) gg.getLegendBreak();
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
-            Coordinate p = (Coordinate) shape.getPoint();
+            Coordinate p = (Coordinate) shape.getCoordinate();
             gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
         }
         gl.glEnd();
@@ -2956,12 +2972,12 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            PointShape shape = (PointShape) graphic.getShape();
+            Point shape = (Point) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4fv(rgba, 0);
             gl.glPushMatrix();
-            Coordinate p = (Coordinate) shape.getPoint();
+            Coordinate p = (Coordinate) shape.getCoordinate();
             Vector3f xyz = new Vector3f((float) p.x, (float) p.y, (float) p.z);
             gl.glTranslated(xyz.x, xyz.y, xyz.z);
             GLUquadric sphere = glu.gluNewQuadric();
@@ -3122,12 +3138,12 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            PolylineShape shape = (PolylineShape) graphic.getShape();
+            MultiLineString shape = (MultiLineString) graphic.getShape();
             ColorBreak cb = graphic.getLegendBreak();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;
-                Polyline line = shape.getPolylines().get(0);
-                java.util.List<Coordinate> ps = (java.util.List<Coordinate>) line.getPointList();
+                LineString line = shape.getPolylines().get(0);
+                java.util.List<Coordinate> ps = line.getCoordinates();
                 float[] rgba;
                 Coordinate p;
                 gl.glLineWidth(((PolylineBreak) cbc.get(0)).getWidth() * this.dpiScale);
@@ -3146,9 +3162,9 @@ public class GLPlot extends Plot {
                 float[] rgba = pb.getColor().getRGBComponents(null);
                 gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
                 gl.glLineWidth(pb.getWidth() * this.dpiScale);
-                for (Polyline line : shape.getPolylines()) {
+                for (LineString line : shape.getPolylines()) {
                     gl.glBegin(GL2.GL_LINE_STRIP);
-                    java.util.List<Coordinate> ps = (java.util.List<Coordinate>) line.getPointList();
+                    java.util.List<Coordinate> ps = line.getCoordinates();
                     for (Coordinate p : ps) {
                         gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
                     }
@@ -3221,7 +3237,7 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            PolygonShape shape = (PolygonShape) graphic.getShape();
+            MultiPolygon shape = (MultiPolygon) graphic.getShape();
             PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
             java.util.List<Polygon> polygonZS = shape.getPolygons();
             for (int i = 0; i < polygonZS.size(); i++) {
@@ -3371,7 +3387,7 @@ public class GLPlot extends Plot {
         }
     }
 
-    private void drawQuadsPolygons(GL2 gl, GraphicCollection3D graphic) {
+    private void drawQuadsPolygons(GL2 gl, GraphicCollection graphic) {
         Coordinate p;
         for (int i = 0; i < graphic.getNumGraphics(); i++) {
             Graphic gg = graphic.getGraphicN(i);
@@ -3380,7 +3396,7 @@ public class GLPlot extends Plot {
                 isDraw = drawExtent.intersects(gg.getExtent());
 
             if (isDraw) {
-                PolygonShape shape = (PolygonShape) gg.getShape();
+                MultiPolygon shape = (MultiPolygon) gg.getShape();
                 PolygonBreak pb = (PolygonBreak) gg.getLegendBreak();
                 for (Polygon poly : shape.getPolygons()) {
                     drawQuads(gl, poly, pb);
@@ -3415,7 +3431,7 @@ public class GLPlot extends Plot {
         }
     }
 
-    private void drawTrianglePolygons(GL2 gl, GraphicCollection3D graphic) {
+    private void drawTrianglePolygons(GL2 gl, GraphicCollection graphic) {
         Coordinate p;
         for (int i = 0; i < graphic.getNumGraphics(); i++) {
             Graphic gg = graphic.getGraphicN(i);
@@ -3424,7 +3440,7 @@ public class GLPlot extends Plot {
                 isDraw = drawExtent.intersects(gg.getExtent());
 
             if (isDraw) {
-                PolygonShape shape = (PolygonShape) gg.getShape();
+                MultiPolygon shape = (MultiPolygon) gg.getShape();
                 PolygonBreak pb = (PolygonBreak) gg.getLegendBreak();
                 for (Polygon poly : shape.getPolygons()) {
                     drawTriangle(gl, poly, pb);
@@ -3502,7 +3518,7 @@ public class GLPlot extends Plot {
     }
 
     private void drawImage(GL2 gl, Graphic graphic) {
-        ImageShape ishape = (ImageShape) graphic.getShape();
+        Image ishape = (Image) graphic.getShape();
         BufferedImage image = ishape.getImage();
         Texture texture = AWTTextureIO.newTexture(gl.getGLProfile(), image, true);
         //Texture texture = this.imageCache.get(image);
@@ -3710,9 +3726,9 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            CubicShape cubic = (CubicShape) graphic.getShape();
+            Cubic cubic = (Cubic) graphic.getShape();
             BarBreak bb = (BarBreak) graphic.getLegendBreak();
-            java.util.List<Coordinate> ps = cubic.getPoints();
+            java.util.List<Coordinate> ps = cubic.getCoordinates();
             java.util.List<float[]> vertex = new ArrayList<>();
             for (Coordinate p : ps) {
                 vertex.add(new float[]{(float) p.x, (float) p.y, (float) p.z});
@@ -3757,9 +3773,9 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            CylinderShape cylinder = (CylinderShape) graphic.getShape();
+            Cylinder cylinder = (Cylinder) graphic.getShape();
             BarBreak bb = (BarBreak) graphic.getLegendBreak();
-            java.util.List<Coordinate> ps = cylinder.getPoints();
+            java.util.List<Coordinate> ps = cylinder.getCoordinates();
             java.util.List<float[]> vertex = new ArrayList<>();
             for (Coordinate p : ps) {
                 vertex.add(new float[]{(float) p.x, (float) p.y, (float) p.z});
@@ -4095,7 +4111,7 @@ public class GLPlot extends Plot {
         }
 
         if (ls == null) {
-            ShapeTypes stype = ShapeTypes.POLYLINE;
+            GeometryType stype = GeometryType.LINESTRING;
             ls = new LegendScheme(stype);
             for (Graphic g : this.graphics.getGraphics()) {
                 ls.getLegendBreaks().add(g.getLegendBreak());

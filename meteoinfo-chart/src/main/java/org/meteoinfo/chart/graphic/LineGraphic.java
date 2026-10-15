@@ -5,7 +5,7 @@ import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.ColorBreakCollection;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolylineBreak;
-import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.MultiLineString;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.IndexIterator;
 
@@ -25,7 +25,7 @@ public class LineGraphic extends Graphic {
      * @param polylineShape Polyline shape
      * @param polylineBreak Polyline break
      */
-    public LineGraphic(PolylineShape polylineShape, PolylineBreak polylineBreak) {
+    public LineGraphic(MultiLineString polylineShape, PolylineBreak polylineBreak) {
         this.shape = polylineShape;
         this.legendBreak = polylineBreak;
     }
@@ -85,9 +85,9 @@ public class LineGraphic extends Graphic {
             points.add(new Coordinate(x, y));
         }
         if (this.shape == null) {
-            this.shape = new PolylineShape();
+            this.shape = new MultiLineString();
         }
-        this.shape.setPoints(points);
+        this.shape.setCoordinates(points);
     }
 
     protected void updateShapeLegend(LegendScheme legendScheme) {
@@ -111,10 +111,10 @@ public class LineGraphic extends Graphic {
             cbc.add(cb);
         }
         if (this.shape == null) {
-            this.shape = new PolylineShape();
+            this.shape = new MultiLineString();
         }
         if (points.size() >= 2)
-            this.shape.setPoints(points);
+            this.shape.setCoordinates(points);
 
         this.legendBreak = cbc;
     }
@@ -140,9 +140,9 @@ public class LineGraphic extends Graphic {
             i += 1;
         }
         if (this.shape == null) {
-            this.shape = new PolylineShape();
+            this.shape = new MultiLineString();
         }
-        this.shape.setPoints(points);
+        this.shape.setCoordinates(points);
 
         this.legendBreak = cbc;
     }

@@ -6,7 +6,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.chart.graphic.cylinder.Cylinder;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
@@ -14,8 +14,8 @@ import org.meteoinfo.chart.jogl.Utils;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.Polyline;
-import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.LineString;
+import org.meteoinfo.geometry.MultiLineString;
 import org.meteoinfo.math.Matrix4f;
 
 import java.nio.FloatBuffer;
@@ -25,7 +25,7 @@ import java.util.List;
 
 public class LineRender extends JOGLGraphicRender {
 
-    private GraphicCollection3D graphics;
+    private GraphicCollection graphics;
     private IntBuffer vbo;
     private Program program;
     private int vertexNum;
@@ -70,7 +70,7 @@ public class LineRender extends JOGLGraphicRender {
      * @param gl The JOGL GL2 object
      * @param graphics Linestring 3D graphics
      */
-    public LineRender(GL2 gl, GraphicCollection3D graphics) {
+    public LineRender(GL2 gl, GraphicCollection graphics) {
         this(gl);
 
         this.graphics = graphics;
@@ -99,14 +99,14 @@ public class LineRender extends JOGLGraphicRender {
     private void updateVertexColor() {
         this.vertexNum = 0;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            this.vertexNum += graphic.getShape().getPointNum();
+            this.vertexNum += graphic.getShape().getNumPoints();
         }
 
         this.vertexColor = new float[this.vertexNum * 4];
         int i = 0;
         float[] color;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            int n = graphic.getShape().getPointNum();
+            int n = graphic.getShape().getNumPoints();
             ColorBreak cb = graphic.getLegendBreak();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 PolylineBreak lineBreak;
@@ -133,9 +133,9 @@ public class LineRender extends JOGLGraphicRender {
         int i = 0;
         linePointNumbers = new ArrayList<>();
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PolylineShape shape = (PolylineShape) graphic.getShape();
-            for (Polyline line : shape.getPolylines()) {
-                List<Coordinate> ps = (List<Coordinate>) line.getPointList();
+            MultiLineString shape = (MultiLineString) graphic.getShape();
+            for (LineString line : shape.getPolylines()) {
+                List<Coordinate> ps = line.getCoordinates();
                 linePointNumbers.add(ps.size());
                 for (Coordinate p : ps) {
                     vertexPosition[i] = (float) p.x;
@@ -154,9 +154,9 @@ public class LineRender extends JOGLGraphicRender {
         int i = 0;
         linePointNumbers = new ArrayList<>();
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PolylineShape shape = (PolylineShape) graphic.getShape();
-            for (Polyline line : shape.getPolylines()) {
-                List<Coordinate> ps = (List<Coordinate>) line.getPointList();
+            MultiLineString shape = (MultiLineString) graphic.getShape();
+            for (LineString line : shape.getPolylines()) {
+                List<Coordinate> ps = line.getCoordinates();
                 linePointNumbers.add(ps.size());
                 for (Coordinate p : ps) {
                     vertexPosition[i] = transform.transform_x((float) p.x);
@@ -175,9 +175,9 @@ public class LineRender extends JOGLGraphicRender {
         List<Integer> vertexIndices = new ArrayList<>();
         Cylinder cylinder = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PolylineShape shape = (PolylineShape) graphic.getShape();
-            int pointNum = shape.getPointNum();
-            List<Coordinate> ps = (List<Coordinate>) shape.getPoints();
+            MultiLineString shape = (MultiLineString) graphic.getShape();
+            int pointNum = shape.getNumPoints();
+            List<Coordinate> ps = (List<Coordinate>) shape.getCoordinates();
             ColorBreak cb = graphic.getLegendBreak();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;

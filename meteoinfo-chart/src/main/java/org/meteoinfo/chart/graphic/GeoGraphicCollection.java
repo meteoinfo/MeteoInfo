@@ -1,12 +1,10 @@
 package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.common.DataConvert;
-import org.meteoinfo.geometry.Extent;
+import org.meteoinfo.geometry.*;
 import org.meteoinfo.common.MIMath;
-import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.Point;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.geometry.shape.*;
-import org.meteoinfo.geometry.shape.Shape;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.table.AttributeTable;
@@ -53,7 +51,7 @@ public class GeoGraphicCollection extends GraphicCollection {
         geoGraphics.setAntiAlias(graphics.isAntiAlias());
 
         AttributeTable attrTable = new AttributeTable();
-        ShapeTypes shapeType = graphics.getShapeType();
+        GeometryType shapeType = graphics.getShapeType();
         switch (shapeType) {
             case POLYGON:
                 attrTable.addField(new Field("data_Low", DataType.DOUBLE));
@@ -69,8 +67,8 @@ public class GeoGraphicCollection extends GraphicCollection {
                 DataRow dataRow = dataTable.addRow();
                 switch (shapeType) {
                     case POLYGON:
-                        dataRow.setValue("data_Low", ((PolygonShape) graphic.getShape()).lowValue);
-                        dataRow.setValue("data_High", ((PolygonShape) graphic.getShape()).highValue);
+                        dataRow.setValue("data_Low", ((MultiPolygon) graphic.getShape()).lowValue);
+                        dataRow.setValue("data_High", ((MultiPolygon) graphic.getShape()).highValue);
                         break;
                     default:
                         dataRow.setValue("data", graphic.getShape().getValue());
@@ -177,28 +175,28 @@ public class GeoGraphicCollection extends GraphicCollection {
         }
 
         for (Graphic graphic : this.graphics) {
-            Shape shape = graphic.getShape();
+            Geometry shape = graphic.getShape();
             shapeIdx += 1;
             ColorBreak aCB = graphic.getLegendBreak();
             if (!aCB.isDrawShape()) {
                 continue;
             }
 
-            PointShape aPS = new PointShape();
+            Point aPS = new Point();
             switch (this.getShapeType()) {
                 case POINT:
-                    aPS.setPoint((Coordinate) ((PointShape) shape).getPoint().clone());
+                    aPS.setCoordinate((Coordinate) ((Point) shape).getCoordinate().clone());
                     break;
-                case POLYLINE:
-                    int pIdx = ((PolylineShape) shape).getPoints().size() / 2;
-                    aPS.setPoint((Coordinate) ((PolylineShape) shape).getPoints().get(pIdx - 1).clone());
+                case LINESTRING:
+                    int pIdx = ((MultiLineString) shape).getCoordinates().size() / 2;
+                    aPS.setCoordinate((Coordinate) ((MultiLineString) shape).getCoordinates().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                     Extent aExtent = shape.getExtent();
                     aPoint = new Coordinate();
                     aPoint.x = ((aExtent.minX + aExtent.maxX) / 2);
                     aPoint.y = ((aExtent.minY + aExtent.maxY) / 2);
-                    aPS.setPoint(aPoint);
+                    aPS.setCoordinate(aPoint);
                     break;
             }
 
@@ -236,7 +234,7 @@ public class GeoGraphicCollection extends GraphicCollection {
      */
     public LegendScheme createLegendScheme(LegendType aLT, String fieldName) {
         double min, max;
-        ShapeTypes aST = this.getShapeType();
+        GeometryType aST = this.getShapeType();
         LegendScheme aLS = new LegendScheme(this.getShapeType());
 
         min = aLS.getMinValue();
@@ -250,7 +248,7 @@ public class GeoGraphicCollection extends GraphicCollection {
                         aColor = Color.black;
                         size = 5;
                         break;
-                    case POLYLINE:
+                    case LINESTRING:
                         aColor = Color.black;
                         break;
                     case POLYGON:

@@ -4,7 +4,7 @@ import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.Polygon;
+import org.meteoinfo.geometry.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,7 +96,7 @@ public class PrimitiveTessellator {
 
         // 2. Process inner holes (if any)
         if (polygon.hasHole()) {
-            for (int i = 0; i < polygon.getHoleLineNumber(); i++) {
+            for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
                 glu.gluTessBeginContour(tobj);
                 List<Coordinate> holeLine = (List<Coordinate>) polygon.getHoleLine(i);
                 for (int j = 0; j < holeLine.size(); j++) {

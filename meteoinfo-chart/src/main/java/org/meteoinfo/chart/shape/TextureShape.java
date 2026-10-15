@@ -9,8 +9,8 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureIO;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
-import org.meteoinfo.geometry.shape.ImageShape;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.special.Image;
+import org.meteoinfo.geometry.GeometryType;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import java.io.IOException;
  *
  * @author yaqiang
  */
-public class TextureShape extends ImageShape{
+public class TextureShape extends Image {
     private Texture texture;
     private String fileName;
     private int textureID;
@@ -68,8 +68,8 @@ public class TextureShape extends ImageShape{
     }
     
     @Override
-    public ShapeTypes getShapeType(){
-        return ShapeTypes.TEXTURE;
+    public GeometryType getGeometryType(){
+        return GeometryType.TEXTURE;
     }
     
     /**

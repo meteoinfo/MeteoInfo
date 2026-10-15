@@ -5,8 +5,8 @@ import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.LegendType;
 import org.meteoinfo.geometry.legend.PointBreak;
-import org.meteoinfo.geometry.shape.PointShape;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.Point;
+import org.meteoinfo.geometry.GeometryType;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.IndexIterator;
 
@@ -159,7 +159,7 @@ public class PointGraphicCollection extends GraphicCollection {
             if (Double.isNaN(x) || Double.isNaN(y)) {
                 continue;
             }
-            PointShape shape = new PointShape(new Coordinate(x, y));
+            Point shape = new Point(new Coordinate(x, y));
             this.add(new PointGraphic(shape, pointBreak));
         }
     }
@@ -178,14 +178,14 @@ public class PointGraphicCollection extends GraphicCollection {
                 if (Double.isNaN(x) || Double.isNaN(y)) {
                     continue;
                 }
-                PointShape shape = new PointShape(new Coordinate(x, y));
+                Point shape = new Point(new Coordinate(x, y));
                 this.add(new PointGraphic(shape, (PointBreak) cbs.get(i)));
                 i += 1;
             }
             LegendScheme ls = new LegendScheme();
             ls.setLegendBreaks(cbs);
             ls.setLegendType(LegendType.UNIQUE_VALUE);
-            ls.setShapeType(ShapeTypes.POINT);
+            ls.setShapeType(GeometryType.POINT);
             this.singleLegend = false;
             this.legendScheme = ls;
         } else {
@@ -195,7 +195,7 @@ public class PointGraphicCollection extends GraphicCollection {
 
     protected void updateGraphics(LegendScheme ls) {
         this.graphics = new ArrayList<Graphic>();
-        PointShape ps;
+        Point ps;
         double z;
         ColorBreak cb;
         IndexIterator xIter = this.xData.getIndexIterator();
@@ -204,8 +204,8 @@ public class PointGraphicCollection extends GraphicCollection {
         if (ls.getLegendType() == LegendType.UNIQUE_VALUE && this.xData.getSize() == ls.getBreakNum()) {
             int i = 0;
             while (xIter.hasNext()) {
-                ps = new PointShape();
-                ps.setPoint(new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext()));
+                ps = new Point();
+                ps.setCoordinate(new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext()));
                 z = zIter.getDoubleNext();
                 ps.setValue(z);
                 cb = ls.getLegendBreak(i);
@@ -214,8 +214,8 @@ public class PointGraphicCollection extends GraphicCollection {
             }
         } else {
             while (xIter.hasNext()) {
-                ps = new PointShape();
-                ps.setPoint(new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext()));
+                ps = new Point();
+                ps.setCoordinate(new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext()));
                 z = zIter.getDoubleNext();
                 ps.setValue(z);
                 cb = ls.findLegendBreak(z);

@@ -14,7 +14,8 @@ from org.meteoinfo.data import TableUtil, XYListDataset
 from org.meteoinfo.geo.layer import LayerTypes, VectorLayer
 from org.meteoinfo.geometry.legend import LegendType
 from org.meteoinfo.projection import ProjectionUtil, KnownCoordinateSystems
-from org.meteoinfo.geometry.shape import PolygonShape, ShapeTypes
+from org.meteoinfo.geometry import MultiPolygon
+from org.meteoinfo.geometry import GeometryType
 from org.meteoinfo.geo.analysis import GeometryUtil
 from org.meteoinfo.geo.util import GeoProjectionUtil
 from org.meteoinfo.geo.io import GeoJSONReader, GeoJSONWriter
@@ -25,7 +26,7 @@ class MILayer(object):
     Map layer
     
     :param layer: (*MapLayer*) MapLayer object.
-    :param shapetype: (*ShapeTypes*) Shape type ['point' | 'point_z' | 'line' | 'line_z' | 'polygon'
+    :param shapetype: (*ShapeType*) Shape type ['point' | 'point_z' | 'line' | 'line_z' | 'polygon'
         | 'polygon_z']
     """
 
@@ -36,14 +37,14 @@ class MILayer(object):
             else:
                 shapetype = shapetype.upper()
                 if shapetype == 'LINE':
-                    shapetype = 'POLYLINE'
+                    shapetype = 'LINESTRING'
                 elif shapetype == 'LINE_Z':
                     shapetype = 'POLYLINE_Z'
                 try:
-                    type = ShapeTypes.valueOf(shapetype)
+                    type = GeometryType.valueOf(shapetype)
                 except:
                     print('shapetype is not valid: {}'.foramt(shapetype))
-                    type = ShapeTypes.POINT
+                    type = GeometryType.POINT
                 self._layer = VectorLayer(type)
                 self.shapetype = type
                 self.proj = KnownCoordinateSystems.geographic.world.WGS1984
@@ -529,11 +530,11 @@ class MILayer(object):
         """
         Clip this layer by polygon or another polygon layer.
         
-        :param clipobj: (*PolygonShape or MILayer*) Clip object.
+        :param clipobj: (*Polygon or MILayer*) Clip object.
         
         :returns: (*MILayer*) Clipped layer.
         """
-        if isinstance(clipobj, PolygonShape):
+        if isinstance(clipobj, (Polygon, MultiPolygon)):
             clipobj = [clipobj]
         elif isinstance(clipobj, MILayer):
             clipobj = clipobj._layer

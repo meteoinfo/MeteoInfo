@@ -24,7 +24,7 @@ import org.meteoinfo.geo.layer.LayerDrawType;
 import org.meteoinfo.geo.layer.LayerTypes;
 import org.meteoinfo.geo.layer.MapLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 import com.l2fprod.common.beans.BaseBeanInfo;
 import com.l2fprod.common.beans.ExtendedPropertyDescriptor;
 import com.l2fprod.common.beans.editor.ComboBoxPropertyEditor;
@@ -611,7 +611,7 @@ public class LayoutLegend extends LayoutElement {
                         aPB.setSize(aPB.getSize() * zoom);
                         Draw.drawPoint((PointF) aP.clone(), aPB, g);
                         break;
-                    case POLYLINE:
+                    case LINESTRING:
                         PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
                         caption = aPLB.getCaption();
                         Draw.drawPolylineSymbol((PointF) aP.clone(), width, height, aPLB, g);
@@ -725,7 +725,7 @@ public class LayoutLegend extends LayoutElement {
                         caption = DataConvert.removeTailingZeros(aPB.getStartValue().toString());
                     }
                     break;
-                case POLYLINE:
+                case LINESTRING:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
@@ -770,7 +770,7 @@ public class LayoutLegend extends LayoutElement {
 
             if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                 if (DrawShape) {
-                    if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                    if (aLS.getShapeType() == GeometryType.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                         aPGB.setDrawOutline(true);
                         aPGB.setOutlineColor(Color.black);
@@ -804,7 +804,7 @@ public class LayoutLegend extends LayoutElement {
                         Points[3] = new PointF();
                         Points[3].X = aP.X;
                         Points[3].Y = 0;
-                        if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                        if (aLS.getShapeType() == GeometryType.POLYGON) {
                             PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                             aPGB.setDrawOutline(true);
                             aPGB.setOutlineColor(Color.black);
@@ -826,7 +826,7 @@ public class LayoutLegend extends LayoutElement {
                         Points[3] = new PointF();
                         Points[3].X = 0;
                         Points[3].Y = i * height;
-                        if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                        if (aLS.getShapeType() == GeometryType.POLYGON) {
                             PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                             aPGB.setDrawOutline(true);
                             aPGB.setOutlineColor(Color.black);
@@ -834,7 +834,7 @@ public class LayoutLegend extends LayoutElement {
                         } else {
                             Draw.drawPolygon(Points, FillColor, OutlineColor, DrawFill, DrawOutline, g);
                         }
-                    } else if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                    } else if (aLS.getShapeType() == GeometryType.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                         aPGB.setDrawOutline(true);
                         aPGB.setOutlineColor(Color.black);
@@ -918,7 +918,7 @@ public class LayoutLegend extends LayoutElement {
                     DrawFill = aPB.isDrawFill();
                     FillColor = aPB.getColor();
                     break;
-                case POLYLINE:
+                case LINESTRING:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
@@ -942,7 +942,7 @@ public class LayoutLegend extends LayoutElement {
 
             if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                 if (DrawShape) {
-                    if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                    if (aLS.getShapeType() == GeometryType.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                         aPGB.setDrawOutline(DrawOutline);
                         aPGB.setOutlineColor(Color.black);
@@ -967,7 +967,7 @@ public class LayoutLegend extends LayoutElement {
                     Points[3] = new PointF();
                     Points[3].X = aP.X;
                     Points[3].Y = 0;
-                    if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                    if (aLS.getShapeType() == GeometryType.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                         aPGB.setDrawOutline(DrawOutline);
                         aPGB.setOutlineColor(Color.black);
@@ -989,7 +989,7 @@ public class LayoutLegend extends LayoutElement {
                     Points[3] = new PointF();
                     Points[3].X = 0;
                     Points[3].Y = i * height;
-                    if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                    if (aLS.getShapeType() == GeometryType.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                         aPGB.setDrawOutline(DrawOutline);
                         aPGB.setOutlineColor(Color.black);
@@ -997,7 +997,7 @@ public class LayoutLegend extends LayoutElement {
                     } else {
                         Draw.drawPolygon(Points, FillColor, OutlineColor, DrawFill, DrawOutline, g);
                     }
-                } else if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                } else if (aLS.getShapeType() == GeometryType.POLYGON) {
                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                     aPGB.setDrawOutline(DrawOutline);
                     aPGB.setOutlineColor(Color.black);
@@ -1111,7 +1111,7 @@ public class LayoutLegend extends LayoutElement {
                         caption = DataConvert.removeTailingZeros(aPB.getEndValue().toString());
                     }
                     break;
-                case POLYLINE:
+                case LINESTRING:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
@@ -1150,7 +1150,7 @@ public class LayoutLegend extends LayoutElement {
 
             if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                 if (DrawShape) {
-                    if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                    if (aLS.getShapeType() == GeometryType.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i).clone();
                         aPGB.setDrawOutline(true);
                         aPGB.setOutlineColor(Color.black);
@@ -1184,7 +1184,7 @@ public class LayoutLegend extends LayoutElement {
                         Points[3] = new PointF();
                         Points[3].X = 0;
                         Points[3].Y = aP.Y;
-                        if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                        if (aLS.getShapeType() == GeometryType.POLYGON) {
                             PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i).clone();
                             aPGB.setDrawOutline(true);
                             aPGB.setOutlineColor(Color.black);
@@ -1206,7 +1206,7 @@ public class LayoutLegend extends LayoutElement {
                         Points[3] = new PointF();
                         Points[3].X = i * width;
                         Points[3].Y = height;
-                        if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                        if (aLS.getShapeType() == GeometryType.POLYGON) {
                             PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i).clone();
                             aPGB.setDrawOutline(true);
                             aPGB.setOutlineColor(Color.black);
@@ -1214,7 +1214,7 @@ public class LayoutLegend extends LayoutElement {
                         } else {
                             Draw.drawPolygon(Points, FillColor, OutlineColor, DrawFill, DrawOutline, g);
                         }
-                    } else if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                    } else if (aLS.getShapeType() == GeometryType.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i).clone();
                         aPGB.setDrawOutline(true);
                         aPGB.setOutlineColor(Color.black);
@@ -1281,7 +1281,7 @@ public class LayoutLegend extends LayoutElement {
                     DrawFill = aPB.isDrawFill();
                     FillColor = aPB.getColor();
                     break;
-                case POLYLINE:
+                case LINESTRING:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
@@ -1305,7 +1305,7 @@ public class LayoutLegend extends LayoutElement {
 
             if (aLS.getLegendType() == LegendType.UNIQUE_VALUE) {
                 if (DrawShape) {
-                    if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                    if (aLS.getShapeType() == GeometryType.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i).clone();
                         aPGB.setDrawOutline(DrawOutline);
                         aPGB.setOutlineColor(Color.black);
@@ -1330,7 +1330,7 @@ public class LayoutLegend extends LayoutElement {
                     Points[3] = new PointF();
                     Points[3].X = 0;
                     Points[3].Y = aP.Y;
-                    if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                    if (aLS.getShapeType() == GeometryType.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i).clone();
                         aPGB.setDrawOutline(DrawOutline);
                         aPGB.setOutlineColor(Color.black);
@@ -1352,7 +1352,7 @@ public class LayoutLegend extends LayoutElement {
                     Points[3] = new PointF();
                     Points[3].X = i * width;
                     Points[3].Y = height;
-                    if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                    if (aLS.getShapeType() == GeometryType.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i).clone();
                         aPGB.setDrawOutline(DrawOutline);
                         aPGB.setOutlineColor(Color.black);
@@ -1360,7 +1360,7 @@ public class LayoutLegend extends LayoutElement {
                     } else {
                         Draw.drawPolygon(Points, FillColor, OutlineColor, DrawFill, DrawOutline, g);
                     }
-                } else if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                } else if (aLS.getShapeType() == GeometryType.POLYGON) {
                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i).clone();
                     aPGB.setDrawOutline(DrawOutline);
                     aPGB.setOutlineColor(Color.black);
@@ -1461,7 +1461,7 @@ public class LayoutLegend extends LayoutElement {
                         caption = aPB.getCaption();
                     }
                     break;
-                case POLYLINE:
+                case LINESTRING:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
                     if (aLS.getLegendType() == LegendType.GRADUATED_COLOR && _legendStyle != LegendStyles.NORMAL) {
                         caption = DataConvert.removeTailingZeros(aPLB.getEndValue().toString());

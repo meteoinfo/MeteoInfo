@@ -13,7 +13,7 @@ from org.meteoinfo.chart.jogl import JOGLUtil
 from org.meteoinfo.chart.plot import Plot2D, Plot3D
 from org.meteoinfo.chart.geo import MapPlot
 from org.meteoinfo.geometry.legend import LegendManage, LegendScheme, LegendType
-from org.meteoinfo.geometry.shape import ShapeTypes
+from org.meteoinfo.geometry import GeometryType
 from org.meteoinfo.image import AnimatedGifEncoder
 
 import datetime
@@ -2254,13 +2254,13 @@ def makesymbolspec(geometry, *args, **kwargs):
     
     :returns: Created legend.
     """
-    shapetype = ShapeTypes.IMAGE
+    shapetype = GeometryType.IMAGE
     if geometry == 'point':
-        shapetype = ShapeTypes.POINT
+        shapetype = GeometryType.POINT
     elif geometry == 'line':
-        shapetype = ShapeTypes.POLYLINE
+        shapetype = GeometryType.LINESTRING
     elif geometry == 'polygon':
-        shapetype = ShapeTypes.POLYGON
+        shapetype = GeometryType.POLYGON
 
     levels = kwargs.pop('levels', None)
     cols = kwargs.pop('colors', None)

@@ -8,23 +8,24 @@ package org.meteoinfo.chart.plot;
 import org.meteoinfo.chart.*;
 import org.meteoinfo.chart.axis.Axis;
 import org.meteoinfo.chart.axis.LogAxis;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.chart.plot3d.Projector;
 import org.meteoinfo.common.*;
 import org.meteoinfo.data.DataMath;
 import org.meteoinfo.data.Dataset;
-import org.meteoinfo.geometry.Extent;
-import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.Polygon;
+import org.meteoinfo.geometry.*;
+import org.meteoinfo.geometry.Point;
+import org.meteoinfo.geometry.Polygon;
+import org.meteoinfo.geometry.special.Image;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.geometry.shape.Shape;
-import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.geometry.special.*;
 import org.meteoinfo.math.sort.QuickSort;
 
 import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D;
@@ -39,7 +40,7 @@ import java.util.List;
 public class Plot3D extends Plot {
 
     // <editor-fold desc="Variables">
-    private final GraphicCollection3D graphics;
+    private final GraphicCollection graphics;
     private Extent extent;
     private Extent axesExtent;
     private ChartText title;
@@ -51,7 +52,7 @@ public class Plot3D extends Plot {
 
     private final Projector projector; // the projector, controls the point of view
     private int prevwidth, prevheight; // canvas size
-    private Rectangle graphBounds;    //Graphic area bounds
+    private java.awt.Rectangle graphBounds;    //Graphic area bounds
 
     private boolean isBoxed, isMesh, isScaleBox, isDisplayXY, isDisplayZ,
             drawBoundingBox, drawBase;
@@ -67,7 +68,7 @@ public class Plot3D extends Plot {
     private int t_x, t_y, t_z; // determines ticks density
     //private final int poly_x[] = new int[9];
     //private final int poly_y[] = new int[9];
-    private Point projection;
+    private java.awt.Point projection;
     float xfactor;
     float yfactor;
     float zfactor;
@@ -93,7 +94,7 @@ public class Plot3D extends Plot {
         projector.set2DScaling(15);
         projector.setRotationAngle(225);
         projector.setElevationAngle(30);
-        this.graphics = new GraphicCollection3D();
+        this.graphics = new GraphicCollection();
         this.hideOnDrag = false;
         this.isBoxed = true;
         this.gridLine = new GridLine();
@@ -110,7 +111,7 @@ public class Plot3D extends Plot {
      * Get graphics
      * @return The graphics
      */
-    public GraphicCollection3D getGraphics() {
+    public GraphicCollection getGraphics() {
         return this.graphics;
     }
 
@@ -702,7 +703,7 @@ public class Plot3D extends Plot {
         float y = this.drawTitle(g2, this.getGraphArea());
 
         //Set projection area
-        Rectangle parea = this.getPositionArea(area).getBounds();
+        java.awt.Rectangle parea = this.getPositionArea(area).getBounds();
         if ((parea.width != prevwidth) || (parea.height != prevheight)) {
             prevwidth = parea.width;
             prevheight = parea.height;
@@ -766,7 +767,7 @@ public class Plot3D extends Plot {
     private void drawAllGraphics(Graphics2D g2) {
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);
-            if (graphic instanceof GraphicCollection3D && ((GraphicCollection3D) graphic).isFixZ()) {
+            if (graphic instanceof GraphicCollection && ((GraphicCollection) graphic).isFixZ()) {
                 this.drawGraphics_FixZ(g2, graphic);
             } else {
                 this.drawGraphics(g2, graphic);
@@ -775,18 +776,21 @@ public class Plot3D extends Plot {
     }
 
     private void drawGraphic(Graphics2D g, Graphic graphic) {
-        Shape shape = graphic.getGraphicN(0).getShape();
-        switch (shape.getShapeType()) {
+        Geometry shape = graphic.getGraphicN(0).getShape();
+        switch (shape.getGeometryType()) {
             case POINT:
+            case MULTI_POINT:
                 this.drawPoint(g, graphic);
                 break;
             case TEXT:
                 this.drawText((ChartText3D) shape, g);
                 break;
-            case POLYLINE:
+            case LINESTRING:
+            case MULTI_LINESTRING:
                 this.drawLineString(g, graphic);
                 break;
             case POLYGON:
+            case MULTI_POLYGON:
                 this.drawPolygonShape(g, graphic);
                 break;
             case WIND_ARROW:
@@ -800,11 +804,11 @@ public class Plot3D extends Plot {
 
     private void drawGraphics_FixZ(Graphics2D g, Graphic graphic) {
         //Set clip polygon
-        float zValue = (float) ((GraphicCollection3D) graphic).getZValue();
-        String zdir = ((GraphicCollection3D) graphic).getZDir();
+        float zValue = (float) ((GraphicCollection) graphic).getZValue();
+        String zdir = ((GraphicCollection) graphic).getZDir();
         java.awt.Polygon polygon = new java.awt.Polygon();
-        Point p;
-        List<Point> points = new ArrayList<>();
+        java.awt.Point p;
+        List<java.awt.Point> points = new ArrayList<>();
         switch (zdir) {
             case "x":
                 /*zValue = (zValue - this.xmin) * xfactor - 10;
@@ -837,7 +841,7 @@ public class Plot3D extends Plot {
                 points.add(p);
                 break;
             case "xy":
-                List<Number> sePoint = ((GraphicCollection3D) graphic).getSEPoint();
+                List<Number> sePoint = ((GraphicCollection) graphic).getSEPoint();
                 if (sePoint != null && sePoint.size() > 3){
                     float sx = sePoint.get(0).floatValue();
                     float sy = sePoint.get(1).floatValue();
@@ -879,7 +883,7 @@ public class Plot3D extends Plot {
         }
         java.awt.Shape oldRegion = g.getClip();
         if (points.size() > 3){
-            for (Point pp : points) {
+            for (java.awt.Point pp : points) {
                 polygon.addPoint(pp.x, pp.y);
             }            
             g.setClip(polygon);
@@ -888,9 +892,9 @@ public class Plot3D extends Plot {
         //Draw graphics
         for (int i = 0; i < graphic.getNumGraphics(); i++) {
             Graphic gg = graphic.getGraphicN(i);
-            if (gg.getShape().getShapeType() == ShapeTypes.IMAGE) {
+            if (gg.getShape().getGeometryType() == GeometryType.IMAGE) {
                 //g.setClip(oldRegion);
-                this.drawImage(g, gg, zdir, (float) ((GraphicCollection3D) graphic).getZValue());
+                this.drawImage(g, gg, zdir, (float) ((GraphicCollection) graphic).getZValue());
             } else {
                 this.drawGraphic(g, gg);
             }
@@ -921,8 +925,8 @@ public class Plot3D extends Plot {
             if (xdir) {
                 for (int i = 0; i < n; i++) {
                     Graphic gg = graphic.getGraphicN(i);
-                    Shape shape = gg.getShape();
-                    p = (Coordinate) shape.getPoints().get(0);
+                    Geometry shape = gg.getShape();
+                    p = (Coordinate) shape.getCoordinates().get(0);
                     d = p.x * projector.getSinRotationAngle();
                     dds[i] = d;
                     order[i] = i;
@@ -930,8 +934,8 @@ public class Plot3D extends Plot {
             } else {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
-                    Shape shape = gg.getShape();
-                    p = (Coordinate) shape.getPoints().get(0);
+                    Geometry shape = gg.getShape();
+                    p = (Coordinate) shape.getCoordinates().get(0);
                     d = p.y * projector.getCosRotationAngle();
                     dds[i] = d;
                     order[i] = i;
@@ -965,8 +969,8 @@ public class Plot3D extends Plot {
             if (xdir) {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
-                    PointShape shape = (PointShape) gg.getShape();
-                    p = (Coordinate) shape.getPoint();
+                    Point shape = (Point) gg.getShape();
+                    p = (Coordinate) shape.getCoordinate();
                     d = p.x * projector.getSinRotationAngle();
                     isIn = false;
                     for (int j = 0; j < dds.size(); j++) {
@@ -985,8 +989,8 @@ public class Plot3D extends Plot {
             } else {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
-                    PointShape shape = (PointShape) gg.getShape();
-                    p = (Coordinate) shape.getPoint();
+                    Point shape = (Point) gg.getShape();
+                    p = (Coordinate) shape.getCoordinate();
                     d = p.y * projector.getCosRotationAngle();
                     isIn = false;
                     for (int j = 0; j < dds.size(); j++) {
@@ -1019,7 +1023,7 @@ public class Plot3D extends Plot {
      * @param z Z
      * @return Projected 2D point
      */
-    public Point project(float x, float y, float z) {
+    public java.awt.Point project(float x, float y, float z) {
         float px, py, pz;
         if (this.xAxis instanceof LogAxis)
             px = (float)(Math.log10(x) - Math.log10(xmin)) * xfactor - 10;
@@ -1044,14 +1048,14 @@ public class Plot3D extends Plot {
      * @param z Z
      * @return Projected 2D point
      */
-    public Point project_bak(float x, float y, float z) {
+    public java.awt.Point project_bak(float x, float y, float z) {
         return this.projector.project((x - xmin) * xfactor - 10,
                 (y - ymin) * yfactor - 10, (z - zmin) * zfactor - 10);
     }
 
     void drawText(ChartText3D text, Graphics2D g) {
         float x, y;
-        Point p = this.project((float) text.getX(), (float) text.getY(), (float) text.getZ());
+        java.awt.Point p = this.project((float) text.getX(), (float) text.getY(), (float) text.getZ());
         x = p.x;
         y = p.y;
         this.drawText(g, text, x, y);
@@ -1096,9 +1100,9 @@ public class Plot3D extends Plot {
 
     private void drawPoint(Graphics2D g, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
-            PointShape shape = (PointShape) graphic.getShape();
+            Point shape = (Point) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
-            Coordinate p = (Coordinate) shape.getPoint();
+            Coordinate p = (Coordinate) shape.getCoordinate();
             /*PointZ pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
                     (p.Z - this.zmin) * zfactor - 10);
             projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);*/
@@ -1126,8 +1130,8 @@ public class Plot3D extends Plot {
             if (xdir) {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
-                    Shape shape = gg.getShape();
-                    p = (Coordinate) shape.getPoints().get(0);
+                    Geometry shape = gg.getShape();
+                    p = (Coordinate) shape.getCoordinates().get(0);
                     d = p.x * projector.getSinRotationAngle();
                     isIn = false;
                     for (int j = 0; j < dds.size(); j++) {
@@ -1146,8 +1150,8 @@ public class Plot3D extends Plot {
             } else {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
-                    Shape shape = gg.getShape();
-                    p = (Coordinate) shape.getPoints().get(0);
+                    Geometry shape = gg.getShape();
+                    p = (Coordinate) shape.getCoordinates().get(0);
                     d = p.y * projector.getCosRotationAngle();
                     isIn = false;
                     for (int j = 0; j < dds.size(); j++) {
@@ -1174,10 +1178,10 @@ public class Plot3D extends Plot {
 
     private void drawLineString(Graphics2D g, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
-            PolylineShape shape = (PolylineShape) graphic.getShape();
+            MultiLineString shape = (MultiLineString) graphic.getShape();
             ColorBreak pb = graphic.getLegendBreak();
-            for (Polyline line : shape.getPolylines()){
-                List<Coordinate> ps = (List<Coordinate>)line.getPointList();
+            for (LineString line : shape.getPolylines()){
+                List<Coordinate> ps = line.getCoordinates();
                 PointF[] points = new PointF[ps.size()];
                 Coordinate p, pp;
                 for (int i = 0; i < ps.size(); i++) {
@@ -1207,8 +1211,8 @@ public class Plot3D extends Plot {
         if (xdir) {
             for (int i = 0; i < graphic.getNumGraphics(); i++) {
                 Graphic gg = graphic.getGraphicN(i);
-                Shape shape = gg.getShape();
-                p = (Coordinate) shape.getPoints().get(0);
+                Geometry shape = gg.getShape();
+                p = (Coordinate) shape.getCoordinates().get(0);
                 d = p.x * projector.getSinRotationAngle();
                 isIn = false;
                 for (int j = 0; j < dds.size(); j++) {
@@ -1227,8 +1231,8 @@ public class Plot3D extends Plot {
         } else {
             for (int i = 0; i < graphic.getNumGraphics(); i++) {
                 Graphic gg = graphic.getGraphicN(i);
-                Shape shape = gg.getShape();
-                p = (Coordinate) shape.getPoints().get(0);
+                Geometry shape = gg.getShape();
+                p = (Coordinate) shape.getCoordinates().get(0);
                 d = p.y * projector.getCosRotationAngle();
                 isIn = false;
                 for (int j = 0; j < dds.size(); j++) {
@@ -1254,7 +1258,7 @@ public class Plot3D extends Plot {
 
     private void drawPolygonShape(Graphics2D g, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
-            PolygonShape shape = (PolygonShape) graphic.getShape();
+            MultiPolygon shape = (MultiPolygon) graphic.getShape();
             PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
             for (Polygon poly : shape.getPolygons()) {
                 drawPolygon(g, poly, pb);
@@ -1327,10 +1331,10 @@ public class Plot3D extends Plot {
     }
 
     private void drawImage(Graphics2D g, Graphic igraphic, String zdir, float zValue) {
-        ImageShape ishape = (ImageShape) igraphic.getShape();
+        Image ishape = (Image) igraphic.getShape();
         BufferedImage image = ishape.getImage();
         Extent ext = ishape.getExtent();
-        Point p1, p2, p3, p4;
+        java.awt.Point p1, p2, p3, p4;
         AffineTransform transform = new AffineTransform();
         transform.setToIdentity();
         float minx, miny, maxx, maxy, minz, maxz;
@@ -1460,7 +1464,7 @@ public class Plot3D extends Plot {
         if (extent.intersects(graphic.getExtent())) {
             WindArrow3D shape = (WindArrow3D) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
-            Coordinate p = (Coordinate) shape.getPoint();
+            Coordinate p = (Coordinate) shape.getCoordinate();
             /*PointZ pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
                     (p.Z - this.zmin) * zfactor - 10);
             projection = projector.project((float) pp.X, (float) pp.Y, (float) pp.Z);*/
@@ -1485,7 +1489,7 @@ public class Plot3D extends Plot {
      * @param y used to retrieve y coordinates of drawn plane from this method.
      */
     private void drawBase(Graphics2D g, int[] x, int[] y) {
-        Point p = projector.project(-10, -10, -10);
+        java.awt.Point p = projector.project(-10, -10, -10);
         x[0] = p.x;
         y[0] = p.y;
         p = projector.project(-10, 10, -10);
@@ -1766,12 +1770,12 @@ public class Plot3D extends Plot {
     }
 
     private java.awt.Polygon getBorder() {
-        Point p;
+        java.awt.Point p;
         java.awt.Polygon polygon = new java.awt.Polygon();
         float elevation = this.projector.getElevationAngle();
         float rotation = this.projector.getRotationAngle();
         if (elevation == 0 && ((rotation > 90 && rotation < 180) || (rotation > 270 && rotation < 360))) {
-            Rectangle rect = this.projector.getBounds();
+            java.awt.Rectangle rect = this.projector.getBounds();
             polygon.addPoint(rect.x, rect.y);
             polygon.addPoint(rect.x, rect.y + rect.height);
             polygon.addPoint(rect.x + rect.width, rect.y + rect.height);
@@ -1800,7 +1804,7 @@ public class Plot3D extends Plot {
      * @param g the graphics context to draw
      */
     private void drawBoxGridsTicksLabels(Graphics2D g) {
-        Point tickpos;
+        java.awt.Point tickpos;
         boolean x_left, y_left;
         int x[], y[], i;
 
@@ -1976,7 +1980,7 @@ public class Plot3D extends Plot {
                 //g.drawLine(projection.x, projection.y, tickpos.x, tickpos.y);
                 g.drawLine(tickpos.x, tickpos.y, (int) value[0], (int) value[1]);
                 value = DataMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength() + 5);
-                tickpos = new Point((int) value[0], (int) value[1]);
+                tickpos = new java.awt.Point((int) value[0], (int) value[1]);
                 g.setColor(this.xAxis.getTickLabelColor());
                 if (x_left) {
                     //outString(g, tickpos.x, tickpos.y, s, XAlign.LEFT, YAlign.TOP);
@@ -2057,7 +2061,7 @@ public class Plot3D extends Plot {
                 g.setColor(this.yAxis.getTickColor());
                 g.drawLine(tickpos.x, tickpos.y, (int) value[0], (int) value[1]);
                 value = DataMath.getEndPoint(tickpos.x, tickpos.y, angle, this.xAxis.getTickLength() + 5);
-                tickpos = new Point((int) value[0], (int) value[1]);
+                tickpos = new java.awt.Point((int) value[0], (int) value[1]);
                 g.setColor(this.yAxis.getTickLabelColor());
                 if (y_left) {
                     //outString(g, tickpos.x, tickpos.y, s, XAlign.LEFT, YAlign.TOP);
@@ -2168,7 +2172,7 @@ public class Plot3D extends Plot {
      * Draws the bounding box of surface.
      */
     private void drawBoundingBox(Graphics2D g2) {
-        Point startingpoint;
+        java.awt.Point startingpoint;
 
         startingpoint = projector.project(factor_x * 10, factor_y * 10, 10);
         g2.setColor(this.gridLine.getColor());
@@ -2314,7 +2318,7 @@ public class Plot3D extends Plot {
         }
 
         if (ls == null) {
-            ShapeTypes stype = ShapeTypes.POLYLINE;
+            GeometryType stype = GeometryType.LINESTRING;
             ls = new LegendScheme(stype);
             for (Graphic g : this.graphics.getGraphics()) {
                 ls.getLegendBreaks().add(g.getLegendBreak());

@@ -14,14 +14,12 @@
 package org.meteoinfo.geo.util;
 
 import org.meteoinfo.chart.geo.ProjectUtil;
-import org.meteoinfo.geometry.Extent;
-import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.*;
 import org.meteoinfo.data.GridArray;
 import org.meteoinfo.geo.layer.RasterLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.geometry.special.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
-import org.meteoinfo.geometry.GeometryUtil;
 import org.meteoinfo.math.interpolate.InterpUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
@@ -88,9 +86,9 @@ public class GeoProjectionUtil {
         Array r = InterpUtil.interpolation_Nearest(px, py, data, rx, ry, Double.POSITIVE_INFINITY);
 
         //Convexhull maskout
-        PolygonShape polyshape = GeometryUtil.convexHull(px, py);
+        MultiPolygon polyshape = GeometryUtil.convexHull(px, py);
         Array[] rxy = ArrayUtil.meshgrid(rx, ry);
-        List<PolygonShape> pss = new ArrayList<>();
+        List<MultiPolygon> pss = new ArrayList<>();
         pss.add(polyshape);
         r = GeometryUtil.maskout(r, rxy[0], rxy[1], pss);
 
@@ -194,29 +192,29 @@ public class GeoProjectionUtil {
             case WIND_ARROW:
             case WIND_BARB:
             case STATION_MODEL:
-                List<Shape> shapePoints = new ArrayList<>();
+                List<Geometry> shapePoints = new ArrayList<>();
                 newPoints.clear();                
                 for (s = 0; s < oLayer.getShapeNum(); s++) {
-                    PointShape aPS = (PointShape) oLayer.getShapes().get(s);
+                    Point aPS = (Point) oLayer.getShapes().get(s);
                     if (fromProj.getProjectionName() == ProjectionNames.LongLat) {
                         switch (toProj.getProjectionName()) {
                             case Lambert_Conformal_Conic:
-                                if (aPS.getPoint().y < cutoff) {
+                                if (aPS.getCoordinate().y < cutoff) {
                                     continue;
                                 }
                                 break;
                             case North_Polar_Stereographic_Azimuthal:
-                                if (aPS.getPoint().y < cutoff) {
+                                if (aPS.getCoordinate().y < cutoff) {
                                     continue;
                                 }
                                 break;
                             case South_Polar_Stereographic_Azimuthal:
-                                if (aPS.getPoint().y > cutoff) {
+                                if (aPS.getCoordinate().y > cutoff) {
                                     continue;
                                 }
                                 break;
                             case Mercator:
-                                if (aPS.getPoint().y > cutoff || aPS.getPoint().y < -cutoff) {
+                                if (aPS.getCoordinate().y > cutoff || aPS.getCoordinate().y < -cutoff) {
                                     continue;
                                 }
                                 break;
@@ -225,7 +223,7 @@ public class GeoProjectionUtil {
                     aPS = ProjectionUtil.projectPointShape(aPS, fromProj, toProj);
                     if (aPS != null) {
                         shapePoints.add(aPS);
-                        newPoints.add(aPS.getPoint());
+                        newPoints.add(aPS.getCoordinate());
 
                         DataRow aDR = oLayer.getAttributeTable().getTable().getRows().get(s);
                         try {
@@ -242,10 +240,10 @@ public class GeoProjectionUtil {
             case POLYLINE:
             case POLYLINE_M:
             case POLYLINE_Z:
-                List<Shape> newPolylines = new ArrayList<>();
+                List<Geometry> newPolylines = new ArrayList<>();
                 for (s = 0; s < oLayer.getShapeNum(); s++) {
-                    PolylineShape aPLS = (PolylineShape) oLayer.getShapes().get(s);
-                    List<PolylineShape> plsList = new ArrayList<>();
+                    MultiLineString aPLS = (MultiLineString) oLayer.getShapes().get(s);
+                    List<MultiLineString> plsList = new ArrayList<>();
                     if (fromProj.getProjectionName() == ProjectionNames.LongLat) {
                         switch (toProj.getProjectionName()) {
                             case Lambert_Conformal_Conic:
@@ -328,11 +326,11 @@ public class GeoProjectionUtil {
             case POLYGON:
             case POLYGON_M:
             case POLYGON_Z:
-                List<Shape> newPolygons = new ArrayList<>();
+                List<Geometry> newPolygons = new ArrayList<>();
                 for (s = 0; s < oLayer.getShapeNum(); s++) {
                     DataRow aDR = oLayer.getAttributeTable().getTable().getRows().get(s);
-                    PolygonShape aPGS = (PolygonShape) oLayer.getShapes().get(s);
-                    List<PolygonShape> pgsList = new ArrayList<>();
+                    MultiPolygon aPGS = (MultiPolygon) oLayer.getShapes().get(s);
+                    List<MultiPolygon> pgsList = new ArrayList<>();
                     if (fromProj.getProjectionName() == ProjectionNames.LongLat) {
                         switch (toProj.getProjectionName()) {
                             case Lambert_Conformal_Conic:
@@ -490,26 +488,26 @@ public class GeoProjectionUtil {
         }
 
         int s;
-        List<Shape> vectors = new ArrayList<>();
+        List<Geometry> vectors = new ArrayList<>();
         newPoints.clear();
         for (s = 0; s < aLayer.getShapeNum(); s++) {
-            PointShape aPS = (PointShape) aLayer.getShapes().get(s);
+            Point aPS = (Point) aLayer.getShapes().get(s);
             if (fromProj.getProjectionName() == ProjectionNames.LongLat) {
                 switch (toProj.getProjectionName()) {
                     case Lambert_Conformal_Conic:
                     case North_Polar_Stereographic_Azimuthal:
-                        if (aPS.getPoint().x < -89) {
+                        if (aPS.getCoordinate().x < -89) {
                             continue;
                         }
                         break;
                     case South_Polar_Stereographic_Azimuthal:
-                        if (aPS.getPoint().y > 89) {
+                        if (aPS.getCoordinate().y > 89) {
                             continue;
                         }
                         break;
                 }
             }
-            double[] fromP = new double[]{aPS.getPoint().x, aPS.getPoint().y};
+            double[] fromP = new double[]{aPS.getCoordinate().x, aPS.getCoordinate().y};
             double[] toP;
             double[][] points = new double[1][];
             points[0] = (double[]) fromP.clone();
@@ -525,10 +523,10 @@ public class GeoProjectionUtil {
                         ((WindBarb) aPS).angle = ProjectionUtil.projectAngle(((WindBarb) aPS).angle, toP, fromP, fromProj, toProj);
                         break;
                     case STATION_MODEL:
-                        ((StationModelShape) aPS).windBarb.angle = ProjectionUtil.projectAngle(((StationModelShape) aPS).windBarb.angle, toP, fromP, fromProj, toProj);
+                        ((StationModel) aPS).windBarb.angle = ProjectionUtil.projectAngle(((StationModel) aPS).windBarb.angle, toP, fromP, fromProj, toProj);
                         break;
                 }
-                newPoints.add(aPS.getPoint());
+                newPoints.add(aPS.getCoordinate());
                 vectors.add(aPS);
 
                 DataRow aDR = oLayer.getAttributeTable().getTable().getRows().get(s);
@@ -585,26 +583,26 @@ public class GeoProjectionUtil {
             aTable.getColumns().add(bDC);
         }
 
-        List<Shape> shapes = new ArrayList<>();
+        List<Geometry> shapes = new ArrayList<>();
         newPoints.clear();
         for (s = 0; s < oLayer.getShapeNum(); s++) {
-            PointShape aPS = (PointShape) oLayer.getShapes().get(s);
+            Point aPS = (Point) oLayer.getShapes().get(s);
             if (fromProj.getProjectionName() == ProjectionNames.LongLat) {
                 switch (toProj.getProjectionName()) {
                     case Lambert_Conformal_Conic:
                     case North_Polar_Stereographic_Azimuthal:
-                        if (aPS.getPoint().y < -89) {
+                        if (aPS.getCoordinate().y < -89) {
                             continue;
                         }
                         break;
                     case South_Polar_Stereographic_Azimuthal:
-                        if (aPS.getPoint().y > 89) {
+                        if (aPS.getCoordinate().y > 89) {
                             continue;
                         }
                         break;
                 }
             }
-            double[] fromP = new double[]{aPS.getPoint().x, aPS.getPoint().y};
+            double[] fromP = new double[]{aPS.getCoordinate().x, aPS.getCoordinate().y};
             double[] toP;
             double[][] points = new double[1][];
             points[0] = (double[]) fromP.clone();
@@ -614,7 +612,7 @@ public class GeoProjectionUtil {
                 aPoint = new Coordinate();
                 aPoint.x = (float) toP[0];
                 aPoint.y = (float) toP[1];
-                aPS.setPoint(aPoint);
+                aPS.setCoordinate(aPoint);
                 if (IfReprojectAngle) {
                     switch (oLayer.getLayerDrawType()) {
                         case VECTOR:
@@ -624,7 +622,7 @@ public class GeoProjectionUtil {
                             ((WindBarb) aPS).angle = ProjectionUtil.projectAngle(((WindBarb) aPS).angle, fromP, toP, fromProj, toProj);
                             break;
                         case STATION_MODEL:
-                            ((StationModelShape) aPS).windBarb.angle = ProjectionUtil.projectAngle(((StationModelShape) aPS).windBarb.angle, fromP, toP, fromProj, toProj);
+                            ((StationModel) aPS).windBarb.angle = ProjectionUtil.projectAngle(((StationModel) aPS).windBarb.angle, fromP, toP, fromProj, toProj);
                             break;
                     }
                 }

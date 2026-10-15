@@ -2,9 +2,8 @@ package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;
-import org.meteoinfo.geometry.shape.ImageShape;
+import org.meteoinfo.geometry.special.Image;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class ImageGraphic extends Graphic {
@@ -22,7 +21,7 @@ public class ImageGraphic extends Graphic {
      * @param shape The image shape
      * @param ls
      */
-    public ImageGraphic(ImageShape shape, LegendScheme ls) {
+    public ImageGraphic(Image shape, LegendScheme ls) {
         super(shape, new ColorBreak());
         this.legendScheme = ls;
     }

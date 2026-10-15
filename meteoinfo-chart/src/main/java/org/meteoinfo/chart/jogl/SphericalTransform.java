@@ -6,12 +6,12 @@ import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.chart.jogl.tessellator.Primitive;
 import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.chart.graphic.Graphic;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.Polygon;
-import org.meteoinfo.geometry.shape.PolygonShape;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.Polygon;
+import org.meteoinfo.geometry.MultiPolygon;
+import org.meteoinfo.geometry.Geometry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -134,18 +134,18 @@ public class SphericalTransform {
         } else if (graphic instanceof VolumeGraphic) {
             return graphic;
         } else {
-            if (graphic instanceof GraphicCollection3D) {
-                GraphicCollection3D graphics = (GraphicCollection3D) graphic;
+            if (graphic instanceof GraphicCollection) {
+                GraphicCollection graphics = (GraphicCollection) graphic;
                 for (int i = 0; i < graphics.getNumGraphics(); i++) {
                     Graphic gg = graphics.getGraphicN(i);
-                    Shape shape = gg.getGraphicN(0).getShape();
+                    Geometry shape = gg.getGraphicN(0).getShape();
                     boolean isTess = false;
-                    if (shape instanceof PolygonShape) {
+                    if (shape instanceof MultiPolygon) {
                         PolygonBreak pb = (PolygonBreak) gg.getGraphicN(0).getLegendBreak();
                         isTess = pb.isDrawFill();
                     }
                     if (isTess) {
-                        PolygonShape polygonZShape = (PolygonShape) shape;
+                        MultiPolygon polygonZShape = (MultiPolygon) shape;
                         List<Polygon> polygonZS = (List<Polygon>) polygonZShape.getPolygons();
                         for (int j = 0; j < polygonZS.size(); j++) {
                             Polygon polygonZ = polygonZS.get(j);
@@ -155,19 +155,19 @@ public class SphericalTransform {
                             }
                             List<Coordinate> outLine = (List<Coordinate>) tessPolygon.getOutLine();
                             outLine.replaceAll(SphericalTransform::transform);
-                            for (int k = 0; k < tessPolygon.getHoleLineNumber(); k++) {
+                            for (int k = 0; k < tessPolygon.getNumInteriorRing(); k++) {
                                 List<Coordinate> holeLine = (List<Coordinate>) tessPolygon.getHoleLine(k);
                                 holeLine.replaceAll(SphericalTransform::transform);
                             }
                             polygonZS.set(j, tessPolygon);
                         }
                     } else {
-                        List<Coordinate> points = shape.getPoints();
+                        List<Coordinate> points = shape.getCoordinates();
                         points.replaceAll(SphericalTransform::transform);
-                        if (shape instanceof PolygonShape)
-                            ((PolygonShape) shape).setPoints_keep(points);
+                        if (shape instanceof MultiPolygon)
+                            ((MultiPolygon) shape).setPoints_keep(points);
                         else
-                            shape.setPoints(points);
+                            shape.setCoordinates(points);
                     }
                     gg.setShape(shape);
                     graphics.setGraphicN(i, gg);
@@ -176,17 +176,17 @@ public class SphericalTransform {
                 return graphics;
             } else {
                 Graphic gg = graphic.getGraphicN(0);
-                Shape shape = gg.getShape();
+                Geometry shape = gg.getShape();
                 if (shape instanceof ChartText3D) {
                     Coordinate p = ((ChartText3D) shape).getPoint();
                     ((ChartText3D) shape).setPoint(SphericalTransform.transform(p));
                 } else {
-                    List<Coordinate> points = (List<Coordinate>) shape.getPoints();
+                    List<Coordinate> points = (List<Coordinate>) shape.getCoordinates();
                     points.replaceAll(SphericalTransform::transform);
-                    if (shape instanceof PolygonShape)
-                        ((PolygonShape) shape).setPoints_keep(points);
+                    if (shape instanceof MultiPolygon)
+                        ((MultiPolygon) shape).setPoints_keep(points);
                     else
-                        shape.setPoints(points);
+                        shape.setCoordinates(points);
                 }
 
                 gg.setShape(shape);

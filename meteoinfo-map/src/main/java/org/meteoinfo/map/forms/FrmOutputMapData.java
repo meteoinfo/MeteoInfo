@@ -29,10 +29,10 @@ import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.map.config.GenericFileFilter;
 import org.meteoinfo.data.meteodata.grads.GrADSDataInfo;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
-import org.meteoinfo.geometry.shape.PointShape;
-import org.meteoinfo.geometry.shape.PolygonShape;
-import org.meteoinfo.geometry.shape.PolylineShape;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.Point;
+import org.meteoinfo.geometry.MultiPolygon;
+import org.meteoinfo.geometry.MultiLineString;
+import org.meteoinfo.geometry.Geometry;
 
 /**
  *
@@ -281,20 +281,20 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                     sw.newLine();
                     sw.write(String.valueOf(shpNum));
                     sw.newLine();
-                    PointShape aPS;
+                    Point aPS;
                     if (hasSelShape) {
                         for (i = 0; i < currentLayer.getShapeNum(); i++) {
-                            aPS = (PointShape) currentLayer.getShapes().get(i);
+                            aPS = (Point) currentLayer.getShapes().get(i);
                             if (aPS.isSelected()) {
-                                sw.write(String.valueOf(aPS.getPoint().x) + "," + String.valueOf(aPS.getPoint().y));
+                                sw.write(String.valueOf(aPS.getCoordinate().x) + "," + String.valueOf(aPS.getCoordinate().y));
                                 sw.newLine();
                             }
                             this.jProgressBar1.setValue((i + 1) * 100 / currentLayer.getShapeNum());
                         }
                     } else {
                         for (i = 0; i < currentLayer.getShapeNum(); i++) {
-                            aPS = (PointShape) currentLayer.getShapes().get(i);
-                            sw.write(String.valueOf(aPS.getPoint().x) + "," + String.valueOf(aPS.getPoint().y));
+                            aPS = (Point) currentLayer.getShapes().get(i);
+                            sw.write(String.valueOf(aPS.getCoordinate().x) + "," + String.valueOf(aPS.getCoordinate().y));
                             sw.newLine();
                             this.jProgressBar1.setValue((i + 1) * 100 / currentLayer.getShapeNum());
                         }
@@ -305,37 +305,37 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                     sw.write("Polyline");
                     sw.newLine();
                     int shapeNum = 0;
-                    PolylineShape aPLS;
+                    MultiLineString aPLS;
                     for (i = 0; i < currentLayer.getShapeNum(); i++) {
-                        aPLS = (PolylineShape) currentLayer.getShapes().get(i);
+                        aPLS = (MultiLineString) currentLayer.getShapes().get(i);
                         if (hasSelShape) {
                             if (!aPLS.isSelected()) {
                                 continue;
                             }
                         }
-                        shapeNum += aPLS.getPartNum();
+                        shapeNum += aPLS.getNumParts();
                     }
                     sw.write(String.valueOf(shpNum));
                     sw.newLine();
 
                     for (i = 0; i < currentLayer.getShapeNum(); i++) {
-                        aPLS = (PolylineShape) currentLayer.getShapes().get(i);
+                        aPLS = (MultiLineString) currentLayer.getShapes().get(i);
                         if (hasSelShape) {
                             if (!aPLS.isSelected()) {
                                 continue;
                             }
                         }
                         Coordinate[] Pointps;
-                        for (int p = 0; p < aPLS.getPartNum(); p++) {
-                            if (p == aPLS.getPartNum() - 1) {
-                                Pointps = new Coordinate[aPLS.getPointNum() - aPLS.parts[p]];
-                                for (int pp = aPLS.parts[p]; pp < aPLS.getPointNum(); pp++) {
-                                    Pointps[pp - aPLS.parts[p]] = aPLS.getPoints().get(pp);
+                        for (int p = 0; p < aPLS.getNumParts(); p++) {
+                            if (p == aPLS.getNumParts() - 1) {
+                                Pointps = new Coordinate[aPLS.getNumPoints() - aPLS.parts[p]];
+                                for (int pp = aPLS.parts[p]; pp < aPLS.getNumPoints(); pp++) {
+                                    Pointps[pp - aPLS.parts[p]] = aPLS.getCoordinates().get(pp);
                                 }
                             } else {
                                 Pointps = new Coordinate[aPLS.parts[p + 1] - aPLS.parts[p]];
                                 for (int pp = aPLS.parts[p]; pp < aPLS.parts[p + 1]; pp++) {
-                                    Pointps[pp - aPLS.parts[p]] = aPLS.getPoints().get(pp);
+                                    Pointps[pp - aPLS.parts[p]] = aPLS.getCoordinates().get(pp);
                                 }
                             }
                             sw.write(String.valueOf(Pointps.length));
@@ -354,21 +354,21 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                     sw.write("Polygon");
                     sw.newLine();
                     shapeNum = 0;
-                    PolygonShape aPGS;
+                    MultiPolygon aPGS;
                     for (i = 0; i < currentLayer.getShapeNum(); i++) {
-                        aPGS = (PolygonShape) currentLayer.getShapes().get(i);
+                        aPGS = (MultiPolygon) currentLayer.getShapes().get(i);
                         if (hasSelShape) {
                             if (!aPGS.isSelected()) {
                                 continue;
                             }
                         }
-                        shapeNum += aPGS.getPartNum();
+                        shapeNum += aPGS.getNumParts();
                     }
                     sw.write(String.valueOf(shapeNum));
                     sw.newLine();
 
                     for (i = 0; i < currentLayer.getShapeNum(); i++) {
-                        aPGS = (PolygonShape) currentLayer.getShapes().get(i);
+                        aPGS = (MultiPolygon) currentLayer.getShapes().get(i);
                         if (hasSelShape) {
                             if (!aPGS.isSelected()) {
                                 continue;
@@ -376,16 +376,16 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                         }
 
                         Coordinate[] Pointps;
-                        for (int p = 0; p < aPGS.getPartNum(); p++) {
-                            if (p == aPGS.getPartNum() - 1) {
-                                Pointps = new Coordinate[aPGS.getPointNum() - aPGS.parts[p]];
-                                for (int pp = aPGS.parts[p]; pp < aPGS.getPointNum(); pp++) {
-                                    Pointps[pp - aPGS.parts[p]] = aPGS.getPoints().get(pp);
+                        for (int p = 0; p < aPGS.getNumParts(); p++) {
+                            if (p == aPGS.getNumParts() - 1) {
+                                Pointps = new Coordinate[aPGS.getNumPoints() - aPGS.parts[p]];
+                                for (int pp = aPGS.parts[p]; pp < aPGS.getNumPoints(); pp++) {
+                                    Pointps[pp - aPGS.parts[p]] = aPGS.getCoordinates().get(pp);
                                 }
                             } else {
                                 Pointps = new Coordinate[aPGS.parts[p + 1] - aPGS.parts[p]];
                                 for (int pp = aPGS.parts[p]; pp < aPGS.parts[p + 1]; pp++) {
-                                    Pointps[pp - aPGS.parts[p]] = aPGS.getPoints().get(pp);
+                                    Pointps[pp - aPGS.parts[p]] = aPGS.getCoordinates().get(pp);
                                 }
                             }
                             sw.write(String.valueOf(Pointps.length));
@@ -439,11 +439,11 @@ public class FrmOutputMapData extends javax.swing.JDialog {
             boolean hasSelShape = currentLayer.hasSelectedShapes();
 
             //Get grid set
-            PolygonShape aPGS;
+            MultiPolygon aPGS;
             Extent aExtent = new Extent();
             int n = 0;
             for (i = 0; i < currentLayer.getShapeNum(); i++) {
-                aPGS = (PolygonShape) currentLayer.getShapes().get(i);
+                aPGS = (MultiPolygon) currentLayer.getShapes().get(i);
                 if (hasSelShape) {
                     if (!aPGS.isSelected()) {
                         continue;
@@ -491,7 +491,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                         aPoint.x = aGDP.dataExtent.minX + j * xSize;
                         isIn = false;
                         for (p = 0; p < currentLayer.getShapeNum(); p++) {
-                            aPGS = (PolygonShape) currentLayer.getShapes().get(p);
+                            aPGS = (MultiPolygon) currentLayer.getShapes().get(p);
                             if (hasSelShape) {
                                 if (!aPGS.isSelected()) {
                                     continue;
@@ -593,7 +593,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
                 boolean hasSelShape = currentLayer.hasSelectedShapes();
 
                 for (i = 0; i < currentLayer.getShapeNum(); i++) {
-                    Shape aPS = currentLayer.getShapes().get(i);
+                    Geometry aPS = currentLayer.getShapes().get(i);
                     if (hasSelShape) {
                         if (!aPS.isSelected()) {
                             continue;
@@ -641,7 +641,7 @@ public class FrmOutputMapData extends javax.swing.JDialog {
         boolean hasSelShape = currentLayer.hasSelectedShapes();
 
         for (i = 0; i < currentLayer.getShapeNum(); i++) {
-            Shape aPS = currentLayer.getShapes().get(i);
+            Geometry aPS = currentLayer.getShapes().get(i);
             if (hasSelShape) {
                 if (!aPS.isSelected()) {
                     continue;

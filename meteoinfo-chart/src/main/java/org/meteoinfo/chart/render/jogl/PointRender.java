@@ -6,7 +6,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.chart.graphic.ParticleGraphics;
 import org.meteoinfo.chart.graphic.sphere.Sphere;
 import org.meteoinfo.chart.jogl.Program;
@@ -15,7 +15,7 @@ import org.meteoinfo.chart.jogl.Utils;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.PointShape;
+import org.meteoinfo.geometry.Point;
 import org.meteoinfo.math.Matrix4f;
 
 import java.nio.FloatBuffer;
@@ -26,7 +26,7 @@ import java.util.Map;
 
 public class PointRender extends JOGLGraphicRender {
 
-    private GraphicCollection3D graphics;
+    private GraphicCollection graphics;
     private IntBuffer vbo;
     private Program program;
     private int pointNum;
@@ -66,7 +66,7 @@ public class PointRender extends JOGLGraphicRender {
      * @param gl The opengl pipeline
      * @param pointGraphics 3D point graphics
      */
-    public PointRender(GL2 gl, GraphicCollection3D pointGraphics) {
+    public PointRender(GL2 gl, GraphicCollection pointGraphics) {
         this(gl);
 
         this.graphics = pointGraphics;
@@ -143,8 +143,8 @@ public class PointRender extends JOGLGraphicRender {
                 }
             } else {
                 for (Graphic graphic : this.graphics.getGraphics()) {
-                    PointShape shape = (PointShape) graphic.getShape();
-                    Coordinate p = (Coordinate) shape.getPoint();
+                    Point shape = (Point) graphic.getShape();
+                    Coordinate p = (Coordinate) shape.getCoordinate();
                     vertexPosition[i] = (float) p.x;
                     vertexPosition[i + 1] = (float) p.y;
                     vertexPosition[i + 2] = (float) p.z;
@@ -166,8 +166,8 @@ public class PointRender extends JOGLGraphicRender {
         float size = -1;
         Sphere sphere = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PointShape shape = (PointShape) graphic.getShape();
-            Coordinate p = (Coordinate) shape.getPoint();
+            Point shape = (Point) graphic.getShape();
+            Coordinate p = (Coordinate) shape.getCoordinate();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             if (size != pb.getSize()) {
                 size = pb.getSize();
@@ -231,8 +231,8 @@ public class PointRender extends JOGLGraphicRender {
         float size = -1;
         Sphere sphere = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PointShape shape = (PointShape) graphic.getShape();
-            Coordinate p = (Coordinate) shape.getPoint();
+            Point shape = (Point) graphic.getShape();
+            Coordinate p = (Coordinate) shape.getCoordinate();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             if (size != pb.getSize()) {
                 size = pb.getSize();

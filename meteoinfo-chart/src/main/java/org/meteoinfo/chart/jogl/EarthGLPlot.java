@@ -19,9 +19,9 @@ import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.Polygon;
-import org.meteoinfo.geometry.shape.PolygonShape;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.Polygon;
+import org.meteoinfo.geometry.MultiPolygon;
+import org.meteoinfo.geometry.GeometryType;
 import org.meteoinfo.image.ImageUtil;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
@@ -185,7 +185,7 @@ public class EarthGLPlot extends GLPlot {
         lon = lonlat[0];
         lat = lonlat[1];
         Array alt = ArrayUtil.zeros(lon.getShape(), DataType.FLOAT);
-        LegendScheme ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, Color.cyan, 1);
+        LegendScheme ls = LegendManage.createSingleSymbolLegendScheme(GeometryType.POLYGON, Color.cyan, 1);
         ((PolygonBreak) ls.getLegendBreak(0)).setDrawOutline(false);
         ((PolygonBreak) ls.getLegendBreak(0)).setOutlineColor(Color.white);
         surface = GraphicFactory.surface(lon, lat, alt, ls);
@@ -537,7 +537,7 @@ public class EarthGLPlot extends GLPlot {
         }
 
         // ========== 2. Extract Polygon Data (Reusing Base Class Tessellation Logic) ==========
-        PolygonShape shape = (PolygonShape) graphic.getShape();
+        MultiPolygon shape = (MultiPolygon) graphic.getShape();
         PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
         List<Polygon> polygonZS = shape.getPolygons();
 

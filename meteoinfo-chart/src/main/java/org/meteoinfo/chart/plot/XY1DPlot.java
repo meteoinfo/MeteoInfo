@@ -15,7 +15,7 @@ import org.meteoinfo.common.colors.ColorUtil;
 import org.meteoinfo.data.*;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -829,7 +829,7 @@ public class XY1DPlot extends AbstractPlot2D {
 //                ls.getLegendBreaks().addAll(Arrays.asList(this.polygonBreaks));
 //                break;
 //        }
-        ShapeTypes stype = ShapeTypes.POLYLINE;
+        GeometryType stype = GeometryType.LINESTRING;
         LegendScheme ls = new LegendScheme(stype);
         for (SeriesLegend slegend : this.seriesLegends) {
             ls.getLegendBreaks().add(slegend.getLegendBreak());

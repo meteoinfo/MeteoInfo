@@ -8,7 +8,7 @@ import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geo.layer.FrmLayerProperty;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.io.IOException;
@@ -61,7 +61,7 @@ public class FrmLegendBreaks extends javax.swing.JDialog {
                 aCB = _legendScheme.getLegendBreaks().get(bnum - 1);
                 endValue = Double.parseDouble(aCB.getStartValue().toString());
                 switch (_legendScheme.getShapeType()) {
-                    case POLYLINE:
+                    case LINESTRING:
                         _interval = BigDecimalUtil.div((BigDecimalUtil.sub(endValue, startValue)), (bnum - 1));
                         break;
                     default:
@@ -410,7 +410,7 @@ public class FrmLegendBreaks extends javax.swing.JDialog {
         // TODO add your handling code here:
         int colorNum = _legendScheme.getBreakNum();
 
-        if (_legendScheme.getShapeType() == ShapeTypes.POLYLINE) {
+        if (_legendScheme.getShapeType() == GeometryType.LINESTRING) {
             colorNum += 1;
         }
 

@@ -1,13 +1,12 @@
 package org.meteoinfo.geometry.io.geojson;
 
-import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.*;
 import org.meteoinfo.common.colors.ColorUtil;
+import org.meteoinfo.geometry.Geometry;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.PointBreak;
 import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.legend.PolylineBreak;
-import org.meteoinfo.geometry.shape.*;
-import org.meteoinfo.geometry.shape.Shape;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -22,7 +21,7 @@ public class GeoJSONUtil {
      * @param geometry The geometry
      * @return Shape
      */
-    public static Shape toShape(Geometry geometry) {
+    public static Geometry toShape(org.meteoinfo.geometry.io.geojson.Geometry geometry) {
         if (geometry instanceof Point) {
             return toShape((Point) geometry);
         } else if (geometry instanceof LineString) {
@@ -44,13 +43,13 @@ public class GeoJSONUtil {
      * @param shape The shape
      * @return Geometry
      */
-    public static Geometry fromShape(Shape shape) {
-        if (shape instanceof PointShape) {
-            return fromShape((PointShape) shape);
-        } else if (shape instanceof PolylineShape) {
-            return fromShape((PolylineShape) shape);
-        } else if (shape instanceof PolygonShape) {
-            return fromShape((PolygonShape) shape);
+    public static org.meteoinfo.geometry.io.geojson.Geometry fromShape(Geometry shape) {
+        if (shape instanceof org.meteoinfo.geometry.Point) {
+            return fromShape((org.meteoinfo.geometry.Point) shape);
+        } else if (shape instanceof org.meteoinfo.geometry.MultiLineString) {
+            return fromShape((org.meteoinfo.geometry.MultiLineString) shape);
+        } else if (shape instanceof org.meteoinfo.geometry.MultiPolygon) {
+            return fromShape((org.meteoinfo.geometry.MultiPolygon) shape);
         } else {
             throw new UnsupportedOperationException();
         }
@@ -62,8 +61,8 @@ public class GeoJSONUtil {
      * @param pointShape The PointShape object
      * @return GeoJSON Point object
      */
-    public static Point fromShape(PointShape pointShape) {
-        Coordinate p = pointShape.getPoint();
+    public static Point fromShape(org.meteoinfo.geometry.Point pointShape) {
+        Coordinate p = pointShape.getCoordinate();
 
         return new Point(p.toArray());
     }
@@ -74,12 +73,12 @@ public class GeoJSONUtil {
      * @param point The GeoJSON Point object
      * @return PointShape object
      */
-    public static PointShape toShape(Point point) {
+    public static org.meteoinfo.geometry.Point toShape(Point point) {
         double[] coordinates = point.getCoordinates();
         if (coordinates.length == 2) {
-            return new PointShape(new Coordinate(coordinates[0], coordinates[1]));
+            return new org.meteoinfo.geometry.Point(new Coordinate(coordinates[0], coordinates[1]));
         } else {
-            return new PointShape(new Coordinate(coordinates[0], coordinates[1], coordinates[2]));
+            return new org.meteoinfo.geometry.Point(new Coordinate(coordinates[0], coordinates[1], coordinates[2]));
         }
     }
 
@@ -89,27 +88,27 @@ public class GeoJSONUtil {
      * @param polylineShape The PolylineShape object
      * @return GeoJSON LineString or MultiLineString object
      */
-    public static Geometry fromShape(PolylineShape polylineShape) {
+    public static org.meteoinfo.geometry.io.geojson.Geometry fromShape(org.meteoinfo.geometry.MultiLineString polylineShape) {
         if (polylineShape.isMultiLine()) {
-            int lineNum = polylineShape.getPartNum();
+            int lineNum = polylineShape.getNumParts();
             double[][][] coordinates = new double[lineNum][][];
-            int cNum = polylineShape.getShapeType() == ShapeTypes.POLYLINE ? 2 : 3;
+            int cNum = polylineShape.getGeometryType() == GeometryType.LINESTRING ? 2 : 3;
             for (int j = 0; j < lineNum; j++) {
-                Polyline polyline = polylineShape.getPolylines().get(j);
-                int pNum = polyline.getPointList().size();
+                org.meteoinfo.geometry.LineString polyline = polylineShape.getPolylines().get(j);
+                int pNum = polyline.getNumPoints();
                 double[][] matrix = new double[pNum][cNum];
                 for (int i = 0; i < pNum; i++) {
-                    matrix[i] = polyline.getPointList().get(i).toArray();
+                    matrix[i] = polyline.getCoordinates().get(i).toArray();
                 }
                 coordinates[j] = matrix;
             }
 
             return new MultiLineString(coordinates);
         } else {
-            int cNum = polylineShape.getShapeType() == ShapeTypes.POLYLINE ? 2 : 3;
-            double[][] coordinates = new double[polylineShape.getPointNum()][cNum];
-            for (int i = 0; i < polylineShape.getPointNum(); i++) {
-                coordinates[i] = polylineShape.getPoints().get(i).toArray();
+            int cNum = polylineShape.getGeometryType() == GeometryType.LINESTRING ? 2 : 3;
+            double[][] coordinates = new double[polylineShape.getNumPoints()][cNum];
+            for (int i = 0; i < polylineShape.getNumPoints(); i++) {
+                coordinates[i] = polylineShape.getCoordinates().get(i).toArray();
             }
 
             return new LineString(coordinates);
@@ -122,7 +121,7 @@ public class GeoJSONUtil {
      * @param lineString The GeoJSON LineString object
      * @return PolylineShape object
      */
-    public static PolylineShape toShape(LineString lineString) {
+    public static org.meteoinfo.geometry.MultiLineString toShape(LineString lineString) {
         double[][] coordinates = lineString.getCoordinates();
         int pNum = coordinates.length;
         if (coordinates[0].length == 2) {
@@ -131,14 +130,14 @@ public class GeoJSONUtil {
                 points.add(new Coordinate(coordinates[i][0], coordinates[i][1]));
             }
 
-            return new PolylineShape(points);
+            return new org.meteoinfo.geometry.MultiLineString(points);
         } else {
             List<Coordinate> points = new ArrayList<>();
             for (int i = 0; i < pNum; i++) {
                 points.add(new Coordinate(coordinates[i][0], coordinates[i][1], coordinates[i][2]));
             }
 
-            return new PolylineShape(points);
+            return new org.meteoinfo.geometry.MultiLineString(points);
         }
     }
 
@@ -148,12 +147,12 @@ public class GeoJSONUtil {
      * @param lineString The GeoJSON LineString object
      * @return PolylineShape object
      */
-    public static PolylineShape toShape(MultiLineString lineString) {
+    public static org.meteoinfo.geometry.MultiLineString toShape(MultiLineString lineString) {
         double[][][] coordinates = lineString.getCoordinates();
         int lineNum = coordinates.length;
         int cNum = coordinates[0][0].length;
         if (cNum == 2) {
-            PolylineShape polylineShape = new PolylineShape();
+            org.meteoinfo.geometry.MultiLineString polylineShape = new org.meteoinfo.geometry.MultiLineString();
             polylineShape.setPartNum(lineNum);
             polylineShape.parts = new int[lineNum];
             List<Coordinate> points = new ArrayList<>();
@@ -164,11 +163,11 @@ public class GeoJSONUtil {
                     points.add(new Coordinate(coordinates[j][i][0], coordinates[j][i][1]));
                 }
             }
-            polylineShape.setPoints(points);
+            polylineShape.setCoordinates(points);
 
             return polylineShape;
         } else {
-            PolylineShape polylineZShape = new PolylineShape();
+            org.meteoinfo.geometry.MultiLineString polylineZShape = new org.meteoinfo.geometry.MultiLineString();
             polylineZShape.setPartNum(lineNum);
             polylineZShape.parts = new int[lineNum];
             List<Coordinate> points = new ArrayList<>();
@@ -179,7 +178,7 @@ public class GeoJSONUtil {
                     points.add(new Coordinate(coordinates[j][i][0], coordinates[j][i][1], coordinates[j][i][2]));
                 }
             }
-            polylineZShape.setPoints(points);
+            polylineZShape.setCoordinates(points);
 
             return polylineZShape;
         }
@@ -191,13 +190,13 @@ public class GeoJSONUtil {
      * @param polygonShape The PolygonShape object
      * @return GeoJSON Polygon or MultiPolygon object
      */
-    public static Geometry fromShape(PolygonShape polygonShape) {
-        int cNum = polygonShape.getShapeType() == ShapeTypes.POLYGON ? 2 : 3;
+    public static org.meteoinfo.geometry.io.geojson.Geometry fromShape(org.meteoinfo.geometry.MultiPolygon polygonShape) {
+        int cNum = polygonShape.getGeometryType() == GeometryType.POLYGON ? 2 : 3;
         if (polygonShape.isMultiPolygon()) {
             int polygonNum = polygonShape.getPolygons().size();
             double[][][][] coordinates = new double[polygonNum][][][];
             for (int k = 0; k < polygonNum; k++) {
-                org.meteoinfo.geometry.shape.Polygon sPolygon = polygonShape.getPolygon(k);
+                org.meteoinfo.geometry.Polygon sPolygon = polygonShape.getPolygon(k);
                 int ringNumber = sPolygon.getRingNumber();
                 double[][][] a3d = new double[ringNumber][][];
                 int pNum = sPolygon.getOutLine().size();
@@ -207,7 +206,7 @@ public class GeoJSONUtil {
                 }
                 a3d[0] = matrix;
                 if (sPolygon.hasHole()) {
-                    for (int j = 0; j < sPolygon.getHoleLineNumber(); j++) {
+                    for (int j = 0; j < sPolygon.getNumInteriorRing(); j++) {
                         pNum = sPolygon.getHoleLine(j).size();
                         matrix = new double[pNum][cNum];
                         for (int i = 0; i < sPolygon.getHoleLine(j).size(); i++) {
@@ -221,7 +220,7 @@ public class GeoJSONUtil {
 
             return new MultiPolygon(coordinates);
         } else {
-            org.meteoinfo.geometry.shape.Polygon sPolygon = polygonShape.getPolygon(0);
+            org.meteoinfo.geometry.Polygon sPolygon = polygonShape.getPolygon(0);
             int ringNum = sPolygon.getRingNumber();
             double[][][] coordinates = new double[ringNum][][];
             int pNum = sPolygon.getOutLine().size();
@@ -231,7 +230,7 @@ public class GeoJSONUtil {
             }
             coordinates[0] = matrix;
             if (sPolygon.hasHole()) {
-                for (int j = 0; j < sPolygon.getHoleLineNumber(); j++) {
+                for (int j = 0; j < sPolygon.getNumInteriorRing(); j++) {
                     pNum = sPolygon.getHoleLine(j).size();
                     matrix = new double[pNum][cNum];
                     for (int i = 0; i < sPolygon.getHoleLine(j).size(); i++) {
@@ -251,12 +250,12 @@ public class GeoJSONUtil {
      * @param polygon The GeoJSON Polygon object
      * @return PolygonShape object
      */
-    public static PolygonShape toShape(Polygon polygon) {
+    public static org.meteoinfo.geometry.MultiPolygon toShape(Polygon polygon) {
         double[][][] coordinates = polygon.getCoordinates();
         int ringNum = coordinates.length;
         int cNum = coordinates[0][0].length;
         if (cNum == 2) {
-            PolygonShape polygonShape = new PolygonShape();
+            org.meteoinfo.geometry.MultiPolygon polygonShape = new org.meteoinfo.geometry.MultiPolygon();
             polygonShape.setPartNum(ringNum);
             polygonShape.parts = new int[ringNum];
             List<Coordinate> points = new ArrayList<>();
@@ -267,11 +266,11 @@ public class GeoJSONUtil {
                     points.add(new Coordinate(coordinates[j][i][0], coordinates[j][i][1]));
                 }
             }
-            polygonShape.setPoints(points);
+            polygonShape.setCoordinates(points);
 
             return polygonShape;
         } else {
-            PolygonShape polygonZShape = new PolygonShape();
+            org.meteoinfo.geometry.MultiPolygon polygonZShape = new org.meteoinfo.geometry.MultiPolygon();
             polygonZShape.setPartNum(ringNum);
             polygonZShape.parts = new int[ringNum];
             List<Coordinate> points = new ArrayList<>();
@@ -282,7 +281,7 @@ public class GeoJSONUtil {
                     points.add(new Coordinate(coordinates[j][i][0], coordinates[j][i][1], coordinates[j][i][2]));
                 }
             }
-            polygonZShape.setPoints(points);
+            polygonZShape.setCoordinates(points);
 
             return polygonZShape;
         }
@@ -294,15 +293,15 @@ public class GeoJSONUtil {
      * @param multiPolygon The GeoJSON MultiPolygon object
      * @return PolygonShape object
      */
-    public static PolygonShape toShape(MultiPolygon multiPolygon) {
+    public static org.meteoinfo.geometry.MultiPolygon toShape(MultiPolygon multiPolygon) {
         double[][][][] coordinates = multiPolygon.getCoordinates();
         int polygonNum = coordinates.length;
         int cNum = coordinates[0][0][0].length;
         if (cNum == 2) {
-            List<org.meteoinfo.geometry.shape.Polygon> polygons = new ArrayList<>();
+            List<org.meteoinfo.geometry.Polygon> polygons = new ArrayList<>();
             for (int k = 0; k < polygonNum; k++) {
                 int ringNum = coordinates[k].length;
-                org.meteoinfo.geometry.shape.Polygon polygon = new org.meteoinfo.geometry.shape.Polygon();
+                org.meteoinfo.geometry.Polygon polygon = new org.meteoinfo.geometry.Polygon();
                 for (int j = 0; j < ringNum; j++) {
                     List<Coordinate> points = new ArrayList<>();
                     int pNum = coordinates[k][j].length;
@@ -317,15 +316,15 @@ public class GeoJSONUtil {
                 }
                 polygons.add(polygon);
             }
-            PolygonShape polygonShape = new PolygonShape();
+            org.meteoinfo.geometry.MultiPolygon polygonShape = new org.meteoinfo.geometry.MultiPolygon();
             polygonShape.setPolygons(polygons);
 
             return polygonShape;
         } else {
-            List<org.meteoinfo.geometry.shape.Polygon> polygons = new ArrayList<>();
+            List<org.meteoinfo.geometry.Polygon> polygons = new ArrayList<>();
             for (int k = 0; k < polygonNum; k++) {
                 int ringNum = coordinates[k].length;
-                org.meteoinfo.geometry.shape.Polygon polygon = new org.meteoinfo.geometry.shape.Polygon();
+                org.meteoinfo.geometry.Polygon polygon = new org.meteoinfo.geometry.Polygon();
                 for (int j = 0; j < ringNum; j++) {
                     List<Coordinate> points = new ArrayList<>();
                     int pNum = coordinates[k][j].length;
@@ -341,7 +340,7 @@ public class GeoJSONUtil {
                 }
                 polygons.add(polygon);
             }
-            PolygonShape polygonZShape = new PolygonShape();
+            org.meteoinfo.geometry.MultiPolygon polygonZShape = new org.meteoinfo.geometry.MultiPolygon();
             polygonZShape.setPolygons(polygons);
 
             return polygonZShape;
@@ -353,17 +352,17 @@ public class GeoJSONUtil {
      * @param geometry GeoJSON geometry
      * @return Shape type
      */
-    public static ShapeTypes getShapeType(Geometry geometry) {
+    public static GeometryType getShapeType(org.meteoinfo.geometry.io.geojson.Geometry geometry) {
         if (geometry instanceof Point) {
-            return ShapeTypes.POINT;
+            return GeometryType.POINT;
         } else if (geometry instanceof LineString) {
-            return ShapeTypes.POLYLINE;
+            return GeometryType.LINESTRING;
         } else if (geometry instanceof MultiLineString) {
-            return ShapeTypes.POLYLINE;
+            return GeometryType.LINESTRING;
         } else if (geometry instanceof Polygon) {
-            return ShapeTypes.POLYGON;
+            return GeometryType.POLYGON;
         } else if (geometry instanceof MultiPolygon) {
-            return ShapeTypes.POLYGON;
+            return GeometryType.POLYGON;
         } else {
             throw new UnsupportedOperationException();
         }
@@ -374,7 +373,7 @@ public class GeoJSONUtil {
      * @param feature GeoJSON feature
      * @return Shape type
      */
-    public static ShapeTypes getShapeType(Feature feature) {
+    public static GeometryType getShapeType(Feature feature) {
         return getShapeType(feature.getGeometry());
     }
 
@@ -384,7 +383,7 @@ public class GeoJSONUtil {
      * @return Legend break
      */
     public static ColorBreak getLegendBreak(Feature feature) {
-        ShapeTypes shapeType = getShapeType(feature);
+        GeometryType shapeType = getShapeType(feature);
         Map<String, Object> properties = feature.getProperties();
         switch (shapeType) {
             case POINT:
@@ -394,7 +393,7 @@ public class GeoJSONUtil {
                     pointBreak.setColor(color);
                 }
                 return pointBreak;
-            case POLYLINE:
+            case LINESTRING:
                 PolylineBreak polylineBreak = new PolylineBreak();
                 if (properties.containsKey("stroke")) {
                     Color color = ColorUtil.parseToColor((String) properties.get("stroke"));

@@ -15,7 +15,7 @@ import org.meteoinfo.common.XAlign;
 import org.meteoinfo.common.YAlign;
 import org.meteoinfo.common.util.JDateUtil;
 import org.meteoinfo.render.java2d.Draw;
-import org.meteoinfo.chart.graphic.Artist;
+import org.meteoinfo.chart.Artist;
 import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 

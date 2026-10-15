@@ -8,10 +8,10 @@ import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.projection.GridLabel;
 import org.meteoinfo.geometry.geoprocess.BorderPoint;
-import org.meteoinfo.geometry.shape.Line;
-import org.meteoinfo.geometry.shape.PolygonShape;
-import org.meteoinfo.geometry.shape.Polyline;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.LineSegment;
+import org.meteoinfo.geometry.MultiPolygon;
+import org.meteoinfo.geometry.LineString;
+import org.meteoinfo.geometry.Geometry;
 import org.meteoinfo.math.meteo.MeteoMath;
 
 import java.util.ArrayList;
@@ -27,9 +27,9 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
      * @param isVertical If is vertical
      * @return Clip points
      */
-    public static List<GridLabel> getGridLabels(Polyline inPolyLine, Extent clipExtent, boolean isVertical) {
+    public static List<GridLabel> getGridLabels(LineString inPolyLine, Extent clipExtent, boolean isVertical) {
         List<GridLabel> gridLabels = new ArrayList<>();
-        List<Coordinate> aPList = inPolyLine.getPointList();
+        List<Coordinate> aPList = inPolyLine.getCoordinates();
 
         if (!isExtentCross(inPolyLine.getExtent(), clipExtent)) {
             return gridLabels;
@@ -120,7 +120,7 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
             aPList = newLines.get(l);
             boolean isInPolygon = pointInClipObj(clipExtent, aPList.get(0));
             Coordinate q1, q2, IPoint = new Coordinate();
-            Line lineA, lineB;
+            LineSegment lineA, lineB;
             List<Coordinate> newPlist = new ArrayList<>();
             //Polyline bLine = new Polyline();
             p1 = aPList.get(0);
@@ -131,15 +131,15 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
                 p2 = aPList.get(i);
                 if (pointInClipObj(clipExtent, p2)) {
                     if (!isInPolygon) {
-                        lineA = new Line();
-                        lineA.P1 = p1;
-                        lineA.P2 = p2;
+                        lineA = new LineSegment();
+                        lineA.p1 = p1;
+                        lineA.p2 = p2;
                         q1 = borderList.get(0).Point;
                         for (j = 1; j < borderList.size(); j++) {
                             q2 = borderList.get(j).Point;
-                            lineB = new Line();
-                            lineB.P1 = q1;
-                            lineB.P2 = q2;
+                            lineB = new LineSegment();
+                            lineB.p1 = q1;
+                            lineB.p2 = q2;
                             if (isLineSegmentCross(lineA, lineB)) {
                                 IPoint = getCrossPoint(lineA, lineB);
                                 inIdx = j;
@@ -180,15 +180,15 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
                     isInPolygon = true;
                 } else {
                     if (isInPolygon) {
-                        lineA = new Line();
-                        lineA.P1 = p1;
-                        lineA.P2 = p2;
+                        lineA = new LineSegment();
+                        lineA.p1 = p1;
+                        lineA.p2 = p2;
                         q1 = borderList.get(0).Point;
                         for (j = 1; j < borderList.size(); j++) {
                             q2 = borderList.get(j).Point;
-                            lineB = new Line();
-                            lineB.P1 = q1;
-                            lineB.P2 = q2;
+                            lineB = new LineSegment();
+                            lineB.p1 = q1;
+                            lineB.p2 = q2;
                             if (isLineSegmentCross(lineA, lineB)) {
                                 IPoint = getCrossPoint(lineA, lineB);
                                 outIdx = j;
@@ -268,11 +268,11 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
      * @param isVertical If is vertical
      * @return Clip points
      */
-    public static List<GridLabel> getGridLabels_StraightLine(Polyline inPolyLine, Extent clipExtent, boolean isVertical) {
+    public static List<GridLabel> getGridLabels_StraightLine(LineString inPolyLine, Extent clipExtent, boolean isVertical) {
         List<GridLabel> gridLabels = new ArrayList<>();
         //List<PointZ> aPList = inPolyLine.getPointList();
 
-        Coordinate aPoint = inPolyLine.getPointList().get(0);
+        Coordinate aPoint = inPolyLine.getCoordinates().get(0);
         if (isVertical) {
             if (aPoint.x < clipExtent.minX || aPoint.x > clipExtent.maxX) {
                 return gridLabels;
@@ -293,7 +293,7 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
             gridLabels.add(aGL);
         }
 
-        aPoint = inPolyLine.getPointList().get(inPolyLine.getPointList().size() - 1);
+        aPoint = inPolyLine.getCoordinates().get(inPolyLine.getCoordinates().size() - 1);
         if (isVertical) {
             if (aPoint.x < clipExtent.minX || aPoint.x > clipExtent.maxX) {
                 return gridLabels;
@@ -330,16 +330,16 @@ public class GeoComputation extends org.meteoinfo.geometry.geoprocess.GeoComputa
             return false;
         }
 
-        List<PolygonShape> polygons = new ArrayList<>();
+        List<MultiPolygon> polygons = new ArrayList<>();
         if (onlySel) {
-            for (Shape aShape : aLayer.getShapes()) {
+            for (Geometry aShape : aLayer.getShapes()) {
                 if (aShape.isSelected()) {
-                    polygons.add((PolygonShape) aShape);
+                    polygons.add((MultiPolygon) aShape);
                 }
             }
         } else {
-            for (Shape aShape : aLayer.getShapes()) {
-                polygons.add((PolygonShape) aShape);
+            for (Geometry aShape : aLayer.getShapes()) {
+                polygons.add((MultiPolygon) aShape);
             }
         }
 

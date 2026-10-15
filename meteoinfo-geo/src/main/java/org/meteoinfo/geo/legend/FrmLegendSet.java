@@ -7,7 +7,7 @@ package org.meteoinfo.geo.legend;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import org.meteoinfo.common.GenericFileFilter;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -308,7 +308,7 @@ public class FrmLegendSet extends JDialog {
     private void jButton_AddBreakActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_AddBreakActionPerformed
         // TODO add your handling code here:
         switch (_legendScheme.getShapeType()) {
-            case POLYLINE:
+            case LINESTRING:
                 PolylineBreak aPLB = new PolylineBreak();
                 aPLB.setDrawPolyline(true);
                 aPLB.setWidth(0.1F);
@@ -374,7 +374,7 @@ public class FrmLegendSet extends JDialog {
         int oldIdx, newIdx;
         oldIdx = legendView1.getSelectedRows().get(0);
         if (oldIdx > 0) {
-            if (_legendScheme.getShapeType() == ShapeTypes.POINT) {
+            if (_legendScheme.getShapeType() == GeometryType.POINT) {
                 PointBreak aPB = (PointBreak) _legendScheme.getLegendBreaks().get(oldIdx);
                 if (aPB.isNoData()) {
                     return;
@@ -394,7 +394,7 @@ public class FrmLegendSet extends JDialog {
         int oldIdx, newIdx, endIdx;
         oldIdx = legendView1.getSelectedRows().get(0);
         endIdx = legendView1.getLegendScheme().getBreakNum() - 1;
-        if (_legendScheme.getShapeType() == ShapeTypes.POINT) {
+        if (_legendScheme.getShapeType() == GeometryType.POINT) {
             PointBreak aPB = (PointBreak) _legendScheme.getLegendBreaks().get(oldIdx);
             if (aPB.isNoData()) {
                 endIdx = endIdx - 1;

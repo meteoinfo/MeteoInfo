@@ -27,8 +27,8 @@ import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.geo.layer.LayerDrawType;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.geo.legend.LegendManage;
-import org.meteoinfo.geometry.shape.PointShape;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.Point;
+import org.meteoinfo.geometry.GeometryType;
 import org.meteoinfo.table.Field;
 
 /**
@@ -299,7 +299,7 @@ public class FrmAddXYData extends javax.swing.JDialog {
                 aLayer.setLayerDrawType(LayerDrawType.MAP);
                 aLayer.setLayerName(aFile.getName());
                 aLayer.setFileName(fileName);
-                aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.black, 5));
+                aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(GeometryType.POINT, Color.black, 5));
                 aLayer.setVisible(true);
                 for (Field field : fields){
                     aLayer.editAddField(field);
@@ -329,8 +329,8 @@ public class FrmAddXYData extends javax.swing.JDialog {
                     aPoint.y = lat;
 
                     //Add shape
-                    PointShape aPS = new PointShape();
-                    aPS.setPoint(aPoint);
+                    Point aPS = new Point();
+                    aPS.setCoordinate(aPoint);
                     int shapeNum = aLayer.getShapeNum();
                     if (aLayer.editInsertShape(aPS, shapeNum)) {
                         //Edit record value

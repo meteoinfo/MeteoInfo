@@ -17,8 +17,8 @@ import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.PolygonShape;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.MultiPolygon;
+import org.meteoinfo.geometry.Geometry;
 import org.meteoinfo.table.DataRow;
 
 /**
@@ -58,10 +58,10 @@ public class MapViewUndoRedo {
     
     public class AddFeatureEdit extends FeatureUndoableEdit {
         MapView mapView;
-        Shape shape;
+        Geometry shape;
         VectorLayer layer;
         
-        public AddFeatureEdit(MapView mapView, VectorLayer layer, Shape shape){
+        public AddFeatureEdit(MapView mapView, VectorLayer layer, Geometry shape){
             this.mapView = mapView;
             this.layer = layer;
             this.shape = shape;
@@ -95,10 +95,10 @@ public class MapViewUndoRedo {
     
     public class AddFeaturesEdit extends FeatureUndoableEdit {
         MapView mapView;
-        List<Shape> shapes;
+        List<Geometry> shapes;
         VectorLayer layer;
         
-        public AddFeaturesEdit(MapView mapView, VectorLayer layer, List<Shape> shapes){
+        public AddFeaturesEdit(MapView mapView, VectorLayer layer, List<Geometry> shapes){
             this.mapView = mapView;
             this.layer = layer;
             this.shapes = shapes;
@@ -112,7 +112,7 @@ public class MapViewUndoRedo {
         @Override
         public void undo() {
             super.undo();
-            for (Shape shape : shapes)
+            for (Geometry shape : shapes)
                 layer.editRemoveShape(shape);
             mapView.paintLayers();
             System.out.println("Undo add features");
@@ -122,7 +122,7 @@ public class MapViewUndoRedo {
         public void redo(){
             super.redo();
             try {
-                for (Shape shape : shapes)
+                for (Geometry shape : shapes)
                     layer.editAddShape(shape);
                 mapView.paintLayers();
                 System.out.println("Redo add features");
@@ -134,17 +134,17 @@ public class MapViewUndoRedo {
     
     public class ReplaceFeatureEdit extends FeatureUndoableEdit {
         MapView mapView;
-        Shape s0;
-        Shape s1;
-        Shape s00;
+        Geometry s0;
+        Geometry s1;
+        Geometry s00;
         VectorLayer layer;
         
-        public ReplaceFeatureEdit(MapView mapView, VectorLayer layer, Shape s0, Shape s1){
+        public ReplaceFeatureEdit(MapView mapView, VectorLayer layer, Geometry s0, Geometry s1){
             this.mapView = mapView;
             this.layer = layer;
             this.s0 = s0;
             this.s1 = s1;
-            this.s00 = (Shape)s0.clone();
+            this.s00 = (Geometry)s0.clone();
         }
         
         @Override
@@ -171,11 +171,11 @@ public class MapViewUndoRedo {
     
     public class SplitFeatureEdit extends FeatureUndoableEdit {
         MapView mapView;
-        Shape shape;
-        List<Shape> shapes;
+        Geometry shape;
+        List<Geometry> shapes;
         VectorLayer layer;
         
-        public SplitFeatureEdit(MapView mapView, VectorLayer layer, Shape shape, List<Shape> shapes){
+        public SplitFeatureEdit(MapView mapView, VectorLayer layer, Geometry shape, List<Geometry> shapes){
             this.mapView = mapView;
             this.layer = layer;
             this.shape = shape;
@@ -190,7 +190,7 @@ public class MapViewUndoRedo {
         @Override
         public void undo() {
             super.undo();
-            for (Shape s : shapes)
+            for (Geometry s : shapes)
                 layer.editRemoveShape(s);
             try {
                 layer.editAddShape(shape);
@@ -205,7 +205,7 @@ public class MapViewUndoRedo {
         public void redo(){
             super.redo();
             try {
-                for (Shape s : shapes)
+                for (Geometry s : shapes)
                     layer.editAddShape(s);
                 layer.editRemoveShape(shape);
                 mapView.paintLayers();
@@ -218,11 +218,11 @@ public class MapViewUndoRedo {
     
     public class UnionFeaturesEdit extends FeatureUndoableEdit {
         MapView mapView;
-        Shape shape;
-        List<Shape> shapes;
+        Geometry shape;
+        List<Geometry> shapes;
         VectorLayer layer;
         
-        public UnionFeaturesEdit(MapView mapView, VectorLayer layer, Shape shape, List<Shape> shapes){
+        public UnionFeaturesEdit(MapView mapView, VectorLayer layer, Geometry shape, List<Geometry> shapes){
             this.mapView = mapView;
             this.layer = layer;
             this.shape = shape;
@@ -239,7 +239,7 @@ public class MapViewUndoRedo {
             super.undo();
             try {
                 layer.editRemoveShape(shape);
-                for (Shape s : shapes)
+                for (Geometry s : shapes)
                     layer.editAddShape(s);                
                 mapView.paintLayers();
                 System.out.println("Undo split feature");
@@ -252,7 +252,7 @@ public class MapViewUndoRedo {
         public void redo(){
             super.redo();
             try {
-                for (Shape s : shapes)
+                for (Geometry s : shapes)
                     layer.editRemoveShape(s);
                 layer.editAddShape(shape);
                 mapView.paintLayers();
@@ -265,13 +265,13 @@ public class MapViewUndoRedo {
     
     public class AddRingEdit extends FeatureUndoableEdit {
         MapView mapView;
-        PolygonShape shape;
+        MultiPolygon shape;
         List<Coordinate> points;
         int polyIdx;
         int holeIdx;
         
-        public AddRingEdit(MapView mapView, PolygonShape shape, List<Coordinate> points,
-                int polygonIdx, int holeIdx){
+        public AddRingEdit(MapView mapView, MultiPolygon shape, List<Coordinate> points,
+                           int polygonIdx, int holeIdx){
             this.mapView = mapView;
             this.shape = shape;
             this.points = points;
@@ -308,13 +308,13 @@ public class MapViewUndoRedo {
     public class FillRingEdit extends FeatureUndoableEdit {
         MapView mapView;
         VectorLayer layer;
-        PolygonShape shape;
-        PolygonShape hole;
+        MultiPolygon shape;
+        MultiPolygon hole;
         int polyIdx;
         int holeIdx;
         
-        public FillRingEdit(MapView mapView, VectorLayer layer, PolygonShape shape, PolygonShape hole,
-                int polygonIdx, int holeIdx){
+        public FillRingEdit(MapView mapView, VectorLayer layer, MultiPolygon shape, MultiPolygon hole,
+                            int polygonIdx, int holeIdx){
             this.mapView = mapView;
             this.layer = layer;
             this.shape = shape;
@@ -341,7 +341,7 @@ public class MapViewUndoRedo {
         public void redo(){
             super.redo();
             try {
-                shape.addHole(hole.getPoints(), polyIdx);
+                shape.addHole(hole.getCoordinates(), polyIdx);
                 layer.editAddShape(hole);
                 mapView.paintLayers();
                 System.out.println("Redo Fill a hole");
@@ -353,12 +353,12 @@ public class MapViewUndoRedo {
     
     public class RemoveRingEdit extends FeatureUndoableEdit {
         MapView mapView;
-        PolygonShape shape;
+        MultiPolygon shape;
         List<Coordinate> points;
         int polyIdx;
         int holeIdx;
         
-        public RemoveRingEdit(MapView mapView, PolygonShape shape, List<Coordinate> hole, int polygonIdx, int holeIdx){
+        public RemoveRingEdit(MapView mapView, MultiPolygon shape, List<Coordinate> hole, int polygonIdx, int holeIdx){
             this.mapView = mapView;
             this.shape = shape;
             this.points = hole;
@@ -394,12 +394,12 @@ public class MapViewUndoRedo {
     
     public class RemoveFeaturesEdit extends FeatureUndoableEdit {
         MapView mapView;
-        List<Shape> shapes;
+        List<Geometry> shapes;
         VectorLayer layer;
         List<Integer> indices;
         List<DataRow> records;
         
-        public RemoveFeaturesEdit(MapView mapView, VectorLayer layer, List<Shape> shapes){
+        public RemoveFeaturesEdit(MapView mapView, VectorLayer layer, List<Geometry> shapes){
             this.mapView = mapView;
             this.layer = layer;
             this.shapes = shapes;
@@ -407,7 +407,7 @@ public class MapViewUndoRedo {
             records = new ArrayList<>();
             int idx;
             DataRow row;
-            for (Shape shape : shapes){
+            for (Geometry shape : shapes){
                 idx = layer.getShapes().indexOf(shape);
                 row = layer.getAttributeTable().getTable().getRows().get(idx);
                 indices.add(idx);
@@ -437,7 +437,7 @@ public class MapViewUndoRedo {
         @Override
         public void redo(){
             super.redo();            
-            for (Shape shape : shapes)
+            for (Geometry shape : shapes)
                 layer.editRemoveShape(shape);
             mapView.paintLayers();
             System.out.println("Undo remove features");
@@ -446,11 +446,11 @@ public class MapViewUndoRedo {
     
     class MoveFeatureEdit extends FeatureUndoableEdit {
         MapView mapView;
-        Shape shape;
+        Geometry shape;
         Point fromPoint;
         Point toPoint;
         
-        public MoveFeatureEdit(MapView mapView, Shape shape, Point fromPoint, Point toPoint){
+        public MoveFeatureEdit(MapView mapView, Geometry shape, Point fromPoint, Point toPoint){
             this.mapView = mapView;
             this.shape = shape;
             this.fromPoint = new Point(fromPoint.x, fromPoint.y);
@@ -479,11 +479,11 @@ public class MapViewUndoRedo {
     
     class MoveFeaturesEdit extends FeatureUndoableEdit {
         MapView mapView;
-        List<Shape> shapes;
+        List<Geometry> shapes;
         Point fromPoint;
         Point toPoint;
         
-        public MoveFeaturesEdit(MapView mapView, List<Shape> shapes, Point fromPoint, Point toPoint){
+        public MoveFeaturesEdit(MapView mapView, List<Geometry> shapes, Point fromPoint, Point toPoint){
             this.mapView = mapView;
             this.shapes = shapes;
             this.fromPoint = new Point(fromPoint.x, fromPoint.y);
@@ -498,7 +498,7 @@ public class MapViewUndoRedo {
         @Override
         public void undo() {
             super.undo();
-            for (Shape shape : shapes)
+            for (Geometry shape : shapes)
                 mapView.moveShapeOnScreen(shape, toPoint, fromPoint);
             mapView.paintLayers();
         }
@@ -506,7 +506,7 @@ public class MapViewUndoRedo {
         @Override
         public void redo(){
             super.redo();
-            for (Shape shape : shapes)
+            for (Geometry shape : shapes)
                 mapView.moveShapeOnScreen(shape, fromPoint, toPoint);
             mapView.paintLayers();
         }
@@ -514,21 +514,21 @@ public class MapViewUndoRedo {
     
     class MoveFeatureVerticeEdit extends FeatureUndoableEdit {
         MapView mapView;
-        Shape shape;
+        Geometry shape;
         int verticeIdx;
         double newX;
         double newY;
         double oldX;
         double oldY;
         
-        public MoveFeatureVerticeEdit(MapView mapView, Shape shape, int vIdx, double newX, double newY){
+        public MoveFeatureVerticeEdit(MapView mapView, Geometry shape, int vIdx, double newX, double newY){
             this.mapView = mapView;
             this.shape = shape;            
             this.verticeIdx = vIdx;
             this.newX = newX;
             this.newY = newY;
-            this.oldX = shape.getPoints().get(vIdx).x;
-            this.oldY = shape.getPoints().get(vIdx).y;
+            this.oldX = shape.getCoordinates().get(vIdx).x;
+            this.oldY = shape.getCoordinates().get(vIdx).y;
         }
         
         @Override
@@ -553,11 +553,11 @@ public class MapViewUndoRedo {
     
     class AddFeatureVerticeEdit extends AbstractUndoableEdit {
         MapView mapView;
-        Shape shape;
+        Geometry shape;
         int verticeIdx;
         Coordinate vertice;
         
-        public AddFeatureVerticeEdit(MapView mapView, Shape shape, int vIdx, Coordinate vertice){
+        public AddFeatureVerticeEdit(MapView mapView, Geometry shape, int vIdx, Coordinate vertice){
             this.mapView = mapView;
             this.shape = shape;            
             this.verticeIdx = vIdx;
@@ -586,15 +586,15 @@ public class MapViewUndoRedo {
     
     class RemoveFeatureVerticeEdit extends AbstractUndoableEdit {
         MapView mapView;
-        Shape shape;
+        Geometry shape;
         int verticeIdx;
         Coordinate vertice;
         
-        public RemoveFeatureVerticeEdit(MapView mapView, Shape shape, int vIdx){
+        public RemoveFeatureVerticeEdit(MapView mapView, Geometry shape, int vIdx){
             this.mapView = mapView;
             this.shape = shape;            
             this.verticeIdx = vIdx;
-            this.vertice = shape.getPoints().get(vIdx);
+            this.vertice = shape.getCoordinates().get(vIdx);
         }
         
         @Override
@@ -752,8 +752,8 @@ public class MapViewUndoRedo {
             this.verticeIdx = vIdx;
             this.newX = newX;
             this.newY = newY;
-            this.oldX = graphic.getShape().getPoints().get(vIdx).x;
-            this.oldY = graphic.getShape().getPoints().get(vIdx).y;
+            this.oldX = graphic.getShape().getCoordinates().get(vIdx).x;
+            this.oldY = graphic.getShape().getCoordinates().get(vIdx).y;
         }
         
         @Override
@@ -819,7 +819,7 @@ public class MapViewUndoRedo {
             this.mapView = mapView;
             this.graphic = graphic;            
             this.verticeIdx = vIdx;
-            this.vertice = graphic.getShape().getPoints().get(vIdx);
+            this.vertice = graphic.getShape().getCoordinates().get(vIdx);
         }
         
         @Override
@@ -885,7 +885,7 @@ public class MapViewUndoRedo {
             this.mapView = mapView;
             this.graphic = graphic;
             this.newPoints = points;
-            this.oldPoints = graphic.getShape().getPoints();
+            this.oldPoints = graphic.getShape().getCoordinates();
         }
         
         @Override
@@ -896,29 +896,29 @@ public class MapViewUndoRedo {
         @Override
         public void undo() {
             super.undo();
-            graphic.getShape().setPoints(oldPoints);
+            graphic.getShape().setCoordinates(oldPoints);
             mapView.paintLayers();
         }
         
         @Override
         public void redo(){
             super.redo();
-            graphic.getShape().setPoints(newPoints);
+            graphic.getShape().setCoordinates(newPoints);
             mapView.paintLayers();
         }
     }
     
     class SmoothFeatureEdit extends AbstractUndoableEdit {
         MapView mapView;
-        Shape shape;
+        Geometry shape;
         List<Coordinate> oldPoints;
         List<Coordinate> newPoints;
         
-        public SmoothFeatureEdit(MapView mapView, Shape shape, List<Coordinate> points){
+        public SmoothFeatureEdit(MapView mapView, Geometry shape, List<Coordinate> points){
             this.mapView = mapView;
             this.shape = shape;
             this.newPoints = points;
-            this.oldPoints = shape.getPoints();
+            this.oldPoints = shape.getCoordinates();
         }
         
         @Override
@@ -929,14 +929,14 @@ public class MapViewUndoRedo {
         @Override
         public void undo() {
             super.undo();
-            shape.setPoints(oldPoints);
+            shape.setCoordinates(oldPoints);
             mapView.paintLayers();
         }
         
         @Override
         public void redo(){
             super.redo();
-            shape.setPoints(newPoints);
+            shape.setCoordinates(newPoints);
             mapView.paintLayers();
         }
     }

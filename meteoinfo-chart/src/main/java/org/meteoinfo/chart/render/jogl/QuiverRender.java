@@ -6,7 +6,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
+import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.chart.graphic.cylinder.Cylinder;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
@@ -14,7 +14,7 @@ import org.meteoinfo.chart.jogl.Utils;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.WindArrow3D;
+import org.meteoinfo.geometry.special.WindArrow3D;
 import org.meteoinfo.math.Matrix4f;
 
 import java.nio.FloatBuffer;
@@ -24,7 +24,7 @@ import java.util.List;
 
 public class QuiverRender extends JOGLGraphicRender {
 
-    private GraphicCollection3D graphics;
+    private GraphicCollection graphics;
     private Program program;
     private IntBuffer vbo;
     private int quiverNumber;
@@ -65,7 +65,7 @@ public class QuiverRender extends JOGLGraphicRender {
      * @param gl The JOGL GL2 object
      * @param graphics The quiver graphics
      */
-    public QuiverRender(GL2 gl, GraphicCollection3D graphics) {
+    public QuiverRender(GL2 gl, GraphicCollection graphics) {
         this(gl);
 
         this.graphics = graphics;
@@ -86,7 +86,7 @@ public class QuiverRender extends JOGLGraphicRender {
             Graphic graphic = graphics.getGraphicN(i);
             WindArrow3D shape = (WindArrow3D) graphic.getShape();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
-            Coordinate sp = (Coordinate) shape.getPoint();
+            Coordinate sp = (Coordinate) shape.getCoordinate();
             Coordinate ep = (Coordinate) shape.getEndPoint();
 
             Vector3f v1 = transform.transform((float) sp.x, (float) sp.y, (float) sp.z);

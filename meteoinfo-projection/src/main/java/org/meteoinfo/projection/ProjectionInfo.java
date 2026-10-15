@@ -23,7 +23,7 @@ package org.meteoinfo.projection;
  import org.locationtech.proj4j.proj.Projection;
  import org.meteoinfo.common.*;
  import org.meteoinfo.geometry.Coordinate;
- import org.meteoinfo.geometry.shape.PolygonShape;
+ import org.meteoinfo.geometry.MultiPolygon;
  import org.meteoinfo.ndarray.Array;
  import org.meteoinfo.ndarray.math.ArrayUtil;
  import org.meteoinfo.projection.info.*;
@@ -40,7 +40,7 @@ package org.meteoinfo.projection;
              "+title=long/lat:WGS84 +proj=longlat +ellps=WGS84 +datum=WGS84 +units=degrees"));
 
      protected CoordinateReferenceSystem crs;
-     protected PolygonShape boundary;
+     protected MultiPolygon boundary;
      protected float cutoff = Float.NaN;    //Latitude cutoff - valiad for some speciafic projections
      // </editor-fold>
      // <editor-fold desc="Constructor">
@@ -241,7 +241,7 @@ package org.meteoinfo.projection;
       * Get map boundary
       * @return Map boundary
       */
-     public PolygonShape getBoundary(){
+     public MultiPolygon getBoundary(){
          return this.boundary;
      }
 
@@ -249,7 +249,7 @@ package org.meteoinfo.projection;
       * Set map boundary
       * @param value Map boundary
       */
-     public void setBoundary(PolygonShape value) {
+     public void setBoundary(MultiPolygon value) {
          this.boundary = value;
      }
 

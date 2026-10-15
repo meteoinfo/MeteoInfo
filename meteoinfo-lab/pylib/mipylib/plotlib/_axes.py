@@ -14,11 +14,10 @@ from org.meteoinfo.common import XAlign, YAlign
 from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
 from org.meteoinfo.geometry.legend import BarBreak, PolygonBreak, PolylineBreak, \
     PointBreak, LineStyles, PointStyle, LegendScheme, LegendType, LegendManage, ExtendFraction
-from org.meteoinfo.geometry.shape import ShapeTypes
 from org.meteoinfo.chart.graphic import Graphic, GraphicCollection, ImageGraphic
 from org.meteoinfo.geometry.colors import ExtendType
 from org.meteoinfo.common import MIMath
-from org.meteoinfo.geometry import Extent
+from org.meteoinfo.geometry import Extent, GeometryType
 from org.meteoinfo.geo.layer import MapLayer
 
 from java.awt import Font, Color, BasicStroke
@@ -2671,7 +2670,7 @@ class Axes(object):
         vmin = kwargs.pop('vmin', a.min())
         vmax = kwargs.pop('vmax', a.max())
         ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
-        ls = ls.convertTo(ShapeTypes.POLYLINE)
+        ls = ls.convertTo(GeometryType.LINESTRING)
         plotutil.setlegendscheme(ls, **kwargs)
 
         # norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
@@ -2734,7 +2733,7 @@ class Axes(object):
             color = plotutil.getcolor(color)
             labelset.setLabelColor(color)
 
-        dynamic = kwargs.pop('dynamic', gc.getShapeType() == ShapeTypes.POLYLINE)
+        dynamic = kwargs.pop('dynamic', gc.getShapeType() == GeometryType.LINESTRING)
         drawshadow = kwargs.pop('drawshadow', dynamic)
         shadowcolor= kwargs.pop('shadowcolor', Color.white if drawshadow else None)
         if shadowcolor is not None:
@@ -2809,7 +2808,7 @@ class Axes(object):
         if not kwargs.has_key('extend'):
             kwargs['extend'] = 'both'
         ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
-        ls = ls.convertTo(ShapeTypes.POLYGON)
+        ls = ls.convertTo(GeometryType.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
@@ -2918,7 +2917,7 @@ class Axes(object):
                     norm = kwargs.pop('norm', colors.Normalize(vmin, vmax))
                     ls.setNormalize(norm._norm)
                     ls.setColorMap(cmap)
-                ls = ls.convertTo(ShapeTypes.IMAGE)
+                ls = ls.convertTo(GeometryType.IMAGE)
                 plotutil.setlegendscheme(ls, **kwargs)
             igraphic = GraphicFactory.createImage(X._array, xdata._array, ydata._array, ls, extent)
 
@@ -2979,7 +2978,7 @@ class Axes(object):
         if a.ndim == 2 and x.ndim == 1:
             x, y = np.meshgrid(x, y)
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
-        ls = ls.convertTo(ShapeTypes.POLYGON)
+        ls = ls.convertTo(GeometryType.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
@@ -3029,7 +3028,7 @@ class Axes(object):
             args = args[3:]
 
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
-        ls = ls.convertTo(ShapeTypes.POLYGON)
+        ls = ls.convertTo(GeometryType.POLYGON)
         plotutil.setlegendscheme(ls, **kwargs)
         graphics = GraphicFactory.createGridPolygons(x.asarray(), y.asarray(), a.asarray(), ls)
         antialias = kwargs.pop('antialias', None)
@@ -3210,7 +3209,7 @@ class Axes(object):
         """
         Create one or more filled polygons.
         
-        :param x: (*array_like*) X coordinates for each vertex. X should be PolygonShape if y
+        :param x: (*array_like*) X coordinates for each vertex. X should be Polygon if y
             is None.
         :param y: (*array_like*) Y coordinates for each vertex.
         """
@@ -3842,7 +3841,7 @@ class Axes(object):
                     c = cmap.getColor(0)
                 else:
                     c = Color.black
-                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, c, 10)
+                ls = LegendManage.createSingleSymbolLegendScheme(GeometryType.POINT, c, 10)
             ls = plotutil.setlegendscheme_point(ls, **kwargs)
 
         if not cdata is None:
@@ -3954,7 +3953,7 @@ class Axes(object):
                     c = cmap.getColor(0)
                 else:
                     c = Color.black
-                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, c, 10)
+                ls = LegendManage.createSingleSymbolLegendScheme(GeometryType.POINT, c, 10)
             ls = plotutil.setlegendscheme_arrow(ls, **kwargs)
 
         if not cdata is None:

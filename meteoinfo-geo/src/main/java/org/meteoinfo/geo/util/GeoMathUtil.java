@@ -7,7 +7,7 @@ import org.meteoinfo.data.StationData;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.geo.analysis.GeoComputation;
 import org.meteoinfo.geo.mapdata.ShapeFileType;
-import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.MultiPolygon;
 import org.meteoinfo.geo.analysis.InterpolationSetting;
 import org.meteoinfo.math.interpolate.InterpUtil;
 
@@ -22,7 +22,7 @@ public class GeoMathUtil {
      * @param aPGS The polygon shape
      * @return Maskouted grid data
      */
-    public static GridData maskout(GridData gridData, PolygonShape aPGS) {
+    public static GridData maskout(GridData gridData, MultiPolygon aPGS) {
         int xNum = gridData.getXNum();
         int yNum = gridData.getYNum();
 
@@ -59,7 +59,7 @@ public class GeoMathUtil {
      * @param polygons The polygon shapes
      * @return Maskouted grid data
      */
-    public static GridData maskout(GridData gridData, List<PolygonShape> polygons) {
+    public static GridData maskout(GridData gridData, List<MultiPolygon> polygons) {
         int xNum = gridData.getXNum();
         int yNum = gridData.getYNum();
 
@@ -126,7 +126,7 @@ public class GeoMathUtil {
       * @param polygonShape Mask polygon shape
       * @return Result station data
       */
-     public static StationData maskout(StationData stationData, PolygonShape polygonShape) {
+     public static StationData maskout(StationData stationData, MultiPolygon polygonShape) {
          StationData stData = new StationData();
          stData.projInfo = stationData.projInfo;
          stData.missingValue = stationData.missingValue;
@@ -146,7 +146,7 @@ public class GeoMathUtil {
       * @param polygonShapes Mask polygon shapes
       * @return Result station data
       */
-     public static StationData maskout(StationData stationData, List<PolygonShape> polygonShapes) {
+     public static StationData maskout(StationData stationData, List<MultiPolygon> polygonShapes) {
          StationData stData = new StationData();
          stData.projInfo = stationData.projInfo;
          stData.missingValue = stationData.missingValue;
@@ -171,7 +171,7 @@ public class GeoMathUtil {
              return stationData;
          }
 
-         List<PolygonShape> polygons = (List<PolygonShape>) maskLayer.getShapes();
+         List<MultiPolygon> polygons = (List<MultiPolygon>) maskLayer.getShapes();
          return maskout(stationData, polygons);
      }
 
@@ -182,7 +182,7 @@ public class GeoMathUtil {
       * @param polygonShape Mask polygon shape
       * @return Result station data
       */
-     public static StationData maskin(StationData stationData, PolygonShape polygonShape) {
+     public static StationData maskin(StationData stationData, MultiPolygon polygonShape) {
          StationData stData = new StationData();
          stData.projInfo = stationData.projInfo;
          stData.missingValue = stationData.missingValue;
@@ -202,7 +202,7 @@ public class GeoMathUtil {
       * @param polygonShapes Mask polygon shapes
       * @return Result station data
       */
-     public static StationData maskin(StationData stationData, List<PolygonShape> polygonShapes) {
+     public static StationData maskin(StationData stationData, List<MultiPolygon> polygonShapes) {
          StationData stData = new StationData();
          stData.projInfo = stationData.projInfo;
          stData.missingValue = stationData.missingValue;
@@ -227,7 +227,7 @@ public class GeoMathUtil {
              return stationData;
          }
 
-         List<PolygonShape> polygons = (List<PolygonShape>) maskLayer.getShapes();
+         List<MultiPolygon> polygons = (List<MultiPolygon>) maskLayer.getShapes();
          return maskin(stationData, polygons);
      }
 

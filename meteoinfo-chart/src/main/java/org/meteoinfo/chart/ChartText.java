@@ -17,20 +17,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.common.XAlign;
 import org.meteoinfo.common.YAlign;
 import org.meteoinfo.render.java2d.Draw;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.meteoinfo.geometry.shape.Shape;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.Geometry;
+import org.meteoinfo.geometry.GeometryType;
 
 /**
  *
  * @author yaqiang
  */
-public class ChartText extends Shape {
+public class ChartText extends Geometry {
 
     // <editor-fold desc="Variables">
     protected double x;
@@ -39,7 +39,7 @@ public class ChartText extends Shape {
     protected List<String> text;
     protected Color color;
     protected int lineSpace;
-    protected CoordinateType coordinates;
+    protected CoordinateType coordinateType;
     protected Color background;
     protected boolean drawBackground;
     protected boolean drawNeatline;
@@ -62,7 +62,7 @@ public class ChartText extends Shape {
         font = new Font("Arial", Font.PLAIN, 14);
         color = Color.black;
         lineSpace = 5;
-        coordinates = CoordinateType.DATA;
+        coordinateType = CoordinateType.DATA;
         this.background = Color.white;
         this.drawBackground = false;
         this.drawNeatline = false;
@@ -288,8 +288,8 @@ public class ChartText extends Shape {
      *
      * @return Coordinates
      */
-    public CoordinateType getCoordinates() {
-        return this.coordinates;
+    public CoordinateType getCoordinateType() {
+        return this.coordinateType;
     }
 
     /**
@@ -297,8 +297,8 @@ public class ChartText extends Shape {
      *
      * @param value Coordinates
      */
-    public void setCoordinates(CoordinateType value) {
-        this.coordinates = value;
+    public void setCoordinateType(CoordinateType value) {
+        this.coordinateType = value;
     }
 
     /**
@@ -309,16 +309,16 @@ public class ChartText extends Shape {
     public void setCoordinates(String value) {
         switch (value) {
             case "axes":
-                this.coordinates = CoordinateType.AXES;
+                this.coordinateType = CoordinateType.AXES;
                 break;
             case "figure":
-                this.coordinates = CoordinateType.FIGURE;
+                this.coordinateType = CoordinateType.FIGURE;
                 break;
             case "data":
-                this.coordinates = CoordinateType.DATA;
+                this.coordinateType = CoordinateType.DATA;
                 break;
             case "inches":
-                this.coordinates = CoordinateType.INCHES;
+                this.coordinateType = CoordinateType.INCHES;
                 break;
         }
     }
@@ -565,8 +565,40 @@ public class ChartText extends Shape {
     }
 
     @Override
-    public ShapeTypes getShapeType() {
-        return ShapeTypes.TEXT;
+    public GeometryType getGeometryType() {
+        return GeometryType.TEXT;
+    }
+
+    @Override
+    public Coordinate getCoordinate() {
+        return new Coordinate(x, y);
+    }
+
+    @Override
+    public List<Coordinate> getCoordinates() {
+        List<Coordinate> coordinates = new ArrayList<>();
+        coordinates.add(new Coordinate(x, y));
+        return coordinates;
+    }
+
+    @Override
+    public void updateExtent() {
+        extent.expandToInclude(x, y);
+    }
+
+    @Override
+    public int getNumPoints() {
+        return 1;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public Geometry reverse() {
+        return null;
     }
 
     /**
@@ -632,7 +664,7 @@ public class ChartText extends Shape {
      * @return Geometry
      */
     @Override
-    public Geometry toGeometry(GeometryFactory factory) {
+    public org.locationtech.jts.geom.Geometry toJTSGeometry(GeometryFactory factory) {
         return null;
     }
 
@@ -748,7 +780,7 @@ public class ChartText extends Shape {
         ct.angle = this.angle;
         ct.background = this.background;
         ct.color = this.color;
-        ct.coordinates = this.coordinates;
+        ct.coordinateType = this.coordinateType;
         ct.drawBackground = this.drawBackground;
         ct.drawNeatline = this.drawNeatline;
         ct.font = this.font;

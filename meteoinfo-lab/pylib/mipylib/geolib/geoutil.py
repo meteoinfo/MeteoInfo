@@ -5,8 +5,8 @@
 # Note: Jython
 #-----------------------------------------------------
 
-from org.meteoinfo.geometry.shape import ShapeUtil, PointShape, ShapeTypes
-from org.meteoinfo.geometry import Coordinate
+from org.meteoinfo.geometry import GeometryUtil
+from org.meteoinfo.geometry import Coordinate, Point, GeometryType
 import mipylib.numeric as np
 
 __all__ = [
@@ -41,9 +41,9 @@ def makeshapes(x, y, shape_type=None, z=None, m=None):
             z = np.asarray(z)
         if isinstance(shape_type, basestring):
             try:
-                shape_type = ShapeTypes.valueOf(shape_type)
+                shape_type = GeometryType.valueOf(shape_type)
             except:
-                shape_type = ShapeTypes.POINT
+                shape_type = GeometryType.POINT
 
         if shape_type.isZ():
             if z is None:
@@ -53,17 +53,17 @@ def makeshapes(x, y, shape_type=None, z=None, m=None):
             z = z._array
             m = m._array
 
-        if shape_type == ShapeTypes.POINT:
-            shapes = ShapeUtil.createPointShapes(x, y)
-        elif shape_type == ShapeTypes.POINT_Z:
-            shapes = ShapeUtil.createPointShapes(x, y, z, m)
-        elif shape_type == ShapeTypes.POLYLINE:
-            shapes = ShapeUtil.createPolylineShapes(x, y)
-        elif shape_type == ShapeTypes.POLYLINE_Z:
-            shapes = ShapeUtil.createPolylineShapes(x, y, z, m)
-        elif shape_type == ShapeTypes.POLYGON:
-            shapes = ShapeUtil.createPolygonShapes(x, y)
-        elif shape_type == ShapeTypes.POLYGON_Z:
-            shapes = ShapeUtil.createPolygonShape(x, y, z, m)
+        if shape_type == GeometryType.POINT:
+            shapes = GeometryUtil.createPointShapes(x, y)
+        elif shape_type == GeometryType.POINT_Z:
+            shapes = GeometryUtil.createPointShapes(x, y, z, m)
+        elif shape_type == GeometryType.LINESTRING:
+            shapes = GeometryUtil.createPolylineShapes(x, y)
+        elif shape_type == GeometryType.POLYLINE_Z:
+            shapes = GeometryUtil.createPolylineShapes(x, y, z, m)
+        elif shape_type == GeometryType.POLYGON:
+            shapes = GeometryUtil.createPolygonShapes(x, y)
+        elif shape_type == GeometryType.POLYGON_Z:
+            shapes = GeometryUtil.createPolygonShape(x, y, z, m)
     return shapes   
     

@@ -15,7 +15,7 @@ package org.meteoinfo.projection.info;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.MultiPolygon;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
@@ -72,8 +72,8 @@ public class LambertAzimuthalEqualArea extends ProjectionInfo {
         double easting = this.crs.getProjection().getFalseEasting();
         double northing = this.crs.getProjection().getFalseNorthing();
         List<Coordinate> points = this.ellipse_boundary(a * 1.9999, max_y - northing, easting, northing, 61);
-        PolygonShape ps = new PolygonShape();
-        ps.setPoints(points);
+        MultiPolygon ps = new MultiPolygon();
+        ps.setCoordinates(points);
         this.boundary = ps;
     }
     // </editor-fold>

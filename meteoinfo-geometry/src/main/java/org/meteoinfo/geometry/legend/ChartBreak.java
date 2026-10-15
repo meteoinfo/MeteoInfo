@@ -15,7 +15,7 @@ package org.meteoinfo.geometry.legend;
 
  import org.meteoinfo.geometry.Extent;
  import org.meteoinfo.common.PointF;
- import org.meteoinfo.geometry.shape.ShapeTypes;
+ import org.meteoinfo.geometry.GeometryType;
 
  import java.awt.*;
  import java.util.ArrayList;
@@ -63,7 +63,7 @@ package org.meteoinfo.geometry.legend;
          _chartData = new ArrayList<>();
          _xShift = 0;
          _yShift = 0;
-         _legendScheme = new LegendScheme(ShapeTypes.POLYGON);
+         _legendScheme = new LegendScheme(GeometryType.POLYGON);
          _maxSize = 50;
          _minSize = 10;
          _barWidth = 10;

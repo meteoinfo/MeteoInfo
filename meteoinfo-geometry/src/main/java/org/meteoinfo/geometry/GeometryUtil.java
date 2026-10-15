@@ -5,13 +5,10 @@
  */
 package org.meteoinfo.geometry;
 
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
-import org.meteoinfo.geometry.shape.*;
-import org.meteoinfo.geometry.shape.Polygon;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.special.Circle;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
@@ -139,7 +136,7 @@ public class GeometryUtil {
      * @param shapes
      * @return Extent
      */
-    public static Extent getExtent(List<? extends Shape> shapes) {
+    public static Extent getExtent(List<? extends Geometry> shapes) {
         Extent extent = (Extent) shapes.get(0).getExtent().clone();
         double minx = extent.minX;
         double maxx = extent.maxX;
@@ -451,9 +448,9 @@ public class GeometryUtil {
      * @param y Y array
      * @return PolygonShape
      */
-    public static PolygonShape convexHull(Array x, Array y) {
+    public static MultiPolygon convexHull(Array x, Array y) {
         int n = (int) x.getSize();
-        List<Geometry> geos = new ArrayList<>();
+        List<org.locationtech.jts.geom.Geometry> geos = new ArrayList<>();
         GeometryFactory factory = new GeometryFactory();
         IndexIterator xIter = x.getIndexIterator();
         IndexIterator yIter = y.getIndexIterator();
@@ -466,9 +463,9 @@ public class GeometryUtil {
                 geos.add(factory.createPoint(c));
             }
         }
-        Geometry gs = factory.createGeometryCollection(geos.toArray(new Geometry[geos.size()]));
-        Geometry ch = gs.convexHull();
-        return new PolygonShape(ch);
+        org.locationtech.jts.geom.Geometry gs = factory.createGeometryCollection(geos.toArray(new org.locationtech.jts.geom.Geometry[geos.size()]));
+        org.locationtech.jts.geom.Geometry ch = gs.convexHull();
+        return new MultiPolygon(ch);
     }
 
     /**
@@ -481,8 +478,8 @@ public class GeometryUtil {
      * @return Result array with cell values of 1 inside polygons and -1 outside
      * polygons
      */
-    public static Array inPolygon(Array a, List<Number> x, List<Number> y, PolygonShape ps) {
-        List<PolygonShape> polygons = new ArrayList<>();
+    public static Array inPolygon(Array a, List<Number> x, List<Number> y, MultiPolygon ps) {
+        List<MultiPolygon> polygons = new ArrayList<>();
         polygons.add(ps);
         return inPolygon(a, x, y, polygons);
     }
@@ -497,7 +494,7 @@ public class GeometryUtil {
      * @return Result array with cell values of 1 inside polygons and -1 outside
      * polygons
      */
-    public static Array inPolygon(Array a, List<Number> x, List<Number> y, List<PolygonShape> polygons) {
+    public static Array inPolygon(Array a, List<Number> x, List<Number> y, List<MultiPolygon> polygons) {
         if (a.getRank() == 2) {
             int xNum = x.size();
             int yNum = y.size();
@@ -539,7 +536,7 @@ public class GeometryUtil {
      * @param polygons PolygonShape list
      * @return Result boolean array
      */
-    public static Array inPolygon(Array x, Array y, List<PolygonShape> polygons) {
+    public static Array inPolygon(Array x, Array y, List<MultiPolygon> polygons) {
         Array r = Array.factory(DataType.BOOLEAN, x.getShape());
         IndexIterator xIter = x.getIndexIterator();
         IndexIterator yIter = y.getIndexIterator();
@@ -568,13 +565,13 @@ public class GeometryUtil {
      * polygons
      */
     public static Array inPolygon(Array a, List<Number> x, List<Number> y, List<Number> x_p, List<Number> y_p) {
-        PolygonShape ps = new PolygonShape();
+        MultiPolygon ps = new MultiPolygon();
         List<Coordinate> points = new ArrayList<>();
         for (int i = 0; i < x_p.size(); i++) {
             points.add(new Coordinate(x_p.get(i).doubleValue(), y_p.get(i).doubleValue()));
         }
-        ps.setPoints(points);
-        List<PolygonShape> shapes = new ArrayList<>();
+        ps.setCoordinates(points);
+        List<MultiPolygon> shapes = new ArrayList<>();
         shapes.add(ps);
 
         return inPolygon(a, x, y, shapes);
@@ -590,15 +587,15 @@ public class GeometryUtil {
      * @return Result boolean array
      */
     public static Array inPolygon(Array x, Array y, Array x_p, Array y_p) {
-        PolygonShape ps = new PolygonShape();
+        MultiPolygon ps = new MultiPolygon();
         List<Coordinate> points = new ArrayList<>();
         IndexIterator xIter = x_p.getIndexIterator();
         IndexIterator yIter = y_p.getIndexIterator();
         while (xIter.hasNext()) {
             points.add(new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext()));
         }
-        ps.setPoints(points);
-        List<PolygonShape> shapes = new ArrayList<>();
+        ps.setCoordinates(points);
+        List<MultiPolygon> shapes = new ArrayList<>();
         shapes.add(ps);
 
         return inPolygon(x, y, shapes);
@@ -611,7 +608,7 @@ public class GeometryUtil {
      * @param polygons The polygons
      * @return Polygon index for each point
      */
-    public static Array polygonIndex(Array x, Array y, List<PolygonShape> polygons) {
+    public static Array polygonIndex(Array x, Array y, List<MultiPolygon> polygons) {
         Array r = Array.factory(DataType.INT, x.getShape());
         IndexIterator xIter = x.getIndexIterator();
         IndexIterator yIter = y.getIndexIterator();
@@ -636,8 +633,8 @@ public class GeometryUtil {
      * @param missingValue Missing value
      * @return Result array with cell values of missing outside polygons
      */
-    public static Array maskout(Array a, List<Number> x, List<Number> y, PolygonShape polygon, Number missingValue) {
-        List<PolygonShape> polygons = new ArrayList<>();
+    public static Array maskout(Array a, List<Number> x, List<Number> y, MultiPolygon polygon, Number missingValue) {
+        List<MultiPolygon> polygons = new ArrayList<>();
         polygons.add(polygon);
         return maskout(a, x, y, polygons, missingValue);
     }
@@ -651,7 +648,7 @@ public class GeometryUtil {
      * @param polygons Polygons for maskout
      * @return Result array with cell values of missing outside polygons
      */
-    public static Array maskout(Array a, Array x, Array y, List<PolygonShape> polygons) {
+    public static Array maskout(Array a, Array x, Array y, List<MultiPolygon> polygons) {
         Array r = Array.factory(a.getDataType(), a.getShape());
         IndexIterator aIter = a.getIndexIterator();
         IndexIterator xIter = x.getIndexIterator();
@@ -679,7 +676,7 @@ public class GeometryUtil {
      * @param polygons Polygons for maskin
      * @return Result array with cell values of missing inside polygons
      */
-    public static Array maskin(Array a, Array x, Array y, List<PolygonShape> polygons) {
+    public static Array maskin(Array a, Array x, Array y, List<MultiPolygon> polygons) {
         Array r = Array.factory(a.getDataType(), a.getShape());
         IndexIterator aIter = a.getIndexIterator();
         IndexIterator xIter = x.getIndexIterator();
@@ -707,7 +704,7 @@ public class GeometryUtil {
      * @param polygons Polygons for maskout
      * @return Result arrays removing cells outside polygons
      */
-    public static Array[] maskout_Remove(Array a, Array x, Array y, List<PolygonShape> polygons) {
+    public static Array[] maskout_Remove(Array a, Array x, Array y, List<MultiPolygon> polygons) {
         List<Object> rdata = new ArrayList<>();
         List<Double> rxdata = new ArrayList<>();
         List<Double> rydata = new ArrayList<>();
@@ -750,7 +747,7 @@ public class GeometryUtil {
      * @param polygons Polygons for maskin
      * @return Result arrays removing cells inside polygons
      */
-    public static Array[] maskin_Remove(Array a, Array x, Array y, List<PolygonShape> polygons) {
+    public static Array[] maskin_Remove(Array a, Array x, Array y, List<MultiPolygon> polygons) {
         List<Object> rdata = new ArrayList<>();
         List<Double> rxdata = new ArrayList<>();
         List<Double> rydata = new ArrayList<>();
@@ -793,7 +790,7 @@ public class GeometryUtil {
      * @param polygons PolygonShape list
      * @return Result array with cell values of missing outside polygons
      */
-    public static Array maskout(Array a, List<Number> x, List<Number> y, List<PolygonShape> polygons) {
+    public static Array maskout(Array a, List<Number> x, List<Number> y, List<MultiPolygon> polygons) {
         return maskout(a, x, y, polygons, Double.NaN);
     }
 
@@ -807,7 +804,7 @@ public class GeometryUtil {
      * @param missingValue Missing value
      * @return Result array with cell values of missing outside polygons
      */
-    public static Array maskout(Array a, List<Number> x, List<Number> y, List<PolygonShape> polygons, Number missingValue) {
+    public static Array maskout(Array a, List<Number> x, List<Number> y, List<MultiPolygon> polygons, Number missingValue) {
         int xNum = x.size();
         int yNum = y.size();
 
@@ -952,8 +949,8 @@ public class GeometryUtil {
      * @param pgs The polygon shape
      * @return Coordinate arrays
      */
-    public static Array[] getCoordinates(PolygonShape pgs) {
-        int n = pgs.getPointNum() + pgs.getPartNum() - 1;
+    public static Array[] getCoordinates(MultiPolygon pgs) {
+        int n = pgs.getNumPoints() + pgs.getNumParts() - 1;
         int[] shape = new int[]{n};
         Array xArray = Array.factory(DataType.DOUBLE, shape);
         Array yArray = Array.factory(DataType.DOUBLE, shape);
@@ -984,15 +981,15 @@ public class GeometryUtil {
      * @param pls The polygon shape
      * @return Coordinate arrays
      */
-    public static Array[] getCoordinates(PolylineShape pls) {
-        int n = pls.getPointNum() + pls.getPartNum() - 1;
+    public static Array[] getCoordinates(MultiLineString pls) {
+        int n = pls.getNumPoints() + pls.getNumParts() - 1;
         int[] shape = new int[]{n};
         Array xArray = Array.factory(DataType.DOUBLE, shape);
         Array yArray = Array.factory(DataType.DOUBLE, shape);
         Array zArray = Array.factory(DataType.DOUBLE, shape);
         int i = 0;
-        for (Polyline polyline : pls.getPolylines()) {
-            for (Coordinate p : (List<Coordinate>) polyline.getPointList()) {
+        for (LineString polyline : pls.getPolylines()) {
+            for (Coordinate p : (List<Coordinate>) polyline.getCoordinates()) {
                 xArray.setDouble(i, p.x);
                 yArray.setDouble(i, p.y);
                 zArray.setDouble(i, p.z);
@@ -1007,6 +1004,392 @@ public class GeometryUtil {
         }
 
         return new Array[]{xArray, yArray, zArray};
+    }
+
+    /**
+     * Create point shapes
+     *
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @return Point shapes
+     */
+    public static List<Point> createPointShapes(List<Number> x, List<Number> y) {
+        double xx, yy;
+        Point ps;
+        List<Point> shapes = new ArrayList<>();
+        for (int i = 0; i < x.size(); i++) {
+            ps = new Point();
+            xx = x.get(i).doubleValue();
+            yy = y.get(i).doubleValue();
+            ps.setCoordinate(new Coordinate(xx, yy));
+            shapes.add(ps);
+        }
+        return shapes;
+    }
+
+    /**
+     * Create point shapes
+     *
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @return Point shapes
+     */
+    public static List<Point> createPointShapes(Array x, Array y) {
+        double xx, yy;
+        Point ps;
+        List<Point> shapes = new ArrayList<>();
+        for (int i = 0; i < x.getSize(); i++) {
+            ps = new Point();
+            xx = x.getDouble(i);
+            yy = y.getDouble(i);
+            ps.setCoordinate(new Coordinate(xx, yy));
+            shapes.add(ps);
+        }
+        return shapes;
+    }
+
+    /**
+     * Create PointZ shapes
+     *
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @param z Z coordinates
+     * @param m M coordinates
+     * @return PointZ shapes
+     */
+    public static List<Point> createPointShapes(Array x, Array y, Array z, Array m) {
+        double xx, yy;
+        Point ps;
+        List<Point> shapes = new ArrayList<>();
+        for (int i = 0; i < x.getSize(); i++) {
+            ps = new Point();
+            xx = x.getDouble(i);
+            yy = y.getDouble(i);
+
+            ps.setCoordinate(new Coordinate(xx, yy, z.getDouble(i), m.getDouble(i)));
+            shapes.add(ps);
+        }
+        return shapes;
+    }
+
+    /**
+     * Create polyline shapes
+     *
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @return Polyline shapes
+     */
+    public static List<MultiLineString> createPolylineShapes(List<Number> x, List<Number> y) {
+        double xx, yy;
+        List<Coordinate> points = new ArrayList<>();
+        MultiLineString pls;
+        List<MultiLineString> shapes = new ArrayList<>();
+        for (int i = 0; i < x.size(); i++) {
+            xx = x.get(i).doubleValue();
+            yy = y.get(i).doubleValue();
+            if (Double.isNaN(xx)) {
+                if (points.size() >= 2) {
+                    pls = new MultiLineString();
+                    pls.setCoordinates(points);
+                    shapes.add(pls);
+                }
+                points = new ArrayList<>();
+            } else {
+                points.add(new Coordinate(xx, yy));
+            }
+        }
+        if (points.size() >= 2) {
+            pls = new MultiLineString();
+            pls.setCoordinates(points);
+            shapes.add(pls);
+        }
+
+        return shapes;
+    }
+
+    /**
+     * Create a polyline shape
+     *
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @return Polyline shape
+     */
+    public static MultiLineString createPolylineShape(Array x, Array y) {
+        double xx, yy;
+        List<Coordinate> points = new ArrayList<>();
+        MultiLineString pls;
+        IndexIterator xIter = x.getIndexIterator();
+        IndexIterator yIter = y.getIndexIterator();
+        while (xIter.hasNext()){
+            xx = xIter.getDoubleNext();
+            yy = yIter.getDoubleNext();
+            points.add(new Coordinate(xx, yy));
+        }
+        pls = new MultiLineString();
+        pls.setCoordinates(points);
+
+        return pls;
+    }
+
+    /**
+     * Create polyline shapes
+     *
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @return Polyline shapes
+     */
+    public static List<MultiLineString> createPolylineShapes(Array x, Array y) {
+        double xx, yy;
+        List<Coordinate> points = new ArrayList<>();
+        MultiLineString pls;
+        List<MultiLineString> shapes = new ArrayList<>();
+        for (int i = 0; i < x.getSize(); i++) {
+            xx = x.getDouble(i);
+            yy = y.getDouble(i);
+            if (Double.isNaN(xx)) {
+                if (points.size() >= 2) {
+                    pls = new MultiLineString();
+                    pls.setCoordinates(points);
+                    shapes.add(pls);
+                }
+                points = new ArrayList<>();
+            } else {
+                points.add(new Coordinate(xx, yy));
+            }
+        }
+        if (points.size() >= 2) {
+            pls = new MultiLineString();
+            pls.setCoordinates(points);
+            shapes.add(pls);
+        }
+
+        return shapes;
+    }
+
+    /**
+     * Create polylineZ shapes
+     *
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @param z Z coordinates
+     * @param m M coordinates
+     * @return PolylineZ shapes
+     */
+    public static List<MultiLineString> createPolylineShapes(Array x, Array y, Array z, Array m) {
+        double xx, yy;
+        List<Coordinate> points = new ArrayList<>();
+        MultiLineString pls;
+        List<MultiLineString> shapes = new ArrayList<>();
+        for (int i = 0; i < x.getSize(); i++) {
+            xx = x.getDouble(i);
+            yy = y.getDouble(i);
+            if (Double.isNaN(xx)) {
+                if (points.size() >= 2) {
+                    pls = new MultiLineString();
+                    pls.setCoordinates(points);
+                    shapes.add(pls);
+                }
+                points = new ArrayList<>();
+            } else {
+                points.add(new Coordinate(xx, yy, z.getDouble(i), m.getDouble(i)));
+            }
+        }
+        if (points.size() >= 2) {
+            pls = new MultiLineString();
+            pls.setCoordinates(points);
+            shapes.add(pls);
+        }
+
+        return shapes;
+    }
+
+    /**
+     * Create polygon shapes
+     *
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @return Polygon shapes
+     */
+    public static List<MultiPolygon> createPolygonShapes(List<Number> x, List<Number> y) {
+        double xx, yy;
+        List<Coordinate> points = new ArrayList<>();
+        MultiPolygon pls;
+        List<MultiPolygon> shapes = new ArrayList<>();
+        for (int i = 0; i < x.size(); i++) {
+            xx = x.get(i).doubleValue();
+            yy = y.get(i).doubleValue();
+            if (Double.isNaN(xx)) {
+                if (points.size() > 2) {
+                    pls = new MultiPolygon();
+                    pls.setCoordinates(points);
+                    shapes.add(pls);
+                }
+                points = new ArrayList<>();
+            } else {
+                points.add(new Coordinate(xx, yy));
+            }
+        }
+        if (points.size() > 2) {
+            pls = new MultiPolygon();
+            pls.setCoordinates(points);
+            shapes.add(pls);
+        }
+
+        return shapes;
+    }
+
+    /**
+     * Create polygon shapes
+     *
+     * @param x X coordinates
+     * @param y Y coordinates
+     * @return Polygon shapes
+     */
+    public static List<MultiPolygon> createPolygonShapes(Array x, Array y) {
+        double xx, yy;
+        List<Coordinate> points = new ArrayList<>();
+        MultiPolygon pls;
+        List<MultiPolygon> shapes = new ArrayList<>();
+        for (int i = 0; i < x.getSize(); i++) {
+            xx = x.getDouble(i);
+            yy = y.getDouble(i);
+            if (Double.isNaN(xx)) {
+                if (points.size() > 2) {
+                    pls = new MultiPolygon();
+                    pls.setCoordinates(points);
+                    shapes.add(pls);
+                }
+                points = new ArrayList<>();
+            } else {
+                points.add(new Coordinate(xx, yy));
+            }
+        }
+        if (points.size() > 2) {
+            pls = new MultiPolygon();
+            pls.setCoordinates(points);
+            shapes.add(pls);
+        }
+
+        return shapes;
+    }
+
+    /**
+     * Create polygon shape
+     *
+     * @param x_p X coordinate list
+     * @param y_p Y coordinate list
+     * @return Polygon shape
+     */
+    public static MultiPolygon createPolygonShape(List<Number> x_p, List<Number> y_p) {
+        MultiPolygon ps = new MultiPolygon();
+        List<Coordinate> points = new ArrayList<>();
+        for (int i = 0; i < x_p.size(); i++) {
+            points.add(new Coordinate(x_p.get(i).doubleValue(), y_p.get(i).doubleValue()));
+        }
+        if (!points.get(points.size() - 1).equals(points.get(0))) {
+            points.add((Coordinate) points.get(0).clone());
+        }
+        ps.setCoordinates(points);
+
+        return ps;
+    }
+
+    /**
+     * Create polygon shape
+     *
+     * @param xy X/Y coordinates
+     * @return Polygon shape
+     */
+    public static MultiPolygon createPolygonShape(List<List<Number>> xy) {
+        MultiPolygon ps = new MultiPolygon();
+        List<Coordinate> points = new ArrayList<>();
+        for (List<Number> xy1 : xy) {
+            points.add(new Coordinate(xy1.get(0).doubleValue(), xy1.get(1).doubleValue()));
+        }
+        if (!points.get(points.size() - 1).equals(points.get(0))) {
+            points.add((Coordinate) points.get(0).clone());
+        }
+        ps.setCoordinates(points);
+
+        return ps;
+    }
+
+    /**
+     * Create a polygon
+     *
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @return PolygonShape
+     */
+    public static MultiPolygon createPolygon(Array xa, Array ya) {
+        double x, y;
+        int n = (int) xa.getSize();
+        MultiPolygon pgs;
+        Coordinate p;
+        List<Coordinate> points = new ArrayList<>();
+        IndexIterator xIter = xa.getIndexIterator();
+        IndexIterator yIter = ya.getIndexIterator();
+        while (xIter.hasNext()){
+            x = xIter.getDoubleNext();
+            y = yIter.getDoubleNext();
+            p = new Coordinate(x, y);
+            points.add(p);
+        }
+        if (points.size() > 2) {
+            pgs = new MultiPolygon();
+            pgs.setCoordinates(points);
+            return pgs;
+        }
+        return null;
+    }
+
+    /**
+     * Create a polygon
+     *
+     * @param xa X coordinate array
+     * @param ya Y coordinate array
+     * @return PolygonShape
+     */
+    public static MultiPolygon createPolygonShape(Array xy) {
+        double x, y;
+        int n = xy.getShape()[0];
+        MultiPolygon pgs;
+        Coordinate p;
+        List<Coordinate> points = new ArrayList<>();
+        IndexIterator iter = xy.getIndexIterator();
+        while (iter.hasNext()){
+            x = iter.getDoubleNext();
+            y = iter.getDoubleNext();
+            p = new Coordinate(x, y);
+            points.add(p);
+        }
+        if (points.size() > 2) {
+            pgs = new MultiPolygon();
+            pgs.setCoordinates(points);
+            return pgs;
+        }
+        return null;
+    }
+
+    /**
+     * Add a circle
+     *
+     * @param x Center x
+     * @param y Center y
+     * @param radius
+     * @return Graphic
+     */
+    public static Circle createCircleShape(float x, float y, float radius) {
+        List<Coordinate> points = new ArrayList<>();
+        points.add(new Coordinate(x - radius, y));
+        points.add(new Coordinate(x, y -  radius));
+        points.add(new Coordinate(x + radius, y));
+        points.add(new Coordinate(x, y + radius));
+
+        Circle aPGS = new Circle();
+        aPGS.setCoordinates(points);
+
+        return aPGS;
     }
 
 }

@@ -2,7 +2,7 @@ package org.meteoinfo.chart.geo;
 
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.Geometry;
 import org.meteoinfo.projection.ProjectionInfo;
 
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ public class ProjectUtil {
 
             return newGCollection;
         } else {
-            Shape shape = projectShape(graphic.getShape(), fromProj, toProj);
+            Geometry shape = projectShape(graphic.getShape(), fromProj, toProj);
             Graphic rGraphic = new Graphic(shape, graphic.getLegendBreak());
             rGraphic.setAntiAlias(graphic.isAntiAlias());
             return rGraphic;
@@ -56,7 +56,7 @@ public class ProjectUtil {
             try {
                 List<Graphic> graphics = new ArrayList<>();
                 for (Graphic aGraphic : ((GraphicCollection) graphic).getGraphics()) {
-                    List<? extends Shape> shapes = projectClipShape(aGraphic.getShape(), fromProj, toProj);
+                    List<? extends Geometry> shapes = projectClipShape(aGraphic.getShape(), fromProj, toProj);
                     if (shapes != null && shapes.size() > 0) {
                         if (shapes.get(0).getExtent() == null) {
                             //System.out.println(shapes.get(0).toString());
@@ -74,7 +74,7 @@ public class ProjectUtil {
                 return null;
             }
         } else {
-            List<? extends Shape> shapes = projectClipShape(graphic.getShape(), fromProj, toProj);
+            List<? extends Geometry> shapes = projectClipShape(graphic.getShape(), fromProj, toProj);
             if (shapes != null && shapes.size() > 0) {
                 graphic.setShape(shapes.get(0));
                 return graphic;
@@ -97,7 +97,7 @@ public class ProjectUtil {
             try {
                 Graphic newGCollection = graphic.getClass().getDeclaredConstructor().newInstance();
                 for (Graphic aGraphic : ((GraphicCollection) graphic).getGraphics()) {
-                    List<? extends Shape> shapes = projectClipShape(aGraphic.getShape(), fromProj, toProj);
+                    List<? extends Geometry> shapes = projectClipShape(aGraphic.getShape(), fromProj, toProj);
                     if (shapes != null && shapes.size() > 0) {
                         aGraphic.setShape(shapes.get(0));
                         ((GraphicCollection) newGCollection).add(aGraphic);
@@ -113,7 +113,7 @@ public class ProjectUtil {
                 return null;
             }
         } else {
-            List<? extends Shape> shapes = projectClipShape(graphic.getShape(), fromProj, toProj);
+            List<? extends Geometry> shapes = projectClipShape(graphic.getShape(), fromProj, toProj);
             if (shapes != null && shapes.size() > 0) {
                 Graphic rGraphic = new Graphic(shapes.get(0), graphic.getLegendBreak());
                 rGraphic.setAntiAlias(graphic.isAntiAlias());
@@ -139,7 +139,7 @@ public class ProjectUtil {
     public static List<Graphic> projectGraphic(List<Graphic> graphics, ProjectionInfo fromProj, ProjectionInfo toProj) {
         List<Graphic> newGraphics = new ArrayList<>();
         for (Graphic aGraphic : graphics) {
-            Shape aShape = projectShape(aGraphic.getShape(), fromProj, toProj);
+            Geometry aShape = projectShape(aGraphic.getShape(), fromProj, toProj);
             if (aShape != null) {
                 newGraphics.add(new Graphic(aShape, aGraphic.getLegendBreak()));
             }

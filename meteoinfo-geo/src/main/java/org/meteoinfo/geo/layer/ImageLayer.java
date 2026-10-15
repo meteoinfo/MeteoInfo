@@ -23,11 +23,10 @@ import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.legend.ColorBreak;
-import org.meteoinfo.geometry.shape.ImageShape;
+import org.meteoinfo.geometry.special.Image;
 import org.meteoinfo.geometry.Coordinate;
 
 import java.awt.Color;
-import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
@@ -147,7 +146,7 @@ public class ImageLayer extends MapLayer {
     public void setUseTransColor(boolean istrue) {
         _isSetTransColor = istrue;
         if (istrue) {
-            Image image = GlobalUtil.makeColorTransparent(_image, _transparencyColor);
+            java.awt.Image image = GlobalUtil.makeColorTransparent(_image, _transparencyColor);
             _image = GlobalUtil.imageToBufferedImage(image);
         }
     }
@@ -169,7 +168,7 @@ public class ImageLayer extends MapLayer {
     public void setTransparencyColor(Color color) {
         _transparencyColor = color;
         if (_isSetTransColor) {
-            Image image = GlobalUtil.makeColorTransparent(_image, _transparencyColor);
+            java.awt.Image image = GlobalUtil.makeColorTransparent(_image, _transparencyColor);
             _image = GlobalUtil.imageToBufferedImage(image);
         }
     }
@@ -521,7 +520,7 @@ public class ImageLayer extends MapLayer {
     public GeoGraphicCollection getGraphics(double xShift, String interpolation) {
         GeoGraphicCollection graphics = new GeoGraphicCollection();
         graphics.setProjInfo(this._projInfo);
-        ImageShape ishape = new ImageShape();
+        Image ishape = new Image();
         ishape.setImage(this.getImage());
         Extent extent = this.getExtent();
         extent = extent.shift(xShift, 0);
@@ -534,7 +533,7 @@ public class ImageLayer extends MapLayer {
         ishape.setCoords(coords);
         Graphic gg = new Graphic(ishape, new ColorBreak());
         if (interpolation != null) {
-            ((ImageShape) gg.getShape()).setInterpolation(interpolation);
+            ((Image) gg.getShape()).setInterpolation(interpolation);
         }
         graphics.add(gg);
 
@@ -683,7 +682,7 @@ public class ImageLayer extends MapLayer {
         public void setUseTransColor(boolean istrue) {
             _isSetTransColor = istrue;
             if (istrue) {
-                Image image = GlobalUtil.makeColorTransparent(_image, _transparencyColor);
+                java.awt.Image image = GlobalUtil.makeColorTransparent(_image, _transparencyColor);
                 _image = GlobalUtil.imageToBufferedImage(image);
             }
         }
@@ -705,7 +704,7 @@ public class ImageLayer extends MapLayer {
         public void setTransparencyColor(Color color) {
             _transparencyColor = color;
             if (_isSetTransColor) {
-                Image image = GlobalUtil.makeColorTransparent(_image, _transparencyColor);
+                java.awt.Image image = GlobalUtil.makeColorTransparent(_image, _transparencyColor);
                 _image = GlobalUtil.imageToBufferedImage(image);
             }
         }

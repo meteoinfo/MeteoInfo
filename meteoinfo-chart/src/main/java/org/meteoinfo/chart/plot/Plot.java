@@ -8,7 +8,7 @@ package org.meteoinfo.chart.plot;
 import org.meteoinfo.chart.Margin;
 import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.data.Dataset;
-import org.meteoinfo.chart.graphic.Artist;
+import org.meteoinfo.chart.Artist;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;

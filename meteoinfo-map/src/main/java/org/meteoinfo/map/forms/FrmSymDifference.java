@@ -13,7 +13,7 @@ import org.meteoinfo.geo.layer.LayerTypes;
 import org.meteoinfo.geo.layer.MapLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.geo.mapview.MapView;
-import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.MultiPolygon;
 
 /**
  *
@@ -164,11 +164,11 @@ public class FrmSymDifference extends javax.swing.JDialog {
         VectorLayer fromLayer = _vLayers.get(this.jComboBox_SubjectLayer.getSelectedIndex());
         VectorLayer clipLayer = _polygonLayers.get(this.jComboBox_SymDifferenceLayer.getSelectedIndex());
         boolean onlySel = this.jCheckBox_SelFeatureOnly_Subject.isSelected();
-        List<PolygonShape> clipShapes;
+        List<MultiPolygon> clipShapes;
         if (this.jCheckBox_SelFeatureOnly_Difference.isSelected()){
-            clipShapes = (List<PolygonShape>)clipLayer.getSelectedShapes();
+            clipShapes = (List<MultiPolygon>)clipLayer.getSelectedShapes();
         } else {
-            clipShapes = (List<PolygonShape>)clipLayer.getShapes();
+            clipShapes = (List<MultiPolygon>)clipLayer.getShapes();
         }
         VectorLayer newLayer = fromLayer.symDifference(clipShapes, onlySel);
         newLayer.setLayerName("SymDifference_" + newLayer.getLayerName());

@@ -2,7 +2,7 @@ package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.legend.PointBreak;
-import org.meteoinfo.geometry.shape.PointShape;
+import org.meteoinfo.geometry.Point;
 
 public class PointGraphic extends Graphic {
 
@@ -13,10 +13,10 @@ public class PointGraphic extends Graphic {
      * @param pointShape Point shape
      * @param pointBreak Point break
      */
-    public PointGraphic(PointShape pointShape, PointBreak pointBreak) {
+    public PointGraphic(Point pointShape, PointBreak pointBreak) {
         this.shape = pointShape;
         this.legendBreak = pointBreak;
-        this.coordinate = pointShape.getPoint();
+        this.coordinate = pointShape.getCoordinate();
     }
 
     /**

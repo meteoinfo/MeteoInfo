@@ -1,16 +1,14 @@
 package org.meteoinfo.geo.io;
 
-import org.meteoinfo.geometry.Extent;
-import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.*;
 import org.meteoinfo.geo.layer.ImageLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
-import org.meteoinfo.chart.graphic.GraphicCollection3D;
 import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;
-import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.geometry.special.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,16 +28,16 @@ public class GraphicUtil {
         LegendScheme ls = layer.getLegendScheme();
         ColorBreak cb;
         if (xShift == 0) {
-            for (Shape shape : layer.getShapes()) {
+            for (Geometry shape : layer.getShapes()) {
                 if (shape.getLegendIndex() >= 0) {
                     cb = ls.getLegendBreak(shape.getLegendIndex());
                     graphics.add(new Graphic(shape, cb));
                 }
             }
         } else {
-            for (Shape shape : layer.getShapes()) {
+            for (Geometry shape : layer.getShapes()) {
                 if (shape.getLegendIndex() >= 0) {
-                    for (Coordinate p : shape.getPoints()) {
+                    for (Coordinate p : shape.getCoordinates()) {
                         p.x += xShift;
                     }
                     shape.updateExtent();
@@ -63,7 +61,7 @@ public class GraphicUtil {
      * @return Graphics
      */
     public static GraphicCollection layerToGraphics(VectorLayer layer, double offset, double xshift) {
-        GraphicCollection3D graphics = new GraphicCollection3D();
+        GraphicCollection graphics = new GraphicCollection();
         graphics.setFixZ(true);
         graphics.setZValue(offset);
         ShapeFileType shapeType = layer.getShapeType();
@@ -72,41 +70,41 @@ public class GraphicUtil {
         ColorBreak cb;
         switch (shapeType) {
             case POINT:
-                for (PointShape shape : (List<PointShape>) layer.getShapes()) {
-                    PointShape s = new PointShape();
-                    Coordinate pd = shape.getPoint();
+                for (Point shape : (List<Point>) layer.getShapes()) {
+                    Point s = new Point();
+                    Coordinate pd = shape.getCoordinate();
                     pz = new Coordinate(pd.x + xshift, pd.y, offset);
-                    s.setPoint(pz);
+                    s.setCoordinate(pz);
                     cb = ls.getLegendBreaks().get(shape.getLegendIndex());
                     graphics.add(new Graphic(s, cb));
                 }
                 break;
             case POLYLINE:
-                for (PolylineShape shape : (List<PolylineShape>) layer.getShapes()) {
+                for (MultiLineString shape : (List<MultiLineString>) layer.getShapes()) {
                     cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                    for (Polyline pl : (List<Polyline>) shape.getPolylines()) {
-                        PolylineShape s = new PolylineShape();
+                    for (LineString pl : (List<LineString>) shape.getPolylines()) {
+                        MultiLineString s = new MultiLineString();
                         List<Coordinate> plist = new ArrayList<>();
-                        for (Coordinate pd : pl.getPointList()) {
+                        for (Coordinate pd : pl.getCoordinates()) {
                             pz = new Coordinate(pd.x + xshift, pd.y, pd.z + offset);
                             plist.add(pz);
                         }
-                        s.setPoints(plist);
+                        s.setCoordinates(plist);
                         graphics.add(new Graphic(s, cb));
                     }
                 }
                 break;
             case POLYGON:
-                for (PolygonShape shape : (List<PolygonShape>) layer.getShapes()) {
-                    PolygonShape s = new PolygonShape();
+                for (MultiPolygon shape : (List<MultiPolygon>) layer.getShapes()) {
+                    MultiPolygon s = new MultiPolygon();
                     List<Coordinate> plist = new ArrayList<>();
-                    for (Coordinate pd : shape.getPoints()) {
+                    for (Coordinate pd : shape.getCoordinates()) {
                         pz = new Coordinate(pd.x + xshift, pd.y, offset);
                         plist.add(pz);
                     }
-                    s.setPartNum(shape.getPartNum());
+                    s.setPartNum(shape.getNumParts());
                     s.setParts(shape.getParts());
-                    s.setPoints(plist);
+                    s.setCoordinates(plist);
                     cb = ls.getLegendBreaks().get(shape.getLegendIndex());
                     graphics.add(new Graphic(s, cb));
                 }
@@ -117,31 +115,31 @@ public class GraphicUtil {
                 graphics.setFixZ(false);
                 switch (shapeType) {
                     case POLYLINE_Z:
-                        for (PolylineShape shape : (List<PolylineShape>) layer.getShapes()) {
+                        for (MultiLineString shape : (List<MultiLineString>) layer.getShapes()) {
                             cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                            for (Polyline pl : shape.getPolylines()) {
-                                PolylineShape s = new PolylineShape();
+                            for (LineString pl : shape.getPolylines()) {
+                                MultiLineString s = new MultiLineString();
                                 List<Coordinate> plist = new ArrayList<>();
-                                for (Coordinate pd : (List<Coordinate>) pl.getPointList()) {
+                                for (Coordinate pd : pl.getCoordinates()) {
                                     pz = new Coordinate(pd.x + xshift, pd.y, pd.z + offset, pd.m);
                                     plist.add(pz);
                                 }
-                                s.setPoints(plist);
+                                s.setCoordinates(plist);
                                 graphics.add(new Graphic(s, cb));
                             }
                         }
                         break;
                     case POLYGON_Z:
-                        for (PolygonShape shape : (List<PolygonShape>) layer.getShapes()) {
-                            PolygonShape s = new PolygonShape();
+                        for (MultiPolygon shape : (List<MultiPolygon>) layer.getShapes()) {
+                            MultiPolygon s = new MultiPolygon();
                             List<Coordinate> plist = new ArrayList<>();
-                            for (Coordinate pd : (List<Coordinate>) shape.getPoints()) {
+                            for (Coordinate pd : (List<Coordinate>) shape.getCoordinates()) {
                                 pz = new Coordinate(pd.x + xshift, pd.y, pd.z + offset, pd.m);
                                 plist.add(pz);
                             }
-                            s.setPartNum(shape.getPartNum());
+                            s.setPartNum(shape.getNumParts());
                             s.setParts(shape.getParts());
-                            s.setPoints(plist);
+                            s.setCoordinates(plist);
                             cb = ls.getLegendBreaks().get(shape.getLegendIndex());
                             graphics.add(new Graphic(s, cb));
                         }
@@ -166,7 +164,7 @@ public class GraphicUtil {
     public static GraphicCollection layerToGraphics(ImageLayer layer, double xShift,
                                                     String interpolation) {
         GraphicCollection graphics = new GraphicCollection();
-        ImageShape ishape = new ImageShape();
+        Image ishape = new Image();
         ishape.setImage(layer.getImage());
         Extent extent = layer.getExtent();
         extent = extent.shift(xShift, 0);
@@ -179,7 +177,7 @@ public class GraphicUtil {
         ishape.setCoords(coords);
         Graphic gg = new Graphic(ishape, new ColorBreak());
         if (interpolation != null) {
-            ((ImageShape) gg.getShape()).setInterpolation(interpolation);
+            ((Image) gg.getShape()).setInterpolation(interpolation);
         }
         graphics.add(gg);
 
@@ -198,11 +196,11 @@ public class GraphicUtil {
      */
     public static GraphicCollection layerToGraphics(ImageLayer layer, double offset, double xshift,
                                                 String interpolation) {
-        GraphicCollection3D graphics = new GraphicCollection3D();
+        GraphicCollection graphics = new GraphicCollection();
         graphics.setFixZ(true);
         graphics.setZDir("z");
         graphics.setZValue(offset);
-        ImageShape ishape = new ImageShape();
+        Image ishape = new Image();
         ishape.setImage(layer.getImage());
         Extent extent = layer.getExtent();
         Extent ex3 = new Extent(extent.minX + xshift, extent.maxX + xshift, extent.minY, extent.maxY, offset, offset);
@@ -215,7 +213,7 @@ public class GraphicUtil {
         ishape.setCoords(coords);
         Graphic gg = new Graphic(ishape, new ColorBreak());
         if (interpolation != null) {
-            ((ImageShape) gg.getShape()).setInterpolation(interpolation);
+            ((Image) gg.getShape()).setInterpolation(interpolation);
         }
         graphics.add(gg);
 

@@ -24,7 +24,7 @@ import org.meteoinfo.geometry.colors.ExtendType;
 import org.meteoinfo.geometry.colors.LogNorm;
 import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 
 /**
  *
@@ -500,7 +500,7 @@ public class ChartColorBar extends ChartLegend {
         }
 
         AffineTransform oldMatrix = g.getTransform();
-        g.translate(point.X + this.xshift, point.Y + this.yshift);
+        g.translate(point.X + this.xShift, point.Y + this.yShift);
 
         //Draw background color
         if (this.drawBackground) {
@@ -894,7 +894,7 @@ public class ChartColorBar extends ChartLegend {
                     DrawFill = aPB.isDrawFill();
                     FillColor = aPB.getColor();
                     break;
-                case POLYLINE:
+                case LINESTRING:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
@@ -915,7 +915,7 @@ public class ChartColorBar extends ChartLegend {
 
             if (DrawShape) {
                 if (this.extendRect && this.extendType == ExtendType.NONE) {
-                    if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                    if (aLS.getShapeType() == GeometryType.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                         aPGB.setDrawOutline(false);
                         Draw.drawPolygonSymbol(aP.x, aP.y, barWidth, barHeight, aPGB, g);
@@ -933,7 +933,7 @@ public class ChartColorBar extends ChartLegend {
                                 Points[1] = new Coordinate(extendLength, aP.y);
                                 Points[2] = new Coordinate(extendLength, aP.y + barHeight);
                                 Points[3] = new Coordinate(0, aP.y + barHeight * 0.5);
-                                if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                                if (aLS.getShapeType() == GeometryType.POLYGON) {
                                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                                     aPGB.setDrawOutline(false);
                                     Draw.drawPolygon(Points, aPGB, g);
@@ -943,7 +943,7 @@ public class ChartColorBar extends ChartLegend {
                                 aP.x += extendLength - barWidth;
                                 break;
                             default:
-                                if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                                if (aLS.getShapeType() == GeometryType.POLYGON) {
                                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                                     aPGB.setDrawOutline(false);
                                     Draw.drawPolygonSymbol(aP.x, aP.y, barWidth, barHeight, aPGB, g);
@@ -962,7 +962,7 @@ public class ChartColorBar extends ChartLegend {
                                 Points[1] = new Coordinate(legendWidth - extendLength, aP.y);
                                 Points[2] = new Coordinate(legendWidth, aP.y + barHeight * 0.5);
                                 Points[3] = new Coordinate(legendWidth - extendLength, aP.y + barHeight);
-                                if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                                if (aLS.getShapeType() == GeometryType.POLYGON) {
                                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                                     aPGB.setDrawOutline(false);
                                     Draw.drawPolygon(Points, aPGB, g);
@@ -971,7 +971,7 @@ public class ChartColorBar extends ChartLegend {
                                 }
                                 break;
                             default:
-                                if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                                if (aLS.getShapeType() == GeometryType.POLYGON) {
                                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                                     aPGB.setDrawOutline(false);
                                     Draw.drawPolygonSymbol(aP.x, aP.y, barWidth, barHeight, aPGB, g);
@@ -982,7 +982,7 @@ public class ChartColorBar extends ChartLegend {
                                 break;
                         }
                     } else {
-                        if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                        if (aLS.getShapeType() == GeometryType.POLYGON) {
                             PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                             aPGB.setDrawOutline(false);
                             Draw.drawPolygonSymbol(aP.x, aP.y, barWidth, barHeight, aPGB, g);
@@ -1498,7 +1498,7 @@ public class ChartColorBar extends ChartLegend {
                     DrawFill = aPB.isDrawFill();
                     FillColor = aPB.getColor();
                     break;
-                case POLYLINE:
+                case LINESTRING:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
@@ -1520,7 +1520,7 @@ public class ChartColorBar extends ChartLegend {
             if (DrawShape) {
                 if (this.extendRect && this.extendType == ExtendType.NONE) {
                     aP.y = aP.y - barHeight;
-                    if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                    if (aLS.getShapeType() == GeometryType.POLYGON) {
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                         aPGB.setDrawOutline(false);
                         Draw.drawPolygonSymbol(aP.x, aP.y, barWidth, barHeight, aPGB, g);
@@ -1539,7 +1539,7 @@ public class ChartColorBar extends ChartLegend {
                                 Points[1] = new Coordinate(aP.x, aP.y);
                                 Points[2] = new Coordinate(aP.x + barWidth, aP.y);
                                 Points[3] = new Coordinate(aP.x + barWidth * 0.5, this.legendHeight);
-                                if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                                if (aLS.getShapeType() == GeometryType.POLYGON) {
                                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                                     aPGB.setDrawOutline(false);
                                     Draw.drawPolygon(Points, aPGB, g);
@@ -1549,7 +1549,7 @@ public class ChartColorBar extends ChartLegend {
                                 break;
                             default:
                                 aP.y = aP.y - barHeight;
-                                if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                                if (aLS.getShapeType() == GeometryType.POLYGON) {
                                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                                     aPGB.setDrawOutline(false);
                                     Draw.drawPolygonSymbol(aP.x, aP.y, barWidth, barHeight, aPGB, g);
@@ -1569,7 +1569,7 @@ public class ChartColorBar extends ChartLegend {
                                 Points[1] = new Coordinate(aP.x + barWidth, extendLength);
                                 Points[2] = new Coordinate(aP.x + barWidth * 0.5, 0);
                                 Points[3] = new Coordinate(aP.x, extendLength);
-                                if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                                if (aLS.getShapeType() == GeometryType.POLYGON) {
                                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                                     aPGB.setDrawOutline(false);
                                     Draw.drawPolygon(Points, aPGB, g);
@@ -1578,7 +1578,7 @@ public class ChartColorBar extends ChartLegend {
                                 }
                                 break;
                             default:
-                                if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                                if (aLS.getShapeType() == GeometryType.POLYGON) {
                                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                                     aPGB.setDrawOutline(false);
                                     Draw.drawPolygonSymbol(aP.x, aP.y, barWidth, barHeight, aPGB, g);
@@ -1590,7 +1590,7 @@ public class ChartColorBar extends ChartLegend {
                         }
                     } else {
                         aP.y = aP.y - barHeight;
-                        if (aLS.getShapeType() == ShapeTypes.POLYGON) {
+                        if (aLS.getShapeType() == GeometryType.POLYGON) {
                             PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx).clone();
                             aPGB.setDrawOutline(false);
                             Draw.drawPolygonSymbol(aP.x, aP.y, barWidth, barHeight, aPGB, g);

@@ -52,17 +52,17 @@ import org.meteoinfo.geo.legend.FrmPolylineSymbolSet;
 import org.meteoinfo.geo.legend.GridLabelPosition;
 import org.meteoinfo.geo.legend.MapFrame;
 import org.meteoinfo.geo.mapview.FrmIdentifer;
-import org.meteoinfo.geometry.shape.CircleShape;
-import org.meteoinfo.geometry.shape.CurveLineShape;
-import org.meteoinfo.geometry.shape.CurvePolygonShape;
-import org.meteoinfo.geometry.shape.EllipseShape;
+import org.meteoinfo.geometry.special.Circle;
+import org.meteoinfo.geometry.special.CurveLineString;
+import org.meteoinfo.geometry.special.CurvePolygon;
+import org.meteoinfo.geometry.special.Ellipse;
 import org.meteoinfo.chart.graphic.Graphic;
-import org.meteoinfo.geometry.shape.PointShape;
-import org.meteoinfo.geometry.shape.PolygonShape;
-import org.meteoinfo.geometry.shape.PolylineShape;
-import org.meteoinfo.geometry.shape.RectangleShape;
-import org.meteoinfo.geometry.shape.ShapeTypes;
-import org.meteoinfo.geometry.shape.WindArrow;
+import org.meteoinfo.geometry.Point;
+import org.meteoinfo.geometry.MultiPolygon;
+import org.meteoinfo.geometry.MultiLineString;
+import org.meteoinfo.geometry.special.Rectangle;
+import org.meteoinfo.geometry.GeometryType;
+import org.meteoinfo.geometry.special.WindArrow;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -135,7 +135,7 @@ import org.meteoinfo.geo.layer.RasterLayer;
 import org.meteoinfo.geo.layer.WebMapLayer;
 import org.meteoinfo.geo.mapview.FrmIdentiferGrid;
 import org.meteoinfo.geo.mapview.MapView;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.Geometry;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -170,7 +170,7 @@ import org.xml.sax.SAXException;
      private FrmPointSymbolSet _frmPointSymbolSet = null;
      private FrmPolylineSymbolSet _frmPolylineSymbolSet = null;
      private FrmPolygonSymbolSet _frmPolygonSymbolSet = null;
-     private Rectangle _pageBounds;
+     private java.awt.Rectangle _pageBounds;
      private Color _pageForeColor = Color.black;
      private Color _pageBackColor = Color.white;
      private PaperSize _paperSize = new PaperSize();
@@ -186,10 +186,10 @@ import org.xml.sax.SAXException;
      private final int _yShift = 0;
      private MouseMode _mouseMode = MouseMode.DEFAULT;
      private List<LayoutElement> _selectedElements = new ArrayList<>();
-     private Rectangle _selectedRectangle = new Rectangle();
-     private final Point _mouseDownPos = new Point(0, 0);
-     private Point _mouseLastPos = new Point(0, 0);
-     private final Point _mouseDownPoint = new Point(0, 0);
+     private java.awt.Rectangle _selectedRectangle = new java.awt.Rectangle();
+     private final java.awt.Point _mouseDownPos = new java.awt.Point(0, 0);
+     private java.awt.Point _mouseLastPos = new java.awt.Point(0, 0);
+     private final java.awt.Point _mouseDownPoint = new java.awt.Point(0, 0);
      private Edge _resizeSelectedEdge = Edge.NONE;
      private boolean _startNewGraphic = true;
      private List<PointF> _graphicPoints = new ArrayList<>();
@@ -280,7 +280,7 @@ import org.xml.sax.SAXException;
          _isLandscape = true;
 
          //Set default size
-         _pageBounds = new Rectangle();
+         _pageBounds = new java.awt.Rectangle();
          _pageBounds.x = 0;
          _pageBounds.y = 0;
          _pageBounds.width = 730;
@@ -291,7 +291,7 @@ import org.xml.sax.SAXException;
          //Add a default map frame
          MapFrame aMF = new MapFrame();
          aMF.setActive(true);
-         aMF.setLayoutBounds(new Rectangle(40, 36, 606, 420));
+         aMF.setLayoutBounds(new java.awt.Rectangle(40, 36, 606, 420));
          _mapFrames.add(aMF);
          LayoutMap layoutMap = new LayoutMap(aMF, this.tileLoadListener);
          this.addElement(layoutMap);
@@ -494,7 +494,7 @@ import org.xml.sax.SAXException;
          if (e.getButton() == MouseEvent.BUTTON1) {
              //int left = e.getX();
              //int top = e.getY();
-             Point pageP = screenToPage(e.getX(), e.getY());
+             java.awt.Point pageP = screenToPage(e.getX(), e.getY());
              Graphics2D g = (Graphics2D) this.getGraphics();
              LayoutMap aLM = getLayoutMap(pageP);
              if (aLM != null) {
@@ -503,7 +503,7 @@ import org.xml.sax.SAXException;
 
              switch (_mouseMode) {
                  case MAP_PAN:
-                     Rectangle mapRect = pageToScreen(_currentLayoutMap.getBounds());
+                     java.awt.Rectangle mapRect = pageToScreen(_currentLayoutMap.getBounds());
                      _tempImage = new BufferedImage(mapRect.width - 2,
                              mapRect.height - 2, BufferedImage.TYPE_INT_ARGB);
                      Graphics2D tg = _tempImage.createGraphics();
@@ -515,7 +515,7 @@ import org.xml.sax.SAXException;
                  case SELECT:
                      List<LayoutElement> tempGraphics = selectElements(pageP, _selectedElements, 3);
                      if (tempGraphics.size() > 0) {
-                         _selectedRectangle = (Rectangle) _selectedElements.get(0).getBounds().clone();
+                         _selectedRectangle = (java.awt.Rectangle) _selectedElements.get(0).getBounds().clone();
                          _selectedRectangle = pageToScreen(_selectedRectangle);
                          if (_resizeSelectedEdge == Edge.NONE) {
                              _mouseMode = MouseMode.MOVE_SELECTION;
@@ -528,8 +528,8 @@ import org.xml.sax.SAXException;
 
                      break;
                  case NEW_POINT:
-                     PointShape aPS = new PointShape();
-                     aPS.setPoint(new Coordinate(pageP.x, pageP.y));
+                     Point aPS = new Point();
+                     aPS.setCoordinate(new Coordinate(pageP.x, pageP.y));
                      Graphic aGraphic = new Graphic(aPS, (PointBreak) _defPointBreak.clone());
                      LayoutGraphic aLayoutGraphic = new LayoutGraphic(aGraphic, this);
                      addElement(aLayoutGraphic);
@@ -539,8 +539,8 @@ import org.xml.sax.SAXException;
                      this.fireUndoEditEvent(edit);
                      break;
                  case NEW_LABEL:
-                     aPS = new PointShape();
-                     aPS.setPoint(new Coordinate(pageP.x, pageP.y));
+                     aPS = new Point();
+                     aPS.setCoordinate(new Coordinate(pageP.x, pageP.y));
                      aGraphic = new Graphic(aPS, (LabelBreak) _defLabelBreak.clone());
                      aLayoutGraphic = new LayoutGraphic(aGraphic, this);
                      addElement(aLayoutGraphic);
@@ -597,29 +597,29 @@ import org.xml.sax.SAXException;
                                              List<Integer> selectedShapes = _currentLayoutMap.getMapFrame().getMapView().selectShapes(aLayer, aPoint);
                                              if (selectedShapes.size() > 0) {
                                                  int shapeIdx = selectedShapes.get(0);
-                                                 Shape aShape = aLayer.getShapes().get(shapeIdx);
+                                                 Geometry aShape = aLayer.getShapes().get(shapeIdx);
                                                  aLayer.setIdentiferShape(shapeIdx);
                                                  _currentLayoutMap.getMapFrame().getMapView().setDrawIdentiferShape(true);
                                                  //this.repaint();
                                                  this.repaintOld();
                                                  //_currentLayoutMap.getMapFrame().getMapView().drawIdShape((Graphics2D) this.getGraphics(), aLayer.getShapes().get(shapeIdx), rect);
                                                  double value = 0.0;
-                                                 switch (aShape.getShapeType()) {
-                                                     case POLYLINE:
+                                                 switch (aShape.getGeometryType()) {
+                                                     case LINESTRING:
                                                          _frmMeasure.setArea(false);
                                                          if (_currentLayoutMap.getMapFrame().getMapView().getProjection().isLonLatMap()) {
-                                                             value = GeoComputation.getDistance(((PolylineShape) aShape).getPoints(), true);
+                                                             value = GeoComputation.getDistance(((MultiLineString) aShape).getCoordinates(), true);
                                                          } else {
-                                                             value = ((PolylineShape) aShape).getLength();
+                                                             value = ((MultiLineString) aShape).getLength();
                                                              value *= _currentLayoutMap.getMapFrame().getMapView().getProjection().getProjInfo().getCoordinateReferenceSystem().getProjection().getFromMetres();
                                                          }
                                                          break;
                                                      case POLYGON:
                                                          _frmMeasure.setArea(true);
                                                          if (_currentLayoutMap.getMapFrame().getMapView().getProjection().isLonLatMap()) {
-                                                             value = ((PolygonShape) aShape).getSphericalArea();
+                                                             value = ((MultiPolygon) aShape).getSphericalArea();
                                                          } else {
-                                                             value = ((PolygonShape) aShape).getArea();
+                                                             value = ((MultiPolygon) aShape).getArea();
                                                          }
                                                          value *= _currentLayoutMap.getMapFrame().getMapView().getProjection().getProjInfo().getCoordinateReferenceSystem().getProjection().getFromMetres()
                                                                  * _currentLayoutMap.getMapFrame().getMapView().getProjection().getProjInfo().getCoordinateReferenceSystem().getProjection().getFromMetres();
@@ -653,7 +653,7 @@ import org.xml.sax.SAXException;
 
          _mouseDownPoint.x = e.getX();
          _mouseDownPoint.y = e.getY();
-         _mouseLastPos = new Point(_mouseDownPoint.x, _mouseDownPoint.y);
+         _mouseLastPos = new java.awt.Point(_mouseDownPoint.x, _mouseDownPoint.y);
      }
 
      void onMouseDragged(MouseEvent e) {
@@ -663,7 +663,7 @@ import org.xml.sax.SAXException;
          _mouseLastPos.x = e.getX();
          _mouseLastPos.y = e.getY();
 
-         Point pageP = screenToPage(e.getX(), e.getY());
+         java.awt.Point pageP = screenToPage(e.getX(), e.getY());
 
          Graphics2D g = (Graphics2D) this.getGraphics();
          //Pen aPen = new Pen(Color.Red);
@@ -677,7 +677,7 @@ import org.xml.sax.SAXException;
              case MAP_ZOOM_IN:
                  if (isInLayoutMaps(pageP)) {
                      this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
-                             getImage(this.getClass().getResource("/images/zoom_in_32x32x32.png")), new Point(8, 8), "Zoom In"));
+                             getImage(this.getClass().getResource("/images/zoom_in_32x32x32.png")), new java.awt.Point(8, 8), "Zoom In"));
 
                      //this.repaint();
                      this.repaintOld();
@@ -686,9 +686,9 @@ import org.xml.sax.SAXException;
              case MAP_PAN:
                  if (isInLayoutMaps(pageP)) {
                      this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
-                             getImage(this.getClass().getResource("/images/Pan_Open_32x32x32.png")), new Point(8, 8), "Pan"));
+                             getImage(this.getClass().getResource("/images/Pan_Open_32x32x32.png")), new java.awt.Point(8, 8), "Pan"));
 
-                     Rectangle mapRect = pageToScreen(_currentLayoutMap.getBounds());
+                     java.awt.Rectangle mapRect = pageToScreen(_currentLayoutMap.getBounds());
                      g.setClip(mapRect);
                      Color aColor = _currentLayoutMap.getMapFrame().getBackColor();
                      if (aColor.getAlpha() == 255) {
@@ -835,7 +835,7 @@ import org.xml.sax.SAXException;
          _mouseLastPos.x = e.getX();
          _mouseLastPos.y = e.getY();
 
-         Point pageP = screenToPage(e.getX(), e.getY());
+         java.awt.Point pageP = screenToPage(e.getX(), e.getY());
 
          Graphics2D g = (Graphics2D) this.getGraphics();
          //Pen aPen = new Pen(Color.Red);
@@ -849,25 +849,25 @@ import org.xml.sax.SAXException;
              case MAP_ZOOM_IN:
                  if (isInLayoutMaps(pageP)) {
                      this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
-                             getImage(this.getClass().getResource("/images/zoom_in_32x32x32.png")), new Point(8, 8), "Zoom In"));
+                             getImage(this.getClass().getResource("/images/zoom_in_32x32x32.png")), new java.awt.Point(8, 8), "Zoom In"));
                  }
                  break;
              case MAP_ZOOM_OUT:
                  if (isInLayoutMaps(pageP)) {
                      this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
-                             getImage(this.getClass().getResource("/images/zoom_out_32x32x32.png")), new Point(8, 8), "Zoom Out"));
+                             getImage(this.getClass().getResource("/images/zoom_out_32x32x32.png")), new java.awt.Point(8, 8), "Zoom Out"));
                  }
                  break;
              case MAP_PAN:
                  if (isInLayoutMaps(pageP)) {
                      this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
-                             getImage(this.getClass().getResource("/images/Pan_Open_32x32x32.png")), new Point(8, 8), "Pan"));
+                             getImage(this.getClass().getResource("/images/Pan_Open_32x32x32.png")), new java.awt.Point(8, 8), "Pan"));
                  }
                  break;
              case MAP_IDENTIFIER:
                  if (isInLayoutMaps(pageP)) {
                      this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
-                             getImage(this.getClass().getResource("/images/identifer_32x32x32.png")), new Point(8, 8), "Identifer"));
+                             getImage(this.getClass().getResource("/images/identifer_32x32x32.png")), new java.awt.Point(8, 8), "Identifer"));
                  }
                  break;
              case MAP_SELECT_FEATURES_RECTANGLE:
@@ -883,7 +883,7 @@ import org.xml.sax.SAXException;
                      List<LayoutElement> tempElements = selectElements(pageP, _selectedElements, 3);
                      if (tempElements.size() > 0) {
                          //Change mouse cursor
-                         Rectangle aRect = (Rectangle) _selectedElements.get(0).getBounds().clone();
+                         java.awt.Rectangle aRect = (java.awt.Rectangle) _selectedElements.get(0).getBounds().clone();
                          _resizeSelectedEdge = intersectElementEdge(aRect, new PointF(pageP.x, pageP.y), 3F);
                          switch (_selectedElements.get(0).getResizeAbility()) {
                              case SAME_WIDTH_HEIGHT:
@@ -957,10 +957,10 @@ import org.xml.sax.SAXException;
                      Toolkit toolkit = Toolkit.getDefaultToolkit();
                      if (_editingVerticeIndex >= 0) {
                          this.setCursor(Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().
-                                 getImage(this.getClass().getResource("/images/VertexEdit_32x32x32.png")), new Point(8, 8), "Vertices edit"));
+                                 getImage(this.getClass().getResource("/images/VertexEdit_32x32x32.png")), new java.awt.Point(8, 8), "Vertices edit"));
                      } else {
                          Image image = toolkit.getImage(this.getClass().getResource("/images/Edit_tool.png"));
-                         this.setCursor(toolkit.createCustomCursor(image, new Point(2, 2), "Edit Tool"));
+                         this.setCursor(toolkit.createCustomCursor(image, new java.awt.Point(2, 2), "Edit Tool"));
                      }
                  }
                  break;
@@ -1035,7 +1035,7 @@ import org.xml.sax.SAXException;
      void onMouseReleased(MouseEvent e) throws CloneNotSupportedException {
          _dragMode = false;
          double MinX, MaxX, MinY, MaxY, ZoomF;
-         Point pageP = screenToPage(e.getX(), e.getY());
+         java.awt.Point pageP = screenToPage(e.getX(), e.getY());
          switch (_mouseMode) {
              case MAP_ZOOM_IN:
                  MinX = Math.min(e.getX(), _mouseDownPoint.x);
@@ -1120,20 +1120,20 @@ import org.xml.sax.SAXException;
 
                      VectorLayer aLayer = (VectorLayer) aMLayer;
                      PointF mapP = pageToScreen(_currentLayoutMap.getLeft(), _currentLayoutMap.getTop());
-                     Point aPoint = new Point(e.getX() - (int) mapP.X, e.getY() - (int) mapP.Y);
-                     Point bPoint = new Point(_mouseDownPoint.x - (int) mapP.X, _mouseDownPoint.y - (int) mapP.Y);
+                     java.awt.Point aPoint = new java.awt.Point(e.getX() - (int) mapP.X, e.getY() - (int) mapP.Y);
+                     java.awt.Point bPoint = new java.awt.Point(_mouseDownPoint.x - (int) mapP.X, _mouseDownPoint.y - (int) mapP.Y);
                      int minx = Math.min(bPoint.x, aPoint.x);
                      int miny = Math.min(bPoint.y, aPoint.y);
                      int width = Math.abs(aPoint.x - bPoint.x);
                      int height = Math.abs(aPoint.y - bPoint.y);
-                     Rectangle.Float rect = new Rectangle.Float(minx, miny, width, height);
+                     java.awt.Rectangle.Float rect = new java.awt.Rectangle.Float(minx, miny, width, height);
                      List<Integer> selectedShapes = _currentLayoutMap.getMapFrame().getMapView().selectShapes(aLayer, rect);
                      if (!(e.isControlDown() || e.isShiftDown())) {
                          aLayer.clearSelectedShapes();
                      }
                      if (selectedShapes.size() > 0) {
                          for (int shapeIdx : selectedShapes) {
-                             Shape shape = aLayer.getShapes().get(shapeIdx);
+                             Geometry shape = aLayer.getShapes().get(shapeIdx);
                              shape.setSelected(!shape.isSelected());
                          }
                          _currentLayoutMap.getMapFrame().getMapView().fireShapeSelectedEvent();
@@ -1257,14 +1257,14 @@ import org.xml.sax.SAXException;
                          Graphic aGraphic = null;
                          switch (_mouseMode) {
                              case NEW_RECTANGLE:
-                                 RectangleShape aPGS = new RectangleShape();
+                                 Rectangle aPGS = new Rectangle();
                                  points.add((Coordinate) points.get(0).clone());
-                                 aPGS.setPoints(points);
+                                 aPGS.setCoordinates(points);
                                  aGraphic = new Graphic(aPGS, (PolygonBreak) _defPolygonBreak.clone());
                                  break;
                              case NEW_ELLIPSE:
-                                 EllipseShape aES = new EllipseShape();
-                                 aES.setPoints(points);
+                                 Ellipse aES = new Ellipse();
+                                 aES.setCoordinates(points);
                                  aGraphic = new Graphic(aES, (PolygonBreak) _defPolygonBreak.clone());
                                  break;
                          }
@@ -1295,8 +1295,8 @@ import org.xml.sax.SAXException;
                              points.add(new Coordinate(dPoint.X, dPoint.Y));
                          }
 
-                         PolylineShape aPLS = new PolylineShape();
-                         aPLS.setPoints(points);
+                         MultiLineString aPLS = new MultiLineString();
+                         aPLS.setCoordinates(points);
                          Graphic aGraphic = new Graphic(aPLS, (PolylineBreak) _defPolylineBreak.clone());
                          LayoutGraphic lg = new LayoutGraphic(aGraphic, this);
                          addElement(lg);
@@ -1326,8 +1326,8 @@ import org.xml.sax.SAXException;
                              points.add(new Coordinate(dPoint.X, dPoint.Y));
                          }
 
-                         CircleShape aPGS = new CircleShape();
-                         aPGS.setPoints(points);
+                         Circle aPGS = new Circle();
+                         aPGS.setCoordinates(points);
                          Graphic aGraphic = new Graphic(aPGS, (PolygonBreak) _defPolygonBreak.clone());
                          LayoutGraphic lg = new LayoutGraphic(aGraphic, this);
                          addElement(lg);
@@ -1354,7 +1354,7 @@ import org.xml.sax.SAXException;
      void onMouseClicked(MouseEvent e) throws CloneNotSupportedException {
          int clickTimes = e.getClickCount();
          if (clickTimes == 1) {
-             Point pageP = screenToPage(e.getX(), e.getY());
+             java.awt.Point pageP = screenToPage(e.getX(), e.getY());
              if (e.getButton() == MouseEvent.BUTTON1) {
                  switch (_mouseMode) {
                      case MAP_IDENTIFIER:
@@ -1561,8 +1561,8 @@ import org.xml.sax.SAXException;
                                          });
                                          jPopupMenu_Element.add(jMenuItem_Reverse);
 
-                                         if (aGraphic.getShape().getShapeType() == ShapeTypes.POLYLINE ||
-                                                 aGraphic.getShape().getShapeType() == ShapeTypes.POLYGON) {
+                                         if (aGraphic.getShape().getGeometryType() == GeometryType.LINESTRING ||
+                                                 aGraphic.getShape().getGeometryType() == GeometryType.POLYGON) {
                                              jPopupMenu_Element.add(new JSeparator());
                                              JMenuItem jMenuItem_Smooth = new JMenuItem("Smooth Graphic");
                                              jMenuItem_Smooth.addActionListener(new ActionListener() {
@@ -1574,7 +1574,7 @@ import org.xml.sax.SAXException;
                                              jPopupMenu_Element.add(jMenuItem_Smooth);
                                          }
 
-                                         if (aGraphic.getShape().getShapeType() == ShapeTypes.ELLIPSE) {
+                                         if (aGraphic.getShape().getGeometryType() == GeometryType.ELLIPSE) {
                                              JMenuItem jMenuItem_Angle = new JMenuItem("Set Angle");
                                              jMenuItem_Angle.addActionListener(new ActionListener() {
                                                  @Override
@@ -1594,7 +1594,7 @@ import org.xml.sax.SAXException;
                  jPopupMenu_Element.show(this, e.getX(), e.getY());
              }
          } else if (clickTimes == 2) {
-             Point pageP = screenToPage(e.getX(), e.getY());
+             java.awt.Point pageP = screenToPage(e.getX(), e.getY());
              switch (_mouseMode) {
                  case SELECT:
                  case MOVE_SELECTION:
@@ -1675,9 +1675,9 @@ import org.xml.sax.SAXException;
                                  return;
                              }
 
-                             PolygonShape aPGS = new PolygonShape();
+                             MultiPolygon aPGS = new MultiPolygon();
                              points.add((Coordinate) points.get(0).clone());
-                             aPGS.setPoints(points);
+                             aPGS.setCoordinates(points);
                              VectorLayer aLayer = (VectorLayer) aMLayer;
                              if (!e.isControlDown() && !e.isShiftDown()) {
                                  aLayer.clearSelectedShapes();
@@ -1695,28 +1695,28 @@ import org.xml.sax.SAXException;
                              switch (_mouseMode) {
                                  case NEW_POLYLINE:
                                  case NEW_FREEHAND:
-                                     PolylineShape aPLS = new PolylineShape();
-                                     aPLS.setPoints(points);
+                                     MultiLineString aPLS = new MultiLineString();
+                                     aPLS.setCoordinates(points);
                                      aGraphic = new Graphic(aPLS, (PolylineBreak) _defPolylineBreak.clone());
                                      break;
                                  case NEW_POLYGON:
                                      if (points.size() > 2) {
-                                         PolygonShape aPGS = new PolygonShape();
+                                         MultiPolygon aPGS = new MultiPolygon();
                                          points.add((Coordinate) points.get(0).clone());
-                                         aPGS.setPoints(points);
+                                         aPGS.setCoordinates(points);
                                          aGraphic = new Graphic(aPGS, (PolygonBreak) _defPolygonBreak.clone());
                                      }
                                      break;
                                  case NEW_CIRCLE:
-                                     CurveLineShape aCLS = new CurveLineShape();
-                                     aCLS.setPoints(points);
+                                     CurveLineString aCLS = new CurveLineString();
+                                     aCLS.setCoordinates(points);
                                      aGraphic = new Graphic(aCLS, (PolylineBreak) _defPolylineBreak.clone());
                                      break;
                                  case NEW_CURVE_POLYGON:
                                      if (points.size() > 2) {
-                                         CurvePolygonShape aCPS = new CurvePolygonShape();
+                                         CurvePolygon aCPS = new CurvePolygon();
                                          points.add((Coordinate) points.get(0).clone());
-                                         aCPS.setPoints(points);
+                                         aCPS.setCoordinates(points);
                                          aGraphic = new Graphic(aCPS, (PolygonBreak) _defPolygonBreak.clone());
                                      }
                                      break;
@@ -1790,9 +1790,9 @@ import org.xml.sax.SAXException;
      private void onReverseGraphicClick(ActionEvent e) {
          LayoutElement aElement = _selectedElements.get(0);
          Graphic aGraphic = ((LayoutGraphic) aElement).getGraphic();
-         List<Coordinate> points = (List<Coordinate>) aGraphic.getShape().getPoints();
+         List<Coordinate> points = (List<Coordinate>) aGraphic.getShape().getCoordinates();
          Collections.reverse(points);
-         aGraphic.getShape().setPoints(points);
+         aGraphic.getShape().setCoordinates(points);
 
          //this.paintGraphics();
          this.repaintNew();
@@ -1804,11 +1804,11 @@ import org.xml.sax.SAXException;
          List<wcontour.global.PointD> pointList = new ArrayList<>();
          List<Coordinate> newPoints = new ArrayList<>();
 
-         for (Coordinate aP : aGraphic.getShape().getPoints()) {
+         for (Coordinate aP : aGraphic.getShape().getCoordinates()) {
              pointList.add(new wcontour.global.PointD(aP.x, aP.y));
          }
 
-         if (aGraphic.getShape().getShapeType() == ShapeTypes.POLYGON) {
+         if (aGraphic.getShape().getGeometryType() == GeometryType.POLYGON) {
              pointList.add(pointList.get(0));
          }
 
@@ -1816,7 +1816,7 @@ import org.xml.sax.SAXException;
          for (wcontour.global.PointD aP : pointList) {
              newPoints.add(new Coordinate(aP.X, aP.Y));
          }
-         aGraphic.getShape().setPoints(newPoints);
+         aGraphic.getShape().setCoordinates(newPoints);
          ((LayoutGraphic) aElement).updateControlSize();
          //this.paintGraphics();
          this.repaintNew();
@@ -1825,7 +1825,7 @@ import org.xml.sax.SAXException;
      private void onGraphicAngleClick(ActionEvent e) {
          LayoutElement aElement = _selectedElements.get(0);
          Graphic aGraphic = ((LayoutGraphic) aElement).getGraphic();
-         EllipseShape es = (EllipseShape)aGraphic.getShape();
+         Ellipse es = (Ellipse)aGraphic.getShape();
          String angleStr = JOptionPane.showInputDialog(this, "Ellipse angle:", es.getAngle());
          if (angleStr != null){
              es.setAngle(Float.parseFloat(angleStr));
@@ -1884,7 +1884,7 @@ import org.xml.sax.SAXException;
      }
 
      private void showSymbolSetForm(Graphic graphic) {
-         Shape shape = graphic.getShape();
+         Geometry shape = graphic.getShape();
          ColorBreak aCB = graphic.getLegendBreak();
          switch (aCB.getBreakType()) {
              case POINT_BREAK:
@@ -2128,7 +2128,7 @@ import org.xml.sax.SAXException;
       */
      public void setLandscape(boolean istrue) {
          _isLandscape = istrue;
-         Rectangle.Float aRect = paperToScreen(new Rectangle.Float(0, 0, this.getPaperWidth(), this.getPaperHeight()));
+         java.awt.Rectangle.Float aRect = paperToScreen(new java.awt.Rectangle.Float(0, 0, this.getPaperWidth(), this.getPaperHeight()));
          _pageBounds.width = (int) aRect.width;
          _pageBounds.height = (int) aRect.height;
      }
@@ -2251,7 +2251,7 @@ import org.xml.sax.SAXException;
       */
      public void setPaperSize(PaperSize ps) {
          _paperSize = ps;
-         Rectangle.Float aRect = paperToScreen(new Rectangle.Float(0, 0, getPaperWidth(), getPaperHeight()));
+         java.awt.Rectangle.Float aRect = paperToScreen(new java.awt.Rectangle.Float(0, 0, getPaperWidth(), getPaperHeight()));
          _pageBounds.width = (int) aRect.width;
          _pageBounds.height = (int) aRect.height;
      }
@@ -2319,7 +2319,7 @@ import org.xml.sax.SAXException;
       *
       * @return Page bounds
       */
-     public Rectangle getPageBounds() {
+     public java.awt.Rectangle getPageBounds() {
          return _pageBounds;
      }
 
@@ -2328,7 +2328,7 @@ import org.xml.sax.SAXException;
       *
       * @param pb Page bounds
       */
-     public void setPageBounds(Rectangle pb) {
+     public void setPageBounds(java.awt.Rectangle pb) {
          _pageBounds = pb;
      }
 
@@ -2520,7 +2520,7 @@ import org.xml.sax.SAXException;
          }
 
          if (this._dragMode) {
-             Rectangle rect = new Rectangle();
+             java.awt.Rectangle rect = new java.awt.Rectangle();
              float dash1[] = {2.0f};
              switch (this._mouseMode) {
                  case MAP_ZOOM_IN:
@@ -2554,7 +2554,7 @@ import org.xml.sax.SAXException;
                      int sx = Math.min(_mouseDownPoint.x, _mouseLastPos.x);
                      int sy = Math.min(_mouseDownPoint.y, _mouseLastPos.y);
                      g2.setColor(this.getForeground());
-                     g2.draw(new Rectangle(sx, sy, Math.abs(_mouseLastPos.x - _mouseDownPoint.x),
+                     g2.draw(new java.awt.Rectangle(sx, sy, Math.abs(_mouseLastPos.x - _mouseDownPoint.x),
                              Math.abs(_mouseLastPos.y - _mouseDownPoint.y)));
                      break;
                  case NEW_FREEHAND:
@@ -2583,7 +2583,7 @@ import org.xml.sax.SAXException;
                          g2.drawLine((int) p2.X, (int) p2.Y, _mouseLastPos.x, _mouseLastPos.y);
                      }
 
-                     Rectangle nRect = new Rectangle(_mouseLastPos.x - 3, _mouseLastPos.y - 3, 6, 6);
+                     java.awt.Rectangle nRect = new java.awt.Rectangle(_mouseLastPos.x - 3, _mouseLastPos.y - 3, 6, 6);
                      g2.setColor(Color.cyan);
                      g2.fill(nRect);
                      g2.setColor(Color.black);
@@ -2656,7 +2656,7 @@ import org.xml.sax.SAXException;
                      MapLayer aLayer = this._currentLayoutMap.getMapFrame().getMapView().getLayerByHandle(selLayerHandle);
                      if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
                          VectorLayer vLayer = (VectorLayer) aLayer;
-                         Rectangle rect = getElementViewExtent(_currentLayoutMap);
+                         java.awt.Rectangle rect = getElementViewExtent(_currentLayoutMap);
                          this._currentLayoutMap.getMapFrame().getMapView().drawIdShape(g2, vLayer.getShapes().get(vLayer.getIdentiferShape()), rect);
                      }
                  }
@@ -2762,7 +2762,7 @@ import org.xml.sax.SAXException;
          }
 
          //Draw bound rectangle
-         Rectangle.Float aRect = pageToScreen(_pageBounds.x, _pageBounds.y, _pageBounds.width, _pageBounds.height);
+         java.awt.Rectangle.Float aRect = pageToScreen(_pageBounds.x, _pageBounds.y, _pageBounds.width, _pageBounds.height);
          g.setColor(_pageBackColor);
          g.fill(aRect);
 
@@ -2834,7 +2834,7 @@ import org.xml.sax.SAXException;
          }
 
          //Draw bound rectangle
-         Rectangle.Float aRect = pageToScreen(_pageBounds.x, _pageBounds.y, _pageBounds.width, _pageBounds.height);
+         java.awt.Rectangle.Float aRect = pageToScreen(_pageBounds.x, _pageBounds.y, _pageBounds.width, _pageBounds.height);
          g.setColor(_pageBackColor);
          g.fill(aRect);
 
@@ -2871,11 +2871,11 @@ import org.xml.sax.SAXException;
              if (aElement.isSelected()) {
                  if (_mouseMode == MouseMode.EDIT_VERTICES) {
                      LayoutGraphic aLG = (LayoutGraphic) aElement;
-                     List<Coordinate> points = aLG.getGraphic().getShape().getPoints();
+                     List<Coordinate> points = aLG.getGraphic().getShape().getCoordinates();
                      drawSelectedVertices(g, points);
                  } else {
                      float[] dashPattern = new float[]{2.0F, 1.0F};
-                     Rectangle aRect = pageToScreen(aElement.getBounds());
+                     java.awt.Rectangle aRect = pageToScreen(aElement.getBounds());
                      g.setColor(Color.cyan);
                      g.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, dashPattern, 0.0f));
                      g.draw(aRect);
@@ -2914,9 +2914,9 @@ import org.xml.sax.SAXException;
      }
 
      private void drawSelectedCorners(Graphics2D g, LayoutElement aElement) {
-         Rectangle elementRect = pageToScreen(aElement.getBounds());
+         java.awt.Rectangle elementRect = pageToScreen(aElement.getBounds());
          int size = 6;
-         Rectangle rect = new Rectangle(elementRect.x - size / 2, elementRect.y - size / 2, size, size);
+         java.awt.Rectangle rect = new java.awt.Rectangle(elementRect.x - size / 2, elementRect.y - size / 2, size, size);
          g.setColor(Color.cyan);
          g.fill(rect);
          g.setColor(Color.black);
@@ -2939,9 +2939,9 @@ import org.xml.sax.SAXException;
      }
 
      private void drawSelectedEdgeCenters(Graphics2D g, LayoutElement aElement) {
-         Rectangle elementRect = pageToScreen(aElement.getBounds());
+         java.awt.Rectangle elementRect = pageToScreen(aElement.getBounds());
          int size = 6;
-         Rectangle rect = new Rectangle(elementRect.x + elementRect.width / 2 - size / 2, elementRect.y - size / 2, size, size);
+         java.awt.Rectangle rect = new java.awt.Rectangle(elementRect.x + elementRect.width / 2 - size / 2, elementRect.y - size / 2, size, size);
          g.setColor(Color.cyan);
          g.fill(rect);
          g.setColor(Color.black);
@@ -2966,7 +2966,7 @@ import org.xml.sax.SAXException;
 
      private void drawSelectedVertices(Graphics2D g, List<Coordinate> points) {
          int size = 6;
-         Rectangle rect = new Rectangle(0, 0, size, size);
+         java.awt.Rectangle rect = new java.awt.Rectangle(0, 0, size, size);
 
          for (Coordinate aPoint : points) {
              PointF aP = pageToScreen((float) aPoint.x, (float) aPoint.y);
@@ -3174,10 +3174,10 @@ import org.xml.sax.SAXException;
       * @param screenY Screen y
       * @return Page position
       */
-     public Point screenToPage(int screenX, int screenY) {
+     public java.awt.Point screenToPage(int screenX, int screenY) {
          float x = (screenX - _pageLocation.X) / _zoom;
          float y = (screenY - _pageLocation.Y) / _zoom;
-         return (new Point((int) x, (int) y));
+         return (new java.awt.Point((int) x, (int) y));
      }
 
      /**
@@ -3199,19 +3199,19 @@ import org.xml.sax.SAXException;
          return (new PointF(x, y));
      }
 
-     private Rectangle.Float pageToScreen(float pageX, float pageY, float pageW, float pageH) {
+     private java.awt.Rectangle.Float pageToScreen(float pageX, float pageY, float pageW, float pageH) {
          PointF screenTL = pageToScreen(pageX, pageY);
          PointF screenBR = pageToScreen(pageX + pageW, pageY + pageH);
-         return new Rectangle.Float(screenTL.X, screenTL.Y, screenBR.X - screenTL.X, screenBR.Y - screenTL.Y);
+         return new java.awt.Rectangle.Float(screenTL.X, screenTL.Y, screenBR.X - screenTL.X, screenBR.Y - screenTL.Y);
      }
 
-     private Rectangle pageToScreen(Rectangle rect) {
+     private java.awt.Rectangle pageToScreen(java.awt.Rectangle rect) {
          PointF screenTL = pageToScreen(rect.x, rect.y);
          PointF screenBR = pageToScreen(rect.x + rect.width, rect.y + rect.height);
-         return new Rectangle((int) screenTL.X, (int) screenTL.Y, (int) (screenBR.X - screenTL.X), (int) (screenBR.Y - screenTL.Y));
+         return new java.awt.Rectangle((int) screenTL.X, (int) screenTL.Y, (int) (screenBR.X - screenTL.X), (int) (screenBR.Y - screenTL.Y));
      }
 
-     private Rectangle.Float paperToScreen(Rectangle.Float paper) {
+     private java.awt.Rectangle.Float paperToScreen(java.awt.Rectangle.Float paper) {
          return paperToScreen(paper.x, paper.y, paper.width, paper.height);
      }
 
@@ -3225,10 +3225,10 @@ import org.xml.sax.SAXException;
       * @param paperH Paper height
       * @return Screen rectangle
       */
-     private Rectangle.Float paperToScreen(float paperX, float paperY, float paperW, float paperH) {
+     private java.awt.Rectangle.Float paperToScreen(float paperX, float paperY, float paperW, float paperH) {
          PointF screenTL = paperToScreen(paperX, paperY);
          PointF screenBR = paperToScreen(paperX + paperW, paperY + paperH);
-         return new Rectangle.Float(screenTL.X, screenTL.Y, screenBR.X - screenTL.X, screenBR.Y - screenTL.Y);
+         return new java.awt.Rectangle.Float(screenTL.X, screenTL.Y, screenBR.X - screenTL.X, screenBR.Y - screenTL.Y);
      }
 
      /**
@@ -3411,8 +3411,8 @@ import org.xml.sax.SAXException;
       * @return Text layout graphic
       */
      public LayoutGraphic addText(String text, int x, int y, String fontName, float fontSize) {
-         PointShape aPS = new PointShape();
-         aPS.setPoint(new Coordinate(x, y));
+         Point aPS = new Point();
+         aPS.setCoordinate(new Coordinate(x, y));
          LabelBreak aLB = (LabelBreak) _defLabelBreak.clone();
          aLB.setText(text);
          aLB.setFont(new Font(fontName, Font.PLAIN, (int) fontSize));
@@ -3606,7 +3606,7 @@ import org.xml.sax.SAXException;
          return aLM;
      }
 
-     private LayoutMap getLayoutMap(Point aPoint) {
+     private LayoutMap getLayoutMap(java.awt.Point aPoint) {
          for (int i = getLayoutMaps().size() - 1; i >= 0; i--) {
              LayoutMap aLM = getLayoutMaps().get(i);
              if (MIMath.pointInRectangle(aPoint, aLM.getBounds())) {
@@ -3635,12 +3635,12 @@ import org.xml.sax.SAXException;
          return false;
      }
 
-     private List<LayoutElement> selectElements(Point aPoint, List<LayoutElement> baseElements, int limit) {
+     private List<LayoutElement> selectElements(java.awt.Point aPoint, List<LayoutElement> baseElements, int limit) {
          List<LayoutElement> selectedElements = new ArrayList<>();
          for (int i = baseElements.size() - 1; i >= 0; i--) {
              LayoutElement element = baseElements.get(i);
              if (element.isVisible()) {
-                 Rectangle rect = (Rectangle) element.getBounds().clone();
+                 java.awt.Rectangle rect = (java.awt.Rectangle) element.getBounds().clone();
                  if (rect.width < 5) {
                      rect.width = 5;
                      rect.x -= 2.5;
@@ -3660,17 +3660,17 @@ import org.xml.sax.SAXException;
          return selectedElements;
      }
 
-     private Rectangle getElementViewExtent(LayoutElement aLE) {
+     private java.awt.Rectangle getElementViewExtent(LayoutElement aLE) {
          PointF aP = aLE.pageToScreen(aLE.getLeft(), aLE.getTop(), _pageLocation, _zoom);
-         Rectangle rect = new Rectangle((int) aP.X, (int) aP.Y, (int) (aLE.getWidth() * _zoom), (int) (aLE.getHeight() * _zoom));
+         java.awt.Rectangle rect = new java.awt.Rectangle((int) aP.X, (int) aP.Y, (int) (aLE.getWidth() * _zoom), (int) (aLE.getHeight() * _zoom));
 
          return rect;
      }
 
-     private int selectEditVertices(Point aPoint, Shape aShape, List<Coordinate> vertices) {
-         List<Coordinate> points = aShape.getPoints();
+     private int selectEditVertices(java.awt.Point aPoint, Geometry aShape, List<Coordinate> vertices) {
+         List<Coordinate> points = aShape.getCoordinates();
          int buffer = 4;
-         Rectangle rect = new Rectangle(aPoint.x - buffer / 2, aPoint.y - buffer / 2, buffer, buffer);
+         java.awt.Rectangle rect = new java.awt.Rectangle(aPoint.x - buffer / 2, aPoint.y - buffer / 2, buffer, buffer);
          vertices.clear();
          Coordinate aPD;
          int vIdx = -1;
@@ -3678,8 +3678,8 @@ import org.xml.sax.SAXException;
              if (GeometryUtil.pointInRectangle(points.get(i), rect)) {
                  vIdx = i;
                  vertices.add(points.get(i));
-                 switch (aShape.getShapeType()) {
-                     case POLYLINE:
+                 switch (aShape.getGeometryType()) {
+                     case LINESTRING:
                      case CURVE_LINE:
                          if (i == 0) {
                              vertices.add(points.get(i + 1));
@@ -3751,7 +3751,7 @@ import org.xml.sax.SAXException;
          return vIdx;
      }
 
-     private boolean isInLayoutMaps(Point aPoint) {
+     private boolean isInLayoutMaps(java.awt.Point aPoint) {
          for (LayoutMap aLM : getLayoutMaps()) {
              if (MIMath.pointInRectangle(aPoint, aLM.getBounds())) {
                  return true;
@@ -3761,8 +3761,8 @@ import org.xml.sax.SAXException;
          return false;
      }
 
-     private static Edge intersectElementEdge(Rectangle screen, PointF pt, float limit) {
-         Rectangle.Float ptRect = new Rectangle.Float(pt.X - limit, pt.Y - limit, 2F * limit, 2F * limit);
+     private static Edge intersectElementEdge(java.awt.Rectangle screen, PointF pt, float limit) {
+         java.awt.Rectangle.Float ptRect = new java.awt.Rectangle.Float(pt.X - limit, pt.Y - limit, 2F * limit, 2F * limit);
          if ((pt.X >= screen.x - limit && pt.X <= screen.x + limit) && (pt.Y >= screen.y - limit && pt.Y <= screen.y + limit)) {
              return Edge.TOP_LEFT;
          }
@@ -3775,16 +3775,16 @@ import org.xml.sax.SAXException;
          if ((pt.X >= screen.x - limit && pt.X <= screen.x + limit) && (pt.Y >= screen.y + screen.height - limit && pt.Y <= screen.y + screen.height + limit)) {
              return Edge.BOTTOM_LEFT;
          }
-         if (ptRect.intersects(new Rectangle.Float(screen.x, screen.y, screen.width, 1F))) {
+         if (ptRect.intersects(new java.awt.Rectangle.Float(screen.x, screen.y, screen.width, 1F))) {
              return Edge.TOP;
          }
-         if (ptRect.intersects(new Rectangle.Float(screen.x, screen.y, 1F, screen.height))) {
+         if (ptRect.intersects(new java.awt.Rectangle.Float(screen.x, screen.y, 1F, screen.height))) {
              return Edge.LEFT;
          }
-         if (ptRect.intersects(new Rectangle.Float(screen.x, screen.y + screen.height, screen.width, 1F))) {
+         if (ptRect.intersects(new java.awt.Rectangle.Float(screen.x, screen.y + screen.height, screen.width, 1F))) {
              return Edge.BOTTOM;
          }
-         if (ptRect.intersects(new Rectangle.Float(screen.x + screen.width, screen.y, 1F, screen.height))) {
+         if (ptRect.intersects(new java.awt.Rectangle.Float(screen.x + screen.width, screen.y, 1F, screen.height))) {
              return Edge.RIGHT;
          }
          return Edge.NONE;
@@ -3793,7 +3793,7 @@ import org.xml.sax.SAXException;
 
      // <editor-fold desc="Others">
      private void updatePageSet() {
-         Rectangle.Float aRect = paperToScreen(new Rectangle.Float(0, 0, this.getPaperWidth(), this.getPaperHeight()));
+         java.awt.Rectangle.Float aRect = paperToScreen(new java.awt.Rectangle.Float(0, 0, this.getPaperWidth(), this.getPaperHeight()));
          _pageBounds.width = (int) aRect.width;
          _pageBounds.height = (int) aRect.height;
      }
@@ -4274,7 +4274,7 @@ import org.xml.sax.SAXException;
                      break;
                  case LAYOUT_GRAPHIC:
                      LayoutGraphic aLG = loadLayoutGraphicElement(elementNode);
-                     if (aLG.getGraphic().getShape().getShapeType() == ShapeTypes.WIND_ARROW) {
+                     if (aLG.getGraphic().getShape().getGeometryType() == GeometryType.WIND_ARROW) {
                          ((WindArrow) aLG.getGraphic().getShape()).angle = 270;
                      }
                      addElement(aLG);
@@ -4427,7 +4427,7 @@ import org.xml.sax.SAXException;
          aGraphic.importFromXML((Element) graphicNode);
 
          LayoutGraphic aLG;
-         if (aGraphic.getShape().getShapeType() == ShapeTypes.WIND_ARROW) {
+         if (aGraphic.getShape().getGeometryType() == GeometryType.WIND_ARROW) {
              aLG = new LayoutGraphic(aGraphic, this, this.getActiveLayoutMap());
          } else {
              aLG = new LayoutGraphic(aGraphic, this);

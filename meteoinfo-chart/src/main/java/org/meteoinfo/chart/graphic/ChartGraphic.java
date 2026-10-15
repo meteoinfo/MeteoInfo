@@ -7,7 +7,7 @@ package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.geometry.legend.ChartBreak;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.PointShape;
+import org.meteoinfo.geometry.Point;
 import org.w3c.dom.*;
 
 /**
@@ -34,9 +34,9 @@ public class ChartGraphic extends Graphic {
      * @param shape Point shape
      * @param legend Chart break
      */
-    public ChartGraphic(PointShape shape, ChartBreak legend) {
+    public ChartGraphic(Point shape, ChartBreak legend) {
         super(shape, legend);
-        startPosition = (Coordinate) shape.getPoint().clone();
+        startPosition = (Coordinate) shape.getCoordinate().clone();
     }
 
     // </editor-fold>
@@ -64,9 +64,9 @@ public class ChartGraphic extends Graphic {
      *
      * @param aShape Point shape
      */
-    public void setShape(PointShape aShape) {
+    public void setShape(Point aShape) {
         super.setShape(aShape);
-        startPosition = (Coordinate) aShape.getPoint().clone();
+        startPosition = (Coordinate) aShape.getCoordinate().clone();
     }
 
     // </editor-fold>
@@ -81,7 +81,7 @@ public class ChartGraphic extends Graphic {
     public void exportToXML(Document doc, Element parent) {
         Element graphic = doc.createElement("Graphic");
         this.addShape(doc, graphic, this.getShape());
-        this.addLegend(doc, graphic, this.getLegendBreak(), this.getShape().getShapeType());
+        this.addLegend(doc, graphic, this.getLegendBreak(), this.getShape().getGeometryType());
         this.addStartPosition(doc, graphic, startPosition);
 
         parent.appendChild(graphic);
@@ -110,10 +110,10 @@ public class ChartGraphic extends Graphic {
     @Override
     public void importFromXML(Element graphicNode) {
         Node shape = graphicNode.getElementsByTagName("Shape").item(0);
-        this.setShape((PointShape)loadShape(shape));
+        this.setShape((Point)loadShape(shape));
 
         Node legend = graphicNode.getElementsByTagName("Legend").item(0);
-        this.setLegendBreak(loadLegend(legend, this.getShape().getShapeType()));
+        this.setLegendBreak(loadLegend(legend, this.getShape().getGeometryType()));
 
         Node startPos = graphicNode.getElementsByTagName("StartPosition").item(0);
         if (startPos != null) {

@@ -14,7 +14,6 @@
 package org.meteoinfo.chart;
 
 import org.meteoinfo.common.PointF;
-import org.meteoinfo.chart.graphic.Artist;
 import org.meteoinfo.ui.event.ILocationChangedListener;
 import org.meteoinfo.ui.event.ISizeChangedListener;
 import org.meteoinfo.ui.event.LocationChangedEvent;

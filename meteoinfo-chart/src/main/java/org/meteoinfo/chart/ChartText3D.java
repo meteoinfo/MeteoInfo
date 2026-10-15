@@ -171,7 +171,7 @@ public class ChartText3D extends ChartText {
         ct.angle = this.angle;
         ct.background = this.background;
         ct.color = this.color;
-        ct.coordinates = this.coordinates;
+        ct.coordinateType = this.coordinateType;
         ct.drawBackground = this.drawBackground;
         ct.drawNeatline = this.drawNeatline;
         ct.font = this.font;

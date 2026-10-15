@@ -5,13 +5,13 @@
  */
 package org.meteoinfo.chart.shape;
 
-import org.meteoinfo.geometry.shape.ImageShape;
+import org.meteoinfo.geometry.special.Image;
 
 /**
  *
  * @author Yaqiang Wang
  */
-public class ImageShape3D extends ImageShape {
+public class ImageShape3D extends Image {
     private double zValue;
     private String zdir;
     

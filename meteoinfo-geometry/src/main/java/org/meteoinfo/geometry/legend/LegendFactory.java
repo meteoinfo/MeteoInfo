@@ -16,9 +16,9 @@ package org.meteoinfo.geometry.legend;
 import org.meteoinfo.common.DataConvert;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.colors.ColorMap;
+import org.meteoinfo.geometry.GeometryType;
 import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.colors.TransferFunction;
-import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.ndarray.util.BigDecimalUtil;
 
 import java.awt.*;
@@ -41,7 +41,7 @@ public class LegendFactory {
      * @param shapeType The shape type
      * @return Legend scheme
      */
-    public static LegendScheme createSingleSymbolLegendScheme(ShapeTypes shapeType) {
+    public static LegendScheme createSingleSymbolLegendScheme(GeometryType shapeType) {
         if (shapeType.isPoint()) {
             return createSingleSymbolLegendScheme(shapeType, Color.green, 8.0f);
         } else if (shapeType.isLine()) {
@@ -59,8 +59,8 @@ public class LegendFactory {
      * @param size Size
      * @return Legend scheme
      */
-    public static LegendScheme createSingleSymbolLegendScheme(ShapeTypes aST, Color aColor,
-            float size) {
+    public static LegendScheme createSingleSymbolLegendScheme(GeometryType aST, Color aColor,
+                                                              float size) {
         LegendScheme legendScheme = new LegendScheme(aST);
         legendScheme.setLegendType(LegendType.SINGLE_SYMBOL);
         legendScheme.setShapeType(aST);
@@ -130,7 +130,7 @@ public class LegendFactory {
      * @param unDef Undefine data
      * @return The legend scheme
      */
-    public static LegendScheme createUniqValueLegendScheme(List<String> CValues, List<String> captions, Color[] colors, ShapeTypes aST,
+    public static LegendScheme createUniqValueLegendScheme(List<String> CValues, List<String> captions, Color[] colors, GeometryType aST,
             double min, double max, boolean hasNodata, double unDef) {
         LegendScheme legendScheme = new LegendScheme(aST);
         legendScheme.setLegendType(LegendType.UNIQUE_VALUE);
@@ -211,7 +211,7 @@ public class LegendFactory {
      * @param max Maximum value
      * @return The legend scheme
      */
-    public static LegendScheme createUniqValueLegendScheme(List<String> CValues, List<String> captions, Color[] colors, ShapeTypes aST,
+    public static LegendScheme createUniqValueLegendScheme(List<String> CValues, List<String> captions, Color[] colors, GeometryType aST,
             double min, double max) {
         LegendScheme legendScheme = new LegendScheme(aST);
         legendScheme.setLegendType(LegendType.UNIQUE_VALUE);
@@ -286,7 +286,7 @@ public class LegendFactory {
      * @param aST The shape type
      * @return The legend scheme
      */
-    public static LegendScheme createUniqValueLegendScheme(int n, ShapeTypes aST) {
+    public static LegendScheme createUniqValueLegendScheme(int n, GeometryType aST) {
         LegendScheme legendScheme = new LegendScheme(aST);
         legendScheme.setLegendType(LegendType.UNIQUE_VALUE);
         legendScheme.setShapeType(aST);
@@ -367,7 +367,7 @@ public class LegendFactory {
      * @param aST The shape type
      * @return The legend scheme
      */
-    public static LegendScheme createUniqValueLegendScheme(List<Number> values, ShapeTypes aST) {
+    public static LegendScheme createUniqValueLegendScheme(List<Number> values, GeometryType aST) {
         Color[] colors;
         int n = values.size();
         if (n <= 13) {
@@ -386,7 +386,7 @@ public class LegendFactory {
      * @param aST The shape type
      * @return The legend scheme
      */
-    public static LegendScheme createUniqValueLegendScheme(List<Number> values, ColorMap cmap, ShapeTypes aST) {
+    public static LegendScheme createUniqValueLegendScheme(List<Number> values, ColorMap cmap, GeometryType aST) {
         int n = values.size();
         Color[] colors = cmap.getColors(n);
         return LegendFactory.createUniqValueLegendScheme(values, colors, aST);
@@ -400,7 +400,7 @@ public class LegendFactory {
      * @param aST The shape type
      * @return The legend scheme
      */
-    public static LegendScheme createUniqValueLegendScheme(List<Number> values, Color[] colors, ShapeTypes aST) {
+    public static LegendScheme createUniqValueLegendScheme(List<Number> values, Color[] colors, GeometryType aST) {
         LegendScheme legendScheme = new LegendScheme(aST);
         legendScheme.setLegendType(LegendType.UNIQUE_VALUE);
         legendScheme.setShapeType(aST);
@@ -488,7 +488,7 @@ public class LegendFactory {
      * @param aST The shape type
      * @return The legend scheme
      */
-    public static LegendScheme createUniqValueLegendScheme(List<Number> values, List<Color> colors, ShapeTypes aST) {
+    public static LegendScheme createUniqValueLegendScheme(List<Number> values, List<Color> colors, GeometryType aST) {
         Color[] cols = colors.toArray(new Color[0]);
         return createUniqValueLegendScheme(values, cols, aST);
     }
@@ -505,7 +505,7 @@ public class LegendFactory {
      * @param unDef Undefine data
      * @return The legend scheme
      */
-    public static LegendScheme createUniqValueLegendScheme(List<String> CValues, Color[] colors, ShapeTypes aST,
+    public static LegendScheme createUniqValueLegendScheme(List<String> CValues, Color[] colors, GeometryType aST,
             double min, double max, boolean hasNodata, double unDef) {
         return createUniqValueLegendScheme(CValues, CValues, colors, aST, min, max, hasNodata, unDef);
     }
@@ -522,7 +522,7 @@ public class LegendFactory {
      * @param unDef Undefine data
      * @return The legend scheme
      */
-    public static LegendScheme createUniqValueLegendScheme(double[] CValues, Color[] colors, ShapeTypes aST,
+    public static LegendScheme createUniqValueLegendScheme(double[] CValues, Color[] colors, GeometryType aST,
             double min, double max, Boolean hasNodata, double unDef) {
         List<String> values = new ArrayList<>();
         List<String> captions = new ArrayList<>();
@@ -545,7 +545,7 @@ public class LegendFactory {
      * @param max Maximum value
      * @return The legend scheme
      */
-    public static LegendScheme createUniqValueLegendScheme(double[] CValues, Color[] colors, ShapeTypes aST,
+    public static LegendScheme createUniqValueLegendScheme(double[] CValues, Color[] colors, GeometryType aST,
             double min, double max) {
         List<String> values = new ArrayList<>();
         List<String> captions = new ArrayList<>();
@@ -570,7 +570,7 @@ public class LegendFactory {
      * @param unDef Undefine data
      * @return The legend scheme
      */
-    public static LegendScheme createGraduatedLegendScheme(double[] CValues, Color[] colors, ShapeTypes aST,
+    public static LegendScheme createGraduatedLegendScheme(double[] CValues, Color[] colors, GeometryType aST,
             double min, double max, Boolean hasNodata, double unDef) {
         if (CValues.length > 1){            
             if (min >= CValues[0]) {
@@ -762,7 +762,7 @@ public class LegendFactory {
      */
     public static LegendScheme createLegendScheme(List<Number> values, List<Color> colors) {
         if (values.size() == colors.size()) {
-            return createUniqValueLegendScheme(values, colors, ShapeTypes.IMAGE);
+            return createUniqValueLegendScheme(values, colors, GeometryType.IMAGE);
         } else {
             double[] vs = new double[values.size()];
             for (int i = 0; i < vs.length; i++) {
@@ -772,7 +772,7 @@ public class LegendFactory {
             for (int i = 0; i < cs.length; i++) {
                 cs[i] = colors.get(i);
             }
-            return createGraduatedLegendScheme(vs, cs, ShapeTypes.IMAGE, -Double.MAX_VALUE, Double.MIN_VALUE);
+            return createGraduatedLegendScheme(vs, cs, GeometryType.IMAGE, -Double.MAX_VALUE, Double.MIN_VALUE);
         }
     }
 
@@ -786,7 +786,7 @@ public class LegendFactory {
      * @param max Maximum value
      * @return The legend scheme
      */
-    public static LegendScheme createGraduatedLegendScheme(double[] values, Color[] colors, ShapeTypes aST,
+    public static LegendScheme createGraduatedLegendScheme(double[] values, Color[] colors, GeometryType aST,
             double min, double max) {
         double unDef = -9999.0;
         boolean hasNodata = false;
@@ -853,7 +853,7 @@ public class LegendFactory {
      * @param colors Colors
      * @return Legend scheme
      */
-    public static LegendScheme createLegendScheme(ShapeTypes shapeType, List<Number> values, List<Color> colors) {
+    public static LegendScheme createLegendScheme(GeometryType shapeType, List<Number> values, List<Color> colors) {
         LegendScheme ls;
         Color[] cols = new Color[colors.size()];
         for (int i = 0; i < colors.size(); i++) {
@@ -886,7 +886,7 @@ public class LegendFactory {
     public static LegendScheme createLegendScheme(double min, double max) {
         double[] values = createContourValues(min, max);
         Color[] colors = createRainBowColors(values.length + 1);
-        return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, false, -9999.0);
+        return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, GeometryType.IMAGE, false, -9999.0);
     }
 
     /**
@@ -900,7 +900,7 @@ public class LegendFactory {
     public static LegendScheme createLegendScheme(double min, double max, ColorMap ct) {
         double[] values = createContourValues(min, max);
         Color[] colors = ct.getColors(values.length + 1);
-        return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, false, -9999.0);
+        return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, GeometryType.IMAGE, false, -9999.0);
     }
 
     /**
@@ -915,7 +915,7 @@ public class LegendFactory {
     public static LegendScheme createLegendScheme(double min, double max, ColorMap ct, double missingValue) {
         double[] values = createContourValues(min, max);
         Color[] colors = ct.getColors(values.length + 1);
-        return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, true, missingValue);
+        return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, GeometryType.IMAGE, true, missingValue);
     }
 
     /**
@@ -929,7 +929,7 @@ public class LegendFactory {
      * @return LegendScheme
      */
     public static LegendScheme createLegendScheme(double min, double max, double interval,
-            LegendType legendType, ShapeTypes shapeType) {
+            LegendType legendType, GeometryType shapeType) {
         return createLegendScheme(min, max, interval, legendType, shapeType, false, -9999.0);
     }
 
@@ -946,7 +946,7 @@ public class LegendFactory {
      * @return LegendScheme
      */
     public static LegendScheme createLegendScheme(double min, double max, double interval,
-            LegendType legendType, ShapeTypes shapeType, boolean hasNodata, double unDef) {
+                                                  LegendType legendType, GeometryType shapeType, boolean hasNodata, double unDef) {
         double[] values = MIMath.getIntervalValues(min, max, interval);
         Color[] colors = createRainBowColors(values.length + 1);
 
@@ -971,7 +971,7 @@ public class LegendFactory {
      * @return LegendScheme
      */
     public static LegendScheme createLegendScheme(double min, double max, int n) {
-        return createLegendScheme(min, max, n, LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, false, -9999.0);
+        return createLegendScheme(min, max, n, LegendType.GRADUATED_COLOR, GeometryType.IMAGE, false, -9999.0);
     }
 
     /**
@@ -985,7 +985,7 @@ public class LegendFactory {
      * @return LegendScheme
      */
     public static LegendScheme createLegendScheme(double min, double max, int n,
-            LegendType legendType, ShapeTypes shapeType) {
+            LegendType legendType, GeometryType shapeType) {
         return createLegendScheme(min, max, n, legendType, shapeType, false, -9999.0);
     }
 
@@ -1003,7 +1003,7 @@ public class LegendFactory {
      * @return LegendScheme
      */
     public static LegendScheme createLegendScheme(double min, double max, double[] values, Color[] colors,
-            LegendType legendType, ShapeTypes shapeType, boolean hasNodata, double unDef) {
+                                                  LegendType legendType, GeometryType shapeType, boolean hasNodata, double unDef) {
 
         LegendScheme ls;
         if (legendType == LegendType.UNIQUE_VALUE) {
@@ -1030,7 +1030,7 @@ public class LegendFactory {
      * @return LegendScheme
      */
     public static LegendScheme createLegendScheme(double min, double max, int n,
-            LegendType legendType, ShapeTypes shapeType, boolean hasNodata, double unDef) {
+                                                  LegendType legendType, GeometryType shapeType, boolean hasNodata, double unDef) {
         double[] values = MIMath.getIntervalValues(min, max, n);
         Color[] colors = createRainBowColors(values.length + 1);
 
@@ -1051,7 +1051,7 @@ public class LegendFactory {
      * @return LegendScheme
      */
     public static LegendScheme createLegendScheme(double min, double max, int n, ColorMap ct,
-            LegendType legendType, ShapeTypes shapeType, boolean hasNodata, double unDef) {
+                                                  LegendType legendType, GeometryType shapeType, boolean hasNodata, double unDef) {
         double[] values = MIMath.getIntervalValues(min, max, n);
         Color[] colors = ct.getColors(values.length + 1);
 
@@ -1072,7 +1072,7 @@ public class LegendFactory {
      * @return LegendScheme
      */
     public static LegendScheme createLegendScheme(double min, double max, List<Number> levs, ColorMap ct,
-            LegendType legendType, ShapeTypes shapeType, boolean hasNodata, double unDef) {
+                                                  LegendType legendType, GeometryType shapeType, boolean hasNodata, double unDef) {
         double[] values = new double[levs.size()];
         for (int i = 0; i < levs.size(); i++){
             values[i] = levs.get(i).doubleValue();
@@ -1093,7 +1093,7 @@ public class LegendFactory {
      */
     public static LegendScheme createLegendScheme(double min, double max, List<Number> levs, ColorMap ct) {
         if (levs.size() == ct.getColorCount()){
-            return createUniqValueLegendScheme(levs, ct.getColors(), ShapeTypes.IMAGE);
+            return createUniqValueLegendScheme(levs, ct.getColors(), GeometryType.IMAGE);
         }
         
         double[] values = new double[levs.size()];
@@ -1102,7 +1102,7 @@ public class LegendFactory {
         }
         Color[] colors = ct.getColors(levs.size() + 1);
 
-        return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, false, -9999.0);
+        return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, GeometryType.IMAGE, false, -9999.0);
     }
 
     /**
@@ -1118,7 +1118,7 @@ public class LegendFactory {
         double[] values = MIMath.getIntervalValues(min, max, n);
         Color[] colors = ct.getColors(values.length + 1);
 
-        return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, ShapeTypes.IMAGE, false, -9999.0);
+        return createLegendScheme(min, max, values, colors, LegendType.GRADUATED_COLOR, GeometryType.IMAGE, false, -9999.0);
     }
 
     /**
@@ -1133,7 +1133,7 @@ public class LegendFactory {
         int n = colors.length;
         Normalize norm = transferFunction.getNormalize();
         double[] values = MIMath.getIntervalValues(norm.getMinValue(), norm.getMaxValue(), n - 1);
-        LegendScheme ls = LegendFactory.createGraduatedLegendScheme(values, colors, ShapeTypes.POLYGON,
+        LegendScheme ls = LegendFactory.createGraduatedLegendScheme(values, colors, GeometryType.POLYGON,
                 norm.getMinValue(), norm.getMaxValue());
         ls.setColorMap(colorMap);
         ls.setNormalize(norm);
@@ -1368,7 +1368,7 @@ public class LegendFactory {
             cValues = new double[aLS.getBreakNum() - 1];
             colors = new Color[aLS.getBreakNum()];
         }
-        ShapeTypes st = aLS.getShapeType();
+        GeometryType st = aLS.getShapeType();
         if (st.isPoint()) {
             for (i = 0; i < aLS.getBreakNum(); i++) {
                 PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(i);
@@ -1427,7 +1427,7 @@ public class LegendFactory {
             cValues = new double[aLS.getBreakNum() - 1];
             colors = new Color[aLS.getBreakNum()];
         }
-        ShapeTypes st = aLS.getShapeType();
+        GeometryType st = aLS.getShapeType();
         if (st.isPoint()) {
             for (i = 0; i < aLS.getBreakNum(); i++) {
                 PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(i);

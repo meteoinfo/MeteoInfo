@@ -10,7 +10,7 @@ import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.colors.TransferFunction;
 import org.meteoinfo.geometry.legend.LegendScheme;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 import org.meteoinfo.ndarray.Array;
 
 import java.awt.*;
@@ -18,7 +18,7 @@ import java.util.List;
 
 import static org.joml.Math.clamp;
 
-public class VolumeGraphic extends GraphicCollection3D {
+public class VolumeGraphic extends GraphicCollection {
     final int width;
     final int height;
     final int depth;
@@ -101,7 +101,7 @@ public class VolumeGraphic extends GraphicCollection3D {
         }
 
         double[] values = MIMath.getIntervalValues(vMin, vMax, n - 1);
-        LegendScheme ls = LegendManage.createGraduatedLegendScheme(values, oColors, ShapeTypes.POLYGON, vMin, vMax);
+        LegendScheme ls = LegendManage.createGraduatedLegendScheme(values, oColors, GeometryType.POLYGON, vMin, vMax);
         this.setLegendScheme(ls);
         this.setSingleLegend(false);
     }
@@ -257,7 +257,7 @@ public class VolumeGraphic extends GraphicCollection3D {
         }
 
         double[] values = MIMath.getIntervalValues(norm.getMinValue(), norm.getMaxValue(), n - 1);
-        LegendScheme ls = LegendManage.createGraduatedLegendScheme(values, oColors, ShapeTypes.POLYGON,
+        LegendScheme ls = LegendManage.createGraduatedLegendScheme(values, oColors, GeometryType.POLYGON,
                 norm.getMinValue(), norm.getMaxValue());
         ls.setColorMap(colorMap);
         ls.setNormalize(norm);
@@ -429,7 +429,7 @@ public class VolumeGraphic extends GraphicCollection3D {
 
         Normalize norm = this.transferFunction.getNormalize();
         double[] values = MIMath.getIntervalValues(norm.getMinValue(), norm.getMaxValue(), n - 1);
-        LegendScheme ls = LegendManage.createGraduatedLegendScheme(values, oColors, ShapeTypes.POLYGON,
+        LegendScheme ls = LegendManage.createGraduatedLegendScheme(values, oColors, GeometryType.POLYGON,
                 norm.getMinValue(), norm.getMaxValue());
         ls.setColorMap(colorMap);
         ls.setNormalize(norm);

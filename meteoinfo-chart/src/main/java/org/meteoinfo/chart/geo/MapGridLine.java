@@ -8,8 +8,8 @@ import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
-import org.meteoinfo.geometry.shape.Polyline;
-import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.LineString;
+import org.meteoinfo.geometry.MultiLineString;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
 import org.meteoinfo.projection.ProjectionUtil;
@@ -287,8 +287,8 @@ public class MapGridLine extends GridLine {
                 lat += delta;
             }
             points.add((new Coordinate(lon, latMax)));
-            PolylineShape line = new PolylineShape();
-            line.setPoints(points);
+            MultiLineString line = new MultiLineString();
+            line.setCoordinates(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
             graphic = ProjectUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
             if (graphic != null) {
@@ -320,22 +320,22 @@ public class MapGridLine extends GridLine {
                 lon += delta;
             }
             //points.add(new Coordinate(lonMax, lat));
-            PolylineShape line = new PolylineShape();
-            line.setPoints(points);
+            MultiLineString line = new MultiLineString();
+            line.setCoordinates(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
             graphic = ProjectUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
             if (graphic == null) {
                 continue;
             }
 
-            PolylineShape polylineShape = (PolylineShape) graphic.getShape();
-            if (polylineShape.getPartNum() > 1) {
-                points = polylineShape.getPolylines().get(0).getPointList();
-                List<Coordinate> points1 = polylineShape.getPolylines().get(1).getPointList();
+            MultiLineString polylineShape = (MultiLineString) graphic.getShape();
+            if (polylineShape.getNumParts() > 1) {
+                points = polylineShape.getPolylines().get(0).getCoordinates();
+                List<Coordinate> points1 = polylineShape.getPolylines().get(1).getCoordinates();
                 Collections.reverse(points1);
                 points.addAll(points1);
-                line = new PolylineShape();
-                line.setPoints(points);
+                line = new MultiLineString();
+                line.setCoordinates(points);
                 graphic = new Graphic(line, this.lineBreak);
             }
             graphic.getShape().setValue(lat);
@@ -351,7 +351,7 @@ public class MapGridLine extends GridLine {
         //Longitude
         List<GridLabel> tLabels = new ArrayList<>();
         for (int i = 0; i < this.longitudeLines.size(); i++) {
-            PolylineShape line = (PolylineShape) this.longitudeLines.getGraphicN(i).getShape();
+            MultiLineString line = (MultiLineString) this.longitudeLines.getGraphicN(i).getShape();
             float value = (float) line.getValue();
             String labStr = String.valueOf(value);
             labStr = DataConvert.removeTailingZeros(labStr);
@@ -367,7 +367,7 @@ public class MapGridLine extends GridLine {
             }
 
             List<GridLabel> gLabels = new ArrayList<>();
-            for (Polyline aPL : line.getPolylines()) {
+            for (LineString aPL : line.getPolylines()) {
                 gLabels.addAll(GridLine.getGridLabels(aPL, extent, true));
             }
 
@@ -381,7 +381,7 @@ public class MapGridLine extends GridLine {
 
         //Latitude
         for (int i = 0; i < this.latitudeLines.size(); i++) {
-            PolylineShape line = (PolylineShape) this.latitudeLines.getGraphicN(i).getShape();
+            MultiLineString line = (MultiLineString) this.latitudeLines.getGraphicN(i).getShape();
             float value = (float) line.getValue();
             String labStr = String.valueOf(value);
             labStr = DataConvert.removeTailingZeros(labStr);
@@ -399,7 +399,7 @@ public class MapGridLine extends GridLine {
             }
 
             List<GridLabel> gLabels = new ArrayList<>();
-            for (Polyline aPL : line.getPolylines()) {
+            for (LineString aPL : line.getPolylines()) {
                 gLabels.addAll(GridLine.getGridLabels(aPL, extent, false));
             }
 

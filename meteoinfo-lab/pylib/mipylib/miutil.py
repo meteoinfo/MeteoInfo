@@ -5,10 +5,10 @@
 # Note: Jython
 # -----------------------------------------------------
 
-from org.meteoinfo.geometry import Coordinate
+from org.meteoinfo.geometry import Coordinate, Point
 from org.meteoinfo.common.util import JDateUtil
 from org.meteoinfo.ndarray import Complex
-from org.meteoinfo.geometry.shape import PointShape, ShapeUtil
+from org.meteoinfo.geometry import GeometryUtil
 from org.python.core import PyComplex
 from java.util import Locale
 from java.time import LocalDateTime
@@ -264,11 +264,11 @@ def makeshapes(x, y, type=None, z=None, m=None):
         if not isinstance(y, list):
             y = y.asarray()
         if type == 'point':
-            shapes = ShapeUtil.createPointShapes(x, y)
+            shapes = GeometryUtil.createPointShapes(x, y)
         elif type == 'line':
-            shapes = ShapeUtil.createPolylineShapes(x, y)
+            shapes = GeometryUtil.createPolylineShapes(x, y)
         elif type == 'polygon':
-            shapes = ShapeUtil.createPolygonShapes(x, y)
+            shapes = GeometryUtil.createPolygonShapes(x, y)
     return shapes
 
 

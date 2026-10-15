@@ -8,7 +8,6 @@ import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.legend.AlignType;
 import org.meteoinfo.geometry.legend.LabelBreak;
 import org.meteoinfo.geo.mapview.MapView;
-import org.meteoinfo.geometry.shape.ShapeTypes;
 import com.l2fprod.common.swing.JFontChooser;
 import java.awt.Color;
 import java.awt.Font;

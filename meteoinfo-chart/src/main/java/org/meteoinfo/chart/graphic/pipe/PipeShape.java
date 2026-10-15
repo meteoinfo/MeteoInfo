@@ -2,13 +2,13 @@ package org.meteoinfo.chart.graphic.pipe;
 
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.MultiLineString;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PipeShape extends PolylineShape {
+public class PipeShape extends MultiLineString {
     private float radius = 0.05f;
     private int steps = 48;
     private Pipe pipe;
@@ -18,8 +18,8 @@ public class PipeShape extends PolylineShape {
      * Constructor
      * @param shape PolylineZShape
      */
-    public PipeShape(PolylineShape shape) {
-        this.setPoints(shape.getPoints());
+    public PipeShape(MultiLineString shape) {
+        this.setCoordinates(shape.getCoordinates());
         //generatePipe();
     }
 
@@ -29,8 +29,8 @@ public class PipeShape extends PolylineShape {
      * @param radius Radius
      * @param steps Steps
      */
-    public PipeShape(PolylineShape shape, float radius, int steps) {
-        this.setPoints(shape.getPoints());
+    public PipeShape(MultiLineString shape, float radius, int steps) {
+        this.setCoordinates(shape.getCoordinates());
         this.radius = radius;
         this.steps = steps;
         generatePipe();
@@ -61,12 +61,12 @@ public class PipeShape extends PolylineShape {
     }
 
     public int getVertexCount() {
-        return this.getPointNum() * (this.steps + 1);
+        return this.getNumPoints() * (this.steps + 1);
     }
 
     void generatePipe() {
         List<Vector3f> path = new ArrayList<>();
-        for (Coordinate p : (List<Coordinate>) this.getPoints()) {
+        for (Coordinate p : (List<Coordinate>) this.getCoordinates()) {
             path.add(new Vector3f((float)p.x, (float)p.y, (float)p.z));
         }
         this.pipe = new Pipe(path, this.radius, this.steps);
@@ -84,7 +84,7 @@ public class PipeShape extends PolylineShape {
         this.transform = (Transform) transform.clone();
 
         List<Vector3f> path = new ArrayList<>();
-        for (Coordinate p : (List<Coordinate>) this.getPoints()) {
+        for (Coordinate p : (List<Coordinate>) this.getCoordinates()) {
             path.add(new Vector3f(transform.transform_x((float)p.x), transform.transform_y((float)p.y),
                     transform.transform_z((float)p.z)));
         }

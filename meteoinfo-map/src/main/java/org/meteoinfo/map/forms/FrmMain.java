@@ -62,6 +62,7 @@ import org.meteoinfo.common.PointF;
 import org.meteoinfo.common.util.GlobalUtil;
 import org.meteoinfo.data.mapdata.webmap.WebMapProvider;
 import org.meteoinfo.geo.mapdata.ShapeFileType;
+import org.meteoinfo.geometry.GeometryFactory;
 import org.meteoinfo.map.config.GenericFileFilter;
 import org.meteoinfo.map.config.Options;
 import org.meteoinfo.map.config.Plugin;
@@ -113,13 +114,11 @@ import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
 import org.meteoinfo.projection.Reproject;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.Geometry;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.geo.mapdata.ShapeFileManage;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.operation.union.UnaryUnionOp;
-import org.meteoinfo.geometry.shape.ShapeFactory;
-import org.meteoinfo.geometry.shape.ShapeSelection;
+import org.meteoinfo.geometry.special.ShapeSelection;
 import org.xml.sax.SAXException;
 
 /**
@@ -215,8 +214,8 @@ public class FrmMain extends JFrame implements IApplication {
             public void elementSelectedEvent(ElementSelectedEvent event) {
                 if (_mapLayout.getSelectedElements().size() > 0) {
                     if (_mapLayout.getSelectedElements().get(0).getElementType() == ElementType.LAYOUT_GRAPHIC) {
-                        switch (((LayoutGraphic) _mapLayout.getSelectedElements().get(0)).getGraphic().getShape().getShapeType()) {
-                            case POLYLINE:
+                        switch (((LayoutGraphic) _mapLayout.getSelectedElements().get(0)).getGraphic().getShape().getGeometryType()) {
+                            case LINESTRING:
                             case CURVE_LINE:
                             case POLYGON:
                             case CURVE_POLYGON:
@@ -1868,8 +1867,8 @@ public class FrmMain extends JFrame implements IApplication {
             @Override
             public void graphicSelectedEvent(GraphicSelectedEvent event) {
                 if (_mapView.getSelectedGraphics().size() > 0) {
-                    switch (_mapView.getSelectedGraphics().get(0).getShape().getShapeType()) {
-                        case POLYLINE:
+                    switch (_mapView.getSelectedGraphics().get(0).getShape().getGeometryType()) {
+                        case LINESTRING:
                         case CURVE_LINE:
                         case POLYGON:
                         case CURVE_POLYGON:
@@ -2635,13 +2634,13 @@ public class FrmMain extends JFrame implements IApplication {
 
     private void jMenuItem_CutActionPerformed(ActionEvent evt) {
         VectorLayer layer = (VectorLayer) _mapDocument.getActiveMapFrame().getMapView().getSelectedLayer();
-        List<Shape> selShapes = (List<Shape>)layer.getSelectedShapes();
+        List<Geometry> selShapes = (List<Geometry>)layer.getSelectedShapes();
 
         UndoableEdit edit = (new MapViewUndoRedo()).new RemoveFeaturesEdit(_mapView, layer, selShapes);
         currentUndoManager.addEdit(edit);
         this.refreshUndoRedo();
 
-        for (Shape shape : selShapes) {
+        for (Geometry shape : selShapes) {
             layer.editRemoveShape(shape);
         }
         this.jButton_EditRemoveFeature.setEnabled(false);
@@ -2653,10 +2652,10 @@ public class FrmMain extends JFrame implements IApplication {
 
     private void jMenuItem_CopyActionPerformed(ActionEvent evt) {
         VectorLayer layer = (VectorLayer) _mapDocument.getActiveMapFrame().getMapView().getSelectedLayer();
-        List<Shape> selShapes = (List<Shape>)layer.getSelectedShapes();
-        List<Shape> r = new ArrayList<>();
-        for (Shape s : selShapes) {
-            r.add((Shape) s.clone());
+        List<Geometry> selShapes = (List<Geometry>)layer.getSelectedShapes();
+        List<Geometry> r = new ArrayList<>();
+        for (Geometry s : selShapes) {
+            r.add((Geometry) s.clone());
         }
         ShapeSelection shapeSelection = new ShapeSelection(r);
         Toolkit.getDefaultToolkit().getSystemClipboard().setContents(shapeSelection, null);
@@ -2671,11 +2670,11 @@ public class FrmMain extends JFrame implements IApplication {
 
         VectorLayer layer = (VectorLayer) _mapDocument.getActiveMapFrame().getMapView().getSelectedLayer();
         if (layer.isEditing()) {
-            DataFlavor dataFlavors = new DataFlavor(org.meteoinfo.geometry.shape.Shape.class, "Shape Object");
+            DataFlavor dataFlavors = new DataFlavor(Geometry.class, "Shape Object");
             if (t.isDataFlavorSupported(dataFlavors)) {
                 try {
-                    List<Shape> shapes = (List<Shape>) t.getTransferData(dataFlavors);
-                    for (Shape shape : shapes) {
+                    List<Geometry> shapes = (List<Geometry>) t.getTransferData(dataFlavors);
+                    for (Geometry shape : shapes) {
                         layer.editAddShape(shape);
                     }
                     this._mapView.paintLayers();
@@ -2737,20 +2736,20 @@ public class FrmMain extends JFrame implements IApplication {
 
     private void jMenuItem_MergeFeatureActionPerformed(ActionEvent evt) {
         VectorLayer layer = (VectorLayer) _mapDocument.getActiveMapFrame().getMapView().getSelectedLayer();
-        List<Shape> selShapes = (List<Shape>)layer.getSelectedShapes();
+        List<Geometry> selShapes = (List<Geometry>)layer.getSelectedShapes();
         if (selShapes.size() < 2) {
             JOptionPane.showMessageDialog(this, "Union option need at least two features are selected!");
             return;
         }
 
-        List<Geometry> geos = new ArrayList<>();
+        List<org.locationtech.jts.geom.Geometry> geos = new ArrayList<>();
         for (int i = 0; i < selShapes.size(); i++) {
-            geos.add(selShapes.get(i).toGeometry());
+            geos.add(selShapes.get(i).toJTSGeometry());
         }
-        Geometry mgeo = UnaryUnionOp.union(geos);
-        Shape bShape = ShapeFactory.createShape(mgeo);
+        org.locationtech.jts.geom.Geometry mgeo = UnaryUnionOp.union(geos);
+        Geometry bShape = GeometryFactory.createGeometry(mgeo);
         
-        for (Shape shape : selShapes) {
+        for (Geometry shape : selShapes) {
             layer.editRemoveShape(shape);
         }
         try {
@@ -2972,7 +2971,7 @@ public class FrmMain extends JFrame implements IApplication {
         MapLayer aLayer = _mapDocument.getActiveMapFrame().getMapView().getSelectedLayer();
         if (aLayer.getLayerType() == LayerTypes.VECTOR_LAYER) {
             ((VectorLayer) aLayer).clearSelectedShapes();
-            for (Shape shape : ((VectorLayer) aLayer).getShapes()) {
+            for (Geometry shape : ((VectorLayer) aLayer).getShapes()) {
                 shape.setVisible(true);
             }
         }
@@ -3611,13 +3610,13 @@ public class FrmMain extends JFrame implements IApplication {
 
     private void jButton_EditRemoveFeatureActionPerformed(ActionEvent evt) {
         VectorLayer layer = (VectorLayer) _mapDocument.getActiveMapFrame().getMapView().getSelectedLayer();
-        List<Shape> selShapes = (List<Shape>)layer.getSelectedShapes();
+        List<Geometry> selShapes = (List<Geometry>)layer.getSelectedShapes();
 
         UndoableEdit edit = (new MapViewUndoRedo()).new RemoveFeaturesEdit(_mapView, layer, selShapes);
         currentUndoManager.addEdit(edit);
         this.refreshUndoRedo();
 
-        for (Shape shape : selShapes) {
+        for (Geometry shape : selShapes) {
             layer.editRemoveShape(shape);
         }
         this.jButton_EditRemoveFeature.setEnabled(false);
@@ -3626,7 +3625,7 @@ public class FrmMain extends JFrame implements IApplication {
 
     private void jButton_EditFeatureVerticesActionPerformed(ActionEvent evt) {
         VectorLayer layer = (VectorLayer) _mapDocument.getActiveMapFrame().getMapView().getSelectedLayer();
-        List<Shape> selShapes = (List<Shape>)layer.getSelectedShapes();
+        List<Geometry> selShapes = (List<Geometry>)layer.getSelectedShapes();
         if (selShapes.size() != 1) {
             JOptionPane.showMessageDialog(this, "Select one editable feature to edit.", "Edit Vertices", JOptionPane.WARNING_MESSAGE);
             return;

@@ -18,11 +18,11 @@ from org.meteoinfo.geo.meteodata import DrawMeteoData
 from org.meteoinfo.geo.mapview import MapView
 from org.meteoinfo.geo.io import GraphicUtil
 from org.meteoinfo.geometry.legend import BreakTypes, LegendScheme, LegendType, LegendManage
-from org.meteoinfo.geometry.shape import Shape, PolylineShape, PolygonShape, ShapeTypes
+from org.meteoinfo.geometry import LineString, MultiLineString, Polygon, MultiPolygon
 from org.meteoinfo.chart.graphic import Graphic
 from org.meteoinfo.chart.transform import GeoTransform
 from org.meteoinfo.projection import ProjectionInfo
-from org.meteoinfo.geometry import Extent
+from org.meteoinfo.geometry import Extent, Geometry, GeometryType
 from org.meteoinfo.geo.layer import LayerTypes, WebMapLayer
 from org.meteoinfo.data.mapdata.webmap import WebMapProvider, DefaultTileFactory, TileFactoryInfo
 
@@ -560,19 +560,19 @@ class MapAxes(Axes):
                 graphic = args[0]
                 displaytype = 'point'
                 stype = graphic.getShape().getShapeType()
-                if stype == ShapeTypes.POLYLINE:
+                if stype == GeometryType.LINESTRING:
                     displaytype = 'line'
-                elif stype == ShapeTypes.POLYGON:
+                elif stype == GeometryType.POLYGON:
                     displaytype = 'polygon'
                 lbreak, isunique = plotutil.getlegendbreak(displaytype, **kwargs)
                 graphic.setLegend(lbreak)
                 self.add_graphic(graphic)            
-            elif isinstance(args[0], Shape):
+            elif isinstance(args[0], Geometry):
                 shape = args[0]
                 displaytype = 'point'
-                if isinstance(shape, PolylineShape):
+                if isinstance(shape, (LineString, MultiLineString)):
                     displaytype = 'line'
-                elif isinstance(shape, PolygonShape):
+                elif isinstance(shape, (Polygon, MultiPolygon)):
                     displaytype = 'polygon'
                 lbreak, isunique = plotutil.getlegendbreak(displaytype, **kwargs)
                 graphic = Graphic(shape, lbreak)
@@ -857,7 +857,7 @@ class MapAxes(Axes):
                     if isinstance(marker, (list, tuple, NDArray)) and len(marker) == x.size:
                         isunique = True
             if isunique:
-                ls = LegendManage.createUniqValueLegendScheme(x.size, ShapeTypes.POINT)
+                ls = LegendManage.createUniqValueLegendScheme(x.size, GeometryType.POINT)
             else:
                 ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)
             ls = plotutil.setlegendscheme_point(ls, **kwargs)
@@ -945,7 +945,7 @@ class MapAxes(Axes):
         vmin = kwargs.pop('vmin', a.min())
         vmax = kwargs.pop('vmax', a.max())
         ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
-        ls = ls.convertTo(ShapeTypes.POLYLINE)
+        ls = ls.convertTo(GeometryType.LINESTRING)
         plotutil.setlegendscheme(ls, **kwargs)
         smooth = kwargs.pop('smooth', True)
         if x.ndim == 2 and y.ndim == 2:
@@ -1010,7 +1010,7 @@ class MapAxes(Axes):
         if not kwargs.has_key('extend'):
             kwargs['extend'] = 'both'
         ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
-        ls = ls.convertTo(ShapeTypes.POLYGON)
+        ls = ls.convertTo(GeometryType.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
@@ -1225,7 +1225,7 @@ class MapAxes(Axes):
         vmin = kwargs.pop('vmin', a.min())
         vmax = kwargs.pop('vmax', a.max())
         ls = plotutil.getlegendscheme(args, vmin, vmax, **kwargs)
-        ls = ls.convertTo(ShapeTypes.POLYGON)
+        ls = ls.convertTo(GeometryType.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
@@ -1287,7 +1287,7 @@ class MapAxes(Axes):
             args = args[3:]  
             
         ls = plotutil.getlegendscheme(args, a.min(), a.max(), **kwargs)   
-        ls = ls.convertTo(ShapeTypes.POLYGON)
+        ls = ls.convertTo(GeometryType.POLYGON)
         plotutil.setlegendscheme(ls, **kwargs)
 
         graphics = GraphicFactory.createGridPolygons(x.asarray(), y.asarray(), a.asarray(), ls)
@@ -1382,7 +1382,7 @@ class MapAxes(Axes):
                 c = cmap.getColor(0)
             else:
                 c = Color.black
-            ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, c, 10)
+            ls = LegendManage.createSingleSymbolLegendScheme(GeometryType.POINT, c, 10)
 
         ls = plotutil.setlegendscheme_arrow(ls, **kwargs)
         if not cdata is None:
@@ -1482,7 +1482,7 @@ class MapAxes(Axes):
                 c = cmap.getColor(0)
             else:
                 c = Color.black
-            ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, c, 10)
+            ls = LegendManage.createSingleSymbolLegendScheme(GeometryType.POINT, c, 10)
         ls = plotutil.setlegendscheme_point(ls, **kwargs)
         if not cdata is None:
             cdata = cdata._array
@@ -1608,7 +1608,7 @@ class MapAxes(Axes):
         surface = kwargs.pop('surface', True)
         color = kwargs.pop('color', 'b')
         color = plotutil.getcolor(color)
-        ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, color, size)
+        ls = LegendManage.createSingleSymbolLegendScheme(GeometryType.POINT, color, size)
         graphics = GraphicFactory.createStationModel(smdata, ls, surface)
         graphics.transform = transform
      

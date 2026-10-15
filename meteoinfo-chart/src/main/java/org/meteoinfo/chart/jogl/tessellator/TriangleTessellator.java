@@ -1,247 +1,110 @@
 package org.meteoinfo.chart.jogl.tessellator;
 
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.glu.GLUtessellator;
-import com.jogamp.opengl.glu.GLUtessellatorCallbackAdapter;
-import org.meteoinfo.chart.graphic.Triangle3D;
+import org.maplibre.earcut4j.Earcut;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.Polygon;
-import org.joml.Vector3f;
+import org.meteoinfo.geometry.Polygon;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+/**
+ * High-performance polygon tessellator using EarCut algorithm.
+ * Pure Java, no JNI, optimized for GIS polygons with holes.
+ */
 public class TriangleTessellator {
-    private final GLU glu = new GLU();
-    private final GLUtessellator tobj = glu.gluNewTess();
-    private final TessellationCallback tessCallback = new TessellationCallback();
-
-    private TesselationException err;
-
-    /*
-     * Either you kindly wait for your triangles.
-     */
-
-    private boolean done = false;
 
     /**
-     * Tessellate a shape, transform it to a set of triangles. This method locks
-     * until rendering is completed.
+     * Tessellates a PolygonZ into independent triangles (3 PointZ per triangle).
+     * Output is directly consumable by VBO builders without further processing.
      *
-     * @param shape
-     *            The shape to tessellate.
-     * @param hole
-     *            Shape of the hole in the tessellation (optional).
-     * @return A list of triangles that constitutes the shape.
-     * @throws TesselationException
-     *             Throws {@link TesselationException} if the tessellation was
-     *             unsuccessful, most commonly due to ambiguous shapes
+     * @param polygon The polygon to tessellate (supports concave & holed)
+     * @return List of triangles, each as PointZ[3]. Empty list if degenerate.
      */
-    public List<Triangle3D> getTriangles(Polygon polygon)
-            throws TesselationException {
+    public static List<Coordinate[]> tessellate(Polygon polygon) {
+        // 1. Flatten vertices into double[] for EarCut
+        //    Format: [x0,y0, x1,y1, ..., xn,yn]
+        List<Double> coords = new ArrayList<>();
+        List<Integer> holeIndices = new ArrayList<>();
 
-        makeTriangles(polygon);
-
-        try {
-            while (!done) {
-                Thread.sleep(10);
-            }
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+        // Outer ring
+        List<Coordinate> outer = polygon.getOutLine();
+        for (Coordinate p : outer) {
+            coords.add(p.x);
+            coords.add(p.y);
         }
 
-        if (err == null) {
-            return tessCallback.triangles;
-        } else
-            throw err;
-    }
-
-    /*
-     * Or you may implement a listener interface and handle an asynchronous
-     * call.
-     */
-
-    private TessellatorListener listener;
-
-    /**
-     * Tessellates a shape that is, tiling of the shape in a pattern of
-     * triangles that fills the shape with no overlaps and no gaps. Returns a
-     * set of triangles to the given {@link TessellatorListener} whenever done.
-     *
-     * @param shape
-     *            The shape to tessellate.
-     * @param hole
-     *            Shape of the hole in the tessellation (optional).
-     * @param listener
-     *            Instance of {@link TessellatorListener} that will be invoked
-     *            whenever tessellation is done or fails.
-     */
-    public void getTriangles(Polygon polygon,
-                             TessellatorListener listener) {
-        this.listener = listener;
-        makeTriangles(polygon);
-    }
-
-    public interface TessellatorListener {
-        public void onTesselationDone(List<Triangle3D> triangles);
-
-        public void onTesselationError(TesselationException err);
-    }
-
-    public class TesselationException extends Exception {
-        private static final long serialVersionUID = 1L;
-
-        public TesselationException(String message) {
-            super(message);
-        }
-    }
-
-    /**
-     * This method register an instance of {@link TessellationCallback} which
-     * will produce triangles given an outer- and an optional inner- (hollow)
-     * {@link Shape}. {@link TessellationCallback} will report status to callers
-     * whenever done.
-     *
-     * @param shape
-     *            The to shape to tessellate. This shape can not be a complex
-     *            type, neither contain holes. In such case a
-     *            {@link TesselationException} will be thrown.
-     * @param hole
-     *            A subsection of the shape that will not be included in the
-     *            resulting triangles area. The hole's contour may not exceed
-     *            the contour of the shape or a {@link TesselationException}
-     *            will be thrown.
-     *
-     */
-    private void makeTriangles(Polygon polygon) {
-        glu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);
-        glu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);
-        glu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);
-        //glu.gluTessCallback(tobj, GLU.GLU_TESS_COMBINE, tessCallback);
-        glu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);
-
-        glu.gluTessBeginPolygon(tobj, null);
-
-        glu.gluTessBeginContour(tobj);
-
-        double[] v;
-        Coordinate p;
-        for (int i = 0; i < polygon.getOutLine().size() - 1; i++) {
-            p = ((List<Coordinate>) polygon.getOutLine()).get(i);
-            v = p.toArray();
-            glu.gluTessVertex(tobj, v, 0, v);
-        }
-
-        glu.gluTessEndContour(tobj);
-
+        // Inner rings (holes)
         if (polygon.hasHole()) {
-            for (int i = 0; i < polygon.getHoleLineNumber(); i++) {
-                glu.gluTessBeginContour(tobj);
-                for (int j = 0; j < polygon.getHoleLine(i).size() - 1; j++) {
-                    p = ((List<Coordinate>) polygon.getHoleLine(i)).get(j);
-                    v = p.toArray();
-                    glu.gluTessVertex(tobj, v, 0, v);
+            for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
+                // Record the starting index of this hole in the flat array
+                holeIndices.add(coords.size() / 2);
+
+                List<Coordinate> hole = polygon.getHoleLine(i);
+                for (Coordinate p : hole) {
+                    coords.add(p.x);
+                    coords.add(p.y);
                 }
-                glu.gluTessEndContour(tobj);
             }
         }
 
-        glu.gluTessEndPolygon(tobj);
+        // Convert to primitive array (Earcut requires double[])
+        double[] data = coords.stream().mapToDouble(Double::doubleValue).toArray();
+        int[] holes = holeIndices.stream().mapToInt(Integer::intValue).toArray();
 
-        glu.gluDeleteTess(tobj);
+        // 2. Run EarCut — returns triangle indices [i0,i1,i2, i3,i4,i5, ...]
+        List<Integer> indices;
+        try {
+            indices = Earcut.earcut(data, holes.length > 0 ? holes : null, 2);
+        } catch (Exception e) {
+            System.err.println("EarCut failed: " + e.getMessage());
+            return Collections.emptyList();
+        }
 
+        if (indices == null || indices.size() < 3) {
+            return Collections.emptyList();
+        }
+
+        // 3. Map indices back to PointZ triangles
+        //    Reconstruct full vertex list for index lookup
+        List<Coordinate> allVertices = new ArrayList<>(data.length / 2);
+        for (int i = 0; i < data.length; i += 2) {
+            allVertices.add(new Coordinate(data[i], data[i + 1], 0.0));
+        }
+
+        // Preserve original Z values from source polygon
+        restoreZValues(allVertices, polygon);
+
+        List<Coordinate[]> triangles = new ArrayList<>(indices.size() / 3);
+        for (int i = 0; i + 2 < indices.size(); i += 3) {
+            Coordinate[] tri = new Coordinate[]{
+                    allVertices.get(indices.get(i)),
+                    allVertices.get(indices.get(i + 1)),
+                    allVertices.get(indices.get(i + 2))
+            };
+            triangles.add(tri);
+        }
+
+        return triangles;
     }
 
     /**
-     * Implementation of {@link GLUtessellatorCallback} thats responsible for
-     * creating {@link Triangle}s from {@link GLU}'s tessellation callbacks and
-     * reporting back to {@link TessellatorListener}s whenever done or an error
-     * occurs.
-     *
-     * @author nomis
-     *
+     * Restores Z coordinates that EarCut discards (it operates in 2D).
+     * Matches flattened vertices back to original PointZ by XY proximity.
      */
-    class TessellationCallback extends GLUtessellatorCallbackAdapter {
-
-        protected List<Triangle3D> triangles = new ArrayList<>();
-
-        private Vector3f p1, p2, p3;
-
-        private int geometricPrimitiveType;
-
-        public void begin(int type) {
-            this.geometricPrimitiveType = type;
-        }
-
-        public void end() {
-            sendSuccess();
-        }
-
-        public void vertex(Object vertexData) {
-            double[] vertex = (double[]) vertexData;
-            Vector3f thisPoint = new Vector3f((float) vertex[0], (float) vertex[1], (float) vertex[2]);
-            switch (geometricPrimitiveType) {
-                case GL2.GL_TRIANGLE_FAN:
-
-                    if (p1 == null) {
-                        p1 = thisPoint;
-                    } else if (p2 == null) {
-                        p2 = thisPoint;
-                    } else {
-                        triangles.add(new Triangle3D(p1, p2, thisPoint));
-                        p2 = thisPoint;
-                    }
-                    break;
-
-                case GL2.GL_TRIANGLE_STRIP:
-                    if (p3 == null)
-                        p3 = thisPoint;
-                    else {
-                        p1 = p2;
-                        p2 = p3;
-                        p3 = thisPoint;
-
-                        if (p1 != null) {
-                            triangles.add(new Triangle3D(p1, p2, p3));
-                        }
-                    }
-                    break;
-
-                default:
-                    sendError("Geometric Primitive Type #"
-                            + geometricPrimitiveType
-                            + " not implemented. See "
-                            + "http://www.glprogramming.com/red/chapter02.html#name2 "
-                            + "for more.");
+    private static void restoreZValues(List<Coordinate> flatVerts, Polygon polygon) {
+        // Build a combined ordered list of original vertices matching EarCut's traversal order
+        List<Coordinate> originals = new ArrayList<>();
+        originals.addAll(polygon.getOutLine());
+        if (polygon.hasHole()) {
+            for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
+                originals.addAll(polygon.getHoleLine(i));
             }
-
         }
 
-        public void combine(double[] coords, Object[] data, float[] weight,
-                            Object[] outData) {
-            sendError("Self-intersecting polygons not supported");
+        // Direct positional mapping (EarCut preserves vertex order)
+        for (int i = 0; i < Math.min(flatVerts.size(), originals.size()); i++) {
+            flatVerts.get(i).z = originals.get(i).z;
         }
-
-        public void error(int errnum) {
-            sendError("Opengl error: " + glu.gluErrorString(errnum));
-        }
-    }
-
-    protected void sendSuccess() {
-        done = true;
-        err = null;
-        if (listener != null) {
-            listener.onTesselationDone(tessCallback.triangles);
-        }
-    }
-
-    protected void sendError(String message) {
-        done = true;
-        err = new TesselationException(message);
-        if (listener != null) {
-            listener.onTesselationError(err);
-        }
-
     }
 }

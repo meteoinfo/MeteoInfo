@@ -14,7 +14,7 @@
  */
 package org.meteoinfo.geo.mapdata;
 
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 
 /**
  * Shape type enum
@@ -56,7 +56,7 @@ public enum ShapeFileType {
      * Get value from ordinal
      *
      * @param ordinal Ordinal
-     * @return ShapeTypes value
+     * @return ShapeType value
      */
     public static ShapeFileType valueOf(int ordinal) {
         switch(ordinal){
@@ -94,37 +94,37 @@ public enum ShapeFileType {
     }
 
     /**
-     * Convert to ShapeTypes
-     * @return ShapeTypes
+     * Convert to ShapeType
+     * @return ShapeType
      */
-    public ShapeTypes toShapeType() {
+    public GeometryType toShapeType() {
         switch (this) {
             case POINT:
             case POINT_M:
             case POINT_Z:
-                return ShapeTypes.POINT;
+                return GeometryType.POINT;
             case POLYLINE:
             case POLYLINE_M:
             case POLYLINE_Z:
-                return ShapeTypes.POLYLINE;
+                return GeometryType.LINESTRING;
             case POLYGON:
             case POLYGON_M:
             case POLYGON_Z:
-                return ShapeTypes.POLYGON;
+                return GeometryType.POLYGON;
         }
-        return ShapeTypes.POINT;
+        return GeometryType.POINT;
     }
 
     /**
-     * Convert from ShapeTypes
-     * @param shapeType ShapeTypes
+     * Convert from ShapeType
+     * @param shapeType ShapeType
      * @return ShapeFileType
      */
-    public static ShapeFileType fromShapeType(ShapeTypes shapeType) {
+    public static ShapeFileType fromShapeType(GeometryType shapeType) {
         switch (shapeType) {
             case POINT:
                 return ShapeFileType.POINT;
-            case POLYLINE:
+            case LINESTRING:
                 return ShapeFileType.POLYLINE;
             case POLYGON:
                 return ShapeFileType.POLYGON;

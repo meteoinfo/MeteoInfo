@@ -19,7 +19,7 @@ import org.meteoinfo.common.YAlign;
 import org.meteoinfo.common.Direction;
 import org.meteoinfo.projection.GridLabel;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.MultiPolygon;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
@@ -84,8 +84,8 @@ public class Mollweide extends ProjectionInfo {
         }
         lat = minLat;
         points.add(new Coordinate(lon, lat));
-        PolygonShape ps = new PolygonShape();
-        ps.setPoints(points);
+        MultiPolygon ps = new MultiPolygon();
+        ps.setCoordinates(points);
         this.boundary = ProjectionUtil.projectPolygonShape(ps, KnownCoordinateSystems.geographic.world.WGS1984, this);
     }
 

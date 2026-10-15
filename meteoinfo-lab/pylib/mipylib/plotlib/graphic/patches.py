@@ -1,6 +1,7 @@
 from org.meteoinfo.chart.graphic import Graphic, PolygonGraphic
-from org.meteoinfo.geometry.shape import ShapeUtil, CircleShape, EllipseShape, \
-    RectangleShape, ArcShape
+from org.meteoinfo.geometry import GeometryUtil
+from org.meteoinfo.geometry.special import Circle as JCircle, Ellipse as JEllipse, \
+    Rectangle as JRectangle, Arc as JArc
 
 from .. import plotutil
 import mipylib.numeric as np
@@ -22,7 +23,7 @@ class Circle(Graphic):
         """
         self._center = xy
         self._radius = radius
-        shape = CircleShape(xy[0], xy[1], radius)
+        shape = JCircle(xy[0], xy[1], radius)
         legend, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         super(Circle, self).__init__(shape, legend)
 
@@ -52,7 +53,7 @@ class Ellipse(Graphic):
         self._width = width
         self._height = height
         self._angle = angle
-        shape = EllipseShape(xy[0], xy[1], width, height)
+        shape = JEllipse(xy[0], xy[1], width, height)
         shape.setAngle(angle)
         legend, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         super(Ellipse, self).__init__(shape, legend)
@@ -96,7 +97,7 @@ class Arc(Graphic):
         self._angle = angle
         self._theta1 = theta1
         self._theta2 = theta2
-        shape = ArcShape(xy[0], xy[1], width, height)
+        shape = JArc(xy[0], xy[1], width, height)
         shape.setAngle(angle)
         shape.setStartAngle(theta1)
         shape.setSweepAngle(theta2 - theta1)
@@ -166,7 +167,7 @@ class Wedge(Graphic):
         self._r = r
         self._theta1 = theta1
         self._theta2 = theta2
-        shape = ArcShape(center[0], center[1], r * 2, r * 2)
+        shape = JArc(center[0], center[1], r * 2, r * 2)
         shape.setStartAngle(theta1)
         shape.setSweepAngle(theta2 - theta1)
         self._closure = kwargs.pop('closure', None)
@@ -223,7 +224,7 @@ class Rectangle(Graphic):
         self._width = width
         self._height = height
         self._angle = angle
-        shape = RectangleShape(xy[0], xy[1], width, height)
+        shape = JRectangle(xy[0], xy[1], width, height)
         shape.setAngle(angle)
         legend, isunique = plotutil.getlegendbreak('polygon', **kwargs)
         super(Rectangle, self).__init__(shape, legend)

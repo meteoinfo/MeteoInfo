@@ -142,6 +142,17 @@ public class Coordinate implements Comparable<Coordinate>,  Cloneable{
         this.z = z;
         this.m = m;
     }
+
+    /**
+     *  Sets this <code>Coordinate</code>s (x,y,z) values to that of <code>other</code>.
+     *
+     *@param  other  the <code>Coordinate</code> to copy
+     */
+    public void setCoordinate(Coordinate other) {
+        x = other.x;
+        y = other.y;
+        z = other.getZ();
+    }
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
     /**

@@ -4,7 +4,7 @@ import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.colors.ColorMap;
 import org.meteoinfo.geometry.legend.LegendFactory;
 import org.meteoinfo.geometry.legend.LegendScheme;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 
 import java.awt.*;
 
@@ -102,7 +102,7 @@ public class ScalarMappable {
      */
     public LegendScheme toLegendScheme(double min, double max) {
         if (min == max) {
-            return LegendFactory.createSingleSymbolLegendScheme(ShapeTypes.IMAGE);
+            return LegendFactory.createSingleSymbolLegendScheme(GeometryType.IMAGE);
         }
 
         double[] values = MIMath.getIntervalValues(min, max);
@@ -113,7 +113,7 @@ public class ScalarMappable {
             colors[i] = getColor(values[i - 1]);
         }
 
-        LegendScheme ls = LegendFactory.createGraduatedLegendScheme(values, colors, ShapeTypes.IMAGE, min, max);
+        LegendScheme ls = LegendFactory.createGraduatedLegendScheme(values, colors, GeometryType.IMAGE, min, max);
         ls.setColorMap(colorMap);
         ls.setNormalize(normalize);
         return ls;
@@ -128,7 +128,7 @@ public class ScalarMappable {
      */
     public LegendScheme toLegendScheme(double min, double max, int n) {
         if (min == max) {
-            return LegendFactory.createSingleSymbolLegendScheme(ShapeTypes.IMAGE);
+            return LegendFactory.createSingleSymbolLegendScheme(GeometryType.IMAGE);
         }
 
         double[] values = MIMath.getIntervalValues(min, max, n);
@@ -138,7 +138,7 @@ public class ScalarMappable {
             colors[i] = getColor(values[i - 1]);
         }
 
-        LegendScheme ls = LegendFactory.createGraduatedLegendScheme(values, colors, ShapeTypes.IMAGE, min, max);
+        LegendScheme ls = LegendFactory.createGraduatedLegendScheme(values, colors, GeometryType.IMAGE, min, max);
         ls.setColorMap(colorMap);
         ls.setNormalize(normalize);
         return ls;

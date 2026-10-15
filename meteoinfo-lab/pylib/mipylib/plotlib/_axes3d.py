@@ -12,7 +12,7 @@ from org.meteoinfo.chart import ChartText3D
 from org.meteoinfo.chart.axis import Axis, LonLatAxis, TimeAxis, LogAxis
 from org.meteoinfo.geo.io import GraphicUtil
 from org.meteoinfo.geometry.legend import BreakTypes, PolylineBreak, LegendManage
-from org.meteoinfo.geometry.shape import ShapeTypes
+from org.meteoinfo.geometry import GeometryType
 from org.meteoinfo.chart.graphic import Graphic
 from org.meteoinfo.geo.layer import LayerTypes
 
@@ -1108,7 +1108,7 @@ class Axes3D(Axes):
                     ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
             else:
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
-            ls = ls.convertTo(ShapeTypes.POLYLINE)
+            ls = ls.convertTo(GeometryType.LINESTRING)
             plotutil.setlegendscheme(ls, **kwargs)
             graphics = GraphicFactory.createWireframe(x.asarray(), y.asarray(), z.asarray(), ls)
 
@@ -1163,7 +1163,7 @@ class Axes3D(Axes):
                     ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
             else:    
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
-            ls = ls.convertTo(ShapeTypes.POLYLINE)
+            ls = ls.convertTo(GeometryType.LINESTRING)
             plotutil.setlegendscheme(ls, **kwargs)
             graphics = GraphicFactory.createWireframe(x.asarray(), y.asarray(), z.asarray(), ls)
         
@@ -1211,7 +1211,7 @@ class Axes3D(Axes):
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
         else:
             ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
-        ls = ls.convertTo(ShapeTypes.POLYGON)
+        ls = ls.convertTo(GeometryType.POLYGON)
         edge = kwargs.pop('edge', True)
         kwargs['edge'] = edge
         plotutil.setlegendscheme(ls, **kwargs)
@@ -1261,7 +1261,7 @@ class Axes3D(Axes):
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
         else:    
             ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
-        ls = ls.convertTo(ShapeTypes.POLYGON)
+        ls = ls.convertTo(GeometryType.POLYGON)
         edge = kwargs.pop('edge', True)
         kwargs['edge'] = edge
         plotutil.setlegendscheme(ls, **kwargs)
@@ -1324,7 +1324,7 @@ class Axes3D(Axes):
                 ls = LegendManage.createLegendScheme(a.min(), a.max(), level_arg, cmap)
         else:    
             ls = LegendManage.createLegendScheme(a.min(), a.max(), cmap)
-        ls = ls.convertTo(ShapeTypes.POLYLINE)
+        ls = ls.convertTo(GeometryType.LINESTRING)
         plotutil.setlegendscheme(ls, **kwargs)
         
         smooth = kwargs.pop('smooth', True)
@@ -1398,7 +1398,7 @@ class Axes3D(Axes):
                 ls = LegendManage.createLegendScheme(z.min(), z.max(), level_arg, cmap)
         else:
             ls = LegendManage.createLegendScheme(z.min(), z.max(), cmap)
-        ls = ls.convertTo(ShapeTypes.POLYLINE)
+        ls = ls.convertTo(GeometryType.LINESTRING)
         plotutil.setlegendscheme(ls, **kwargs)
 
         smooth = kwargs.pop('smooth', False)
@@ -1466,7 +1466,7 @@ class Axes3D(Axes):
                 ls = LegendManage.createLegendScheme(a.min(), a.max(), level_arg, cmap)
         else:    
             ls = LegendManage.createLegendScheme(a.min(), a.max(), cmap)
-        ls = ls.convertTo(ShapeTypes.POLYGON)
+        ls = ls.convertTo(GeometryType.POLYGON)
         if not kwargs.has_key('edgecolor'):
             kwargs['edgecolor'] = None
         plotutil.setlegendscheme(ls, **kwargs)
@@ -1575,7 +1575,7 @@ class Axes3D(Axes):
                     ls = LegendManage.createImageLegend(arr._array, level_arg, cmap)
             else:
                 ls = plotutil.getlegendscheme(args, arr.min(), arr.max(), **kwargs)
-            ls = ls.convertTo(ShapeTypes.IMAGE)
+            ls = ls.convertTo(GeometryType.IMAGE)
             plotutil.setlegendscheme(ls, **kwargs)
             if zdir == 'xy':
                 sepoint = kwargs.pop('sepoint', [0,0,1,1])
@@ -1654,7 +1654,7 @@ class Axes3D(Axes):
                     c = cmap.getColor(0)
                 else:
                     c = Color.black
-                ls = LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, c, 10)
+                ls = LegendManage.createSingleSymbolLegendScheme(GeometryType.POINT, c, 10)
             ls = plotutil.setlegendscheme_point(ls, **kwargs)
         
         if not cdata is None:

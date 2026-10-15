@@ -25,7 +25,7 @@ import org.meteoinfo.geo.mapdata.ShapeFileType;
 import org.meteoinfo.geometry.colors.Normalize;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.LegendType;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 import java.awt.Color;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -341,7 +341,7 @@ public class RasterLayer extends ImageLayer {
         BufferedImage image = this.getImageFromGridData(_gridData, colors);
         this.setImage(image);
 
-        LegendScheme ls = new LegendScheme(ShapeTypes.IMAGE);
+        LegendScheme ls = new LegendScheme(GeometryType.IMAGE);
         ls.importFromPaletteFile_Unique(aFile);
         this.setLegendScheme(ls);
     }

@@ -574,8 +574,12 @@ def full(shape, fill_value, dtype=None):
         shapelist.append(shape)
     else:
         shapelist = shape
+
     if isinstance(dtype, basestring):
-        dtype = _dtype.DataType.from_char(dtype)._dtype
+        dtype = _dtype.DataType(dtype)
+
+    if dtype is not None:
+        dtype = dtype._dtype
 
     if isinstance(fill_value, (list, tuple)):
         fill_value = array(fill_value)

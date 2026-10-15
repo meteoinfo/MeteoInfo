@@ -17,13 +17,10 @@ import org.meteoinfo.common.*;
 import org.meteoinfo.chart.graphic.GeoGraphicCollection;
 import org.meteoinfo.geo.mapdata.ShapeFileManage;
 import org.meteoinfo.geo.mapdata.ShapeFileType;
-import org.meteoinfo.geometry.Extent;
-import org.meteoinfo.geometry.GeometryUtil;
-import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.*;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.common.colors.ColorUtil;
-import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.table.*;
 import org.meteoinfo.ndarray.DataType;
@@ -52,7 +49,6 @@ import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.operation.union.CascadedPolygonUnion;
 import org.meteoinfo.geo.legend.LegendManage;
@@ -77,7 +73,7 @@ public class VectorLayer extends MapLayer {
     // <editor-fold desc="Variables">
     //private final boolean _isEditing;
     private boolean _avoidCollision;
-    private List<Shape> shapes;
+    private List<Geometry> shapes;
     private AttributeTable _attributeTable;
     private LabelSet _labelSet;
     private List<Graphic> _labelPoints;
@@ -86,14 +82,14 @@ public class VectorLayer extends MapLayer {
     //private int _numFields;
     private int _identiferShape;
     private float _drawingZoom = 1.0f;
-    private List<Shape> _originShapes = null;
+    private List<Geometry> _originShapes = null;
     private AttributeTable _originAttributeTable = null;
     private List<Graphic> _originLabelPoints = null;
     private List<ChartGraphic> _originChartPoints = null;
     private ProjectionInfo originProjInfo = null;
     private boolean _projected = false;
     private boolean editing = false;
-    private Shape editingShape;
+    private Geometry editingShape;
     private final UndoManager undoManager = new UndoManager();
     // </editor-fold>
 
@@ -162,7 +158,7 @@ public class VectorLayer extends MapLayer {
      *
      * @return Shape list
      */
-    public List<? extends Shape> getShapes() {
+    public List<? extends Geometry> getShapes() {
         return shapes;
     }
 
@@ -171,8 +167,8 @@ public class VectorLayer extends MapLayer {
      *
      * @param shapes Shape list
      */
-    public void setShapes(List<? extends Shape> shapes) {
-        this.shapes = (List<Shape>) shapes;
+    public void setShapes(List<? extends Geometry> shapes) {
+        this.shapes = (List<Geometry>) shapes;
     }
 
     /**
@@ -418,7 +414,7 @@ public class VectorLayer extends MapLayer {
      *
      * @return Editing shape
      */
-    public Shape getEditingShape() {
+    public Geometry getEditingShape() {
         return editingShape;
     }
 
@@ -427,9 +423,9 @@ public class VectorLayer extends MapLayer {
      *
      * @param value The shape
      */
-    public void setEditingShape(Shape value) {
+    public void setEditingShape(Geometry value) {
         editingShape = value;
-        for (Shape shape : shapes) {
+        for (Geometry shape : shapes) {
             shape.setEditing(false);
         }
         editingShape.setEditing(true);
@@ -463,7 +459,7 @@ public class VectorLayer extends MapLayer {
      * Add charts
      */
     public void addCharts() {
-        List<Shape> shapeList = new ArrayList<>(this.shapes);
+        List<Geometry> shapeList = new ArrayList<>(this.shapes);
         int shapeIdx = -1;
         Coordinate aPoint = new Coordinate();
 
@@ -472,7 +468,7 @@ public class VectorLayer extends MapLayer {
         if (selShapeIdx.isEmpty()) {
             isShapeSel = false;
         }
-        for (Shape aShape : shapeList) {
+        for (Geometry aShape : shapeList) {
             shapeIdx += 1;
             if (isShapeSel) {
                 if (!aShape.isSelected()) {
@@ -480,18 +476,18 @@ public class VectorLayer extends MapLayer {
                 }
             }
 
-            PointShape aPS = new PointShape();
+            Point aPS = new Point();
             switch (this.getShapeType()) {
                 case POINT:
                 case POINT_M:
                 case POINT_Z:
-                    aPS.setPoint((Coordinate) ((PointShape) aShape).getPoint().clone());
+                    aPS.setCoordinate((Coordinate) ((Point) aShape).getCoordinate().clone());
                     break;
                 case POLYLINE:
                 case POLYLINE_M:
                 case POLYLINE_Z:
-                    int pIdx = ((PolylineShape) aShape).getPoints().size() / 2;
-                    aPS.setPoint((Coordinate) ((PolylineShape) aShape).getPoints().get(pIdx - 1).clone());
+                    int pIdx = ((MultiLineString) aShape).getCoordinates().size() / 2;
+                    aPS.setCoordinate((Coordinate) ((MultiLineString) aShape).getCoordinates().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                 case POLYGON_M:
@@ -499,7 +495,7 @@ public class VectorLayer extends MapLayer {
                     Extent aExtent = aShape.getExtent();
                     aPoint.x = (aExtent.minX + aExtent.maxX) / 2;
                     aPoint.y = (aExtent.minY + aExtent.maxY) / 2;
-                    aPS.setPoint(aPoint);
+                    aPS.setCoordinate(aPoint);
                     break;
             }
 
@@ -626,7 +622,7 @@ public class VectorLayer extends MapLayer {
      * @param idx Shape index
      * @return Shape
      */
-    public Shape getShape(int idx) {
+    public Geometry getShape(int idx) {
         return this.shapes.get(idx);
     }
 
@@ -635,7 +631,7 @@ public class VectorLayer extends MapLayer {
      *
      * @param aShape Shape
      */
-    public void addShape(Shape aShape) {
+    public void addShape(Geometry aShape) {
         shapes.add(aShape);
         updateLayerExtent(aShape);
     }
@@ -646,8 +642,8 @@ public class VectorLayer extends MapLayer {
      * @param other Another shape
      * @return Result shape
      */
-    public Shape findShape_contains(Shape other) {
-        for (Shape s : this.shapes) {
+    public Geometry findShape_contains(Geometry other) {
+        for (Geometry s : this.shapes) {
             if (s.contains(other)) {
                 return s;
             }
@@ -662,8 +658,8 @@ public class VectorLayer extends MapLayer {
      * @param other Another shape
      * @return Result shape
      */
-    public Shape findShape_crosses(Shape other) {
-        for (Shape s : this.shapes) {
+    public Geometry findShape_crosses(Geometry other) {
+        for (Geometry s : this.shapes) {
             if (s.crosses(other)) {
                 return s;
             }
@@ -678,18 +674,18 @@ public class VectorLayer extends MapLayer {
      * @param other The polyline shape
      * @return Result shape
      */
-    public Shape findReformShape(PolylineShape other) {
+    public Geometry findReformShape(MultiLineString other) {
         if (this.getShapeType().isLine()) {
             return this.findShape_crosses(other);
         } else if (this.getShapeType().isPolygon()) {
-            PointShape a = new PointShape();
-            a.setPoint(other.getPoints().get(0));
-            PolygonShape r = (PolygonShape) this.findShape_contains(a);
+            Point a = new Point();
+            a.setCoordinate(other.getCoordinates().get(0));
+            MultiPolygon r = (MultiPolygon) this.findShape_contains(a);
             if (r == null) {
                 return null;
             } else {
-                PointShape b = new PointShape();
-                b.setPoint(other.getPoints().get(other.getPointNum() - 1));
+                Point b = new Point();
+                b.setCoordinate(other.getCoordinates().get(other.getNumPoints() - 1));
                 if (r.contains(b)) {
                     return r;
                 } else {
@@ -729,7 +725,7 @@ public class VectorLayer extends MapLayer {
      * @param isSingleSel If just select one shape
      * @return Selected shapes
      */
-    public List<Integer> selectShapes(Extent aExtent, List<Shape> shapes, boolean isSingleSel) {
+    public List<Integer> selectShapes(Extent aExtent, List<Geometry> shapes, boolean isSingleSel) {
         List<Integer> selectedShapes = new ArrayList<>();
         int i, j;
         Coordinate sp = aExtent.getCenterPoint();
@@ -743,8 +739,8 @@ public class VectorLayer extends MapLayer {
             case WEATHER_SYMBOL:
             case STATION_MODEL:
                 for (i = 0; i < shapes.size(); i++) {
-                    PointShape aPS = (PointShape) shapes.get(i);
-                    if (aExtent.contains(aPS.getPoint())) {
+                    Point aPS = (Point) shapes.get(i);
+                    if (aExtent.contains(aPS.getCoordinate())) {
                         selectedShapes.add(shapes.indexOf(aPS));
                         if (isSingleSel) {
                             break;
@@ -758,7 +754,7 @@ public class VectorLayer extends MapLayer {
                 Object sel;
                 List<Double> dislist = new ArrayList<>();
                 for (i = 0; i < shapes.size(); i++) {
-                    PolylineShape aPLS = (PolylineShape) shapes.get(i);
+                    MultiLineString aPLS = (MultiLineString) shapes.get(i);
                     if (GeometryUtil.isExtentCross(aExtent, aPLS.getExtent())) {
                         sel = GeoComputation.selectPolylineShape(sp, aPLS, aExtent.getWidth() / 2);
                         if (sel != null) {
@@ -785,7 +781,7 @@ public class VectorLayer extends MapLayer {
             case POLYGON_M:
             case POLYGON_Z:
                 for (i = shapes.size() - 1; i >= 0; i--) {
-                    PolygonShape aPGS = (PolygonShape) shapes.get(i);
+                    MultiPolygon aPGS = (MultiPolygon) shapes.get(i);
                     if (isSingleSel) {
                         if (GeoComputation.pointInPolygon(aPGS, sp)) {
                             selectedShapes.add(shapes.indexOf(aPGS));
@@ -814,11 +810,11 @@ public class VectorLayer extends MapLayer {
      * @param polygonShape The polygon shape
      * @return Selected shape indexes
      */
-    public List<Integer> selectShapes(PolygonShape polygonShape) {
+    public List<Integer> selectShapes(MultiPolygon polygonShape) {
         List<Integer> selIdxs = new ArrayList<>();
         for (int i = 0; i < shapes.size(); i++) {
             boolean isIn = false;
-            List<Coordinate> points = shapes.get(i).getPoints();
+            List<Coordinate> points = shapes.get(i).getCoordinates();
             for (Coordinate aPoint : points) {
                 if (GeoComputation.pointInPolygon(polygonShape, aPoint)) {
                     isIn = true;
@@ -911,11 +907,11 @@ public class VectorLayer extends MapLayer {
      * @param p The point
      * @return Selected shape
      */
-    public Shape selectShape(Coordinate p) {
+    public Geometry selectShape(Coordinate p) {
         org.locationtech.jts.geom.Coordinate c = new org.locationtech.jts.geom.Coordinate(p.x, p.y);
-        Geometry point = new GeometryFactory().createPoint(c);
-        for (Shape shape : shapes) {
-            if (point.within(shape.toGeometry())) {
+        org.locationtech.jts.geom.Geometry point = new GeometryFactory().createPoint(c);
+        for (Geometry shape : shapes) {
+            if (point.within(shape.toJTSGeometry())) {
                 return shape;
             }
         }
@@ -929,9 +925,9 @@ public class VectorLayer extends MapLayer {
      * @return PolygonShape and polygon hole index
      */
     public Object[] selectPolygonHole(Coordinate p) {
-        for (Shape shape : shapes) {
+        for (Geometry shape : shapes) {
             int i = 0;
-            for (Polygon poly : ((PolygonShape) shape).getPolygons()) {
+            for (Polygon poly : ((MultiPolygon) shape).getPolygons()) {
                 if (poly.hasHole()) {
                     if (GeoComputation.pointInPolygon(poly.getOutLine(), p)) {
                         int j = 0;
@@ -958,7 +954,7 @@ public class VectorLayer extends MapLayer {
         List<DataRow> rows = this.getDataRows();
         List<DataRow> selRows = new ArrayList<>();
         int i = 0;
-        for (Shape shape : shapes) {
+        for (Geometry shape : shapes) {
             if (shape.isSelected()) {
                 selRows.add(rows.get(i));
             }
@@ -973,9 +969,9 @@ public class VectorLayer extends MapLayer {
      *
      * @return Selected shapes
      */
-    public List<? extends Shape> getSelectedShapes() {
-        List<Shape> selShapes = new ArrayList<>();
-        for (Shape shape : shapes) {
+    public List<? extends Geometry> getSelectedShapes() {
+        List<Geometry> selShapes = new ArrayList<>();
+        for (Geometry shape : shapes) {
             if (shape.isSelected()) {
                 selShapes.add(shape);
             }
@@ -1005,9 +1001,9 @@ public class VectorLayer extends MapLayer {
      *
      * @return The visible shapes
      */
-    public List<Shape> getVisibleShapes() {
-        List<Shape> visShapes = new ArrayList<>();
-        for (Shape shape : shapes) {
+    public List<Geometry> getVisibleShapes() {
+        List<Geometry> visShapes = new ArrayList<>();
+        for (Geometry shape : shapes) {
             if (shape.isVisible()) {
                 visShapes.add(shape);
             }
@@ -1020,7 +1016,7 @@ public class VectorLayer extends MapLayer {
      * Clear selected shapes
      */
     public void clearSelectedShapes() {
-        for (Shape aShape : shapes) {
+        for (Geometry aShape : shapes) {
             if (aShape.isSelected()) {
                 aShape.setSelected(false);
             }
@@ -1033,7 +1029,7 @@ public class VectorLayer extends MapLayer {
      * @return Boolean
      */
     public boolean hasSelectedShapes() {
-        for (Shape shape : shapes) {
+        for (Geometry shape : shapes) {
             if (shape.isSelected()) {
                 return true;
             }
@@ -1332,7 +1328,7 @@ public class VectorLayer extends MapLayer {
      * @return If success
      * @throws Exception
      */
-    public boolean editInsertShape(Shape aShape, int position) throws Exception {
+    public boolean editInsertShape(Geometry aShape, int position) throws Exception {
         if (position < 0) {
             position = 0;
         } else if (position > shapes.size()) {
@@ -1355,7 +1351,7 @@ public class VectorLayer extends MapLayer {
      * @return If success
      * @throws Exception
      */
-    public boolean editInsertShape(Shape aShape, int position, DataRow record) throws Exception {
+    public boolean editInsertShape(Geometry aShape, int position, DataRow record) throws Exception {
         if (position < 0) {
             position = 0;
         } else if (position > shapes.size()) {
@@ -1376,7 +1372,7 @@ public class VectorLayer extends MapLayer {
      * @return If success
      * @throws Exception
      */
-    public boolean editAddShape(Shape aShape) throws Exception {
+    public boolean editAddShape(Geometry aShape) throws Exception {
         int pos = shapes.size();
         return this.editInsertShape(aShape, pos);
     }
@@ -1388,7 +1384,7 @@ public class VectorLayer extends MapLayer {
      * @param fieldValues Field values
      * @throws Exception
      */
-    public void editAddShape(Shape aShape, List<Object> fieldValues) throws Exception {
+    public void editAddShape(Geometry aShape, List<Object> fieldValues) throws Exception {
         int pos = shapes.size();
         this.editInsertShape(aShape, pos);
         for (int i = 0; i < this.getFieldNumber(); i++) {
@@ -1401,7 +1397,7 @@ public class VectorLayer extends MapLayer {
      *
      * @param shape The shape
      */
-    public void editRemoveShape(Shape shape) {
+    public void editRemoveShape(Geometry shape) {
         int idx = this.shapes.indexOf(shape);
         if (idx >= 0) {
             this.shapes.remove(shape);
@@ -1420,7 +1416,7 @@ public class VectorLayer extends MapLayer {
         }
     }
 
-    private void updateLayerExtent(Shape aShape) {
+    private void updateLayerExtent(Geometry aShape) {
         if (this.getShapeNum() == 1) {
             this.setExtent((Extent) aShape.getExtent().clone());
         } else {
@@ -1508,35 +1504,35 @@ public class VectorLayer extends MapLayer {
      * @return Bufferred layer
      */
     public VectorLayer buffer(double distance, boolean onlySel, boolean isMerge) {
-        List<Shape> shapes = new ArrayList<>();
+        List<Geometry> shapes = new ArrayList<>();
         if (onlySel) {
-            for (Shape aShape : this.shapes) {
+            for (Geometry aShape : this.shapes) {
                 if (aShape.isSelected()) {
                     shapes.add(aShape);
                 }
             }
         } else {
-            shapes = (List<Shape>) this.shapes;
+            shapes = (List<Geometry>) this.shapes;
         }
 
         VectorLayer newLayer = new VectorLayer(ShapeFileType.POLYGON);
         newLayer.setProjInfo(this.getProjInfo());
 
         if (isMerge) {
-            List<Geometry> bgeos = new ArrayList<>();
-            for (Shape shape : shapes) {
-                bgeos.add(shape.toGeometry().buffer(distance));
+            List<org.locationtech.jts.geom.Geometry> bgeos = new ArrayList<>();
+            for (Geometry shape : shapes) {
+                bgeos.add(shape.toJTSGeometry().buffer(distance));
             }
-            Geometry mbgeo = CascadedPolygonUnion.union(bgeos);
-            Shape bShape = new PolygonShape(mbgeo);
+            org.locationtech.jts.geom.Geometry mbgeo = CascadedPolygonUnion.union(bgeos);
+            Geometry bShape = new MultiPolygon(mbgeo);
             try {
                 newLayer.editAddShape(bShape);
             } catch (Exception ex) {
                 Logger.getLogger(VectorLayer.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-            for (Shape aShape : shapes) {
-                Shape bShape = aShape.buffer(distance);
+            for (Geometry aShape : shapes) {
+                Geometry bShape = aShape.buffer(distance);
                 try {
                     newLayer.editAddShape(bShape);
                 } catch (Exception ex) {
@@ -1556,44 +1552,44 @@ public class VectorLayer extends MapLayer {
      * @return Result layer
      */
     public VectorLayer convexhull(boolean onlySel, boolean isMerge) {
-        List<Shape> shapes = new ArrayList<>();
+        List<Geometry> shapes = new ArrayList<>();
         if (onlySel) {
-            for (Shape aShape : this.shapes) {
+            for (Geometry aShape : this.shapes) {
                 if (aShape.isSelected()) {
                     shapes.add(aShape);
                 }
             }
         } else {
-            shapes = (List<Shape>) this.shapes;
+            shapes = (List<Geometry>) this.shapes;
         }
 
         VectorLayer newLayer = new VectorLayer(ShapeFileType.POLYGON);
         newLayer.setProjInfo(this.getProjInfo());
 
         if (shapes.size() == 1) {
-            Shape rshape = shapes.get(0).convexHull();
+            Geometry rshape = shapes.get(0).convexHull();
             try {
                 newLayer.editAddShape(rshape);
             } catch (Exception ex) {
                 Logger.getLogger(VectorLayer.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else if (isMerge) {
-            Geometry[] geos = new Geometry[shapes.size()];
+            org.locationtech.jts.geom.Geometry[] geos = new org.locationtech.jts.geom.Geometry[shapes.size()];
             for (int i = 0; i < geos.length; i++) {
-                geos[i] = shapes.get(i).toGeometry();
+                geos[i] = shapes.get(i).toJTSGeometry();
             }
             GeometryFactory factory = new GeometryFactory();
-            Geometry gs = factory.createGeometryCollection(geos);
-            Geometry ch = gs.convexHull();
-            Shape rshape = new PolygonShape(ch);
+            org.locationtech.jts.geom.Geometry gs = factory.createGeometryCollection(geos);
+            org.locationtech.jts.geom.Geometry ch = gs.convexHull();
+            Geometry rshape = new MultiPolygon(ch);
             try {
                 newLayer.editAddShape(rshape);
             } catch (Exception ex) {
                 Logger.getLogger(VectorLayer.class.getName()).log(Level.SEVERE, null, ex);
             }
         } else {
-            for (Shape shape : shapes) {
-                Shape rshape = shape.convexHull();
+            for (Geometry shape : shapes) {
+                Geometry rshape = shape.convexHull();
                 try {
                     newLayer.editAddShape(rshape);
                 } catch (Exception ex) {
@@ -1623,15 +1619,15 @@ public class VectorLayer extends MapLayer {
      * @return Clipped result layer
      */
     public VectorLayer clip(VectorLayer clipLayer, boolean onlySel) {
-        List<PolygonShape> shapes = new ArrayList<>();
+        List<MultiPolygon> shapes = new ArrayList<>();
         if (onlySel) {
-            for (Shape aShape : clipLayer.getShapes()) {
+            for (Geometry aShape : clipLayer.getShapes()) {
                 if (aShape.isSelected()) {
-                    shapes.add((PolygonShape) aShape);
+                    shapes.add((MultiPolygon) aShape);
                 }
             }
         } else {
-            shapes = (List<PolygonShape>) clipLayer.getShapes();
+            shapes = (List<MultiPolygon>) clipLayer.getShapes();
         }
 
         return this.clip(shapes);
@@ -1643,7 +1639,7 @@ public class VectorLayer extends MapLayer {
      * @param clipPolys Clipping polygons
      * @return Clipped result layer
      */
-    public VectorLayer clip(List<PolygonShape> clipPolys) {
+    public VectorLayer clip(List<MultiPolygon> clipPolys) {
         VectorLayer newLayer = (VectorLayer) this.cloneValue();
         DataTable aTable = new DataTable();
         for (DataColumn aDC : this.getAttributeTable().getTable().getColumns()) {
@@ -1651,12 +1647,12 @@ public class VectorLayer extends MapLayer {
             aTable.getColumns().add(bDC);
         }
 
-        newLayer.setShapes(new ArrayList<Shape>());
-        for (PolygonShape aPGS : clipPolys) {
+        newLayer.setShapes(new ArrayList<Geometry>());
+        for (MultiPolygon aPGS : clipPolys) {
             for (int i = 0; i < this.getShapeNum(); i++) {
-                Shape bShape = this.getShapes().get(i);
+                Geometry bShape = this.getShapes().get(i);
                 DataRow aDR = this.getAttributeTable().getTable().getRows().get(i);
-                Shape clipShape = bShape.intersection(aPGS);
+                Geometry clipShape = bShape.intersection(aPGS);
                 if (clipShape != null) {
                     newLayer.addShape(clipShape);
                     try {
@@ -1681,7 +1677,7 @@ public class VectorLayer extends MapLayer {
      * @param clipPolys Clipping polygons
      * @return Clipped result layer
      */
-    public VectorLayer clip_bak(List<PolygonShape> clipPolys) {
+    public VectorLayer clip_bak(List<MultiPolygon> clipPolys) {
         VectorLayer newLayer = (VectorLayer) this.cloneValue();
         DataTable aTable = new DataTable();
         for (DataColumn aDC : this.getAttributeTable().getTable().getColumns()) {
@@ -1689,13 +1685,13 @@ public class VectorLayer extends MapLayer {
             aTable.getColumns().add(bDC);
         }
 
-        newLayer.setShapes(new ArrayList<Shape>());
-        for (PolygonShape aPGS : clipPolys) {
+        newLayer.setShapes(new ArrayList<Geometry>());
+        for (MultiPolygon aPGS : clipPolys) {
             for (int i = 0; i < this.getShapeNum(); i++) {
-                Shape bShape = this.getShapes().get(i);
+                Geometry bShape = this.getShapes().get(i);
                 DataRow aDR = this.getAttributeTable().getTable().getRows().get(i);
                 for (Polygon aPolygon : aPGS.getPolygons()) {
-                    Shape clipShape = GeoComputation.clipShape(bShape, aPolygon.getOutLine());
+                    Geometry clipShape = GeoComputation.clipShape(bShape, aPolygon.getOutLine());
                     if (clipShape != null) {
                         newLayer.addShape(clipShape);
                         try {
@@ -1724,14 +1720,14 @@ public class VectorLayer extends MapLayer {
      * @return Result layer
      */
     public VectorLayer intersection(VectorLayer ilayer, boolean onlySel, boolean onlySelOther) {
-        List<PolygonShape> ishapes = new ArrayList<>();
+        List<MultiPolygon> ishapes = new ArrayList<>();
         if (onlySelOther) {
-            for (Shape shape : ilayer.getSelectedShapes()) {
-                ishapes.add((PolygonShape) shape);
+            for (Geometry shape : ilayer.getSelectedShapes()) {
+                ishapes.add((MultiPolygon) shape);
             }
         } else {
-            for (Shape shape : ilayer.getShapes()) {
-                ishapes.add((PolygonShape) shape);
+            for (Geometry shape : ilayer.getShapes()) {
+                ishapes.add((MultiPolygon) shape);
             }
         }
 
@@ -1745,7 +1741,7 @@ public class VectorLayer extends MapLayer {
      * @param onlySel Only selected shapes
      * @return Result layer
      */
-    public VectorLayer intersection(List<PolygonShape> clipPolys, boolean onlySel) {
+    public VectorLayer intersection(List<MultiPolygon> clipPolys, boolean onlySel) {
         VectorLayer newLayer = (VectorLayer) this.cloneValue();
         DataTable aTable = new DataTable();
         for (DataColumn aDC : this.getAttributeTable().getTable().getColumns()) {
@@ -1753,14 +1749,14 @@ public class VectorLayer extends MapLayer {
             aTable.getColumns().add(bDC);
         }
 
-        newLayer.setShapes(new ArrayList<Shape>());
+        newLayer.setShapes(new ArrayList<Geometry>());
         for (int i = 0; i < this.getShapeNum(); i++) {
-            Shape bShape = this.getShapes().get(i);
+            Geometry bShape = this.getShapes().get(i);
             if (onlySel) {
                 if (bShape.isSelected()) {
                     DataRow aDR = this.getAttributeTable().getTable().getRows().get(i);
-                    for (PolygonShape aPGS : clipPolys) {
-                        Shape clipShape = bShape.intersection(aPGS);
+                    for (MultiPolygon aPGS : clipPolys) {
+                        Geometry clipShape = bShape.intersection(aPGS);
                         if (clipShape != null) {
                             newLayer.addShape(clipShape);
                             try {
@@ -1773,8 +1769,8 @@ public class VectorLayer extends MapLayer {
                 }
             } else {
                 DataRow aDR = this.getAttributeTable().getTable().getRows().get(i);
-                for (PolygonShape aPGS : clipPolys) {
-                    Shape clipShape = bShape.intersection(aPGS);
+                for (MultiPolygon aPGS : clipPolys) {
+                    Geometry clipShape = bShape.intersection(aPGS);
                     if (clipShape != null) {
                         newLayer.addShape(clipShape);
                         try {
@@ -1801,16 +1797,16 @@ public class VectorLayer extends MapLayer {
      * @param onlySel Only selected shapes
      * @return Result layer
      */
-    public VectorLayer difference(List<PolygonShape> clipPolys, boolean onlySel) {
+    public VectorLayer difference(List<MultiPolygon> clipPolys, boolean onlySel) {
         VectorLayer newLayer = (VectorLayer) this.cloneValue();
         DataTable aTable = new DataTable();
         for (DataColumn aDC : this.getAttributeTable().getTable().getColumns()) {
             Field bDC = new Field(aDC.getColumnName(), aDC.getDataType());
             aTable.getColumns().add(bDC);
         }
-        List<Shape> shapes;
+        List<Geometry> shapes;
         if (onlySel) {
-            shapes = (List<Shape>) this.getSelectedShapes();
+            shapes = (List<Geometry>) this.getSelectedShapes();
         } else {
             shapes = this.shapes;
         }
@@ -1821,12 +1817,12 @@ public class VectorLayer extends MapLayer {
             dataRows = this.getDataRows();
         }
 
-        newLayer.setShapes(new ArrayList<Shape>());
+        newLayer.setShapes(new ArrayList<Geometry>());
         boolean isNull;
         for (int i = 0; i < shapes.size(); i++) {
-            Shape bShape = shapes.get(i);
+            Geometry bShape = shapes.get(i);
             DataRow dataRow = dataRows.get(i);
-            Shape clipShape = bShape.difference(clipPolys.get(0));
+            Geometry clipShape = bShape.difference(clipPolys.get(0));
             isNull = clipShape == null;
             if (!isNull) {
                 if (clipPolys.size() > 1) {
@@ -1870,16 +1866,16 @@ public class VectorLayer extends MapLayer {
      * @param onlySel Only selected shapes
      * @return Result layer
      */
-    public VectorLayer symDifference(List<PolygonShape> clipPolys, boolean onlySel) {
+    public VectorLayer symDifference(List<MultiPolygon> clipPolys, boolean onlySel) {
         VectorLayer newLayer = (VectorLayer) this.cloneValue();
         DataTable aTable = new DataTable();
         for (DataColumn aDC : this.getAttributeTable().getTable().getColumns()) {
             Field bDC = new Field(aDC.getColumnName(), aDC.getDataType());
             aTable.getColumns().add(bDC);
         }
-        List<Shape> shapes;
+        List<Geometry> shapes;
         if (onlySel) {
-            shapes = (List<Shape>) this.getSelectedShapes();
+            shapes = (List<Geometry>) this.getSelectedShapes();
         } else {
             shapes = this.shapes;
         }
@@ -1890,12 +1886,12 @@ public class VectorLayer extends MapLayer {
             dataRows = this.getDataRows();
         }
 
-        newLayer.setShapes(new ArrayList<Shape>());
+        newLayer.setShapes(new ArrayList<Geometry>());
         boolean isNull;
         for (int i = 0; i < shapes.size(); i++) {
-            Shape bShape = shapes.get(i);
+            Geometry bShape = shapes.get(i);
             DataRow dataRow = dataRows.get(i);
-            Shape clipShape = bShape.difference(clipPolys.get(0));
+            Geometry clipShape = bShape.difference(clipPolys.get(0));
             isNull = clipShape == null;
             if (!isNull) {
                 if (clipPolys.size() > 1) {
@@ -1927,8 +1923,8 @@ public class VectorLayer extends MapLayer {
         
         newLayer.getAttributeTable().setTable(aTable);
         for (int i = 0; i < clipPolys.size(); i++) {
-            Shape bShape = clipPolys.get(i);
-            Shape clipShape = bShape.difference(shapes.get(0));
+            Geometry bShape = clipPolys.get(i);
+            Geometry clipShape = bShape.difference(shapes.get(0));
             isNull = clipShape == null;
             if (!isNull) {
                 if (shapes.size() > 1) {
@@ -2056,7 +2052,7 @@ public class VectorLayer extends MapLayer {
         if (selShapeIdx.isEmpty()) {
             isShapeSel = false;
         }
-        for (Shape aShape : shapes) {
+        for (Geometry aShape : shapes) {
             shapeIdx += 1;
             if (isShapeSel) {
                 if (!aShape.isSelected()) {
@@ -2078,18 +2074,18 @@ public class VectorLayer extends MapLayer {
                 continue;
             }
 
-            PointShape aPS = new PointShape();
+            Point aPS = new Point();
             switch (this.getShapeType()) {
                 case POINT:
                 case POINT_M:
                 case POINT_Z:
-                    aPS.setPoint((Coordinate) ((PointShape) aShape).getPoint().clone());
+                    aPS.setCoordinate((Coordinate) ((Point) aShape).getCoordinate().clone());
                     break;
                 case POLYLINE:
                 case POLYLINE_M:
                 case POLYLINE_Z:
-                    int pIdx = ((PolylineShape) aShape).getPoints().size() / 2;
-                    aPS.setPoint((Coordinate) ((PolylineShape) aShape).getPoints().get(pIdx - 1).clone());
+                    int pIdx = ((MultiLineString) aShape).getCoordinates().size() / 2;
+                    aPS.setCoordinate((Coordinate) ((MultiLineString) aShape).getCoordinates().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                 case POLYGON_M:
@@ -2098,7 +2094,7 @@ public class VectorLayer extends MapLayer {
                     aPoint = new Coordinate();
                     aPoint.x = ((aExtent.minX + aExtent.maxX) / 2);
                     aPoint.y = ((aExtent.minY + aExtent.maxY) / 2);
-                    aPS.setPoint(aPoint);
+                    aPS.setCoordinate(aPoint);
                     break;
             }
 
@@ -2181,16 +2177,16 @@ public class VectorLayer extends MapLayer {
         dFormat = "%1$." + String.valueOf(_labelSet.getDecimalDigits()) + "f";
         int shapeIdx = 0;
         String text;
-        for (Shape aShape : shapes) {
-            PolylineShape aPLS = (PolylineShape) aShape;
+        for (Geometry aShape : shapes) {
+            MultiLineString aPLS = (MultiLineString) aShape;
             Extent IExtent = aPLS.getExtent();
             if (IExtent.maxX - IExtent.minX > (sExtent.maxX - sExtent.minX) / 10
                     || IExtent.maxY - IExtent.minY > (sExtent.maxY - sExtent.minY) / 10) {
                 LabelBreak aLP = new LabelBreak();
-                int pIdx = aPLS.getPoints().size() / 2;
+                int pIdx = aPLS.getCoordinates().size() / 2;
                 //PointF aPoint = new PointF(0, 0);
-                PointShape aPS = new PointShape();
-                aPS.setPoint(aPLS.getPoints().get(pIdx - 1));
+                Point aPS = new Point();
+                aPS.setCoordinate(aPLS.getCoordinates().get(pIdx - 1));
                 if (this._labelSet.isAutoDecimal()) {
                     text = DataConvert.removeTailingZeros(getCellValue(_labelSet.getFieldName(), shapeIdx).toString());
                 } else {
@@ -2253,8 +2249,8 @@ public class VectorLayer extends MapLayer {
     public void updateOriginData() {
         _originAttributeTable = (AttributeTable) _attributeTable.clone();
         _originShapes = new ArrayList<>();
-        for (Shape aShape : shapes) {
-            _originShapes.add((Shape) aShape.clone());
+        for (Geometry aShape : shapes) {
+            _originShapes.add((Geometry) aShape.clone());
         }
 
         _originLabelPoints = new ArrayList<>(_labelPoints);
@@ -2269,8 +2265,8 @@ public class VectorLayer extends MapLayer {
     public void getOriginData() {
         _attributeTable = (AttributeTable) _originAttributeTable.clone();
         shapes = new ArrayList<>();
-        for (Shape aShape : _originShapes) {
-            shapes.add((Shape) aShape.clone());
+        for (Geometry aShape : _originShapes) {
+            shapes.add((Geometry) aShape.clone());
         }
 
         _labelPoints = _originLabelPoints;
@@ -2427,8 +2423,8 @@ public class VectorLayer extends MapLayer {
             handler.endElement("", "", "description");    //description
 
             boolean hasSelShape = this.hasSelectedShapes();
-            for (Shape shp : shapes) {
-                PolygonShape pgs = (PolygonShape) shp;
+            for (Geometry shp : shapes) {
+                MultiPolygon pgs = (MultiPolygon) shp;
                 if (hasSelShape) {
                     if (!pgs.isSelected()) {
                         continue;
@@ -2605,8 +2601,8 @@ public class VectorLayer extends MapLayer {
             handler.endElement("", "", "description");    //description
 
             boolean hasSelShape = this.hasSelectedShapes();
-            for (Shape shp : shapes) {
-                PolylineShape pgs = (PolylineShape) shp;
+            for (Geometry shp : shapes) {
+                MultiLineString pgs = (MultiLineString) shp;
                 if (hasSelShape) {
                     if (!pgs.isSelected()) {
                         continue;
@@ -2615,7 +2611,7 @@ public class VectorLayer extends MapLayer {
                 double currentLevel = pgs.getValue();
                 int levelNum = pgs.getLegendIndex();
                 int i = 0;
-                for (Polyline line : pgs.getPolylines()) {
+                for (LineString line : pgs.getPolylines()) {
                     handler.startElement("", "", "Placemark", atts);
                     handler.startElement("", "", "name", atts);
                     str = "Level " + String.valueOf(currentLevel);
@@ -2631,7 +2627,7 @@ public class VectorLayer extends MapLayer {
                     handler.endElement("", "", "styleUrl");    //styleUrl
                     handler.startElement("", "", "LineString", atts);
                     handler.startElement("", "", "coordinates", atts);
-                    for (Coordinate point : line.getPointList()) {
+                    for (Coordinate point : line.getCoordinates()) {
                         str = String.valueOf(point.x) + "," + String.valueOf(point.y);
                         str = str + "," + String.valueOf(point.z);
                         str = str + " ";
@@ -2763,8 +2759,8 @@ public class VectorLayer extends MapLayer {
 
             boolean hasSelShape = this.hasSelectedShapes();
             int shapIdx = 0;
-            for (Shape shp : shapes) {
-                PointShape pgs = (PointShape) shp;
+            for (Geometry shp : shapes) {
+                Point pgs = (Point) shp;
                 if (hasSelShape) {
                     if (!pgs.isSelected()) {
                         shapIdx += 1;
@@ -2791,8 +2787,8 @@ public class VectorLayer extends MapLayer {
                 handler.endElement("", "", "styleUrl");    //sytleUrl
                 handler.startElement("", "", "Point", atts);
                 handler.startElement("", "", "coordinates", atts);
-                str = String.valueOf(pgs.getPoint().x) + "," + String.valueOf(pgs.getPoint().y);
-                str = str + "," + String.valueOf(pgs.getPoint().z);
+                str = String.valueOf(pgs.getCoordinate().x) + "," + String.valueOf(pgs.getCoordinate().y);
+                str = str + "," + String.valueOf(pgs.getCoordinate().z);
                 handler.characters(str.toCharArray(), 0, str.length());
                 handler.endElement("", "", "coordinates");    //coordinates                    
                 handler.endElement("", "", "Point");    //Point
@@ -2840,8 +2836,8 @@ public class VectorLayer extends MapLayer {
         ColorBreak cb;
 
         if (xShift != 0) {
-            for (Shape shape : shapes) {
-                for (Coordinate p : shape.getPoints()) {
+            for (Geometry shape : shapes) {
+                for (Coordinate p : shape.getCoordinates()) {
                     p.x += xShift;
                 }
                 shape.updateExtent();
@@ -2849,16 +2845,16 @@ public class VectorLayer extends MapLayer {
         }
 
         if (this.legendScheme.isGeometry()) {
-            for (Shape shape : this.shapes) {
+            for (Geometry shape : this.shapes) {
                 ColorBreakCollection cbs = new ColorBreakCollection();
-                for (Coordinate p : (List<Coordinate>) shape.getPoints()) {
+                for (Coordinate p : (List<Coordinate>) shape.getCoordinates()) {
                     cb = legendScheme.findLegendBreak(p.z);
                     cbs.add(cb);
                 }
                 graphics.add(new Graphic(shape, cbs));
             }
         } else {
-            for (Shape shape : this.shapes) {
+            for (Geometry shape : this.shapes) {
                 if (shape.getLegendIndex() >= 0) {
                     cb = legendScheme.getLegendBreak(shape.getLegendIndex());
                     graphics.add(new Graphic(shape, cb));
@@ -2906,7 +2902,7 @@ public class VectorLayer extends MapLayer {
             case UNIQUE_VALUE:
                 int shapeIdx = 0;
                 if (this.getField(ls.getFieldName()).isNumeric()) {
-                    for (Shape aShape : this.getShapes()) {
+                    for (Geometry aShape : this.getShapes()) {
                         String vStr = this.getCellValue(ls.getFieldName(), shapeIdx).toString();
                         aShape.setLegendIndex(-1);
                         for (int i = 0; i < ls.getBreakNum(); i++) {
@@ -2919,7 +2915,7 @@ public class VectorLayer extends MapLayer {
                         shapeIdx += 1;
                     }
                 } else {
-                    for (Shape aShape : this.getShapes()) {
+                    for (Geometry aShape : this.getShapes()) {
                         String vStr = this.getCellValue(ls.getFieldName(), shapeIdx).toString();
                         aShape.setLegendIndex(-1);
                         for (int i = 0; i < ls.getBreakNum(); i++) {
@@ -2936,7 +2932,7 @@ public class VectorLayer extends MapLayer {
                 if (!ls.isGeometry()) {
                     shapeIdx = 0;
                     int idx = -1;
-                    for (Shape aShape : this.getShapes()) {
+                    for (Geometry aShape : this.getShapes()) {
                         String vStr = this.getCellValue(ls.getFieldName(), shapeIdx).toString();
                         double v = Double.parseDouble(vStr);
                         if (Double.isNaN(v))
@@ -2965,7 +2961,7 @@ public class VectorLayer extends MapLayer {
                 }
                 break;
             default:
-                for (Shape aShape : this.getShapes()) {
+                for (Geometry aShape : this.getShapes()) {
                     aShape.setLegendIndex(0);
                 }
                 break;
@@ -3092,7 +3088,7 @@ public class VectorLayer extends MapLayer {
      * @param yShift Y shift
      */
     public void move(double xShift, double yShift) {
-        for (Shape shape : this.shapes) {
+        for (Geometry shape : this.shapes) {
             shape.move(xShift, yShift);
         }
     }
@@ -3110,13 +3106,13 @@ public class VectorLayer extends MapLayer {
         aLayer.setHandle(this.getHandle());
         aLayer.setLayerName(this.getLayerName());
         if (_projected) {
-            for (Shape shape : _originShapes) {
-                aLayer.addShape((Shape) shape.clone());
+            for (Geometry shape : _originShapes) {
+                aLayer.addShape((Geometry) shape.clone());
             }
             aLayer.setAttributeTable((AttributeTable) _originAttributeTable.clone());
         } else {
-            for (Shape shape : shapes) {
-                aLayer.addShape((Shape) shape.clone());
+            for (Geometry shape : shapes) {
+                aLayer.addShape((Geometry) shape.clone());
             }
             aLayer.setAttributeTable((AttributeTable) _attributeTable.clone());
         }
@@ -3147,12 +3143,12 @@ public class VectorLayer extends MapLayer {
         aLayer.setProjInfo(this.getProjInfo());
         aLayer.setLegendScheme((LegendScheme) this.getLegendScheme().clone());
         if (_projected) {
-            for (Shape shape : _originShapes) {
-                aLayer.addShape((Shape) shape.clone());
+            for (Geometry shape : _originShapes) {
+                aLayer.addShape((Geometry) shape.clone());
             }
         } else {
-            for (Shape shape : shapes) {
-                aLayer.addShape((Shape) shape.clone());
+            for (Geometry shape : shapes) {
+                aLayer.addShape((Geometry) shape.clone());
             }
         }
         aLayer.setTransparency(this.getTransparency());

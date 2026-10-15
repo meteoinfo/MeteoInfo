@@ -16,8 +16,8 @@ import org.meteoinfo.geometry.geoprocess.SpatialQueryTypes;
 import org.meteoinfo.geo.layer.LayerTypes;
 import org.meteoinfo.geo.layer.MapLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.geometry.shape.PolygonShape;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.MultiPolygon;
+import org.meteoinfo.geometry.Geometry;
 
 /**
  *
@@ -209,9 +209,9 @@ public class FrmSelectByLocation extends javax.swing.JDialog {
                     this.setCursor(Cursor.getDefaultCursor());
                     return;
                 } else {
-                    for (Shape aShape : fromLayer.getShapes()) {
+                    for (Geometry aShape : fromLayer.getShapes()) {
                         boolean isIn = true;
-                        List<Coordinate> points = aShape.getPoints();
+                        List<Coordinate> points = aShape.getCoordinates();
                         for (Coordinate aPoint : points) {
                             if (!GeoComputation.pointInPolygonLayer(relatedLayer, aPoint, onlySel)) {
                                 isIn = false;
@@ -232,23 +232,23 @@ public class FrmSelectByLocation extends javax.swing.JDialog {
                     this.setCursor(Cursor.getDefaultCursor());
                     return;
                 } else {
-                    List<Shape> shapes = new ArrayList<>();
+                    List<Geometry> shapes = new ArrayList<>();
                     if (onlySel) {
-                        for (Shape aShape : relatedLayer.getShapes()) {
+                        for (Geometry aShape : relatedLayer.getShapes()) {
                             if (aShape.isSelected()) {
                                 shapes.add(aShape);
                             }
                         }
                     } else {
-                        shapes = (List<Shape>) relatedLayer.getShapes();
+                        shapes = (List<Geometry>) relatedLayer.getShapes();
                     }
 
-                    for (Shape aShape : fromLayer.getShapes()) {
+                    for (Geometry aShape : fromLayer.getShapes()) {
                         aShape.setSelected(false);
-                        PolygonShape aPolygon = (PolygonShape) aShape;
-                        for (Shape bShape : shapes) {
+                        MultiPolygon aPolygon = (MultiPolygon) aShape;
+                        for (Geometry bShape : shapes) {
                             boolean isIn = true;
-                            List<Coordinate> points = bShape.getPoints();
+                            List<Coordinate> points = bShape.getCoordinates();
                             for (Coordinate aPoint : points) {
                                 if (!GeoComputation.pointInPolygon(aPolygon, aPoint)) {
                                     isIn = false;

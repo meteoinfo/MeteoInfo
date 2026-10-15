@@ -15,7 +15,7 @@ import org.meteoinfo.table.DataRow;
 import org.meteoinfo.geo.layer.LayerTypes;
 import org.meteoinfo.geo.layer.MapLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.Geometry;
 
 /**
  *
@@ -528,7 +528,7 @@ public class FrmSelectByAttributes extends javax.swing.JDialog {
         }
 
         if (onlySelVisible) {
-            for (Shape shape : _selectLayer.getShapes()) {
+            for (Geometry shape : _selectLayer.getShapes()) {
                 shape.setVisible(shape.isSelected());
             }
         }
@@ -541,7 +541,7 @@ public class FrmSelectByAttributes extends javax.swing.JDialog {
         // TODO add your handling code here:
         this.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));        
         this._selectLayer.clearSelectedShapes();
-        for (Shape shape : _selectLayer.getShapes()) {
+        for (Geometry shape : _selectLayer.getShapes()) {
             shape.setVisible(true);
         }
         this._frmMain.refreshMap();

@@ -14,7 +14,7 @@
 package org.meteoinfo.geo.legend;
 
 import org.meteoinfo.geometry.legend.ColorBreak;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 
  /**
   *
@@ -23,7 +23,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
  public class LegendNode extends ItemNode {
      // <editor-fold desc="Variables">
 
-     private ShapeTypes _shapeType;
+     private GeometryType _shapeType;
      private ColorBreak _legendBreak;
      // </editor-fold>
      // <editor-fold desc="Constructor">
@@ -35,7 +35,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
       *
       * @return The shape type
       */
-     public ShapeTypes getShapeType() {
+     public GeometryType getShapeType() {
          return _shapeType;
      }
 
@@ -44,7 +44,7 @@ import org.meteoinfo.geometry.shape.ShapeTypes;
       *
       * @param type The shape type
       */
-     public void setShapeType(ShapeTypes type) {
+     public void setShapeType(GeometryType type) {
          _shapeType = type;
      }
 

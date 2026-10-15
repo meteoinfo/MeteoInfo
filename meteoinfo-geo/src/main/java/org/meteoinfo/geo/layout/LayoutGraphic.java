@@ -28,9 +28,9 @@ import org.meteoinfo.geo.layer.LayerTypes;
 import org.meteoinfo.geo.layer.MapLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.chart.graphic.Graphic;
-import org.meteoinfo.geometry.shape.PointShape;
-import org.meteoinfo.geometry.shape.ShapeTypes;
-import org.meteoinfo.geometry.shape.WindArrow;
+import org.meteoinfo.geometry.Point;
+import org.meteoinfo.geometry.GeometryType;
+import org.meteoinfo.geometry.special.WindArrow;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -41,7 +41,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.meteoinfo.geometry.shape.EllipseShape;
+import org.meteoinfo.geometry.special.Ellipse;
 
 /**
  *
@@ -156,7 +156,7 @@ public class LayoutGraphic extends LayoutElement {
     public void setGraphic(Graphic graphic) {
         _graphic = graphic;
         if (_graphic.getShape() != null) {
-            switch (_graphic.getShape().getShapeType()) {
+            switch (_graphic.getShape().getGeometryType()) {
                 case POINT:
                     if (_graphic.getLegendBreak().getBreakType() == BreakTypes.POINT_BREAK) {
                         this.setResizeAbility(ResizeAbility.SAME_WIDTH_HEIGHT);
@@ -222,7 +222,7 @@ public class LayoutGraphic extends LayoutElement {
      * @param text Label text
      */
     public void setLabelText(String text) {
-        switch (_graphic.getShape().getShapeType()) {
+        switch (_graphic.getShape().getGeometryType()) {
             case POINT:
                 if (_graphic.getLegendBreak().getBreakType() == BreakTypes.LABEL_BREAK) {
                     ((LabelBreak) _graphic.getLegendBreak()).setText(text);
@@ -242,11 +242,11 @@ public class LayoutGraphic extends LayoutElement {
 
         _updatingSize = true;
 
-        switch (_graphic.getShape().getShapeType()) {
+        switch (_graphic.getShape().getGeometryType()) {
             case POINT:
-                PointShape aPS = (PointShape) _graphic.getShape();
-                this.setLeft((int) aPS.getPoint().x);
-                this.setTop((int) aPS.getPoint().y);
+                Point aPS = (Point) _graphic.getShape();
+                this.setLeft((int) aPS.getCoordinate().x);
+                this.setTop((int) aPS.getCoordinate().y);
                 if (_graphic.getLegendBreak().getBreakType() == BreakTypes.POINT_BREAK) {
                     PointBreak aPB = (PointBreak) _graphic.getLegendBreak();
                     this.setLeft(this.getLeft() - (int) (aPB.getSize() / 2));
@@ -270,15 +270,15 @@ public class LayoutGraphic extends LayoutElement {
                 break;
             case WIND_ARROW:
                     WindArrow aWA = (WindArrow)_graphic.getShape();
-                    this.setLeft((int)aWA.getPoint().x);
-                    this.setTop((int)aWA.getPoint().y);
+                    this.setLeft((int)aWA.getCoordinate().x);
+                    this.setTop((int)aWA.getCoordinate().y);
                     if (aWA.length == 0){
                         aWA.length = 20;
                     }
                     this.setWidth((int)(aWA.length * ((VectorBreak)_graphic.getLegendBreak()).getZoom()));
                     this.setHeight(20);
                 break;
-            case POLYLINE:
+            case LINESTRING:
             case POLYGON:
             case RECTANGLE:
             case CIRCLE:
@@ -304,8 +304,8 @@ public class LayoutGraphic extends LayoutElement {
      * @param newY New y
      */
     public void verticeEditUpdate(int vIdx, double newX, double newY) {
-        List<Coordinate> points = _graphic.getShape().getPoints();
-        switch (_graphic.getShape().getShapeType()) {
+        List<Coordinate> points = _graphic.getShape().getCoordinates();
+        switch (_graphic.getShape().getGeometryType()) {
             case POLYGON:
             case CURVE_POLYGON:
             case RECTANGLE:
@@ -327,7 +327,7 @@ public class LayoutGraphic extends LayoutElement {
         Coordinate aP = points.get(vIdx);
         aP.x = newX;
         aP.y = newY;
-        _graphic.getShape().setPoints(points);
+        _graphic.getShape().setCoordinates(points);
         updateControlSize();
     }
 
@@ -362,9 +362,9 @@ public class LayoutGraphic extends LayoutElement {
      * @param zoom Zoom
      */
     public void paintGraphics(Graphics2D g, PointF pageLocation, float zoom) {
-        switch (_graphic.getShape().getShapeType()) {
+        switch (_graphic.getShape().getGeometryType()) {
             case POINT:
-                Coordinate dPoint = _graphic.getShape().getPoints().get(0);
+                Coordinate dPoint = _graphic.getShape().getCoordinates().get(0);
                 PointF aPoint = pageToScreen((float) dPoint.x, (float) dPoint.y, pageLocation, zoom);
                 if (_graphic.getLegendBreak().getBreakType() == BreakTypes.POINT_BREAK) {
                     PointBreak aPB = (PointBreak) ((PointBreak) _graphic.getLegendBreak()).clone();
@@ -387,7 +387,7 @@ public class LayoutGraphic extends LayoutElement {
                 }
                 break;
             case WIND_ARROW:
-                dPoint = _graphic.getShape().getPoints().get(0);
+                dPoint = _graphic.getShape().getCoordinates().get(0);
                 aPoint = pageToScreen((float) dPoint.x, (float) dPoint.y, pageLocation, zoom);
                 WindArrow aArraw = (WindArrow) _graphic.getShape();
                 VectorBreak aVB = (VectorBreak) _graphic.getLegendBreak();
@@ -400,21 +400,21 @@ public class LayoutGraphic extends LayoutElement {
                 g.setFont(drawFont);
                 g.drawString(drawStr, aPoint.X, aPoint.Y + fsize.height);
                 break;
-            case POLYLINE:
+            case LINESTRING:
             case POLYGON:
             case RECTANGLE:
             case CIRCLE:
             case CURVE_LINE:
             case CURVE_POLYGON:
             case ELLIPSE:
-                List<Coordinate> pList = _graphic.getShape().getPoints();
+                List<Coordinate> pList = _graphic.getShape().getCoordinates();
                 PointF[] points = new PointF[pList.size()];
                 for (int i = 0; i < pList.size(); i++) {
                     points[i] = pageToScreen((float) pList.get(i).x, (float) pList.get(i).y, pageLocation, zoom);
                 }
 
-                switch (_graphic.getShape().getShapeType()) {
-                    case POLYLINE:
+                switch (_graphic.getShape().getGeometryType()) {
+                    case LINESTRING:
                         PolylineBreak aPLB = (PolylineBreak) ((PolylineBreak) _graphic.getLegendBreak()).clone();
                         float size = aPLB.getWidth();
                         aPLB.setWidth(size * zoom);
@@ -454,7 +454,7 @@ public class LayoutGraphic extends LayoutElement {
                         aPGB = (PolygonBreak) ((PolygonBreak) _graphic.getLegendBreak()).clone();
                         size = aPGB.getOutlineSize();
                         aPGB.setOutlineSize(size * zoom);
-                        float angle = ((EllipseShape)_graphic.getShape()).getAngle();
+                        float angle = ((Ellipse)_graphic.getShape()).getAngle();
                         Draw.drawEllipse(points, angle, (PolygonBreak) _graphic.getLegendBreak(), g);
                         aPGB.setOutlineSize(size);
                         break;
@@ -466,11 +466,11 @@ public class LayoutGraphic extends LayoutElement {
     @Override
     public void moveUpdate() {
         if (_graphic.getShape() != null) {
-            List<Coordinate> points = _graphic.getShape().getPoints();
+            List<Coordinate> points = _graphic.getShape().getCoordinates();
             Extent aExtent = _graphic.getShape().getExtent();
             double minX = aExtent.minX;
             double minY = aExtent.minY;
-            if (_graphic.getShape().getShapeType() == ShapeTypes.POINT) {
+            if (_graphic.getShape().getGeometryType() == GeometryType.POINT) {
                 //minX -= this.getWidth() / 2;
                 if (_graphic.getLegendBreak().getBreakType() == BreakTypes.POINT_BREAK)
                     minY -= this.getHeight() / 2;
@@ -484,14 +484,14 @@ public class LayoutGraphic extends LayoutElement {
                 aP.x += shiftX;
                 aP.y += shiftY;
             }
-            _graphic.getShape().setPoints(points);
+            _graphic.getShape().setCoordinates(points);
         }
     }
 
     @Override
     public void resizeUpdate() {
         if (_graphic.getShape() != null) {
-            switch (_graphic.getShape().getShapeType()) {
+            switch (_graphic.getShape().getGeometryType()) {
                 case POINT:
                     if (_graphic.getLegendBreak().getBreakType() == BreakTypes.POINT_BREAK) {
                         PointBreak aPB = (PointBreak) _graphic.getLegendBreak();
@@ -499,12 +499,12 @@ public class LayoutGraphic extends LayoutElement {
                         updateControlSize();
                     }
                     break;
-                case POLYLINE:
+                case LINESTRING:
                 case POLYGON:
                 case CURVE_LINE:
                 case CURVE_POLYGON:
                     moveUpdate();
-                    List<Coordinate> points = _graphic.getShape().getPoints();
+                    List<Coordinate> points = _graphic.getShape().getCoordinates();
                     Extent aExtent = _graphic.getShape().getExtent();
                     int deltaX = this.getWidth() - (int) aExtent.getWidth();
                     int deltaY = this.getHeight() - (int) aExtent.getHeight();
@@ -514,7 +514,7 @@ public class LayoutGraphic extends LayoutElement {
                         aP.x = aP.x + deltaX * (aP.x - aExtent.minX) / aExtent.getWidth();
                         aP.y = aP.y + deltaY * (aP.y - aExtent.minY) / aExtent.getHeight();
                     }
-                    _graphic.getShape().setPoints(points);
+                    _graphic.getShape().setCoordinates(points);
                     break;
                 case RECTANGLE:
                 case ELLIPSE:
@@ -523,10 +523,10 @@ public class LayoutGraphic extends LayoutElement {
                     points.add(new Coordinate(this.getLeft(), this.getBottom()));
                     points.add(new Coordinate(this.getRight(), this.getBottom()));
                     points.add(new Coordinate(this.getRight(), this.getTop()));
-                    if (_graphic.getShape().getShapeType() == ShapeTypes.RECTANGLE) {
+                    if (_graphic.getShape().getGeometryType() == GeometryType.RECTANGLE) {
                         points.add((Coordinate) points.get(0).clone());
                     }
-                    _graphic.getShape().setPoints(points);
+                    _graphic.getShape().setCoordinates(points);
                     break;
                 case CIRCLE:
                     points = new ArrayList<>();
@@ -534,7 +534,7 @@ public class LayoutGraphic extends LayoutElement {
                     points.add(new Coordinate(this.getLeft() + this.getWidth() / 2, this.getTop()));
                     points.add(new Coordinate(this.getLeft() + this.getWidth(), this.getTop() + this.getWidth() / 2));
                     points.add(new Coordinate(this.getLeft() + this.getWidth() / 2, this.getTop() + this.getWidth()));
-                    _graphic.getShape().setPoints(points);
+                    _graphic.getShape().setCoordinates(points);
                     break;
             }
         }

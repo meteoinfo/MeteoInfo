@@ -12,8 +12,8 @@ import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.PolygonBreak;
-import org.meteoinfo.geometry.shape.ArcShape;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.special.Arc;
+import org.meteoinfo.geometry.Geometry;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -64,8 +64,8 @@ public class PiePlot extends Plot2D {
                 if (!graphic.isSingleLegend()) {
                     cb = gg.getLegendBreak();
                 }
-                Shape shape = gg.getShape();
-                this.drawArc(g, (ArcShape) shape, (PolygonBreak) cb, area, dist, ex, labelFont,
+                Geometry shape = gg.getShape();
+                this.drawArc(g, (Arc) shape, (PolygonBreak) cb, area, dist, ex, labelFont,
                     labelColor);
             }
         }
@@ -79,7 +79,7 @@ public class PiePlot extends Plot2D {
         float ex = 0;
         for (int i = 0; i < graphic.getNumGraphics(); i++) {
             Graphic gg = graphic.getGraphicN(i);
-            ArcShape shape = (ArcShape) gg.getShape();
+            Arc shape = (Arc) gg.getShape();
             if (shape.getExplode() > 0) {
                 ex = 10;
                 break;
@@ -88,8 +88,8 @@ public class PiePlot extends Plot2D {
         return ex;
     }
 
-    void drawArc(Graphics2D g, ArcShape aShape, PolygonBreak aPGB,
-            Rectangle2D area, float dist, float ex, Font labelFont, Color labelColor) {
+    void drawArc(Graphics2D g, Arc aShape, PolygonBreak aPGB,
+                 Rectangle2D area, float dist, float ex, Font labelFont, Color labelColor) {
         float startAngle = aShape.getStartAngle();
         float sweepAngle = aShape.getSweepAngle();
         float angle = startAngle + sweepAngle / 2;

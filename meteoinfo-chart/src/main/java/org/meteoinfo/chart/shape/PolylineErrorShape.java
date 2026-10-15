@@ -5,8 +5,8 @@
  */
 package org.meteoinfo.chart.shape;
 
-import org.meteoinfo.geometry.shape.PolylineShape;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.MultiLineString;
+import org.meteoinfo.geometry.GeometryType;
 import org.meteoinfo.ndarray.Array;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
  *
  * @author Yaqiang Wang
  */
-public class PolylineErrorShape extends PolylineShape {
+public class PolylineErrorShape extends MultiLineString {
     // <editor-fold desc="Variables">
     private double[] xerror;
     private double[] yerror;
@@ -44,7 +44,7 @@ public class PolylineErrorShape extends PolylineShape {
      * @param value X error data
      */
     public void setXerror(double value){
-        this.xerror = new double[this.getPointNum()];
+        this.xerror = new double[this.getNumPoints()];
         for (int i = 0; i < this.xerror.length; i++){
             this.xerror[i] = value;
         }
@@ -97,7 +97,7 @@ public class PolylineErrorShape extends PolylineShape {
      * @param value Y error data
      */
     public void setYerror(double value){
-        this.yerror = new double[this.getPointNum()];
+        this.yerror = new double[this.getNumPoints()];
         for (int i = 0; i < this.yerror.length; i++){
             this.yerror[i] = value;
         }
@@ -131,8 +131,8 @@ public class PolylineErrorShape extends PolylineShape {
     // </editor-fold>
     // <editor-fold desc="Methods">
     @Override
-    public ShapeTypes getShapeType(){
-        return ShapeTypes.POLYLINE_ERROR;
+    public GeometryType getGeometryType(){
+        return GeometryType.POLYLINE_ERROR;
     }
     
     /**

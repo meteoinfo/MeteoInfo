@@ -15,7 +15,7 @@ package org.meteoinfo.projection.info;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.MultiPolygon;
 import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
@@ -83,8 +83,8 @@ public class Mercator extends ProjectionInfo {
         points.add(new Coordinate(maxLon, maxLat));
         points.add(new Coordinate(minLon, maxLat));
         points.add(new Coordinate(minLon, minLat));
-        PolygonShape ps = new PolygonShape();
-        ps.setPoints(points);
+        MultiPolygon ps = new MultiPolygon();
+        ps.setCoordinates(points);
         this.boundary = ProjectionUtil.projectPolygonShape(ps, KnownCoordinateSystems.geographic.world.WGS1984, this);
     }
     // </editor-fold>

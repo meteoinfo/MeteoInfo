@@ -14,12 +14,10 @@
 package org.meteoinfo.geometry.geoprocess;
 
 import org.meteoinfo.common.*;
-import org.meteoinfo.geometry.Extent;
-import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.geometry.*;
+import org.meteoinfo.geometry.special.*;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
-import org.meteoinfo.geometry.GeometryUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -142,18 +140,18 @@ public class GeoComputation {
      * @param aPoint The point
      * @return Boolean
      */
-    public static boolean pointInPolygon(PolygonShape aPolygon, Coordinate aPoint) {
+    public static boolean pointInPolygon(MultiPolygon aPolygon, Coordinate aPoint) {
         if (!aPolygon.getExtent().contains(aPoint)) {
             return false;
         }
 
-        switch (aPolygon.getShapeType()) {
+        switch (aPolygon.getGeometryType()) {
             case CIRCLE:
-                return ((CircleShape) aPolygon).contains(aPoint);
+                return ((Circle) aPolygon).contains(aPoint);
             case ELLIPSE:
-                return ((EllipseShape) aPolygon).contains(aPoint);
+                return ((Ellipse) aPolygon).contains(aPoint);
             case ARC:
-                return ((ArcShape) aPolygon).contains(aPoint);
+                return ((Arc) aPolygon).contains(aPoint);
         }
 
         boolean isIn = false;
@@ -187,7 +185,7 @@ public class GeoComputation {
      * @param y Y
      * @return Boolean
      */
-    public static boolean pointInPolygon(PolygonShape aPolygon, double x, double y) {
+    public static boolean pointInPolygon(MultiPolygon aPolygon, double x, double y) {
         return pointInPolygon(aPolygon, new Coordinate(x, y));
     }
 
@@ -227,11 +225,11 @@ public class GeoComputation {
      * @param aPoint The point
      * @return Boolean
      */
-    public static boolean pointInPolygons(List<PolygonShape> polygons, Coordinate aPoint) {
+    public static boolean pointInPolygons(List<MultiPolygon> polygons, Coordinate aPoint) {
         boolean isIn = false;
         Extent ext = GeometryUtil.getExtent(polygons);
         if (ext.contains(aPoint)) {
-            for (PolygonShape aPGS : polygons) {
+            for (MultiPolygon aPGS : polygons) {
                 if (pointInPolygon(aPGS, aPoint)) {
                     isIn = true;
                     break;
@@ -248,11 +246,11 @@ public class GeoComputation {
      * @param point The point
      * @return Polygon index - the point is inside the polygon
      */
-    public static int polygonIndex(List<PolygonShape> polygons, Coordinate point) {
+    public static int polygonIndex(List<MultiPolygon> polygons, Coordinate point) {
         int idx = -1;
         Extent ext = GeometryUtil.getExtent(polygons);
         if (ext.contains(point)) {
-            PolygonShape polygonShape;
+            MultiPolygon polygonShape;
             for (int i = 0; i < polygons.size(); i++) {
                 polygonShape = polygons.get(i);
                 if (pointInPolygon(polygonShape, point)) {
@@ -336,7 +334,7 @@ public class GeoComputation {
      * @param buffer Buffer
      * @return Is the polyline shape selected
      */
-    public static Object selectPolylineShape(Coordinate sp, PolylineShape aPLS, double buffer) {
+    public static Object selectPolylineShape(Coordinate sp, MultiLineString aPLS, double buffer) {
         Extent aExtent = new Extent();
         aExtent.minX = sp.x - buffer;
         aExtent.maxX = sp.x + buffer;
@@ -344,13 +342,13 @@ public class GeoComputation {
         aExtent.maxY = sp.y + buffer;
         double dis;
         if (GeometryUtil.isExtentCross(aExtent, aPLS.getExtent())) {
-            for (int j = 0; j < aPLS.getPointNum(); j++) {
-                Coordinate aPoint = aPLS.getPoints().get(j);
+            for (int j = 0; j < aPLS.getNumPoints(); j++) {
+                Coordinate aPoint = aPLS.getCoordinates().get(j);
                 if (aExtent.contains(aPoint)) {
                     return GeoComputation.distance(sp, aPoint);
                 }
-                if (j < aPLS.getPointNum() - 1) {
-                    Coordinate bPoint = aPLS.getPoints().get(j + 1);
+                if (j < aPLS.getNumPoints() - 1) {
+                    Coordinate bPoint = aPLS.getCoordinates().get(j + 1);
                     if (Math.abs(sp.y - aPoint.y) <= Math.abs(bPoint.y - aPoint.y)
                             || Math.abs(sp.x - aPoint.x) <= Math.abs(bPoint.x - aPoint.x)) {
                         dis = GeoComputation.dis_PointToLine(sp, aPoint, bPoint);
@@ -794,18 +792,18 @@ public class GeoComputation {
      * @param clipObj Clipping object
      * @return Clipped shape
      */
-    public static Shape clipShape(Shape aShape, Object clipObj) {
-        switch (aShape.getShapeType()) {
+    public static Geometry clipShape(Geometry aShape, Object clipObj) {
+        switch (aShape.getGeometryType()) {
             case POINT:
             case WEATHER_SYMBOL:
             case WIND_ARROW:
             case WIND_BARB:
             case STATION_MODEL:
-                return clipPointShape((PointShape) aShape, clipObj);
-            case POLYLINE:
-                return clipPolylineShape((PolylineShape) aShape, clipObj);
+                return clipPointShape((Point) aShape, clipObj);
+            case LINESTRING:
+                return clipPolylineShape((MultiLineString) aShape, clipObj);
             case POLYGON:
-                return clipPolygonShape((PolygonShape) aShape, clipObj);
+                return clipPolygonShape((MultiPolygon) aShape, clipObj);
             default:
                 return null;
         }
@@ -818,8 +816,8 @@ public class GeoComputation {
      * @param clipObj Clipping object
      * @return Clipped point shape
      */
-    public static PointShape clipPointShape(PointShape aPS, Object clipObj) {
-        if (pointInClipObj(clipObj, aPS.getPoint())) {
+    public static Point clipPointShape(Point aPS, Object clipObj) {
+        if (pointInClipObj(clipObj, aPS.getCoordinate())) {
             return aPS;
         } else {
             return null;
@@ -833,12 +831,12 @@ public class GeoComputation {
      * @param clipObj Clipping object
      * @return Clipped polyline shape
      */
-    public static PolylineShape clipPolylineShape(PolylineShape aPLS, Object clipObj) {
-        List<Polyline> polyLines = clipPolylines(aPLS.getPolylines(), clipObj);
+    public static MultiLineString clipPolylineShape(MultiLineString aPLS, Object clipObj) {
+        List<LineString> polyLines = clipPolylines(aPLS.getPolylines(), clipObj);
         if (polyLines.isEmpty()) {
             return null;
         } else {
-            PolylineShape bPLS = (PolylineShape) aPLS.valueClone();
+            MultiLineString bPLS = (MultiLineString) aPLS.valueClone();
             bPLS.setPolylines(polyLines);
 
             return bPLS;
@@ -852,8 +850,8 @@ public class GeoComputation {
      * @param lon Longitude
      * @return Clipped polyline shape
      */
-    public static PolylineShape clipPolylineShape_Lon(PolylineShape aPLS, double lon) {
-        List<Polyline> polylines = new ArrayList<>();
+    public static MultiLineString clipPolylineShape_Lon(MultiLineString aPLS, double lon) {
+        List<LineString> polylines = new ArrayList<>();
         ClipLine clipLine = new ClipLine();
         clipLine.setLongitude(true);
         clipLine.setValue(lon - 0.0001);
@@ -864,7 +862,7 @@ public class GeoComputation {
         clipLine.setLeftOrTop(false);
         polylines.addAll(clipPolylines(aPLS.getPolylines(), clipLine));
 
-        PolylineShape bPLS = (PolylineShape) aPLS.valueClone();
+        MultiLineString bPLS = (MultiLineString) aPLS.valueClone();
         bPLS.setPolylines(polylines);
 
         return bPLS;
@@ -877,8 +875,8 @@ public class GeoComputation {
      * @param lat The latitude
      * @return Clipped polyline shape
      */
-    public static PolylineShape clipPolylineShape_Lat(PolylineShape aPLS, double lat) {
-        List<Polyline> polylines = new ArrayList<>();
+    public static MultiLineString clipPolylineShape_Lat(MultiLineString aPLS, double lat) {
+        List<LineString> polylines = new ArrayList<>();
         ClipLine clipLine = new ClipLine();
         clipLine.setLongitude(false);
         clipLine.setValue(lat + 0.0001);
@@ -889,7 +887,7 @@ public class GeoComputation {
         clipLine.setLeftOrTop(false);
         polylines.addAll(clipPolylines(aPLS.getPolylines(), clipLine));
 
-        PolylineShape bPLS = (PolylineShape) aPLS.valueClone();
+        MultiLineString bPLS = (MultiLineString) aPLS.valueClone();
         bPLS.setPolylines(polylines);
 
         return bPLS;
@@ -903,8 +901,8 @@ public class GeoComputation {
      * @param isTop If is top
      * @return Clipped polyline shape
      */
-    public static PolylineShape clipPolylineShape_Lat(PolylineShape aPLS, double lat, boolean isTop) {
-        List<Polyline> polylines = new ArrayList<>();
+    public static MultiLineString clipPolylineShape_Lat(MultiLineString aPLS, double lat, boolean isTop) {
+        List<LineString> polylines = new ArrayList<>();
         ClipLine clipLine = new ClipLine();
         clipLine.setLongitude(false);
         clipLine.setValue(lat);
@@ -914,7 +912,7 @@ public class GeoComputation {
             return null;
         }
 
-        PolylineShape bPLS = (PolylineShape) aPLS.valueClone();
+        MultiLineString bPLS = (MultiLineString) aPLS.valueClone();
         bPLS.setPolylines(polylines);
 
         return bPLS;
@@ -927,18 +925,18 @@ public class GeoComputation {
      * @param clipObj Clipping object
      * @return Clipped polylines
      */
-    private static List<Polyline> clipPolylines(List<? extends Polyline> polyLines, Object clipObj) {
-        List<Polyline> newPolyLines = new ArrayList<>();
-        for (Polyline aPolyLine : polyLines) {
+    private static List<LineString> clipPolylines(List<? extends LineString> polyLines, Object clipObj) {
+        List<LineString> newPolyLines = new ArrayList<>();
+        for (LineString aPolyLine : polyLines) {
             newPolyLines.addAll(clipPolyline(aPolyLine, clipObj));
         }
 
         return newPolyLines;
     }
 
-    private static List<? extends Polyline> clipPolyline(Polyline inPolyLine, Object clipObj) {
-        List<Polyline> newPolylines = new ArrayList<>();
-        List<Coordinate> aPList = inPolyLine.getPointList();
+    private static List<? extends LineString> clipPolyline(LineString inPolyLine, Object clipObj) {
+        List<LineString> newPolylines = new ArrayList<>();
+        List<Coordinate> aPList = inPolyLine.getCoordinates();
 
         if (!isExtentCross(inPolyLine.getExtent(), clipObj)) {
             return newPolylines;
@@ -1007,9 +1005,9 @@ public class GeoComputation {
             aPList = newLines.get(l);
             boolean isInPolygon = pointInClipObj(clipObj, aPList.get(0));
             Coordinate q1, q2, p1, p2, IPoint = new Coordinate();
-            Line lineA, lineB;
+            LineSegment lineA, lineB;
             List<Coordinate> newPlist = new ArrayList<>();
-            Polyline bLine;
+            LineString bLine;
             p1 = aPList.get(0);
             int inIdx = -1, outIdx = -1;
             boolean newLine = true;
@@ -1018,15 +1016,15 @@ public class GeoComputation {
                 p2 = aPList.get(i);
                 if (pointInClipObj(clipObj, p2)) {
                     if (!isInPolygon) {
-                        lineA = new Line();
-                        lineA.P1 = p1;
-                        lineA.P2 = p2;
+                        lineA = new LineSegment();
+                        lineA.p1 = p1;
+                        lineA.p2 = p2;
                         q1 = borderList.get(0).Point;
                         for (j = 1; j < borderList.size(); j++) {
                             q2 = borderList.get(j).Point;
-                            lineB = new Line();
-                            lineB.P1 = q1;
-                            lineB.P2 = q2;
+                            lineB = new LineSegment();
+                            lineB.p1 = q1;
+                            lineB.p2 = q2;
                             if (isLineSegmentCross(lineA, lineB)) {
                                 IPoint = getCrossPoint(lineA, lineB);
                                 aBP = new BorderPoint();
@@ -1044,15 +1042,15 @@ public class GeoComputation {
                     isInPolygon = true;
                 } else {
                     if (isInPolygon) {
-                        lineA = new Line();
-                        lineA.P1 = p1;
-                        lineA.P2 = p2;
+                        lineA = new LineSegment();
+                        lineA.p1 = p1;
+                        lineA.p2 = p2;
                         q1 = borderList.get(0).Point;
                         for (j = 1; j < borderList.size(); j++) {
                             q2 = borderList.get(j).Point;
-                            lineB = new Line();
-                            lineB.P1 = q1;
-                            lineB.P2 = q2;
+                            lineB = new LineSegment();
+                            lineB.p1 = q1;
+                            lineB.p2 = q2;
                             if (isLineSegmentCross(lineA, lineB)) {
                                 if (!newLine) {
                                     if (inIdx - outIdx >= 1 && inIdx - outIdx <= 10) {
@@ -1087,8 +1085,8 @@ public class GeoComputation {
                         }
                         newPlist.add(IPoint);
 
-                        bLine = new Polyline();
-                        bLine.setPointList(new ArrayList<>(newPlist));
+                        bLine = new LineString();
+                        bLine.setCoordinates(new ArrayList<>(newPlist));
                         newPolylines.add(bLine);
 
                         isInPolygon = false;
@@ -1099,8 +1097,8 @@ public class GeoComputation {
             }
 
             if (isInPolygon && newPlist.size() > 1) {
-                bLine = new Polyline();
-                bLine.setPointList(new ArrayList<>(newPlist));
+                bLine = new LineString();
+                bLine.setCoordinates(new ArrayList<>(newPlist));
                 newPolylines.add(bLine);
             }
         }
@@ -1115,12 +1113,12 @@ public class GeoComputation {
      * @param clipObj Clipping object
      * @return Clipped polygon shape
      */
-    public static PolygonShape clipPolygonShape(PolygonShape aPGS, Object clipObj) {
+    public static MultiPolygon clipPolygonShape(MultiPolygon aPGS, Object clipObj) {
         List<Polygon> polygons = clipPolygons(aPGS.getPolygons(), clipObj);
         if (polygons.isEmpty()) {
             return null;
         } else {
-            PolygonShape bPGS = aPGS.valueClone();
+            MultiPolygon bPGS = aPGS.valueClone();
             bPGS.setPolygons(polygons);
 
             return bPGS;
@@ -1134,7 +1132,7 @@ public class GeoComputation {
      * @param lon Longitude
      * @return Clipped polygon shape
      */
-    public static PolygonShape clipPolygonShape_Lon(PolygonShape aPGS, double lon) {
+    public static MultiPolygon clipPolygonShape_Lon(MultiPolygon aPGS, double lon) {
         List<Polygon> polygons = new ArrayList<>();
         ClipLine clipLine = new ClipLine();
         clipLine.setLongitude(true);
@@ -1146,7 +1144,7 @@ public class GeoComputation {
         clipLine.setLeftOrTop(false);
         polygons.addAll(clipPolygons(aPGS.getPolygons(), clipLine));
 
-        PolygonShape bPGS = aPGS.valueClone();
+        MultiPolygon bPGS = aPGS.valueClone();
         bPGS.setPolygons(polygons);
 
         return bPGS;
@@ -1159,7 +1157,7 @@ public class GeoComputation {
      * @param lat Latitude
      * @return Clipped polygon shape
      */
-    public static PolygonShape clipPolygonShape_Lat(PolygonShape aPGS, double lat) {
+    public static MultiPolygon clipPolygonShape_Lat(MultiPolygon aPGS, double lat) {
         List<Polygon> polygons = new ArrayList<>();
         ClipLine clipLine = new ClipLine();
         clipLine.setLongitude(false);
@@ -1171,7 +1169,7 @@ public class GeoComputation {
         clipLine.setLeftOrTop(false);
         polygons.addAll(clipPolygons(aPGS.getPolygons(), clipLine));
 
-        PolygonShape bPGS = aPGS.valueClone();
+        MultiPolygon bPGS = aPGS.valueClone();
         bPGS.setPolygons(polygons);
 
         return bPGS;
@@ -1185,7 +1183,7 @@ public class GeoComputation {
      * @param isTop If is top
      * @return Clipped polygon shape
      */
-    public static PolygonShape clipPolygonShape_Lat(PolygonShape aPGS, double lat, boolean isTop) {
+    public static MultiPolygon clipPolygonShape_Lat(MultiPolygon aPGS, double lat, boolean isTop) {
         List<Polygon> polygons = new ArrayList<>();
         ClipLine clipLine = new ClipLine();
         clipLine.setLongitude(false);
@@ -1193,7 +1191,7 @@ public class GeoComputation {
         clipLine.setLeftOrTop(isTop);
         polygons.addAll(clipPolygons(aPGS.getPolygons(), clipLine));
 
-        PolygonShape bPGS = aPGS.valueClone();
+        MultiPolygon bPGS = aPGS.valueClone();
         bPGS.setPolygons(polygons);
 
         return bPGS;
@@ -1222,7 +1220,7 @@ public class GeoComputation {
 
     public static List<Polygon> clipPolygon(Polygon inPolygon, Object clipObj) {
         List<Polygon> newPolygons = new ArrayList<>();
-        List<Polyline> newPolylines = new ArrayList<>();
+        List<LineString> newPolylines = new ArrayList<>();
         List<Coordinate> aPList = (List<Coordinate>) inPolygon.getOutLine();
 
         if (!isExtentCross(inPolygon.getExtent(), clipObj)) {
@@ -1325,9 +1323,9 @@ public class GeoComputation {
             aPList = newLines.get(l);
             boolean isInPolygon = false;
             Coordinate q1, q2, p1, p2, IPoint = new Coordinate();
-            Line lineA, lineB;
+            LineSegment lineA, lineB;
             List<Coordinate> newPlist = new ArrayList<>();
-            Polyline bLine;
+            LineString bLine;
             p1 = (Coordinate) aPList.get(0).clone();
             int inIdx = -1, outIdx = -1;
             boolean newLine = true;
@@ -1336,16 +1334,16 @@ public class GeoComputation {
                 p2 = (Coordinate) aPList.get(i).clone();
                 if (pointInClipObj(clipObj, p2)) {
                     if (!isInPolygon) {
-                        lineA = new Line();
-                        lineA.P1 = p1;
-                        lineA.P2 = p2;
+                        lineA = new LineSegment();
+                        lineA.p1 = p1;
+                        lineA.p2 = p2;
                         //q1 = borderList[borderList.Count - 1].Point;
                         q1 = (Coordinate) borderList.get(0).Point.clone();
                         for (j = 1; j < borderList.size(); j++) {
                             q2 = (Coordinate) borderList.get(j).Point.clone();
-                            lineB = new Line();
-                            lineB.P1 = q1;
-                            lineB.P2 = q2;
+                            lineB = new LineSegment();
+                            lineB.p1 = q1;
+                            lineB.p2 = q2;
                             if (isLineSegmentCross(lineA, lineB)) {
                                 IPoint = getCrossPoint(lineA, lineB);
                                 aBP = new BorderPoint();
@@ -1363,15 +1361,15 @@ public class GeoComputation {
                     isInPolygon = true;
                 } else {
                     if (isInPolygon) {
-                        lineA = new Line();
-                        lineA.P1 = p1;
-                        lineA.P2 = p2;
+                        lineA = new LineSegment();
+                        lineA.p1 = p1;
+                        lineA.p2 = p2;
                         q1 = (Coordinate) borderList.get(0).Point.clone();
                         for (j = 1; j < borderList.size(); j++) {
                             q2 = (Coordinate) borderList.get(j).Point.clone();
-                            lineB = new Line();
-                            lineB.P1 = q1;
-                            lineB.P2 = q2;
+                            lineB = new LineSegment();
+                            lineB.p1 = q1;
+                            lineB.p2 = q2;
                             if (isLineSegmentCross(lineA, lineB)) {
                                 if (!newLine) {
                                     if (inIdx - outIdx >= 1 && inIdx - outIdx <= 10) {
@@ -1406,8 +1404,8 @@ public class GeoComputation {
                         }
                         newPlist.add(IPoint);
 
-                        bLine = new Polyline();
-                        bLine.setPointList(new ArrayList<>(newPlist));
+                        bLine = new LineString();
+                        bLine.setCoordinates(new ArrayList<>(newPlist));
                         newPolylines.add(bLine);
 
                         isInPolygon = false;
@@ -1454,7 +1452,7 @@ public class GeoComputation {
 
     private static List<Polygon> clipPolygon_Extent(Polygon inPolygon, Extent extent) {
         List<Polygon> newPolygons = new ArrayList<>();
-        List<Polyline> newPolylines = new ArrayList<>();
+        List<LineString> newPolylines = new ArrayList<>();
         List<Coordinate> aPList = inPolygon.getOutLine();
 
         if (!isExtentCross(inPolygon.getExtent(), extent)) {
@@ -1562,9 +1560,9 @@ public class GeoComputation {
             aPList = newLines.get(l);
             boolean isInPolygon = false;
             Coordinate q1, q2, p1, p2, IPoint = new Coordinate();
-            Line lineA, lineB;
+            LineSegment lineA, lineB;
             List<Coordinate> newPlist = new ArrayList<>();
-            Polyline bLine;
+            LineString bLine;
             p1 = (Coordinate) aPList.get(0).clone();
             int inIdx = -1, outIdx = -1;
             boolean newLine = true;
@@ -1573,16 +1571,16 @@ public class GeoComputation {
                 p2 = (Coordinate) aPList.get(i).clone();
                 if (pointInClipObj(extent, p2)) {
                     if (!isInPolygon) {
-                        lineA = new Line();
-                        lineA.P1 = p1;
-                        lineA.P2 = p2;
+                        lineA = new LineSegment();
+                        lineA.p1 = p1;
+                        lineA.p2 = p2;
                         //q1 = borderList[borderList.Count - 1].Point;
                         q1 = (Coordinate) borderList.get(0).Point.clone();
                         for (j = 1; j < borderList.size(); j++) {
                             q2 = (Coordinate) borderList.get(j).Point.clone();
-                            lineB = new Line();
-                            lineB.P1 = q1;
-                            lineB.P2 = q2;
+                            lineB = new LineSegment();
+                            lineB.p1 = q1;
+                            lineB.p2 = q2;
                             if (isLineSegmentCross(lineA, lineB)) {
                                 IPoint = getCrossPoint(lineA, lineB);
                                 aBP = new BorderPoint();
@@ -1600,15 +1598,15 @@ public class GeoComputation {
                     isInPolygon = true;
                 } else {
                     if (isInPolygon) {
-                        lineA = new Line();
-                        lineA.P1 = p1;
-                        lineA.P2 = p2;
+                        lineA = new LineSegment();
+                        lineA.p1 = p1;
+                        lineA.p2 = p2;
                         q1 = (Coordinate) borderList.get(0).Point.clone();
                         for (j = 1; j < borderList.size(); j++) {
                             q2 = (Coordinate) borderList.get(j).Point.clone();
-                            lineB = new Line();
-                            lineB.P1 = q1;
-                            lineB.P2 = q2;
+                            lineB = new LineSegment();
+                            lineB.p1 = q1;
+                            lineB.p2 = q2;
                             if (isLineSegmentCross(lineA, lineB)) {
                                 if (!newLine) {
                                     if (inIdx - outIdx >= 1 && inIdx - outIdx <= 10) {
@@ -1643,16 +1641,16 @@ public class GeoComputation {
                         }
                         newPlist.add(IPoint);
 
-                        bLine = new Polyline();
-                        bLine.setPointList(new ArrayList<>(newPlist));
+                        bLine = new LineString();
+                        bLine.setCoordinates(new ArrayList<>(newPlist));
                         newPolylines.add(bLine);
 
                         isInPolygon = false;
                         newPlist = new ArrayList<>();
                     } else {
-                        lineA = new Line();
-                        lineA.P1 = p1;
-                        lineA.P2 = p2;
+                        lineA = new LineSegment();
+                        lineA.p1 = p1;
+                        lineA.p2 = p2;
                         List<BorderPoint> clippedBPs = getCrossPoints(lineA, extent);
                         boolean isOK = clippedBPs.size() > 1;
                         if (clippedBPs.size() == 2) {
@@ -1721,8 +1719,8 @@ public class GeoComputation {
                                         break;
                                 }
                             }
-                            bLine = new Polyline();
-                            bLine.setPointList(new ArrayList<>(newPlist));
+                            bLine = new LineString();
+                            bLine.setCoordinates(new ArrayList<>(newPlist));
                             newPolylines.add(bLine);
 
                             isInPolygon = false;
@@ -1762,14 +1760,14 @@ public class GeoComputation {
         return newPolygons;
     }
 
-    private static List<Polygon> tracingClipPolygons(Polygon inPolygon, List<Polyline> LineList, List<BorderPoint> borderList) {
+    private static List<Polygon> tracingClipPolygons(Polygon inPolygon, List<LineString> LineList, List<BorderPoint> borderList) {
         if (LineList.isEmpty()) {
             return new ArrayList<>();
         }
 
         List<Polygon> aPolygonList = new ArrayList<>(), newPolygonlist;
-        List<Polyline> aLineList;
-        Polyline aLine;
+        List<LineString> aLineList;
+        LineString aLine;
         Coordinate aPoint;
         Polygon aPolygon;
         int i, j;
@@ -1834,7 +1832,7 @@ public class GeoComputation {
                             timesArray[pIdx] += +1;
                             aLine = aLineList.get(bP.Id);
 
-                            newPList = (List<Coordinate>) new ArrayList<>(aLine.getPointList());
+                            newPList = (List<Coordinate>) new ArrayList<>(aLine.getCoordinates());
                             aPoint = newPList.get(0);
 
                             if (!(MIMath.doubleEquals(bP.Point.x, aPoint.x) && MIMath.doubleEquals(bP.Point.y, aPoint.y))) {
@@ -1909,7 +1907,7 @@ public class GeoComputation {
                             timesArray[pIdx] += +1;
                             aLine = aLineList.get(bP.Id);
 
-                            newPList = new ArrayList<>(aLine.getPointList());
+                            newPList = new ArrayList<>(aLine.getCoordinates());
                             aPoint = newPList.get(0);
 
                             if (!(MIMath.doubleEquals(bP.Point.x, aPoint.x) && MIMath.doubleEquals(bP.Point.y, aPoint.y))) {
@@ -2089,23 +2087,23 @@ public class GeoComputation {
         return clipPList;
     }
 
-    private static boolean isLineSegmentCross_old(Line lineA, Line lineB) {
+    private static boolean isLineSegmentCross_old(LineSegment lineA, LineSegment lineB) {
         Extent boundA, boundB;
         List<Coordinate> PListA = new ArrayList<>(), PListB = new ArrayList<>();
-        PListA.add(lineA.P1);
-        PListA.add(lineA.P2);
-        PListB.add(lineB.P1);
-        PListB.add(lineB.P2);
+        PListA.add(lineA.p1);
+        PListA.add(lineA.p2);
+        PListB.add(lineB.p1);
+        PListB.add(lineB.p2);
         boundA = GeometryUtil.getPointsExtent(PListA);
         boundB = GeometryUtil.getPointsExtent(PListB);
 
         if (!GeometryUtil.isExtentCross(boundA, boundB)) {
             return false;
         } else {
-            double XP1 = (lineB.P1.x - lineA.P1.x) * (lineA.P2.y - lineA.P1.y)
-                    - (lineA.P2.x - lineA.P1.x) * (lineB.P1.y - lineA.P1.y);
-            double XP2 = (lineB.P2.x - lineA.P1.x) * (lineA.P2.y - lineA.P1.y)
-                    - (lineA.P2.x - lineA.P1.x) * (lineB.P2.y - lineA.P1.y);
+            double XP1 = (lineB.p1.x - lineA.p1.x) * (lineA.p2.y - lineA.p1.y)
+                    - (lineA.p2.x - lineA.p1.x) * (lineB.p1.y - lineA.p1.y);
+            double XP2 = (lineB.p2.x - lineA.p1.x) * (lineA.p2.y - lineA.p1.y)
+                    - (lineA.p2.x - lineA.p1.x) * (lineB.p2.y - lineA.p1.y);
             if (XP1 * XP2 > 0) {
                 return false;
             } else {
@@ -2114,34 +2112,34 @@ public class GeoComputation {
         }
     }
 
-    public static boolean isLineSegmentCross(Line lineA, Line lineB) {
+    public static boolean isLineSegmentCross(LineSegment lineA, LineSegment lineB) {
         Extent boundA, boundB;
         List<Coordinate> PListA = new ArrayList<>(), PListB = new ArrayList<>();
-        PListA.add(lineA.P1);
-        PListA.add(lineA.P2);
-        PListB.add(lineB.P1);
-        PListB.add(lineB.P2);
-        boundA = new Extent(Math.min(lineA.P1.x, lineA.P2.x), Math.max(lineA.P1.x, lineA.P2.x),
-            Math.min(lineA.P1.y, lineA.P2.y), Math.max(lineA.P1.y, lineA.P2.y));
-        boundB = new Extent(Math.min(lineB.P1.x, lineB.P2.x), Math.max(lineB.P1.x, lineB.P2.x),
-                Math.min(lineB.P1.y, lineB.P2.y), Math.max(lineB.P1.y, lineB.P2.y));
+        PListA.add(lineA.p1);
+        PListA.add(lineA.p2);
+        PListB.add(lineB.p1);
+        PListB.add(lineB.p2);
+        boundA = new Extent(Math.min(lineA.p1.x, lineA.p2.x), Math.max(lineA.p1.x, lineA.p2.x),
+            Math.min(lineA.p1.y, lineA.p2.y), Math.max(lineA.p1.y, lineA.p2.y));
+        boundB = new Extent(Math.min(lineB.p1.x, lineB.p2.x), Math.max(lineB.p1.x, lineB.p2.x),
+                Math.min(lineB.p1.y, lineB.p2.y), Math.max(lineB.p1.y, lineB.p2.y));
 
         if (!GeometryUtil.isExtentCross(boundA, boundB)) {
             return false;
         } else {
-            double d1 = crossProduct(lineA.P1, lineA.P2, lineB.P1);
-            double d2 = crossProduct(lineA.P1, lineA.P2, lineB.P2);
-            double d3 = crossProduct(lineB.P1, lineB.P2, lineA.P1);
-            double d4 = crossProduct(lineB.P1, lineB.P2, lineA.P2);
+            double d1 = crossProduct(lineA.p1, lineA.p2, lineB.p1);
+            double d2 = crossProduct(lineA.p1, lineA.p2, lineB.p2);
+            double d3 = crossProduct(lineB.p1, lineB.p2, lineA.p1);
+            double d4 = crossProduct(lineB.p1, lineB.p2, lineA.p2);
             if ((d1 * d2 < 0) && (d3 * d4 < 0)) {
                 return true;
-            } else if (d1 == 0 && pointProduct(lineB.P1, lineA.P1, lineA.P2) <= 0) {
+            } else if (d1 == 0 && pointProduct(lineB.p1, lineA.p1, lineA.p2) <= 0) {
                 return true;
-            } else if (d2 == 0 && pointProduct(lineB.P2, lineA.P1, lineA.P2) <= 0) {
+            } else if (d2 == 0 && pointProduct(lineB.p2, lineA.p1, lineA.p2) <= 0) {
                 return true;
-            } else if (d3 == 0 && pointProduct(lineA.P1, lineB.P1, lineB.P2) <= 0) {
+            } else if (d3 == 0 && pointProduct(lineA.p1, lineB.p1, lineB.p2) <= 0) {
                 return true;
-            } else if (d4 == 0 && pointProduct(lineA.P2, lineB.P1, lineB.P2) <= 0) {
+            } else if (d4 == 0 && pointProduct(lineA.p2, lineB.p1, lineB.p2) <= 0) {
                 return true;
             } else {
                 return false;
@@ -2177,12 +2175,12 @@ public class GeoComputation {
         return (p2.x - p1.x) * (p3.x - p1.x) + (p2.y - p1.y) * (p3.y - p1.y);
     }
 
-    private static boolean lineIntersectRect(Line line, Extent extent) {
+    private static boolean lineIntersectRect(LineSegment line, Extent extent) {
         boolean result = false;
-        result |= checkRectLineH(line.P1, line.P2, extent.minY, extent.minX, extent.maxX);
-        result |= checkRectLineH(line.P1, line.P2, extent.maxY, extent.minX, extent.maxX);
-        result |= checkRectLineV(line.P1, line.P2, extent.minX, extent.minY, extent.maxY);
-        result |= checkRectLineV(line.P1, line.P2, extent.maxX, extent.minY, extent.maxY);
+        result |= checkRectLineH(line.p1, line.p2, extent.minY, extent.minX, extent.maxX);
+        result |= checkRectLineH(line.p1, line.p2, extent.maxY, extent.minX, extent.maxX);
+        result |= checkRectLineV(line.p1, line.p2, extent.minX, extent.minY, extent.maxY);
+        result |= checkRectLineV(line.p1, line.p2, extent.maxX, extent.minY, extent.maxY);
         return result;
     }
 
@@ -2239,25 +2237,25 @@ public class GeoComputation {
         return ((y >= y1) && (y <= y2));
     }
 
-    private static List<BorderPoint> getCrossPoints(Line line, Extent extent) {
+    private static List<BorderPoint> getCrossPoints(LineSegment line, Extent extent) {
         List<BorderPoint> crossPoints = new ArrayList<>();
 
-        if (line.P1.x <= extent.minX && line.P2.x <= extent.minX) {
+        if (line.p1.x <= extent.minX && line.p2.x <= extent.minX) {
             return crossPoints;
         }
-        if (line.P1.x >= extent.maxX && line.P2.x >= extent.maxX) {
+        if (line.p1.x >= extent.maxX && line.p2.x >= extent.maxX) {
             return crossPoints;
         }
-        if (line.P1.y <= extent.minY && line.P2.y <= extent.minY) {
+        if (line.p1.y <= extent.minY && line.p2.y <= extent.minY) {
             return crossPoints;
         }
-        if (line.P1.y >= extent.maxY && line.P2.y >= extent.maxY) {
+        if (line.p1.y >= extent.maxY && line.p2.y >= extent.maxY) {
             return crossPoints;
         }
 
         //Left border
-        if (Math.abs(line.P1.x - line.P2.x) - Math.abs(line.P1.x - extent.minX) > 0) {
-            double y = (line.P2.y - line.P1.y) * (extent.minX - line.P1.x) / (line.P2.x - line.P1.x) + line.P1.y;
+        if (Math.abs(line.p1.x - line.p2.x) - Math.abs(line.p1.x - extent.minX) > 0) {
+            double y = (line.p2.y - line.p1.y) * (extent.minX - line.p1.x) / (line.p2.x - line.p1.x) + line.p1.y;
             if ((y >= extent.minY) && (y <= extent.maxY)) {
                 BorderPoint bp = new BorderPoint();
                 bp.rectPointType = RectPointTypes.Left;
@@ -2267,8 +2265,8 @@ public class GeoComputation {
         }
 
         //Top border
-        if (Math.abs(line.P1.y - line.P2.y) - Math.abs(line.P1.y - extent.maxY) > 0) {
-            double x = (extent.maxY - line.P1.y) * (line.P2.x - line.P1.x) / (line.P2.y - line.P1.y) + line.P1.x;
+        if (Math.abs(line.p1.y - line.p2.y) - Math.abs(line.p1.y - extent.maxY) > 0) {
+            double x = (extent.maxY - line.p1.y) * (line.p2.x - line.p1.x) / (line.p2.y - line.p1.y) + line.p1.x;
             if ((x >= extent.minX) && (x <= extent.maxX)) {
                 BorderPoint bp = new BorderPoint();
                 bp.rectPointType = RectPointTypes.Top;
@@ -2278,8 +2276,8 @@ public class GeoComputation {
         }
 
         //Right border
-        if (Math.abs(line.P1.x - line.P2.x) - Math.abs(line.P1.x - extent.maxX) > 0) {
-            double y = (line.P2.y - line.P1.y) * (extent.maxX - line.P1.x) / (line.P2.x - line.P1.x) + line.P1.y;
+        if (Math.abs(line.p1.x - line.p2.x) - Math.abs(line.p1.x - extent.maxX) > 0) {
+            double y = (line.p2.y - line.p1.y) * (extent.maxX - line.p1.x) / (line.p2.x - line.p1.x) + line.p1.y;
             if ((y >= extent.minY) && (y <= extent.maxY)) {
                 BorderPoint bp = new BorderPoint();
                 bp.rectPointType = RectPointTypes.Right;
@@ -2289,8 +2287,8 @@ public class GeoComputation {
         }
 
         //Bottom border
-        if (Math.abs(line.P1.y - line.P2.y) - Math.abs(line.P1.y - extent.minY) > 0) {
-            double x = (extent.minY - line.P1.y) * (line.P2.x - line.P1.x) / (line.P2.y - line.P1.y) + line.P1.x;
+        if (Math.abs(line.p1.y - line.p2.y) - Math.abs(line.p1.y - extent.minY) > 0) {
+            double x = (extent.minY - line.p1.y) * (line.p2.x - line.p1.x) / (line.p2.y - line.p1.y) + line.p1.x;
             if ((x >= extent.minX) && (x <= extent.maxX)) {
                 BorderPoint bp = new BorderPoint();
                 bp.rectPointType = RectPointTypes.Bottom;
@@ -2302,24 +2300,24 @@ public class GeoComputation {
         return crossPoints;
     }
 
-    public static Coordinate getCrossPoint(Line lineA, Line lineB) {
+    public static Coordinate getCrossPoint(LineSegment lineA, LineSegment lineB) {
         Coordinate IPoint = new Coordinate();
         Coordinate p1, p2, q1, q2;
         double tempLeft, tempRight;
 
-        double XP1 = (lineB.P1.x - lineA.P1.x) * (lineA.P2.y - lineA.P1.y)
-                - (lineA.P2.x - lineA.P1.x) * (lineB.P1.y - lineA.P1.y);
-        double XP2 = (lineB.P2.x - lineA.P1.x) * (lineA.P2.y - lineA.P1.y)
-                - (lineA.P2.x - lineA.P1.x) * (lineB.P2.y - lineA.P1.y);
+        double XP1 = (lineB.p1.x - lineA.p1.x) * (lineA.p2.y - lineA.p1.y)
+                - (lineA.p2.x - lineA.p1.x) * (lineB.p1.y - lineA.p1.y);
+        double XP2 = (lineB.p2.x - lineA.p1.x) * (lineA.p2.y - lineA.p1.y)
+                - (lineA.p2.x - lineA.p1.x) * (lineB.p2.y - lineA.p1.y);
         if (XP1 == 0) {
-            IPoint = lineB.P1;
+            IPoint = lineB.p1;
         } else if (XP2 == 0) {
-            IPoint = lineB.P2;
+            IPoint = lineB.p2;
         } else {
-            p1 = lineA.P1;
-            p2 = lineA.P2;
-            q1 = lineB.P1;
-            q2 = lineB.P2;
+            p1 = lineA.p1;
+            p2 = lineA.p2;
+            q1 = lineB.p1;
+            q2 = lineB.p2;
 
             tempLeft = (q2.x - q1.x) * (p1.y - p2.y) - (p2.x - p1.x) * (q1.y - q2.y);
             tempRight = (p1.y - q1.y) * (p2.x - p1.x) * (q2.x - q1.x) + q1.x * (q2.y - q1.y) * (p2.x - p1.x) - p1.x * (p2.y - p1.y) * (q2.x - q1.x);
@@ -2330,8 +2328,8 @@ public class GeoComputation {
             IPoint.y = tempRight / tempLeft;
         }
 
-        if (lineA.P1 instanceof Coordinate) {
-            return new Coordinate(IPoint.x, IPoint.y, ((Coordinate) lineA.P1).z, ((Coordinate) lineA.P1).m);
+        if (lineA.p1 instanceof Coordinate) {
+            return new Coordinate(IPoint.x, IPoint.y, ((Coordinate) lineA.p1).z, ((Coordinate) lineA.p1).m);
         }
         return IPoint;
     }
@@ -2412,14 +2410,14 @@ public class GeoComputation {
                         || Double.isNaN(yll) || Double.isNaN(ytl) || Double.isNaN(ytr) || Double.isNaN(ylr)) {
                     continue;
                 }
-                PolygonShape ps = new PolygonShape();
+                MultiPolygon ps = new MultiPolygon();
                 List<Coordinate> points = new ArrayList<>();
                 points.add(new Coordinate(xll, yll));
                 points.add(new Coordinate(xtl, ytl));
                 points.add(new Coordinate(xtr, ytr));
                 points.add(new Coordinate(xlr, ylr));
                 points.add((Coordinate) points.get(0).clone());
-                ps.setPoints(points);
+                ps.setCoordinates(points);
                 minxi = (int) ((ps.getExtent().minX - X.getDouble(0)) / dX);
                 maxxi = (int) ((ps.getExtent().maxX - X.getDouble(0)) / dX);
                 minyi = (int) ((ps.getExtent().minY - Y.getDouble(0)) / dY);

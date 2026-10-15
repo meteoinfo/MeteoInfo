@@ -6,7 +6,7 @@ import org.meteoinfo.geo.mapdata.MapDataManage;
 import org.meteoinfo.geo.meteodata.DrawMeteoData;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolygonBreak;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 
 import java.awt.*;
 
@@ -64,7 +64,7 @@ public class ClipTest {
 
         //渐变值
         LegendScheme aLS = LegendManage.createGraduatedLegendScheme(values, colors,
-                ShapeTypes.POLYGON, minData, maxData, false, grid.getDoubleMissingValue());
+                GeometryType.POLYGON, minData, maxData, false, grid.getDoubleMissingValue());
         //绘制图层
         VectorLayer layer = DrawMeteoData.createShadedLayer(grid, aLS, "Shaded_var", "var", false);
 

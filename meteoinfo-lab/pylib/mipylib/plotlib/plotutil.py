@@ -14,7 +14,7 @@ from org.meteoinfo.geometry.legend import LineStyles, HatchStyle, ColorBreak, Po
 from org.meteoinfo.geometry.colors import ExtendType
 from org.meteoinfo.chart.graphic import Graphic
 from org.meteoinfo.common.colors import ColorUtil, ColorMap
-from org.meteoinfo.geometry.shape import ShapeTypes
+from org.meteoinfo.geometry import GeometryType
 from org.meteoinfo.chart import ChartText
 
 from java.awt import Color, Font
@@ -749,11 +749,11 @@ def setlegendscheme(ls, **kwargs):
     if extend is not None:
         ls.setExtendType(extend)
     st = ls.getShapeType()
-    if st == ShapeTypes.POINT:
+    if st == GeometryType.POINT:
         setlegendscheme_point(ls, **kwargs)
-    elif st == ShapeTypes.POLYLINE:
+    elif st == GeometryType.LINESTRING:
         setlegendscheme_line(ls, **kwargs)
-    elif st == ShapeTypes.POLYGON:
+    elif st == GeometryType.POLYGON:
         setlegendscheme_polygon(ls, **kwargs)
     else:
         setlegendscheme_image(ls, **kwargs)
@@ -775,7 +775,7 @@ def setlegendscheme_image(ls, **kwargs):
 
 
 def setlegendscheme_point(ls, **kwargs):
-    ls = ls.convertTo(ShapeTypes.POINT)
+    ls = ls.convertTo(GeometryType.POINT)
     sizes = kwargs.get('size', None)
     colors = kwargs.get('colors', None)
     edgecolors = kwargs.get('edgecolors', None)
@@ -804,7 +804,7 @@ def setlegendscheme_arrow(ls, **kwargs):
     
     :returns: (*LegendScheme*) Result legend scheme.
     """
-    ls = ls.convertTo(ShapeTypes.POINT)
+    ls = ls.convertTo(GeometryType.POINT)
     sizes = kwargs.get('size', None)
     colors = kwargs.get('colors', None)
     marker = kwargs.get('marker', None)
@@ -958,7 +958,7 @@ def polygon2arrow(pb, **kwargs):
 
 
 def setlegendscheme_line(ls, **kwargs):
-    ls = ls.convertTo(ShapeTypes.POLYLINE)
+    ls = ls.convertTo(GeometryType.LINESTRING)
     size = kwargs.pop('size', None)
     size = kwargs.pop('linewidth', size)
     lsobj = kwargs.pop('linestyle', None)
@@ -979,7 +979,7 @@ def setlegendscheme_line(ls, **kwargs):
 
 
 def setlegendscheme_polygon(ls, **kwargs):
-    ls = ls.convertTo(ShapeTypes.POLYGON)
+    ls = ls.convertTo(GeometryType.POLYGON)
     fill = True
     if 'facecolor' in kwargs.keys():
         facecolor = kwargs['facecolor']
@@ -1198,13 +1198,13 @@ def makesymbolspec(geometry, *args, **kwargs):
     
     :returns: Created legend.
     """
-    shapetype = ShapeTypes.IMAGE
+    shapetype = GeometryType.IMAGE
     if geometry == 'point':
-        shapetype = ShapeTypes.POINT
+        shapetype = GeometryType.POINT
     elif geometry == 'line':
-        shapetype = ShapeTypes.POLYLINE
+        shapetype = GeometryType.LINESTRING
     elif geometry == 'polygon':
-        shapetype = ShapeTypes.POLYGON
+        shapetype = GeometryType.POLYGON
 
     levels = kwargs.pop('levels', None)
     cols = kwargs.pop('colors', None)

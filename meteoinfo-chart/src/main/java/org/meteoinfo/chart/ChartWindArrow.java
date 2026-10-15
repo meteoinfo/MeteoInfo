@@ -17,7 +17,7 @@ import org.meteoinfo.common.PointF;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.legend.ArrowBreak;
 import org.meteoinfo.chart.graphic.GraphicCollection;
-import org.meteoinfo.geometry.shape.WindArrow;
+import org.meteoinfo.geometry.special.WindArrow;
 
 /**
  *

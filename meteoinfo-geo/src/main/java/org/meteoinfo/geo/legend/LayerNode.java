@@ -20,7 +20,7 @@ import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geo.layer.LayerTypes;
 import org.meteoinfo.geo.layer.MapLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -202,14 +202,14 @@ public class LayerNode extends ItemNode {
                     VectorLayer aLayer = (VectorLayer) _mapLayer;
                     if (aLayer.getChartSet().isDrawCharts() && aLayer.getChartPoints().size() > 0) {
                         LegendNode aLN = new LegendNode();
-                        aLN.setShapeType(ShapeTypes.POLYGON);
+                        aLN.setShapeType(GeometryType.POLYGON);
                         ChartBreak aCB = ((ChartBreak) aLayer.getChartPoints().get(0).getLegendBreak()).getSampleChartBreak();
                         aLN.setLegendBreak(aCB);
                         aLN.setHeight(((ChartBreak) aLN.getLegendBreak()).getHeight() + 10);
                         _legendNodes.add(aLN);
                         for (int i = 0; i < aLayer.getChartSet().getLegendScheme().getBreakNum(); i++) {
                             aLN = new LegendNode();
-                            aLN.setShapeType(ShapeTypes.POLYGON);
+                            aLN.setShapeType(GeometryType.POLYGON);
                             aLN.setLegendBreak(aLayer.getChartSet().getLegendScheme().getLegendBreaks().get(i));
                             _legendNodes.add(aLN);
                         }

@@ -6,7 +6,7 @@ package org.meteoinfo.geo.analysis;
 
 import org.meteoinfo.geo.layer.VectorLayer;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.PolylineShape;
+import org.meteoinfo.geometry.MultiLineString;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.math.ArrayUtil;
@@ -135,11 +135,11 @@ public class Clustering {
                 aLine = format.format(aDate);
                 String height = layer.getCellValue("Height", i).toString();
                 flags.add(aLine + "," + height);
-                PolylineShape aPLZ = (PolylineShape) layer.getShapes().get(i);
+                MultiLineString aPLZ = (MultiLineString) layer.getShapes().get(i);
                 col = 0;
-                for (j = 0; j < aPLZ.getPointNum(); j++) {
+                for (j = 0; j < aPLZ.getNumPoints(); j++) {
                     if (j % interval == 0) {
-                        aPoint = (Coordinate) aPLZ.getPoints().get(j);
+                        aPoint = (Coordinate) aPLZ.getCoordinates().get(j);
                         DATA[row][col] = aPoint.x;
                         col += 1;
                         DATA[row][col] = aPoint.y;
@@ -192,11 +192,11 @@ public class Clustering {
                 aLine = format.format(aDate);
                 String height = layer.getCellValue("Height", i).toString();
                 flags.add(aLine + "," + height);
-                PolylineShape aPLZ = (PolylineShape) layer.getShapes().get(i);
+                MultiLineString aPLZ = (MultiLineString) layer.getShapes().get(i);
                 col = 0;
-                for (j = 0; j < aPLZ.getPointNum(); j++) {
+                for (j = 0; j < aPLZ.getNumPoints(); j++) {
                     if (j % interval == 0) {
-                        aPoint = (Coordinate) aPLZ.getPoints().get(j);
+                        aPoint = (Coordinate) aPLZ.getCoordinates().get(j);
                         DATA[row][col] = aPoint.x;
                         col += 1;
                         DATA[row][col] = aPoint.y;

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.meteoinfo.geo.layer.LayerTypes;
 import org.meteoinfo.geo.layer.MapLayer;
-import org.meteoinfo.geometry.shape.ShapeTypes;
 
  /**
   *

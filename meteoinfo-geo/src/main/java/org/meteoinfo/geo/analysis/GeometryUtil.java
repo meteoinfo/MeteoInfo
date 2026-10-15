@@ -5,12 +5,9 @@
  */
 package org.meteoinfo.geo.analysis;
 
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.meteoinfo.geometry.Extent;
-import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.*;
 import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.geometry.shape.*;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.IndexIterator;
@@ -73,7 +70,7 @@ public class GeometryUtil {
      * @param shapes
      * @return Extent
      */
-    public static Extent getExtent(List<? extends Shape> shapes) {
+    public static Extent getExtent(List<? extends Geometry> shapes) {
         Extent extent = (Extent) shapes.get(0).getExtent().clone();
         double minx = extent.minX;
         double maxx = extent.maxX;
@@ -217,9 +214,9 @@ public class GeometryUtil {
      * @param y Y array
      * @return PolygonShape
      */
-    public static PolygonShape convexHull(Array x, Array y) {
+    public static MultiPolygon convexHull(Array x, Array y) {
         int n = (int) x.getSize();
-        List<Geometry> geos = new ArrayList<>();
+        List<org.locationtech.jts.geom.Geometry> geos = new ArrayList<>();
         GeometryFactory factory = new GeometryFactory();
         IndexIterator xIter = x.getIndexIterator();
         IndexIterator yIter = y.getIndexIterator();
@@ -232,9 +229,9 @@ public class GeometryUtil {
                 geos.add(factory.createPoint(c));
             }
         }
-        Geometry gs = factory.createGeometryCollection(geos.toArray(new Geometry[geos.size()]));
-        Geometry ch = gs.convexHull();
-        return new PolygonShape(ch);
+        org.locationtech.jts.geom.Geometry gs = factory.createGeometryCollection(geos.toArray(new org.locationtech.jts.geom.Geometry[geos.size()]));
+        org.locationtech.jts.geom.Geometry ch = gs.convexHull();
+        return new MultiPolygon(ch);
     }
     
     /**
@@ -248,7 +245,7 @@ public class GeometryUtil {
      * polygons
      */
     public static Array inPolygon(Array a, List<Number> x, List<Number> y, VectorLayer layer) {
-        List<PolygonShape> polygons = (List<PolygonShape>) layer.getShapes();
+        List<MultiPolygon> polygons = (List<MultiPolygon>) layer.getShapes();
         return inPolygon(a, x, y, polygons);
     }
 
@@ -262,8 +259,8 @@ public class GeometryUtil {
      * @return Result array with cell values of 1 inside polygons and -1 outside
      * polygons
      */
-    public static Array inPolygon(Array a, List<Number> x, List<Number> y, PolygonShape ps) {
-        List<PolygonShape> polygons = new ArrayList<>();
+    public static Array inPolygon(Array a, List<Number> x, List<Number> y, MultiPolygon ps) {
+        List<MultiPolygon> polygons = new ArrayList<>();
         polygons.add(ps);
         return inPolygon(a, x, y, polygons);
     }
@@ -278,7 +275,7 @@ public class GeometryUtil {
      * @return Result array with cell values of 1 inside polygons and -1 outside
      * polygons
      */
-    public static Array inPolygon(Array a, List<Number> x, List<Number> y, List<PolygonShape> polygons) {
+    public static Array inPolygon(Array a, List<Number> x, List<Number> y, List<MultiPolygon> polygons) {
         if (a.getRank() == 2) {
             int xNum = x.size();
             int yNum = y.size();
@@ -320,7 +317,7 @@ public class GeometryUtil {
      * @param polygons PolygonShape list
      * @return Result boolean array
      */
-    public static Array inPolygon(Array x, Array y, List<PolygonShape> polygons) {
+    public static Array inPolygon(Array x, Array y, List<MultiPolygon> polygons) {
         Array r = Array.factory(DataType.BOOLEAN, x.getShape());
         IndexIterator xIter = x.getIndexIterator();
         IndexIterator yIter = y.getIndexIterator();
@@ -349,13 +346,13 @@ public class GeometryUtil {
      * polygons
      */
     public static Array inPolygon(Array a, List<Number> x, List<Number> y, List<Number> x_p, List<Number> y_p) {
-        PolygonShape ps = new PolygonShape();
+        MultiPolygon ps = new MultiPolygon();
         List<Coordinate> points = new ArrayList<>();
         for (int i = 0; i < x_p.size(); i++) {
             points.add(new Coordinate(x_p.get(i).doubleValue(), y_p.get(i).doubleValue()));
         }
-        ps.setPoints(points);
-        List<PolygonShape> shapes = new ArrayList<>();
+        ps.setCoordinates(points);
+        List<MultiPolygon> shapes = new ArrayList<>();
         shapes.add(ps);
 
         return inPolygon(a, x, y, shapes);
@@ -371,15 +368,15 @@ public class GeometryUtil {
      * @return Result boolean array
      */
     public static Array inPolygon(Array x, Array y, Array x_p, Array y_p) {
-        PolygonShape ps = new PolygonShape();
+        MultiPolygon ps = new MultiPolygon();
         List<Coordinate> points = new ArrayList<>();
         IndexIterator xIter = x_p.getIndexIterator();
         IndexIterator yIter = y_p.getIndexIterator();
         while (xIter.hasNext()) {
             points.add(new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext()));
         }
-        ps.setPoints(points);
-        List<PolygonShape> shapes = new ArrayList<>();
+        ps.setCoordinates(points);
+        List<MultiPolygon> shapes = new ArrayList<>();
         shapes.add(ps);
 
         return inPolygon(x, y, shapes);
@@ -396,7 +393,7 @@ public class GeometryUtil {
      * @return Result array with cell values of missing outside polygons
      */
     public static Array maskout(Array a, List<Number> x, List<Number> y, VectorLayer layer, Number missingValue) {
-        List<PolygonShape> polygons = (List<PolygonShape>) layer.getShapes();
+        List<MultiPolygon> polygons = (List<MultiPolygon>) layer.getShapes();
         return maskout(a, x, y, polygons, missingValue);
     }
 
@@ -410,8 +407,8 @@ public class GeometryUtil {
      * @param missingValue Missing value
      * @return Result array with cell values of missing outside polygons
      */
-    public static Array maskout(Array a, List<Number> x, List<Number> y, PolygonShape polygon, Number missingValue) {
-        List<PolygonShape> polygons = new ArrayList<>();
+    public static Array maskout(Array a, List<Number> x, List<Number> y, MultiPolygon polygon, Number missingValue) {
+        List<MultiPolygon> polygons = new ArrayList<>();
         polygons.add(polygon);
         return maskout(a, x, y, polygons, missingValue);
     }
@@ -425,7 +422,7 @@ public class GeometryUtil {
      * @param polygons Polygons for maskout
      * @return Result array with cell values of missing outside polygons
      */
-    public static Array maskout(Array a, Array x, Array y, List<PolygonShape> polygons) {
+    public static Array maskout(Array a, Array x, Array y, List<MultiPolygon> polygons) {
         Array r = Array.factory(a.getDataType(), a.getShape());
         IndexIterator aIter = a.getIndexIterator();
         IndexIterator xIter = x.getIndexIterator();
@@ -453,7 +450,7 @@ public class GeometryUtil {
      * @param polygons Polygons for maskin
      * @return Result array with cell values of missing inside polygons
      */
-    public static Array maskin(Array a, Array x, Array y, List<PolygonShape> polygons) {
+    public static Array maskin(Array a, Array x, Array y, List<MultiPolygon> polygons) {
         Array r = Array.factory(a.getDataType(), a.getShape());
         IndexIterator aIter = a.getIndexIterator();
         IndexIterator xIter = x.getIndexIterator();
@@ -481,7 +478,7 @@ public class GeometryUtil {
      * @param polygons Polygons for maskout
      * @return Result arrays removing cells outside polygons
      */
-    public static Array[] maskout_Remove(Array a, Array x, Array y, List<PolygonShape> polygons) {
+    public static Array[] maskout_Remove(Array a, Array x, Array y, List<MultiPolygon> polygons) {
         List<Object> rdata = new ArrayList<>();
         List<Double> rxdata = new ArrayList<>();
         List<Double> rydata = new ArrayList<>();
@@ -524,7 +521,7 @@ public class GeometryUtil {
      * @param polygons Polygons for maskin
      * @return Result arrays removing cells inside polygons
      */
-    public static Array[] maskin_Remove(Array a, Array x, Array y, List<PolygonShape> polygons) {
+    public static Array[] maskin_Remove(Array a, Array x, Array y, List<MultiPolygon> polygons) {
         List<Object> rdata = new ArrayList<>();
         List<Double> rxdata = new ArrayList<>();
         List<Double> rydata = new ArrayList<>();
@@ -567,7 +564,7 @@ public class GeometryUtil {
      * @param polygons PolygonShape list
      * @return Result array with cell values of missing outside polygons
      */
-    public static Array maskout(Array a, List<Number> x, List<Number> y, List<PolygonShape> polygons) {
+    public static Array maskout(Array a, List<Number> x, List<Number> y, List<MultiPolygon> polygons) {
         return maskout(a, x, y, polygons, Double.NaN);
     }
 
@@ -581,7 +578,7 @@ public class GeometryUtil {
      * @param missingValue Missing value
      * @return Result array with cell values of missing outside polygons
      */
-    public static Array maskout(Array a, List<Number> x, List<Number> y, List<PolygonShape> polygons, Number missingValue) {
+    public static Array maskout(Array a, List<Number> x, List<Number> y, List<MultiPolygon> polygons, Number missingValue) {
         int xNum = x.size();
         int yNum = y.size();
 
@@ -726,8 +723,8 @@ public class GeometryUtil {
      * @param pgs The polygon shape
      * @return Coordinate arrays
      */
-    public static Array[] getCoordinates(PolygonShape pgs) {
-        int n = pgs.getPointNum() + pgs.getPartNum() - 1;
+    public static Array[] getCoordinates(MultiPolygon pgs) {
+        int n = pgs.getNumPoints() + pgs.getNumParts() - 1;
         int[] shape = new int[]{n};
         Array xArray = Array.factory(DataType.DOUBLE, shape);
         Array yArray = Array.factory(DataType.DOUBLE, shape);
@@ -761,16 +758,16 @@ public class GeometryUtil {
      * @param pls The polygon shape
      * @return Coordinate arrays
      */
-    public static Array[] getCoordinates(PolylineShape pls) {
-        int n = pls.getPointNum() + pls.getPartNum() - 1;
+    public static Array[] getCoordinates(MultiLineString pls) {
+        int n = pls.getNumPoints() + pls.getNumParts() - 1;
         int[] shape = new int[]{n};
         Array xArray = Array.factory(DataType.DOUBLE, shape);
         Array yArray = Array.factory(DataType.DOUBLE, shape);
         Array zArray = Array.factory(DataType.DOUBLE, shape);
         Array mArray = Array.factory(DataType.DOUBLE, shape);
         int i = 0;
-        for (Polyline polyline : pls.getPolylines()) {
-            for (Coordinate p : (List<Coordinate>) polyline.getPointList()) {
+        for (LineString polyline : pls.getPolylines()) {
+            for (Coordinate p : polyline.getCoordinates()) {
                 xArray.setDouble(i, p.x);
                 yArray.setDouble(i, p.y);
                 zArray.setDouble(i, p.z);
@@ -807,8 +804,8 @@ public class GeometryUtil {
                 mArray = Array.factory(DataType.DOUBLE, new int[]{n});
                 int i = 0;
                 Coordinate p;
-                for (PointShape shape : (List<PointShape>) layer.getShapes()) {
-                    p = (Coordinate) shape.getPoint();
+                for (Point shape : (List<Point>) layer.getShapes()) {
+                    p = (Coordinate) shape.getCoordinate();
                     xArray.setDouble(i, p.x);
                     yArray.setDouble(i, p.y);
                     zArray.setDouble(i, p.z);
@@ -818,8 +815,8 @@ public class GeometryUtil {
             } else {
                 int i = 0;
                 Coordinate p;
-                for (PointShape shape : (List<PointShape>) layer.getShapes()) {
-                    p = shape.getPoint();
+                for (Point shape : (List<Point>) layer.getShapes()) {
+                    p = shape.getCoordinate();
                     xArray.setDouble(i, p.x);
                     yArray.setDouble(i, p.y);
                 }
@@ -827,8 +824,8 @@ public class GeometryUtil {
             }
         } else {
             int n = 0;
-            for (Shape shape : layer.getShapes()) {
-                n += shape.getPointNum() + shape.getPartNum();
+            for (Geometry shape : layer.getShapes()) {
+                n += shape.getNumPoints() + shape.getNumParts();
             }
             n -= 1;
             Array xArray = Array.factory(DataType.DOUBLE, new int[]{n});
@@ -843,7 +840,7 @@ public class GeometryUtil {
             int[] origin = new int[1];
             int[] shape = new int[1];
             if (layer.getShapeType().isLine()) {
-                for (PolylineShape pls : (List<PolylineShape>) layer.getShapes()) {
+                for (MultiLineString pls : (List<MultiLineString>) layer.getShapes()) {
                     Array[] arrays = getCoordinates(pls);
                     origin[0] = i;
                     shape[0] = (int) arrays[0].getSize();
@@ -869,7 +866,7 @@ public class GeometryUtil {
                     }
                 }
             } else {
-                for (PolygonShape pgs : (List<PolygonShape>) layer.getShapes()) {
+                for (MultiPolygon pgs : (List<MultiPolygon>) layer.getShapes()) {
                     Array[] arrays = getCoordinates(pgs);
                     origin[0] = i;
                     shape[0] = (int) arrays[0].getSize();

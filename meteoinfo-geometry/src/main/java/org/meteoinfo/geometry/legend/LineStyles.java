@@ -13,8 +13,6 @@
  */
 package org.meteoinfo.geometry.legend;
 
- import org.meteoinfo.geometry.shape.Line;
-
  /**
  * Line style enum
  *

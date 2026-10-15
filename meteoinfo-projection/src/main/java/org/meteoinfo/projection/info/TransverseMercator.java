@@ -15,7 +15,7 @@ package org.meteoinfo.projection.info;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.MultiPolygon;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
 
@@ -79,8 +79,8 @@ public class TransverseMercator extends ProjectionInfo {
         points.add(new Coordinate(x1, y1));
         points.add(new Coordinate(x0, y1));
         points.add(new Coordinate(x0, y0));
-        PolygonShape ps = new PolygonShape();
-        ps.setPoints(points);
+        MultiPolygon ps = new MultiPolygon();
+        ps.setCoordinates(points);
         this.boundary = ps;
     }
     // </editor-fold>

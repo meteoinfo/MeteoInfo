@@ -2,7 +2,7 @@ package org.meteoinfo.chart.jogl.tessellator;
 
 import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geometry.geoprocess.ClipLine;
-import org.meteoinfo.geometry.shape.Polygon;
+import org.meteoinfo.geometry.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;

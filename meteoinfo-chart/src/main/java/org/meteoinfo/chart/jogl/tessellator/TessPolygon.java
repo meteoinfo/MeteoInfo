@@ -1,6 +1,6 @@
 package org.meteoinfo.chart.jogl.tessellator;
 
-import org.meteoinfo.geometry.shape.Polygon;
+import org.meteoinfo.geometry.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ public class TessPolygon extends Polygon {
 
     /**
      * Constructor
-     * @param polygonZ Input PolygonZ
+     * @param polygon Input Polygon
      */
     public TessPolygon(Polygon polygon) {
         this.setOutLine(polygon.getOutLine());

@@ -18,16 +18,15 @@ import org.meteoinfo.data.mapdata.webmap.GeoPosition;
 import org.meteoinfo.data.mapdata.webmap.GeoUtil;
 import org.meteoinfo.data.mapdata.webmap.IWebMapPanel;
 import org.meteoinfo.data.mapdata.webmap.TileLoadListener;
-import org.meteoinfo.geometry.Extent;
-import org.meteoinfo.geometry.GeometryUtil;
-import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.*;
+import org.meteoinfo.geometry.Point;
 import org.meteoinfo.projection.*;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.chart.graphic.GeoGraphicCollection;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.geometry.shape.*;
+import org.meteoinfo.geometry.special.*;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
@@ -95,7 +94,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
 
         Extent extent = this.getAutoExtent();
         this.setDrawExtent(extent);
-        PolygonShape bvs = this.projInfo.getBoundary();
+        MultiPolygon bvs = this.projInfo.getBoundary();
         if (bvs != null) {
             this.setBoundary(bvs);
         }
@@ -264,7 +263,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      *
      * @param value Map boundary
      */
-    public void setBoundary(PolygonShape value) {
+    public void setBoundary(MultiPolygon value) {
         PolygonBreak pb = new PolygonBreak();
         pb.setOutlineSize(1.5f);
         pb.setDrawFill(false);
@@ -494,7 +493,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
                     continue;
                 }
 
-                ShapeTypes shapeType = graphic.getGraphicN(0).getShape().getShapeType();
+                GeometryType shapeType = graphic.getGraphicN(0).getShape().getGeometryType();
                 switch (shapeType) {
                     case BAR:
                         this.drawBars(g, (GraphicCollection) graphic, barIdx);
@@ -526,8 +525,8 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         Extent aExtent;
         PointBreak pointBreak = (PointBreak) ls.getLegendBreak(0);
         for (Graphic graphic : graphics.getGraphics()) {
-            StationModelShape shape = (StationModelShape) graphic.getShape();
-            Coordinate p = shape.getPoint();
+            StationModel shape = (StationModel) graphic.getShape();
+            Coordinate p = shape.getCoordinate();
             if (p.x < drawExtent.minX || p.x > drawExtent.maxX
                     || p.y < drawExtent.minY || p.y > drawExtent.maxY) {
                 continue;
@@ -580,8 +579,8 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         Extent aExtent;
         PointBreak pointBreak = (PointBreak) ls.getLegendBreak(0);
         for (Graphic graphic : graphics.getGraphics()) {
-            StationModelShape shape = (StationModelShape) graphic.getShape();
-            Coordinate p = shape.getPoint();
+            StationModel shape = (StationModel) graphic.getShape();
+            Coordinate p = shape.getCoordinate();
             if (p.x < drawExtent.minX || p.x > drawExtent.maxX
                     || p.y < drawExtent.minY || p.y > drawExtent.maxY) {
                 continue;
@@ -891,14 +890,14 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      * @param pb Point break
      */
     public void addPoint(double lat, double lon, PointBreak pb) {
-        PointShape ps = new PointShape();
+        Point ps = new Point();
         Coordinate lonlatp = new Coordinate(lon, lat);
         if (this.isLonLatMap()) {
-            ps.setPoint(lonlatp);
+            ps.setCoordinate(lonlatp);
         } else {
             Coordinate xyp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
                     this.getProjInfo());
-            ps.setPoint(xyp);
+            ps.setCoordinate(xyp);
         }
         Graphic aGraphic = new Graphic(ps, pb);
         this.addGraphic(aGraphic);
@@ -914,19 +913,19 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      */
     public Graphic addPoint(List<Number> lat, List<Number> lon, PointBreak pb) {
         double x, y;
-        PointShape ps;
+        Point ps;
         Coordinate lonlatp, xyp;
         for (int i = 0; i < lat.size(); i++) {
-            ps = new PointShape();
+            ps = new Point();
             x = lon.get(i).doubleValue();
             y = lat.get(i).doubleValue();
             lonlatp = new Coordinate(x, y);
             if (this.isLonLatMap()) {
-                ps.setPoint(lonlatp);
+                ps.setCoordinate(lonlatp);
             } else {
                 xyp = Reproject.reprojectPoint(lonlatp, KnownCoordinateSystems.geographic.world.WGS1984,
                         this.getProjInfo());
-                ps.setPoint(xyp);
+                ps.setCoordinate(xyp);
             }
             Graphic aGraphic = new Graphic(ps, pb);
             this.addGraphic(aGraphic);
@@ -945,7 +944,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      */
     public Graphic addPolyline(List<Number> lat, List<Number> lon, PolylineBreak plb) {
         double x, y;
-        PolylineShape pls;
+        MultiLineString pls;
         Coordinate lonlatp;
         List<Coordinate> points = new ArrayList<>();
         for (int i = 0; i < lat.size(); i++) {
@@ -953,8 +952,8 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
             y = lat.get(i).doubleValue();
             if (Double.isNaN(x)) {
                 if (points.size() >= 2) {
-                    pls = new PolylineShape();
-                    pls.setPoints(points);
+                    pls = new MultiLineString();
+                    pls.setCoordinates(points);
                     Graphic aGraphic = new Graphic(pls, plb);
                     this.addGraphic(aGraphic);
                 }
@@ -969,8 +968,8 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
             }
         }
         if (points.size() >= 2) {
-            pls = new PolylineShape();
-            pls.setPoints(points);
+            pls = new MultiLineString();
+            pls.setCoordinates(points);
             Graphic aGraphic = new Graphic(pls, plb);
             this.addGraphic(aGraphic);
             return aGraphic;
@@ -989,7 +988,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      */
     public Graphic addPolyline(List<Number> lat, List<Number> lon, PolylineBreak plb, boolean iscurve) {
         double x, y;
-        PolylineShape pls;
+        MultiLineString pls;
         Coordinate lonlatp;
         List<Coordinate> points = new ArrayList<>();
         for (int i = 0; i < lat.size(); i++) {
@@ -998,11 +997,11 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
             if (Double.isNaN(x)) {
                 if (points.size() >= 2) {
                     if (iscurve) {
-                        pls = new CurveLineShape();
+                        pls = new CurveLineString();
                     } else {
-                        pls = new PolylineShape();
+                        pls = new MultiLineString();
                     }
-                    pls.setPoints(points);
+                    pls.setCoordinates(points);
                     Graphic aGraphic = new Graphic(pls, plb);
                     this.addGraphic(aGraphic);
                 }
@@ -1018,11 +1017,11 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         }
         if (points.size() >= 2) {
             if (iscurve) {
-                pls = new CurveLineShape();
+                pls = new CurveLineString();
             } else {
-                pls = new PolylineShape();
+                pls = new MultiLineString();
             }
-            pls.setPoints(points);
+            pls.setCoordinates(points);
             Graphic aGraphic = new Graphic(pls, plb);
             this.addGraphic(aGraphic);
             return aGraphic;
@@ -1040,7 +1039,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      */
     public Graphic addPolygon(List<Number> lat, List<Number> lon, PolygonBreak pgb) {
         double x, y;
-        PolygonShape pgs;
+        MultiPolygon pgs;
         Coordinate lonlatp;
         List<Coordinate> points = new ArrayList<>();
         for (int i = 0; i < lat.size(); i++) {
@@ -1048,8 +1047,8 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
             y = lat.get(i).doubleValue();
             if (Double.isNaN(x)) {
                 if (points.size() > 2) {
-                    pgs = new PolygonShape();
-                    pgs.setPoints(points);
+                    pgs = new MultiPolygon();
+                    pgs.setCoordinates(points);
                     Graphic aGraphic = new Graphic(pgs, pgb);
                     this.addGraphic(aGraphic);
                 }
@@ -1064,8 +1063,8 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
             }
         }
         if (points.size() > 2) {
-            pgs = new PolygonShape();
-            pgs.setPoints(points);
+            pgs = new MultiPolygon();
+            pgs.setCoordinates(points);
             Graphic aGraphic = new Graphic(pgs, pgb);
             this.addGraphic(aGraphic);
             return aGraphic;
@@ -1083,7 +1082,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      * @return Graphic
      */
     public Graphic addCircle(float x, float y, float radius, PolygonBreak pgb) {
-        CircleShape aPGS = ShapeUtil.createCircleShape(x, y, radius);
+        Circle aPGS = GeometryUtil.createCircleShape(x, y, radius);
         Graphic graphic = new Graphic(aPGS, pgb);
         this.addGraphic(graphic);
 

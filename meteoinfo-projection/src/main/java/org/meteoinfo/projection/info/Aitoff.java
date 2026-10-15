@@ -16,7 +16,7 @@ package org.meteoinfo.projection.info;
 import org.locationtech.proj4j.CoordinateReferenceSystem;
 import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.shape.PolygonShape;
+import org.meteoinfo.geometry.MultiPolygon;
 import org.meteoinfo.projection.*;
 
 import java.util.ArrayList;
@@ -78,8 +78,8 @@ public class Aitoff extends ProjectionInfo {
         }
         lat = minLat;
         points.add(new Coordinate(lon, lat));
-        PolygonShape ps = new PolygonShape();
-        ps.setPoints(points);
+        MultiPolygon ps = new MultiPolygon();
+        ps.setCoordinates(points);
         this.boundary = ProjectionUtil.projectPolygonShape(ps, KnownCoordinateSystems.geographic.world.WGS1984, this);
     }
 

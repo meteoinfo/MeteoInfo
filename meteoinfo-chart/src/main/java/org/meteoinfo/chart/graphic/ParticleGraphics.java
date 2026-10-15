@@ -2,7 +2,7 @@ package org.meteoinfo.chart.graphic;
 
 import java.util.*;
 
-public class ParticleGraphics extends GraphicCollection3D {
+public class ParticleGraphics extends GraphicCollection {
 
     /**
      * Inner Particle class

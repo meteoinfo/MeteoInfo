@@ -46,7 +46,7 @@ import org.meteoinfo.geo.layer.MapLayer;
 import org.meteoinfo.geo.layout.LayoutChart;
 import org.meteoinfo.geo.layout.MapLayout;
 import org.meteoinfo.geo.legend.LegendManage;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 
 /**
  *
@@ -497,7 +497,7 @@ public class FrmOneDim extends javax.swing.JFrame {
                     }
                 }
                 if (ls == null) {
-                    ls = LegendManage.createUniqValueLegendScheme(ldataset.getSeriesCount(), ShapeTypes.POLYLINE);
+                    ls = LegendManage.createUniqValueLegendScheme(ldataset.getSeriesCount(), GeometryType.LINESTRING);
                     for (ColorBreak cb : ls.getLegendBreaks()) {
                         PolylineBreak plb = (PolylineBreak) cb;
                         plb.setDrawSymbol(true);
@@ -610,7 +610,7 @@ public class FrmOneDim extends javax.swing.JFrame {
                     if (_plotDimension == PlotDimension.Time) {
                         isTime = true;
                     }
-                    ls = LegendManage.createUniqValueLegendScheme(dataset.getSeriesCount(), ShapeTypes.POLYLINE);
+                    ls = LegendManage.createUniqValueLegendScheme(dataset.getSeriesCount(), GeometryType.LINESTRING);
                     for (ColorBreak cb : ls.getLegendBreaks()) {
                         PolylineBreak plb = (PolylineBreak) cb;
                         plb.setDrawSymbol(true);
@@ -698,7 +698,7 @@ public class FrmOneDim extends javax.swing.JFrame {
         if (_plotDimension == PlotDimension.Time) {
             isTime = true;
         }
-        LegendScheme ls = LegendManage.createUniqValueLegendScheme(dataset.getSeriesCount(), ShapeTypes.POLYLINE);
+        LegendScheme ls = LegendManage.createUniqValueLegendScheme(dataset.getSeriesCount(), GeometryType.LINESTRING);
         for (ColorBreak cb : ls.getLegendBreaks()) {
             PolylineBreak plb = (PolylineBreak) cb;
             plb.setDrawSymbol(true);

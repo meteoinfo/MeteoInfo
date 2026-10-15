@@ -14,15 +14,13 @@
 package org.meteoinfo.geo.mapdata;
 
  import org.meteoinfo.chart.graphic.GeoGraphicCollection;
- import org.meteoinfo.geometry.Extent;
- import org.meteoinfo.geometry.Coordinate;
+ import org.meteoinfo.geometry.*;
  import org.meteoinfo.common.io.EndianDataOutputStream;
  import org.meteoinfo.geo.layer.LayerDrawType;
  import org.meteoinfo.geo.layer.VectorLayer;
  import org.meteoinfo.geo.legend.LegendManage;
  import org.meteoinfo.chart.graphic.GraphicCollection;
- import org.meteoinfo.geometry.shape.Shape;
- import org.meteoinfo.geometry.shape.*;
+ import org.meteoinfo.geometry.Point;
  import org.meteoinfo.projection.ProjectionInfo;
  import org.meteoinfo.table.AttributeTable;
 
@@ -223,16 +221,16 @@ public class ShapeFileManage {
             x = buffer.getDouble();
             y = buffer.getDouble();
 
-            PointShape aP = new PointShape();
+            Point aP = new Point();
             Coordinate aPoint = new Coordinate();
             aPoint.x = x;
             aPoint.y = y;
-            aP.setPoint(aPoint);
+            aP.setCoordinate(aPoint);
             aLayer.addShape(aP);
         }
 
         //Create legend scheme            
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.black, 5));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(GeometryType.POINT, Color.black, 5));
         return aLayer;
     }
     
@@ -259,18 +257,18 @@ public class ShapeFileManage {
             z = buffer.getDouble();
             m = buffer.getDouble();
 
-            PointShape aP = new PointShape();
+            Point aP = new Point();
             Coordinate aPoint = new Coordinate();
             aPoint.x = x;
             aPoint.y = y;
             aPoint.z = z;
             aPoint.m = m;
-            aP.setPoint(aPoint);
+            aP.setCoordinate(aPoint);
             aLayer.addShape(aP);
         }
 
         //Create legend scheme            
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POINT, Color.black, 5));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(GeometryType.POINT, Color.black, 5));
         return aLayer;
     }
 
@@ -297,7 +295,7 @@ public class ShapeFileManage {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             aShapeType = buffer.getInt();
 
-            PolylineShape aPL = new PolylineShape();
+            MultiLineString aPL = new MultiLineString();
             Extent extent = new Extent();
             extent.minX = buffer.getDouble();
             extent.minY = buffer.getDouble();
@@ -307,11 +305,11 @@ public class ShapeFileManage {
 
             aPL.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
-            aPL.parts = new int[aPL.getPartNum()];
+            aPL.parts = new int[aPL.getNumParts()];
             List<Coordinate> points = new ArrayList<>();
 
             //firstly read out parts begin pos in file 
-            for (int j = 0; j < aPL.getPartNum(); j++) {
+            for (int j = 0; j < aPL.getNumParts(); j++) {
                 aPL.parts[j] = buffer.getInt();
             }
 
@@ -324,12 +322,12 @@ public class ShapeFileManage {
                 aPoint.y = y;
                 points.add(aPoint);
             }
-            aPL.setPoints(points);
+            aPL.setCoordinates(points);
             aLayer.addShape(aPL);
         }
 
         //Create legend scheme            
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.darkGray, 1.0F));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(GeometryType.LINESTRING, Color.darkGray, 1.0F));
 
         return aLayer;
     }
@@ -359,7 +357,7 @@ public class ShapeFileManage {
             aShapeType = buffer.getInt();
 
             //Read bounding box
-            PolylineShape aPL = new PolylineShape();
+            MultiLineString aPL = new MultiLineString();
             Extent extent = new Extent();
             extent.minX = buffer.getDouble();
             extent.minY = buffer.getDouble();
@@ -369,11 +367,11 @@ public class ShapeFileManage {
 
             aPL.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
-            aPL.parts = new int[aPL.getPartNum()];
+            aPL.parts = new int[aPL.getNumParts()];
             List<Coordinate> points = new ArrayList<>();
 
             //firstly read out parts begin position in file 
-            for (int j = 0; j < aPL.getPartNum(); j++) {
+            for (int j = 0; j < aPL.getNumParts(); j++) {
                 aPL.parts[j] = buffer.getInt();
             }
 
@@ -412,12 +410,12 @@ public class ShapeFileManage {
                 pointZs.add(new Coordinate(points.get(j).x, points.get(j).y, zArray[j], mArray[j]));
             }
 
-            aPL.setPoints(pointZs);
+            aPL.setCoordinates(pointZs);
             aLayer.addShape(aPL);
         }
 
         //Create legend scheme            
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYLINE, Color.darkGray, 1.0F));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(GeometryType.LINESTRING, Color.darkGray, 1.0F));
 
         return aLayer;
     }
@@ -449,7 +447,7 @@ public class ShapeFileManage {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             aShapeType = buffer.getInt();
 
-            PolygonShape aSPG = new PolygonShape();
+            MultiPolygon aSPG = new MultiPolygon();
             Extent extent = new Extent();
             extent.minX = buffer.getDouble();
             extent.minY = buffer.getDouble();
@@ -458,11 +456,11 @@ public class ShapeFileManage {
             aSPG.setExtent(extent);
             aSPG.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
-            aSPG.parts = new int[aSPG.getPartNum()];
+            aSPG.parts = new int[aSPG.getNumParts()];
             List<Coordinate> points = new ArrayList<>();
 
             //firstly read out parts begin pos in file 
-            for (int j = 0; j < aSPG.getPartNum(); j++) {
+            for (int j = 0; j < aSPG.getNumParts(); j++) {
                 aSPG.parts[j] = buffer.getInt();
             }
 
@@ -475,12 +473,12 @@ public class ShapeFileManage {
                 aPoint.y = y;
                 points.add(aPoint);
             }
-            aSPG.setPoints(points);
+            aSPG.setCoordinates(points);
             aLayer.addShape(aSPG);
         }
 
         //Create legend scheme            
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, new Color(255, 251, 195), 1.0F));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(GeometryType.POLYGON, new Color(255, 251, 195), 1.0F));
 
         return aLayer;
     }
@@ -506,7 +504,7 @@ public class ShapeFileManage {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             aShapeType = buffer.getInt();
 
-            PolygonShape aSPG = new PolygonShape();
+            MultiPolygon aSPG = new MultiPolygon();
             Extent extent = new Extent();
             extent.minX = buffer.getDouble();
             extent.minY = buffer.getDouble();
@@ -515,11 +513,11 @@ public class ShapeFileManage {
             aSPG.setExtent(extent);
             aSPG.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
-            aSPG.parts = new int[aSPG.getPartNum()];
+            aSPG.parts = new int[aSPG.getNumParts()];
             List<Coordinate> points = new ArrayList<>();
 
             //firstly read out parts begin pos in file 
-            for (int j = 0; j < aSPG.getPartNum(); j++) {
+            for (int j = 0; j < aSPG.getNumParts(); j++) {
                 aSPG.parts[j] = buffer.getInt();
             }
 
@@ -547,12 +545,12 @@ public class ShapeFileManage {
                 pointMs.add(new Coordinate(points.get(j).x, points.get(j).y, Double.NaN, mArray[j]));
             }
             
-            aSPG.setPoints(pointMs);
+            aSPG.setCoordinates(pointMs);
             aLayer.addShape(aSPG);
         }
 
         //Create legend scheme            
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, new Color(255, 251, 195), 1.0F));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(GeometryType.POLYGON, new Color(255, 251, 195), 1.0F));
 
         return aLayer;
     }
@@ -578,7 +576,7 @@ public class ShapeFileManage {
             buffer.order(ByteOrder.LITTLE_ENDIAN);
             aShapeType = buffer.getInt();
 
-            PolygonShape aSPG = new PolygonShape();
+            MultiPolygon aSPG = new MultiPolygon();
             Extent extent = new Extent();
             extent.minX = buffer.getDouble();
             extent.minY = buffer.getDouble();
@@ -587,11 +585,11 @@ public class ShapeFileManage {
             aSPG.setExtent(extent);
             aSPG.setPartNum(buffer.getInt());
             int numPoints = buffer.getInt();
-            aSPG.parts = new int[aSPG.getPartNum()];
+            aSPG.parts = new int[aSPG.getNumParts()];
             List<Coordinate> points = new ArrayList<>();
 
             //firstly read out parts begin pos in file 
-            for (int j = 0; j < aSPG.getPartNum(); j++) {
+            for (int j = 0; j < aSPG.getNumParts(); j++) {
                 aSPG.parts[j] = buffer.getInt();
             }
 
@@ -629,12 +627,12 @@ public class ShapeFileManage {
                 pointZs.add(new Coordinate(points.get(j).x, points.get(j).y, zArray[j], mArray[j]));
             }
             
-            aSPG.setPoints(pointZs);
+            aSPG.setCoordinates(pointZs);
             aLayer.addShape(aSPG);
         }
 
         //Create legend scheme            
-        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(ShapeTypes.POLYGON, new Color(255, 251, 195), 1.0F));
+        aLayer.setLegendScheme(LegendManage.createSingleSymbolLegendScheme(GeometryType.POLYGON, new Color(255, 251, 195), 1.0F));
 
         return aLayer;
     }
@@ -797,7 +795,7 @@ public class ShapeFileManage {
 
          switch (geoGraphics.getShapeType()) {
              case POINT:
-             case POLYLINE:
+             case LINESTRING:
              case POLYGON:
                  writeShxFile(shxFilePath, geoGraphics);
                  writeShpFile(shpFilePath, geoGraphics);
@@ -825,7 +823,7 @@ public class ShapeFileManage {
         int RecordNumber;
 
         for (int i = 0; i < aLayer.getShapeNum(); i++) {
-            Shape aShape = aLayer.getShapes().get(i);
+            Geometry aShape = aLayer.getShapes().get(i);
             RecordNumber = i + 1;
             writeRecord(bw, RecordNumber, aShape, aLayer.getShapeType());
         }
@@ -846,7 +844,7 @@ public class ShapeFileManage {
          int RecordNumber;
 
          for (int i = 0; i < graphics.getNumGraphics(); i++) {
-             Shape aShape = graphics.getShapes().get(i);
+             Geometry aShape = graphics.getShapes().get(i);
              RecordNumber = i + 1;
              writeRecord(bw, RecordNumber, aShape, ShapeFileType.fromShapeType(graphics.getShapeType()));
          }
@@ -859,7 +857,7 @@ public class ShapeFileManage {
         int fileLength = 50;
 
         for (int i = 0; i < aLayer.getShapeNum(); i++) {
-            Shape aShape = aLayer.getShapes().get(i);
+            Geometry aShape = aLayer.getShapes().get(i);
             int cLen = getContentLength(aShape, aLayer.getShapeType());
             fileLength += 4 + cLen;
         }
@@ -871,7 +869,7 @@ public class ShapeFileManage {
          int fileLength = 50;
 
          for (int i = 0; i < graphics.getNumGraphics(); i++) {
-             Shape aShape = graphics.getShapes().get(i);
+             Geometry aShape = graphics.getShapes().get(i);
              int cLen = getContentLength(aShape, ShapeFileType.fromShapeType(graphics.getShapeType()));
              fileLength += 4 + cLen;
          }
@@ -879,7 +877,7 @@ public class ShapeFileManage {
          return fileLength;
      }
 
-    private static int getContentLength(Shape aShape, ShapeFileType aST) {
+    private static int getContentLength(Geometry aShape, ShapeFileType aST) {
         int contentLength = 0;
         switch (aST) {
             case POINT:
@@ -889,29 +887,29 @@ public class ShapeFileManage {
                 contentLength = 2 + 4 * 4;
                 break;
             case POLYLINE:
-                PolylineShape aPLS = (PolylineShape) aShape;
-                contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPLS.getPartNum() + 4 * 2 * aPLS.getPointNum();
+                MultiLineString aPLS = (MultiLineString) aShape;
+                contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPLS.getNumParts() + 4 * 2 * aPLS.getNumPoints();
                 break;
             case POLYLINE_Z:
-                PolylineShape aPLZS = (PolylineShape) aShape;
-                contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPLZS.getPartNum() + 4 * 2 * aPLZS.getPointNum()
-                        + 4 + 4 + 4 * aPLZS.getPointNum() + 4 + 4 + 4 * aPLZS.getPointNum();
+                MultiLineString aPLZS = (MultiLineString) aShape;
+                contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPLZS.getNumParts() + 4 * 2 * aPLZS.getNumPoints()
+                        + 4 + 4 + 4 * aPLZS.getNumPoints() + 4 + 4 + 4 * aPLZS.getNumPoints();
                 break;
             case POLYGON:
-                PolygonShape aPGS = (PolygonShape) aShape;
-                contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPGS.getPartNum() + 4 * 2 * aPGS.getPointNum();
+                MultiPolygon aPGS = (MultiPolygon) aShape;
+                contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPGS.getNumParts() + 4 * 2 * aPGS.getNumPoints();
                 break;
             case POLYGON_Z:
-                PolygonShape aPGZS = (PolygonShape) aShape;
-                contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPGZS.getPartNum() + 4 * 2 * aPGZS.getPointNum()
-                        + 4 + 4 + 4 * aPGZS.getPointNum() + 4 + 4 + 4 * aPGZS.getPointNum();
+                MultiPolygon aPGZS = (MultiPolygon) aShape;
+                contentLength = 2 + 4 * 4 + 2 + 2 + 2 * aPGZS.getNumParts() + 4 * 2 * aPGZS.getNumPoints()
+                        + 4 + 4 + 4 * aPGZS.getNumPoints() + 4 + 4 + 4 * aPGZS.getNumPoints();
                 break;
         }
 
         return contentLength;
     }
 
-    private static void writeRecord(EndianDataOutputStream bw, int RecordNumber, Shape aShape, ShapeFileType aST) throws IOException {
+    private static void writeRecord(EndianDataOutputStream bw, int RecordNumber, Geometry aShape, ShapeFileType aST) throws IOException {
         int ContentLength, i;
 
         ContentLength = getContentLength(aShape, aST);
@@ -920,91 +918,91 @@ public class ShapeFileManage {
         bw.writeIntLE(aST.getValue());
         switch (aST) {
             case POINT:
-                PointShape aPS = (PointShape) aShape;
-                bw.writeDoubleLE(aPS.getPoint().x);
-                bw.writeDoubleLE(aPS.getPoint().y);
+                Point aPS = (Point) aShape;
+                bw.writeDoubleLE(aPS.getCoordinate().x);
+                bw.writeDoubleLE(aPS.getCoordinate().y);
                 break;
             case POLYLINE:
-                PolylineShape aPLS = (PolylineShape) aShape;
+                MultiLineString aPLS = (MultiLineString) aShape;
                 bw.writeDoubleLE(aPLS.getExtent().minX);
                 bw.writeDoubleLE(aPLS.getExtent().minY);
                 bw.writeDoubleLE(aPLS.getExtent().maxX);
                 bw.writeDoubleLE(aPLS.getExtent().maxY);
-                bw.writeIntLE(aPLS.getPartNum());
-                bw.writeIntLE(aPLS.getPointNum());
-                for (i = 0; i < aPLS.getPartNum(); i++) {
+                bw.writeIntLE(aPLS.getNumParts());
+                bw.writeIntLE(aPLS.getNumPoints());
+                for (i = 0; i < aPLS.getNumParts(); i++) {
                     bw.writeIntLE(aPLS.parts[i]);
                 }
-                for (i = 0; i < aPLS.getPointNum(); i++) {
-                    bw.writeDoubleLE((aPLS.getPoints().get(i)).x);
-                    bw.writeDoubleLE((aPLS.getPoints().get(i)).y);
+                for (i = 0; i < aPLS.getNumPoints(); i++) {
+                    bw.writeDoubleLE((aPLS.getCoordinates().get(i)).x);
+                    bw.writeDoubleLE((aPLS.getCoordinates().get(i)).y);
                 }
                 break;
             case POLYLINE_Z:
-                PolylineShape aPLZS = (PolylineShape) aShape;
+                MultiLineString aPLZS = (MultiLineString) aShape;
                 bw.writeDoubleLE(aPLZS.getExtent().minX);
                 bw.writeDoubleLE(aPLZS.getExtent().minY);
                 bw.writeDoubleLE(aPLZS.getExtent().maxX);
                 bw.writeDoubleLE(aPLZS.getExtent().maxY);
-                bw.writeIntLE(aPLZS.getPartNum());
-                bw.writeIntLE(aPLZS.getPointNum());
-                for (i = 0; i < aPLZS.getPartNum(); i++) {
+                bw.writeIntLE(aPLZS.getNumParts());
+                bw.writeIntLE(aPLZS.getNumPoints());
+                for (i = 0; i < aPLZS.getNumParts(); i++) {
                     bw.writeIntLE(aPLZS.parts[i]);
                 }
-                for (i = 0; i < aPLZS.getPointNum(); i++) {
-                    bw.writeDoubleLE((aPLZS.getPoints().get(i)).x);
-                    bw.writeDoubleLE((aPLZS.getPoints().get(i)).y);
+                for (i = 0; i < aPLZS.getNumPoints(); i++) {
+                    bw.writeDoubleLE((aPLZS.getCoordinates().get(i)).x);
+                    bw.writeDoubleLE((aPLZS.getCoordinates().get(i)).y);
                 }
                 bw.writeDoubleLE(aPLZS.getZRange()[0]);
                 bw.writeDoubleLE(aPLZS.getZRange()[1]);
-                for (i = 0; i < aPLZS.getPointNum(); i++) {
+                for (i = 0; i < aPLZS.getNumPoints(); i++) {
                     bw.writeDoubleLE(aPLZS.getZArray()[i]);
                 }
                 bw.writeDoubleLE(aPLZS.getMRange()[0]);
                 bw.writeDoubleLE(aPLZS.getMRange()[1]);
-                for (i = 0; i < aPLZS.getPointNum(); i++) {
+                for (i = 0; i < aPLZS.getNumPoints(); i++) {
                     bw.writeDoubleLE(aPLZS.getMArray()[i]);
                 }
                 break;
             case POLYGON:
-                PolygonShape aPGS = (PolygonShape) aShape;
+                MultiPolygon aPGS = (MultiPolygon) aShape;
                 bw.writeDoubleLE(aPGS.getExtent().minX);
                 bw.writeDoubleLE(aPGS.getExtent().minY);
                 bw.writeDoubleLE(aPGS.getExtent().maxX);
                 bw.writeDoubleLE(aPGS.getExtent().maxY);
-                bw.writeIntLE(aPGS.getPartNum());
-                bw.writeIntLE(aPGS.getPointNum());
-                for (i = 0; i < aPGS.getPartNum(); i++) {
+                bw.writeIntLE(aPGS.getNumParts());
+                bw.writeIntLE(aPGS.getNumPoints());
+                for (i = 0; i < aPGS.getNumParts(); i++) {
                     bw.writeIntLE(aPGS.parts[i]);
                 }
-                for (i = 0; i < aPGS.getPointNum(); i++) {
-                    bw.writeDoubleLE((aPGS.getPoints().get(i)).x);
-                    bw.writeDoubleLE((aPGS.getPoints().get(i)).y);
+                for (i = 0; i < aPGS.getNumPoints(); i++) {
+                    bw.writeDoubleLE((aPGS.getCoordinates().get(i)).x);
+                    bw.writeDoubleLE((aPGS.getCoordinates().get(i)).y);
                 }
                 break;
             case POLYGON_Z:
-                PolygonShape aPGZS = (PolygonShape) aShape;
+                MultiPolygon aPGZS = (MultiPolygon) aShape;
                 bw.writeDoubleLE(aPGZS.getExtent().minX);
                 bw.writeDoubleLE(aPGZS.getExtent().minY);
                 bw.writeDoubleLE(aPGZS.getExtent().maxX);
                 bw.writeDoubleLE(aPGZS.getExtent().maxY);
-                bw.writeIntLE(aPGZS.getPartNum());
-                bw.writeIntLE(aPGZS.getPointNum());
-                for (i = 0; i < aPGZS.getPartNum(); i++) {
+                bw.writeIntLE(aPGZS.getNumParts());
+                bw.writeIntLE(aPGZS.getNumPoints());
+                for (i = 0; i < aPGZS.getNumParts(); i++) {
                     bw.writeIntLE(aPGZS.parts[i]);
                 }
-                for (i = 0; i < aPGZS.getPointNum(); i++) {
-                    bw.writeDoubleLE((aPGZS.getPoints().get(i)).x);
-                    bw.writeDoubleLE((aPGZS.getPoints().get(i)).y);
+                for (i = 0; i < aPGZS.getNumPoints(); i++) {
+                    bw.writeDoubleLE((aPGZS.getCoordinates().get(i)).x);
+                    bw.writeDoubleLE((aPGZS.getCoordinates().get(i)).y);
                 }
                 bw.writeDoubleLE(aPGZS.getZRange()[0]);
                 bw.writeDoubleLE(aPGZS.getZRange()[1]);
-                for (i = 0; i < aPGZS.getPointNum(); i++) {
+                for (i = 0; i < aPGZS.getNumPoints(); i++) {
                     bw.writeDoubleLE(aPGZS.getZArray()[i]);
                 }
                 bw.writeDoubleLE(aPGZS.getMRange()[0]);
                 bw.writeDoubleLE(aPGZS.getMRange()[1]);
-                for (i = 0; i < aPGZS.getPointNum(); i++) {
+                for (i = 0; i < aPGZS.getNumPoints(); i++) {
                     bw.writeDoubleLE(aPGZS.getMArray()[i]);
                 }
                 break;
@@ -1058,7 +1056,7 @@ public class ShapeFileManage {
         OffSet = 50;
 
         for (int i = 0; i < aLayer.getShapeNum(); i++) {
-            Shape aShape = aLayer.getShapes().get(i);
+            Geometry aShape = aLayer.getShapes().get(i);
             ContentLength = getContentLength(aShape, aLayer.getShapeType());
 
             bw.writeIntBE(OffSet);
@@ -1084,7 +1082,7 @@ public class ShapeFileManage {
          OffSet = 50;
 
          for (int i = 0; i < graphics.getNumGraphics(); i++) {
-             Shape aShape = graphics.getShapes().get(i);
+             Geometry aShape = graphics.getShapes().get(i);
              ContentLength = getContentLength(aShape, ShapeFileType.fromShapeType(graphics.getShapeType()));
 
              bw.writeIntBE(OffSet);

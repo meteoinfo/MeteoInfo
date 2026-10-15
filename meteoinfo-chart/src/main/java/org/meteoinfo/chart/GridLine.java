@@ -8,7 +8,6 @@ package org.meteoinfo.chart;
 import org.meteoinfo.common.Direction;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.colors.ColorUtil;
-import org.meteoinfo.chart.graphic.Artist;
 import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geometry.GeometryUtil;
 import org.meteoinfo.geometry.Coordinate;
@@ -16,8 +15,8 @@ import org.meteoinfo.geometry.geoprocess.BorderPoint;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.legend.LineStyles;
 import org.meteoinfo.geometry.legend.PolylineBreak;
-import org.meteoinfo.geometry.shape.Line;
-import org.meteoinfo.geometry.shape.Polyline;
+import org.meteoinfo.geometry.LineSegment;
+import org.meteoinfo.geometry.LineString;
 import org.meteoinfo.projection.GridLabel;
 
 import java.awt.*;
@@ -210,9 +209,9 @@ public class GridLine extends Artist {
      * @param isVertical If is vertical
      * @return Clip points
      */
-    public static java.util.List<GridLabel> getGridLabels(Polyline inPolyLine, Extent clipExtent, boolean isVertical) {
+    public static java.util.List<GridLabel> getGridLabels(LineString inPolyLine, Extent clipExtent, boolean isVertical) {
         java.util.List<GridLabel> gridLabels = new ArrayList<>();
-        java.util.List<Coordinate> aPList = inPolyLine.getPointList();
+        java.util.List<Coordinate> aPList = inPolyLine.getCoordinates();
 
         if (!GeometryUtil.isExtentCross(inPolyLine.getExtent(), clipExtent)) {
             return gridLabels;
@@ -303,7 +302,7 @@ public class GridLine extends Artist {
             aPList = newLines.get(l);
             boolean isInPolygon = GeoComputation.pointInClipObj(clipExtent, aPList.get(0));
             Coordinate q1, q2, IPoint = new Coordinate();
-            Line lineA, lineB;
+            LineSegment lineA, lineB;
             List<Coordinate> newPlist = new ArrayList<>();
             //Polyline bLine = new Polyline();
             p1 = aPList.get(0);
@@ -314,15 +313,15 @@ public class GridLine extends Artist {
                 p2 = aPList.get(i);
                 if (GeoComputation.pointInClipObj(clipExtent, p2)) {
                     if (!isInPolygon) {
-                        lineA = new Line();
-                        lineA.P1 = p1;
-                        lineA.P2 = p2;
+                        lineA = new LineSegment();
+                        lineA.p1 = p1;
+                        lineA.p2 = p2;
                         q1 = borderList.get(0).Point;
                         for (j = 1; j < borderList.size(); j++) {
                             q2 = borderList.get(j).Point;
-                            lineB = new Line();
-                            lineB.P1 = q1;
-                            lineB.P2 = q2;
+                            lineB = new LineSegment();
+                            lineB.p1 = q1;
+                            lineB.p2 = q2;
                             if (GeoComputation.isLineSegmentCross(lineA, lineB)) {
                                 IPoint = GeoComputation.getCrossPoint(lineA, lineB);
                                 inIdx = j;
@@ -366,15 +365,15 @@ public class GridLine extends Artist {
                     isInPolygon = true;
                 } else {
                     if (isInPolygon) {
-                        lineA = new Line();
-                        lineA.P1 = p1;
-                        lineA.P2 = p2;
+                        lineA = new LineSegment();
+                        lineA.p1 = p1;
+                        lineA.p2 = p2;
                         q1 = borderList.get(0).Point;
                         for (j = 1; j < borderList.size(); j++) {
                             q2 = borderList.get(j).Point;
-                            lineB = new Line();
-                            lineB.P1 = q1;
-                            lineB.P2 = q2;
+                            lineB = new LineSegment();
+                            lineB.p1 = q1;
+                            lineB.p2 = q2;
                             if (GeoComputation.isLineSegmentCross(lineA, lineB)) {
                                 IPoint = GeoComputation.getCrossPoint(lineA, lineB);
                                 outIdx = j;

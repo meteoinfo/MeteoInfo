@@ -11,7 +11,7 @@ import org.meteoinfo.chart.transform.GeoTransform;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public abstract class MeshGraphic extends GraphicCollection3D {
+public abstract class MeshGraphic extends GraphicCollection {
     protected float[] vertexPosition;
     protected float[] vertexValue;
     protected float[] vertexColor;

@@ -14,14 +14,8 @@
 package org.meteoinfo.projection.info;
 
 import org.locationtech.proj4j.CoordinateReferenceSystem;
-import org.meteoinfo.geometry.shape.PolygonShape;
-import org.meteoinfo.projection.KnownCoordinateSystems;
 import org.meteoinfo.projection.ProjectionInfo;
 import org.meteoinfo.projection.ProjectionNames;
-import org.meteoinfo.projection.ProjectionUtil;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *

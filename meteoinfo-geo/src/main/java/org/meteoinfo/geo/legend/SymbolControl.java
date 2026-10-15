@@ -18,7 +18,7 @@ import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.ui.event.ISelectedCellChangedListener;
 import org.meteoinfo.ui.event.SelectedCellChangedEvent;
-import org.meteoinfo.geometry.shape.ShapeTypes;
+import org.meteoinfo.geometry.GeometryType;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -48,7 +48,7 @@ public class SymbolControl extends JPanel {
     // <editor-fold desc="Variables">
 
     private EventListenerList _listeners = new EventListenerList();
-    private ShapeTypes _shapeType;
+    private GeometryType _shapeType;
     private MarkerType _markerType;
     private Dimension _cellSize;
     private int _symbolNumber;
@@ -78,7 +78,7 @@ public class SymbolControl extends JPanel {
             }
         });
 
-        _shapeType = ShapeTypes.POINT;
+        _shapeType = GeometryType.POINT;
         _markerType = MarkerType.SIMPLE;
         _cellSize = new Dimension(25, 25);
         _symbolNumber = PointStyle.values().length;
@@ -163,7 +163,7 @@ public class SymbolControl extends JPanel {
      *
      * @return The shape type
      */
-    public ShapeTypes getShapeType() {
+    public GeometryType getShapeType() {
         return _shapeType;
     }
 
@@ -172,7 +172,7 @@ public class SymbolControl extends JPanel {
      *
      * @param st The shape type
      */
-    public void setShapeType(ShapeTypes st) {
+    public void setShapeType(GeometryType st) {
         _shapeType = st;
         switch (_shapeType) {
             case POINT:
@@ -183,7 +183,7 @@ public class SymbolControl extends JPanel {
                     setSymbolNumber(256);
                 }
                 break;
-            case POLYLINE:
+            case LINESTRING:
                 setCellSize(new Dimension(50, 40));
                 setSymbolNumber(LineStyles.values().length);
                 break;
@@ -434,7 +434,7 @@ public class SymbolControl extends JPanel {
                         break;
                 }
                 break;
-            case POLYLINE:
+            case LINESTRING:
                 PolylineBreak aPLB = new PolylineBreak();
                 aPLB.setWidth(2);
                 aPLB.setColor(Color.black);

@@ -7,9 +7,8 @@ import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.io.geojson.Feature;
 import org.meteoinfo.geometry.io.geojson.FeatureCollection;
 import org.meteoinfo.geometry.io.geojson.GeoJSONUtil;
-import org.meteoinfo.geometry.io.geojson.Geometry;
 import org.meteoinfo.geometry.legend.*;
-import org.meteoinfo.geometry.shape.Shape;
+import org.meteoinfo.geometry.Geometry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +25,8 @@ public class GeoJSONWriter {
         Feature[] features = new Feature[layer.getShapeNum()];
         LegendScheme ls = layer.getLegendScheme();
         for (int i = 0; i < layer.getShapeNum(); i++) {
-            Shape shape = layer.getShape(i);
-            Geometry geometry = GeoJSONUtil.fromShape(shape);
+            Geometry shape = layer.getShape(i);
+            org.meteoinfo.geometry.io.geojson.Geometry geometry = GeoJSONUtil.fromShape(shape);
             Map<String, Object> properties = new HashMap<>();
             ColorBreak cb = ls.getLegendBreak(shape.getLegendIndex());
             switch (cb.getBreakType()) {
@@ -72,8 +71,8 @@ public class GeoJSONWriter {
         Feature[] features = new Feature[graphics.getNumGraphics()];
         for (int i = 0; i < graphics.getNumGraphics(); i++) {
             Graphic graphic = graphics.getGraphicN(i);
-            Shape shape = graphic.getShape();
-            Geometry geometry = GeoJSONUtil.fromShape(shape);
+            Geometry shape = graphic.getShape();
+            org.meteoinfo.geometry.io.geojson.Geometry geometry = GeoJSONUtil.fromShape(shape);
             Map<String, Object> properties = new HashMap<>();
             ColorBreak cb = graphic.getLegendBreak();
             switch (cb.getBreakType()) {

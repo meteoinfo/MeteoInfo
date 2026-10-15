@@ -23,7 +23,6 @@ import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 import org.meteoinfo.chart.plot.PlotOrientation;
-import org.meteoinfo.chart.graphic.Artist;
 import org.meteoinfo.geometry.legend.*;
 
 /**
@@ -68,8 +67,8 @@ public class ChartLegend extends Artist {
     private Dimension symbolDimension;
     protected boolean extendRect;
     //protected ExtendFraction extendFraction;
-    protected float xshift;
-    protected float yshift;
+    protected float xShift;
+    protected float yShift;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -101,8 +100,8 @@ public class ChartLegend extends Artist {
         this.symbolDimension = new Dimension(16, 10);
         this.extendRect = true;
         //this.extendFraction = ls.getExtendFraction();
-        this.xshift = 0;
-        this.yshift = 0;
+        this.xShift = 0;
+        this.yShift = 0;
     }
 
     /**
@@ -731,7 +730,7 @@ public class ChartLegend extends Artist {
      * @return X shift
      */
     public float getXShift() {
-        return this.xshift;
+        return this.xShift;
     }
 
     /**
@@ -740,7 +739,7 @@ public class ChartLegend extends Artist {
      * @param value X shift
      */
     public void setXShift(float value) {
-        this.xshift = value;
+        this.xShift = value;
     }
 
     /**
@@ -749,7 +748,7 @@ public class ChartLegend extends Artist {
      * @return Y shift
      */
     public float getYShift() {
-        return this.yshift;
+        return this.yShift;
     }
 
     /**
@@ -758,7 +757,7 @@ public class ChartLegend extends Artist {
      * @param value Y shift
      */
     public void setYShift(float value) {
-        this.yshift = value;
+        this.yShift = value;
     }
 
     // </editor-fold>
@@ -785,7 +784,7 @@ public class ChartLegend extends Artist {
         }
 
         AffineTransform oldMatrix = g.getTransform();
-        g.translate(point.X + this.xshift, point.Y + this.yshift);
+        g.translate(point.X + this.xShift, point.Y + this.yShift);
 
         //Draw background color
         if (this.drawBackground) {

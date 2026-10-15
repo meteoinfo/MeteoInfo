@@ -9,10 +9,9 @@ import os
 import numbers
 
 from org.meteoinfo.data.mapdata.geotiff import GeoTiff
-from org.meteoinfo.geometry.shape import ShapeUtil, PolygonShape
 from org.meteoinfo.chart.graphic import Graphic
 from org.meteoinfo.geometry.legend import BreakTypes
-from org.meteoinfo.geometry import GeometryUtil, Coordinate
+from org.meteoinfo.geometry import GeometryUtil, Coordinate, Polygon, MultiPolygon
 from org.meteoinfo.geometry.geoprocess import GeoComputation
 from org.meteoinfo.ndarray.math import ArrayMath, ArrayUtil
 from org.meteoinfo.geo.mapdata import MapDataManage, ShapeFileManage
@@ -151,7 +150,7 @@ def maplayer(shapetype='polygon'):
     """
     Create a new map layer.
     
-    :param shapetype: (*ShapeTypes*) Shape type ['point' | 'point_z' | 'line' | 'line_z' | 'polygon'
+    :param shapetype: (*ShapeType*) Shape type ['point' | 'point_z' | 'line' | 'line_z' | 'polygon'
         | 'polygon_z']
     
     :returns: (*MILayer*) MILayer object.
@@ -166,16 +165,16 @@ def polygon(x, y=None):
     :param x: (*array_like*) X coordinate array. If y is ``None``, x should be 2-D array contains x and y.
     :param y: (*array_like*) Y coordinate array.
     
-    :returns: (*PolygonShape*) Created polygon.
+    :returns: (*MultiPolygon*) Created polygon.
     """
     if y is None:
-        polygon = ShapeUtil.createPolygonShape(x)
+        polygon = GeometryUtil.createPolygonShape(x)
     else:
         if isinstance(x, NDArray):
             x = x.aslist()
         if isinstance(y, NDArray):
             y = y.aslist()
-        polygon = ShapeUtil.createPolygonShape(x, y)
+        polygon = GeometryUtil.createPolygonShape(x, y)
     return polygon
 
 
@@ -188,7 +187,7 @@ def circle(xy, radius=5):
     
     :returns: (*CircleShape*) Created circle.
     """
-    cc = ShapeUtil.createCircleShape(xy[0], xy[1], radius)
+    cc = GeometryUtil.createCircleShape(xy[0], xy[1], radius)
     return cc
 
 
@@ -198,7 +197,7 @@ def inpolygon(x, y, polygon):
     
     :param x: (*array_like*) X coordinate of the points.
     :param y: (*array_like*) Y coordinate of the points.
-    :param polygon: (*PolygonShape list*) The polygon list.
+    :param polygon: (*MultiPolygon list*) The polygon list.
     
     :returns: (*boolean array*) Inside or not.
     """
@@ -222,7 +221,7 @@ def inpolygon(x, y, polygon):
     else:
         if isinstance(polygon, MILayer):
             polygon = polygon.shapes
-        elif isinstance(polygon, PolygonShape):
+        elif isinstance(polygon, (Polygon, MultiPolygon)):
             polygon = [polygon]
         r = NDArray(GeometryUtil.inPolygon(x._array, y._array, polygon))
         if len(r) == 1:
@@ -236,7 +235,7 @@ def arrayinpolygon(a, polygon, x=None, y=None):
     Set array element value as 1 if inside a polygon or set value as -1.
     
     :param a: (*array_like*) The array.
-    :param polygon: (*PolygonShape*) The polygon.
+    :param polygon: (*Polygon*) The polygon.
     :param x: (*float*) X coordinate of the point. Default is ``None``, for DimArray
     :param y: (*float*) Y coordinate of the point. Default is ``None``, for DimArray
     
@@ -270,7 +269,7 @@ def polygonindex(x, y, polygons):
 
     :param x: (*float*) X coordinate of the point.
     :param y: (*float*) Y coordinate of the point.
-    :param polygons: (*list of PolygonShape*) The polygons
+    :param polygons: (*list of Polygon*) The polygons
 
     :returns: (*array_like*) Result array.
     """

@@ -64,7 +64,7 @@ public class PiePlot extends Plot2D {
                 if (!graphic.isSingleLegend()) {
                     cb = gg.getLegendBreak();
                 }
-                Geometry shape = gg.getShape();
+                Geometry shape = gg.getGeometry();
                 this.drawArc(g, (Arc) shape, (PolygonBreak) cb, area, dist, ex, labelFont,
                     labelColor);
             }
@@ -79,7 +79,7 @@ public class PiePlot extends Plot2D {
         float ex = 0;
         for (int i = 0; i < graphic.getNumGraphics(); i++) {
             Graphic gg = graphic.getGraphicN(i);
-            Arc shape = (Arc) gg.getShape();
+            Arc shape = (Arc) gg.getGeometry();
             if (shape.getExplode() > 0) {
                 ex = 10;
                 break;

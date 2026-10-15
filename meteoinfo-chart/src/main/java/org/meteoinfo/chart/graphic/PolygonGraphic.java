@@ -32,7 +32,7 @@ public class PolygonGraphic extends Graphic {
      * @param legend Polygon legend break
      */
     public PolygonGraphic(MultiPolygon shape, PolygonBreak legend) {
-        this.shape = shape;
+        this.geometry = shape;
         this.legendBreak = legend;
     }
 
@@ -90,10 +90,10 @@ public class PolygonGraphic extends Graphic {
             }
             points.add(new Coordinate(x, y));
         }
-        if (this.shape == null) {
-            this.shape = new MultiPolygon();
+        if (this.geometry == null) {
+            this.geometry = new MultiPolygon();
         }
-        this.shape.setCoordinates(points);
+        this.geometry.setCoordinates(points);
     }
 
     protected void updateShapeLegend(LegendScheme legendScheme) {
@@ -116,11 +116,11 @@ public class PolygonGraphic extends Graphic {
             cb = legendScheme.findLegendBreakAlways(c);
             cbc.add(cb);
         }
-        if (this.shape == null) {
-            this.shape = new MultiPolygon();
+        if (this.geometry == null) {
+            this.geometry = new MultiPolygon();
         }
         if (points.size() >= 2)
-            this.shape.setCoordinates(points);
+            this.geometry.setCoordinates(points);
 
         this.legendBreak = cbc;
     }

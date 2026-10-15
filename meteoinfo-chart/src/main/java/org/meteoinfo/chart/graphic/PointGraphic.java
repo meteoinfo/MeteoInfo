@@ -14,7 +14,7 @@ public class PointGraphic extends Graphic {
      * @param pointBreak Point break
      */
     public PointGraphic(Point pointShape, PointBreak pointBreak) {
-        this.shape = pointShape;
+        this.geometry = pointShape;
         this.legendBreak = pointBreak;
         this.coordinate = pointShape.getCoordinate();
     }

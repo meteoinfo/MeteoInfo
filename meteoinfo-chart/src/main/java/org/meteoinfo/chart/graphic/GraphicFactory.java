@@ -628,9 +628,9 @@ public class GraphicFactory {
     public static GraphicCollection lineString3DToPipe(GraphicCollection lines, float radius,
                                                          int steps) {
         for (Graphic graphic : lines.getGraphics()) {
-            MultiLineString shape = (MultiLineString) graphic.getShape();
+            MultiLineString shape = (MultiLineString) graphic.getGeometry();
             PipeShape pipeShape = new PipeShape(shape, radius, steps);
-            graphic.setShape(pipeShape);
+            graphic.setGeometry(pipeShape);
         }
         return lines;
     }
@@ -3154,9 +3154,9 @@ public class GraphicFactory {
             String zdir, String interpolation) {
         Graphic gg = createImage(data, null);
         if (interpolation != null) {
-            ((Image) gg.getShape()).setInterpolation(interpolation);
+            ((Image) gg.getGeometry()).setInterpolation(interpolation);
         }
-        Image shape = (Image)gg.getShape();
+        Image shape = (Image)gg.getGeometry();
         Extent extent = new Extent(x.getDouble(0), x.getDouble((int) x.getSize() - 1),
                 y.getDouble(0), y.getDouble((int) y.getSize() - 1));
         Extent ex3 = new Extent();
@@ -3654,9 +3654,9 @@ public class GraphicFactory {
                                                 String zdir, List<Number> sePoint, String interpolation) {
         Graphic gg = createImage(gdata, ls);
         if (interpolation != null) {
-            ((Image) gg.getShape()).setInterpolation(interpolation);
+            ((Image) gg.getGeometry()).setInterpolation(interpolation);
         }
-        Image shape = (Image) gg.getShape();
+        Image shape = (Image) gg.getGeometry();
         Extent extent = shape.getExtent();
         Extent ex3 = new Extent();
         List<Coordinate> coords = new ArrayList<>();
@@ -3734,7 +3734,7 @@ public class GraphicFactory {
         ishape.setCoords(coords);
         Graphic gg = new Graphic(ishape, new ColorBreak());
         if (interpolation != null) {
-            ((Image) gg.getShape()).setInterpolation(interpolation);
+            ((Image) gg.getGeometry()).setInterpolation(interpolation);
         }
         graphics.add(gg);
 
@@ -8867,7 +8867,7 @@ public class GraphicFactory {
             Graphic graphic = graphics.get(m);
             for (int i = 0; i < graphic.getNumGraphics(); i++) {
                 Graphic gg = graphic.getGraphicN(i);
-                Geometry shape = gg.getShape();
+                Geometry shape = gg.getGeometry();
                 List<Coordinate> points = new ArrayList<>();
                 for (Coordinate p : shape.getCoordinates()) {
                     double[] xy = MIMath.polarToCartesian(p.x, p.y);
@@ -8890,14 +8890,14 @@ public class GraphicFactory {
         } else {
             for (int i = 0; i < graphic.getNumGraphics(); i++) {
                 Graphic gg = graphic.getGraphicN(i);
-                Geometry shape = gg.getShape();
+                Geometry shape = gg.getGeometry();
                 List<Coordinate> points = new ArrayList<>();
                 for (Coordinate p : shape.getCoordinates()) {
                     double[] xy = MIMath.polarToCartesian(p.x, p.y + bottom);
                     points.add(new Coordinate(xy[0], xy[1]));
                 }
                 shape.setCoordinates(points);
-                gg.setShape(shape);
+                gg.setGeometry(shape);
             }
         }
     }
@@ -8912,7 +8912,7 @@ public class GraphicFactory {
             Graphic graphic = graphics.get(m);
             for (int i = 0; i < graphic.getNumGraphics(); i++) {
                 Graphic gg = graphic.getGraphicN(i);
-                Geometry shape = gg.getShape();
+                Geometry shape = gg.getGeometry();
                 List<Coordinate> points = new ArrayList<>();
                 for (Coordinate p : shape.getCoordinates()) {
                     double[] xy = MIMath.polarToCartesian(p.x, p.y + bottom);

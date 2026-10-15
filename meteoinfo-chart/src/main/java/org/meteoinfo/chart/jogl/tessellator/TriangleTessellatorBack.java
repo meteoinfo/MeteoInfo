@@ -135,7 +135,7 @@ public class TriangleTessellatorBack {
 
         glu.gluTessEndContour(tobj);
 
-        if (polygon.hasHole()) {
+        if (polygon.hasHoles()) {
             for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
                 glu.gluTessBeginContour(tobj);
                 for (int j = 0; j < polygon.getHoleLine(i).size() - 1; j++) {

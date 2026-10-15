@@ -1617,9 +1617,9 @@ class Axes3DGL(Axes3D):
                     elif isinstance(cdata, BufferedImage):
                         image = cdata
                     elif isinstance(cdata, GraphicCollection):
-                        image = cdata.getGraphicN(0).getShape().getImage()
+                        image = cdata.getGraphicN(0).getGeometry().getImage()
                     else:
-                        image = cdata.getShape().getImage()
+                        image = cdata.getGeometry().getImage()
                 elif not facecolor in ['flat', 'none']:
                     facecolor = plotutil.getcolor(facecolor)
                     ls = LegendManage.createSingleSymbolLegendScheme(GeometryType.POLYGON, facecolor, 1)

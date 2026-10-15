@@ -176,6 +176,7 @@ public class SymbolControl extends JPanel {
         _shapeType = st;
         switch (_shapeType) {
             case POINT:
+            case MULTI_POINT:
                 setCellSize(new Dimension(25, 25));
                 if (_markerType == MarkerType.SIMPLE) {
                     setSymbolNumber(PointStyle.values().length);
@@ -184,10 +185,12 @@ public class SymbolControl extends JPanel {
                 }
                 break;
             case LINESTRING:
+            case MULTI_LINESTRING:
                 setCellSize(new Dimension(50, 40));
                 setSymbolNumber(LineStyles.values().length);
                 break;
             case POLYGON:
+            case MULTI_POLYGON:
                 setCellSize(new Dimension(30, 30));
                 setSymbolNumber(HatchStyle.values().length);
                 break;
@@ -352,6 +355,7 @@ public class SymbolControl extends JPanel {
         int hideRows = 0;
         switch (_shapeType) {
             case POINT:
+            case MULTI_POINT:
                 switch (_markerType) {
                     case CHARACTER:
                         Font smallFont = new Font(this.getFont().getFamily(), Font.PLAIN, (int) (_cellSize.width * 0.8F));
@@ -435,6 +439,7 @@ public class SymbolControl extends JPanel {
                 }
                 break;
             case LINESTRING:
+            case MULTI_LINESTRING:
                 PolylineBreak aPLB = new PolylineBreak();
                 aPLB.setWidth(2);
                 aPLB.setColor(Color.black);
@@ -462,6 +467,7 @@ public class SymbolControl extends JPanel {
                 }
                 break;
             case POLYGON:
+            case MULTI_POLYGON:
                 PolygonBreak aPGB = new PolygonBreak();
                 aPGB.setColor(Color.red);
                 aPGB.setOutlineColor(Color.black);

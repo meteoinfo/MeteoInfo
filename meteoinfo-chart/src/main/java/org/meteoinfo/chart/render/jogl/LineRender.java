@@ -99,14 +99,14 @@ public class LineRender extends JOGLGraphicRender {
     private void updateVertexColor() {
         this.vertexNum = 0;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            this.vertexNum += graphic.getShape().getNumPoints();
+            this.vertexNum += graphic.getGeometry().getNumPoints();
         }
 
         this.vertexColor = new float[this.vertexNum * 4];
         int i = 0;
         float[] color;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            int n = graphic.getShape().getNumPoints();
+            int n = graphic.getGeometry().getNumPoints();
             ColorBreak cb = graphic.getLegendBreak();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 PolylineBreak lineBreak;
@@ -133,7 +133,7 @@ public class LineRender extends JOGLGraphicRender {
         int i = 0;
         linePointNumbers = new ArrayList<>();
         for (Graphic graphic : this.graphics.getGraphics()) {
-            MultiLineString shape = (MultiLineString) graphic.getShape();
+            MultiLineString shape = (MultiLineString) graphic.getGeometry();
             for (LineString line : shape.getPolylines()) {
                 List<Coordinate> ps = line.getCoordinates();
                 linePointNumbers.add(ps.size());
@@ -154,7 +154,7 @@ public class LineRender extends JOGLGraphicRender {
         int i = 0;
         linePointNumbers = new ArrayList<>();
         for (Graphic graphic : this.graphics.getGraphics()) {
-            MultiLineString shape = (MultiLineString) graphic.getShape();
+            MultiLineString shape = (MultiLineString) graphic.getGeometry();
             for (LineString line : shape.getPolylines()) {
                 List<Coordinate> ps = line.getCoordinates();
                 linePointNumbers.add(ps.size());
@@ -175,7 +175,7 @@ public class LineRender extends JOGLGraphicRender {
         List<Integer> vertexIndices = new ArrayList<>();
         Cylinder cylinder = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            MultiLineString shape = (MultiLineString) graphic.getShape();
+            MultiLineString shape = (MultiLineString) graphic.getGeometry();
             int pointNum = shape.getNumPoints();
             List<Coordinate> ps = (List<Coordinate>) shape.getCoordinates();
             ColorBreak cb = graphic.getLegendBreak();

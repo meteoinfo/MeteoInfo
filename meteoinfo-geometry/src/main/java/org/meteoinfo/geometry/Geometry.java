@@ -66,9 +66,15 @@ public abstract class Geometry implements Cloneable{
         switch (shapeType) {
             case POINT:
                 return new Point();
+            case MULTI_POINT:
+                return new MultiPoint();
             case LINESTRING:
+                return new LineString();
+            case MULTI_LINESTRING:
                 return new MultiLineString();
             case POLYGON:
+                return new Polygon();
+            case MULTI_POLYGON:
                 return new MultiPolygon();
             default:
                 throw new IllegalArgumentException("Shape type not supported");

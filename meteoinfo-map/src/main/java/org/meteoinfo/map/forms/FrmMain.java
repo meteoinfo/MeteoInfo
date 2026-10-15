@@ -214,10 +214,12 @@ public class FrmMain extends JFrame implements IApplication {
             public void elementSelectedEvent(ElementSelectedEvent event) {
                 if (_mapLayout.getSelectedElements().size() > 0) {
                     if (_mapLayout.getSelectedElements().get(0).getElementType() == ElementType.LAYOUT_GRAPHIC) {
-                        switch (((LayoutGraphic) _mapLayout.getSelectedElements().get(0)).getGraphic().getShape().getGeometryType()) {
+                        switch (((LayoutGraphic) _mapLayout.getSelectedElements().get(0)).getGraphic().getGeometry().getGeometryType()) {
                             case LINESTRING:
+                            case MULTI_LINESTRING:
                             case CURVE_LINE:
                             case POLYGON:
+                            case MULTI_POLYGON:
                             case CURVE_POLYGON:
                                 jButton_EditVertices.setEnabled(true);
                                 break;
@@ -1867,10 +1869,12 @@ public class FrmMain extends JFrame implements IApplication {
             @Override
             public void graphicSelectedEvent(GraphicSelectedEvent event) {
                 if (_mapView.getSelectedGraphics().size() > 0) {
-                    switch (_mapView.getSelectedGraphics().get(0).getShape().getGeometryType()) {
+                    switch (_mapView.getSelectedGraphics().get(0).getGeometry().getGeometryType()) {
                         case LINESTRING:
+                        case MULTI_LINESTRING:
                         case CURVE_LINE:
                         case POLYGON:
+                        case MULTI_POLYGON:
                         case CURVE_POLYGON:
                             jButton_EditVertices.setEnabled(true);
                             break;

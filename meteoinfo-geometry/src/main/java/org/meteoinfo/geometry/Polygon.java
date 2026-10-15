@@ -201,7 +201,7 @@ public class Polygon extends Geometry {
     public List<List<Coordinate>> getRings() {
         List<List<Coordinate>> rings = new ArrayList<>();
         rings.add(shell.getCoordinates());
-        if (hasHole()) {
+        if (hasHoles()) {
             rings.addAll(getHoleLines());
         }
 
@@ -209,11 +209,11 @@ public class Polygon extends Geometry {
     }
 
     /**
-     * Determine if the polygon has hole
+     * Determine if the polygon has holes
      *
      * @return boolean
      */
-    public boolean hasHole() {
+    public boolean hasHoles() {
         return (holes.size() > 0);
     }
     

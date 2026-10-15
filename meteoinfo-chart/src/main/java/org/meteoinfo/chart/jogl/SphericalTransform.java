@@ -138,7 +138,7 @@ public class SphericalTransform {
                 GraphicCollection graphics = (GraphicCollection) graphic;
                 for (int i = 0; i < graphics.getNumGraphics(); i++) {
                     Graphic gg = graphics.getGraphicN(i);
-                    Geometry shape = gg.getGraphicN(0).getShape();
+                    Geometry shape = gg.getGraphicN(0).getGeometry();
                     boolean isTess = false;
                     if (shape instanceof MultiPolygon) {
                         PolygonBreak pb = (PolygonBreak) gg.getGraphicN(0).getLegendBreak();
@@ -169,14 +169,14 @@ public class SphericalTransform {
                         else
                             shape.setCoordinates(points);
                     }
-                    gg.setShape(shape);
+                    gg.setGeometry(shape);
                     graphics.setGraphicN(i, gg);
                 }
                 graphics.updateExtent();
                 return graphics;
             } else {
                 Graphic gg = graphic.getGraphicN(0);
-                Geometry shape = gg.getShape();
+                Geometry shape = gg.getGeometry();
                 if (shape instanceof ChartText3D) {
                     Coordinate p = ((ChartText3D) shape).getPoint();
                     ((ChartText3D) shape).setPoint(SphericalTransform.transform(p));
@@ -189,7 +189,7 @@ public class SphericalTransform {
                         shape.setCoordinates(points);
                 }
 
-                gg.setShape(shape);
+                gg.setGeometry(shape);
                 return gg;
             }
         }

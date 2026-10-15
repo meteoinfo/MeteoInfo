@@ -205,7 +205,7 @@ public class GeoJSONUtil {
                     matrix[i] = sPolygon.getOutLine().get(i).toArray();
                 }
                 a3d[0] = matrix;
-                if (sPolygon.hasHole()) {
+                if (sPolygon.hasHoles()) {
                     for (int j = 0; j < sPolygon.getNumInteriorRing(); j++) {
                         pNum = sPolygon.getHoleLine(j).size();
                         matrix = new double[pNum][cNum];
@@ -229,7 +229,7 @@ public class GeoJSONUtil {
                 matrix[i] = sPolygon.getOutLine().get(i).toArray();
             }
             coordinates[0] = matrix;
-            if (sPolygon.hasHole()) {
+            if (sPolygon.hasHoles()) {
                 for (int j = 0; j < sPolygon.getNumInteriorRing(); j++) {
                     pNum = sPolygon.getHoleLine(j).size();
                     matrix = new double[pNum][cNum];
@@ -387,6 +387,7 @@ public class GeoJSONUtil {
         Map<String, Object> properties = feature.getProperties();
         switch (shapeType) {
             case POINT:
+            case MULTI_POINT:
                 PointBreak pointBreak = new PointBreak();
                 if (properties.containsKey("marker-color")) {
                     Color color = ColorUtil.parseToColor((String) properties.get("marker-color"));
@@ -394,6 +395,7 @@ public class GeoJSONUtil {
                 }
                 return pointBreak;
             case LINESTRING:
+            case MULTI_LINESTRING:
                 PolylineBreak polylineBreak = new PolylineBreak();
                 if (properties.containsKey("stroke")) {
                     Color color = ColorUtil.parseToColor((String) properties.get("stroke"));
@@ -409,6 +411,7 @@ public class GeoJSONUtil {
                 }
                 return polylineBreak;
             case POLYGON:
+            case MULTI_POLYGON:
                 PolygonBreak cb = new PolygonBreak();
                 if (properties.containsKey("title")) {
                     String titleValue = (String) properties.get("title");

@@ -84,7 +84,7 @@ public class QuiverRender extends JOGLGraphicRender {
         Cylinder cylinder = null;
         for (int i = 0, pi = 0, ci = 0; i < quiverNumber; i++, pi+=6, ci+=8) {
             Graphic graphic = graphics.getGraphicN(i);
-            WindArrow3D shape = (WindArrow3D) graphic.getShape();
+            WindArrow3D shape = (WindArrow3D) graphic.getGeometry();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             Coordinate sp = (Coordinate) shape.getCoordinate();
             Coordinate ep = (Coordinate) shape.getEndPoint();

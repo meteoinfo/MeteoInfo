@@ -537,7 +537,7 @@ public class EarthGLPlot extends GLPlot {
         }
 
         // ========== 2. Extract Polygon Data (Reusing Base Class Tessellation Logic) ==========
-        MultiPolygon shape = (MultiPolygon) graphic.getShape();
+        MultiPolygon shape = (MultiPolygon) graphic.getGeometry();
         PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
         List<Polygon> polygonZS = shape.getPolygons();
 
@@ -601,7 +601,7 @@ public class EarthGLPlot extends GLPlot {
                 drawSphericalOutline(gl, (List<Coordinate>) tessPolygon.getOutLine());
 
                 // Draw inner hole boundaries along great-circle arcs
-                if (tessPolygon.hasHole()) {
+                if (tessPolygon.hasHoles()) {
                     for (List<Coordinate> holeLine : tessPolygon.getHoleLines()) {
                         drawSphericalOutline(gl, holeLine);
                     }

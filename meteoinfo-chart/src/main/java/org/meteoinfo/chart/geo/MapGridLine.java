@@ -292,7 +292,7 @@ public class MapGridLine extends GridLine {
             Graphic graphic = new Graphic(line, this.lineBreak);
             graphic = ProjectUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
             if (graphic != null) {
-                graphic.getShape().setValue(lon);
+                graphic.getGeometry().setValue(lon);
                 this.longitudeLines.add(graphic);
             }
         }
@@ -328,7 +328,7 @@ public class MapGridLine extends GridLine {
                 continue;
             }
 
-            MultiLineString polylineShape = (MultiLineString) graphic.getShape();
+            MultiLineString polylineShape = (MultiLineString) graphic.getGeometry();
             if (polylineShape.getNumParts() > 1) {
                 points = polylineShape.getPolylines().get(0).getCoordinates();
                 List<Coordinate> points1 = polylineShape.getPolylines().get(1).getCoordinates();
@@ -338,7 +338,7 @@ public class MapGridLine extends GridLine {
                 line.setCoordinates(points);
                 graphic = new Graphic(line, this.lineBreak);
             }
-            graphic.getShape().setValue(lat);
+            graphic.getGeometry().setValue(lat);
             this.latitudeLines.add(graphic);
         }
     }
@@ -351,7 +351,7 @@ public class MapGridLine extends GridLine {
         //Longitude
         List<GridLabel> tLabels = new ArrayList<>();
         for (int i = 0; i < this.longitudeLines.size(); i++) {
-            MultiLineString line = (MultiLineString) this.longitudeLines.getGraphicN(i).getShape();
+            MultiLineString line = (MultiLineString) this.longitudeLines.getGraphicN(i).getGeometry();
             float value = (float) line.getValue();
             String labStr = String.valueOf(value);
             labStr = DataConvert.removeTailingZeros(labStr);
@@ -381,7 +381,7 @@ public class MapGridLine extends GridLine {
 
         //Latitude
         for (int i = 0; i < this.latitudeLines.size(); i++) {
-            MultiLineString line = (MultiLineString) this.latitudeLines.getGraphicN(i).getShape();
+            MultiLineString line = (MultiLineString) this.latitudeLines.getGraphicN(i).getGeometry();
             float value = (float) line.getValue();
             String labStr = String.valueOf(value);
             labStr = DataConvert.removeTailingZeros(labStr);

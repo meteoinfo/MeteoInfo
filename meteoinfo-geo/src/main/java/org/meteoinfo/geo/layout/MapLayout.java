@@ -564,7 +564,7 @@ import org.xml.sax.SAXException;
                      break;
                  case EDIT_VERTICES:
                      if (_selectedElements.size() > 0) {
-                         _editingVerticeIndex = selectEditVertices(pageP, ((LayoutGraphic) _selectedElements.get(0)).getGraphic().getShape(),
+                         _editingVerticeIndex = selectEditVertices(pageP, ((LayoutGraphic) _selectedElements.get(0)).getGraphic().getGeometry(),
                                  _editingVertices);
                          if (_editingVerticeIndex >= 0) {
                              _mouseMode = MouseMode.IN_EDITING_VERTICES;
@@ -606,6 +606,7 @@ import org.xml.sax.SAXException;
                                                  double value = 0.0;
                                                  switch (aShape.getGeometryType()) {
                                                      case LINESTRING:
+                                                     case MULTI_LINESTRING:
                                                          _frmMeasure.setArea(false);
                                                          if (_currentLayoutMap.getMapFrame().getMapView().getProjection().isLonLatMap()) {
                                                              value = GeoComputation.getDistance(((MultiLineString) aShape).getCoordinates(), true);
@@ -615,6 +616,7 @@ import org.xml.sax.SAXException;
                                                          }
                                                          break;
                                                      case POLYGON:
+                                                     case MULTI_POLYGON:
                                                          _frmMeasure.setArea(true);
                                                          if (_currentLayoutMap.getMapFrame().getMapView().getProjection().isLonLatMap()) {
                                                              value = ((MultiPolygon) aShape).getSphericalArea();
@@ -952,7 +954,7 @@ import org.xml.sax.SAXException;
                  break;
              case EDIT_VERTICES:
                  if (_selectedElements.size() > 0) {
-                     _editingVerticeIndex = selectEditVertices(pageP, ((LayoutGraphic) _selectedElements.get(0)).getGraphic().getShape(),
+                     _editingVerticeIndex = selectEditVertices(pageP, ((LayoutGraphic) _selectedElements.get(0)).getGraphic().getGeometry(),
                              _editingVertices);
                      Toolkit toolkit = Toolkit.getDefaultToolkit();
                      if (_editingVerticeIndex >= 0) {
@@ -1561,8 +1563,8 @@ import org.xml.sax.SAXException;
                                          });
                                          jPopupMenu_Element.add(jMenuItem_Reverse);
 
-                                         if (aGraphic.getShape().getGeometryType() == GeometryType.LINESTRING ||
-                                                 aGraphic.getShape().getGeometryType() == GeometryType.POLYGON) {
+                                         if (aGraphic.getGeometry().getGeometryType() == GeometryType.LINESTRING ||
+                                                 aGraphic.getGeometry().getGeometryType() == GeometryType.POLYGON) {
                                              jPopupMenu_Element.add(new JSeparator());
                                              JMenuItem jMenuItem_Smooth = new JMenuItem("Smooth Graphic");
                                              jMenuItem_Smooth.addActionListener(new ActionListener() {
@@ -1574,7 +1576,7 @@ import org.xml.sax.SAXException;
                                              jPopupMenu_Element.add(jMenuItem_Smooth);
                                          }
 
-                                         if (aGraphic.getShape().getGeometryType() == GeometryType.ELLIPSE) {
+                                         if (aGraphic.getGeometry().getGeometryType() == GeometryType.ELLIPSE) {
                                              JMenuItem jMenuItem_Angle = new JMenuItem("Set Angle");
                                              jMenuItem_Angle.addActionListener(new ActionListener() {
                                                  @Override
@@ -1790,9 +1792,9 @@ import org.xml.sax.SAXException;
      private void onReverseGraphicClick(ActionEvent e) {
          LayoutElement aElement = _selectedElements.get(0);
          Graphic aGraphic = ((LayoutGraphic) aElement).getGraphic();
-         List<Coordinate> points = (List<Coordinate>) aGraphic.getShape().getCoordinates();
+         List<Coordinate> points = (List<Coordinate>) aGraphic.getGeometry().getCoordinates();
          Collections.reverse(points);
-         aGraphic.getShape().setCoordinates(points);
+         aGraphic.getGeometry().setCoordinates(points);
 
          //this.paintGraphics();
          this.repaintNew();
@@ -1804,11 +1806,11 @@ import org.xml.sax.SAXException;
          List<wcontour.global.PointD> pointList = new ArrayList<>();
          List<Coordinate> newPoints = new ArrayList<>();
 
-         for (Coordinate aP : aGraphic.getShape().getCoordinates()) {
+         for (Coordinate aP : aGraphic.getGeometry().getCoordinates()) {
              pointList.add(new wcontour.global.PointD(aP.x, aP.y));
          }
 
-         if (aGraphic.getShape().getGeometryType() == GeometryType.POLYGON) {
+         if (aGraphic.getGeometry().getGeometryType() == GeometryType.POLYGON) {
              pointList.add(pointList.get(0));
          }
 
@@ -1816,7 +1818,7 @@ import org.xml.sax.SAXException;
          for (wcontour.global.PointD aP : pointList) {
              newPoints.add(new Coordinate(aP.X, aP.Y));
          }
-         aGraphic.getShape().setCoordinates(newPoints);
+         aGraphic.getGeometry().setCoordinates(newPoints);
          ((LayoutGraphic) aElement).updateControlSize();
          //this.paintGraphics();
          this.repaintNew();
@@ -1825,7 +1827,7 @@ import org.xml.sax.SAXException;
      private void onGraphicAngleClick(ActionEvent e) {
          LayoutElement aElement = _selectedElements.get(0);
          Graphic aGraphic = ((LayoutGraphic) aElement).getGraphic();
-         Ellipse es = (Ellipse)aGraphic.getShape();
+         Ellipse es = (Ellipse)aGraphic.getGeometry();
          String angleStr = JOptionPane.showInputDialog(this, "Ellipse angle:", es.getAngle());
          if (angleStr != null){
              es.setAngle(Float.parseFloat(angleStr));
@@ -1884,7 +1886,7 @@ import org.xml.sax.SAXException;
      }
 
      private void showSymbolSetForm(Graphic graphic) {
-         Geometry shape = graphic.getShape();
+         Geometry shape = graphic.getGeometry();
          ColorBreak aCB = graphic.getLegendBreak();
          switch (aCB.getBreakType()) {
              case POINT_BREAK:
@@ -2871,7 +2873,7 @@ import org.xml.sax.SAXException;
              if (aElement.isSelected()) {
                  if (_mouseMode == MouseMode.EDIT_VERTICES) {
                      LayoutGraphic aLG = (LayoutGraphic) aElement;
-                     List<Coordinate> points = aLG.getGraphic().getShape().getCoordinates();
+                     List<Coordinate> points = aLG.getGraphic().getGeometry().getCoordinates();
                      drawSelectedVertices(g, points);
                  } else {
                      float[] dashPattern = new float[]{2.0F, 1.0F};
@@ -3680,6 +3682,7 @@ import org.xml.sax.SAXException;
                  vertices.add(points.get(i));
                  switch (aShape.getGeometryType()) {
                      case LINESTRING:
+                     case MULTI_LINESTRING:
                      case CURVE_LINE:
                          if (i == 0) {
                              vertices.add(points.get(i + 1));
@@ -4274,8 +4277,8 @@ import org.xml.sax.SAXException;
                      break;
                  case LAYOUT_GRAPHIC:
                      LayoutGraphic aLG = loadLayoutGraphicElement(elementNode);
-                     if (aLG.getGraphic().getShape().getGeometryType() == GeometryType.WIND_ARROW) {
-                         ((WindArrow) aLG.getGraphic().getShape()).angle = 270;
+                     if (aLG.getGraphic().getGeometry().getGeometryType() == GeometryType.WIND_ARROW) {
+                         ((WindArrow) aLG.getGraphic().getGeometry()).angle = 270;
                      }
                      addElement(aLG);
                      break;
@@ -4427,7 +4430,7 @@ import org.xml.sax.SAXException;
          aGraphic.importFromXML((Element) graphicNode);
 
          LayoutGraphic aLG;
-         if (aGraphic.getShape().getGeometryType() == GeometryType.WIND_ARROW) {
+         if (aGraphic.getGeometry().getGeometryType() == GeometryType.WIND_ARROW) {
              aLG = new LayoutGraphic(aGraphic, this, this.getActiveLayoutMap());
          } else {
              aLG = new LayoutGraphic(aGraphic, this);

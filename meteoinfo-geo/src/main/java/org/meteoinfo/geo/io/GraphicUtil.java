@@ -177,7 +177,7 @@ public class GraphicUtil {
         ishape.setCoords(coords);
         Graphic gg = new Graphic(ishape, new ColorBreak());
         if (interpolation != null) {
-            ((Image) gg.getShape()).setInterpolation(interpolation);
+            ((Image) gg.getGeometry()).setInterpolation(interpolation);
         }
         graphics.add(gg);
 
@@ -213,7 +213,7 @@ public class GraphicUtil {
         ishape.setCoords(coords);
         Graphic gg = new Graphic(ishape, new ColorBreak());
         if (interpolation != null) {
-            ((Image) gg.getShape()).setInterpolation(interpolation);
+            ((Image) gg.getGeometry()).setInterpolation(interpolation);
         }
         graphics.add(gg);
 

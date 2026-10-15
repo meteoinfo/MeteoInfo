@@ -19,7 +19,6 @@ import org.meteoinfo.geometry.Polygon;
 import org.meteoinfo.geometry.special.Image;
 import org.meteoinfo.render.java2d.Draw;
 import org.meteoinfo.chart.graphic.Graphic;
-import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.special.*;
 import org.meteoinfo.math.sort.QuickSort;
@@ -776,7 +775,7 @@ public class Plot3D extends Plot {
     }
 
     private void drawGraphic(Graphics2D g, Graphic graphic) {
-        Geometry shape = graphic.getGraphicN(0).getShape();
+        Geometry shape = graphic.getGraphicN(0).getGeometry();
         switch (shape.getGeometryType()) {
             case POINT:
             case MULTI_POINT:
@@ -892,7 +891,7 @@ public class Plot3D extends Plot {
         //Draw graphics
         for (int i = 0; i < graphic.getNumGraphics(); i++) {
             Graphic gg = graphic.getGraphicN(i);
-            if (gg.getShape().getGeometryType() == GeometryType.IMAGE) {
+            if (gg.getGeometry().getGeometryType() == GeometryType.IMAGE) {
                 //g.setClip(oldRegion);
                 this.drawImage(g, gg, zdir, (float) ((GraphicCollection) graphic).getZValue());
             } else {
@@ -925,7 +924,7 @@ public class Plot3D extends Plot {
             if (xdir) {
                 for (int i = 0; i < n; i++) {
                     Graphic gg = graphic.getGraphicN(i);
-                    Geometry shape = gg.getShape();
+                    Geometry shape = gg.getGeometry();
                     p = (Coordinate) shape.getCoordinates().get(0);
                     d = p.x * projector.getSinRotationAngle();
                     dds[i] = d;
@@ -934,7 +933,7 @@ public class Plot3D extends Plot {
             } else {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
-                    Geometry shape = gg.getShape();
+                    Geometry shape = gg.getGeometry();
                     p = (Coordinate) shape.getCoordinates().get(0);
                     d = p.y * projector.getCosRotationAngle();
                     dds[i] = d;
@@ -969,7 +968,7 @@ public class Plot3D extends Plot {
             if (xdir) {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
-                    Point shape = (Point) gg.getShape();
+                    Point shape = (Point) gg.getGeometry();
                     p = (Coordinate) shape.getCoordinate();
                     d = p.x * projector.getSinRotationAngle();
                     isIn = false;
@@ -989,7 +988,7 @@ public class Plot3D extends Plot {
             } else {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
-                    Point shape = (Point) gg.getShape();
+                    Point shape = (Point) gg.getGeometry();
                     p = (Coordinate) shape.getCoordinate();
                     d = p.y * projector.getCosRotationAngle();
                     isIn = false;
@@ -1100,7 +1099,7 @@ public class Plot3D extends Plot {
 
     private void drawPoint(Graphics2D g, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
-            Point shape = (Point) graphic.getShape();
+            Point shape = (Point) graphic.getGeometry();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             Coordinate p = (Coordinate) shape.getCoordinate();
             /*PointZ pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,
@@ -1130,7 +1129,7 @@ public class Plot3D extends Plot {
             if (xdir) {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
-                    Geometry shape = gg.getShape();
+                    Geometry shape = gg.getGeometry();
                     p = (Coordinate) shape.getCoordinates().get(0);
                     d = p.x * projector.getSinRotationAngle();
                     isIn = false;
@@ -1150,7 +1149,7 @@ public class Plot3D extends Plot {
             } else {
                 for (int i = 0; i < graphic.getNumGraphics(); i++) {
                     Graphic gg = graphic.getGraphicN(i);
-                    Geometry shape = gg.getShape();
+                    Geometry shape = gg.getGeometry();
                     p = (Coordinate) shape.getCoordinates().get(0);
                     d = p.y * projector.getCosRotationAngle();
                     isIn = false;
@@ -1178,7 +1177,7 @@ public class Plot3D extends Plot {
 
     private void drawLineString(Graphics2D g, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
-            MultiLineString shape = (MultiLineString) graphic.getShape();
+            MultiLineString shape = (MultiLineString) graphic.getGeometry();
             ColorBreak pb = graphic.getLegendBreak();
             for (LineString line : shape.getPolylines()){
                 List<Coordinate> ps = line.getCoordinates();
@@ -1211,7 +1210,7 @@ public class Plot3D extends Plot {
         if (xdir) {
             for (int i = 0; i < graphic.getNumGraphics(); i++) {
                 Graphic gg = graphic.getGraphicN(i);
-                Geometry shape = gg.getShape();
+                Geometry shape = gg.getGeometry();
                 p = (Coordinate) shape.getCoordinates().get(0);
                 d = p.x * projector.getSinRotationAngle();
                 isIn = false;
@@ -1231,7 +1230,7 @@ public class Plot3D extends Plot {
         } else {
             for (int i = 0; i < graphic.getNumGraphics(); i++) {
                 Graphic gg = graphic.getGraphicN(i);
-                Geometry shape = gg.getShape();
+                Geometry shape = gg.getGeometry();
                 p = (Coordinate) shape.getCoordinates().get(0);
                 d = p.y * projector.getCosRotationAngle();
                 isIn = false;
@@ -1258,7 +1257,7 @@ public class Plot3D extends Plot {
 
     private void drawPolygonShape(Graphics2D g, Graphic graphic) {
         if (extent.intersects(graphic.getExtent())) {
-            MultiPolygon shape = (MultiPolygon) graphic.getShape();
+            MultiPolygon shape = (MultiPolygon) graphic.getGeometry();
             PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
             for (Polygon poly : shape.getPolygons()) {
                 drawPolygon(g, poly, pb);
@@ -1286,7 +1285,7 @@ public class Plot3D extends Plot {
         }
 
         List<Coordinate> newPList;
-        if (aPG.hasHole()) {
+        if (aPG.hasHoles()) {
             for (int h = 0; h < aPG.getHoleLines().size(); h++) {
                 newPList = (List<Coordinate>) aPG.getHoleLines().get(h);
                 for (int j = 0; j < newPList.size(); j++) {
@@ -1331,7 +1330,7 @@ public class Plot3D extends Plot {
     }
 
     private void drawImage(Graphics2D g, Graphic igraphic, String zdir, float zValue) {
-        Image ishape = (Image) igraphic.getShape();
+        Image ishape = (Image) igraphic.getGeometry();
         BufferedImage image = ishape.getImage();
         Extent ext = ishape.getExtent();
         java.awt.Point p1, p2, p3, p4;
@@ -1462,7 +1461,7 @@ public class Plot3D extends Plot {
 
     private void drawWindArrow(Graphics2D g, Graphic graphic) {        
         if (extent.intersects(graphic.getExtent())) {
-            WindArrow3D shape = (WindArrow3D) graphic.getShape();
+            WindArrow3D shape = (WindArrow3D) graphic.getGeometry();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             Coordinate p = (Coordinate) shape.getCoordinate();
             /*PointZ pp = new PointZ((p.X - xmin) * xfactor - 10, (p.Y - ymin) * yfactor - 10,

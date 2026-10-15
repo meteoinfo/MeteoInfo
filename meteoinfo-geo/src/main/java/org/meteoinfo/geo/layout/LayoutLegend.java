@@ -606,17 +606,20 @@ public class LayoutLegend extends LayoutElement {
                 //boolean isVisible = true;
                 switch (aLS.getShapeType()) {
                     case POINT:
+                    case MULTI_POINT:
                         PointBreak aPB = (PointBreak) ((PointBreak) aLS.getLegendBreaks().get(i)).clone();
                         caption = aPB.getCaption();
                         aPB.setSize(aPB.getSize() * zoom);
                         Draw.drawPoint((PointF) aP.clone(), aPB, g);
                         break;
                     case LINESTRING:
+                    case MULTI_LINESTRING:
                         PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
                         caption = aPLB.getCaption();
                         Draw.drawPolylineSymbol((PointF) aP.clone(), width, height, aPLB, g);
                         break;
                     case POLYGON:
+                    case MULTI_POLYGON:
                         PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i);
                         caption = aPGB.getCaption();
                         if (this.forceDrawOutline) {
@@ -713,6 +716,7 @@ public class LayoutLegend extends LayoutElement {
             }
             switch (aLS.getShapeType()) {
                 case POINT:
+                case MULTI_POINT:
                     PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPB.isDrawShape();
                     DrawFill = aPB.isDrawFill();
@@ -726,6 +730,7 @@ public class LayoutLegend extends LayoutElement {
                     }
                     break;
                 case LINESTRING:
+                case MULTI_LINESTRING:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
@@ -738,6 +743,7 @@ public class LayoutLegend extends LayoutElement {
                     }
                     break;
                 case POLYGON:
+                case MULTI_POLYGON:
                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPGB.isDrawShape();
                     DrawFill = aPGB.isDrawFill();
@@ -913,17 +919,20 @@ public class LayoutLegend extends LayoutElement {
             }
             switch (aLS.getShapeType()) {
                 case POINT:
+                case MULTI_POINT:
                     PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPB.isDrawShape();
                     DrawFill = aPB.isDrawFill();
                     FillColor = aPB.getColor();
                     break;
                 case LINESTRING:
+                case MULTI_LINESTRING:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
                     break;
                 case POLYGON:
+                case MULTI_POLYGON:
                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPGB.isDrawShape();
                     DrawFill = aPGB.isDrawFill();
@@ -1112,6 +1121,7 @@ public class LayoutLegend extends LayoutElement {
                     }
                     break;
                 case LINESTRING:
+                case MULTI_LINESTRING:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
@@ -1122,6 +1132,7 @@ public class LayoutLegend extends LayoutElement {
                     }
                     break;
                 case POLYGON:
+                case MULTI_POLYGON:
                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i);
                     DrawShape = aPGB.isDrawShape();
                     DrawFill = aPGB.isDrawFill();
@@ -1282,11 +1293,13 @@ public class LayoutLegend extends LayoutElement {
                     FillColor = aPB.getColor();
                     break;
                 case LINESTRING:
+                case MULTI_LINESTRING:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
                     break;
                 case POLYGON:
+                case MULTI_POLYGON:
                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i);
                     DrawShape = aPGB.isDrawShape();
                     DrawFill = aPGB.isDrawFill();
@@ -1462,6 +1475,7 @@ public class LayoutLegend extends LayoutElement {
                     }
                     break;
                 case LINESTRING:
+                case MULTI_LINESTRING:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(i);
                     if (aLS.getLegendType() == LegendType.GRADUATED_COLOR && _legendStyle != LegendStyles.NORMAL) {
                         caption = DataConvert.removeTailingZeros(aPLB.getEndValue().toString());
@@ -1470,6 +1484,7 @@ public class LayoutLegend extends LayoutElement {
                     }
                     break;
                 case POLYGON:
+                case MULTI_POLYGON:
                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(i);
                     if (aLS.getLegendType() == LegendType.GRADUATED_COLOR && _legendStyle != LegendStyles.NORMAL) {
                         caption = DataConvert.removeTailingZeros(aPGB.getEndValue().toString());

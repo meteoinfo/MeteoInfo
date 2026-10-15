@@ -309,6 +309,7 @@ public class FrmLegendSet extends JDialog {
         // TODO add your handling code here:
         switch (_legendScheme.getShapeType()) {
             case LINESTRING:
+            case MULTI_LINESTRING:
                 PolylineBreak aPLB = new PolylineBreak();
                 aPLB.setDrawPolyline(true);
                 aPLB.setWidth(0.1F);
@@ -319,6 +320,7 @@ public class FrmLegendSet extends JDialog {
                 _legendScheme.getLegendBreaks().add(aPLB);
                 break;
             case POINT:
+            case MULTI_POINT:
                 PointBreak aPB = new PointBreak();
                 aPB.setDrawShape(true);
                 aPB.setDrawFill(true);
@@ -330,6 +332,7 @@ public class FrmLegendSet extends JDialog {
                 _legendScheme.getLegendBreaks().add(aPB);
                 break;
             case POLYGON:
+            case MULTI_POLYGON:
                 PolygonBreak aPGB = new PolygonBreak();
                 aPGB.setDrawShape(true);
                 aPGB.setDrawFill(true);

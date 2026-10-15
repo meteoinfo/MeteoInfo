@@ -2033,7 +2033,7 @@ public class DrawMeteoData {
      * @return Image layer
      */
     public static ImageLayer createImageLayer(Array x, Array y, Graphic graphic, String layerName) {
-        BufferedImage image = ((Image) graphic.getShape()).getImage();
+        BufferedImage image = ((Image) graphic.getGeometry()).getImage();
         return createImageLayer(x, y, image, layerName);
     }
 

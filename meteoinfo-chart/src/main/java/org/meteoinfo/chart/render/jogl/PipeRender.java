@@ -77,7 +77,7 @@ public class PipeRender extends JOGLGraphicRender{
         this.graphics = graphics;
         this.vertexNum = 0;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            this.vertexNum += ((PipeShape) graphic.getShape()).getVertexCount();
+            this.vertexNum += ((PipeShape) graphic.getGeometry()).getVertexCount();
         }
 
         ColorBreak cb = graphics.getGraphicN(0).getLegendBreak();
@@ -105,7 +105,7 @@ public class PipeRender extends JOGLGraphicRender{
         int i = 0;
         float[] color;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PipeShape shape = (PipeShape) graphic.getShape();
+            PipeShape shape = (PipeShape) graphic.getGeometry();
             Pipe pipe = shape.getPipe();
             int n = pipe.getContourCount();
             int m = pipe.getContour().size();
@@ -135,7 +135,7 @@ public class PipeRender extends JOGLGraphicRender{
         int i = 0;
         linePointNumbers = new ArrayList<>();
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PipeShape shape = (PipeShape) graphic.getShape();
+            PipeShape shape = (PipeShape) graphic.getGeometry();
             shape.transform(transform);
             Pipe pipe = shape.getPipe();
             linePointNumbers.add(pipe.getVertexCount());
@@ -153,7 +153,7 @@ public class PipeRender extends JOGLGraphicRender{
     private void updateVertexIndices() {
         int idxNum = 0;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PipeShape shape = (PipeShape) graphic.getShape();
+            PipeShape shape = (PipeShape) graphic.getGeometry();
             Pipe pipe = shape.getPipe();
             idxNum += (pipe.getContourCount() - 1) * (pipe.getContour().size() - 1) * 6;
         }
@@ -162,7 +162,7 @@ public class PipeRender extends JOGLGraphicRender{
         int i = 0;
         int b = 0;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PipeShape shape = (PipeShape) graphic.getShape();
+            PipeShape shape = (PipeShape) graphic.getGeometry();
             Pipe pipe = shape.getPipe();
             int n = pipe.getContour().size();
             for (int j = 0; j < pipe.getContourCount() - 1; j++) {
@@ -186,7 +186,7 @@ public class PipeRender extends JOGLGraphicRender{
         float[] vertexNormal = new float[this.vertexNum * 3];
         int i = 0;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            PipeShape shape = (PipeShape) graphic.getShape();
+            PipeShape shape = (PipeShape) graphic.getGeometry();
             Pipe pipe = shape.getPipe();
             for (int j = 0; j < pipe.getContourCount(); j++) {
                 for (Vector3f vector3f : shape.getPipe().getNormal(j)) {
@@ -208,7 +208,7 @@ public class PipeRender extends JOGLGraphicRender{
         List<Integer> vertexIndices = new ArrayList<>();
         Cylinder cylinder = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            MultiLineString shape = (MultiLineString) graphic.getShape();
+            MultiLineString shape = (MultiLineString) graphic.getGeometry();
             int pointNum = shape.getNumPoints();
             List<Coordinate> ps = (List<Coordinate>) shape.getCoordinates();
             ColorBreak cb = graphic.getLegendBreak();

@@ -36,7 +36,7 @@ package org.meteoinfo.chart.graphic;
  public class Graphic extends Artist {
      // <editor-fold desc="Variables">
 
-     protected Geometry shape;
+     protected Geometry geometry;
      protected ColorBreak legendBreak;
      protected GeneralPath clipPath;
      protected Graphic clipGraphic;
@@ -59,7 +59,7 @@ package org.meteoinfo.chart.graphic;
       * @param legend a legend
       */
      public Graphic(Geometry shape, ColorBreak legend) {
-         this.shape = shape;
+         this.geometry = shape;
          this.legendBreak = legend;
          updateResizeAbility();
      }
@@ -71,8 +71,8 @@ package org.meteoinfo.chart.graphic;
       *
       * @return Shape
       */
-     public Geometry getShape() {
-         return shape;
+     public Geometry getGeometry() {
+         return geometry;
      }
 
      /**
@@ -80,9 +80,18 @@ package org.meteoinfo.chart.graphic;
       *
       * @param aShape a shape
       */
-     public void setShape(Geometry aShape) {
-         shape = aShape;
+     public void setGeometry(Geometry aShape) {
+         geometry = aShape;
          updateResizeAbility();
+     }
+
+     /**
+      * Test if is empty graphic
+      *
+      * @return Empty or not
+      */
+     public boolean isEmpty() {
+         return geometry == null || geometry.isEmpty();
      }
 
      /**
@@ -179,7 +188,7 @@ package org.meteoinfo.chart.graphic;
                  }
              } else {
                  this.clipPath = new GeneralPath();
-                 for (Polygon aPolygon : ((MultiPolygon) graphic.getShape()).getPolygons()) {
+                 for (Polygon aPolygon : ((MultiPolygon) graphic.getGeometry()).getPolygons()) {
                      GeneralPath aPath = new GeneralPath();
                      Coordinate wPoint;
                      double[] sXY;
@@ -244,7 +253,7 @@ package org.meteoinfo.chart.graphic;
       * @return The extent
       */
      public Extent getExtent() {
-         return this.shape.getExtent();
+         return this.geometry.getExtent();
      }
 
      /**
@@ -252,7 +261,7 @@ package org.meteoinfo.chart.graphic;
       * @param value The extent
       */
      public void setExtent(Extent value){
-         this.shape.setExtent(value);
+         this.geometry.setExtent(value);
      }
 
      /**
@@ -279,7 +288,7 @@ package org.meteoinfo.chart.graphic;
       * @return The shape type
       */
      public GeometryType getShapeType(){
-         return shape.getGeometryType();
+         return geometry.getGeometryType();
      }
 
      /**
@@ -309,9 +318,10 @@ package org.meteoinfo.chart.graphic;
      }
 
      private void updateResizeAbility() {
-         if (shape != null && legendBreak != null) {
-             switch (shape.getGeometryType()) {
+         if (geometry != null && legendBreak != null) {
+             switch (geometry.getGeometryType()) {
                  case POINT:
+                 case MULTI_POINT:
                      switch (legendBreak.getBreakType()) {
                          case POINT_BREAK:
                              _resizeAbility = ResizeAbility.SAME_WIDTH_HEIGHT;
@@ -340,9 +350,10 @@ package org.meteoinfo.chart.graphic;
       * @param newY New Y
       */
      public void verticeMoveUpdate(int vIdx, double newX, double newY) {
-         List<Coordinate> points = (List<Coordinate>) shape.getCoordinates();
-         switch (shape.getGeometryType()){
+         List<Coordinate> points = (List<Coordinate>) geometry.getCoordinates();
+         switch (geometry.getGeometryType()){
              case POLYGON:
+             case MULTI_POLYGON:
              case CURVE_POLYGON:
              case RECTANGLE:
                  int last = points.size() - 1;
@@ -364,7 +375,7 @@ package org.meteoinfo.chart.graphic;
          aP.x = newX;
          aP.y = newY;
          //points.set(vIdx, aP);
-         shape.setCoordinates(points);
+         geometry.setCoordinates(points);
      }
 
      /**
@@ -374,9 +385,9 @@ package org.meteoinfo.chart.graphic;
       * @param point The add vertice
       */
      public void verticeAddUpdate(int vIdx, Coordinate point) {
-         List<Coordinate> points = shape.getCoordinates();
+         List<Coordinate> points = geometry.getCoordinates();
          points.add(vIdx, point);
-         shape.setCoordinates(points);
+         geometry.setCoordinates(points);
      }
 
      /**
@@ -385,9 +396,9 @@ package org.meteoinfo.chart.graphic;
       * @param vIdx Vertice index
       */
      public void verticeRemoveUpdate(int vIdx) {
-         List<Coordinate> points = shape.getCoordinates();
+         List<Coordinate> points = geometry.getCoordinates();
          points.remove(vIdx);
-         shape.setCoordinates(points);
+         geometry.setCoordinates(points);
      }
 
      /**
@@ -397,8 +408,8 @@ package org.meteoinfo.chart.graphic;
       */
      public void exportToXML(Document doc, Element parent) {
          Element graphic = doc.createElement("Graphic");
-         addShape(doc, graphic, shape);
-         addLegend(doc, graphic, legendBreak, shape.getGeometryType());
+         addShape(doc, graphic, geometry);
+         addLegend(doc, graphic, legendBreak, geometry.getGeometryType());
 
          parent.appendChild(graphic);
      }
@@ -653,10 +664,10 @@ package org.meteoinfo.chart.graphic;
       */
      public void importFromXML(Element graphicNode) {
          Node shape = graphicNode.getElementsByTagName("Shape").item(0);
-         this.shape = loadShape(shape);
+         this.geometry = loadShape(shape);
 
          Node legend = graphicNode.getElementsByTagName("Legend").item(0);
-         this.legendBreak = loadLegend(legend, this.shape.getGeometryType());
+         this.legendBreak = loadLegend(legend, this.geometry.getGeometryType());
 
          updateResizeAbility();
      }
@@ -667,12 +678,14 @@ package org.meteoinfo.chart.graphic;
              GeometryType shapeType = GeometryType.valueOf(shapeNode.getAttributes().getNamedItem("ShapeType").getNodeValue());
              switch (shapeType) {
                  case POINT:
+                 case MULTI_POINT:
                      aShape = new Point();
                      break;
                  case WIND_ARROW:
                      aShape = new WindArrow();
                      break;
                  case LINESTRING:
+                 case MULTI_LINESTRING:
                      aShape = new MultiLineString();
                      break;
                  case CURVE_LINE:
@@ -682,6 +695,7 @@ package org.meteoinfo.chart.graphic;
                      aShape = new Circle();
                      break;
                  case POLYGON:
+                 case MULTI_POLYGON:
                  case RECTANGLE:
                      aShape = new MultiPolygon();
                      break;

@@ -2616,7 +2616,7 @@ public class Draw {
         }
 
         List<Coordinate> newPList;
-        if (aPG.hasHole()) {
+        if (aPG.hasHoles()) {
             for (int h = 0; h < aPG.getHoleLines().size(); h++) {
                 newPList = aPG.getHoleLines().get(h);
                 for (int j = 0; j < newPList.size(); j++) {

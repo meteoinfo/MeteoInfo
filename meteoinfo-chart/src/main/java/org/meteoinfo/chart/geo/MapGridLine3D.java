@@ -50,7 +50,7 @@ public class MapGridLine3D extends MapGridLine {
             line.setCoordinates(points);
             Graphic graphic = new Graphic(line, this.lineBreak);
             graphic = ProjectUtil.projectClipGraphic(graphic, ProjectionInfo.LONG_LAT, projInfo);
-            graphic.getShape().setValue(lon);
+            graphic.getGeometry().setValue(lon);
             this.longitudeLines.add(graphic);
         }
     }
@@ -83,9 +83,9 @@ public class MapGridLine3D extends MapGridLine {
                 continue;
             }
 
-            if (graphic.getShape().getNumParts() > 1) {
-                points = (List<Coordinate>) ((MultiLineString) graphic.getShape()).getPolylines().get(0).getCoordinates();
-                List<Coordinate> points1 = (List<Coordinate>) ((MultiLineString) graphic.getShape()).getPolylines().
+            if (graphic.getGeometry().getNumParts() > 1) {
+                points = (List<Coordinate>) ((MultiLineString) graphic.getGeometry()).getPolylines().get(0).getCoordinates();
+                List<Coordinate> points1 = (List<Coordinate>) ((MultiLineString) graphic.getGeometry()).getPolylines().
                         get(1).getCoordinates();
                 Collections.reverse(points1);
                 points.addAll(points1);
@@ -93,7 +93,7 @@ public class MapGridLine3D extends MapGridLine {
                 line.setCoordinates(points);
                 graphic = new Graphic(line, this.lineBreak);
             }
-            graphic.getShape().setValue(lat);
+            graphic.getGeometry().setValue(lat);
             this.latitudeLines.add(graphic);
         }
     }

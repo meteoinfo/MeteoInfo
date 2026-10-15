@@ -209,8 +209,8 @@ public class MapLayoutUndoRedo {
             this.verticeIdx = vIdx;
             this.newX = newX;
             this.newY = newY;
-            this.oldX = lg.getGraphic().getShape().getCoordinates().get(vIdx).x;
-            this.oldY = lg.getGraphic().getShape().getCoordinates().get(vIdx).y;
+            this.oldX = lg.getGraphic().getGeometry().getCoordinates().get(vIdx).x;
+            this.oldY = lg.getGraphic().getGeometry().getCoordinates().get(vIdx).y;
         }
 
         @Override

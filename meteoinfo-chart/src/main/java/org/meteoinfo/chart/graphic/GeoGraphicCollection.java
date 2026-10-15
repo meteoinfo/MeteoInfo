@@ -54,6 +54,7 @@ public class GeoGraphicCollection extends GraphicCollection {
         GeometryType shapeType = graphics.getShapeType();
         switch (shapeType) {
             case POLYGON:
+            case MULTI_POLYGON:
                 attrTable.addField(new Field("data_Low", DataType.DOUBLE));
                 attrTable.addField(new Field("data_High", DataType.DOUBLE));
                 break;
@@ -67,11 +68,12 @@ public class GeoGraphicCollection extends GraphicCollection {
                 DataRow dataRow = dataTable.addRow();
                 switch (shapeType) {
                     case POLYGON:
-                        dataRow.setValue("data_Low", ((MultiPolygon) graphic.getShape()).lowValue);
-                        dataRow.setValue("data_High", ((MultiPolygon) graphic.getShape()).highValue);
+                    case MULTI_POLYGON:
+                        dataRow.setValue("data_Low", ((MultiPolygon) graphic.getGeometry()).lowValue);
+                        dataRow.setValue("data_High", ((MultiPolygon) graphic.getGeometry()).highValue);
                         break;
                     default:
-                        dataRow.setValue("data", graphic.getShape().getValue());
+                        dataRow.setValue("data", graphic.getGeometry().getValue());
                         break;
                 }
             } catch (Exception e) {
@@ -175,7 +177,7 @@ public class GeoGraphicCollection extends GraphicCollection {
         }
 
         for (Graphic graphic : this.graphics) {
-            Geometry shape = graphic.getShape();
+            Geometry shape = graphic.getGeometry();
             shapeIdx += 1;
             ColorBreak aCB = graphic.getLegendBreak();
             if (!aCB.isDrawShape()) {
@@ -185,13 +187,16 @@ public class GeoGraphicCollection extends GraphicCollection {
             Point aPS = new Point();
             switch (this.getShapeType()) {
                 case POINT:
+                case MULTI_POINT:
                     aPS.setCoordinate((Coordinate) ((Point) shape).getCoordinate().clone());
                     break;
                 case LINESTRING:
+                case MULTI_LINESTRING:
                     int pIdx = ((MultiLineString) shape).getCoordinates().size() / 2;
                     aPS.setCoordinate((Coordinate) ((MultiLineString) shape).getCoordinates().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
+                case MULTI_POLYGON:
                     Extent aExtent = shape.getExtent();
                     aPoint = new Coordinate();
                     aPoint.x = ((aExtent.minX + aExtent.maxX) / 2);
@@ -245,13 +250,16 @@ public class GeoGraphicCollection extends GraphicCollection {
                 float size = 1.0F;
                 switch (aST) {
                     case POINT:
+                    case MULTI_POINT:
                         aColor = Color.black;
                         size = 5;
                         break;
                     case LINESTRING:
+                    case MULTI_LINESTRING:
                         aColor = Color.black;
                         break;
                     case POLYGON:
+                    case MULTI_POLYGON:
                     case IMAGE:
                         aColor = new Color(255, 251, 195);
                         break;

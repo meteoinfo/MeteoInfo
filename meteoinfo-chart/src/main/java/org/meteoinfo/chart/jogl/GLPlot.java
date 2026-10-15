@@ -2768,6 +2768,7 @@ public class GLPlot extends Plot {
             if (isDraw) {
                 switch (graphic.getGraphicN(0).getShapeType()) {
                     case POINT:
+                    case MULTI_POINT:
                         if (!this.renderMap.containsKey(graphic)) {
                             renderMap.put(graphic, new PointRender(gl, (GraphicCollection) graphic));
                         }
@@ -2781,7 +2782,7 @@ public class GLPlot extends Plot {
                         break;
                     case LINESTRING:
                     case MULTI_LINESTRING:
-                        if (graphic.getGraphicN(0).getShape() instanceof PipeShape) {
+                        if (graphic.getGraphicN(0).getGeometry() instanceof PipeShape) {
                             if (!this.renderMap.containsKey(graphic)) {
                                 renderMap.put(graphic, new PipeRender(gl, (GraphicCollection) graphic));
                             }
@@ -2852,7 +2853,7 @@ public class GLPlot extends Plot {
     }
 
     protected void drawGraphic(GL2 gl, Graphic graphic) {
-        Geometry shape = graphic.getGraphicN(0).getShape();
+        Geometry shape = graphic.getGraphicN(0).getGeometry();
         switch (shape.getGeometryType()) {
             case POINT:
             case MULTI_POINT:
@@ -2939,7 +2940,7 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            Point shape = (Point) graphic.getShape();
+            Point shape = (Point) graphic.getGeometry();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -2956,7 +2957,7 @@ public class GLPlot extends Plot {
         gl.glPointSize(pb.getSize() * this.dpiScale);
         gl.glBegin(GL2.GL_POINTS);
         for (Graphic gg : ((GraphicCollection) graphic).getGraphics()) {
-            Point shape = (Point) gg.getShape();
+            Point shape = (Point) gg.getGeometry();
             pb = (PointBreak) gg.getLegendBreak();
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -2972,7 +2973,7 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            Point shape = (Point) graphic.getShape();
+            Point shape = (Point) graphic.getGeometry();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             float[] rgba = pb.getColor().getRGBComponents(null);
             gl.glColor4fv(rgba, 0);
@@ -3138,7 +3139,7 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            MultiLineString shape = (MultiLineString) graphic.getShape();
+            MultiLineString shape = (MultiLineString) graphic.getGeometry();
             ColorBreak cb = graphic.getLegendBreak();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;
@@ -3180,7 +3181,7 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            PipeShape shape = (PipeShape) graphic.getShape();
+            PipeShape shape = (PipeShape) graphic.getGeometry();
             ColorBreak cb = graphic.getLegendBreak();
             shape.transform(transform);
             Pipe pipe = shape.getPipe();
@@ -3237,7 +3238,7 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            MultiPolygon shape = (MultiPolygon) graphic.getShape();
+            MultiPolygon shape = (MultiPolygon) graphic.getGeometry();
             PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
             java.util.List<Polygon> polygonZS = shape.getPolygons();
             for (int i = 0; i < polygonZS.size(); i++) {
@@ -3295,7 +3296,7 @@ public class GLPlot extends Plot {
             }
             gl.glEnd();
 
-            if (tessPolygon.hasHole()) {
+            if (tessPolygon.hasHoles()) {
                 java.util.List<Coordinate> newPList;
                 for (int h = 0; h < tessPolygon.getHoleLines().size(); h++) {
                     gl.glBegin(GL2.GL_LINE_STRIP);
@@ -3345,7 +3346,7 @@ public class GLPlot extends Plot {
             }
             gl.glEnd();
 
-            if (aPG.hasHole()) {
+            if (aPG.hasHoles()) {
                 java.util.List<Coordinate> newPList;
                 gl.glBegin(GL2.GL_LINE_STRIP);
                 for (int h = 0; h < aPG.getHoleLines().size(); h++) {
@@ -3396,7 +3397,7 @@ public class GLPlot extends Plot {
                 isDraw = drawExtent.intersects(gg.getExtent());
 
             if (isDraw) {
-                MultiPolygon shape = (MultiPolygon) gg.getShape();
+                MultiPolygon shape = (MultiPolygon) gg.getGeometry();
                 PolygonBreak pb = (PolygonBreak) gg.getLegendBreak();
                 for (Polygon poly : shape.getPolygons()) {
                     drawQuads(gl, poly, pb);
@@ -3440,7 +3441,7 @@ public class GLPlot extends Plot {
                 isDraw = drawExtent.intersects(gg.getExtent());
 
             if (isDraw) {
-                MultiPolygon shape = (MultiPolygon) gg.getShape();
+                MultiPolygon shape = (MultiPolygon) gg.getGeometry();
                 PolygonBreak pb = (PolygonBreak) gg.getLegendBreak();
                 for (Polygon poly : shape.getPolygons()) {
                     drawTriangle(gl, poly, pb);
@@ -3518,7 +3519,7 @@ public class GLPlot extends Plot {
     }
 
     private void drawImage(GL2 gl, Graphic graphic) {
-        Image ishape = (Image) graphic.getShape();
+        Image ishape = (Image) graphic.getGeometry();
         BufferedImage image = ishape.getImage();
         Texture texture = AWTTextureIO.newTexture(gl.getGLProfile(), image, true);
         //Texture texture = this.imageCache.get(image);
@@ -3587,7 +3588,7 @@ public class GLPlot extends Plot {
     }
 
     private void drawTexture(GL2 gl, Graphic graphic) {
-        TextureShape ishape = (TextureShape) graphic.getShape();
+        TextureShape ishape = (TextureShape) graphic.getGeometry();
         ishape.updateTexture(gl);
         int idTexture = ishape.getTextureID();
         java.util.List<Coordinate> coords = ishape.getCoords();
@@ -3726,7 +3727,7 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            Cubic cubic = (Cubic) graphic.getShape();
+            Cubic cubic = (Cubic) graphic.getGeometry();
             BarBreak bb = (BarBreak) graphic.getLegendBreak();
             java.util.List<Coordinate> ps = cubic.getCoordinates();
             java.util.List<float[]> vertex = new ArrayList<>();
@@ -3773,7 +3774,7 @@ public class GLPlot extends Plot {
             isDraw = drawExtent.intersects(graphic.getExtent());
 
         if (isDraw) {
-            Cylinder cylinder = (Cylinder) graphic.getShape();
+            Cylinder cylinder = (Cylinder) graphic.getGeometry();
             BarBreak bb = (BarBreak) graphic.getLegendBreak();
             java.util.List<Coordinate> ps = cylinder.getCoordinates();
             java.util.List<float[]> vertex = new ArrayList<>();

@@ -35,7 +35,7 @@ public class TriangleTessellator {
         }
 
         // Inner rings (holes)
-        if (polygon.hasHole()) {
+        if (polygon.hasHoles()) {
             for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
                 // Record the starting index of this hole in the flat array
                 holeIndices.add(coords.size() / 2);
@@ -96,7 +96,7 @@ public class TriangleTessellator {
         // Build a combined ordered list of original vertices matching EarCut's traversal order
         List<Coordinate> originals = new ArrayList<>();
         originals.addAll(polygon.getOutLine());
-        if (polygon.hasHole()) {
+        if (polygon.hasHoles()) {
             for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
                 originals.addAll(polygon.getHoleLine(i));
             }

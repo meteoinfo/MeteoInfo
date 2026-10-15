@@ -47,14 +47,14 @@ public class ShapeFileManage {
     /**
      * Load shape file
      *
-     * @param shpfilepath Shape file path
+     * @param shpFilePath Shape file path
      * @return Vector layer
      * @throws IOException
      * @throws FileNotFoundException
      */
-    public static VectorLayer loadShapeFile(String shpfilepath) throws IOException, FileNotFoundException, Exception {
-        String cpgfilepath = shpfilepath.replaceFirst(shpfilepath.substring(shpfilepath.lastIndexOf(".")), ".cpg");
-        File cpgFile = new File(cpgfilepath);
+    public static VectorLayer loadShapeFile(String shpFilePath) throws IOException, FileNotFoundException, Exception {
+        String cpgFilePath = shpFilePath.replaceFirst(shpFilePath.substring(shpFilePath.lastIndexOf(".")), ".cpg");
+        File cpgFile = new File(cpgFilePath);
         String encoding = ENCODING;
         if (cpgFile.exists()){
             BufferedReader sr = new BufferedReader(new FileReader(cpgFile));
@@ -62,42 +62,42 @@ public class ShapeFileManage {
             sr.close();
             encoding = ec;
         }
-        return loadShapeFile(shpfilepath, encoding);
+        return loadShapeFile(shpFilePath, encoding);
     }
     
     /**
      * Load shape file
      *
-     * @param shpfilepath Shape file path
+     * @param shpFilePath Shape file path
      * @param encoding Encoding
      * @return Vector layer
      * @throws IOException
      * @throws FileNotFoundException
      */
-    public static VectorLayer loadShapeFile(String shpfilepath, String encoding) throws IOException, FileNotFoundException, Exception {
+    public static VectorLayer loadShapeFile(String shpFilePath, String encoding) throws IOException, FileNotFoundException, Exception {
         //Set file names
-        String shxfilepath = shpfilepath.replace(shpfilepath.substring(shpfilepath.lastIndexOf(".")), ".shx");
-        String dbffilepath = shpfilepath.replace(shpfilepath.substring(shpfilepath.lastIndexOf(".")), ".dbf");
-        String projfilepath = shpfilepath.replace(shpfilepath.substring(shpfilepath.lastIndexOf(".")), ".prj");
-        File shpFile = new File(shpfilepath);
-        File dbfFile = new File(dbffilepath);
-        File shxFile = new File(shxfilepath);
-        File prjFile = new File(projfilepath);
+        String shxFilePath = shpFilePath.replace(shpFilePath.substring(shpFilePath.lastIndexOf(".")), ".shx");
+        String dbfFilePath = shpFilePath.replace(shpFilePath.substring(shpFilePath.lastIndexOf(".")), ".dbf");
+        String projFilePath = shpFilePath.replace(shpFilePath.substring(shpFilePath.lastIndexOf(".")), ".prj");
+        File shpFile = new File(shpFilePath);
+        File dbfFile = new File(dbfFilePath);
+        File shxFile = new File(shxFilePath);
+        File prjFile = new File(projFilePath);
         if (!shxFile.exists()) {
-            shxfilepath = shxfilepath.replace(".shx", ".SHX");
-            shxFile = new File(shxfilepath);
+            shxFilePath = shxFilePath.replace(".shx", ".SHX");
+            shxFile = new File(shxFilePath);
         }
         if (!dbfFile.exists()) {
-            dbffilepath = dbffilepath.replace(".dbf", ".DBF");
-            dbfFile = new File(dbffilepath);
+            dbfFilePath = dbfFilePath.replace(".dbf", ".DBF");
+            dbfFile = new File(dbfFilePath);
         }
         if (!prjFile.exists()) {
-            projfilepath = projfilepath.replace(".prj", ".PRJ");
-            prjFile = new File(projfilepath);
+            projFilePath = projFilePath.replace(".prj", ".PRJ");
+            prjFile = new File(projFilePath);
         }
 
         //Read shx file 
-        if ("".equals(shxfilepath)) {
+        if ("".equals(shxFilePath)) {
             //  MessageBox.Show("Open shx file error"); 
             return null;
         }
@@ -162,12 +162,12 @@ public class ShapeFileManage {
             
             //Layer property
             aLayer.setLayerDrawType(LayerDrawType.MAP);
-            aLayer.setFileName(shpfilepath);
+            aLayer.setFileName(shpFilePath);
             aLayer.setLayerName(shpFile.getName());
             aLayer.setVisible(true);
 
             //read out the layer attribute information             
-            AttributeTable attrTable = loadDbfFile(shpfilepath, encoding);
+            AttributeTable attrTable = loadDbfFile(shpFilePath, encoding);
             aLayer.setAttributeTable(attrTable);
 
             //Get projection information
@@ -221,12 +221,8 @@ public class ShapeFileManage {
             x = buffer.getDouble();
             y = buffer.getDouble();
 
-            Point aP = new Point();
-            Coordinate aPoint = new Coordinate();
-            aPoint.x = x;
-            aPoint.y = y;
-            aP.setCoordinate(aPoint);
-            aLayer.addShape(aP);
+            Coordinate c = new Coordinate(x, y);
+            aLayer.addShape(new Point(c));
         }
 
         //Create legend scheme            
@@ -243,8 +239,6 @@ public class ShapeFileManage {
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
         
         for (int i = 0; i < shapeNum; i++) {
-
-            //br.ReadBytes(12); //记录头8个字节和一个int(4个字节)的shapetype 
             buffer.order(ByteOrder.BIG_ENDIAN);
             RecordNum = buffer.getInt();
             ContentLength = buffer.getInt();
@@ -257,14 +251,8 @@ public class ShapeFileManage {
             z = buffer.getDouble();
             m = buffer.getDouble();
 
-            Point aP = new Point();
-            Coordinate aPoint = new Coordinate();
-            aPoint.x = x;
-            aPoint.y = y;
-            aPoint.z = z;
-            aPoint.m = m;
-            aP.setCoordinate(aPoint);
-            aLayer.addShape(aP);
+            Coordinate c = new Coordinate(x, y, z, m);
+            aLayer.addShape(new Point(c));
         }
 
         //Create legend scheme            
@@ -284,7 +272,6 @@ public class ShapeFileManage {
             bytes = new byte[8];
             br.read(bytes);
             buffer = ByteBuffer.wrap(bytes);
-            //br.skipBytes(12); 
             buffer.order(ByteOrder.BIG_ENDIAN);
             RecordNum = buffer.getInt();
             ContentLength = buffer.getInt();
@@ -795,8 +782,11 @@ public class ShapeFileManage {
 
          switch (geoGraphics.getShapeType()) {
              case POINT:
+             case MULTI_POINT:
              case LINESTRING:
+             case MULTI_LINESTRING:
              case POLYGON:
+             case MULTI_POLYGON:
                  writeShxFile(shxFilePath, geoGraphics);
                  writeShpFile(shpFilePath, geoGraphics);
                  if (encoding == null) {

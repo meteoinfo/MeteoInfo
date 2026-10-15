@@ -95,7 +95,7 @@ public class PrimitiveTessellator {
         glu.gluTessEndContour(tobj);
 
         // 2. Process inner holes (if any)
-        if (polygon.hasHole()) {
+        if (polygon.hasHoles()) {
             for (int i = 0; i < polygon.getNumInteriorRing(); i++) {
                 glu.gluTessBeginContour(tobj);
                 List<Coordinate> holeLine = (List<Coordinate>) polygon.getHoleLine(i);

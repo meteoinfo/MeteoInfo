@@ -846,6 +846,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
         // TODO add your handling code here:
         switch (_legendScheme.getShapeType()) {
             case LINESTRING:
+            case MULTI_LINESTRING:
                 PolylineBreak aPLB = new PolylineBreak();
                 aPLB.setDrawPolyline(true);
                 aPLB.setWidth(0.1F);
@@ -856,6 +857,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                 _legendScheme.getLegendBreaks().add(aPLB);
                 break;
             case POINT:
+            case MULTI_POINT:
                 PointBreak aPB = new PointBreak();
                 aPB.setDrawShape(true);
                 aPB.setDrawFill(true);
@@ -867,6 +869,7 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                 _legendScheme.getLegendBreaks().add(aPB);
                 break;
             case POLYGON:
+            case MULTI_POLYGON:
                 PolygonBreak aPGB = new PolygonBreak();
                 aPGB.setDrawShape(true);
                 aPGB.setDrawFill(true);
@@ -1106,9 +1109,11 @@ public class FrmLayerProperty extends javax.swing.JDialog {
                             aColor = Color.black;
                             break;
                         case LINESTRING:
+                        case MULTI_LINESTRING:
                             aColor = Color.black;
                             break;
                         case POLYGON:
+                        case MULTI_POLYGON:
                         case IMAGE:
                             aColor = new Color(255, 251, 195);
                             break;

@@ -613,6 +613,7 @@ public class MapDataManage {
             int i;
             switch (shapes.get(0).getGeometryType()) {
                 case POINT:
+                case MULTI_POINT:
                     sw.write("Point");
                     sw.newLine();
                     sw.write(String.valueOf(shpNum));
@@ -627,6 +628,7 @@ public class MapDataManage {
                     }
                     break;
                 case LINESTRING:
+                case MULTI_LINESTRING:
                     sw.write("Polyline");
                     sw.newLine();
                     int shapeNum = 0;
@@ -665,6 +667,7 @@ public class MapDataManage {
                     }
                     break;
                 case POLYGON:
+                case MULTI_POLYGON:
                     sw.write("Polygon");
                     sw.newLine();
                     shapeNum = 0;

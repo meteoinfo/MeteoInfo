@@ -123,10 +123,13 @@ public enum ShapeFileType {
     public static ShapeFileType fromShapeType(GeometryType shapeType) {
         switch (shapeType) {
             case POINT:
+            case MULTI_POINT:
                 return ShapeFileType.POINT;
             case LINESTRING:
+            case MULTI_LINESTRING:
                 return ShapeFileType.POLYLINE;
             case POLYGON:
+            case MULTI_POLYGON:
                 return ShapeFileType.POLYGON;
             case WIND_ARROW:
                 return ShapeFileType.WIND_ARROW;

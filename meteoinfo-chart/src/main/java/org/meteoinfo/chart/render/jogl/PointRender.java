@@ -143,7 +143,7 @@ public class PointRender extends JOGLGraphicRender {
                 }
             } else {
                 for (Graphic graphic : this.graphics.getGraphics()) {
-                    Point shape = (Point) graphic.getShape();
+                    Point shape = (Point) graphic.getGeometry();
                     Coordinate p = (Coordinate) shape.getCoordinate();
                     vertexPosition[i] = (float) p.x;
                     vertexPosition[i + 1] = (float) p.y;
@@ -166,7 +166,7 @@ public class PointRender extends JOGLGraphicRender {
         float size = -1;
         Sphere sphere = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            Point shape = (Point) graphic.getShape();
+            Point shape = (Point) graphic.getGeometry();
             Coordinate p = (Coordinate) shape.getCoordinate();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             if (size != pb.getSize()) {
@@ -231,7 +231,7 @@ public class PointRender extends JOGLGraphicRender {
         float size = -1;
         Sphere sphere = null;
         for (Graphic graphic : this.graphics.getGraphics()) {
-            Point shape = (Point) graphic.getShape();
+            Point shape = (Point) graphic.getGeometry();
             Coordinate p = (Coordinate) shape.getCoordinate();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
             if (size != pb.getSize()) {

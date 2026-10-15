@@ -50,9 +50,9 @@ public class GraphicProjectionUtil extends ProjectionUtil {
                 }
                 int idx = 0;
                 for (Graphic aGraphic : geoGraphic.getGraphics()) {
-                    List<? extends Geometry> shapes = org.meteoinfo.projection.ProjectionUtil.projectClipShape(aGraphic.getShape(), fromProj, toProj);
+                    List<? extends Geometry> shapes = org.meteoinfo.projection.ProjectionUtil.projectClipShape(aGraphic.getGeometry(), fromProj, toProj);
                     if (shapes != null && shapes.size() > 0) {
-                        aGraphic.setShape(shapes.get(0));
+                        aGraphic.setGeometry(shapes.get(0));
                         newGCollection.add(aGraphic);
                         DataRow aDR = geoGraphic.getAttributeTable().getTable().getRows().get(idx);
                         try {

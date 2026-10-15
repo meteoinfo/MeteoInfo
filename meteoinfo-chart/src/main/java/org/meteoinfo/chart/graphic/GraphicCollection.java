@@ -85,11 +85,11 @@ public class GraphicCollection extends Graphic implements Iterator {
      * @return Shape
      */
     @Override
-    public Geometry getShape() {
+    public Geometry getGeometry() {
         if (this.graphics.isEmpty()) {
             return null;
         } else {
-            return this.graphics.get(0).getShape();
+            return this.graphics.get(0).getGeometry();
         }
     }
 
@@ -102,7 +102,7 @@ public class GraphicCollection extends Graphic implements Iterator {
         if (this.graphics.isEmpty()) {
             return null;
         } else {
-            return this.graphics.get(index).getShape();
+            return this.graphics.get(index).getGeometry();
         }
     }
 
@@ -232,7 +232,7 @@ public class GraphicCollection extends Graphic implements Iterator {
             if (this.getGraphicN(0).getLegendBreak().getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 for (Graphic graphic : this.graphics) {
                     ColorBreakCollection cbs = new ColorBreakCollection();
-                    Geometry shape = graphic.getShape();
+                    Geometry shape = graphic.getGeometry();
                     for (Coordinate pointZ : (List<Coordinate>) shape.getCoordinates()) {
                         ColorBreak cb = this.legendScheme.findLegendBreak(pointZ.m);
                         cbs.add(cb);
@@ -707,15 +707,17 @@ public class GraphicCollection extends Graphic implements Iterator {
         aPoint.y = (aExtent.minY + aExtent.maxY) / 2;
 
         for (Graphic aGraphic : this.graphics) {
-            switch (aGraphic.getShape().getGeometryType()) {
+            switch (aGraphic.getGeometry().getGeometryType()) {
                 case POINT:
-                    Point aPS = (Point) aGraphic.getShape();
+                case MULTI_POINT:
+                    Point aPS = (Point) aGraphic.getGeometry();
                     if (aExtent.contains(aPS.getCoordinate())) {
                         selectedGraphics.add(aGraphic);
                     }
                     break;
                 case LINESTRING:
-                    MultiLineString aPLS = (MultiLineString) aGraphic.getShape();
+                case MULTI_LINESTRING:
+                    MultiLineString aPLS = (MultiLineString) aGraphic.getGeometry();
                     if (GeometryUtil.isExtentCross(aExtent, aPLS.getExtent())) {
                         for (j = 0; j < aPLS.getCoordinates().size(); j++) {
                             aPoint = aPLS.getCoordinates().get(j);
@@ -727,8 +729,9 @@ public class GraphicCollection extends Graphic implements Iterator {
                     }
                     break;
                 case POLYGON:
+                case MULTI_POLYGON:
                 case RECTANGLE:
-                    MultiPolygon aPGS = (MultiPolygon) aGraphic.getShape();
+                    MultiPolygon aPGS = (MultiPolygon) aGraphic.getGeometry();
                     if (!(aPGS.getNumParts() > 1)) {
                         if (GeoComputation.pointInPolygon(aPGS.getCoordinates(), aPoint)) {
                             selectedGraphics.add(aGraphic);
@@ -798,7 +801,7 @@ public class GraphicCollection extends Graphic implements Iterator {
     public List<? extends Geometry> getShapes() {
         List<Geometry> shapes = new ArrayList<>();
         for (Graphic g : this.graphics) {
-            shapes.add(g.getShape());
+            shapes.add(g.getGeometry());
         }
         return shapes;
     }
@@ -813,14 +816,14 @@ public class GraphicCollection extends Graphic implements Iterator {
         if (this.graphics.isEmpty()) {
             return null;
         } else {
-            return this.graphics.get(0).getShape().getGeometryType();
+            return this.graphics.get(0).getGeometry().getGeometryType();
         }
     }
 
     private double getMinValue() {
         double min = Double.MAX_VALUE;
         for (Graphic graphic : this.graphics) {
-            Geometry shape = graphic.getShape();
+            Geometry shape = graphic.getGeometry();
             if (min > shape.getValue()) {
                 min = shape.getValue();
             }
@@ -840,17 +843,20 @@ public class GraphicCollection extends Graphic implements Iterator {
         Coordinate aPoint;
         for (Graphic graphic : this.graphics) {
             ColorBreak cb = graphic.getLegendBreak();
-            Geometry shape = graphic.getShape();
+            Geometry shape = graphic.getGeometry();
             Point aPS = new Point();
             switch (shape.getGeometryType()) {
                 case POINT:
+                case MULTI_POINT:
                     aPS.setCoordinate((Coordinate) ((Point) shape).getCoordinate().clone());
                     break;
                 case LINESTRING:
+                case MULTI_LINESTRING:
                     int pIdx = ((MultiLineString) shape).getCoordinates().size() / 2;
                     aPS.setCoordinate((Coordinate) ((MultiLineString) shape).getCoordinates().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
+                case MULTI_POLYGON:
                     Extent aExtent = shape.getExtent();
                     aPoint = new Coordinate();
                     aPoint.x = ((aExtent.minX + aExtent.maxX) / 2);
@@ -897,17 +903,20 @@ public class GraphicCollection extends Graphic implements Iterator {
             }
 
             ColorBreak cb = graphic.getLegendBreak();
-            Geometry shape = graphic.getShape();
+            Geometry shape = graphic.getGeometry();
             Point aPS = new Point();
             switch (shape.getGeometryType()) {
                 case POINT:
+                case MULTI_POINT:
                     aPS.setCoordinate((Coordinate) ((Point) shape).getCoordinate().clone());
                     break;
                 case LINESTRING:
+                case MULTI_LINESTRING:
                     int pIdx = ((MultiLineString) shape).getCoordinates().size() / 2;
                     aPS.setCoordinate((Coordinate) ((MultiLineString) shape).getCoordinates().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
+                case MULTI_POLYGON:
                     Extent aExtent = shape.getExtent();
                     aPoint = new Coordinate();
                     aPoint.x = ((aExtent.minX + aExtent.maxX) / 2);
@@ -954,7 +963,7 @@ public class GraphicCollection extends Graphic implements Iterator {
         String dFormat = "%1$." + String.valueOf(labelSet.getDecimalDigits()) + "f";
         String text;
         for (Graphic graphic : this.graphics) {
-            Geometry shape = graphic.getShape();
+            Geometry shape = graphic.getGeometry();
             ColorBreak cb = graphic.getLegendBreak();
             MultiLineString aPLS = (MultiLineString) shape;
             Extent IExtent = aPLS.getExtent();
@@ -1059,7 +1068,7 @@ public class GraphicCollection extends Graphic implements Iterator {
         GraphicCollection cgraphics = new GraphicCollection();
         for (MultiPolygon aPGS : clipPolys) {
             for (int i = 0; i < this.graphics.size(); i++) {
-                Geometry bShape = this.graphics.get(i).getShape();
+                Geometry bShape = this.graphics.get(i).getGeometry();
                 Geometry clipShape = bShape.intersection(aPGS);
                 if (clipShape != null) {
                     cgraphics.add(new Graphic(clipShape, this.graphics.get(i).getLegendBreak()));
@@ -1078,7 +1087,7 @@ public class GraphicCollection extends Graphic implements Iterator {
      */
     public GraphicCollection xShift(double xs) {
         for (Graphic g : this.graphics) {
-            for (Coordinate p : g.getShape().getCoordinates()) {
+            for (Coordinate p : g.getGeometry().getCoordinates()) {
                 p.x += xs;
             }
             g.setExtent(g.getExtent().shift(xs, 0));
@@ -1095,7 +1104,7 @@ public class GraphicCollection extends Graphic implements Iterator {
     public GraphicCollection xShiftCopy(double xs) {
         GraphicCollection graphicCollection = new GraphicCollection();
         for (Graphic g : this.graphics) {
-            Geometry shape = (Geometry) g.getShape().clone();
+            Geometry shape = (Geometry) g.getGeometry().clone();
             for (Coordinate p : shape.getCoordinates()) {
                 p.x += xs;
             }
@@ -1115,7 +1124,7 @@ public class GraphicCollection extends Graphic implements Iterator {
     public GraphicCollection xRandomShift(int exponent) {
         Random r = new Random();
         for (Graphic g : this.graphics) {
-            for (Coordinate p : g.getShape().getCoordinates()) {
+            for (Coordinate p : g.getGeometry().getCoordinates()) {
                 p.x += (1 - r.nextDouble()) * Math.pow(10, exponent);
             }
         }
@@ -1131,7 +1140,7 @@ public class GraphicCollection extends Graphic implements Iterator {
     public GraphicCollection yRandomShift(int exponent) {
         Random r = new Random();
         for (Graphic g : this.graphics) {
-            for (Coordinate p : g.getShape().getCoordinates()) {
+            for (Coordinate p : g.getGeometry().getCoordinates()) {
                 p.y += (1 - r.nextDouble()) * Math.pow(10, exponent);
             }
         }
@@ -1165,7 +1174,7 @@ public class GraphicCollection extends Graphic implements Iterator {
         sw.write(String.valueOf(this.graphics.size()));
         sw.newLine();
         for (Graphic g : this.graphics) {
-            Geometry shape = g.getShape();
+            Geometry shape = g.getGeometry();
             switch (shape.getGeometryType()) {
                 case POLYGON:
                 case MULTI_POLYGON:
@@ -1189,7 +1198,7 @@ public class GraphicCollection extends Graphic implements Iterator {
                     }
                     sw.write(String.valueOf(polygonZ.getNumInteriorRing()));
                     sw.newLine();
-                    if (polygonZ.hasHole()) {
+                    if (polygonZ.hasHoles()) {
                         for (int i = 0; i < polygonZ.getNumInteriorRing(); i++) {
                             List<Coordinate> pointZS = (List<Coordinate>) polygonZ.getHoleLine(i);
                             sw.write("Hole");

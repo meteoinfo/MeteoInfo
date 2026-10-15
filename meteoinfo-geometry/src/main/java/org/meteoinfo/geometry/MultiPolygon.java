@@ -376,7 +376,7 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
                 eidx = sidx + poly.getOutLine().size();
                 poly.setOutLine(coordinates.subList(sidx, eidx));
                 sidx = eidx;
-                if (poly.hasHole()){
+                if (poly.hasHoles()){
                     for (int i = 0; i < poly.getNumInteriorRing(); i++){
                         eidx = sidx + poly.getHoleLine(i).size();
                         poly.setHoleLine(i, coordinates.subList(sidx, eidx));
@@ -432,22 +432,24 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
     
     private void updatePartsPoints() {
         _numParts = 0;
-        List<Coordinate> coordinates = new ArrayList<>();
+        int pn = 0;
         List<Integer> partList = new ArrayList<>();
         for (int i = 0; i < geometries.length; i++) {
             Polygon polygon = (Polygon) geometries[i];
             _numParts += polygon.getRingNumber();
-            for (int j = 0; j < polygon.getRingNumber(); j++) {
-                partList.add(coordinates.size());
-                coordinates.addAll(polygon.getRings().get(j));
+            partList.add(pn);
+            pn += polygon.getExteriorRing().getNumPoints();
+            for (int j = 0; j < polygon.getNumInteriorRing(); j++) {
+                partList.add(pn);
+                pn += polygon.getInteriorRingN(j).getNumPoints();
             }
         }
         parts = new int[partList.size()];
         for (int i = 0; i < partList.size(); i++) {
             parts[i] = partList.get(i);
         }
-        if (coordinates.size() > 0)
-            this.updateExtent();
+
+        this.updateExtent();
     }
     
     /**

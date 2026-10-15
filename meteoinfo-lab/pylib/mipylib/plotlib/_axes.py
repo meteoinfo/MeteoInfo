@@ -2923,7 +2923,7 @@ class Axes(object):
 
         interpolation = kwargs.pop('interpolation', None)
         if not interpolation is None:
-            igraphic.getShape().setInterpolation(interpolation)
+            igraphic.getGeometry().setInterpolation(interpolation)
 
         if not xaxistype is None:
             self.set_xaxis_type(xaxistype)

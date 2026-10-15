@@ -159,7 +159,7 @@ public class GeoComputation {
             Polygon aPRing = aPolygon.getPolygons().get(i);
             isIn = pointInPolygon(aPRing.getOutLine(), aPoint);
             if (isIn) {
-                if (aPRing.hasHole()) {
+                if (aPRing.hasHoles()) {
                     for (List<Coordinate> aLine : aPRing.getHoleLines()) {
                         if (pointInPolygon(aLine, aPoint)) {
                             isIn = false;
@@ -201,7 +201,7 @@ public class GeoComputation {
             return false;
         }
 
-        if (aPolygon.hasHole()) {
+        if (aPolygon.hasHoles()) {
             boolean isIn = pointInPolygon(aPolygon.getOutLine(), aPoint);
             if (isIn) {
                 for (List<Coordinate> aLine : aPolygon.getHoleLines()) {
@@ -795,14 +795,17 @@ public class GeoComputation {
     public static Geometry clipShape(Geometry aShape, Object clipObj) {
         switch (aShape.getGeometryType()) {
             case POINT:
+            case MULTI_POINT:
             case WEATHER_SYMBOL:
             case WIND_ARROW:
             case WIND_BARB:
             case STATION_MODEL:
                 return clipPointShape((Point) aShape, clipObj);
             case LINESTRING:
+            case MULTI_LINESTRING:
                 return clipPolylineShape((MultiLineString) aShape, clipObj);
             case POLYGON:
+            case MULTI_POLYGON:
                 return clipPolygonShape((MultiPolygon) aShape, clipObj);
             default:
                 return null;
@@ -1271,7 +1274,7 @@ public class GeoComputation {
 
         //Holes
         List<List<Coordinate>> holeLines = new ArrayList<>();
-        if (inPolygon.hasHole()) {
+        if (inPolygon.hasHoles()) {
             for (int h = 0; h < inPolygon.getHoleLines().size(); h++) {
                 List<Coordinate> holePList = inPolygon.getHoleLines().get(h);
                 Extent plExtent = GeometryUtil.getPointsExtent(holePList);
@@ -1491,7 +1494,7 @@ public class GeoComputation {
 
         //Holes
         List<List<Coordinate>> holeLines = new ArrayList<>();
-        if (inPolygon.hasHole()) {
+        if (inPolygon.hasHoles()) {
             for (int h = 0; h < inPolygon.getHoleLines().size(); h++) {
                 List<Coordinate> holePList = inPolygon.getHoleLines().get(h);
                 Extent plExtent = GeometryUtil.getPointsExtent(holePList);

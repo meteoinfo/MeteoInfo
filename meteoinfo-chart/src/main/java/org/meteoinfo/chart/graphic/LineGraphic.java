@@ -26,7 +26,7 @@ public class LineGraphic extends Graphic {
      * @param polylineBreak Polyline break
      */
     public LineGraphic(MultiLineString polylineShape, PolylineBreak polylineBreak) {
-        this.shape = polylineShape;
+        this.geometry = polylineShape;
         this.legendBreak = polylineBreak;
     }
 
@@ -84,10 +84,10 @@ public class LineGraphic extends Graphic {
             }
             points.add(new Coordinate(x, y));
         }
-        if (this.shape == null) {
-            this.shape = new MultiLineString();
+        if (this.geometry == null) {
+            this.geometry = new MultiLineString();
         }
-        this.shape.setCoordinates(points);
+        this.geometry.setCoordinates(points);
     }
 
     protected void updateShapeLegend(LegendScheme legendScheme) {
@@ -110,11 +110,11 @@ public class LineGraphic extends Graphic {
             cb = legendScheme.findLegendBreakAlways(c);
             cbc.add(cb);
         }
-        if (this.shape == null) {
-            this.shape = new MultiLineString();
+        if (this.geometry == null) {
+            this.geometry = new MultiLineString();
         }
         if (points.size() >= 2)
-            this.shape.setCoordinates(points);
+            this.geometry.setCoordinates(points);
 
         this.legendBreak = cbc;
     }
@@ -139,10 +139,10 @@ public class LineGraphic extends Graphic {
             cbc.add(cb);
             i += 1;
         }
-        if (this.shape == null) {
-            this.shape = new MultiLineString();
+        if (this.geometry == null) {
+            this.geometry = new MultiLineString();
         }
-        this.shape.setCoordinates(points);
+        this.geometry.setCoordinates(points);
 
         this.legendBreak = cbc;
     }

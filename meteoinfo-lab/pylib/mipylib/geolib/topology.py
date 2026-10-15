@@ -22,7 +22,7 @@ def asshape(a):
     :param a: (*Graphic*) The graphic.
     """
     if isinstance(a, Graphic):
-        return a.getShape()
+        return a.getGeometry()
     else:
         return a
 

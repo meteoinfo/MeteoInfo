@@ -1188,8 +1188,8 @@ public class ProjectionSet {
     private GraphicCollection projectGraphics(GraphicCollection aGCollection, ProjectionInfo fromProj, ProjectionInfo toProj) {
         GraphicCollection newGCollection = new GraphicCollection();
         for (Graphic aGraphic : aGCollection.getGraphics()) {
-            aGraphic.setShape(projectShape(aGraphic.getShape(), fromProj, toProj));
-            if (aGraphic.getShape() != null) {
+            aGraphic.setGeometry(projectShape(aGraphic.getGeometry(), fromProj, toProj));
+            if (aGraphic.getGeometry() != null) {
                 newGCollection.add(aGraphic);
             }
         }
@@ -1200,7 +1200,7 @@ public class ProjectionSet {
     private List<Graphic> projectGraphics(List<Graphic> graphics, ProjectionInfo fromProj, ProjectionInfo toProj) {
         List<Graphic> newGraphics = new ArrayList<>();
         for (Graphic aGraphic : graphics) {
-            Geometry aShape = projectShape(aGraphic.getShape(), fromProj, toProj);
+            Geometry aShape = projectShape(aGraphic.getGeometry(), fromProj, toProj);
             if (aShape != null) {
                 newGraphics.add(new Graphic(aShape, aGraphic.getLegendBreak()));
             }
@@ -1213,15 +1213,18 @@ public class ProjectionSet {
         Geometry newShape;
         switch (aShape.getGeometryType()) {
             case POINT:
+            case MULTI_POINT:
                 newShape = projectPointShape((Point) aShape, fromProj, toProj);
                 break;
             case LINESTRING:
+            case MULTI_LINESTRING:
                 newShape = projectPolylineShape((MultiLineString) aShape, fromProj, toProj);
                 break;
             case CURVE_LINE:
                 newShape = projectCurvelineShape((CurveLineString) aShape, fromProj, toProj);
                 break;
             case POLYGON:
+            case MULTI_POLYGON:
             case RECTANGLE:
                 newShape = projectPolygonShape((MultiPolygon) aShape, fromProj, toProj);
                 break;

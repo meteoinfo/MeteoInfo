@@ -725,14 +725,14 @@ public class MapViewUndoRedo {
         @Override
         public void undo() {
             super.undo();
-            mapView.moveShapeOnScreen(graphic.getShape(), toPoint, fromPoint);
+            mapView.moveShapeOnScreen(graphic.getGeometry(), toPoint, fromPoint);
             mapView.paintLayers();
         }
         
         @Override
         public void redo(){
             super.redo();
-            mapView.moveShapeOnScreen(graphic.getShape(), fromPoint, toPoint);
+            mapView.moveShapeOnScreen(graphic.getGeometry(), fromPoint, toPoint);
             mapView.paintLayers();
         }
     }
@@ -752,8 +752,8 @@ public class MapViewUndoRedo {
             this.verticeIdx = vIdx;
             this.newX = newX;
             this.newY = newY;
-            this.oldX = graphic.getShape().getCoordinates().get(vIdx).x;
-            this.oldY = graphic.getShape().getCoordinates().get(vIdx).y;
+            this.oldX = graphic.getGeometry().getCoordinates().get(vIdx).x;
+            this.oldY = graphic.getGeometry().getCoordinates().get(vIdx).y;
         }
         
         @Override
@@ -819,7 +819,7 @@ public class MapViewUndoRedo {
             this.mapView = mapView;
             this.graphic = graphic;            
             this.verticeIdx = vIdx;
-            this.vertice = graphic.getShape().getCoordinates().get(vIdx);
+            this.vertice = graphic.getGeometry().getCoordinates().get(vIdx);
         }
         
         @Override
@@ -885,7 +885,7 @@ public class MapViewUndoRedo {
             this.mapView = mapView;
             this.graphic = graphic;
             this.newPoints = points;
-            this.oldPoints = graphic.getShape().getCoordinates();
+            this.oldPoints = graphic.getGeometry().getCoordinates();
         }
         
         @Override
@@ -896,14 +896,14 @@ public class MapViewUndoRedo {
         @Override
         public void undo() {
             super.undo();
-            graphic.getShape().setCoordinates(oldPoints);
+            graphic.getGeometry().setCoordinates(oldPoints);
             mapView.paintLayers();
         }
         
         @Override
         public void redo(){
             super.redo();
-            graphic.getShape().setCoordinates(newPoints);
+            graphic.getGeometry().setCoordinates(newPoints);
             mapView.paintLayers();
         }
     }

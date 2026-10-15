@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\patch">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\volume"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\projection">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\scatter"/>
@@ -14,8 +12,10 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\boxplot"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\imshow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\patch"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
   </Path>
   <File>
     <OpenedFiles>

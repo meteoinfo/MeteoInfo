@@ -65,7 +65,7 @@ public class ChartGraphic extends Graphic {
      * @param aShape Point shape
      */
     public void setShape(Point aShape) {
-        super.setShape(aShape);
+        super.setGeometry(aShape);
         startPosition = (Coordinate) aShape.getCoordinate().clone();
     }
 
@@ -80,8 +80,8 @@ public class ChartGraphic extends Graphic {
     @Override
     public void exportToXML(Document doc, Element parent) {
         Element graphic = doc.createElement("Graphic");
-        this.addShape(doc, graphic, this.getShape());
-        this.addLegend(doc, graphic, this.getLegendBreak(), this.getShape().getGeometryType());
+        this.addShape(doc, graphic, this.getGeometry());
+        this.addLegend(doc, graphic, this.getLegendBreak(), this.getGeometry().getGeometryType());
         this.addStartPosition(doc, graphic, startPosition);
 
         parent.appendChild(graphic);
@@ -113,7 +113,7 @@ public class ChartGraphic extends Graphic {
         this.setShape((Point)loadShape(shape));
 
         Node legend = graphicNode.getElementsByTagName("Legend").item(0);
-        this.setLegendBreak(loadLegend(legend, this.getShape().getGeometryType()));
+        this.setLegendBreak(loadLegend(legend, this.getGeometry().getGeometryType()));
 
         Node startPos = graphicNode.getElementsByTagName("StartPosition").item(0);
         if (startPos != null) {

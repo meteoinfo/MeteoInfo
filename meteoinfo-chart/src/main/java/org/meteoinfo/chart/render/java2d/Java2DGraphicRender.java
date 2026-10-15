@@ -31,8 +31,9 @@ public class Java2DGraphicRender implements GraphicRender {
         rect.width = (int) aExtent.getWidth();
         rect.height = (int) aExtent.getHeight();
 
-        switch (aGraphic.getShape().getGeometryType()) {
+        switch (aGraphic.getGeometry().getGeometryType()) {
             case POINT:
+            case MULTI_POINT:
                 switch (aGraphic.getLegendBreak().getBreakType()) {
                     case POINT_BREAK:
                         Draw.drawPoint((PointF) points[0].clone(), (PointBreak) aGraphic.getLegendBreak(), g);
@@ -48,6 +49,7 @@ public class Java2DGraphicRender implements GraphicRender {
                 }
                 break;
             case LINESTRING:
+            case MULTI_LINESTRING:
                 if (aGraphic.getLegendBreak().getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                     Draw.drawPolyline(points, (ColorBreakCollection) aGraphic.getLegendBreak(), g);
                 } else {
@@ -55,7 +57,8 @@ public class Java2DGraphicRender implements GraphicRender {
                 }
                 break;
             case POLYGON:
-                MultiPolygon pgs = (MultiPolygon) aGraphic.getShape().clone();
+            case MULTI_POLYGON:
+                MultiPolygon pgs = (MultiPolygon) aGraphic.getGeometry().clone();
                 pgs.setPoints_keep(points);
                 Draw.drawPolygonShape(pgs, (PolygonBreak) aGraphic.getLegendBreak(), g);
                 break;
@@ -76,17 +79,17 @@ public class Java2DGraphicRender implements GraphicRender {
                 Draw.drawCircle(points, (PolygonBreak) aGraphic.getLegendBreak(), g);
                 break;
             case ELLIPSE:
-                Ellipse eshape = (Ellipse) aGraphic.getShape();
+                Ellipse eshape = (Ellipse) aGraphic.getGeometry();
                 Draw.drawEllipse(points, eshape.getAngle(), (PolygonBreak) aGraphic.getLegendBreak(), g);
                 break;
             case ARC:
-                Arc arcShape = (Arc) aGraphic.getShape();
+                Arc arcShape = (Arc) aGraphic.getGeometry();
                 Draw.drawArc(points, arcShape, (PolygonBreak) aGraphic.getLegendBreak(), g);
                 break;
         }
 
         //Draw selected rectangle
-        if (aGraphic.getShape().isSelected()) {
+        if (aGraphic.getGeometry().isSelected()) {
             if (isEditingVertices) {
                 Draw.drawSelectedVertices(g, points);
             } else {
@@ -94,15 +97,18 @@ public class Java2DGraphicRender implements GraphicRender {
                 g.setColor(Color.cyan);
                 g.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_MITER, 10.0f, dashPattern, 0.0f));
                 g.draw(rect);
-                switch (aGraphic.getShape().getGeometryType()) {
+                switch (aGraphic.getGeometry().getGeometryType()) {
                     case POINT:
+                    case MULTI_POINT:
                         if (aGraphic.getLegendBreak().getBreakType() == BreakTypes.POINT_BREAK) {
                             Draw.drawSelectedCorners(g, rect);
                         }
                         break;
                     case LINESTRING:
+                    case MULTI_LINESTRING:
                     case CURVE_LINE:
                     case POLYGON:
+                    case MULTI_POLYGON:
                     case RECTANGLE:
                     case ELLIPSE:
                     case CURVE_POLYGON:

@@ -25,8 +25,8 @@ public class ProjectUtil {
         if (graphic instanceof GraphicCollection) {
             GraphicCollection newGCollection = new GraphicCollection();
             for (Graphic aGraphic : ((GraphicCollection) graphic).getGraphics()) {
-                aGraphic.setShape(projectShape(aGraphic.getShape(), fromProj, toProj));
-                if (aGraphic.getShape() != null) {
+                aGraphic.setGeometry(projectShape(aGraphic.getGeometry(), fromProj, toProj));
+                if (aGraphic.getGeometry() != null) {
                     newGCollection.add(aGraphic);
                 }
             }
@@ -36,7 +36,7 @@ public class ProjectUtil {
 
             return newGCollection;
         } else {
-            Geometry shape = projectShape(graphic.getShape(), fromProj, toProj);
+            Geometry shape = projectShape(graphic.getGeometry(), fromProj, toProj);
             Graphic rGraphic = new Graphic(shape, graphic.getLegendBreak());
             rGraphic.setAntiAlias(graphic.isAntiAlias());
             return rGraphic;
@@ -56,13 +56,13 @@ public class ProjectUtil {
             try {
                 List<Graphic> graphics = new ArrayList<>();
                 for (Graphic aGraphic : ((GraphicCollection) graphic).getGraphics()) {
-                    List<? extends Geometry> shapes = projectClipShape(aGraphic.getShape(), fromProj, toProj);
+                    List<? extends Geometry> shapes = projectClipShape(aGraphic.getGeometry(), fromProj, toProj);
                     if (shapes != null && shapes.size() > 0) {
                         if (shapes.get(0).getExtent() == null) {
                             //System.out.println(shapes.get(0).toString());
                             continue;
                         }
-                        aGraphic.setShape(shapes.get(0));
+                        aGraphic.setGeometry(shapes.get(0));
                         graphics.add(aGraphic);
                     }
                 }
@@ -74,9 +74,9 @@ public class ProjectUtil {
                 return null;
             }
         } else {
-            List<? extends Geometry> shapes = projectClipShape(graphic.getShape(), fromProj, toProj);
+            List<? extends Geometry> shapes = projectClipShape(graphic.getGeometry(), fromProj, toProj);
             if (shapes != null && shapes.size() > 0) {
-                graphic.setShape(shapes.get(0));
+                graphic.setGeometry(shapes.get(0));
                 return graphic;
             } else {
                 return null;
@@ -97,9 +97,9 @@ public class ProjectUtil {
             try {
                 Graphic newGCollection = graphic.getClass().getDeclaredConstructor().newInstance();
                 for (Graphic aGraphic : ((GraphicCollection) graphic).getGraphics()) {
-                    List<? extends Geometry> shapes = projectClipShape(aGraphic.getShape(), fromProj, toProj);
+                    List<? extends Geometry> shapes = projectClipShape(aGraphic.getGeometry(), fromProj, toProj);
                     if (shapes != null && shapes.size() > 0) {
-                        aGraphic.setShape(shapes.get(0));
+                        aGraphic.setGeometry(shapes.get(0));
                         ((GraphicCollection) newGCollection).add(aGraphic);
                     }
                 }
@@ -113,7 +113,7 @@ public class ProjectUtil {
                 return null;
             }
         } else {
-            List<? extends Geometry> shapes = projectClipShape(graphic.getShape(), fromProj, toProj);
+            List<? extends Geometry> shapes = projectClipShape(graphic.getGeometry(), fromProj, toProj);
             if (shapes != null && shapes.size() > 0) {
                 Graphic rGraphic = new Graphic(shapes.get(0), graphic.getLegendBreak());
                 rGraphic.setAntiAlias(graphic.isAntiAlias());
@@ -139,7 +139,7 @@ public class ProjectUtil {
     public static List<Graphic> projectGraphic(List<Graphic> graphics, ProjectionInfo fromProj, ProjectionInfo toProj) {
         List<Graphic> newGraphics = new ArrayList<>();
         for (Graphic aGraphic : graphics) {
-            Geometry aShape = projectShape(aGraphic.getShape(), fromProj, toProj);
+            Geometry aShape = projectShape(aGraphic.getGeometry(), fromProj, toProj);
             if (aShape != null) {
                 newGraphics.add(new Graphic(aShape, aGraphic.getLegendBreak()));
             }

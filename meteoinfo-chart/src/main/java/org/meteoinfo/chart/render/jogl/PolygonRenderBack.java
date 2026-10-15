@@ -53,7 +53,7 @@ public class PolygonRenderBack extends JOGLGraphicRender {
             vertexCount = 0;
         }
 
-        List<Polygon> polygons = ((MultiPolygon) polygonGraphic.getShape()).getPolygons();
+        List<Polygon> polygons = ((MultiPolygon) polygonGraphic.getGeometry()).getPolygons();
         if (polygons == null || polygons.isEmpty()) return;
 
         FloatBuffer buffer = GLBuffers.newDirectFloatBuffer(estimateCapacity(polygons));
@@ -88,7 +88,7 @@ public class PolygonRenderBack extends JOGLGraphicRender {
         int totalVerts = 0;
         for (Polygon p : polygons) {
             totalVerts += p.getOutLine().size() * 3;
-            if (p.hasHole()) {
+            if (p.hasHoles()) {
                 for (int i = 0; i < p.getNumInteriorRing(); i++) {
                     totalVerts += p.getHoleLine(i).size() * 3;
                 }

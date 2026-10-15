@@ -559,7 +559,7 @@ class MapAxes(Axes):
             if isinstance(args[0], Graphic):
                 graphic = args[0]
                 displaytype = 'point'
-                stype = graphic.getShape().getShapeType()
+                stype = graphic.getGeometry().getGeometryType()
                 if stype == GeometryType.LINESTRING:
                     displaytype = 'line'
                 elif stype == GeometryType.POLYGON:
@@ -1167,7 +1167,7 @@ class MapAxes(Axes):
             igraphic = GraphicFactory.createImage(arr._array, x._array, y._array, ls, extent)
 
         if not interpolation is None:
-            igraphic.getShape().setInterpolation(interpolation)
+            igraphic.getGeometry().setInterpolation(interpolation)
 
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:

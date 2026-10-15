@@ -28,7 +28,7 @@ def __getimage(src):
     if isinstance(src, BufferedImage):
         return src
     elif isinstance(src, Graphic):
-        return src.getShape().getImage()
+        return src.getGeometry().getImage()
     elif isinstance(src, MILayer):
         return src._layer.getImage()
     elif isinstance(src, NDArray):
@@ -37,7 +37,7 @@ def __getimage(src):
     
 def __getreturn(src, dst):
     if isinstance(src, Graphic):
-        src.getShape().setImage(dst)
+        src.getGeometry().setImage(dst)
         return src
     elif isinstance(src, MILayer):
         src._layer.setImage(dst)

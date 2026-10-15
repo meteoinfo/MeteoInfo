@@ -276,7 +276,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
      */
     public void setBoundaryProp(PolygonBreak pb) {
         if (this.boundary != null) {
-            this.boundary = new Graphic(this.boundary.getShape(), pb);
+            this.boundary = new Graphic(this.boundary.getGeometry(), pb);
         }
     }
     
@@ -485,6 +485,10 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         int barIdx = 0;
         for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
             Graphic graphic = this.graphics.get(m);
+            if (graphic.isEmpty()) {
+                continue;
+            }
+
             if (graphic.isVisible()) {
                 if (graphic instanceof WebMapImage) {
                     this.updateXYScale(area.getWidth(), area.getHeight());
@@ -493,7 +497,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
                     continue;
                 }
 
-                GeometryType shapeType = graphic.getGraphicN(0).getShape().getGeometryType();
+                GeometryType shapeType = graphic.getGraphicN(0).getGeometry().getGeometryType();
                 switch (shapeType) {
                     case BAR:
                         this.drawBars(g, (GraphicCollection) graphic, barIdx);
@@ -525,7 +529,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         Extent aExtent;
         PointBreak pointBreak = (PointBreak) ls.getLegendBreak(0);
         for (Graphic graphic : graphics.getGraphics()) {
-            StationModel shape = (StationModel) graphic.getShape();
+            StationModel shape = (StationModel) graphic.getGeometry();
             Coordinate p = shape.getCoordinate();
             if (p.x < drawExtent.minX || p.x > drawExtent.maxX
                     || p.y < drawExtent.minY || p.y > drawExtent.maxY) {
@@ -579,7 +583,7 @@ public class MapPlot extends Plot2D implements IWebMapPanel {
         Extent aExtent;
         PointBreak pointBreak = (PointBreak) ls.getLegendBreak(0);
         for (Graphic graphic : graphics.getGraphics()) {
-            StationModel shape = (StationModel) graphic.getShape();
+            StationModel shape = (StationModel) graphic.getGeometry();
             Coordinate p = shape.getCoordinate();
             if (p.x < drawExtent.minX || p.x > drawExtent.maxX
                     || p.y < drawExtent.minY || p.y > drawExtent.maxY) {

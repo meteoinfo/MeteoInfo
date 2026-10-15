@@ -71,7 +71,7 @@ public class GeoJSONWriter {
         Feature[] features = new Feature[graphics.getNumGraphics()];
         for (int i = 0; i < graphics.getNumGraphics(); i++) {
             Graphic graphic = graphics.getGraphicN(i);
-            Geometry shape = graphic.getShape();
+            Geometry shape = graphic.getGeometry();
             org.meteoinfo.geometry.io.geojson.Geometry geometry = GeoJSONUtil.fromShape(shape);
             Map<String, Object> properties = new HashMap<>();
             ColorBreak cb = graphic.getLegendBreak();

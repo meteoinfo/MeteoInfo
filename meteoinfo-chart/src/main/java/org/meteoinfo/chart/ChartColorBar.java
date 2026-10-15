@@ -889,17 +889,20 @@ public class ChartColorBar extends ChartLegend {
             idx = i;
             switch (aLS.getShapeType()) {
                 case POINT:
+                case MULTI_POINT:
                     PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPB.isDrawShape();
                     DrawFill = aPB.isDrawFill();
                     FillColor = aPB.getColor();
                     break;
                 case LINESTRING:
+                case MULTI_LINESTRING:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
                     break;
                 case POLYGON:
+                case MULTI_POLYGON:
                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPGB.isDrawShape();
                     DrawFill = aPGB.isDrawFill();
@@ -1493,17 +1496,20 @@ public class ChartColorBar extends ChartLegend {
             idx = i;
             switch (aLS.getShapeType()) {
                 case POINT:
+                case MULTI_POINT:
                     PointBreak aPB = (PointBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPB.isDrawShape();
                     DrawFill = aPB.isDrawFill();
                     FillColor = aPB.getColor();
                     break;
                 case LINESTRING:
+                case MULTI_LINESTRING:
                     PolylineBreak aPLB = (PolylineBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPLB.isDrawPolyline();
                     FillColor = aPLB.getColor();
                     break;
                 case POLYGON:
+                case MULTI_POLYGON:
                     PolygonBreak aPGB = (PolygonBreak) aLS.getLegendBreaks().get(idx);
                     DrawShape = aPGB.isDrawShape();
                     DrawFill = aPGB.isDrawFill();

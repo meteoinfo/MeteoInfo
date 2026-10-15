@@ -845,7 +845,7 @@ public class ProjectionUtil {
                     }
                     break;
             }
-            if (aPGS == null) {
+            if (aPGS == null || aPGS.isEmpty()) {
                 return null;
             }
 
@@ -882,15 +882,18 @@ public class ProjectionUtil {
         Geometry newShape;
         switch (aShape.getGeometryType()) {
             case POINT:
+            case MULTI_POINT:
                 newShape = projectPointShape((Point) aShape, fromProj, toProj);
                 break;
             case LINESTRING:
+            case MULTI_LINESTRING:
                 newShape = projectPolylineShape((MultiLineString) aShape, fromProj, toProj);
                 break;
             case CURVE_LINE:
                 newShape = projectCurvelineShape((CurveLineString) aShape, fromProj, toProj);
                 break;
             case POLYGON:
+            case MULTI_POLYGON:
             case RECTANGLE:
                 newShape = projectPolygonShape((MultiPolygon) aShape, fromProj, toProj);
                 break;
@@ -915,6 +918,7 @@ public class ProjectionUtil {
         List<? extends Geometry> shapes = null;
         switch (shape.getGeometryType()) {
             case POINT:
+            case MULTI_POINT:
             case WIND_ARROW:
             case WIND_BARB:
             case STATION_MODEL:
@@ -926,12 +930,14 @@ public class ProjectionUtil {
                 }
                 break;
             case LINESTRING:
+            case MULTI_LINESTRING:
                 shapes = projectClipPolylineShape((MultiLineString) shape, fromProj, toProj);
                 break;
             case CURVE_LINE:
                 //shapes = projectCurvelineShape((CurveLineShape) shape, fromProj, toProj);
                 break;
             case POLYGON:
+            case MULTI_POLYGON:
             case RECTANGLE:
                 shapes = projectClipPolygonShape((MultiPolygon) shape, fromProj, toProj);
                 break;

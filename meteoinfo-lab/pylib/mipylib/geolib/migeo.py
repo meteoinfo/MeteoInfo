@@ -382,12 +382,12 @@ def maskout(data, mask, x=None, y=None):
 
     if not isinstance(mask, (list, tuple, ArrayList)):
         if isinstance(mask, Graphic):
-            mask = mask.getShape()
+            mask = mask.getGeometry()
         mask = [mask]
     else:
         for i in range(len(mask)):
             if isinstance(mask[i], Graphic):
-                mask[i] = mask[i].getShape()
+                mask[i] = mask[i].getGeometry()
 
     if data.ndim == 2 and x.ndim == 1 and y.ndim == 1:
         x, y = np.meshgrid(x, y)
@@ -409,12 +409,12 @@ def rmaskout(data, x, y, mask):
     """
     if not isinstance(mask, (list, tuple, ArrayList)):
         if isinstance(mask, Graphic):
-            mask = mask.getShape()
+            mask = mask.getGeometry()
         mask = [mask]
     else:
         for i in range(len(mask)):
             if isinstance(mask[i], Graphic):
-                mask[i] = mask[i].getShape()
+                mask[i] = mask[i].getGeometry()
 
     r = GeometryUtil.maskout_Remove(data.asarray(), x.asarray(), y.asarray(), mask)
     return NDArray(r[0]), NDArray(r[1]), NDArray(r[2])

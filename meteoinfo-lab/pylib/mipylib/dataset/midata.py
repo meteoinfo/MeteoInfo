@@ -23,7 +23,7 @@ from ucar.nc2.iosp.bufr.tables import BufrTables
 import mipylib.numeric as np
 import mipylib.miutil as miutil
 from mipylib.numeric.core import NDArray, PyTableData
-from .dataarray import DimArray
+from .dataarray import DimArray, Dimension
 
 from dimdatafile import DimDataFile, DimDataFiles
 from arldatafile import ARLDataFile
@@ -38,7 +38,7 @@ __all__ = [
     'addfile_grads','addfile_hyconc','addfile_hytraj','addfile_hypart','addfile_lonlat',
     'addfile_matlab','addfile_micaps','addfile_mm5','addfile_nc','addfile_grib','addfile_surfer',
     'add_bufr_lookup', 'addtimedim','joinncfile','asciiread','asciiwrite','bincreate','binread',
-    'binwrite', 'numasciicol','numasciirow','readtable','convert2nc','grads2nc','ncwrite'
+    'binwrite', 'numasciicol','numasciirow','readtable','convert2nc','grads2nc','ncwrite','ncwrite_array'
     ]
 
 def isgriddata(gdata):
@@ -885,11 +885,135 @@ def dimension(dimvalue, dimname='null', dimtype=None):
     return dim
 
     
-def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, proj=None, largefile=False,
+def ncwrite(fn, data, attrs=None, proj=None, largefile=False,
             version='netcdf3', time_units='hours', start_time=datetime.datetime(1900,1,1)):
     """
     Write a netCDF data file from an array.
     
+    :param fn: (*string*) netCDF data file path.
+    :param data: (*DimArray list*) List of DimArray.
+    :param attrs: (*dict*) Variable attributes.
+    :param proj: (*ProjectionInfo*) Projection info. Default is `None`, means long/lat projection.
+    :param largefile: (*boolean*) Create netCDF as large file or not.
+    :param version: (*str*) NetCDF version [netcdf3 | netcdf4]. Default is `netcdf3`.
+    :param time_units: (*str*) The units of the time coordinate variable [days | hours | minutes | seconds]
+        . Default is `hours`.
+    :param start_time: (*datetime*) The start time in units of the time coordinate variable. Default is
+        `1900,1,1`.
+    """
+    if isinstance(data, DimArray):
+        data = [data]
+
+    dims = data[0].dims
+    if len(data) > 1:
+        for i in range(1, len(data)):
+            dims = dims.merge(data[i].dims)
+
+    #New netCDF file
+    nc_file = addfile(fn, 'c', largefile=largefile, version=version)
+
+    #Add dimensions
+    mi_dims = {}
+    nc_dims = {}
+    for mi_dim in dims:
+        mi_dims[mi_dim.name] = mi_dim
+        nc_dims[mi_dim.name] = nc_file.adddim(mi_dim.name, mi_dim.length)
+
+    #Add global attributes
+    nc_file.addgroupattr('Conventions', 'CF-1.6')
+    nc_file.addgroupattr('Tools', 'Created using MeteoInfo')
+    if not attrs is None:
+        for key in attrs:
+            nc_file.addgroupattr(key, attrs[key])
+
+    #Add grid map variable
+    if proj is not None:
+        if not proj.isLonLat():
+            var = nc_file.addvar('crs', 'int', [])
+            var.addattr('proj4', proj.toProj4String())
+
+    #Add dimension variables
+    dim_vars = []
+    w_dims = []
+    for key in nc_dims:
+        nc_dim = nc_dims[key]
+        mi_dim = mi_dims[key]
+        dim_type = mi_dim.type
+        dim_name = mi_dim.name
+        if dim_type == DimensionType.T:
+            var = nc_file.addvar(dim_name, 'double', [nc_dim])
+            time_units_str = '{} since {}'.format(time_units, start_time.strftime('%Y-%m-%d %H:%M:%S'))
+            var.addattr('units', time_units_str)
+            var.addattr('long_name', 'Time')
+            var.addattr('standard_name', 'time')
+            var.addattr('axis', 'T')
+        elif dim_type == DimensionType.Z:
+            var = nc_file.addvar(dim_name, 'float', [nc_dim])
+            var.addattr('axis', 'Z')
+        elif dim_type == DimensionType.Y:
+            var = nc_file.addvar(dim_name, 'float', [nc_dim])
+            var.addattr('axis', 'Y')
+        elif dim_type == DimensionType.X:
+            var = nc_file.addvar(dim_name, 'float', [nc_dim])
+            var.addattr('axis', 'X')
+        else:
+            var = None
+
+        if not var is None:
+            dim_vars.append(var)
+            w_dims.append(mi_dim)
+
+    #Add variable
+    nc_vars = []
+    for arr in data:
+        tnc_dims = []
+        for dim in arr.dims:
+            tnc_dims.append(nc_dims[dim.name])
+        var = nc_file.addvar(arr.name, arr.dtype, tnc_dims)
+        if attrs is None:
+            var.addattr('name', arr.name)
+        else:
+            for key in attrs:
+                var.addattr(key, attrs[key])
+        nc_vars.append(var)
+
+    #Create netCDF file
+    nc_file.create()
+
+    #Write dimension variable data
+    for dim_var, nc_dim in zip(dim_vars, w_dims):
+        if nc_dim.type == DimensionType.T:
+            tt = nc_dim.values
+            t_list = []
+            if time_units == 'days':
+                for t in tt:
+                    t_list.append((t - start_time).days)
+            elif time_units == 'hours':
+                for t in tt:
+                    t_list.append((t - start_time).total_seconds() // 3600)
+            elif time_units == 'minutes':
+                for t in tt:
+                    t_list.append((t - start_time).total_seconds() // 60)
+            elif time_units == 'seconds':
+                for t in tt:
+                    t_list.append(((t - start_time).total_seconds()))
+            nc_file.write(dim_var, np.array(t_list))
+        else:
+            nc_file.write(dim_var, nc_dim.values.astype('float'))
+
+    #Write data variables
+    for var, arr in zip(nc_vars, data):
+        nc_file.write(var, arr)
+
+    #Close netCDF file
+    nc_file.close()
+
+
+def ncwrite_array(fn, data, varname=None, dims=None, attrs=None, gattrs=None, proj=None, largefile=False,
+            version='netcdf3', time_units='hours', start_time=datetime.datetime(1900,1,1)):
+    """
+    Write a netCDF data file from an array.
+
     :param fn: (*string*) netCDF data file path.
     :param data: (*array_like*) A numeric array variable of any dimensionality.
     :param varname: (*string*) Variable name.
@@ -908,73 +1032,80 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, proj=None, la
         if isinstance(data, DimArray):
             dims = data.dims
             proj = data.proj
+            if varname is not None:
+                varname = data.name
         else:
             dims = []
             for s in data.shape:
-                dimvalue = np.arange(s)
-                dimname = 'dim' + str(len(dims))
-                dims.append(dimension(dimvalue, dimname))
+                dim_value = np.arange(s)
+                dim_name = 'dim' + str(len(dims))
+                dims.append(Dimension(dim_name, dim_value))
 
     #New netCDF file
-    ncfile = addfile(fn, 'c', largefile=largefile, version=version)
+    nc_file = addfile(fn, 'c', largefile=largefile, version=version)
+
     #Add dimensions
-    ncdims = []
-    for dim in dims:    
-        ncdims.append(ncfile.adddim(dim.getShortName(), dim.getLength()))
+    nc_dims = []
+    for dim in dims:
+        nc_dims.append(nc_file.adddim(dim.name, dim.length))
+
     #Add global attributes
-    ncfile.addgroupattr('Conventions', 'CF-1.6')
-    ncfile.addgroupattr('Tools', 'Created using MeteoInfo')
+    nc_file.addgroupattr('Conventions', 'CF-1.6')
+    nc_file.addgroupattr('Tools', 'Created using MeteoInfo')
     if not gattrs is None:
         for key in gattrs:
-            ncfile.addgroupattr(key, gattrs[key])
+            nc_file.addgroupattr(key, gattrs[key])
 
     #Add grid map variable
     if proj is not None:
         if not proj.isLonLat():
-            var = ncfile.addvar('crs', 'int', [])
+            var = nc_file.addvar('crs', 'int', [])
             var.addattr('proj4', proj.toProj4String())
 
     #Add dimension variables
-    dimvars = []
-    wdims = []
-    for dim,midim in zip(ncdims,dims):
-        dimtype = midim.getDimType()
-        dimname = dim.getShortName()
-        if dimtype == DimensionType.T:
-            var = ncfile.addvar(dimname, 'double', [dim])
+    dim_vars = []
+    w_dims = []
+    for dim, mi_dim in zip(nc_dims, dims):
+        dim_type = mi_dim.type
+        dim_name = mi_dim.name
+        if dim_type == DimensionType.T:
+            var = nc_file.addvar(dim_name, 'double', [dim])
             time_units_str = '{} since {}'.format(time_units, start_time.strftime('%Y-%m-%d %H:%M:%S'))
             var.addattr('units', time_units_str)
             var.addattr('long_name', 'Time')
             var.addattr('standard_name', 'time')
             var.addattr('axis', 'T')
             tvar = var
-        elif dimtype == DimensionType.Z:
-            var = ncfile.addvar(dimname, 'float', [dim])
+        elif dim_type == DimensionType.Z:
+            var = nc_file.addvar(dim_name, 'float', [dim])
             var.addattr('axis', 'Z')
-        elif dimtype == DimensionType.Y:
-            var = ncfile.addvar(dimname, 'float', [dim])
+        elif dim_type == DimensionType.Y:
+            var = nc_file.addvar(dim_name, 'float', [dim])
             var.addattr('axis', 'Y')
-        elif dimtype == DimensionType.X:
-            var = ncfile.addvar(dimname, 'float', [dim])
+        elif dim_type == DimensionType.X:
+            var = nc_file.addvar(dim_name, 'float', [dim])
             var.addattr('axis', 'X')
         else:
             var = None
         if not var is None:
-            dimvars.append(var)
-            wdims.append(midim)
+            dim_vars.append(var)
+            w_dims.append(mi_dim)
+
     #Add variable
-    var = ncfile.addvar(varname, data.dtype, ncdims)
-    if attrs is None:    
+    var = nc_file.addvar(varname, data.dtype, nc_dims)
+    if attrs is None:
         var.addattr('name', varname)
     else:
         for key in attrs:
             var.addattr(key, attrs[key])
+
     #Create netCDF file
-    ncfile.create()
+    nc_file.create()
+
     #Write variable data
-    for dimvar, dim in zip(dimvars, wdims):
-        if dim.getDimType() == DimensionType.T:
-            tt = miutil.nums2dates(np.array(dim.getDimValue()))
+    for dimvar, dim in zip(dim_vars, w_dims):
+        if dim.type == DimensionType.T:
+            tt = dim.values
             t_list = []
             if time_units == 'days':
                 for t in tt:
@@ -988,12 +1119,14 @@ def ncwrite(fn, data, varname, dims=None, attrs=None, gattrs=None, proj=None, la
             elif time_units == 'seconds':
                 for t in tt:
                     t_list.append(((t - start_time).total_seconds()))
-            ncfile.write(dimvar, np.array(t_list))
+            nc_file.write(dimvar, np.array(t_list))
         else:
-            ncfile.write(dimvar, np.array(dim.getDimValue()).astype('float'))
-    ncfile.write(var, data)
+            nc_file.write(dimvar, dim.values.astype('float'))
+    nc_file.write(var, data)
+
     #Close netCDF file
-    ncfile.close()
+    nc_file.close()
+
 
 def add_bufr_lookup(lookup):
     """

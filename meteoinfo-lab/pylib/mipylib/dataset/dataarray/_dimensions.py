@@ -60,6 +60,17 @@ class Dimension(object):
         dim.setShortName(name)
         self._dim = dim
 
+    def __eq__(self, other):
+        if not isinstance(other, Dimension):
+            return False
+        if other._name != self._name:
+            return False
+        if other._type != self._type:
+            return False
+        if not np.array_equal(other._values, self._values):
+            return False
+        return True
+
     @classmethod
     def new_dimension(cls, jdim):
         """
@@ -173,6 +184,27 @@ class Dimensions(tuple):
             self.__add__(dim)
             self._fields.append(dim.name)
             self.__setattr__(dim.name, dim)
+
+
+    def merge(self, dims):
+        """
+        Merge other dimensions.
+        :param dims: The dimensions to merge.
+        :return: The merged dimensions.
+        """
+        m_dims = []
+        for dim in self:
+            if not dim in m_dims:
+                m_dims.append(dim)
+
+        if isinstance(dims, Dimension):
+            dims = [dims]
+
+        for dim in dims:
+            if not dim in m_dims:
+                m_dims.append(dim)
+
+        return Dimensions(m_dims)
 
 
     def __repr__(self):

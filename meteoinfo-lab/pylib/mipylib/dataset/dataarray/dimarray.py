@@ -383,7 +383,7 @@ class DimArray(NDArray):
                 rr.base = self.get_base()
             return rr
 
-        data = DimArray(r, ndims, self.proj)
+        data = DimArray(r, ndims, name=self.name, proj=self.proj)
         if onlyrange:
             data.base = self.get_base()
         return data

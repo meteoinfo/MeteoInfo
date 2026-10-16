@@ -38,7 +38,7 @@ newaxis = None
 
 __all__ = [
     'pi','e','inf','nan','eps','acos','abs','all','allclose','any','arange','arange1',
-    'argmin','argmax','argsort','array','array_split','amax','amin','asanyarray','asarray',
+    'argmin','argmax','argsort','array','array_equal','array_split','amax','amin','asanyarray','asarray',
     'arcsin','asin','asmiarray','atleast_1d','atleast_2d','arctan','atan',
     'arctan2','atan2','average','histogram','broadcast_to','cdiff','ceil',
     'concatenate','conj','conjugate','convolve','corrcoef','cos','cosh','count_nonzero','cylinder',
@@ -1503,6 +1503,66 @@ def allclose(a, b, rtol=1e-05, atol=1e-08, equal_nan=False):
         tolerance; False otherwise.
     """
     return all(isclose(a, b, rtol, atol, equal_nan))
+
+def array_equal(a1, a2):
+    """
+    True if two arrays have the same shape and elements, False otherwise.
+
+    Parameters
+    ----------
+    a1, a2 : array_like
+        Input arrays.
+    equal_nan : bool
+        Whether to compare NaN's as equal. If the dtype of a1 and a2 is
+        complex, values will be considered equal if either the real or the
+        imaginary component of a given value is ``nan``.
+
+    Returns
+    -------
+    b : bool
+        Returns True if the arrays are equal.
+
+    See Also
+    --------
+    allclose: Returns True if two arrays are element-wise equal within a
+              tolerance.
+    array_equiv: Returns True if input arrays are shape consistent and all
+                 elements equal.
+
+    Examples
+    --------
+    >>> np.array_equal([1, 2], [1, 2])
+    True
+
+    >>> np.array_equal(np.array([1, 2]), np.array([1, 2]))
+    True
+
+    >>> np.array_equal([1, 2], [1, 2, 3])
+    False
+
+    >>> np.array_equal([1, 2], [1, 4])
+    False
+
+    >>> a = np.array([1, np.nan])
+    >>> np.array_equal(a, a)
+    False
+
+    >>> np.array_equal(a, a, equal_nan=True)
+    True
+
+    When ``equal_nan`` is True, complex values with nan components are
+    considered equal if either the real *or* the imaginary components are nan.
+
+    >>> a = np.array([1 + 1j])
+    >>> b = a.copy()
+    >>> a.real = np.nan
+    >>> b.imag = np.nan
+    >>> np.array_equal(a, b, equal_nan=True)
+    True
+    """
+    a1 = asanyarray(a1)
+    a2 = asanyarray(a2)
+    return a1._array.equals(a2._array)
 
 def mean(x, axis=None, keepdims=False):
     """

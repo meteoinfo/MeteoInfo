@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\map\projection">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\scatter"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\topology"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\netcdf">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\animation"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\annotate"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\arrow"/>
@@ -16,19 +11,24 @@
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataset"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\numpy"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
   </Path>
   <File>
     <OpenedFiles>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\plots\skewt_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\quiverm_5.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contour_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\netcdf\ncwrite_4.py"/>
     </OpenedFiles>
     <RecentFiles>
       <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\plots\skewt_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\quiverm_5.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\contour\contour_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\io\netcdf\ncwrite_4.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +36,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-6,0" MainFormSize="1397,858"/>
+  <Startup MainFormLocation="-6,0" MainFormSize="1294,814"/>
 </MeteoInfo>

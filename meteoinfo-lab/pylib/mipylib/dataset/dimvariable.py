@@ -414,6 +414,7 @@ class DimVariable(object):
             rr = self.dataset.dataset.read(self._real_name, ranges)
         else:
             rr = self.dataset.dataset.take(self._real_name, ranges)
+
         if rr.getSize() == 1:
             iter = rr.getIndexIterator()
             return iter.getObjectNext()
@@ -427,8 +428,9 @@ class DimVariable(object):
                 array = np.array(rrr)
             else:
                 array = np.array(rr)
-            data = DimArray(array, dims, self.dataset.proj)
+            data = DimArray(array, dims, name=self._name, proj=self.dataset.proj)
             return data
+
 
     @property
     def loc(self):

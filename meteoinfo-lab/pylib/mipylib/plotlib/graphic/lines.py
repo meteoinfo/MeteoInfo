@@ -18,10 +18,11 @@ class Line(LineGraphic, Artist):
 
     #__slots__ = ('set_data')
 
-    def __init__(self, xdata, ydata, legend=None, cdata=None, curve=False, **kwargs):
+    def __init__(self, xdata, ydata, zdata=None, legend=None,
+                 cdata=None, curve=False, **kwargs):
         """
-        Create a `.Line2D` instance with *x* and *y* data in sequences of
-        *xdata*, *ydata*.
+        Create a `.Line` instance with *x* and *y* data in sequences of
+        *xdata*, *ydata*, *zdata*
         """
         Artist.__init__(self)
 
@@ -30,12 +31,19 @@ class Line(LineGraphic, Artist):
 
         self._x = np.asarray(xdata)
         self._y = np.asarray(ydata)
+        self._z = None if zdata is None else np.asarray(zdata)
         self._cdata = np.asarray(cdata)
 
-        if cdata is None:
-            LineGraphic.__init__(self, self._x._array, self._y._array, legend)
+        if zdata is None:
+            if cdata is None:
+                LineGraphic.__init__(self, self._x._array, self._y._array, legend)
+            else:
+                LineGraphic.__init__(self, self._x._array, self._y._array, self._cdata._array, legend)
         else:
-            LineGraphic.__init__(self, self._x._array, self._y._array, self._cdata._array, legend)
+            if cdata is None:
+                LineGraphic.__init__(self, self._x._array, self._y._array, self._z._array, legend)
+            else:
+                LineGraphic.__init__(self, self._x._array, self._y._array, self._z._array, self._cdata._array, legend)
 
         if curve:
             self.setCurve(curve)
@@ -95,6 +103,26 @@ class Line(LineGraphic, Artist):
         self.stale = True
 
     @property
+    def zdata(self):
+        """
+        Return the zdata.
+
+        :return: (*array*) zdata.
+        """
+        return self._z
+
+    @zdata.setter
+    def zdata(self, zdata):
+        """
+        Set the zdata.
+
+        :param zdata: (*array*) The zdata.
+        """
+        self._z = np.asarray(zdata)
+        self.setYData(self._z._array)
+        self.stale = True
+
+    @property
     def cdata(self):
         """
         Return the cdata.
@@ -106,32 +134,42 @@ class Line(LineGraphic, Artist):
     @property
     def data(self):
         """
-        Get x, y data.
+        Get x, y, z data.
 
-        :return: x, y data.
+        :return: x, y, z data.
         """
-        return (self._x, self._y)
+        return (self._x, self._y, self._z)
 
     @data.setter
     def data(self, *args):
         """
-        Set x, y data.
+        Set x, y, z data.
 
         :param xdata: (*array*) X data.
         :param ydata: (*array*) Y data.
+        :param zdata: (*array*) Z data.
         """
+        zdata = None
         if len(args) == 1:
-            xdata = args[0][0]
-            ydata = args[0][1]
+            arr = args[0]
+            xdata = arr[0]
+            ydata = arr[1]
+            if len(arr) > 2:
+                zdata = arr[2]
         else:
             xdata = args[0]
             ydata = args[1]
+            if len(args) > 2:
+                zdata = args[2]
 
-        xdata = np.asarray(xdata)
-        ydata = np.asarray(ydata)
-        self._x = xdata
-        self._y = ydata
-        self.setData(xdata._array, ydata._array)
+        self._x = np.asarray(xdata)
+        self._y = np.asarray(ydata)
+        if zdata is None:
+            self.setData(self._x._array, self._y._array, zdata)
+        else:
+            self._z = np.asarray(zdata)
+            self.setData(self._x._array, self._y._array, self._z._array)
+
         self.stale = True
 
     @property

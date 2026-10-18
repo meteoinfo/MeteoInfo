@@ -17,11 +17,12 @@ public class PolygonGraphic extends Graphic {
 
     private Array xData;
     private Array yData;
+    private Array zData;
     private Array cData;
     private LegendScheme legendScheme;
     protected float[] vertexPosition;
     protected float[] vertexValue;
-    protected float[] vertexColor;
+    protected float[] vertexColor; 
     protected float[] vertexNormal;
     protected boolean faceInterp;
     protected boolean edgeInterp;
@@ -40,17 +41,29 @@ public class PolygonGraphic extends Graphic {
      * Constructor
      * @param xData X data
      * @param yData Y data
+     * @param zData Z data
      * @param polygonBreak Polygon break
      */
-    public PolygonGraphic(Array xData, Array yData, PolygonBreak polygonBreak) {
+    public PolygonGraphic(Array xData, Array yData, Array zData, PolygonBreak polygonBreak) {
         this.xData = xData;
         this.yData = yData;
+        this.zData = zData;
 
         updateShape();
         if (polygonBreak == null) {
             polygonBreak = new PolygonBreak();
         }
         this.legendBreak = polygonBreak;
+    }
+
+    /**
+     * Constructor
+     * @param xData X data
+     * @param yData Y data
+     * @param polygonBreak Polygon break
+     */
+    public PolygonGraphic(Array xData, Array yData, PolygonBreak polygonBreak) {
+        this(xData, yData, null, polygonBreak);
     }
 
     /**
@@ -66,30 +79,57 @@ public class PolygonGraphic extends Graphic {
      * Constructor
      * @param xData X data
      * @param yData Y data
+     * @param zData Z data
+     * @param cData Color data
+     * @param legendScheme Legend scheme
+     */
+    public PolygonGraphic(Array xData, Array yData, Array zData, Array cData, LegendScheme legendScheme) {
+        this.xData = xData;
+        this.yData = yData;
+        this.zData = zData;
+        this.cData = cData;
+
+        updateShapeLegend(legendScheme);
+    }
+
+    /**
+     * Constructor
+     * @param xData X data
+     * @param yData Y data
      * @param cData Color data
      * @param legendScheme Legend scheme
      */
     public PolygonGraphic(Array xData, Array yData, Array cData, LegendScheme legendScheme) {
-        this.xData = xData;
-        this.yData = yData;
-        this.cData = cData;
-
-        updateShapeLegend(legendScheme);
+        this(xData, yData, null, cData, legendScheme);
     }
 
     protected void updateShape() {
         List<Coordinate> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
-        double x, y;
-        while (xIter.hasNext() && yIter.hasNext()) {
-            x = xIter.getDoubleNext();
-            y = yIter.getDoubleNext();
-            if (Double.isNaN(x) || Double.isNaN(y)) {
-                continue;
+        double x, y, z;
+        if (zData == null) {
+            while (xIter.hasNext() && yIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                if (Double.isNaN(x) || Double.isNaN(y)) {
+                    continue;
+                }
+                points.add(new Coordinate(x, y));
             }
-            points.add(new Coordinate(x, y));
+        } else {
+            IndexIterator zIter = this.zData.getIndexIterator();
+            while (xIter.hasNext() && yIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                z = zIter.getDoubleNext();
+                if (Double.isNaN(x) || Double.isNaN(y)) {
+                    continue;
+                }
+                points.add(new Coordinate(x, y, z));
+            }
         }
+
         if (this.geometry == null) {
             this.geometry = new MultiPolygon();
         }
@@ -104,18 +144,35 @@ public class PolygonGraphic extends Graphic {
         IndexIterator cIter = this.cData.getIndexIterator();
         ColorBreakCollection cbc = new ColorBreakCollection();
         ColorBreak cb;
-        double x, y, c;
-        while (xIter.hasNext()) {
-            x = xIter.getDoubleNext();
-            y = yIter.getDoubleNext();
-            c = cIter.getDoubleNext();
-            if (Double.isNaN(x) || Double.isNaN(y)) {
-                continue;
+        double x, y, z, c;
+        if (zData == null) {
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                c = cIter.getDoubleNext();
+                if (Double.isNaN(x) || Double.isNaN(y)) {
+                    continue;
+                }
+                points.add(new Coordinate(x, y));
+                cb = legendScheme.findLegendBreakAlways(c);
+                cbc.add(cb);
             }
-            points.add(new Coordinate(x, y));
-            cb = legendScheme.findLegendBreakAlways(c);
-            cbc.add(cb);
+        } else {
+            IndexIterator zIter = zData.getIndexIterator();
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                z = zIter.getDoubleNext();
+                c = cIter.getDoubleNext();
+                if (Double.isNaN(x) || Double.isNaN(y)) {
+                    continue;
+                }
+                points.add(new Coordinate(x, y, z));
+                cb = legendScheme.findLegendBreakAlways(c);
+                cbc.add(cb);
+            }
         }
+
         if (this.geometry == null) {
             this.geometry = new MultiPolygon();
         }
@@ -160,6 +217,23 @@ public class PolygonGraphic extends Graphic {
     }
 
     /**
+     * Get z data
+     * @return Z data
+     */
+    public Array getZData() {
+        return this.zData;
+    }
+
+    /**
+     * Set z data
+     * @param zData Z data
+     */
+    public void setZData(Array zData) {
+        this.zData = zData;
+        updateShape();
+    }
+
+    /**
      * Set data
      * @param xData X data
      * @param yData Y data
@@ -167,6 +241,19 @@ public class PolygonGraphic extends Graphic {
     public void setData(Array xData, Array yData) {
         this.xData = xData;
         this.yData = yData;
+        updateShape();
+    }
+
+    /**
+     * Set data
+     * @param xData X data
+     * @param yData Y data
+     * @param zData Z data
+     */
+    public void setData(Array xData, Array yData, Array zData) {
+        this.xData = xData;
+        this.yData = yData;
+        this.zData = zData;
         updateShape();
     }
 

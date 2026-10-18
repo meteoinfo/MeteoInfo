@@ -67,12 +67,13 @@ class Collection(Artist):
 
 class PointCollection(Collection, PointGraphicCollection):
 
-    def __init__(self, xdata, ydata, cdata=None, legend=None, **kwargs):
+    def __init__(self, xdata, ydata, zdata=None, cdata=None, legend=None, **kwargs):
         """
         Class init
 
         :param xdata: (*Array*) X data array.
         :param ydata: (*Array*) Y data array.
+        :param zdata: (*Array*) Z data array.
         :param cdata: (*Array*) Color data array.
         :param legend: (*Legend*) Point legend.
         """
@@ -83,12 +84,19 @@ class PointCollection(Collection, PointGraphicCollection):
 
         self._x = np.asarray(xdata)
         self._y = np.asarray(ydata)
+        self._z = np.asarray(zdata)
         self._cdata = np.asarray(cdata)
 
-        if cdata is None:
-            PointGraphicCollection.__init__(self, self._x._array, self._y._array, legend)
+        if zdata is None:
+            if cdata is None:
+                PointGraphicCollection.__init__(self, self._x._array, self._y._array, legend)
+            else:
+                PointGraphicCollection.__init__(self, self._x._array, self._y._array, self._cdata._array, legend)
         else:
-            PointGraphicCollection.__init__(self, self._x._array, self._y._array, self._cdata._array, legend)
+            if cdata is None:
+                PointGraphicCollection.__init__(self, self._x._array, self._y._array, self._z._array, legend)
+            else:
+                PointGraphicCollection.__init__(self, self._x._array, self._y._array, self._z._array, self._cdata._array, legend)
 
     @property
     def visible(self):
@@ -118,7 +126,7 @@ class PointCollection(Collection, PointGraphicCollection):
 
         :param xdata: (*array*) The xdata.
         """
-        self._x = xdata
+        self._x = np.asarray(xdata)
         self.setXData(xdata._array)
         self.stale = True
 
@@ -138,37 +146,71 @@ class PointCollection(Collection, PointGraphicCollection):
 
         :param ydata: (*array*) The ydata.
         """
-        self._y = ydata
+        self._y = np.asarray(ydata)
         self.setYData(ydata._array)
+        self.stale = True
+
+    @property
+    def zdata(self):
+        """
+        Return the zdata.
+
+        :return: (*array*) zdata.
+        """
+        return self._z
+
+    @zdata.setter
+    def zdata(self, zdata):
+        """
+        Set the zdata.
+
+        :param zdata: (*array*) The zdata.
+        """
+        self._z = np.asarray(zdata)
+        self.setZData(zdata._array)
         self.stale = True
 
     @property
     def data(self):
         """
-        Get x, y data.
+        Get x, y, z data.
 
-        :return: x, y data.
+        :return: x, y, z data.
         """
-        return (self._x, self._y)
+        return (self._x, self._y, self._z)
 
     @data.setter
     def data(self, *args):
         """
-        Set x, y data.
+        Set x, y, z data.
 
         :param xdata: (*array*) X data.
         :param ydata: (*array*) Y data.
+        :param zdata: (*array*) Z data.
         """
+        zdata = None
         if len(args) == 1:
-            xdata = args[0][0]
-            ydata = args[0][1]
+            data = args[0]
+            xdata = data[0]
+            ydata = data[1]
+            if len(data) == 3:
+                zdata = data[2]
+        elif len(args) == 2:
+            xdata = args[0]
+            ydata = args[1]
         else:
             xdata = args[0]
             ydata = args[1]
+            zdata = args[2]
 
         self._x = xdata
         self._y = ydata
-        self.setData(xdata._array, ydata._array)
+        self._z = zdata
+        if zdata is None:
+            self.setData(xdata._array, ydata._array)
+        else:
+            self.setData(xdata._array, ydata._array, zdata._array)
+
         self.stale = True
 
 
@@ -190,8 +232,8 @@ class LineCollection(Collection, LineGraphicCollection):
             can have a different number of segments.
         legend : Legend
             Point legend.
-        xydata : List array
-             X and Y 2D coordinates data array for lines.
+        xyz_data : List array
+             X, Y, Z coordinates data array for lines.
         array : Array
             Array data for line colors.
         cdata : Array
@@ -200,16 +242,22 @@ class LineCollection(Collection, LineGraphicCollection):
         Collection.__init__(self)
 
         if segments is None:
-            xydata = kwargs.pop('xydata', None)
-            if xydata is None:
+            xyz_data = kwargs.pop('xyz_data', None)
+            if xyz_data is None:
                 raise ValueError('Segments data is None!')
             else:
-                if len(xydata) == 1:
-                    ydata = xydata[0]
+                if len(xyz_data) == 1:
+                    ydata = xyz_data[0]
                     xdata = None
+                    zdata = None
+                elif len(xyz_data) == 2:
+                    xdata = xyz_data[0]
+                    ydata = xyz_data[1]
+                    zdata = None
                 else:
-                    xdata = xydata[0]
-                    ydata = xydata[1]
+                    xdata = xyz_data[0]
+                    ydata = xyz_data[1]
+                    zdata = xyz_data[2]
 
                 if isinstance(ydata, (list, tuple)):
                     segments = []
@@ -217,22 +265,35 @@ class LineCollection(Collection, LineGraphicCollection):
                     if xdata is None:
                         segments = [np.column_stack([np.arange(ydata[i].size), ydata[i]]) for i in range(nline)]
                     else:
-                        if isinstance(xdata, (list, tuple)):
-                            segments = [np.column_stack([xdata[i], ydata[i]]) for i in range(nline)]
+                        if zdata is None:
+                            if isinstance(xdata, (list, tuple)):
+                                segments = [np.column_stack([xdata[i], ydata[i]]) for i in range(nline)]
+                            else:
+                                segments = [np.column_stack([xdata, ydata[i]]) for i in range(nline)]
                         else:
-                            segments = [np.column_stack([xdata, ydata[i]]) for i in range(nline)]
+                            if isinstance(xdata, (list, tuple)):
+                                segments = [np.column_stack([xdata[i], ydata[i], zdata[i]]) for i in range(nline)]
+                            else:
+                                segments = [np.column_stack([xdata, ydata[i], zdata[i]]) for i in range(nline)]
                 else:
                     nseg, nline = ydata.shape
                     if xdata is None:
                         xdata = np.arange(nseg)
 
-                    if xdata.ndim == 1:
-                        segments = [np.column_stack([xdata, ydata[:,i]]) for i in range(nline)]
+                    if zdata is None:
+                        if xdata.ndim == 1:
+                            segments = [np.column_stack([xdata, ydata[:,i]]) for i in range(nline)]
+                        else:
+                            segments = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
                     else:
-                        segments = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
+                        if xdata.ndim == 1:
+                            segments = [np.column_stack([xdata, ydata[:,i], zdata[:,i]]) for i in range(nline)]
+                        else:
+                            segments = [np.column_stack([xdata[:,i], ydata[:,i], zdata[:,i]]) for i in range(nline)]
 
             self._xdata = xdata
             self._ydata = ydata
+            self._zdata = zdata
 
         if isinstance(segments, np.NDArray):
             self._segments = []
@@ -310,22 +371,34 @@ class LineCollection(Collection, LineGraphicCollection):
             self.setData(data, cdata._array)
             self.stale = True
 
-    def set_xydata(self, xydata, cdata=None):
-        if len(xydata) == 1:
-            ydata = xydata[0]
+    def set_data(self, coord_data, cdata=None):
+        if len(coord_data) == 1:
+            ydata = coord_data[0]
             xdata = None
+            zdata = None
+        elif len(coord_data) == 2:
+            xdata = coord_data[0]
+            ydata = coord_data[1]
+            zdata = None
         else:
-            xdata = xydata[0]
-            ydata = xydata[1]
+            xdata = coord_data[0]
+            ydata = coord_data[1]
+            zdata = coord_data[2]
 
         nseg, nline = ydata.shape
         if xdata is None:
             xdata = np.arange(nseg)
 
-        if xdata.ndim == 1:
-            segments = [np.column_stack([xdata, ydata[:,i]]) for i in range(nline)]
+        if zdata is None:
+            if xdata.ndim == 1:
+                segments = [np.column_stack([xdata, ydata[:,i]]) for i in range(nline)]
+            else:
+                segments = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
         else:
-            segments = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
+            if xdata.ndim == 1:
+                segments = [np.column_stack([xdata, ydata[:,i], zdata[:,i]]) for i in range(nline)]
+            else:
+                segments = [np.column_stack([xdata[:,i], ydata[:,i], zdata[:,i]]) for i in range(nline)]
 
         self.set_segments(segments, cdata=cdata)
 
@@ -337,7 +410,7 @@ class LineCollection(Collection, LineGraphicCollection):
     @xdata.setter
     def xdata(self, val):
         self._xdata = np.asarray(val)
-        self.set_xydata([self._xdata, self._ydata])
+        self.set_data([self._xdata, self._ydata, self._zdata])
 
     @property
     def ydata(self):
@@ -346,19 +419,30 @@ class LineCollection(Collection, LineGraphicCollection):
 
     @ydata.setter
     def ydata(self, val):
-        self._ydata = val
-        self.set_xydata([self._xdata, self._ydata])
+        self._ydata = np.asarray(val)
+        self.set_data([self._xdata, self._ydata, self._zdata])
+
+    @property
+    def zdata(self):
+        """Get or set y data"""
+        return self._zdata
+
+    @zdata.setter
+    def zdata(self, val):
+        self._zdata = np.asarray(val)
+        self.set_data([self._xdata, self._ydata, self._zdata])
 
     @property
     def data(self):
         """Get or set x/y data"""
-        return self._xdata, self._ydata
+        return self._xdata, self._ydata, self._zdata
 
     @data.setter
-    def data(self, xydata):
-        self._xdata = np.asarray(xydata[0])
-        self._ydata = np.asarray(xydata[1])
-        self.set_xydata([self._xdata, self._ydata])
+    def data(self, coord_data):
+        self._xdata = np.asarray(coord_data[0])
+        self._ydata = np.asarray(coord_data[1])
+        self._zdata = np.asarray(coord_data[2])
+        self.set_data([self._xdata, self._ydata, self._zdata])
 
 
 class PolyCollection(Collection, PolygonGraphicCollection):
@@ -375,24 +459,30 @@ class PolyCollection(Collection, PolygonGraphicCollection):
             array-like of shape (M, 2).
         legend : Legend
             Polygon legend.
-        xydata : List array
-             X and Y 2D coordinates data array for lines.
+        xyz_data : List array
+             X, Y, Z coordinates data array for polygons.
         data : Array
             color data array.
         """
         Collection.__init__(self)
 
         if verts is None:
-            xydata = kwargs.pop('xydata', None)
-            if xydata is None:
+            xyz_data = kwargs.pop('xyz_data', None)
+            if xyz_data is None:
                 raise ValueError('Verts data is None!')
             else:
-                if len(xydata) == 1:
-                    ydata = xydata[0]
+                if len(xyz_data) == 1:
+                    ydata = xyz_data[0]
                     xdata = None
+                    zdata = None
+                elif len(xyz_data) == 2:
+                    xdata = xyz_data[0]
+                    ydata = xyz_data[1]
+                    zdata = None
                 else:
-                    xdata = xydata[0]
-                    ydata = xydata[1]
+                    xdata = xyz_data[0]
+                    ydata = xyz_data[1]
+                    zdata = xyz_data[2]
 
                 if isinstance(ydata, (list, tuple)):
                     verts = []
@@ -400,10 +490,16 @@ class PolyCollection(Collection, PolygonGraphicCollection):
                     if xdata is None:
                         verts = [np.column_stack([np.arange(ydata[i].size), ydata[i]]) for i in range(nline)]
                     else:
-                        if isinstance(xdata, (list, tuple)):
-                            verts = [np.column_stack([xdata[i], ydata[i]]) for i in range(nline)]
+                        if zdata is None:
+                            if isinstance(xdata, (list, tuple)):
+                                verts = [np.column_stack([xdata[i], ydata[i]]) for i in range(nline)]
+                            else:
+                                verts = [np.column_stack([xdata, ydata[i]]) for i in range(nline)]
                         else:
-                            verts = [np.column_stack([xdata, ydata[i]]) for i in range(nline)]
+                            if isinstance(xdata, (list, tuple)):
+                                verts = [np.column_stack([xdata[i], ydata[i], zdata[i]]) for i in range(nline)]
+                            else:
+                                verts = [np.column_stack([xdata, ydata[i], zdata[i]]) for i in range(nline)]
                 else:
                     if ydata.ndim == 1:
                         ydata = ydata[:,np.newaxis]
@@ -412,13 +508,20 @@ class PolyCollection(Collection, PolygonGraphicCollection):
                     if xdata is None:
                         xdata = np.arange(nseg)
 
-                    if xdata.ndim == 1:
-                        verts = [np.column_stack([xdata, ydata[:,i]]) for i in range(nline)]
+                    if zdata is None:
+                        if xdata.ndim == 1:
+                            verts = [np.column_stack([xdata, ydata[:,i]]) for i in range(nline)]
+                        else:
+                            verts = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
                     else:
-                        verts = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
+                        if xdata.ndim == 1:
+                            verts = [np.column_stack([xdata, ydata[:,i], zdata[:,i]]) for i in range(nline)]
+                        else:
+                            verts = [np.column_stack([xdata[:,i], ydata[:,i], zdata[:,i]]) for i in range(nline)]
 
                 self._xdata = xdata
                 self._ydata = ydata
+                self._zdata = zdata
 
         if isinstance(verts, np.NDArray):
             self._verts = []
@@ -496,13 +599,16 @@ class PolyCollection(Collection, PolygonGraphicCollection):
             self.setData(data, cdata._array)
             self.stale = True
 
-    def set_xydata(self, xydata, cdata=None):
-        if len(xydata) == 1:
-            ydata = xydata[0]
+    def set_data(self, xyz_data, cdata=None):
+        if len(xyz_data) == 1:
+            ydata = xyz_data[0]
             xdata = None
+            zdata = None
         else:
-            xdata = xydata[0]
-            ydata = xydata[1]
+            xdata = xyz_data[0]
+            ydata = xyz_data[1]
+            if len(xyz_data) > 2:
+                zdata = xyz_data[2]
 
         nseg, nline = ydata.shape
         if xdata is None:
@@ -510,11 +616,18 @@ class PolyCollection(Collection, PolygonGraphicCollection):
 
         self._xdata = xdata
         self._ydata = ydata
+        self._zdata = zdata
 
-        if xdata.ndim == 1:
-            verts = [np.column_stack([xdata, ydata[:,i]]) for i in range(nline)]
+        if zdata is None:
+            if xdata.ndim == 1:
+                verts = [np.column_stack([xdata, ydata[:,i]]) for i in range(nline)]
+            else:
+                verts = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
         else:
-            verts = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
+            if xdata.ndim == 1:
+                verts = [np.column_stack([xdata, ydata[:,i], zdata[:,i]]) for i in range(nline)]
+            else:
+                verts = [np.column_stack([xdata[:,i], ydata[:,i], zdata[:,i]]) for i in range(nline)]
 
         self.set_verts(verts, cdata=cdata)
 
@@ -526,7 +639,7 @@ class PolyCollection(Collection, PolygonGraphicCollection):
     @xdata.setter
     def xdata(self, val):
         self._xdata = np.asarray(val)
-        self.set_xydata([self._xdata, self._ydata])
+        self.set_data([self._xdata, self._ydata, self._zdata])
 
     @property
     def ydata(self):
@@ -536,15 +649,27 @@ class PolyCollection(Collection, PolygonGraphicCollection):
     @ydata.setter
     def ydata(self, val):
         self._ydata = val
-        self.set_xydata([self._xdata, self._ydata])
+        self.set_data([self._xdata, self._ydata, self._zdata])
+
+    @property
+    def zdata(self):
+        """Get or set z data"""
+        return self._zdata
+
+    @zdata.setter
+    def zdata(self, val):
+        self._zdata = val
+        self.set_data([self._xdata, self._ydata, self._zdata])
 
     @property
     def data(self):
-        """Get or set x/y data"""
-        return self._xdata, self._ydata
+        """Get or set x,y,z data"""
+        return self._xdata, self._ydata, self._zdata
 
     @data.setter
-    def data(self, xydata):
-        self._xdata = np.asarray(xydata[0])
-        self._ydata = np.asarray(xydata[1])
-        self.set_xydata([self._xdata, self._ydata])
+    def data(self, xyz_data):
+        self._xdata = np.asarray(xyz_data[0])
+        self._ydata = np.asarray(xyz_data[1])
+        if len(xyz_data) > 2:
+            self._zdata = np.asarray(xyz_data[2])
+        self.set_data([self._xdata, self._ydata, self._zdata])

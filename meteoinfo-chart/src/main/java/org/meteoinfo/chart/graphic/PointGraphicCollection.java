@@ -44,9 +44,21 @@ public class PointGraphicCollection extends GraphicCollection {
      * @param pointBreak Point break
      */
     public PointGraphicCollection(Array xData, Array yData, PointBreak pointBreak) {
+        this(xData, yData, null, pointBreak);
+    }
+
+    /**
+     * Constructor
+     * @param xData X data
+     * @param yData Y data
+     * @param zData Z data
+     * @param pointBreak Point break
+     */
+    public PointGraphicCollection(Array xData, Array yData, Array zData, PointBreak pointBreak) {
         this();
         this.xData = xData;
         this.yData = yData;
+        this.zData = zData;
         this.updateGraphics(pointBreak);
     }
 
@@ -57,9 +69,21 @@ public class PointGraphicCollection extends GraphicCollection {
      * @param pointBreak Point break
      */
     public PointGraphicCollection(Array xData, Array yData, List<ColorBreak> cbs) {
+        this(xData, yData, null, cbs);
+    }
+
+    /**
+     * Constructor
+     * @param xData X data
+     * @param yData Y data
+     * @param zData Z data
+     * @param pointBreak Point break
+     */
+    public PointGraphicCollection(Array xData, Array yData, Array zData, List<ColorBreak> cbs) {
         this();
         this.xData = xData;
         this.yData = yData;
+        this.zData = zData;
         this.updateGraphics(cbs);
     }
 
@@ -72,9 +96,23 @@ public class PointGraphicCollection extends GraphicCollection {
      * @param ls Legend scheme
      */
     public PointGraphicCollection(Array xData, Array yData, Array cData, LegendScheme ls) {
+        this(xData, yData, null, cData, ls);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param xData X data
+     * @param yData Y data
+     * @param zData Z data
+     * @param cData Color data
+     * @param ls Legend scheme
+     */
+    public PointGraphicCollection(Array xData, Array yData, Array zData, Array cData, LegendScheme ls) {
         this();
         this.xData = xData;
         this.yData = yData;
+        this.zData = zData;
         this.cData = cData;
         this.updateGraphics(ls);
     }
@@ -123,6 +161,23 @@ public class PointGraphicCollection extends GraphicCollection {
     }
 
     /**
+     * Get z data
+     * @return Z data
+     */
+    public Array getZData() {
+        return this.zData;
+    }
+
+    /**
+     * Set z data
+     * @param zData Z data
+     */
+    public void setZData(Array zData) {
+        this.zData = zData;
+        updateShape();
+    }
+
+    /**
      * Get color data
      * @return Color data
      */
@@ -152,15 +207,29 @@ public class PointGraphicCollection extends GraphicCollection {
         List<Coordinate> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
-        double x, y;
-        while (xIter.hasNext()) {
-            x = xIter.getDoubleNext();
-            y = yIter.getDoubleNext();
-            if (Double.isNaN(x) || Double.isNaN(y)) {
-                continue;
+        double x, y, z;
+        if (zData == null) {
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                if (Double.isNaN(x) || Double.isNaN(y)) {
+                    continue;
+                }
+                Point shape = new Point(new Coordinate(x, y));
+                this.add(new PointGraphic(shape, pointBreak));
             }
-            Point shape = new Point(new Coordinate(x, y));
-            this.add(new PointGraphic(shape, pointBreak));
+        } else {
+            IndexIterator zIter = this.zData.getIndexIterator();
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                z = zIter.getDoubleNext();
+                if (Double.isNaN(x) || Double.isNaN(y)) {
+                    continue;
+                }
+                Point shape = new Point(new Coordinate(x, y, z));
+                this.add(new PointGraphic(shape, pointBreak));
+            }
         }
     }
 
@@ -169,18 +238,33 @@ public class PointGraphicCollection extends GraphicCollection {
         List<Coordinate> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
-        double x, y;
+        double x, y, z;
         if (cbs.size() == this.xData.getSize()) {
             int i = 0;
-            while (xIter.hasNext()) {
-                x = xIter.getDoubleNext();
-                y = yIter.getDoubleNext();
-                if (Double.isNaN(x) || Double.isNaN(y)) {
-                    continue;
+            if (zData == null) {
+                while (xIter.hasNext()) {
+                    x = xIter.getDoubleNext();
+                    y = yIter.getDoubleNext();
+                    if (Double.isNaN(x) || Double.isNaN(y)) {
+                        continue;
+                    }
+                    Point shape = new Point(new Coordinate(x, y));
+                    this.add(new PointGraphic(shape, (PointBreak) cbs.get(i)));
+                    i += 1;
                 }
-                Point shape = new Point(new Coordinate(x, y));
-                this.add(new PointGraphic(shape, (PointBreak) cbs.get(i)));
-                i += 1;
+            } else {
+                IndexIterator zIter = this.zData.getIndexIterator();
+                while (xIter.hasNext()) {
+                    x = xIter.getDoubleNext();
+                    y = yIter.getDoubleNext();
+                    z = zIter.getDoubleNext();
+                    if (Double.isNaN(x) || Double.isNaN(y)) {
+                        continue;
+                    }
+                    Point shape = new Point(new Coordinate(x, y, z));
+                    this.add(new PointGraphic(shape, (PointBreak) cbs.get(i)));
+                    i += 1;
+                }
             }
             LegendScheme ls = new LegendScheme();
             ls.setLegendBreaks(cbs);
@@ -196,31 +280,60 @@ public class PointGraphicCollection extends GraphicCollection {
     protected void updateGraphics(LegendScheme ls) {
         this.graphics = new ArrayList<Graphic>();
         Point ps;
-        double z;
+        double c;
         ColorBreak cb;
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
-        IndexIterator zIter = this.cData.getIndexIterator();
+        IndexIterator cIter = this.cData.getIndexIterator();
         if (ls.getLegendType() == LegendType.UNIQUE_VALUE && this.xData.getSize() == ls.getBreakNum()) {
             int i = 0;
-            while (xIter.hasNext()) {
-                ps = new Point();
-                ps.setCoordinate(new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext()));
-                z = zIter.getDoubleNext();
-                ps.setValue(z);
-                cb = ls.getLegendBreak(i);
-                this.add(new Graphic(ps, cb));
-                i += 1;
+            if (zData == null) {
+                while (xIter.hasNext()) {
+                    ps = new Point();
+                    ps.setCoordinate(new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext()));
+                    c = cIter.getDoubleNext();
+                    ps.setValue(c);
+                    cb = ls.getLegendBreak(i);
+                    this.add(new Graphic(ps, cb));
+                    i += 1;
+                }
+            } else {
+                IndexIterator zIter = this.zData.getIndexIterator();
+                while (xIter.hasNext()) {
+                    ps = new Point();
+                    ps.setCoordinate(new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext(),
+                            zIter.getDoubleNext()));
+                    c = cIter.getDoubleNext();
+                    ps.setValue(c);
+                    cb = ls.getLegendBreak(i);
+                    this.add(new Graphic(ps, cb));
+                    i += 1;
+                }
             }
         } else {
-            while (xIter.hasNext()) {
-                ps = new Point();
-                ps.setCoordinate(new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext()));
-                z = zIter.getDoubleNext();
-                ps.setValue(z);
-                cb = ls.findLegendBreak(z);
-                if (cb != null) {
-                    this.add(new Graphic(ps, cb));
+            if (zData == null) {
+                while (xIter.hasNext()) {
+                    ps = new Point();
+                    ps.setCoordinate(new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext()));
+                    c = cIter.getDoubleNext();
+                    ps.setValue(c);
+                    cb = ls.findLegendBreak(c);
+                    if (cb != null) {
+                        this.add(new Graphic(ps, cb));
+                    }
+                }
+            } else {
+                IndexIterator zIter = this.zData.getIndexIterator();
+                while (xIter.hasNext()) {
+                    ps = new Point();
+                    ps.setCoordinate(new Coordinate(xIter.getDoubleNext(), yIter.getDoubleNext(),
+                            zIter.getDoubleNext()));
+                    c = cIter.getDoubleNext();
+                    ps.setValue(c);
+                    cb = ls.findLegendBreak(c);
+                    if (cb != null) {
+                        this.add(new Graphic(ps, cb));
+                    }
                 }
             }
         }
@@ -236,6 +349,19 @@ public class PointGraphicCollection extends GraphicCollection {
     public void setData(Array xData, Array yData) {
         this.xData = xData;
         this.yData = yData;
+        updateShape();
+    }
+
+    /**
+     * Set x and y data
+     * @param xData X data array
+     * @param yData Y data array
+     * @param zData Z data array
+     */
+    public void setData(Array xData, Array yData, Array zData) {
+        this.xData = xData;
+        this.yData = yData;
+        this.zData = zData;
         updateShape();
     }
 }

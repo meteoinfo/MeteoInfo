@@ -47,11 +47,14 @@ public class MultiLineString extends GeometryCollection implements Cloneable {
         parts[0] = 0;
     }
 
+    /**
+     * Constructor
+     * @param lineStrings LineString array
+     */
     public MultiLineString(LineString[] lineStrings) {
         super(lineStrings);
-        numParts = 1;
-        parts = new int[1];
-        parts[0] = 0;
+
+        updatePartsPoints();
     }
 
     /**
@@ -173,7 +176,7 @@ public class MultiLineString extends GeometryCollection implements Cloneable {
      * @param coordinates point list
      */
     public void setCoordinates(List<Coordinate> coordinates) {
-        updatePolyLines(coordinates);
+        updateLineStrings(coordinates);
         this.updateExtent();
     }
 
@@ -236,7 +239,7 @@ public class MultiLineString extends GeometryCollection implements Cloneable {
     // </editor-fold>
     // <editor-fold desc="Methods">
 
-    private void updatePolyLines(List<Coordinate> coordinates) {
+    private void updateLineStrings(List<Coordinate> coordinates) {
         List<LineString> polylines = new ArrayList<>();
         if (numParts == 1) {
             LineString aPolyLine = new LineString();
@@ -318,7 +321,7 @@ public class MultiLineString extends GeometryCollection implements Cloneable {
 
         List<Coordinate> coordinates = this.getCoordinates();
         coordinates.add(vIdx, vertice);
-        updatePolyLines(coordinates);
+        updateLineStrings(coordinates);
         this.updateExtent();
     }
 
@@ -335,7 +338,7 @@ public class MultiLineString extends GeometryCollection implements Cloneable {
 
         List<Coordinate> coordinates = this.getCoordinates();
         coordinates.remove(vIdx);
-        updatePolyLines(coordinates);
+        updateLineStrings(coordinates);
         this.updateExtent();
     }
 

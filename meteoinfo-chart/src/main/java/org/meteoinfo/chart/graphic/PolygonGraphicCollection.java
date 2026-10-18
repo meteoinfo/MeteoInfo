@@ -90,15 +90,22 @@ public class PolygonGraphicCollection extends GraphicCollection {
         this.graphics = new ArrayList<>();
         int[] origin = new int[2];
         int[] shape = new int[2];
-        Array x, y;
         try {
             for (Array array : data) {
+                int[] arrShape = array.getShape();
+                int nPoint = arrShape[0];
+                int nDim = arrShape[1];
                 origin = new int[]{0, 0};
-                shape = new int[]{array.getShape()[0], 1};
-                x = array.section(origin, shape);
+                shape = new int[]{nPoint, 1};
+                Array x = array.section(origin, shape);
                 origin = new int[]{0, 1};
-                y = array.section(origin, shape);
-                this.add(new PolygonGraphic(x, y, polygonBreak));
+                Array y = array.section(origin, shape);
+                Array z = null;
+                if (nDim == 3) {
+                    origin = new int[]{0, 2};
+                    z = array.section(origin, shape);
+                }
+                this.add(new PolygonGraphic(x, y, z, polygonBreak));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,19 +118,26 @@ public class PolygonGraphicCollection extends GraphicCollection {
         this.graphics = new ArrayList<>();
         int[] origin = new int[2];
         int[] shape = new int[2];
-        Array x, y;
         try {
             int i = 0;
             for (Array array : data) {
+                int[] arrShape = array.getShape();
+                int nPoint = arrShape[0];
+                int nDim = arrShape[1];
                 origin = new int[]{0, 0};
-                shape = new int[]{array.getShape()[0], 1};
-                x = array.section(origin, shape);
+                shape = new int[]{nPoint, 1};
+                Array x = array.section(origin, shape);
                 origin = new int[]{0, 1};
-                y = array.section(origin, shape);
+                Array y = array.section(origin, shape);
+                Array z = null;
+                if (nDim == 3) {
+                    origin = new int[]{0, 2};
+                    z = array.section(origin, shape);
+                }
                 if (i >= breaks.size()) {
                     i = 0;
                 }
-                this.add(new PolygonGraphic(x, y, breaks.get(i)));
+                this.add(new PolygonGraphic(x, y, z, breaks.get(i)));
                 i += 1;
             }
         } catch (Exception e) {
@@ -137,16 +151,23 @@ public class PolygonGraphicCollection extends GraphicCollection {
         this.graphics = new ArrayList<>();
         int[] origin = new int[2];
         int[] shape = new int[2];
-        Array x, y;
         try {
             int i = 0;
             for (Array array : data) {
+                int[] arrShape = array.getShape();
+                int nPoint = arrShape[0];
+                int nDim = arrShape[1];
                 origin = new int[]{0, 0};
-                shape = new int[]{array.getShape()[0], 1};
-                x = array.section(origin, shape);
+                shape = new int[]{nPoint, 1};
+                Array x = array.section(origin, shape);
                 origin = new int[]{0, 1};
-                y = array.section(origin, shape);
-                this.add(new PolygonGraphic(x, y, cData.get(i), ls));
+                Array y = array.section(origin, shape);
+                Array z = null;
+                if (nDim == 3) {
+                    origin = new int[]{0, 2};
+                    z = array.section(origin, shape);
+                }
+                this.add(new PolygonGraphic(x, y, z, cData.get(i), ls));
                 i += 1;
             }
         } catch (Exception e) {
@@ -161,18 +182,25 @@ public class PolygonGraphicCollection extends GraphicCollection {
         this.graphics = new ArrayList<>();
         int[] origin = new int[2];
         int[] shape = new int[2];
-        Array x, y, c;
         try {
             int i = 0;
             for (Array array : data) {
+                int[] arrShape = array.getShape();
+                int nPoint = arrShape[0];
+                int nDim = arrShape[1];
                 origin = new int[]{0, 0};
-                shape = new int[]{array.getShape()[0], 1};
-                x = array.section(origin, shape);
+                shape = new int[]{nPoint, 1};
+                Array x = array.section(origin, shape);
                 origin = new int[]{0, 1};
-                y = array.section(origin, shape);
+                Array y = array.section(origin, shape);
+                Array z = null;
+                if (nDim == 3) {
+                    origin = new int[]{0, 2};
+                    z = array.section(origin, shape);
+                }
                 origin = new int[]{0, i};
-                c = cData.section(origin, shape);
-                this.add(new PolygonGraphic(x, y, c, ls));
+                Array c = cData.section(origin, shape);
+                this.add(new PolygonGraphic(x, y, z, c, ls));
                 i += 1;
             }
         } catch (Exception e) {

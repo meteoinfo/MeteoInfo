@@ -1741,7 +1741,7 @@ class Axes(object):
                             kwargs['colors'] = kwargs['color']
                         if not kwargs.has_key('cmap'):
                             kwargs['cmap'] = 'matlab_jet'
-                        graphics = LineCollection(None, xydata=[xdata, ydata], **kwargs)
+                        graphics = LineCollection(None, xyz_data=[xdata, ydata], **kwargs)
                     else:
                         graphics = Line(xdata, ydata, legend=lines[0], curve=iscurve)
                 else:
@@ -1749,7 +1749,7 @@ class Axes(object):
                         kwargs['colors'] = kwargs['color']
                     if not kwargs.has_key('cmap'):
                         kwargs['cmap'] = 'matlab_jet'
-                    graphics = LineCollection(None, xydata=[xdata, ydata], **kwargs)
+                    graphics = LineCollection(None, xyz_data=[xdata, ydata], **kwargs)
             else:
                 graphics = []
                 for i in range(0, snum):
@@ -1767,11 +1767,11 @@ class Axes(object):
                     xdata = np.split_array_by_nan(xdata)
                     ydata = np.split_array_by_nan(ydata)
                     cdata = np.split_array_by_nan(cdata)
-                    graphics = LineCollection(None, xydata=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
+                    graphics = LineCollection(None, xyz_data=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
                 else:
                     graphics = Line(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
             else:
-                graphics = LineCollection(None, xydata=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
+                graphics = LineCollection(None, xyz_data=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
 
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:
@@ -1905,7 +1905,7 @@ class Axes(object):
                         ls.getLegendBreaks()[i].setSize(s[i])
             # Create graphics
             #graphics = GraphicFactory.createPoints(xdata, ydata, c.asarray(), ls)
-            graphics = PointCollection(xdata, ydata, c, legend=ls)
+            graphics = PointCollection(xdata, ydata, cdata=c, legend=ls)
         else:
             alpha = kwargs.pop('alpha', None)
             colors = plotutil.getcolors(c, alpha)
@@ -3193,11 +3193,16 @@ class Axes(object):
         """
         if color is not None:
             kwargs['facecolor'] = color
-        lbreak, isunique = plotutil.getlegendbreak('polygon', **kwargs)
+        #lbreak, isunique = plotutil.getlegendbreak('polygon', **kwargs)
 
-        x = plotutil.getplotdata(x)
-        y = plotutil.getplotdata(y)
-        graphics = GraphicFactory.createPolygons(x, y, lbreak)
+        x = np.asarray(x)
+        y = np.asarray(y)
+        if x.ndim == 1 and x.contains_nan():
+            x = np.split_array_by_nan(x)
+        if y.ndim == 1 and y.contains_nan():
+            y = np.split_array_by_nan(y)
+
+        graphics = PolyCollection(None, xyz_data=[x, y], **kwargs)
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)
@@ -3224,7 +3229,7 @@ class Axes(object):
             if y.ndim == 1 and y.contains_nan():
                 y = np.split_array_by_nan(y)
             #graphics = GraphicFactory.createPolygons(x._array, y._array, lbreak)
-            graphics = PolyCollection(None, xydata=[x, y], **kwargs)
+            graphics = PolyCollection(None, xyz_data=[x, y], **kwargs)
 
         zorder = kwargs.pop('zorder', None)
         self.add_graphic(graphics, zorder=zorder)

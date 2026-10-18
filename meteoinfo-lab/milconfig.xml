@@ -1,34 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\io\netcdf">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\animation"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\annotate"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\arrow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\bar"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\boxplot"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\imshow"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\patch"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\meteo\calc"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\map\projection"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\dataset"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\patch">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\numpy"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\netcdf"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\fill"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\slice"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contour"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\patch"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\meteo\plots\skewt_2.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\quiverm_5.py"/>
       <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\io\netcdf\ncwrite_4.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contour\contourf_1.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\meteo\plots\skewt_2.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\wind\quiverm_5.py"/>
       <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf\surf_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\io\netcdf\ncwrite_4.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contour\contourf_1.py"/>
     </RecentFiles>
   </File>
   <Font>
@@ -36,5 +34,5 @@
   </Font>
   <LookFeel DockWindowDecorated="true" LafDecorated="true" Name="FlatDarkLaf"/>
   <Figure DoubleBuffering="true"/>
-  <Startup MainFormLocation="-6,0" MainFormSize="1294,814"/>
+  <Startup MainFormLocation="-6,-6" MainFormSize="1292,764"/>
 </MeteoInfo>

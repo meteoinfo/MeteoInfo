@@ -15,6 +15,7 @@ import java.util.List;
 public class LineGraphic extends Graphic {
     private Array xData;
     private Array yData;
+    private Array zData;
     private Array cData;
     private boolean curve = false;
     private LegendScheme legendScheme;
@@ -51,9 +52,38 @@ public class LineGraphic extends Graphic {
      * Constructor
      * @param xData X data
      * @param yData Y data
+     * @param zData Z data
+     * @param polylineBreak Polyline break
+     */
+    public LineGraphic(Array xData, Array yData, Array zData, PolylineBreak polylineBreak) {
+        this.xData = xData;
+        this.yData = yData;
+        this.zData = zData;
+
+        updateShape();
+        if (polylineBreak == null) {
+            polylineBreak = new PolylineBreak();
+        }
+        this.legendBreak = polylineBreak;
+    }
+
+    /**
+     * Constructor
+     * @param xData X data
+     * @param yData Y data
      */
     public LineGraphic(Array xData, Array yData) {
         this(xData, yData, new PolylineBreak());
+    }
+
+    /**
+     * Constructor
+     * @param xData X data
+     * @param yData Y data
+     * @param zData Z data
+     */
+    public LineGraphic(Array xData, Array yData, Array zData) {
+        this(xData, yData, zData, new PolylineBreak());
     }
 
     /**
@@ -64,8 +94,21 @@ public class LineGraphic extends Graphic {
      * @param legendScheme Legend scheme
      */
     public LineGraphic(Array xData, Array yData, Array cData, LegendScheme legendScheme) {
+        this(xData, yData, null, cData, legendScheme);
+    }
+
+    /**
+     * Constructor
+     * @param xData X data
+     * @param yData Y data
+     * @param zData Z data
+     * @param cData Color data
+     * @param legendScheme Legend scheme
+     */
+    public LineGraphic(Array xData, Array yData, Array zData, Array cData, LegendScheme legendScheme) {
         this.xData = xData;
         this.yData = yData;
+        this.zData = zData;
         this.cData = cData;
 
         updateShapeLegend(legendScheme);
@@ -75,15 +118,30 @@ public class LineGraphic extends Graphic {
         List<Coordinate> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
-        double x, y;
-        while (xIter.hasNext() && yIter.hasNext()) {
-            x = xIter.getDoubleNext();
-            y = yIter.getDoubleNext();
-            if (Double.isNaN(x) || Double.isNaN(y)) {
-                continue;
+        if (this.zData == null) {
+            double x, y;
+            while (xIter.hasNext() && yIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                if (Double.isNaN(x) || Double.isNaN(y)) {
+                    continue;
+                }
+                points.add(new Coordinate(x, y));
             }
-            points.add(new Coordinate(x, y));
+        } else {
+            IndexIterator zIter = this.zData.getIndexIterator();
+            double x, y, z;
+            while (xIter.hasNext() && yIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                z = zIter.getDoubleNext();
+                if (Double.isNaN(x) || Double.isNaN(y)) {
+                    continue;
+                }
+                points.add(new Coordinate(x, y, z));
+            }
         }
+
         if (this.geometry == null) {
             this.geometry = new MultiLineString();
         }
@@ -98,18 +156,35 @@ public class LineGraphic extends Graphic {
         IndexIterator cIter = this.cData.getIndexIterator();
         ColorBreakCollection cbc = new ColorBreakCollection();
         ColorBreak cb;
-        double x, y, c;
-        while (xIter.hasNext()) {
-            x = xIter.getDoubleNext();
-            y = yIter.getDoubleNext();
-            c = cIter.getDoubleNext();
-            if (Double.isNaN(x) || Double.isNaN(y)) {
-                continue;
+        double x, y, z, c;
+        if (zData == null) {
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                c = cIter.getDoubleNext();
+                if (Double.isNaN(x) || Double.isNaN(y)) {
+                    continue;
+                }
+                points.add(new Coordinate(x, y));
+                cb = legendScheme.findLegendBreakAlways(c);
+                cbc.add(cb);
             }
-            points.add(new Coordinate(x, y));
-            cb = legendScheme.findLegendBreakAlways(c);
-            cbc.add(cb);
+        } else {
+            IndexIterator zIter = this.zData.getIndexIterator();
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                z = zIter.getDoubleNext();
+                c = cIter.getDoubleNext();
+                if (Double.isNaN(x) || Double.isNaN(y)) {
+                    continue;
+                }
+                points.add(new Coordinate(x, y, z));
+                cb = legendScheme.findLegendBreakAlways(c);
+                cbc.add(cb);
+            }
         }
+
         if (this.geometry == null) {
             this.geometry = new MultiLineString();
         }
@@ -128,17 +203,34 @@ public class LineGraphic extends Graphic {
         ColorBreak cb;
         double x, y, c;
         int i = 0;
-        while (xIter.hasNext()) {
-            x = xIter.getDoubleNext();
-            y = yIter.getDoubleNext();
-            cb = cbs.get(i);
-            if (Double.isNaN(x) || Double.isNaN(y)) {
-                continue;
+        if (zData == null) {
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                cb = cbs.get(i);
+                if (Double.isNaN(x) || Double.isNaN(y)) {
+                    continue;
+                }
+                points.add(new Coordinate(x, y));
+                cbc.add(cb);
+                i += 1;
             }
-            points.add(new Coordinate(x, y));
-            cbc.add(cb);
-            i += 1;
+        } else {
+            double z;
+            while (xIter.hasNext()) {
+                x = xIter.getDoubleNext();
+                y = yIter.getDoubleNext();
+                z = yIter.getDoubleNext();
+                cb = cbs.get(i);
+                if (Double.isNaN(x) || Double.isNaN(y)) {
+                    continue;
+                }
+                points.add(new Coordinate(x, y, z));
+                cbc.add(cb);
+                i += 1;
+            }
         }
+
         if (this.geometry == null) {
             this.geometry = new MultiLineString();
         }
@@ -198,6 +290,23 @@ public class LineGraphic extends Graphic {
     }
 
     /**
+     * Get z data
+     * @return Z data
+     */
+    public Array getZData() {
+        return this.yData;
+    }
+
+    /**
+     * Set z data
+     * @param zData Z data
+     */
+    public void setZData(Array zData) {
+        this.zData = zData;
+        updateShape();
+    }
+
+    /**
      * Get color data array
      * @return Color data array
      */
@@ -213,6 +322,18 @@ public class LineGraphic extends Graphic {
     public void setData(Array xData, Array yData) {
         this.xData = xData;
         this.yData = yData;
+        updateShape();
+    }
+
+    /**
+     * Set data
+     * @param xData X data
+     * @param yData Y data
+     */
+    public void setData(Array xData, Array yData, Array zData) {
+        this.xData = xData;
+        this.yData = yData;
+        this.zData = zData;
         updateShape();
     }
 

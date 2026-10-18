@@ -741,13 +741,13 @@ class MapAxes(Axes):
                         ydata = np.split_array_by_nan(ydata)
                         if not kwargs.has_key('cmap'):
                             kwargs['cmap'] = 'matlab_jet'
-                        graphics = LineCollection(None, xydata=[xdata, ydata], **kwargs)
+                        graphics = LineCollection(None, coord_data=[xdata, ydata], **kwargs)
                     else:
                         graphics = Line(xdata, ydata, legend=lines[0], curve=iscurve)
                 else:
                     if not kwargs.has_key('cmap'):
                         kwargs['cmap'] = 'matlab_jet'
-                    graphics = LineCollection(None, xydata=[xdata, ydata], **kwargs)
+                    graphics = LineCollection(None, coord_data=[xdata, ydata], **kwargs)
                 graphics.transform = transform
                 graphics = self.add_graphic(graphics)
             else:
@@ -769,11 +769,11 @@ class MapAxes(Axes):
                     xdata = np.split_array_by_nan(xdata)
                     ydata = np.split_array_by_nan(ydata)
                     cdata = np.split_array_by_nan(cdata)
-                    graphics = LineCollection(None, xydata=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
+                    graphics = LineCollection(None, xyz_data=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
                 else:
                     graphics = Line(xdata, ydata, legend=ls, cdata=cdata, curve=iscurve)
             else:
-                graphics = LineCollection(None, xydata=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
+                graphics = LineCollection(None, xyz_data=[xdata, ydata], cdata=cdata, legend=ls, **kwargs)
             #graphic = GraphicFactory.createLineString(xdata._array, ydata._array, cdata._array, ls, iscurve)
             graphics.transform = transform
             graphics = self.add_graphic(graphics)
@@ -868,7 +868,7 @@ class MapAxes(Axes):
             graphics = PointCollection(x._array, y._array, legend=ls.getLegendBreak(0))
         else:
             #graphics = GraphicFactory.createPoints(x._array, y._array, a._array, ls)
-            graphics = PointCollection(x._array, y._array, a._array, ls)
+            graphics = PointCollection(x._array, y._array, cdata=a._array, legend=ls)
 
         transform = kwargs.pop('transform', None)
         graphics.transform = transform

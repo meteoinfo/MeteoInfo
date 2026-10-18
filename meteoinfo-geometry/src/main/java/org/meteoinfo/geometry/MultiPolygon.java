@@ -13,14 +13,12 @@
  */
 package org.meteoinfo.geometry;
 
-import org.checkerframework.checker.units.qual.C;
 import org.meteoinfo.common.MIMath;
 import org.meteoinfo.common.PointF;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.locationtech.jts.geom.GeometryFactory;
@@ -43,7 +41,7 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
     /**
      * Part number
      */
-    protected int _numParts;
+    protected int numParts;
     /**
      * Part array
      */
@@ -55,14 +53,19 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
      * Constructor
      */
     public MultiPolygon() {
-        _numParts = 1;
+        numParts = 1;
         parts = new int[1];
         parts[0] = 0;
     }
 
+    /**
+     * Constructor
+     * @param polygons Polygon array
+     */
     public MultiPolygon(Polygon[] polygons) {
         super(polygons);
-        _numParts = polygons.length;
+
+        updatePartsPoints();
     }
         
     /**
@@ -82,13 +85,13 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
         switch (geometry.getGeometryType()) {
             case "MultiPolygon":
                 int n = geometry.getNumGeometries();                
-                _numParts = 0;
+                numParts = 0;
                 List<Integer> partlist = new ArrayList<>();
                 this.geometries = new Geometry[n];
                 int idx = 0;
                 for (int i = 0; i < n; i++) {
                     org.locationtech.jts.geom.Polygon poly = (org.locationtech.jts.geom.Polygon) geometry.getGeometryN(i);
-                    _numParts += poly.getNumInteriorRing() + 1;                    
+                    numParts += poly.getNumInteriorRing() + 1;
                     partlist.add(idx);                    
                     Polygon polygon = new Polygon();
                     pp = new ArrayList<>();
@@ -115,8 +118,8 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
                 break;
             default:
                 org.locationtech.jts.geom.Polygon poly = (org.locationtech.jts.geom.Polygon) geometry;
-                _numParts = poly.getNumInteriorRing() + 1;                
-                parts = new int[_numParts];                
+                numParts = poly.getNumInteriorRing() + 1;
+                parts = new int[numParts];
                 parts[0] = 0;
                 Polygon polygon = new Polygon();
                 pp = new ArrayList<>();
@@ -153,7 +156,7 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
      * @return Multi polygon or not
      */
     public boolean isMultiPolygon() {
-        return this._numParts > 1;
+        return this.numParts > 1;
     }
 
     /**
@@ -225,7 +228,7 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
      * @return Part number
      */
     public int getNumParts() {
-        return this._numParts;
+        return this.numParts;
     }
 
     /**
@@ -234,7 +237,7 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
      * @param value Part number
      */
     public void setPartNum(int value) {
-        this._numParts = value;
+        this.numParts = value;
     }
     
     /**
@@ -368,7 +371,7 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
     // <editor-fold desc="Methods">
 
     protected void updatePolygons_keep(List<Coordinate> coordinates) {
-        if (_numParts == 1) {
+        if (numParts == 1) {
             ((Polygon) geometries[0]).setOutLine(coordinates);
         } else {
             int sidx = 0, eidx = 0;
@@ -388,7 +391,7 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
     }
     
     protected void updatePolygons(List<Coordinate> coordinates) {
-        if (_numParts == 1) {
+        if (numParts == 1) {
             Polygon aPolygon = new Polygon();
             aPolygon.setOutLine(coordinates);
             geometries = new Polygon[]{aPolygon};
@@ -397,8 +400,8 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
             Polygon aPolygon = null;
             int numPoints = isEmpty() ? coordinates.size() : this.getNumPoints();
             List<Polygon> polys = new ArrayList<>();
-            for (int p = 0; p < _numParts; p++) {
-                if (p == _numParts - 1) {
+            for (int p = 0; p < numParts; p++) {
+                if (p == numParts - 1) {
                     Pointps = new Coordinate[numPoints - parts[p]];
                     for (int pp = parts[p]; pp < numPoints; pp++) {
                         Pointps[pp - parts[p]] = coordinates.get(pp);
@@ -431,12 +434,12 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
     }
     
     private void updatePartsPoints() {
-        _numParts = 0;
+        numParts = 0;
         int pn = 0;
         List<Integer> partList = new ArrayList<>();
         for (int i = 0; i < geometries.length; i++) {
             Polygon polygon = (Polygon) geometries[i];
-            _numParts += polygon.getRingNumber();
+            numParts += polygon.getRingNumber();
             partList.add(pn);
             pn += polygon.getExteriorRing().getNumPoints();
             for (int j = 0; j < polygon.getNumInteriorRing(); j++) {
@@ -495,15 +498,15 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
      * @return Part index
      */
     public int getPartIndex(int vIdx) {
-        if (_numParts == 1) {
+        if (numParts == 1) {
             return 0;
         } else {
-            for (int p = 1; p < _numParts; p++) {
+            for (int p = 1; p < numParts; p++) {
                 if (vIdx < parts[p]) {
                     return p - 1;
                 }
             }
-            return _numParts - 1;
+            return numParts - 1;
         }
     }
 
@@ -515,7 +518,7 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
      */
     public void addVertice(int vIdx, Coordinate vertice) {
         int partIdx = getPartIndex(vIdx);
-        if (partIdx < _numParts - 1) {
+        if (partIdx < numParts - 1) {
             parts[partIdx + 1] += 1;
         }
 
@@ -532,7 +535,7 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
      */
     public void removeVertice(int vIdx) {
         int partIdx = getPartIndex(vIdx);
-        if (partIdx < _numParts - 1) {
+        if (partIdx < numParts - 1) {
             parts[partIdx + 1] -= 1;
         }
 
@@ -553,7 +556,7 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
         aPGS.setExtent(this.getExtent());
         aPGS.highValue = highValue;
         aPGS.lowValue = lowValue;
-        aPGS._numParts = _numParts;
+        aPGS.numParts = numParts;
         aPGS.parts = (int[]) parts.clone();
         aPGS.geometries = (Polygon[]) geometries.clone();
         aPGS.setVisible(this.isVisible());
@@ -589,7 +592,7 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
         this.setExtent(o.getExtent());
         this.highValue = o.highValue;
         this.lowValue = o.lowValue;
-        this._numParts = o._numParts;
+        this.numParts = o.numParts;
         this.parts = (int[]) o.parts.clone();
         this.geometries = (Polygon[]) o.geometries.clone();
         this.setVisible(o.isVisible());

@@ -65,6 +65,15 @@ public class SphericalTransform {
 
     /**
      * Transform spherical coordinates to normal 3D coordinates
+     * @param p Input Vector3f
+     * @return Transformed Vector3f
+     */
+    public static Vector3f transform(Vector3f p) {
+        return transform(p.x, p.y, p.z);
+    }
+
+    /**
+     * Transform spherical coordinates to normal 3D coordinates
      * @param p Input particle
      * @return Transformed particle
      */
@@ -146,21 +155,25 @@ public class SphericalTransform {
                     }
                     if (isTess) {
                         MultiPolygon polygonZShape = (MultiPolygon) shape;
-                        List<Polygon> polygonZS = (List<Polygon>) polygonZShape.getPolygons();
+                        List<Polygon> polygonZS = polygonZShape.getPolygons();
                         for (int j = 0; j < polygonZS.size(); j++) {
                             Polygon polygonZ = polygonZS.get(j);
                             TessPolygon tessPolygon = new TessPolygon(polygonZ);
-                            for (Primitive primitive : tessPolygon.getPrimitives()) {
-                                primitive.vertices.replaceAll(SphericalTransform::transform);
+                            tessPolygon.subdivideEquilateral(3.0f);
+                            for (Triangle triangle : tessPolygon.getTriangles()) {
+                                List<Vector3f> points = triangle.getPoints();
+                                points.replaceAll(SphericalTransform::transform);
+                                triangle.setPoints(points);
                             }
-                            List<Coordinate> outLine = (List<Coordinate>) tessPolygon.getOutLine();
+                            List<Coordinate> outLine = tessPolygon.getOutLine();
                             outLine.replaceAll(SphericalTransform::transform);
                             for (int k = 0; k < tessPolygon.getNumInteriorRing(); k++) {
-                                List<Coordinate> holeLine = (List<Coordinate>) tessPolygon.getHoleLine(k);
+                                List<Coordinate> holeLine = tessPolygon.getHoleLine(k);
                                 holeLine.replaceAll(SphericalTransform::transform);
                             }
                             polygonZS.set(j, tessPolygon);
                         }
+                        polygonZShape.setPolygons(polygonZS);
                     } else {
                         List<Coordinate> points = shape.getCoordinates();
                         points.replaceAll(SphericalTransform::transform);

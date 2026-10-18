@@ -1,26 +1,20 @@
 package org.meteoinfo.chart.jogl.tessellator;
 
+import org.meteoinfo.chart.graphic.Triangle;
+import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.Polygon;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TessPolygon extends Polygon {
-    protected List<Primitive> primitives;
+    protected List<Triangle> triangles;
 
     /**
      * Constructor
      */
     public TessPolygon() {
-        this.primitives = new ArrayList<>();
-    }
-
-    /**
-     * Constructor
-     * @param primitives Primitive list
-     */
-    public TessPolygon(List<Primitive> primitives) {
-        this.primitives = primitives;
+        this.triangles = new ArrayList<>();
     }
 
     /**
@@ -32,19 +26,39 @@ public class TessPolygon extends Polygon {
         this.setHoleLines(polygon.getHoleLines());
         this.setExtent(polygon.getExtent());
 
-        PrimitiveTessellator tessellator = new PrimitiveTessellator();
-        try {
-            this.primitives = tessellator.getPrimitives(polygon);
-        } catch (PrimitiveTessellator.TesselationException e) {
-            e.printStackTrace();
-        }
+        this.triangles = TriangleTessellator.tessellate(polygon);
     }
 
     /**
-     * Get primitive list
-     * @return Primitive list
+     * Get triangles
+     * @return Triangle list
      */
-    public List<Primitive> getPrimitives() {
-        return this.primitives;
+    public List<Triangle> getTriangles() {
+        return this.triangles;
+    }
+
+    /**
+     * Subdivide triangles internal
+     * @param depth Subdivision depth; each level produces 4 child triangles (4^depth total)
+     */
+    public void subdivide(int depth) {
+        List<Triangle> result = new ArrayList<>();
+        for (Triangle triangle : this.triangles) {
+            result.addAll(Triangle.subdivide(triangle, depth));
+        }
+        this.triangles = result;
+    }
+
+    /**
+     * Subdivide triangles internal
+     * @param targetEdgeLen Maximum allowed edge length; subdivision stops when
+     *                      all edges are shorter than this threshold
+     */
+    public void subdivideEquilateral(float targetEdgeLen) {
+        List<Triangle> result = new ArrayList<>();
+        for (Triangle triangle : this.triangles) {
+            result.addAll(Triangle.subdivideEquilateral(triangle, targetEdgeLen));
+        }
+        this.triangles = result;
     }
 }

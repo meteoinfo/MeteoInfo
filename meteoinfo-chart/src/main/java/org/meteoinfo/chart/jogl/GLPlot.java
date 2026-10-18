@@ -3240,9 +3240,9 @@ public class GLPlot extends Plot {
         if (isDraw) {
             MultiPolygon shape = (MultiPolygon) graphic.getGeometry();
             PolygonBreak pb = (PolygonBreak) graphic.getLegendBreak();
-            java.util.List<Polygon> polygonZS = shape.getPolygons();
-            for (int i = 0; i < polygonZS.size(); i++) {
-                Polygon polygonZ = polygonZS.get(i);
+            java.util.List<Polygon> polygons = shape.getPolygons();
+            for (int i = 0; i < polygons.size(); i++) {
+                Polygon polygonZ = polygons.get(i);
                 if (pb.isDrawFill()) {
                     if (polygonZ instanceof TessPolygon) {
                         drawTessPolygon(gl, (TessPolygon) polygonZ, pb);
@@ -3252,7 +3252,7 @@ public class GLPlot extends Plot {
                         } else {
                             TessPolygon tessPolygon = new TessPolygon(polygonZ);
                             drawTessPolygon(gl, tessPolygon, pb);
-                            polygonZS.set(i, tessPolygon);
+                            polygons.set(i, tessPolygon);
                         }
                     }
                 } else {
@@ -3270,15 +3270,15 @@ public class GLPlot extends Plot {
             float[] rgba = aPGB.getColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
 
-            if (tessPolygon.getPrimitives() != null) {
+            if (tessPolygon.getTriangles() != null) {
                 try {
-                    for (Primitive primitive : tessPolygon.getPrimitives()) {
-                        gl.glBegin(primitive.type);
-                        for (Coordinate p : primitive.vertices) {
-                            gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
+                    gl.glBegin(GL2.GL_TRIANGLES);
+                    for (Triangle triangle : tessPolygon.getTriangles()) {
+                        for (Vector3f p : triangle.getPoints()) {
+                            gl.glVertex3f(p.x, p.y, p.z);
                         }
-                        gl.glEnd();
                     }
+                    gl.glEnd();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -3322,13 +3322,13 @@ public class GLPlot extends Plot {
 
             try {
                 TessPolygon tessPolygon = new TessPolygon(aPG);
-                for (Primitive primitive : tessPolygon.getPrimitives()) {
-                    gl.glBegin(primitive.type);
-                    for (Coordinate p : primitive.vertices) {
-                        gl.glVertex3f((float) p.x, (float) p.y, (float) p.z);
+                gl.glBegin(GL2.GL_TRIANGLES);
+                for (Triangle triangle : tessPolygon.getTriangles()) {
+                    for (Vector3f p : triangle.getPoints()) {
+                        gl.glVertex3f(p.x, p.y, p.z);
                     }
-                    gl.glEnd();
                 }
+                gl.glEnd();
                 aPG = tessPolygon;
             } catch (Exception e) {
                 e.printStackTrace();

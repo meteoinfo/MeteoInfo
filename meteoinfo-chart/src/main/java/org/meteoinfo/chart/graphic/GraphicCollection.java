@@ -565,6 +565,15 @@ public class GraphicCollection extends Graphic implements Iterator {
         return this.size();
     }
 
+    @Override
+    public int getNumPoints() {
+        int num = 0;
+        for (Graphic g : this.graphics) {
+            num += g.getNumPoints();
+        }
+        return num;
+    }
+
     /**
      * Get Graphic by index
      *

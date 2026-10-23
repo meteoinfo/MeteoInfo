@@ -44,7 +44,7 @@ public class TessPolygon extends Polygon {
     public void subdivide(int depth) {
         List<Triangle> result = new ArrayList<>();
         for (Triangle triangle : this.triangles) {
-            result.addAll(Triangle.subdivide(triangle, depth));
+            result.addAll(TriangleTessellator.subdivide(triangle, depth));
         }
         this.triangles = result;
     }
@@ -57,7 +57,7 @@ public class TessPolygon extends Polygon {
     public void subdivideEquilateral(float targetEdgeLen) {
         List<Triangle> result = new ArrayList<>();
         for (Triangle triangle : this.triangles) {
-            result.addAll(Triangle.subdivideEquilateral(triangle, targetEdgeLen));
+            result.addAll(TriangleTessellator.subdivideEquilateral(triangle, targetEdgeLen));
         }
         this.triangles = result;
     }

@@ -142,6 +142,71 @@ public class SphericalTransform {
             return particleGraphics;
         } else if (graphic instanceof VolumeGraphic) {
             return graphic;
+        } else if (graphic instanceof PolygonGraphicCollection) {
+            PolygonGraphicCollection polygonGraphic = (PolygonGraphicCollection) graphic;
+            polygonGraphic.updateLineVertex();
+            if (polygonGraphic.isDrawOutline()) {
+                float[] lineVertex = polygonGraphic.getLineVertex();
+                Vector3f vector3f;
+                for (int i = 0; i < lineVertex.length; i+=3) {
+                    vector3f = transform(lineVertex[i], lineVertex[i+1], lineVertex[i+2]);
+                    lineVertex[i] = vector3f.x;
+                    lineVertex[i+1] = vector3f.y;
+                    lineVertex[i+2] = vector3f.z;
+                }
+                polygonGraphic.setLineVertex(lineVertex);
+            }
+            if (polygonGraphic.isFill()) {
+                polygonGraphic.tessellate(true);
+                float[] vertexPosition = polygonGraphic.getVertexPosition();
+                Vector3f vector3f;
+                for (int i = 0; i < vertexPosition.length; i+=3) {
+                    vector3f = transform(vertexPosition[i], vertexPosition[i+1], vertexPosition[i+2]);
+                    vertexPosition[i] = vector3f.x;
+                    vertexPosition[i+1] = vector3f.y;
+                    vertexPosition[i+2] = vector3f.z;
+                }
+                polygonGraphic.setVertexPosition(vertexPosition);
+            }
+            /*boolean isTess = pb.isDrawFill();
+            for (int i = 0; i < polygonGraphic.getNumGraphics(); i++) {
+                PolygonGraphic gg = (PolygonGraphic) polygonGraphic.getGraphicN(i);
+
+                Geometry shape = gg.getGeometry();
+                if (isTess) {
+                    MultiPolygon polygonZShape = (MultiPolygon) shape;
+                    List<Polygon> polygonZS = polygonZShape.getPolygons();
+                    for (int j = 0; j < polygonZS.size(); j++) {
+                        Polygon polygonZ = polygonZS.get(j);
+                        TessPolygon tessPolygon = new TessPolygon(polygonZ);
+                        tessPolygon.subdivideEquilateral(3.0f);
+                        for (Triangle triangle : tessPolygon.getTriangles()) {
+                            List<Vector3f> points = triangle.getPoints();
+                            points.replaceAll(SphericalTransform::transform);
+                            triangle.setPoints(points);
+                        }
+                        List<Coordinate> outLine = tessPolygon.getOutLine();
+                        outLine.replaceAll(SphericalTransform::transform);
+                        for (int k = 0; k < tessPolygon.getNumInteriorRing(); k++) {
+                            List<Coordinate> holeLine = tessPolygon.getHoleLine(k);
+                            holeLine.replaceAll(SphericalTransform::transform);
+                        }
+                        polygonZS.set(j, tessPolygon);
+                    }
+                    polygonZShape.setPolygons(polygonZS);
+                } else {
+                    List<Coordinate> points = shape.getCoordinates();
+                    points.replaceAll(SphericalTransform::transform);
+                    if (shape instanceof MultiPolygon)
+                        ((MultiPolygon) shape).setPoints_keep(points);
+                    else
+                        shape.setCoordinates(points);
+                }
+                gg.setGeometry(shape);
+                polygonGraphic.setGraphicN(i, gg);
+            }*/
+            polygonGraphic.updateExtent();
+            return polygonGraphic;
         } else {
             if (graphic instanceof GraphicCollection) {
                 GraphicCollection graphics = (GraphicCollection) graphic;

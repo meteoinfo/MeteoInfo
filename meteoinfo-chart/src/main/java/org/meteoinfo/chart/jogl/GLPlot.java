@@ -2700,7 +2700,27 @@ public class GLPlot extends Plot {
             }
         }
 
-        if (graphic instanceof ModelGraphic) {
+        if (graphic instanceof PolygonGraphicCollection) {
+            PolygonGraphicCollection polygonalGraphic = (PolygonGraphicCollection) graphic;
+            if (!this.renderMap.containsKey(graphic)) {
+                if (polygonalGraphic.getLineVertex() == null) {
+                    polygonalGraphic.updateLineVertex();
+                }
+                if (polygonalGraphic.isFill()) {
+                    if (polygonalGraphic.isTessellateDirty()) {
+                        polygonalGraphic.tessellate();
+                    }
+                }
+                renderMap.put(graphic, new PolygonRender(gl, polygonalGraphic));
+            }
+            PolygonRender polygonRender = (PolygonRender) renderMap.get(graphic);
+            polygonRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+            polygonRender.setOrthographic(this.orthographic);
+            polygonRender.setLighting(this.lighting);
+            polygonRender.updateMatrix();
+            polygonRender.setRotateModelView(this.modelViewMatrixR);
+            polygonRender.draw();
+        } else if (graphic instanceof ModelGraphic) {
             if (!this.renderMap.containsKey(graphic)) {
                 renderMap.put(graphic, new ModelRender(gl, (ModelGraphic) graphic));
             }
@@ -2807,9 +2827,9 @@ public class GLPlot extends Plot {
                         }
                         break;
                     /*case POLYGON:
-                    case MUlTI_POLYGON:
+                    case MULTI_POLYGON:
                         if (!this.renderMap.containsKey(graphic)) {
-                            renderMap.put(graphic, new PolygonRender(gl, (PolygonGraphic) graphic));
+                            renderMap.put(graphic, new PolygonRender(gl, (PolygonGraphicCollection) graphic));
                         }
                         PolygonRender polygonRender = (PolygonRender) renderMap.get(graphic);
                         polygonRender.setTransform(this.transform, this.alwaysUpdateBuffers);

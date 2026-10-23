@@ -165,6 +165,10 @@ public class Polygon extends Geometry {
         holes.set(idx, new LinearRing(holeLine));
     }
 
+    /**
+     * Get exterior ring (shell)
+     * @return Exterior ring
+     */
     public LinearRing getExteriorRing() {
         return shell;
     }

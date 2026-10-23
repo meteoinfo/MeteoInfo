@@ -300,6 +300,14 @@ package org.meteoinfo.chart.graphic;
      }
 
      /**
+      * Get number points
+      * @return Number points
+      */
+     public int getNumPoints() {
+         return geometry.getNumPoints();
+     }
+
+     /**
       * Get Graphic by index
       * @param idx Index
       * @return Graphic

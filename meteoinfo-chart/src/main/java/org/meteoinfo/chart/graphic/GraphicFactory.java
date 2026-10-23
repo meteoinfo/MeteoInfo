@@ -5594,7 +5594,7 @@ public class GraphicFactory {
      * @param isSmooth Is smooth or not
      * @return Contour polygons
      */
-    public static GraphicCollection createContourPolygons(Array xa, Array ya, Array va, double offset,
+    public static PolygonGraphicCollection createContourPolygons(Array xa, Array ya, Array va, double offset,
                                                           String zdir, LegendScheme ls, boolean isSmooth) {
         ls = ls.convertTo(GeometryType.POLYGON);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
@@ -5628,8 +5628,8 @@ public class GraphicFactory {
         List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(data, contourLines, borders, cValues);
 
         double v;
-        ColorBreak cbb;
-        GraphicCollection graphics = new GraphicCollection();
+        PolygonBreak cbb;
+        PolygonGraphicCollection graphics = new PolygonGraphicCollection();
         graphics.setFixZ(true);
         graphics.setZValue(offset);
         zdir = zdir.toLowerCase();
@@ -5672,10 +5672,9 @@ public class GraphicFactory {
             if (!GeoComputation.isClockwise(pList)) {
                 Collections.reverse(pList);
             }
-            MultiPolygon aPolygonShape = new MultiPolygon();
-            aPolygonShape.setCoordinates(pList);
-            aPolygonShape.setExtent(GeometryUtil.getPointsExtent(pList));
-            aPolygonShape.lowValue = v;
+            MultiPolygon multiPolygon = new MultiPolygon();
+            multiPolygon.setCoordinates(pList);
+            multiPolygon.lowValue = v;
             if (poly.HasHoles()) {
                 switch (zdir) {
                     case "x":
@@ -5688,7 +5687,7 @@ public class GraphicFactory {
                                 aPoint.x = offset;
                                 pList.add(aPoint);
                             }
-                            aPolygonShape.addHole(pList, 0);
+                            multiPolygon.addHole(pList, 0);
                         }
                         break;
                     case "y":
@@ -5701,7 +5700,7 @@ public class GraphicFactory {
                                 aPoint.y = offset;
                                 pList.add(aPoint);
                             }
-                            aPolygonShape.addHole(pList, 0);
+                            multiPolygon.addHole(pList, 0);
                         }
                         break;
                     case "z":
@@ -5714,7 +5713,7 @@ public class GraphicFactory {
                                 aPoint.z = offset;
                                 pList.add(aPoint);
                             }
-                            aPolygonShape.addHole(pList, 0);
+                            multiPolygon.addHole(pList, 0);
                         }
                         break;
                 }
@@ -5725,22 +5724,22 @@ public class GraphicFactory {
             }
             //int valueIdx = findIndex(cValues, v);
             if (valueIdx == cValues.length - 1) {
-                aPolygonShape.highValue = maxData;
+                multiPolygon.highValue = maxData;
             } else {
-                aPolygonShape.highValue = cValues[valueIdx + 1];
+                multiPolygon.highValue = cValues[valueIdx + 1];
             }
             if (!poly.IsHighCenter && poly.HighValue == poly.LowValue) {
-                aPolygonShape.highValue = v;
+                multiPolygon.highValue = v;
                 if (valueIdx == 0) {
-                    aPolygonShape.lowValue = minData;
+                    multiPolygon.lowValue = minData;
                 } else {
-                    aPolygonShape.lowValue = cValues[valueIdx - 1];
+                    multiPolygon.lowValue = cValues[valueIdx - 1];
                 }
             }
 
-            v = aPolygonShape.lowValue;
-            cbb = ls.findLegendBreak(v);
-            graphics.add(new Graphic(aPolygonShape, cbb));
+            v = multiPolygon.lowValue;
+            cbb = (PolygonBreak) ls.findLegendBreak(v);
+            graphics.add(new PolygonGraphic(multiPolygon, cbb));
         }
         graphics.setSingleLegend(false);
         graphics.setLegendScheme(ls);
@@ -5761,7 +5760,7 @@ public class GraphicFactory {
      * @param sePoint Start and end points [xstart, ystart, xend, yend]
      * @return Contour polygons
      */
-    public static GraphicCollection createContourPolygons(Array xa, Array ya, Array va, double offset,
+    public static PolygonGraphicCollection createContourPolygons(Array xa, Array ya, Array va, double offset,
                                                           String zdir, LegendScheme ls, boolean isSmooth, List<Number> sePoint) {
         ls = ls.convertTo(GeometryType.POLYGON);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
@@ -5795,8 +5794,8 @@ public class GraphicFactory {
         List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(data, contourLines, borders, cValues);
 
         double v;
-        ColorBreak cbb;
-        GraphicCollection graphics = new GraphicCollection();
+        PolygonBreak cbb;
+        PolygonGraphicCollection graphics = new PolygonGraphicCollection();
         graphics.setFixZ(true);
         graphics.setZValue(offset);
         graphics.setSEPoint(sePoint);
@@ -5923,8 +5922,8 @@ public class GraphicFactory {
             }
 
             v = aPolygonShape.lowValue;
-            cbb = ls.findLegendBreak(v);
-            graphics.add(new Graphic(aPolygonShape, cbb));
+            cbb = (PolygonBreak) ls.findLegendBreak(v);
+            graphics.add(new PolygonGraphic(aPolygonShape, cbb));
         }
         graphics.setSingleLegend(false);
         graphics.setLegendScheme(ls);

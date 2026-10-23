@@ -2,30 +2,28 @@ package org.meteoinfo.chart.graphic;
 
 import org.joml.Vector3f;
 import org.meteoinfo.chart.jogl.Transform;
+import org.meteoinfo.chart.jogl.tessellator.TriangleTessellator;
 import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.MultiPolygon;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.IndexIterator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.*;
 
-public class PolygonGraphic extends Graphic {
+public class PolygonGraphic extends Graphic implements PolygonalGraphic {
 
     private Array xData;
     private Array yData;
     private Array zData;
     private Array cData;
-    private LegendScheme legendScheme;
     protected float[] vertexPosition;
-    protected float[] vertexValue;
     protected float[] vertexColor; 
     protected float[] vertexNormal;
+    protected int[] vertexIndices;
     protected boolean faceInterp;
     protected boolean edgeInterp;
+    protected boolean tessellateDirty = true;
 
     /**
      * Constructor
@@ -137,7 +135,6 @@ public class PolygonGraphic extends Graphic {
     }
 
     protected void updateShapeLegend(LegendScheme legendScheme) {
-        this.legendScheme = legendScheme;
         List<Coordinate> points = new ArrayList<>();
         IndexIterator xIter = this.xData.getIndexIterator();
         IndexIterator yIter = this.yData.getIndexIterator();
@@ -258,9 +255,19 @@ public class PolygonGraphic extends Graphic {
     }
 
     /**
+     * Get if tessellate dirty
+     * @return Tessellate dirty or not
+     */
+    @Override
+    public boolean isTessellateDirty() {
+        return this.tessellateDirty;
+    }
+
+    /**
      * Get vertex position
      * @return Vertex position
      */
+    @Override
     public float[] getVertexPosition() {
         return vertexPosition;
     }
@@ -283,25 +290,10 @@ public class PolygonGraphic extends Graphic {
     }
 
     /**
-     * Get vertex values
-     * @return Vertex values
-     */
-    public float[] getVertexValue() {
-        return this.vertexValue;
-    }
-
-    /**
-     * Set vertex values
-     * @param value Vertex values
-     */
-    public void setVertexValue(float[] value) {
-        this.vertexValue = value;
-    }
-
-    /**
      * Get vertex color data
      * @return Vertex color data
      */
+    @Override
     public float[] getVertexColor() {
         return vertexColor;
     }
@@ -318,6 +310,7 @@ public class PolygonGraphic extends Graphic {
      * Get vertex normal
      * @return Vertex normal
      */
+    @Override
     public float[] getVertexNormal() {
         return vertexNormal;
     }
@@ -328,6 +321,15 @@ public class PolygonGraphic extends Graphic {
      */
     public void setVertexNormal(float[] value) {
         this.vertexNormal = value;
+    }
+
+    /**
+     * Get vertex indices
+     * @return Vertex indices
+     */
+    @Override
+    public int[] getVertexIndices() {
+        return this.vertexIndices;
     }
 
     /**
@@ -366,6 +368,7 @@ public class PolygonGraphic extends Graphic {
      * Get vertex number
      * @return Vertex number
      */
+    @Override
     public int getVertexNumber() {
         return vertexPosition.length / 3;
     }
@@ -375,7 +378,7 @@ public class PolygonGraphic extends Graphic {
      * @return Face number
      */
     public int getFaceNumber() {
-        return getVertexNumber() / 3;
+        return this.vertexIndices.length / 3;
     }
 
     /**
@@ -429,7 +432,7 @@ public class PolygonGraphic extends Graphic {
         int n = getFaceNumber();
         List<Triangle> triangles = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            triangles.add(getTriangle(i));
+            triangles.add(getTriangle(vData, i));
         }
 
         return triangles;
@@ -440,7 +443,13 @@ public class PolygonGraphic extends Graphic {
      * @return All triangles
      */
     public List<Triangle> getTriangles() {
-        return getTriangles(this.vertexPosition);
+        int n = getFaceNumber();
+        List<Triangle> triangles = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            triangles.add(getTriangle(i));
+        }
+
+        return triangles;
     }
 
     /**
@@ -478,6 +487,68 @@ public class PolygonGraphic extends Graphic {
             vertexNormal[i * 3] = normal.x;
             vertexNormal[i * 3 + 1] = normal.y;
             vertexNormal[i * 3 + 2] = normal.z;
+        }
+    }
+
+    public Object[] getVertices(List<Triangle> triangles) {
+        LinkedHashMap<Vector3f, Integer> map = new LinkedHashMap<Vector3f, Integer>();
+        int n = triangles.size();
+        int[] vertexIndices = new int[n * 3];
+        Vector3f vector3f;
+        int idx = 0, vertexIdx = 0, index;
+        List<Integer> idxList = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            Triangle triangle = triangles.get(i);
+            for (int j = 0; j < 3; j++) {
+                vector3f = new Vector3f(triangle.getPoint(j));
+                if (map.containsKey(vector3f)) {
+                    index = map.get(vector3f);
+                    vertexIndices[vertexIdx] = index;
+                } else {
+                    vertexIndices[vertexIdx] = idx;
+                    map.put(vector3f, idx++);
+                }
+
+                vertexIdx += 1;
+            }
+        }
+
+        float[] vertexPosition = new float[map.size() * 3];
+        idx = 0;
+        for (Map.Entry<Vector3f, Integer> entry : map.entrySet()) {
+            vector3f = entry.getKey();
+            vertexPosition[idx++] = vector3f.x;
+            vertexPosition[idx++] = vector3f.y;
+            vertexPosition[idx++] = vector3f.z;
+        }
+
+        return new Object[]{vertexPosition, vertexIndices};
+    }
+
+    /**
+     * Polygon graphic tesselate to create vertext related float arrays
+     */
+    @Override
+    public void tessellate() {
+        List<Triangle> triangles = TriangleTessellator.tessellate((MultiPolygon) this.geometry);
+        Object[] r = getVertices(triangles);
+        this.vertexPosition = (float[]) r[0];
+        this.vertexIndices = (int[]) r[1];
+
+        updateVertexColor();
+
+        this.tessellateDirty = false;
+    }
+
+    /**
+     * Update vertex color data
+     */
+    public void updateVertexColor() {
+        int vn = getVertexNumber();
+        vertexColor = new float[vn * 4];
+        float[] color = this.legendBreak.getColor().getRGBComponents(null);
+        for (int i = 0; i < vn; i++) {
+            System.arraycopy(color, 0, vertexColor, i * 4, 4);
         }
     }
 }

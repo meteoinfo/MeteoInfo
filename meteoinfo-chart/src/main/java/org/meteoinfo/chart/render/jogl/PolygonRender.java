@@ -7,13 +7,21 @@ import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.meteoinfo.chart.graphic.PolygonGraphic;
+import org.meteoinfo.chart.graphic.PolygonGraphicCollection;
+import org.meteoinfo.chart.graphic.PolygonalGraphic;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
+import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.LinearRing;
+import org.meteoinfo.geometry.MultiPolygon;
+import org.meteoinfo.geometry.Polygon;
 import org.meteoinfo.geometry.legend.PolygonBreak;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Pure Cartesian polygon renderer with VBO caching.
@@ -22,13 +30,16 @@ import java.nio.IntBuffer;
  */
 public class PolygonRender extends JOGLGraphicRender {
 
-    private PolygonGraphic polygonGraphic;
+    private PolygonGraphicCollection polygonGraphic;
     private IntBuffer vbo;
     private Program program;
     private float[] vertexPosition;
+    private float[] lineVertex;
+    private List<Integer> linePointNumbers;
     private int sizePosition;
     private int sizeNormal;
     private int sizeColor;
+    private int sizeLineVertex;
 
     /**
      * Constructor
@@ -55,37 +66,54 @@ public class PolygonRender extends JOGLGraphicRender {
      * @param gl The opengl pipeline
      * @param polygonGraphic The PolygonGraphic
      */
-    public PolygonRender(GL2 gl, PolygonGraphic polygonGraphic) {
+    public PolygonRender(GL2 gl, PolygonGraphicCollection polygonGraphic) {
         this(gl);
 
         this.polygonGraphic = polygonGraphic;
+        this.lineVertex = polygonGraphic.getLineVertex();
+        this.linePointNumbers = polygonGraphic.getLinePointNumbers();
         this.setBufferData();
     }
 
     private void initVertexBuffer() {
-        vbo = GLBuffers.newDirectIntBuffer(1);
+        vbo = GLBuffers.newDirectIntBuffer(2);
     }
 
     private void setBufferData() {
-        if (vertexPosition == null) {
-            vertexPosition = polygonGraphic.getVertexPosition();
-        }
-        FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
-        if (polygonGraphic.getVertexNormal() == null) {
-            polygonGraphic.calculateNormalVectors(vertexPosition);
-        }
-        FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(polygonGraphic.getVertexNormal());
-        FloatBuffer colorBuffer = GLBuffers.newDirectFloatBuffer(polygonGraphic.getVertexColor());
-        sizePosition = vertexBuffer.capacity() * Float.BYTES;
-        sizeNormal = normalBuffer.capacity() * Float.BYTES;
-        sizeColor = colorBuffer.capacity() * Float.BYTES;
+        FloatBuffer lineBuffer = GLBuffers.newDirectFloatBuffer(lineVertex);
+        sizeLineVertex = lineBuffer.capacity() * Float.BYTES;
+        if (polygonGraphic.isFill()) {
+            if (vertexPosition == null) {
+                vertexPosition = polygonGraphic.getVertexPosition();
+            }
+            FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
+            if (polygonGraphic.getVertexNormal() == null) {
+                polygonGraphic.calculateNormalVectors(vertexPosition);
+            }
+            FloatBuffer normalBuffer = GLBuffers.newDirectFloatBuffer(polygonGraphic.getVertexNormal());
+            FloatBuffer colorBuffer = GLBuffers.newDirectFloatBuffer(polygonGraphic.getVertexColor());
+            sizePosition = vertexBuffer.capacity() * Float.BYTES;
+            sizeNormal = normalBuffer.capacity() * Float.BYTES;
+            sizeColor = colorBuffer.capacity() * Float.BYTES;
 
-        gl.glGenBuffers(2, vbo);
-        gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
-        gl.glBufferData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal + sizeColor, null, GL.GL_STATIC_DRAW);
-        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, sizePosition, vertexBuffer);
-        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition, sizeNormal, normalBuffer);
-        gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal, sizeColor, colorBuffer);
+            gl.glGenBuffers(2, vbo);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal + sizeColor + sizeLineVertex, null, GL.GL_STATIC_DRAW);
+            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, sizePosition, vertexBuffer);
+            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition, sizeNormal, normalBuffer);
+            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal, sizeColor, colorBuffer);
+            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, sizePosition + sizeNormal + sizeColor, sizeLineVertex, lineBuffer);
+
+            IntBuffer indexBuffer = GLBuffers.newDirectIntBuffer(polygonGraphic.getVertexIndices());
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vbo.get(1));
+            gl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, indexBuffer.capacity() * Integer.BYTES, indexBuffer, GL.GL_STATIC_DRAW);
+            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+        } else {
+            gl.glGenBuffers(1, vbo);
+            gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
+            gl.glBufferData(GL.GL_ARRAY_BUFFER, sizeLineVertex, null, GL.GL_STATIC_DRAW);
+            gl.glBufferSubData(GL.GL_ARRAY_BUFFER, 0, sizeLineVertex, lineBuffer);
+        }
         gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
     }
 
@@ -181,37 +209,47 @@ public class PolygonRender extends JOGLGraphicRender {
             gl.glUseProgram(0);
         } else {
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
-            gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vbo.get(1));
+            if (this.polygonGraphic.isFill()) {
+                gl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, vbo.get(1));
+            }
 
-            // enable vertex arrays
-            gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
-            gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-            gl.glNormalPointer(GL.GL_FLOAT, 0, sizePosition);
-            gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
-            gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
-            gl.glColorPointer(4, GL.GL_FLOAT, 0, sizePosition + sizeNormal);
+            if (polygonGraphic.isFill()) {
+                // enable vertex arrays
+                gl.glEnableClientState(GL2.GL_NORMAL_ARRAY);
+                gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+                gl.glNormalPointer(GL.GL_FLOAT, 0, sizePosition);
+                gl.glVertexPointer(3, GL.GL_FLOAT, 0, 0);
+                gl.glEnableClientState(GL2.GL_COLOR_ARRAY);
+                gl.glColorPointer(4, GL.GL_FLOAT, 0, sizePosition + sizeNormal);
 
-            PolygonBreak pb = (PolygonBreak) polygonGraphic.getLegendBreak();
-            if (pb.isDrawFill()) {
                 gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
                 gl.glPolygonOffset(1.0f, 1.0f);
                 if (polygonGraphic.isFaceInterp()) {
-                    gl.glDrawArrays(GL2.GL_TRIANGLES, 0, polygonGraphic.getVertexNumber());
+                    gl.glDrawElements(GL2.GL_TRIANGLES, polygonGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
                 } else {
                     gl.glShadeModel(GL2.GL_FLAT);
-                    gl.glDrawArrays(GL2.GL_TRIANGLES, 0, polygonGraphic.getVertexNumber());
+                    gl.glDrawElements(GL2.GL_TRIANGLES, polygonGraphic.getVertexIndices().length, GL.GL_UNSIGNED_INT, 0);
                     gl.glShadeModel(GL2.GL_SMOOTH);
                 }
             }
-            if (pb.isDrawOutline()) {
+            if (polygonGraphic.isDrawOutline()) {
+                gl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
+                int offset = polygonGraphic.isFill() ? sizePosition + sizeNormal + sizeColor : 0;
+                gl.glVertexPointer(3, GL.GL_FLOAT, 0, offset);
                 boolean lightEnabled = this.lighting.isEnable();
                 if (lightEnabled) {
                     this.lighting.stop(gl);
                 }
+                PolygonBreak pb = (PolygonBreak) polygonGraphic.getLegendBreak();
                 gl.glLineWidth(pb.getOutlineSize() * this.dpiScale);
-                gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_LINE);
-                gl.glDrawArrays(GL.GL_TRIANGLES, 0, polygonGraphic.getVertexNumber());
-                gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2.GL_FILL);
+                gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
+                float[] rgba = pb.getOutlineColor().getRGBComponents(null);
+                gl.glColor4fv(rgba, 0);
+                int sIdx = 0;
+                for (int np : linePointNumbers) {
+                    gl.glDrawArrays(GL.GL_LINE_STRIP, sIdx, np);
+                    sIdx += np;
+                }
                 if (lightEnabled) {
                     this.lighting.start(gl);
                 }

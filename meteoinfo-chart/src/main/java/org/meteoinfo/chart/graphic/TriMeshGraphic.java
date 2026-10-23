@@ -77,9 +77,9 @@ public class TriMeshGraphic extends MeshGraphic {
     public void setTriangles(List<Triangle> triangles) {
         LinkedHashMap<Vector3f, Integer> map = new LinkedHashMap<Vector3f, Integer>();
         int n = triangles.size();
-        this.vertexIndices = new int[n];
+        this.vertexIndices = new int[n * 3];
         Vector3f vector3f;
-        int idx = 0, vertexIdx = 0, triangleIdx = 0, index, ii;
+        int idx = 0, vertexIdx = 0, index;
         List<Integer> idxList = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             Triangle triangle = triangles.get(i);
@@ -95,7 +95,6 @@ public class TriMeshGraphic extends MeshGraphic {
 
                 vertexIdx += 1;
             }
-            triangleIdx += 1;
         }
 
         this.vertexPosition = new float[map.size() * 3];
@@ -383,7 +382,7 @@ public class TriMeshGraphic extends MeshGraphic {
         int n = getFaceNumber();
         List<Triangle> triangles = new ArrayList<>();
         for (int i = 0; i < n; i++) {
-            triangles.add(getTriangle(i));
+            triangles.add(getTriangle(vData, i));
         }
 
         return triangles;

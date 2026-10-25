@@ -18,6 +18,9 @@ public class LinearRing extends LineString {
      */
     public LinearRing(List<Coordinate> coordinates) {
         super(coordinates);
+        if (!isClosed()) {
+            this.coordinates.add(this.coordinates.get(0));
+        }
     }
 
     private void validateConstruction() {

@@ -37,6 +37,12 @@ public class VolumeGraphic extends GraphicCollection {
     private RayCastingType rayCastingType = RayCastingType.MAX_VALUE;
     private float brightness = 1.0f;
 
+    // Geographic extent (lon/lat/alt) of the volume, used when the volume is drawn
+    // on the earth surface (EarthGLPlot). The "extent" itself is kept as an ECEF
+    // bounding box so the scene transform / draw extent stays in cartesian space.
+    private Extent geoExtent;
+    private boolean spherical = false;
+
     boolean hasChanges = true;
 
     /**
@@ -464,6 +470,38 @@ public class VolumeGraphic extends GraphicCollection {
 
     public float[] getAabbMax() {
         return this.aabbMax;
+    }
+
+    /**
+     * Get geographic extent - longitude / latitude / altitude
+     * @return Geographic extent, may be null
+     */
+    public Extent getGeoExtent() {
+        return this.geoExtent;
+    }
+
+    /**
+     * Set geographic extent - longitude / latitude / altitude
+     * @param value Geographic extent
+     */
+    public void setGeoExtent(Extent value) {
+        this.geoExtent = value;
+    }
+
+    /**
+     * Whether the volume is drawn as a spherical shell on the earth surface
+     * @return Spherical flag
+     */
+    public boolean isSpherical() {
+        return this.spherical;
+    }
+
+    /**
+     * Set the spherical flag - the volume will be ray-cast against an earth shell
+     * @param value Spherical flag
+     */
+    public void setSpherical(boolean value) {
+        this.spherical = value;
     }
 
     /**

@@ -375,7 +375,12 @@ public class Coordinate implements Comparable<Coordinate>,  Cloneable{
         if (!(other instanceof Coordinate)) {
             return false;
         }
-        return equals2D((Coordinate) other);
+
+        if (is2D() && ((Coordinate) other).is2D()) {
+            return equals2D((Coordinate) other);
+        } else {
+            return equals3D((Coordinate) other);
+        }
     }
 
     /**

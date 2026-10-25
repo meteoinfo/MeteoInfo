@@ -28,6 +28,7 @@ import warnings
 import plotutil
 import colors
 from ._axes3d import Axes3D
+from .graphic import PolyCollection
 from mipylib.numeric.core import NDArray
 from mipylib.dataset import DimArray
 import mipylib.numeric as np
@@ -495,6 +496,43 @@ class Axes3DGL(Axes3D):
         self.stale = True
 
     def fill(self, x, y, z, color=None, **kwargs):
+        """
+        Plot filled polygons.
+
+        - To plot one region, specify x and y as vectors.
+        - To plot multiple regions, specify x and y as matrices where each column corresponds to a polygon.
+
+        :param x: (*array_like*) X coordinates for each vertex.
+        :param y: (*array_like*) Y coordinates for each vertex.
+        :param z: (*array_like*) Z coordinates for each vertex.
+        :param color: (*Color*) Fill color.
+
+        :return: Filled polygons
+        """
+        if color is not None:
+            if isinstance(color, (list, tuple)) and (not isinstance(color[0], (int, float))):
+                kwargs['colors'] = color
+            else:
+                kwargs['facecolor'] = color
+
+        x = np.asarray(x)
+        y = np.asarray(y)
+        z = np.asarray(z)
+        if x.ndim == 1 and x.contains_nan():
+            x = np.split_array_by_nan(x)
+        if y.ndim == 1 and y.contains_nan():
+            y = np.split_array_by_nan(y)
+        if z.ndim == 1 and z.contains_nan():
+            z = np.split_array_by_nan(z)
+
+        graphics = PolyCollection(None, xyz_data=[x, y, z], **kwargs)
+
+        zorder = kwargs.pop('zorder', None)
+        self.add_graphic(graphics, zorder=zorder)
+
+        return graphics
+
+    def fill_back(self, x, y, z, color=None, **kwargs):
         """
         Create filled 3D patches.
 
@@ -2122,6 +2160,11 @@ class MapAxes3D(Axes3DGL):
 class EarthAxes3D(Axes3DGL):
     """
     Earth spherical 3D axes.
+
+    Graphics are given in longitude / latitude / altitude coordinates and are drawn on
+    the earth surface. `volumeplot` draws a volume above the earth surface: the volume
+    is ray cast against the spherical shell between the minimum and maximum altitude of
+    the z coordinates, so it follows the curvature of the earth.
     """
 
     def __init__(self, *args, **kwargs):
@@ -2165,6 +2208,33 @@ class EarthAxes3D(Axes3DGL):
             image = os.path.join(migl.get_map_folder(), image)
         if os.path.exists(image):
             self._axes.earthImage(image)
+
+    def volumeplot(self, *args, **kwargs):
+        """
+        Creates a three-dimensional volume plot above the earth surface.
+
+        The z coordinate is the altitude above the earth surface in km (the same length
+        unit as the earth radius), and the volume is ray cast against the spherical
+        shell between z.min() and z.max(), so the drawn volume follows the curvature of
+        the earth.
+
+        :param x: (*array_like*) Optional. Longitude coordinate array.
+        :param y: (*array_like*) Optional. Latitude coordinate array.
+        :param z: (*array_like*) Optional. Altitude coordinate array in km.
+        :param data: (*array_like*) 3D data array.
+        :param cmap: (*string*) Color map string.
+        :param vmin: (*float*) Minimum value for volume plotting.
+        :param vmax: (*float*) Maximum value for volume plotting.
+        :param ray_casting: (*str*) Ray casting algorithm ['basic' | 'max_value' | 'specular'].
+            Default is 'max_value'.
+        :param brightness: (*float*) Volume brightness. Default is 1.
+        :param opacity_nodes: (*list of float*) Opacity nodes. Default is None.
+        :param opacity_levels: (*list of float*) Opacity levels. Default is [0., 1.].
+
+        :returns: Volumeplot graphic
+        """
+        return super(EarthAxes3D, self).volumeplot(*args, **kwargs)
+
 
     def lonlat(self, lon_delta=30, lat_delta=30, npoints=50, offset=10, **kwargs):
         """

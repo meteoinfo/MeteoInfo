@@ -10,18 +10,14 @@ import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.geo.ProjectUtil;
 import org.meteoinfo.chart.graphic.GraphicFactory;
 import org.meteoinfo.chart.graphic.QuadMeshGraphic;
-import org.meteoinfo.chart.graphic.Triangle;
-import org.meteoinfo.chart.jogl.tessellator.Primitive;
-import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
+import org.meteoinfo.chart.graphic.VolumeGraphic;
+import org.meteoinfo.chart.render.jogl.EarthVolumeRender;
 import org.meteoinfo.common.*;
 import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geometry.legend.LegendManage;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolygonBreak;
-import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.Polygon;
-import org.meteoinfo.geometry.MultiPolygon;
 import org.meteoinfo.geometry.GeometryType;
 import org.meteoinfo.image.ImageUtil;
 import org.meteoinfo.ndarray.Array;
@@ -35,9 +31,18 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.nio.FloatBuffer;
-import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 3D plot drawn on a spherical earth.
+ * <p>
+ * Graphics are added in geographic coordinates (longitude / latitude / altitude in km
+ * above the earth surface) and are converted to earth centred cartesian coordinates by
+ * {@link SphericalTransform}. A {@link VolumeGraphic} keeps its geographic extent and is
+ * ray cast against the spherical shell sector between its altitude bounds by
+ * {@link org.meteoinfo.chart.render.jogl.EarthVolumeRender}, so the volume follows the
+ * curvature of the earth instead of the axis aligned box used by a plain 3D plot.
+ */
 public class EarthGLPlot extends GLPlot {
     // <editor-fold desc="Variables">
     private float radius = 6371.f;
@@ -78,11 +83,20 @@ public class EarthGLPlot extends GLPlot {
     }
 
     /**
-     * Set earth radius
+     * Set earth radius. The spherical transform uses a static radius, so it is kept in
+     * sync here - the radius has to be set before graphics are added, afterwards the
+     * already transformed graphics would not match the earth surface any more.
+     *
      * @param value Earth radius
      */
     public void setRadius(float value) {
+        if (value <= 0 || this.radius == value) {
+            return;
+        }
         this.radius = value;
+        SphericalTransform.radius = value;
+        // The volume shell mesh and the surface textures depend on the radius
+        this.alwaysUpdateBuffers = true;
     }
 
     @Override
@@ -106,18 +120,21 @@ public class EarthGLPlot extends GLPlot {
      */
     @Override
     public void addGraphic(Graphic graphic) {
+        // dataExtent keeps the geographic meaning (lon/lat/alt) for the axis ticks,
+        // while the graphic collection extent is the transformed ECEF box for the scene scale.
         if (this.dataExtent == null) {
-            this.dataExtent = graphic.getExtent();
+            this.dataExtent = (Extent) graphic.getExtent().clone();
         } else {
             this.dataExtent = this.dataExtent.union(graphic.getExtent());
         }
         updateDataExtent();
 
-
         this.graphics.add(SphericalTransform.transform(graphic));
         Extent ex = this.graphics.getExtent();
         this.graphicExtent = ex;
         this.setDrawExtent((Extent) this.graphicExtent.clone());
+        // A volume renderer keeps its own GPU buffers / textures, refresh them
+        this.alwaysUpdateBuffers = true;
     }
 
     /**
@@ -129,7 +146,7 @@ public class EarthGLPlot extends GLPlot {
     @Override
     public void addGraphic(int index, Graphic graphic) {
         if (this.dataExtent == null) {
-            this.dataExtent = graphic.getExtent();
+            this.dataExtent = (Extent) graphic.getExtent().clone();
         } else {
             this.dataExtent = this.dataExtent.union(graphic.getExtent());
         }
@@ -139,6 +156,7 @@ public class EarthGLPlot extends GLPlot {
         Extent ex = this.graphics.getExtent();
         this.graphicExtent = ex;
         this.setDrawExtent((Extent) this.graphicExtent.clone());
+        this.alwaysUpdateBuffers = true;
     }
 
     /**
@@ -214,7 +232,8 @@ public class EarthGLPlot extends GLPlot {
         final GL2 gl = drawable.getGL().getGL2();
         gl.glLoadIdentity();
 
-        float[] rgba = this.background.getRGBComponents(null);
+        Color bg = this.background == null ? Color.white : this.background;
+        float[] rgba = bg.getRGBComponents(null);
         gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
 
@@ -522,73 +541,37 @@ public class EarthGLPlot extends GLPlot {
     }
 
     /**
-     * Spherical Linear Interpolation (Slerp) between two ECEF points.
-     * Operates entirely in Cartesian space using dot product and cross product.
+     * Draw graphics - the volume graphic is ray cast against the earth shell instead of
+     * the axis aligned box used by the plain 3D plot.
      *
-     * @param a Start ECEF vertex
-     * @param b End ECEF vertex
-     * @param t Interpolation parameter [0, 1]
-     * @return Interpolated point on the great-circle arc
+     * @param gl The GL2 object
+     * @param graphic The graphic
      */
-    private Coordinate sphericalLerp(Coordinate a, Coordinate b, double t) {
-        // Dot product to find the angle between vectors
-        double dot = a.x * b.x + a.y * b.y + a.z * b.z;
-        double rSq = this.radius * this.radius;
-        double cosOmega = Math.max(-1.0, Math.min(1.0, dot / rSq));
-        double omega = Math.acos(cosOmega);
-
-        double px, py, pz;
-        if (omega < 1e-10) {
-            // Nearly coincident: fall back to linear interpolation
-            px = a.x + t * (b.x - a.x);
-            py = a.y + t * (b.y - a.y);
-            pz = a.z + t * (b.z - a.z);
+    @Override
+    protected void drawGraphics(GL2 gl, Graphic graphic) {
+        if (graphic instanceof VolumeGraphic) {
+            VolumeGraphic volume = (VolumeGraphic) graphic;
+            if (!volume.isSpherical()) {
+                // Not transformed to the earth shell - draw as a normal 3D volume
+                super.drawGraphics(gl, graphic);
+                return;
+            }
+            try {
+                EarthVolumeRender render;
+                if (!this.renderMap.containsKey(graphic)) {
+                    renderMap.put(graphic, new EarthVolumeRender(gl, volume));
+                }
+                render = (EarthVolumeRender) renderMap.get(graphic);
+                render.setRadius(this.radius);
+                render.setTransform(this.transform, this.alwaysUpdateBuffers);
+                render.setOrthographic(this.orthographic);
+                render.updateMatrix();
+                render.draw();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
-            // Standard Slerp formula in ECEF space
-            double sinOmega = Math.sin(omega);
-            double wa = Math.sin((1.0 - t) * omega) / sinOmega;
-            double wb = Math.sin(t * omega) / sinOmega;
-            px = wa * a.x + wb * b.x;
-            py = wa * a.y + wb * b.y;
-            pz = wa * a.z + wb * b.z;
+            super.drawGraphics(gl, graphic);
         }
-
-        // Re-project onto exact sphere surface to prevent drift from floating-point errors
-        double len = Math.sqrt(px * px + py * py + pz * pz);
-        if (len > 1e-15) {
-            double scale = this.radius / len;
-            px *= scale;
-            py *= scale;
-            pz *= scale;
-        }
-
-        // Preserve altitude by linear interpolation of Z component
-        double z = a.z + t * (b.z - a.z);
-        return new Coordinate(px, py, pz);
     }
-
-    /**
-     * Computes angular distance (degrees) between two ECEF points.
-     * Uses the numerically stable atan2(|cross|, dot) formula instead of Haversine,
-     * avoiding all lat/lon conversions.
-     *
-     * @param a First ECEF vertex
-     * @param b Second ECEF vertex
-     * @return Angular distance in degrees
-     */
-    private double angularDistance(Coordinate a, Coordinate b) {
-        // Cross product magnitude = |a||b|sin(theta)
-        double cx = a.y * b.z - a.z * b.y;
-        double cy = a.z * b.x - a.x * b.z;
-        double cz = a.x * b.y - a.y * b.x;
-        double crossLen = Math.sqrt(cx * cx + cy * cy + cz * cz);
-
-        // Dot product = |a||b|cos(theta)
-        double dot = a.x * b.x + a.y * b.y + a.z * b.z;
-
-        // atan2(cross, dot) is numerically stable for all angles including 0 and 180
-        return Math.toDegrees(Math.atan2(crossLen, dot));
-    }
-
-    // </editor-fold>
 }

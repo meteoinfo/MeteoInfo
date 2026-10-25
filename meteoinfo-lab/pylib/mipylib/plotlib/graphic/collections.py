@@ -514,6 +514,9 @@ class PolyCollection(Collection, PolygonGraphicCollection):
                         else:
                             verts = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
                     else:
+                        if zdata.ndim == 1:
+                            zdata = zdata[:,np.newaxis]
+
                         if xdata.ndim == 1:
                             verts = [np.column_stack([xdata, ydata[:,i], zdata[:,i]]) for i in range(nline)]
                         else:

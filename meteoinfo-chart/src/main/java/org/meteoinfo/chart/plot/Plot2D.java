@@ -624,20 +624,30 @@ public class Plot2D extends AbstractPlot2D {
 
     void drawLine2D(Graphics2D g, LineGraphic line2D) {
         if (line2D.isCurve()) {
-            drawCurveline(g, (MultiLineString) line2D.getGeometry(), (PolylineBreak) line2D.getLegendBreak());
+            drawCurveline(g, (LineString) line2D.getGeometry(), (PolylineBreak) line2D.getLegendBreak());
         } else {
             BreakTypes breakType = line2D.getLegendBreak().getBreakType();
             switch (breakType) {
                 case POINT_BREAK:
-                    drawPolyline(g, (MultiLineString) line2D.getGeometry(), (PointBreak) line2D.getLegendBreak());
+                    drawPolyline(g, (LineString) line2D.getGeometry(), (PointBreak) line2D.getLegendBreak());
                     break;
                 case COLOR_BREAK_COLLECTION:
-                    drawPolyline(g, (MultiLineString) line2D.getGeometry(), (ColorBreakCollection) line2D.getLegendBreak());
+                    drawPolyline(g, (LineString) line2D.getGeometry(), (ColorBreakCollection) line2D.getLegendBreak());
                     break;
                 default:
-                    drawPolyline(g, (MultiLineString) line2D.getGeometry(), (PolylineBreak) line2D.getLegendBreak());
+                    drawPolyline(g, (LineString) line2D.getGeometry(), (PolylineBreak) line2D.getLegendBreak());
                     break;
             }
+        }
+    }
+
+    void drawPolyline(Graphics2D g, LineString lineString, PointBreak aPB) {
+        PointF p;
+        for (int i = 0; i < lineString.getCoordinates().size(); i++) {
+            Coordinate wPoint = lineString.getCoordinates().get(i);
+            Coordinate sp = this.transData.transform(wPoint);
+            p = sp.toPointF();
+            Draw.drawPoint(p, aPB, g);
         }
     }
 
@@ -666,6 +676,16 @@ public class Plot2D extends AbstractPlot2D {
         }
     }
 
+    void drawPolyline(Graphics2D g, LineString lineString, PolylineBreak aPLB) {
+        PointF[] points = new PointF[lineString.getCoordinates().size()];
+        for (int i = 0; i < lineString.getCoordinates().size(); i++) {
+            Coordinate wPoint = lineString.getCoordinates().get(i);
+            Coordinate p = this.transData.transform(wPoint);
+            points[i] = new PointF((float) p.x, (float) p.y);
+        }
+        Draw.drawPolyline(points, aPLB, g);
+    }
+
     void drawPolyline(Graphics2D g, MultiLineString aPLS, PolylineBreak aPLB) {
         for (LineString aline : aPLS.getPolylines()) {
             PointF[] points = new PointF[aline.getCoordinates().size()];
@@ -688,6 +708,20 @@ public class Plot2D extends AbstractPlot2D {
                 points[i] = new PointF((float) sXY[0], (float) sXY[1]);
             }
             Draw.drawPolyline(points, aPLB, g);
+        }
+    }
+
+    void drawPolyline(Graphics2D g, LineString lineString, ColorBreakCollection cpc) {
+        PointF[] points = new PointF[lineString.getCoordinates().size()];
+        for (int i = 0; i < lineString.getCoordinates().size(); i++) {
+            Coordinate wPoint = lineString.getCoordinates().get(i);
+            Coordinate sp =  this.transData.transform(wPoint);
+            points[i] = sp.toPointF();
+        }
+        if (cpc.get(0) instanceof StreamlineBreak) {
+            Draw.drawStreamline(points, cpc, g);
+        } else {
+            Draw.drawPolyline(points, cpc, g);
         }
     }
 
@@ -789,6 +823,16 @@ public class Plot2D extends AbstractPlot2D {
                 Draw.drawPolyline(ps, aPLB, g);
             }
         }
+    }
+
+    void drawCurveline(Graphics2D g, LineString lineString, PolylineBreak aPLB) {
+        PointF[] points = new PointF[lineString.getCoordinates().size()];
+        for (int i = 0; i < lineString.getNumPoints(); i++) {
+            Coordinate wPoint = lineString.getCoordinates().get(i);
+            Coordinate sp = this.transData.transform(wPoint);
+            points[i] = sp.toPointF();
+        }
+        Draw.drawCurveLine(points, aPLB, g);
     }
 
     void drawCurveline(Graphics2D g, MultiLineString aPLS, PolylineBreak aPLB) {

@@ -103,7 +103,7 @@ public class TriangleTessellator {
     }
 
     public static List<Triangle> tessellate(PolygonGraphic polygonGraphic) {
-        return tessellate((MultiPolygon) polygonGraphic.getGeometry());
+        return tessellate((Polygon) polygonGraphic.getGeometry());
     }
 
     /**

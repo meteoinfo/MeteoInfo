@@ -55,13 +55,36 @@ package org.meteoinfo.chart.graphic;
      /**
       * Constructor
       *
-      * @param shape a shape
+      * @param geometry a geometry
       * @param legend a legend
       */
-     public Graphic(Geometry shape, ColorBreak legend) {
-         this.geometry = shape;
+     public Graphic(Geometry geometry, ColorBreak legend) {
+         this.geometry = geometry;
          this.legendBreak = legend;
          updateResizeAbility();
+     }
+
+     /**
+      * Factory graphic
+      * @param geometry The geometry
+      * @param legend The legend
+      * @return
+      */
+     public static Graphic factory(Geometry geometry, ColorBreak legend) {
+         switch (geometry.getGeometryType()) {
+             case POLYGON:
+                 return new PolygonGraphic((Polygon) geometry, (PolygonBreak) legend);
+             case MULTI_POLYGON:
+                 return new MultiPolygonGraphic((MultiPolygon) geometry, (PolygonBreak) legend);
+             case LINESTRING:
+                 return new LineGraphic((LineString) geometry, (PolylineBreak) legend);
+             case MULTI_LINESTRING:
+                 return new MultiLineGraphic((MultiLineString) geometry, (PolylineBreak) legend);
+             case POINT:
+                 return new PointGraphic((Point) geometry, (PointBreak) legend);
+             default:
+                 return new Graphic(geometry, legend);
+         }
      }
      // </editor-fold>
      // <editor-fold desc="Get Set Methods">
@@ -254,6 +277,35 @@ package org.meteoinfo.chart.graphic;
       */
      public Extent getExtent() {
          return this.geometry.getExtent();
+     }
+
+     /**
+      * Whether this graphic is planar.  A planar graphic has no Z extent: the
+      * extent is either a 2-D extent (NaN Z) or all vertices share one Z value.
+      *
+      * @return {@code true} for a 2-D/planar graphic
+      */
+     public boolean is2D() {
+         if (geometry == null) {
+             return true;
+         }
+         Extent extent = getExtent();
+         if (extent == null) {
+             return true;
+         }
+         if (extent.is2D()) {
+             return true;
+         }
+         return Math.abs(extent.getZLength()) < 1.0e-12;
+     }
+
+     /**
+      * Whether this graphic is three dimensional.
+      *
+      * @return {@code true} for a non-planar graphic
+      */
+     public boolean is3D() {
+         return !is2D();
      }
 
      /**

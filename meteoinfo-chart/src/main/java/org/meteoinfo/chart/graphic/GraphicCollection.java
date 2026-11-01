@@ -77,6 +77,28 @@ public class GraphicCollection extends Graphic implements Iterator {
         sphere = false;
     }
 
+    /**
+     * Static factory method
+     * @param type Geometry type
+     * @return GraphicCollection instance
+     */
+    public static GraphicCollection factory(GeometryType type) {
+        switch (type) {
+            case POINT:
+                return new PointGraphicCollection();
+            case LINESTRING:
+                return new LineGraphicCollection();
+            case MULTI_LINESTRING:
+                return new MultiLineGraphicCollection();
+            case POLYGON:
+                return new PolygonGraphicCollection();
+            case MULTI_POLYGON:
+                return new MultiPolygonGraphicCollection();
+            default:
+                return new GraphicCollection();
+        }
+    }
+
     // </editor-fold>
     // <editor-fold desc="Get Set Methods">
     /**
@@ -263,6 +285,16 @@ public class GraphicCollection extends Graphic implements Iterator {
      * @return Boolean
      */
     public boolean is3D() {
+        Extent extent = getExtent();
+        if (extent != null && !extent.is2D()
+                && Math.abs(extent.getZLength()) > 1.0e-12) {
+            return true;
+        }
+        for (Graphic graphic : this.graphics) {
+            if (graphic.is3D()) {
+                return true;
+            }
+        }
         return false;
     }
 

@@ -56,6 +56,7 @@ public class EarthGLPlot extends GLPlot {
     public EarthGLPlot() {
         super();
 
+        this.auto2D = false;
         this.projInfo = KnownCoordinateSystems.geographic.world.WGS1984;
         //earthSurface(50);
         //addGraphic(this.surface);

@@ -5,7 +5,6 @@ import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.chart.jogl.tessellator.TriangleTessellator;
 import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.LinearRing;
-import org.meteoinfo.geometry.MultiPolygon;
 import org.meteoinfo.geometry.Polygon;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolygonBreak;
@@ -367,6 +366,7 @@ public class PolygonGraphicCollection extends GraphicCollection implements Polyg
 
     public void setLineVertex(float[] lineVertex) {
         this.lineVertex = lineVertex;
+
     }
 
     /**
@@ -508,32 +508,26 @@ public class PolygonGraphicCollection extends GraphicCollection implements Polyg
         int idx = 0;
         for (int i = 0; i < this.getNumGraphics(); i++) {
             PolygonGraphic pg = (PolygonGraphic) this.getGraphicN(i);
-            MultiPolygon mp = (MultiPolygon) pg.getGeometry();
-            for (org.meteoinfo.geometry.Polygon p : (Polygon[]) mp.getGeometries()) {
-                linePointNumbers.add(p.getExteriorRing().getNumPoints());
-                for (Coordinate c : p.getExteriorRing().getCoordinates()) {
+            Polygon p = (Polygon) pg.getGeometry();
+            linePointNumbers.add(p.getExteriorRing().getNumPoints());
+            for (Coordinate c : p.getExteriorRing().getCoordinates()) {
+                lineVertex[idx++] = (float) c.x;
+                lineVertex[idx++] = (float) c.y;
+                lineVertex[idx++] = (float) c.z;
+            }
+            for (int j = 0; j < p.getNumInteriorRing(); j++) {
+                LinearRing lr = (LinearRing) p.getInteriorRingN(j);
+                linePointNumbers.add(lr.getNumPoints());
+                for (Coordinate c : lr.getCoordinates()) {
                     lineVertex[idx++] = (float) c.x;
                     lineVertex[idx++] = (float) c.y;
                     lineVertex[idx++] = (float) c.z;
-                }
-                for (int j = 0; j < p.getNumInteriorRing(); j++) {
-                    LinearRing lr = (LinearRing) p.getInteriorRingN(j);
-                    linePointNumbers.add(lr.getNumPoints());
-                    for (Coordinate c : lr.getCoordinates()) {
-                        lineVertex[idx++] = (float) c.x;
-                        lineVertex[idx++] = (float) c.y;
-                        lineVertex[idx++] = (float) c.z;
-                    }
                 }
             }
         }
     }
 
     @Override
-    public void tessellate() {
-        tessellate(false);
-    }
-
     public void tessellate(boolean subdivide) {
         if (subdivide) {
             List<List<Triangle>> triangles = new ArrayList<>();

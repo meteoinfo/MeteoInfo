@@ -2333,7 +2333,9 @@ def array_split(ary, indices_or_sections, axis=0):
             si = idx
         key[axis] = slice(si, n, 1)
         r.append(ary[tuple(key)])
+
     return r
+
 
 def split(ary, indices_or_sections, axis=0):
     """
@@ -2352,7 +2354,9 @@ def split(ary, indices_or_sections, axis=0):
     if isinstance(indices_or_sections, int):
         if n % indices_or_sections:
             raise ValueError('array split does not result in an equal division')
+
     return array_split(ary, indices_or_sections, axis)
+
 
 def atleast_1d(*args):
     """

@@ -1,13 +1,13 @@
 # coding=utf-8
 
-from .numeric import asarray, array, isscalar, split, isnan
+from .numeric import asarray, array, isscalar, split, isnan, diff
 from ._ndarray import NDArray
 from .stride_tricks import broadcast_arrays
 from org.meteoinfo.ndarray.math import ArrayUtil, ArrayMath
 
 
 __all__ = ['clip','cumprod', 'cumsum', 'ndim', 'nonzero', 'prod', 'ravel', 'searchsorted',
-           'split_array_by_nan', 'sum', 'where']
+           'split_array_by_nan', 'split_by_nan_multi', 'sum', 'where']
 
 
 def ndim(a):
@@ -120,7 +120,7 @@ def where(condition, *args):
         return condition.array_wrap(r)
 
 
-def split_array_by_nan(arr):
+def split_array_by_nan(arr, ref=None):
     """
     Split one dimensional array by nan.
 
@@ -128,6 +128,8 @@ def split_array_by_nan(arr):
     ----------
     arr : ndarray
         One dimension array to be divided into sub-arrays.
+    ref : ndarray
+        Reference one dimension array for dividing
 
     Returns
     -------
@@ -135,7 +137,11 @@ def split_array_by_nan(arr):
         A list of sub-arrays as views into `ary`.
     """
     arr = asarray(arr)
-    nan_indices = where(isnan(arr))[0]
+    if ref is None:
+        nan_indices = where(isnan(arr))[0]
+    else:
+        nan_indices = where(isnan(ref))[0]
+
     split_arrays = split(arr, nan_indices)
     r = []
     for sub_arr in split_arrays:
@@ -149,6 +155,43 @@ def split_array_by_nan(arr):
             r.append(sub_arr)
 
     return r
+
+
+def split_by_nan_multi(ref, *others):
+    """
+    Split multiple 1-D arrays at NaN positions of a reference array.
+
+    All arrays are split using the same index groups derived from `ref`,
+    so the resulting segments stay aligned across arrays.
+
+    Parameters
+    ----------
+    ref : ndarray
+        1-D reference array whose NaNs define the split points.
+    *others : ndarray
+        Additional 1-D arrays of the same length as `ref`.
+
+    Returns
+    -------
+    list of tuple
+        Each tuple contains one segment from every input array.
+    """
+    # NaN mask and indices of valid points in the reference array
+    is_nan = isnan(ref)
+    valid_idx = where(~is_nan)[0]
+
+    # Segment id for each valid point
+    group_id = cumsum(is_nan)[~is_nan]
+
+    # Split points where the segment id changes
+    split_idx = where(diff(group_id) != 0)[0] + 1
+    index_groups = split(valid_idx, split_idx)
+
+    # Collect all input arrays
+    all_arrays = (ref,) + others
+
+    # For each array, gather segments using the shared index groups
+    return [[a[idx] for idx in index_groups] for a in all_arrays]
 
 
 def searchsorted(a, v, side='left', sorter=None):

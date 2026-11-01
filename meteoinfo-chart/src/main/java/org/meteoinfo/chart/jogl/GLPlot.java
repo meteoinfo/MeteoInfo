@@ -64,6 +64,18 @@ import static com.jogamp.opengl.GL2ES2.GL_TEXTURE_3D;
 import static com.jogamp.opengl.GL2ES2.GL_TEXTURE_WRAP_R;
 import static com.jogamp.opengl.GL2ES3.GL_TEXTURE_BASE_LEVEL;
 
+/**
+ * OpenGL 3-D plot.
+ *
+ * <p>The plot has an automatic two dimensional mode.  Like MATLAB, when the
+ * camera is rotated close to the top-down view the plot is rendered in the
+ * conventional 2-D form (X/Y grid, X/Y axes, no Z axis or 3-D box).  Rotating
+ * away from the top view returns to normal 3-D rendering.  Planar graphics also
+ * start in 2-D mode until the camera is first moved.  {@link #set2D(boolean)}
+ * can force either mode explicitly.</p>
+ *
+ * @author Yaqiang Wang
+ */
 public class GLPlot extends Plot {
 
     // <editor-fold desc="Variables">
@@ -111,6 +123,19 @@ public class GLPlot extends Plot {
     protected float headAngle;
     protected float pitchAngle;
     protected AspectType aspectType = AspectType.AUTO;
+
+    /** Automatically display near-top views as a 2-D plot. */
+    protected boolean auto2D = true;
+    /** Whether the camera has been moved away from its initial orientation. */
+    protected boolean cameraMoved = false;
+    /** Hysteresis state for the near-top-view detection. */
+    protected boolean nearTopView = false;
+    /** Explicit override: {@code TRUE} 2-D, {@code FALSE} 3-D, {@code null} auto. */
+    protected Boolean force2D = null;
+    /** Enter 2-D mode when both camera angles are within this many degrees. */
+    protected static final float TWO_D_ENTER_ANGLE = 2.0f;
+    /** Leave 2-D mode when either camera angle exceeds this many degrees. */
+    protected static final float TWO_D_EXIT_ANGLE = 4.0f;
 
     protected GLPlot.TessCallback tessCallback;
     protected int width;
@@ -319,12 +344,33 @@ public class GLPlot extends Plot {
      */
     @Override
     public void setDrawExtent(Extent extent) {
-        this.drawExtent = extent;
+        this.drawExtent = normalizeExtent(extent);
         this.transform.setExtent(this.drawExtent);
 
         if (!this.axesZoom) {
             setAxesExtent((Extent) drawExtent.clone());
         }
+    }
+
+    /**
+     * Normalize a planar extent to a unit Z range.  GLPlot always needs a valid
+     * Z range even when the source data are 2-D, otherwise the transform matrix
+     * would contain NaN values.
+     *
+     * @param extent source extent
+     * @return extent with a valid Z range
+     */
+    private static Extent normalizeExtent(Extent extent) {
+        if (extent == null) {
+            return new Extent(-1, 1, -1, 1, 0, 1);
+        }
+        if (extent.is2D() || Math.abs(extent.getZLength()) < 1.0e-12) {
+            Extent normalized = (Extent) extent.clone();
+            normalized.minZ = 0;
+            normalized.maxZ = 1;
+            return normalized;
+        }
+        return extent;
     }
 
     /**
@@ -340,7 +386,7 @@ public class GLPlot extends Plot {
      * @param value Axes extent
      */
     public void setAxesExtent(Extent value) {
-        this.axesExtent = value;
+        this.axesExtent = normalizeExtent(value);
         xAxis.setMinMaxValue(axesExtent.minX, axesExtent.maxX);
         yAxis.setMinMaxValue(axesExtent.minY, axesExtent.maxY);
         zAxis.setMinMaxValue(axesExtent.minZ, axesExtent.maxZ);
@@ -560,6 +606,8 @@ public class GLPlot extends Plot {
      */
     public void setAngleX(float value) {
         this.angleX = value;
+        this.cameraMoved = true;
+        this.force2D = null;
     }
 
     /**
@@ -578,6 +626,8 @@ public class GLPlot extends Plot {
      */
     public void setAngleY(float value) {
         this.angleY = value;
+        this.cameraMoved = true;
+        this.force2D = null;
     }
 
     /**
@@ -594,6 +644,158 @@ public class GLPlot extends Plot {
      */
     public void setHeadAngle(float value) {
         this.headAngle = value;
+        this.cameraMoved = true;
+        this.force2D = null;
+    }
+
+    /**
+     * Whether all graphics in this plot are planar (2-D).
+     *
+     * @return {@code true} when there is at least one graphic and every graphic
+     *         has a zero Z extent
+     */
+    public boolean isAllGraphics2D() {
+        if (this.graphics == null || this.graphics.getNumGraphics() == 0) {
+            return false;
+        }
+        return areAll2D(this.graphics);
+    }
+
+    private boolean areAll2D(Graphic graphic) {
+        if (graphic instanceof VolumeGraphic
+                || graphic instanceof IsosurfaceGraphics
+                || graphic instanceof TriMeshGraphic) {
+            return false;
+        }
+        if (graphic instanceof GraphicCollection) {
+            GraphicCollection collection = (GraphicCollection) graphic;
+            if (collection.getNumGraphics() == 0) {
+                return true;
+            }
+            org.meteoinfo.geometry.Extent extent = collection.getExtent();
+            if (extent != null && !extent.is2D()
+                    && Math.abs(extent.getZLength()) > 1.0e-12) {
+                return false;
+            }
+            for (Graphic child : collection.getGraphics()) {
+                if (!areAll2D(child)) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        return graphic.is2D();
+    }
+
+    /**
+     * Whether the plot should currently be displayed as a 2-D plot.
+     *
+     * <p>Like MATLAB, a camera close to the top-down view is rendered using the
+     * 2-D plotting form even for 3-D graphics.  When the camera is rotated away
+     * from the top view the normal 3-D form is used again.  Planar graphics also
+     * start in 2-D mode until the camera is first moved.</p>
+     *
+     * <p>A small hysteresis band (2 degrees to enter, 4 degrees to leave)
+     * prevents flickering when the user rotates around the top view.</p>
+     *
+     * @return {@code true} for the current 2-D display mode
+     */
+    public boolean is2D() {
+        if (this.force2D != null) {
+            return this.force2D;
+        }
+        if (!this.auto2D) {
+            return false;
+        }
+        if (isNearTopView()) {
+            return true;
+        }
+        return isAllGraphics2D() && !this.cameraMoved;
+    }
+
+    /**
+     * Test whether the camera is close to a top-down 2-D view.  The method keeps
+     * hysteresis state, so it should be called via {@link #is2D()} during
+     * rendering.
+     *
+     * <p>{@code angleX} must be close to 0 or +/-180 degrees (looking down or
+     * up the Z axis).  {@code angleY} may be close to any multiple of 90
+     * degrees: 0, 90, 180 and 270 degrees all represent a valid 2-D
+     * orientation; only the in-plane X/Y axis direction changes.</p>
+     *
+     * @return boolean
+     */
+    public boolean isNearTopView() {
+        float ax = normalizeAngle(this.angleX);
+        // Distance in degrees to 0 or 180 (equivalent to 0, -180, +180).
+        float axToCardinal = Math.min(ax, 180.0f - ax);
+        float ay = normalizeAngle(this.angleY);
+        // Distance in degrees to the nearest multiple of 90 (0, 90, 180, 270).
+        float ayMod = ay % 90.0f;
+        float ayToCardinal = Math.min(ayMod, 90.0f - ayMod);
+        float limit = this.nearTopView ? TWO_D_EXIT_ANGLE : TWO_D_ENTER_ANGLE;
+        this.nearTopView = axToCardinal <= limit && ayToCardinal <= limit;
+        return this.nearTopView;
+    }
+
+    private static float normalizeAngle(float angle) {
+        float value = angle % 360.0f;
+        if (value > 180.0f) {
+            value -= 360.0f;
+        } else if (value < -180.0f) {
+            value += 360.0f;
+        }
+        return Math.abs(value);
+    }
+
+    /**
+     * Whether the plot is currently displayed as three dimensional.
+     *
+     * @return {@code true} when a 3-D camera is active
+     */
+    public boolean is3D() {
+        return !is2D();
+    }
+
+    /**
+     * Switch between the automatic 2-D and 3-D display modes.
+     *
+     * @param value {@code true} to use the 2-D view, {@code false} to use 3-D
+     */
+    public void set2D(boolean value) {
+        this.force2D = value;
+        this.nearTopView = value;
+    }
+
+    /**
+     * Enable or disable automatic 2-D detection.
+     *
+     * @param value automatic mode flag
+     */
+    public void setAuto2D(boolean value) {
+        this.auto2D = value;
+        this.force2D = null;
+        if (!value) {
+            this.nearTopView = false;
+        }
+    }
+
+    /**
+     * Whether automatic 2-D detection is enabled.
+     *
+     * @return boolean
+     */
+    public boolean isAuto2D() {
+        return this.auto2D;
+    }
+
+    /**
+     * Force the next display to use the 3-D camera while keeping automatic
+     * detection configured.
+     */
+    public void rotateTo3D() {
+        this.force2D = Boolean.FALSE;
+        this.nearTopView = false;
     }
 
     /**
@@ -1127,6 +1329,9 @@ public class GLPlot extends Plot {
      * @param graphic Graphic
      */
     public void addGraphic(Graphic graphic) {
+        if (graphic.is2D()) {
+            normalizeZ(graphic);
+        }
         graphic.doTransform();
         this.graphics.add(graphic);
         Extent ex = this.graphics.getExtent();
@@ -1145,6 +1350,9 @@ public class GLPlot extends Plot {
      * @param graphic Graphic
      */
     public void addGraphic(int index, Graphic graphic) {
+        if (graphic.is2D()) {
+            normalizeZ(graphic);
+        }
         graphic.doTransform();
         this.graphics.add(index, graphic);
         Extent ex = this.graphics.getExtent();
@@ -1192,6 +1400,42 @@ public class GLPlot extends Plot {
      *
      * @param graphic The graphic to be removed
      */
+    /**
+     * Replace NaN Z ordinates by zero for planar graphics.  Without this
+     * normalization fixed-function OpenGL would receive NaN vertices and the
+     * geometry would disappear.
+     *
+     * @param graphic graphic to normalize
+     */
+    private void normalizeZ(Graphic graphic) {
+        if (graphic instanceof GraphicCollection) {
+            for (Graphic child : ((GraphicCollection) graphic).getGraphics()) {
+                normalizeZ(child);
+            }
+            return;
+        }
+        Geometry geometry = graphic.getGeometry();
+        if (geometry == null) {
+            return;
+        }
+        if (geometry instanceof Point) {
+            Coordinate coordinate = ((Point) geometry).getCoordinate();
+            if (coordinate != null && Double.isNaN(coordinate.z)) {
+                coordinate.z = 0;
+            }
+            return;
+        }
+        List<Coordinate> coordinates = geometry.getCoordinates();
+        if (coordinates == null) {
+            return;
+        }
+        for (Coordinate coordinate : coordinates) {
+            if (coordinate != null && Double.isNaN(coordinate.z)) {
+                coordinate.z = 0;
+            }
+        }
+    }
+
     public void removeGraphic(Graphic graphic) {
         if (this.graphics.contains(graphic)) {
             this.graphics.remove(graphic);
@@ -1242,6 +1486,24 @@ public class GLPlot extends Plot {
     }
 
     public void display(GLAutoDrawable drawable) {
+        if (is2D()) {
+            boolean oldDisplayZ = displayZ;
+            displayZ = false;
+            angleX = Math.round(angleX / 180.f) * 180.f;
+            angleY = Math.round(angleY / 90.f) * 90.f;
+            display3D(drawable);
+            displayZ = oldDisplayZ;
+        } else {
+            display3D(drawable);
+        }
+    }
+
+    /**
+     * Draw the plot with the 3-D camera.
+     *
+     * @param drawable GL drawable
+     */
+    protected void display3D(GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
         gl.glLoadIdentity();
 
@@ -1958,7 +2220,9 @@ public class GLPlot extends Plot {
                 } else {
                     xAlign = XAlign.RIGHT;
                 }
-                if (this.angleX > -120) {
+                if (is2D()) {
+                    yAlign = YAlign.BOTTOM;
+                } else if (this.angleX > -120) {
                     yAlign = YAlign.TOP;
                 } else {
                     yAlign = YAlign.BOTTOM;
@@ -2006,7 +2270,7 @@ public class GLPlot extends Plot {
                         this.updateTextRender(label.getFont());
                         strWidth += this.tickSpace;
                         float angle = this.toScreenAngle(xMin, y, zMin, xMax, y, zMin);
-                        angle = y < center.y ? 270 - angle : 90 - angle;
+                        angle = is2D() ? 0.0f : (y < center.y ? 270 - angle : 90 - angle);
                         float yShift = Math.min(-strWidth, -strWidth);
                         if (this.angleX <= -120) {
                             yShift = -yShift;
@@ -2046,7 +2310,9 @@ public class GLPlot extends Plot {
                 } else {
                     xAlign = XAlign.LEFT;
                 }
-                if (this.angleX > -120) {
+                if (is2D()) {
+                    yAlign = YAlign.CENTER;
+                } else if (this.angleX > -120) {
                     yAlign = YAlign.TOP;
                 } else {
                     yAlign = YAlign.BOTTOM;
@@ -2094,7 +2360,7 @@ public class GLPlot extends Plot {
                         this.updateTextRender(label.getFont());
                         strWidth += this.tickSpace;
                         float angle = this.toScreenAngle(x, yMin, zMin, x, yMax, zMin);
-                        angle = x > center.x ? 270 - angle : 90 - angle;
+                        angle = is2D() ? 90.0f : (x > center.x ? 270 - angle : 90 - angle);
                         float yShift = Math.min(-strWidth, -strWidth);
                         if (this.angleX <= -120) {
                             yShift = -yShift;
@@ -2692,6 +2958,138 @@ public class GLPlot extends Plot {
         triMeshRender.draw();
     }
 
+    /**
+     * Draw a graphic with fixed-function OpenGL for the 2-D display mode.  This
+     * path intentionally avoids the 3-D shader renderers: it handles the common
+     * planar point, line and polygon graphics directly and keeps a 2-D GLPlot
+     * visually equivalent to a conventional 2-D plot.
+     *
+     * @param gl GL context
+     * @param graphic graphic
+     */
+    protected void drawGraphics2D(GL2 gl, Graphic graphic) {
+        // Keep the specialized 3-D renderers for volume, mesh, isosurface and
+        // particle data.  At a top view they still produce the correct
+        // top-down projection, whereas the fixed-function 2-D path would only
+        // see their child graphics.
+        if (graphic instanceof VolumeGraphic
+                || graphic instanceof IsosurfaceGraphics
+                || graphic instanceof MeshGraphic
+                || graphic instanceof ParticleGraphics) {
+            drawGraphics(gl, graphic);
+            return;
+        }
+        if (graphic instanceof GraphicCollection) {
+            for (Graphic child : ((GraphicCollection) graphic).getGraphics()) {
+                drawGraphics2D(gl, child);
+            }
+            return;
+        }
+        Geometry geometry = graphic.getGeometry();
+        if (geometry == null) {
+            return;
+        }
+        ColorBreak cb = graphic.getLegendBreak();
+        switch (geometry.getGeometryType()) {
+            case POINT:
+            case MULTI_POINT:
+                drawPoints2D(gl, geometry.getCoordinates(), cb);
+                break;
+            case LINESTRING:
+            case MULTI_LINESTRING:
+                if (geometry instanceof MultiLineString) {
+                    for (LineString line : ((MultiLineString) geometry).getPolylines()) {
+                        drawLine2D(gl, line.getCoordinates(), cb);
+                    }
+                } else {
+                    drawLine2D(gl, geometry.getCoordinates(), cb);
+                }
+                break;
+            case POLYGON:
+            case MULTI_POLYGON:
+                if (geometry instanceof MultiPolygon) {
+                    for (Polygon polygon : ((MultiPolygon) geometry).getPolygons()) {
+                        drawPolygon2D(gl, polygon, cb);
+                    }
+                } else {
+                    drawPolygon2D(gl, (Polygon) geometry, cb);
+                }
+                break;
+            case TEXT:
+                if (geometry instanceof ChartText3D) {
+                    drawText(gl, (ChartText3D) geometry);
+                }
+                break;
+            default:
+                drawGraphics(gl, graphic);
+                break;
+        }
+    }
+
+    private void drawPoints2D(GL2 gl, List<Coordinate> coordinates, ColorBreak cb) {
+        if (coordinates == null || coordinates.isEmpty()) {
+            return;
+        }
+        Color color = cb == null ? Color.BLACK : cb.getColor();
+        float[] rgba = color.getRGBComponents(null);
+        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+        float size = cb instanceof PointBreak ? ((PointBreak) cb).getSize() : 5.0f;
+        gl.glPointSize(size * this.dpiScale);
+        gl.glBegin(GL2.GL_POINTS);
+        for (Coordinate coordinate : coordinates) {
+            gl.glVertex3f((float) coordinate.x, (float) coordinate.y, zValue(coordinate.z));
+        }
+        gl.glEnd();
+    }
+
+    private void drawLine2D(GL2 gl, List<Coordinate> coordinates, ColorBreak cb) {
+        if (coordinates == null || coordinates.size() < 2) {
+            return;
+        }
+        Color color = cb == null ? Color.BLACK : cb.getColor();
+        float[] rgba = color.getRGBComponents(null);
+        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+        float width = cb instanceof PolylineBreak ? ((PolylineBreak) cb).getWidth() : 1.0f;
+        gl.glLineWidth(Math.max(1.0f, width) * this.dpiScale);
+        gl.glBegin(GL2.GL_LINE_STRIP);
+        for (Coordinate coordinate : coordinates) {
+            gl.glVertex3f((float) coordinate.x, (float) coordinate.y, zValue(coordinate.z));
+        }
+        gl.glEnd();
+    }
+
+    private void drawPolygon2D(GL2 gl, Polygon polygon, ColorBreak cb) {
+        List<Coordinate> coordinates = polygon.getCoordinates();
+        if (coordinates == null || coordinates.size() < 3) {
+            return;
+        }
+        Color color = cb == null ? Color.BLACK : cb.getColor();
+        float[] rgba = color.getRGBComponents(null);
+        boolean fill = !(cb instanceof PolygonBreak) || ((PolygonBreak) cb).isDrawFill();
+        if (fill) {
+            gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+            gl.glBegin(GL2.GL_POLYGON);
+            for (Coordinate coordinate : coordinates) {
+                gl.glVertex3f((float) coordinate.x, (float) coordinate.y, zValue(coordinate.z));
+            }
+            gl.glEnd();
+        }
+        if (cb instanceof PolygonBreak && !((PolygonBreak) cb).isDrawOutline()) {
+            return;
+        }
+        gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
+        gl.glLineWidth(this.dpiScale);
+        gl.glBegin(GL2.GL_LINE_LOOP);
+        for (Coordinate coordinate : coordinates) {
+            gl.glVertex3f((float) coordinate.x, (float) coordinate.y, zValue(coordinate.z));
+        }
+        gl.glEnd();
+    }
+
+    private static float zValue(double z) {
+        return Double.isNaN(z) ? 0.0f : (float) z;
+    }
+
     protected void drawGraphics(GL2 gl, Graphic graphic) {
         boolean lightEnabled = this.lighting.isEnable();
         if (graphic instanceof GraphicCollection) {
@@ -2700,8 +3098,8 @@ public class GLPlot extends Plot {
             }
         }
 
-        if (graphic instanceof PolygonGraphicCollection) {
-            PolygonGraphicCollection polygonalGraphic = (PolygonGraphicCollection) graphic;
+        if (graphic instanceof PolygonalGraphic) {
+            PolygonalGraphic polygonalGraphic = (PolygonalGraphic) graphic;
             if (!this.renderMap.containsKey(graphic)) {
                 if (polygonalGraphic.getLineVertex() == null) {
                     polygonalGraphic.updateLineVertex();
@@ -4199,7 +4597,13 @@ public class GLPlot extends Plot {
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
 
-        if (this.orthographic) {
+        if (is2D()) {
+            // Give the data a small border and preserve the axes aspect ratio.
+            float aspect = this.height == 0 ? 1.0f : (float) this.width / (float) this.height;
+            // Leave room for tick labels outside the [-1, 1] data range.
+            float v = 1.16f;
+            gl.glOrthof(-v * aspect, v * aspect, -v, v, -distance, distance);
+        } else if (this.orthographic) {
             float v = 2.0f;
             switch (this.aspectType) {
                 case EQUAL:

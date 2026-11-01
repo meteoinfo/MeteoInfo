@@ -532,40 +532,6 @@ class Axes3DGL(Axes3D):
 
         return graphics
 
-    def fill_back(self, x, y, z, color=None, **kwargs):
-        """
-        Create filled 3D patches.
-
-        :param x: (*array_like*) X coordinates for each vertex.
-        :param y: (*array_like*) Y coordinates for each vertex.
-        :param z: (*array_like*) Z coordinates for each vertex.
-        :param color: (*Color*) Fill color.
-
-        :return: Filled 3D patches.
-        """
-        x = plotutil.getplotdata(x)
-        y = plotutil.getplotdata(y)
-        z = plotutil.getplotdata(z)
-
-        lb, isunique = plotutil.getlegendbreak('polygon', **kwargs)
-        if color is None:
-            graphics = GraphicFactory.createPolygons3D(x, y, z, lb)
-        else:
-            alpha = kwargs.pop('alpha', None)
-            colors = plotutil.getcolors(color, alpha)
-            if len(colors) == 1:
-                lb.setColor(colors[0])
-                graphics = GraphicFactory.createPolygons3D(x, y, z, lb)
-            else:
-                lbs = []
-                for c in colors:
-                    nlb = lb.clone()
-                    nlb.setColor(c)
-                    lbs.append(nlb)
-                graphics = GraphicFactory.createPolygons3D(x, y, z, lbs)
-
-        self.add_graphic(graphics)
-        return graphics
 
     def patch(self, *args, **kwargs):
         """

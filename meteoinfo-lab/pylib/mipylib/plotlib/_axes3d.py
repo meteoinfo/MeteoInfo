@@ -17,6 +17,7 @@ from org.meteoinfo.chart.graphic import Graphic
 from org.meteoinfo.geo.layer import LayerTypes
 
 from ._axes import Axes
+from .graphic import LineCollection
 from mipylib.numeric.core import NDArray
 from mipylib.dataset import DimArray
 import mipylib.numeric as np
@@ -774,9 +775,9 @@ class Axes3D(Axes):
           'k'        black
           =========  =====
         """      
-        xdata = plotutil.getplotdata(x)
-        ydata = plotutil.getplotdata(y)
-        zdata = plotutil.getplotdata(z)  
+        xdata = np.asarray(x)
+        ydata = np.asarray(y)
+        zdata = np.asarray(z)
         style = None
         if len(args) > 0:
             style = args[0]
@@ -818,14 +819,25 @@ class Axes3D(Axes):
                 ls = plotutil.setlegendscheme_line(ls, **kwargs)
 
         #Add graphics
+        if ydata.ndim == 1 and ydata.contains_nan():
+            xdata, ydata, zdata = np.split_by_nan_multi(xdata, ydata, zdata)
+            # zdata = np.split_array_by_nan(zdata, xdata)
+            # xdata = np.split_array_by_nan(xdata)
+            # ydata = np.split_array_by_nan(ydata)
+            if cdata is not None:
+                cdata = np.split_array_by_nan(cdata)
+
         if cdata is None:
             if colors is None:
-                graphics = GraphicFactory.createLineString3D(xdata, ydata, zdata, line)
+                #graphics = GraphicFactory.createLineString3D(xdata, ydata, zdata, line)
+                graphics = LineCollection(None, xyz_data=(xdata, ydata, zdata), legend=line)
             else:
-                graphics = GraphicFactory.createLineString3D(xdata, ydata, zdata, cbs)
+                #graphics = GraphicFactory.createLineString3D(xdata, ydata, zdata, cbs)
+                graphics = LineCollection(None, xyz_data=(xdata, ydata, zdata), legend=cbs)
         else:
-            cdata = plotutil.getplotdata(cdata)
-            graphics = GraphicFactory.createLineString3D(xdata, ydata, zdata, cdata, ls)
+            #cdata = plotutil.getplotdata(cdata)
+            #graphics = GraphicFactory.createLineString3D(xdata, ydata, zdata, cdata, ls)
+            graphics = LineCollection(None, xyz_data=(xdata, ydata, zdata), cdata=cdata, legend=ls)
 
         #Pipe
         pipe = kwargs.pop('pipe', False)

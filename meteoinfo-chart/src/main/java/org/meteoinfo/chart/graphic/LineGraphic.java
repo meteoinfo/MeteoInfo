@@ -1,18 +1,18 @@
 package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.LineString;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.ColorBreakCollection;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.legend.PolylineBreak;
-import org.meteoinfo.geometry.MultiLineString;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.IndexIterator;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class LineGraphic extends Graphic {
+public class LineGraphic extends Graphic implements LinealGraphic {
     private Array xData;
     private Array yData;
     private Array zData;
@@ -23,11 +23,11 @@ public class LineGraphic extends Graphic {
     /**
      * Constructor
      *
-     * @param polylineShape Polyline shape
+     * @param lineString LineString geometry
      * @param polylineBreak Polyline break
      */
-    public LineGraphic(MultiLineString polylineShape, PolylineBreak polylineBreak) {
-        this.geometry = polylineShape;
+    public LineGraphic(LineString lineString, PolylineBreak polylineBreak) {
+        this.geometry = lineString;
         this.legendBreak = polylineBreak;
     }
 
@@ -143,7 +143,7 @@ public class LineGraphic extends Graphic {
         }
 
         if (this.geometry == null) {
-            this.geometry = new MultiLineString();
+            this.geometry = new LineString();
         }
         this.geometry.setCoordinates(points);
     }
@@ -186,7 +186,7 @@ public class LineGraphic extends Graphic {
         }
 
         if (this.geometry == null) {
-            this.geometry = new MultiLineString();
+            this.geometry = new LineString();
         }
         if (points.size() >= 2)
             this.geometry.setCoordinates(points);
@@ -232,7 +232,7 @@ public class LineGraphic extends Graphic {
         }
 
         if (this.geometry == null) {
-            this.geometry = new MultiLineString();
+            this.geometry = new LineString();
         }
         this.geometry.setCoordinates(points);
 

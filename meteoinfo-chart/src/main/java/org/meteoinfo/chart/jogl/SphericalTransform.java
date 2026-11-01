@@ -216,8 +216,8 @@ public class SphericalTransform {
             volumeGraphic.setExtent(transform(geo));
             volumeGraphic.setSpherical(true);
             return volumeGraphic;
-        } else if (graphic instanceof PolygonGraphicCollection) {
-            PolygonGraphicCollection polygonGraphic = (PolygonGraphicCollection) graphic;
+        } else if (graphic instanceof PolygonalGraphic) {
+            PolygonalGraphic polygonGraphic = (PolygonalGraphic) graphic;
             polygonGraphic.updateLineVertex();
             if (polygonGraphic.isDrawOutline()) {
                 float[] lineVertex = polygonGraphic.getLineVertex();
@@ -243,7 +243,7 @@ public class SphericalTransform {
                 polygonGraphic.setVertexPosition(vertexPosition);
             }
             polygonGraphic.updateExtent();
-            return polygonGraphic;
+            return (Graphic) polygonGraphic;
         } else {
             if (graphic instanceof GraphicCollection) {
                 GraphicCollection graphics = (GraphicCollection) graphic;

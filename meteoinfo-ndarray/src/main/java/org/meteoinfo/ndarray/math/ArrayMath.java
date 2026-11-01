@@ -8289,7 +8289,11 @@ public class ArrayMath {
      * @throws InvalidRangeException
      */
     public static Array cumsum(Array a) {
-        Array r = Array.factory(a.getDataType(), new int[]{(int) a.getSize()});
+        DataType dataType = a.getDataType();
+        if (dataType == DataType.BOOLEAN) {
+            dataType = DataType.INT;
+        }
+        Array r = Array.factory(dataType, new int[]{(int) a.getSize()});
         int i = 0;
         IndexIterator iterA = a.getIndexIterator();
         double v = 0;

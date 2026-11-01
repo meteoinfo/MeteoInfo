@@ -14,6 +14,7 @@ import org.meteoinfo.chart.jogl.Utils;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.Geometry;
 import org.meteoinfo.geometry.LineString;
 import org.meteoinfo.geometry.MultiLineString;
 import org.meteoinfo.math.Matrix4f;
@@ -21,6 +22,7 @@ import org.meteoinfo.math.Matrix4f;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class LineRender extends JOGLGraphicRender {
@@ -128,13 +130,21 @@ public class LineRender extends JOGLGraphicRender {
         }
     }
 
+    private static List<LineString> getLines(Geometry geometry) {
+        if (geometry instanceof MultiLineString) {
+            return ((MultiLineString) geometry).getPolylines();
+        } else if (geometry instanceof LineString) {
+            return Collections.singletonList((LineString) geometry);
+        }
+        return Collections.emptyList();
+    }
+
     private float[] getVertexPosition() {
         vertexPosition = new float[this.vertexNum * 3];
         int i = 0;
         linePointNumbers = new ArrayList<>();
         for (Graphic graphic : this.graphics.getGraphics()) {
-            MultiLineString shape = (MultiLineString) graphic.getGeometry();
-            for (LineString line : shape.getPolylines()) {
+            for (LineString line : getLines(graphic.getGeometry())) {
                 List<Coordinate> ps = line.getCoordinates();
                 linePointNumbers.add(ps.size());
                 for (Coordinate p : ps) {
@@ -154,8 +164,7 @@ public class LineRender extends JOGLGraphicRender {
         int i = 0;
         linePointNumbers = new ArrayList<>();
         for (Graphic graphic : this.graphics.getGraphics()) {
-            MultiLineString shape = (MultiLineString) graphic.getGeometry();
-            for (LineString line : shape.getPolylines()) {
+            for (LineString line : getLines(graphic.getGeometry())) {
                 List<Coordinate> ps = line.getCoordinates();
                 linePointNumbers.add(ps.size());
                 for (Coordinate p : ps) {

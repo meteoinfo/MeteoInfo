@@ -235,8 +235,8 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
                         var.setDataType(DataType.FLOAT);
                         break;
                 }
-                var.addDimension(trajDim);
                 var.addDimension(obsDim);
+                var.addDimension(trajDim);
                 var.addAttribute("long_name", vName);
                 this.addVariable(var);
             }
@@ -244,8 +244,8 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
                 Variable var = new Variable();
                 var.setName(vName);
                 var.setDataType(DataType.FLOAT);
-                var.addDimension(trajDim);
                 var.addDimension(obsDim);
+                var.addDimension(trajDim);
                 var.addAttribute("long_name", vName);
                 var.setStation(true);
                 this.addVariable(var);
@@ -313,7 +313,7 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
     @Override
     public Array realRead(String varName) {
         int[] origin = new int[]{0, 0};
-        int[] size = new int[]{this.trajNum, this.endPointNum};
+        int[] size = new int[]{this.endPointNum, this.trajNum};
         int[] stride = new int[]{1, 1};
 
         Array r = realRead(varName, origin, size, stride);
@@ -345,13 +345,16 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
             }
             Section section = new Section(origin, size, stride);
             Array array = Array.factory(dtype, section.getShape());
-            Range trajRange = section.getRange(0);
-            Range obsRange = section.getRange(1);
+            Range trajRange = section.getRange(1);
+            Range obsRange = section.getRange(0);
             Index index = array.getIndex();
+            int j = 0;
             for (int trajIdx = trajRange.first(); trajIdx <= trajRange.last(); trajIdx += trajRange.stride()){
                 DataTable dTable = this.dataTables.get(trajIdx);
                 ColumnData colData = dTable.getColumnData(varName);
+                int i = 0;
                 for (int obsIdx = obsRange.first(); obsIdx <= obsRange.last(); obsIdx += obsRange.stride()){
+                    index.set(i, j);
                     if (colData.size() > obsIdx)
                         if (col.getDataType() == DataType.DATE) {
                             array.setObject(index, JDateUtil.toOADate((LocalDateTime) colData.getValue(obsIdx)));
@@ -360,8 +363,9 @@ public class HYSPLITTrajDataInfo extends DataInfo implements ITrajDataInfo {
                         }
                     else
                         array.setObject(index, Double.NaN);
-                    index.incr();
+                    i += 1;
                 }
+                j += 1;
             }
             
             return array;

@@ -22,6 +22,7 @@ import org.meteoinfo.data.analysis.Statistics;
 import org.meteoinfo.data.meteodata.StationModelData;
 import org.meteoinfo.geometry.*;
 import org.meteoinfo.geometry.Point;
+import org.meteoinfo.geometry.Polygon;
 import org.meteoinfo.geometry.special.Image;
 import org.meteoinfo.geometry.special.Rectangle;
 import org.meteoinfo.render.java2d.ContourDraw;
@@ -625,10 +626,10 @@ public class GraphicFactory {
      * @param steps Steps
      * @return Pipe graphics
      */
-    public static GraphicCollection lineString3DToPipe(GraphicCollection lines, float radius,
+    public static LineGraphicCollection lineString3DToPipe(LineGraphicCollection lines, float radius,
                                                          int steps) {
-        for (Graphic graphic : lines.getGraphics()) {
-            MultiLineString shape = (MultiLineString) graphic.getGeometry();
+        for (LineGraphic graphic : (List<LineGraphic>) lines.getGraphics()) {
+            LineString shape = (LineString) graphic.getGeometry();
             PipeShape pipeShape = new PipeShape(shape, radius, steps);
             graphic.setGeometry(pipeShape);
         }
@@ -1743,15 +1744,15 @@ public class GraphicFactory {
      * @param pgbs PolygonBreak list
      * @return Graphics
      */
-    public static GraphicCollection createPolygons3D(Array xa, Array ya, Array za, List<PolygonBreak> pgbs) {
+    public static PolygonGraphicCollection createPolygons3D(Array xa, Array ya, Array za, List<PolygonBreak> pgbs) {
         xa = xa.copyIfView();
         ya = ya.copyIfView();
         za = za.copyIfView();
 
-        GraphicCollection graphics = new GraphicCollection();
+        PolygonGraphicCollection graphics = new PolygonGraphicCollection();
         double x, y, z;
         int n = (int) xa.getSize();
-        MultiPolygon pgs;
+        Polygon pgs;
         Coordinate p;
         List<Coordinate> points = new ArrayList<>();
         if (xa.getRank() == 1) {
@@ -1767,9 +1768,9 @@ public class GraphicFactory {
             }
             if (points.size() > 2) {
                 points.add((Coordinate) points.get(0).clone());
-                pgs = new MultiPolygon();
+                pgs = new Polygon();
                 pgs.setCoordinates(points);
-                Graphic aGraphic = new Graphic(pgs, pgbs.get(ii));
+                Graphic aGraphic = Graphic.factory(pgs, pgbs.get(ii));
                 graphics.add(aGraphic);
                 ii++;
             }
@@ -1788,9 +1789,9 @@ public class GraphicFactory {
                     points.add(new Coordinate(x, y, z));
                 }
                 points.add((Coordinate) points.get(0).clone());
-                pgs = new MultiPolygon();
+                pgs = new Polygon();
                 pgs.setCoordinates(points);
-                graphics.add(new Graphic(pgs, pgbs.get(i)));
+                graphics.add(Graphic.factory(pgs, pgbs.get(i)));
             }
         }
         return graphics;
@@ -1804,14 +1805,14 @@ public class GraphicFactory {
      * @param polygonBreak PolygonBreak list
      * @return Graphics
      */
-    public static GraphicCollection createPolygons3D(Array faces, Array vertices, PolygonBreak polygonBreak) {
+    public static PolygonGraphicCollection createPolygons3D(Array faces, Array vertices, PolygonBreak polygonBreak) {
         faces = faces.copyIfView();
         vertices = vertices.copyIfView();
 
-        GraphicCollection graphics = new GraphicCollection();
+        PolygonGraphicCollection graphics = new PolygonGraphicCollection();
         int vIdx;
         double x, y, z;
-        MultiPolygon pgs;
+        Polygon pgs;
         Coordinate p;
         List<Coordinate> points = new ArrayList<>();
         if (faces.getRank() == 1) {
@@ -1827,9 +1828,9 @@ public class GraphicFactory {
             }
             if (points.size() > 2) {
                 points.add((Coordinate) points.get(0).clone());
-                pgs = new MultiPolygon();
+                pgs = new Polygon();
                 pgs.setCoordinates(points);
-                Graphic aGraphic = new Graphic(pgs, polygonBreak);
+                Graphic aGraphic = Graphic.factory(pgs, polygonBreak);
                 graphics.add(aGraphic);
             }
         } else {
@@ -1851,9 +1852,9 @@ public class GraphicFactory {
                     points.add(new Coordinate(x, y, z));
                 }
                 points.add((Coordinate) points.get(0).clone());
-                pgs = new MultiPolygon();
+                pgs = new Polygon();
                 pgs.setCoordinates(points);
-                graphics.add(new Graphic(pgs, polygonBreak));
+                graphics.add(Graphic.factory(pgs, polygonBreak));
             }
         }
         return graphics;
@@ -4753,7 +4754,7 @@ public class GraphicFactory {
      * @param isSmooth Smooth contour lines or not
      * @return Contour polygon slice graphics
      */
-    public static List<GraphicCollection> contourfSlice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
+    public static List<PolygonGraphicCollection> contourfSlice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
                                                          List<Number> ySlice, List<Number> zSlice, LegendScheme ls,
                                                          boolean isSmooth) throws InvalidRangeException {
         data = data.copyIfView();
@@ -4761,7 +4762,7 @@ public class GraphicFactory {
         ya = ya.copyIfView();
         za = za.copyIfView();
 
-        List<GraphicCollection> sgs = new ArrayList<>();
+        List<PolygonGraphicCollection> sgs = new ArrayList<>();
 
         int dim1, dim2;
         double x, y, z;
@@ -4799,10 +4800,10 @@ public class GraphicFactory {
                 }
                 List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(grid, contourLines, borders, cValues);
 
-                GraphicCollection graphics = new GraphicCollection();
-                ColorBreak cb;
+                PolygonGraphicCollection graphics = new PolygonGraphicCollection();
+                PolygonBreak cb;
                 for (wcontour.global.Polygon polygon : contourPolygons) {
-                    MultiPolygon shape = new MultiPolygon();
+                    Polygon shape = new Polygon();
                     List<Coordinate> points = new ArrayList<>();
                     for (wcontour.global.PointD p : polygon.OutLine.PointList) {
                         points.add(new Coordinate(x, p.X, p.Y));
@@ -4820,7 +4821,7 @@ public class GraphicFactory {
                             for (wcontour.global.PointD p : holeLine.PointList) {
                                 points.add(new Coordinate(x, p.X, p.Y));
                             }
-                            shape.addHole(points, 0);
+                            shape.addHole(points);
                         }
                     }
                     int valueIdx = Arrays.binarySearch(cValues, polygon.LowValue);
@@ -4841,8 +4842,8 @@ public class GraphicFactory {
                             shape.lowValue = cValues[valueIdx - 1];
                         }
                     }
-                    cb = ls.findLegendBreak(shape.lowValue);
-                    graphics.add(new Graphic(shape, cb));
+                    cb = (PolygonBreak) ls.findLegendBreak(shape.lowValue);
+                    graphics.add(new PolygonGraphic(shape, cb));
                 }
                 graphics.setLegendScheme(ls);
                 sgs.add(graphics);
@@ -4875,10 +4876,10 @@ public class GraphicFactory {
                 }
                 List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(grid, contourLines, borders, cValues);
 
-                GraphicCollection graphics = new GraphicCollection();
-                ColorBreak cb;
+                PolygonGraphicCollection graphics = new PolygonGraphicCollection();
+                PolygonBreak cb;
                 for (wcontour.global.Polygon polygon : contourPolygons) {
-                    MultiPolygon shape = new MultiPolygon();
+                    Polygon shape = new Polygon();
                     List<Coordinate> points = new ArrayList<>();
                     for (wcontour.global.PointD p : polygon.OutLine.PointList) {
                         points.add(new Coordinate(p.X, y, p.Y));
@@ -4896,7 +4897,7 @@ public class GraphicFactory {
                             for (wcontour.global.PointD p : holeLine.PointList) {
                                 points.add(new Coordinate(p.X, y, p.Y));
                             }
-                            shape.addHole(points, 0);
+                            shape.addHole(points);
                         }
                     }
                     int valueIdx = Arrays.binarySearch(cValues, polygon.LowValue);
@@ -4917,8 +4918,8 @@ public class GraphicFactory {
                             shape.lowValue = cValues[valueIdx - 1];
                         }
                     }
-                    cb = ls.findLegendBreak(shape.lowValue);
-                    graphics.add(new Graphic(shape, cb));
+                    cb = (PolygonBreak) ls.findLegendBreak(shape.lowValue);
+                    graphics.add(new PolygonGraphic(shape, cb));
                 }
                 graphics.setLegendScheme(ls);
                 sgs.add(graphics);
@@ -4951,10 +4952,10 @@ public class GraphicFactory {
                 }
                 List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(grid, contourLines, borders, cValues);
 
-                GraphicCollection graphics = new GraphicCollection();
-                ColorBreak cb;
+                PolygonGraphicCollection graphics = new PolygonGraphicCollection();
+                PolygonBreak cb;
                 for (wcontour.global.Polygon polygon : contourPolygons) {
-                    MultiPolygon shape = new MultiPolygon();
+                    Polygon shape = new Polygon();
                     List<Coordinate> points = new ArrayList<>();
                     for (wcontour.global.PointD p : polygon.OutLine.PointList) {
                         points.add(new Coordinate(p.X, p.Y, z));
@@ -4972,7 +4973,7 @@ public class GraphicFactory {
                             for (wcontour.global.PointD p : holeLine.PointList) {
                                 points.add(new Coordinate(p.X, p.Y, z));
                             }
-                            shape.addHole(points, 0);
+                            shape.addHole(points);
                         }
                     }
                     int valueIdx = Arrays.binarySearch(cValues, polygon.LowValue);
@@ -4993,8 +4994,8 @@ public class GraphicFactory {
                             shape.lowValue = cValues[valueIdx - 1];
                         }
                     }
-                    cb = ls.findLegendBreak(shape.lowValue);
-                    graphics.add(new Graphic(shape, cb));
+                    cb = (PolygonBreak) ls.findLegendBreak(shape.lowValue);
+                    graphics.add(new PolygonGraphic(shape, cb));
                 }
                 graphics.setLegendScheme(ls);
                 sgs.add(graphics);
@@ -5017,7 +5018,7 @@ public class GraphicFactory {
      * @param isSmooth Smooth contour lines or not
      * @return Contour polygon slice graphics
      */
-    public static GraphicCollection contourfSlice(Array data, Array xa, Array ya, Array za, List<Number> xySlice,
+    public static PolygonGraphicCollection contourfSlice(Array data, Array xa, Array ya, Array za, List<Number> xySlice,
                                                           InterpolationMethod method, LegendScheme ls, boolean isSmooth) throws InvalidRangeException {
         data = data.copyIfView();
         xa = xa.copyIfView();
@@ -5062,11 +5063,11 @@ public class GraphicFactory {
                 }
                 List<wcontour.global.Polygon> contourPolygons = ContourDraw.tracingPolygons(grid, contourLines, borders, cValues);
 
-                GraphicCollection graphics = new GraphicCollection();
-                ColorBreak cb;
+                PolygonGraphicCollection graphics = new PolygonGraphicCollection();
+                PolygonBreak cb;
                 Coordinate pz;
                 for (wcontour.global.Polygon polygon : contourPolygons) {
-                    MultiPolygon shape = new MultiPolygon();
+                    Polygon shape = new Polygon();
                     List<Coordinate> points = new ArrayList<>();
                     for (wcontour.global.PointD p : polygon.OutLine.PointList) {
                         x = p.X;
@@ -5096,7 +5097,7 @@ public class GraphicFactory {
                                 pz.z = y;
                                 points.add(pz);
                             }
-                            shape.addHole(points, 0);
+                            shape.addHole(points);
                         }
                     }
                     int valueIdx = Arrays.binarySearch(cValues, polygon.LowValue);
@@ -5117,8 +5118,8 @@ public class GraphicFactory {
                             shape.lowValue = cValues[valueIdx - 1];
                         }
                     }
-                    cb = ls.findLegendBreak(shape.lowValue);
-                    graphics.add(new Graphic(shape, cb));
+                    cb = (PolygonBreak) ls.findLegendBreak(shape.lowValue);
+                    graphics.add(new PolygonGraphic(shape, cb));
                 }
                 graphics.setLegendScheme(ls);
                 return graphics;
@@ -5672,9 +5673,9 @@ public class GraphicFactory {
             if (!GeoComputation.isClockwise(pList)) {
                 Collections.reverse(pList);
             }
-            MultiPolygon multiPolygon = new MultiPolygon();
-            multiPolygon.setCoordinates(pList);
-            multiPolygon.lowValue = v;
+            Polygon polygon = new Polygon();
+            polygon.setCoordinates(pList);
+            polygon.lowValue = v;
             if (poly.HasHoles()) {
                 switch (zdir) {
                     case "x":
@@ -5687,7 +5688,7 @@ public class GraphicFactory {
                                 aPoint.x = offset;
                                 pList.add(aPoint);
                             }
-                            multiPolygon.addHole(pList, 0);
+                            polygon.addHole(pList);
                         }
                         break;
                     case "y":
@@ -5700,7 +5701,7 @@ public class GraphicFactory {
                                 aPoint.y = offset;
                                 pList.add(aPoint);
                             }
-                            multiPolygon.addHole(pList, 0);
+                            polygon.addHole(pList);
                         }
                         break;
                     case "z":
@@ -5713,7 +5714,7 @@ public class GraphicFactory {
                                 aPoint.z = offset;
                                 pList.add(aPoint);
                             }
-                            multiPolygon.addHole(pList, 0);
+                            polygon.addHole(pList);
                         }
                         break;
                 }
@@ -5724,22 +5725,22 @@ public class GraphicFactory {
             }
             //int valueIdx = findIndex(cValues, v);
             if (valueIdx == cValues.length - 1) {
-                multiPolygon.highValue = maxData;
+                polygon.highValue = maxData;
             } else {
-                multiPolygon.highValue = cValues[valueIdx + 1];
+                polygon.highValue = cValues[valueIdx + 1];
             }
             if (!poly.IsHighCenter && poly.HighValue == poly.LowValue) {
-                multiPolygon.highValue = v;
+                polygon.highValue = v;
                 if (valueIdx == 0) {
-                    multiPolygon.lowValue = minData;
+                    polygon.lowValue = minData;
                 } else {
-                    multiPolygon.lowValue = cValues[valueIdx - 1];
+                    polygon.lowValue = cValues[valueIdx - 1];
                 }
             }
 
-            v = multiPolygon.lowValue;
+            v = polygon.lowValue;
             cbb = (PolygonBreak) ls.findLegendBreak(v);
-            graphics.add(new PolygonGraphic(multiPolygon, cbb));
+            graphics.add(new PolygonGraphic(polygon, cbb));
         }
         graphics.setSingleLegend(false);
         graphics.setLegendScheme(ls);
@@ -5855,10 +5856,10 @@ public class GraphicFactory {
             if (!GeoComputation.isClockwise(pList)) {
                 Collections.reverse(pList);
             }
-            MultiPolygon aPolygonShape = new MultiPolygon();
-            aPolygonShape.setCoordinates(pList);
-            aPolygonShape.setExtent(GeometryUtil.getPointsExtent(pList));
-            aPolygonShape.lowValue = v;
+            Polygon polygon = new Polygon();
+            polygon.setCoordinates(pList);
+            polygon.setExtent(GeometryUtil.getPointsExtent(pList));
+            polygon.lowValue = v;
             if (poly.HasHoles()) {
                 switch (zdir) {
                     case "x":
@@ -5871,7 +5872,7 @@ public class GraphicFactory {
                                 aPoint.x = offset;
                                 pList.add(aPoint);
                             }
-                            aPolygonShape.addHole(pList, 0);
+                            polygon.addHole(pList);
                         }
                         break;
                     case "y":
@@ -5884,7 +5885,7 @@ public class GraphicFactory {
                                 aPoint.y = offset;
                                 pList.add(aPoint);
                             }
-                            aPolygonShape.addHole(pList, 0);
+                            polygon.addHole(pList);
                         }
                         break;
                     case "z":
@@ -5897,7 +5898,7 @@ public class GraphicFactory {
                                 aPoint.z = offset;
                                 pList.add(aPoint);
                             }
-                            aPolygonShape.addHole(pList, 0);
+                            polygon.addHole(pList);
                         }
                         break;
                 }
@@ -5908,22 +5909,22 @@ public class GraphicFactory {
             }
             //int valueIdx = findIndex(cValues, v);
             if (valueIdx == cValues.length - 1) {
-                aPolygonShape.highValue = maxData;
+                polygon.highValue = maxData;
             } else {
-                aPolygonShape.highValue = cValues[valueIdx + 1];
+                polygon.highValue = cValues[valueIdx + 1];
             }
             if (!poly.IsHighCenter && poly.HighValue == poly.LowValue) {
-                aPolygonShape.highValue = v;
+                polygon.highValue = v;
                 if (valueIdx == 0) {
-                    aPolygonShape.lowValue = minData;
+                    polygon.lowValue = minData;
                 } else {
-                    aPolygonShape.lowValue = cValues[valueIdx - 1];
+                    polygon.lowValue = cValues[valueIdx - 1];
                 }
             }
 
-            v = aPolygonShape.lowValue;
+            v = polygon.lowValue;
             cbb = (PolygonBreak) ls.findLegendBreak(v);
-            graphics.add(new PolygonGraphic(aPolygonShape, cbb));
+            graphics.add(new PolygonGraphic(polygon, cbb));
         }
         graphics.setSingleLegend(false);
         graphics.setLegendScheme(ls);

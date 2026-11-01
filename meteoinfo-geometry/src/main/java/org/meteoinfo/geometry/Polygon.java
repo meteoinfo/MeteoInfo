@@ -32,6 +32,14 @@ public class Polygon extends Geometry {
 
     protected LinearRing shell = null;
     protected List<LinearRing> holes;
+    /**
+     * Start value
+     */
+    public double lowValue;
+    /**
+     * End value
+     */
+    public double highValue;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 

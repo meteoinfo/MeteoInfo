@@ -1,15 +1,17 @@
 package org.meteoinfo.geo.io;
 
+import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.geometry.*;
 import org.meteoinfo.geo.layer.ImageLayer;
 import org.meteoinfo.geo.layer.VectorLayer;
-import org.meteoinfo.chart.graphic.Graphic;
-import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geo.mapdata.ShapeFileType;
+import org.meteoinfo.geometry.Point;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.special.*;
+import org.meteoinfo.geometry.special.Image;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,14 +26,14 @@ public class GraphicUtil {
      * @return Graphics
      */
     public static GraphicCollection layerToGraphics(VectorLayer layer, double xShift) {
-        GraphicCollection graphics = new GraphicCollection();
+        GraphicCollection graphics = GraphicCollection.factory(layer.getGeometryType());
         LegendScheme ls = layer.getLegendScheme();
         ColorBreak cb;
         if (xShift == 0) {
             for (Geometry shape : layer.getShapes()) {
                 if (shape.getLegendIndex() >= 0) {
                     cb = ls.getLegendBreak(shape.getLegendIndex());
-                    graphics.add(new Graphic(shape, cb));
+                    graphics.add(Graphic.factory(shape, cb));
                 }
             }
         } else {
@@ -42,7 +44,7 @@ public class GraphicUtil {
                     }
                     shape.updateExtent();
                     cb = ls.getLegendBreak(shape.getLegendIndex());
-                    graphics.add(new Graphic(shape, cb));
+                    graphics.add(Graphic.factory(shape, cb));
                 }
             }
         }
@@ -61,14 +63,14 @@ public class GraphicUtil {
      * @return Graphics
      */
     public static GraphicCollection layerToGraphics(VectorLayer layer, double offset, double xshift) {
-        GraphicCollection graphics = new GraphicCollection();
+        GraphicCollection graphics = GraphicCollection.factory(layer.getGeometryType());
         graphics.setFixZ(true);
         graphics.setZValue(offset);
-        ShapeFileType shapeType = layer.getShapeType();
         LegendScheme ls = layer.getLegendScheme();
         Coordinate pz;
         ColorBreak cb;
-        switch (shapeType) {
+        ShapeFileType shapeFileType = layer.getShapeType();
+        switch (shapeFileType) {
             case POINT:
                 for (Point shape : (List<Point>) layer.getShapes()) {
                     Point s = new Point();
@@ -76,7 +78,7 @@ public class GraphicUtil {
                     pz = new Coordinate(pd.x + xshift, pd.y, offset);
                     s.setCoordinate(pz);
                     cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                    graphics.add(new Graphic(s, cb));
+                    graphics.add(Graphic.factory(s, cb));
                 }
                 break;
             case POLYLINE:
@@ -90,7 +92,7 @@ public class GraphicUtil {
                             plist.add(pz);
                         }
                         s.setCoordinates(plist);
-                        graphics.add(new Graphic(s, cb));
+                        graphics.add(Graphic.factory(s, cb));
                     }
                 }
                 break;
@@ -106,14 +108,14 @@ public class GraphicUtil {
                     s.setParts(shape.getParts());
                     s.setCoordinates(plist);
                     cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                    graphics.add(new Graphic(s, cb));
+                    graphics.add(Graphic.factory(s, cb));
                 }
                 break;
             case POINT_Z:
             case POLYLINE_Z:
             case POLYGON_Z:
                 graphics.setFixZ(false);
-                switch (shapeType) {
+                switch (shapeFileType) {
                     case POLYLINE_Z:
                         for (MultiLineString shape : (List<MultiLineString>) layer.getShapes()) {
                             cb = ls.getLegendBreaks().get(shape.getLegendIndex());
@@ -125,7 +127,7 @@ public class GraphicUtil {
                                     plist.add(pz);
                                 }
                                 s.setCoordinates(plist);
-                                graphics.add(new Graphic(s, cb));
+                                graphics.add(Graphic.factory(s, cb));
                             }
                         }
                         break;
@@ -141,7 +143,7 @@ public class GraphicUtil {
                             s.setParts(shape.getParts());
                             s.setCoordinates(plist);
                             cb = ls.getLegendBreaks().get(shape.getLegendIndex());
-                            graphics.add(new Graphic(s, cb));
+                            graphics.add(Graphic.factory(s, cb));
                         }
                         break;
                 }
@@ -175,7 +177,7 @@ public class GraphicUtil {
         coords.add(new Coordinate(extent.minX + xShift, extent.maxY, 0));
         ishape.setExtent(extent);
         ishape.setCoords(coords);
-        Graphic gg = new Graphic(ishape, new ColorBreak());
+        Graphic gg = Graphic.factory(ishape, new ColorBreak());
         if (interpolation != null) {
             ((Image) gg.getGeometry()).setInterpolation(interpolation);
         }
@@ -211,7 +213,7 @@ public class GraphicUtil {
         coords.add(new Coordinate(extent.minX + xshift, extent.maxY, offset));
         ishape.setExtent(ex3);
         ishape.setCoords(coords);
-        Graphic gg = new Graphic(ishape, new ColorBreak());
+        Graphic gg = Graphic.factory(ishape, new ColorBreak());
         if (interpolation != null) {
             ((Image) gg.getGeometry()).setInterpolation(interpolation);
         }

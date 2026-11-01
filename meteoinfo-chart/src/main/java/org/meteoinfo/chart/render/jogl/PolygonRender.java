@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class PolygonRender extends JOGLGraphicRender {
 
-    private PolygonGraphicCollection polygonGraphic;
+    private PolygonalGraphic polygonGraphic;
     private IntBuffer vbo;
     private Program program;
     private float[] vertexPosition;
@@ -66,7 +66,7 @@ public class PolygonRender extends JOGLGraphicRender {
      * @param gl The opengl pipeline
      * @param polygonGraphic The PolygonGraphic
      */
-    public PolygonRender(GL2 gl, PolygonGraphicCollection polygonGraphic) {
+    public PolygonRender(GL2 gl, PolygonalGraphic polygonGraphic) {
         this(gl);
 
         this.polygonGraphic = polygonGraphic;

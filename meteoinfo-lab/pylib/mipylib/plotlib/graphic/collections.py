@@ -276,7 +276,11 @@ class LineCollection(Collection, LineGraphicCollection):
                             else:
                                 segments = [np.column_stack([xdata, ydata[i], zdata[i]]) for i in range(nline)]
                 else:
+                    if ydata.ndim == 1:
+                        ydata = ydata[:,np.newaxis]
+
                     nseg, nline = ydata.shape
+
                     if xdata is None:
                         xdata = np.arange(nseg)
 
@@ -286,6 +290,9 @@ class LineCollection(Collection, LineGraphicCollection):
                         else:
                             segments = [np.column_stack([xdata[:,i], ydata[:,i]]) for i in range(nline)]
                     else:
+                        if zdata.ndim == 1:
+                            zdata = zdata[:,np.newaxis]
+
                         if xdata.ndim == 1:
                             segments = [np.column_stack([xdata, ydata[:,i], zdata[:,i]]) for i in range(nline)]
                         else:

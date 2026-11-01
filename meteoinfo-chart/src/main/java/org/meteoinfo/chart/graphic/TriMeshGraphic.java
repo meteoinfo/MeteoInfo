@@ -396,11 +396,98 @@ public class TriMeshGraphic extends MeshGraphic {
         return getTriangles(this.vertexPosition);
     }
 
+    @Override
+    public void calculateNormalVectors(float[] vData) {
+        if (this.vertexNormal != null) {
+            return;
+        }
+
+        int nVertex = getVertexNumber();
+        vertexNormal = new float[vData.length];
+
+        // Index-based accumulator: accum[i][0..2] holds the summed normal for vertex i.
+        // Replaces the broken HashMap<Vector3f, Vector3f> approach. Using vertex indices
+        // as keys guarantees correct aggregation regardless of object identity.
+        float[][] accum = new float[nVertex][3];
+
+        int faceCount = getFaceNumber();
+
+        // Reusable scratch vectors to avoid allocating ~3*nFace Vector3f objects
+        // inside the hot loop. These are overwritten each iteration.
+        Vector3f edgeAB = new Vector3f();
+        Vector3f edgeAC = new Vector3f();
+        Vector3f faceN = new Vector3f();
+
+        for (int f = 0; f < faceCount; f++) {
+            // Read triangle vertex indices from the index buffer
+            int ia = vertexIndices[f * 3];
+            int ib = vertexIndices[f * 3 + 1];
+            int ic = vertexIndices[f * 3 + 2];
+
+            // Sample vertex positions directly from the flat array.
+            // No getVertex() calls → zero intermediate Vector3f allocation.
+            float ax = vData[ia * 3],     ay = vData[ia * 3 + 1], az = vData[ia * 3 + 2];
+            float bx = vData[ib * 3],     by = vData[ib * 3 + 1], bz = vData[ib * 3 + 2];
+            float cx = vData[ic * 3],     cy = vData[ic * 3 + 1], cz = vData[ic * 3 + 2];
+
+            // Compute edge vectors originating from vertex A
+            edgeAB.set(bx - ax, by - ay, bz - az);
+            edgeAC.set(cx - ax, cy - ay, cz - az);
+
+            // Cross product: (B-A) × (C-A). Direction follows right-hand rule
+            // assuming counter-clockwise winding order.
+            edgeAB.cross(edgeAC, faceN);
+
+            // Normalize BEFORE accumulation. Unnormalized cross product has magnitude
+            // proportional to triangle area; without this step, larger triangles would
+            // disproportionately bias the averaged vertex normal.
+            float lenSq = faceN.lengthSquared();
+            if (lenSq > 1e-12f) {
+                faceN.normalize();
+            } else {
+                // Degenerate triangle (collinear or coincident vertices).
+                // Skip entirely rather than injecting a zero/NaN vector into the sum.
+                continue;
+            }
+
+            // Accumulate the unit face normal into all three vertex slots.
+            // Each shared vertex receives one contribution per adjacent face.
+            for (int idx : new int[]{ia, ib, ic}) {
+                accum[idx][0] += faceN.x;
+                accum[idx][1] += faceN.y;
+                accum[idx][2] += faceN.z;
+            }
+        }
+
+        // Final pass: normalize each accumulated vertex normal to unit length
+        // and write into the output vertexNormal array.
+        for (int i = 0; i < nVertex; i++) {
+            float nx = accum[i][0];
+            float ny = accum[i][1];
+            float nz = accum[i][2];
+            float len = (float) Math.sqrt(nx * nx + ny * ny + nz * nz);
+
+            if (len > 1e-8f) {
+                // Standard case: normalize the weighted average to unit length
+                vertexNormal[i * 3]     = nx / len;
+                vertexNormal[i * 3 + 1] = ny / len;
+                vertexNormal[i * 3 + 2] = nz / len;
+            } else {
+                // Isolated vertex or all adjacent faces were degenerate.
+                // Assign a safe upward default to prevent NaN propagation
+                // through the lighting pipeline.
+                vertexNormal[i * 3]     = 0f;
+                vertexNormal[i * 3 + 1] = 1f;
+                vertexNormal[i * 3 + 2] = 0f;
+            }
+        }
+    }
+
     /**
      * Given the vertex coordinates of a shape this function calculates the
      * normal vector coordinates.
      */
-    public void calculateNormalVectors(float[] vData) {
+    public void calculateNormalVectors_bak(float[] vData) {
         if (this.vertexNormal != null)
             return;
 

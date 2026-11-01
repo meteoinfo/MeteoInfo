@@ -8,7 +8,7 @@ import org.meteoinfo.ndarray.IndexIterator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LineGraphicCollection extends GraphicCollection {
+public class LineGraphicCollection extends GraphicCollection implements LinealGraphic {
     private Array cData;
     private List<Array> data;
     private boolean curve = false;
@@ -88,29 +88,25 @@ public class LineGraphicCollection extends GraphicCollection {
 
     protected void updateGraphics(List<Array> data, PolylineBreak lineBreak) {
         this.data = data;
-        this.graphics = new ArrayList<>();
+        this.graphics = new ArrayList<LineGraphic>();
         int[] origin = new int[2];
         int[] shape = new int[2];
-        Array x, y, z;
         try {
             for (Array array : data) {
-                if (array.getRank() == 2) {
-                    origin = new int[]{0, 0};
-                    shape = new int[]{array.getShape()[0], 1};
-                    x = array.section(origin, shape);
-                    origin = new int[]{0, 1};
-                    y = array.section(origin, shape);
-                    this.add(new LineGraphic(x, y, lineBreak));
-                } else {
-                    origin = new int[]{0, 0, 0};
-                    shape = new int[]{array.getShape()[0], 1, 1};
-                    x = array.section(origin, shape);
-                    origin = new int[]{0, 1, 0};
-                    y = array.section(origin, shape);
-                    origin = new int[]{0, 0, 1};
+                int[] arrShape = array.getShape();
+                int nPoint = arrShape[0];
+                int nDim = arrShape[1];
+                origin = new int[]{0, 0};
+                shape = new int[]{nPoint, 1};
+                Array x = array.section(origin, shape);
+                origin = new int[]{0, 1};
+                Array y = array.section(origin, shape);
+                Array z = null;
+                if (nDim == 3) {
+                    origin = new int[]{0, 2};
                     z = array.section(origin, shape);
-                    this.add(new LineGraphic(x, y, z, lineBreak));
                 }
+                this.add(new LineGraphic(x, y, z, lineBreak));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -123,34 +119,26 @@ public class LineGraphicCollection extends GraphicCollection {
         this.graphics = new ArrayList<>();
         int[] origin = new int[2];
         int[] shape = new int[2];
-        Array x, y, z;
         try {
             int i = 0;
             for (Array array : data) {
-                if (array.getRank() == 2) {
-                    origin = new int[]{0, 0};
-                    shape = new int[]{array.getShape()[0], 1};
-                    x = array.section(origin, shape);
-                    origin = new int[]{0, 1};
-                    y = array.section(origin, shape);
-                    if (i >= lineBreaks.size()) {
-                        i = 0;
-                    }
-                    this.add(new LineGraphic(x, y, lineBreaks.get(i)));
-                } else {
-                    origin = new int[]{0, 0, 0};
-                    shape = new int[]{array.getShape()[0], 1, 1};
-                    x = array.section(origin, shape);
-                    origin = new int[]{0, 1, 0};
-                    y = array.section(origin, shape);
-                    origin = new int[]{0, 0, 1};
+                int[] arrShape = array.getShape();
+                int nPoint = arrShape[0];
+                int nDim = arrShape[1];
+                origin = new int[]{0, 0};
+                shape = new int[]{nPoint, 1};
+                Array x = array.section(origin, shape);
+                origin = new int[]{0, 1};
+                Array y = array.section(origin, shape);
+                Array z = null;
+                if (nDim == 3) {
+                    origin = new int[]{0, 2};
                     z = array.section(origin, shape);
-                    if (i >= lineBreaks.size()) {
-                        i = 0;
-                    }
-                    this.add(new LineGraphic(x, y, z, lineBreaks.get(i)));
                 }
-
+                if (i >= lineBreaks.size()) {
+                    i = 0;
+                }
+                this.add(new LineGraphic(x, y, z, lineBreaks.get(i)));
                 i += 1;
             }
         } catch (Exception e) {
@@ -164,28 +152,23 @@ public class LineGraphicCollection extends GraphicCollection {
         this.graphics = new ArrayList<>();
         int[] origin = new int[2];
         int[] shape = new int[2];
-        Array x, y, z;
         try {
             int i = 0;
             for (Array array : data) {
-                if (array.getRank() == 2) {
-                    origin = new int[]{0, 0};
-                    shape = new int[]{array.getShape()[0], 1};
-                    x = array.section(origin, shape);
-                    origin = new int[]{0, 1};
-                    y = array.section(origin, shape);
-                    this.add(new LineGraphic(x, y, cData.get(i), ls));
-                } else {
-                    origin = new int[]{0, 0, 0};
-                    shape = new int[]{array.getShape()[0], 1, 1};
-                    x = array.section(origin, shape);
-                    origin = new int[]{0, 1, 0};
-                    y = array.section(origin, shape);
-                    origin = new int[]{0, 0, 1};
+                int[] arrShape = array.getShape();
+                int nPoint = arrShape[0];
+                int nDim = arrShape[1];
+                origin = new int[]{0, 0};
+                shape = new int[]{nPoint, 1};
+                Array x = array.section(origin, shape);
+                origin = new int[]{0, 1};
+                Array y = array.section(origin, shape);
+                Array z = null;
+                if (nDim == 3) {
+                    origin = new int[]{0, 2};
                     z = array.section(origin, shape);
-                    this.add(new LineGraphic(x, y, z, cData.get(i), ls));
                 }
-
+                this.add(new LineGraphic(x, y, z, cData.get(i), ls));
                 i += 1;
             }
         } catch (Exception e) {
@@ -200,33 +183,28 @@ public class LineGraphicCollection extends GraphicCollection {
         this.graphics = new ArrayList<>();
         int[] origin = new int[2];
         int[] shape = new int[2];
-        Array x, y, z, c;
         try {
             int i = 0;
             for (Array array : data) {
-                if (array.getRank() == 2) {
-                    origin = new int[]{0, 0};
-                    shape = new int[]{array.getShape()[0], 1};
-                    x = array.section(origin, shape);
-                    origin = new int[]{0, 1};
-                    y = array.section(origin, shape);
-                    origin = new int[]{0, i};
-                    c = cData.section(origin, shape);
-                    this.add(new LineGraphic(x, y, c, ls));
-                } else {
-                    origin = new int[]{0, 0, 0};
-                    shape = new int[]{array.getShape()[0], 1, 1};
-                    x = array.section(origin, shape);
-                    origin = new int[]{0, 1, 0};
-                    y = array.section(origin, shape);
-                    origin = new int[]{0, 0, 1};
+                int[] arrShape = array.getShape();
+                int nPoint = arrShape[0];
+                int nDim = arrShape[1];
+                origin = new int[]{0, 0};
+                shape = new int[]{nPoint, 1};
+                Array x = array.section(origin, shape);
+                origin = new int[]{0, 1};
+                Array y = array.section(origin, shape);
+                Array z = null;
+                if (nDim == 3) {
+                    origin = new int[]{0, 2};
                     z = array.section(origin, shape);
-                    origin = new int[]{0, i};
-                    shape = new int[]{array.getShape()[0], 1};
-                    c = cData.section(origin, shape);
-                    this.add(new LineGraphic(x, y, z, c, ls));
                 }
-
+                Array c = cData;
+                if (c.getRank() == 2) {
+                    origin = new int[]{0, i};
+                    c = cData.section(origin, shape);
+                }
+                this.add(new LineGraphic(x, y, z, c, ls));
                 i += 1;
             }
         } catch (Exception e) {

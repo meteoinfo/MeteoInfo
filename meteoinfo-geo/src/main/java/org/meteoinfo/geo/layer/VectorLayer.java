@@ -154,6 +154,33 @@ public class VectorLayer extends MapLayer {
     }
 
     /**
+     * Get geometry type
+     * @return Geometry type
+     */
+    public GeometryType getGeometryType() {
+        if (shapes.isEmpty()) {
+            switch (this._shapeType) {
+                case POINT:
+                case POINT_M:
+                case POINT_Z:
+                    return GeometryType.POINT;
+                case POLYLINE:
+                case POLYLINE_M:
+                case POLYLINE_Z:
+                    return GeometryType.MULTI_POINT;
+                case POLYGON:
+                case POLYGON_M:
+                case POLYGON_Z:
+                    return GeometryType.MULTI_POLYGON;
+                default:
+                    return GeometryType.POINT;
+            }
+        } else {
+            return shapes.get(0).getGeometryType();
+        }
+    }
+
+    /**
      * Get shape list
      *
      * @return Shape list

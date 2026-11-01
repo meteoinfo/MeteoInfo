@@ -2,13 +2,13 @@ package org.meteoinfo.chart.graphic.pipe;
 
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.geometry.Coordinate;
-import org.meteoinfo.geometry.MultiLineString;
+import org.meteoinfo.geometry.LineString;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PipeShape extends MultiLineString {
+public class PipeShape extends LineString {
     private float radius = 0.05f;
     private int steps = 48;
     private Pipe pipe;
@@ -18,7 +18,7 @@ public class PipeShape extends MultiLineString {
      * Constructor
      * @param shape PolylineZShape
      */
-    public PipeShape(MultiLineString shape) {
+    public PipeShape(LineString shape) {
         this.setCoordinates(shape.getCoordinates());
         //generatePipe();
     }
@@ -29,7 +29,7 @@ public class PipeShape extends MultiLineString {
      * @param radius Radius
      * @param steps Steps
      */
-    public PipeShape(MultiLineString shape, float radius, int steps) {
+    public PipeShape(LineString shape, float radius, int steps) {
         this.setCoordinates(shape.getCoordinates());
         this.radius = radius;
         this.steps = steps;

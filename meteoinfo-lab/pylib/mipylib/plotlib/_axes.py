@@ -1858,8 +1858,6 @@ class Axes(object):
 
         # Add data series
         label = kwargs.pop('label', 'S_0')
-        xdata = plotutil.getplotdata(x)
-        ydata = plotutil.getplotdata(y)
 
         # Set plot data styles
         pb, isunique = plotutil.getlegendbreak('point', **kwargs)
@@ -1868,18 +1866,16 @@ class Axes(object):
             if c is None:
                 c = 'b'
         pb.setCaption(label)
-        # pstyle = plotutil.getpointstyle(marker)
-        # pb.setStyle(pstyle)
-        isvalue = False
+        is_value = False
 
         if isinstance(c, NDArray):
             if x.size == c.size:
-                isvalue = True
+                is_value = True
         elif isinstance(c, (list, tuple)):
             if len(x) == len(c) and isinstance(c[0], (int, long, float)):
-                isvalue = True
+                is_value = True
 
-        if isvalue:
+        if is_value:
             ls = kwargs.pop('symbolspec', None)
             if ls is None:
                 if isinstance(c, (list, tuple)):
@@ -1904,8 +1900,7 @@ class Axes(object):
                     for i in range(0, n):
                         ls.getLegendBreaks()[i].setSize(s[i])
             # Create graphics
-            #graphics = GraphicFactory.createPoints(xdata, ydata, c.asarray(), ls)
-            graphics = PointCollection(xdata, ydata, cdata=c, legend=ls)
+            graphics = PointCollection(x, y, cdata=c, legend=ls)
         else:
             alpha = kwargs.pop('alpha', None)
             colors = plotutil.getcolors(c, alpha)
@@ -1940,8 +1935,7 @@ class Axes(object):
                     plotutil.setpointlegendbreak(npb, **kwargs)
                     pbs.append(npb)
             # Create graphics
-            #graphics = GraphicFactory.createPoints(xdata, ydata, pbs)
-            graphics = PointCollection(xdata, ydata, legend=pbs)
+            graphics = PointCollection(x, y, legend=pbs)
 
         antialias = kwargs.pop('antialias', None)
         if antialias is not None:

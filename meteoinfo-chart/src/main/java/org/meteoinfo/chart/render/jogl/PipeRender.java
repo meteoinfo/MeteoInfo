@@ -6,7 +6,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
-import org.meteoinfo.chart.graphic.GraphicCollection;
+import org.meteoinfo.chart.graphic.LinealGraphic;
 import org.meteoinfo.chart.graphic.cylinder.Cylinder;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
@@ -14,6 +14,7 @@ import org.meteoinfo.chart.jogl.Utils;
 import org.meteoinfo.chart.graphic.pipe.Pipe;
 import org.meteoinfo.chart.graphic.pipe.PipeShape;
 import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.geometry.Geometry;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.MultiLineString;
@@ -26,7 +27,7 @@ import java.util.List;
 
 public class PipeRender extends JOGLGraphicRender{
 
-    private GraphicCollection graphics;
+    private LinealGraphic linealGraphic;
     private IntBuffer vbo;
     private Program program;
     private int vertexNum;
@@ -71,16 +72,18 @@ public class PipeRender extends JOGLGraphicRender{
      * @param gl The JOGL GL2 object
      * @param graphics Linestring 3D graphics
      */
-    public PipeRender(GL2 gl, GraphicCollection graphics) {
+    public PipeRender(GL2 gl, LinealGraphic linealGraphic) {
         this(gl);
 
-        this.graphics = graphics;
+        this.linealGraphic = linealGraphic;
         this.vertexNum = 0;
-        for (Graphic graphic : this.graphics.getGraphics()) {
+        Graphic pipeGraphic = (Graphic) this.linealGraphic;
+        for (int i = 0; i < pipeGraphic.getNumGraphics(); i++) {
+            Graphic graphic = pipeGraphic.getGraphicN(i);
             this.vertexNum += ((PipeShape) graphic.getGeometry()).getVertexCount();
         }
 
-        ColorBreak cb = graphics.getGraphicN(0).getLegendBreak();
+        ColorBreak cb = this.linealGraphic.getLegendBreak();
         PolylineBreak lineBreak;
         if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
             lineBreak = (PolylineBreak) ((ColorBreakCollection) cb).get(0);
@@ -104,7 +107,9 @@ public class PipeRender extends JOGLGraphicRender{
         this.vertexColor = new float[this.vertexNum * 4];
         int i = 0;
         float[] color;
-        for (Graphic graphic : this.graphics.getGraphics()) {
+        Graphic pipeGraphic = (Graphic) this.linealGraphic;
+        for (int p = 0; p < pipeGraphic.getNumGraphics(); p++) {
+            Graphic graphic = pipeGraphic.getGraphicN(p);
             PipeShape shape = (PipeShape) graphic.getGeometry();
             Pipe pipe = shape.getPipe();
             int n = pipe.getContourCount();
@@ -134,7 +139,9 @@ public class PipeRender extends JOGLGraphicRender{
         vertexPosition = new float[this.vertexNum * 3];
         int i = 0;
         linePointNumbers = new ArrayList<>();
-        for (Graphic graphic : this.graphics.getGraphics()) {
+        Graphic pipeGraphic = (Graphic) this.linealGraphic;
+        for (int p = 0; p < pipeGraphic.getNumGraphics(); p++) {
+            Graphic graphic = pipeGraphic.getGraphicN(p);
             PipeShape shape = (PipeShape) graphic.getGeometry();
             shape.transform(transform);
             Pipe pipe = shape.getPipe();
@@ -152,7 +159,9 @@ public class PipeRender extends JOGLGraphicRender{
 
     private void updateVertexIndices() {
         int idxNum = 0;
-        for (Graphic graphic : this.graphics.getGraphics()) {
+        Graphic pipeGraphic = (Graphic) this.linealGraphic;
+        for (int p = 0; p < pipeGraphic.getNumGraphics(); p++) {
+            Graphic graphic = pipeGraphic.getGraphicN(p);
             PipeShape shape = (PipeShape) graphic.getGeometry();
             Pipe pipe = shape.getPipe();
             idxNum += (pipe.getContourCount() - 1) * (pipe.getContour().size() - 1) * 6;
@@ -161,7 +170,8 @@ public class PipeRender extends JOGLGraphicRender{
         vertexIndices = new int[idxNum];
         int i = 0;
         int b = 0;
-        for (Graphic graphic : this.graphics.getGraphics()) {
+        for (int p = 0; p < pipeGraphic.getNumGraphics(); p++) {
+            Graphic graphic = pipeGraphic.getGraphicN(p);
             PipeShape shape = (PipeShape) graphic.getGeometry();
             Pipe pipe = shape.getPipe();
             int n = pipe.getContour().size();
@@ -185,7 +195,9 @@ public class PipeRender extends JOGLGraphicRender{
     private float[] getVertexNormal() {
         float[] vertexNormal = new float[this.vertexNum * 3];
         int i = 0;
-        for (Graphic graphic : this.graphics.getGraphics()) {
+        Graphic pipeGraphic = (Graphic) this.linealGraphic;
+        for (int p = 0; p < pipeGraphic.getNumGraphics(); p++) {
+            Graphic graphic = pipeGraphic.getGraphicN(p);
             PipeShape shape = (PipeShape) graphic.getGeometry();
             Pipe pipe = shape.getPipe();
             for (int j = 0; j < pipe.getContourCount(); j++) {
@@ -207,8 +219,10 @@ public class PipeRender extends JOGLGraphicRender{
         List<Vector4f> vertexColorList = new ArrayList<>();
         List<Integer> vertexIndices = new ArrayList<>();
         Cylinder cylinder = null;
-        for (Graphic graphic : this.graphics.getGraphics()) {
-            MultiLineString shape = (MultiLineString) graphic.getGeometry();
+        Graphic pipeGraphic = (Graphic) this.linealGraphic;
+        for (int p = 0; p < pipeGraphic.getNumGraphics(); p++) {
+            Graphic graphic = pipeGraphic.getGraphicN(p);
+            Geometry shape = graphic.getGeometry();
             int pointNum = shape.getNumPoints();
             List<Coordinate> ps = (List<Coordinate>) shape.getCoordinates();
             ColorBreak cb = graphic.getLegendBreak();

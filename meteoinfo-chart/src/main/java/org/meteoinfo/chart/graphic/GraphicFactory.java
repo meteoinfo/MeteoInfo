@@ -646,10 +646,10 @@ public class GraphicFactory {
      * @param ls Legend scheme
      * @return LineString graphic
      */
-    public static GraphicCollection createLineString3D(Array xdata, Array ydata, Array zdata, Array mdata,
+    public static LineGraphicCollection createLineString3D(Array xdata, Array ydata, Array zdata, Array mdata,
             LegendScheme ls) {
-        GraphicCollection gc = new GraphicCollection();
-        MultiLineString pls;
+        LineGraphicCollection gc = new LineGraphicCollection();
+        LineString pls;
         List<Coordinate> points = new ArrayList<>();
         double x, y, z = 0, m;
         IndexIterator xIter = xdata.getIndexIterator();
@@ -680,9 +680,9 @@ public class GraphicFactory {
                     if (points.size() == 1) {
                         points.add((Coordinate) points.get(0).clone());
                     }
-                    pls = new MultiLineString();
+                    pls = new LineString();
                     pls.setCoordinates(points);
-                    gc.add(new Graphic(pls, cbs));
+                    gc.add(Graphic.factory(pls, cbs));
                     points = new ArrayList<>();
                     cbs = new ColorBreakCollection();
                 } else {
@@ -691,9 +691,9 @@ public class GraphicFactory {
                 }
             }
             if (points.size() > 1) {
-                pls = new MultiLineString();
+                pls = new LineString();
                 pls.setCoordinates(points);
-                gc.add(new Graphic(pls, cbs));
+                gc.add(Graphic.factory(pls, cbs));
             }
         } else {    //two dimensions
             int[] shape = xdata.getShape();
@@ -720,9 +720,9 @@ public class GraphicFactory {
                         if (points.size() == 1) {
                             points.add((Coordinate) points.get(0).clone());
                         }
-                        pls = new MultiLineString();
+                        pls = new LineString();
                         pls.setCoordinates(points);
-                        gc.add(new Graphic(pls, cbs));
+                        gc.add(Graphic.factory(pls, cbs));
                         points = new ArrayList<>();
                         cbs = new ColorBreakCollection();
                     } else {
@@ -731,9 +731,9 @@ public class GraphicFactory {
                     }
                 }
                 if (points.size() > 1) {
-                    pls = new MultiLineString();
+                    pls = new LineString();
                     pls.setCoordinates(points);
-                    gc.add(new Graphic(pls, cbs));
+                    gc.add(Graphic.factory(pls, cbs));
                     points = new ArrayList<>();
                 }
             }
@@ -3947,7 +3947,7 @@ public class GraphicFactory {
      * @param isSmooth Is smooth or not
      * @return Contour lines
      */
-    public static GraphicCollection createContourLines3D(Array xa, Array ya, Array za, LegendScheme ls, boolean isSmooth) {
+    public static LineGraphicCollection createContourLines3D(Array xa, Array ya, Array za, LegendScheme ls, boolean isSmooth) {
         xa = xa.copyIfView();
         ya = ya.copyIfView();
         za = za.copyIfView();
@@ -3985,13 +3985,13 @@ public class GraphicFactory {
         PolyLine aLine;
         double v;
         ColorBreak cbb;
-        GraphicCollection graphics = new GraphicCollection();
+        LineGraphicCollection graphics = new LineGraphicCollection();
         BivariateFunction interpolator = InterpUtil.getBiInterpFunc(xa, ya, za.transpose(0, 1), "linear");
         for (int i = 0; i < ContourLines.size(); i++) {
             aLine = ContourLines.get(i);
             v = aLine.Value;
 
-            MultiLineString aPolyline = new MultiLineString();
+            LineString aPolyline = new LineString();
             Coordinate aPoint;
             List<Coordinate> pList = new ArrayList<>();
             for (int j = 0; j < aLine.PointList.size(); j++) {
@@ -4004,7 +4004,7 @@ public class GraphicFactory {
             aPolyline.setCoordinates(pList);
             aPolyline.setValue(v);
             cbb = ls.findLegendBreak(v);
-            graphics.add(new Graphic(aPolyline, cbb));
+            graphics.add(Graphic.factory(aPolyline, cbb));
         }
         graphics.setSingleLegend(false);
         graphics.setLegendScheme(ls);

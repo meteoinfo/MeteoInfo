@@ -7,11 +7,13 @@ import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.meteoinfo.chart.graphic.GraphicCollection;
+import org.meteoinfo.chart.graphic.LinealGraphic;
 import org.meteoinfo.chart.graphic.cylinder.Cylinder;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.jogl.Utils;
 import org.meteoinfo.chart.graphic.Graphic;
+import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.Geometry;
@@ -27,7 +29,7 @@ import java.util.List;
 
 public class LineRender extends JOGLGraphicRender {
 
-    private GraphicCollection graphics;
+    private LinealGraphic linealGraphic;
     private IntBuffer vbo;
     private Program program;
     private int vertexNum;
@@ -72,11 +74,11 @@ public class LineRender extends JOGLGraphicRender {
      * @param gl The JOGL GL2 object
      * @param graphics Linestring 3D graphics
      */
-    public LineRender(GL2 gl, GraphicCollection graphics) {
+    public LineRender(GL2 gl, LinealGraphic linealGraphic) {
         this(gl);
 
-        this.graphics = graphics;
-        ColorBreak cb = graphics.getGraphicN(0).getLegendBreak();
+        this.linealGraphic = linealGraphic;
+        ColorBreak cb = linealGraphic.getLegendBreak();
         PolylineBreak lineBreak;
         if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
             lineBreak = (PolylineBreak) ((ColorBreakCollection) cb).get(0);
@@ -84,8 +86,12 @@ public class LineRender extends JOGLGraphicRender {
             lineBreak = (PolylineBreak) cb;
         }
         this.streamline = lineBreak instanceof StreamlineBreak;
+        this.lineWidth = lineBreak.getWidth();
 
-        this.updateVertexColor();
+        this.vertexNum = ((Graphic) this.linealGraphic).getNumPoints();
+        this.vertexPosition = this.linealGraphic.getVertexPosition();
+        this.vertexColor = this.linealGraphic.getVertexColor();
+        this.linePointNumbers = this.linealGraphic.getLinePointNumbers();
     }
 
     void compileShaders() throws Exception {
@@ -98,38 +104,6 @@ public class LineRender extends JOGLGraphicRender {
         vbo = GLBuffers.newDirectIntBuffer(1);
     }
 
-    private void updateVertexColor() {
-        this.vertexNum = 0;
-        for (Graphic graphic : this.graphics.getGraphics()) {
-            this.vertexNum += graphic.getGeometry().getNumPoints();
-        }
-
-        this.vertexColor = new float[this.vertexNum * 4];
-        int i = 0;
-        float[] color;
-        for (Graphic graphic : this.graphics.getGraphics()) {
-            int n = graphic.getGeometry().getNumPoints();
-            ColorBreak cb = graphic.getLegendBreak();
-            if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
-                PolylineBreak lineBreak;
-                for (int j = 0; j < n; j++) {
-                    lineBreak = (PolylineBreak) ((ColorBreakCollection) cb).get(j);
-                    this.lineWidth = lineBreak.getWidth();
-                    color = lineBreak.getColor().getRGBComponents(null);
-                    System.arraycopy(color, 0, vertexColor, i * 4, 4);
-                    i++;
-                }
-            } else {
-                this.lineWidth = ((PolylineBreak) cb).getWidth();
-                color = cb.getColor().getRGBComponents(null);
-                for (int j = 0; j < n; j++) {
-                    System.arraycopy(color, 0, vertexColor, i * 4, 4);
-                    i++;
-                }
-            }
-        }
-    }
-
     private static List<LineString> getLines(Geometry geometry) {
         if (geometry instanceof MultiLineString) {
             return ((MultiLineString) geometry).getPolylines();
@@ -139,54 +113,18 @@ public class LineRender extends JOGLGraphicRender {
         return Collections.emptyList();
     }
 
-    private float[] getVertexPosition() {
-        vertexPosition = new float[this.vertexNum * 3];
-        int i = 0;
-        linePointNumbers = new ArrayList<>();
-        for (Graphic graphic : this.graphics.getGraphics()) {
-            for (LineString line : getLines(graphic.getGeometry())) {
-                List<Coordinate> ps = line.getCoordinates();
-                linePointNumbers.add(ps.size());
-                for (Coordinate p : ps) {
-                    vertexPosition[i] = (float) p.x;
-                    vertexPosition[i + 1] = (float) p.y;
-                    vertexPosition[i + 2] = (float) p.z;
-                    i += 3;
-                }
-            }
-        }
-
-        return vertexPosition;
-    }
-
-    private void updateVertexPosition() {
-        vertexPosition = new float[this.vertexNum * 3];
-        int i = 0;
-        linePointNumbers = new ArrayList<>();
-        for (Graphic graphic : this.graphics.getGraphics()) {
-            for (LineString line : getLines(graphic.getGeometry())) {
-                List<Coordinate> ps = line.getCoordinates();
-                linePointNumbers.add(ps.size());
-                for (Coordinate p : ps) {
-                    vertexPosition[i] = transform.transform_x((float) p.x);
-                    vertexPosition[i + 1] = transform.transform_y((float) p.y);
-                    vertexPosition[i + 2] = transform.transform_z((float) p.z);
-                    i += 3;
-                }
-            }
-        }
-    }
-
     private void updateConeVertex() {
         List<Vector3f> vertexPositionList = new ArrayList<>();
         List<Vector3f> vertexNormalList = new ArrayList<>();
         List<Vector4f> vertexColorList = new ArrayList<>();
         List<Integer> vertexIndices = new ArrayList<>();
         Cylinder cylinder = null;
-        for (Graphic graphic : this.graphics.getGraphics()) {
-            MultiLineString shape = (MultiLineString) graphic.getGeometry();
-            int pointNum = shape.getNumPoints();
-            List<Coordinate> ps = (List<Coordinate>) shape.getCoordinates();
+        Graphic lineGraphic = (Graphic) this.linealGraphic;
+        for (int k = 0; k < lineGraphic.getNumGraphics(); k++) {
+            Graphic graphic = lineGraphic.getGraphicN(k);
+            Geometry geometry = graphic.getGeometry();
+            int pointNum = geometry.getNumPoints();
+            List<Coordinate> ps = geometry.getCoordinates();
             ColorBreak cb = graphic.getLegendBreak();
             if (cb.getBreakType() == BreakTypes.COLOR_BREAK_COLLECTION) {
                 ColorBreakCollection cbc = (ColorBreakCollection) cb;
@@ -310,7 +248,7 @@ public class LineRender extends JOGLGraphicRender {
 
         if (updateBuffer) {
             if (this.vertexPosition == null) {
-                this.getVertexPosition();
+                this.linealGraphic.getVertexPosition();
             }
             FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
             sizePosition = vertexBuffer.capacity() * Float.BYTES;

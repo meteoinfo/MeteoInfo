@@ -69,7 +69,7 @@ public class Coordinate implements Comparable<Coordinate>,  Cloneable{
     /**
      * Z coordinate
      */
-    public double z = Double.NaN;
+    public double z;
 
     /**
      * Measure

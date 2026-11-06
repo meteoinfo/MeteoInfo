@@ -536,7 +536,7 @@ public class MultiPolygonGraphicCollection extends GraphicCollection implements 
         if (subdivide) {
             List<List<Triangle>> triangles = new ArrayList<>();
             for (int i = 0; i < this.getNumGraphics(); i++) {
-                List<Triangle> ts1 = TriangleTessellator.tessellate((PolygonGraphic) this.getGraphicN(i));
+                List<Triangle> ts1 = TriangleTessellator.tessellate((MultiPolygonGraphic) this.getGraphicN(i));
                 List<Triangle> ts2 = new ArrayList<>();
                 for (Triangle triangle : ts1) {
                     ts2.addAll(TriangleTessellator.subdivideEquilateral(triangle, 3.0f));
@@ -551,7 +551,7 @@ public class MultiPolygonGraphicCollection extends GraphicCollection implements 
         } else {
             List<List<Triangle>> triangles = new ArrayList<>();
             for (int i = 0; i < this.getNumGraphics(); i++) {
-                triangles.add(TriangleTessellator.tessellate((PolygonGraphic) this.getGraphicN(i)));
+                triangles.add(TriangleTessellator.tessellate((MultiPolygonGraphic) this.getGraphicN(i)));
             }
 
             Object[] r = getVertices(triangles);

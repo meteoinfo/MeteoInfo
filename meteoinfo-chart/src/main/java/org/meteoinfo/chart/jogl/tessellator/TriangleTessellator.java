@@ -2,6 +2,7 @@ package org.meteoinfo.chart.jogl.tessellator;
 
 import org.joml.Vector3f;
 import org.maplibre.earcut4j.Earcut;
+import org.meteoinfo.chart.graphic.MultiPolygonGraphic;
 import org.meteoinfo.chart.graphic.PolygonGraphic;
 import org.meteoinfo.chart.graphic.Triangle;
 import org.meteoinfo.geometry.Coordinate;
@@ -104,6 +105,10 @@ public class TriangleTessellator {
 
     public static List<Triangle> tessellate(PolygonGraphic polygonGraphic) {
         return tessellate((Polygon) polygonGraphic.getGeometry());
+    }
+
+    public static List<Triangle> tessellate(MultiPolygonGraphic polygonGraphic) {
+        return tessellate((MultiPolygon) polygonGraphic.getGeometry());
     }
 
     /**

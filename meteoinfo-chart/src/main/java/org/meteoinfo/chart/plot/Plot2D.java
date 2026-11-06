@@ -347,6 +347,22 @@ public class Plot2D extends AbstractPlot2D {
                 this.drawText((ChartText)shape, g);
                 break;
             case LINESTRING:
+                if (shape instanceof CapLineString){
+                    this.drawCapPolyline(g, (CapLineString) shape, (PolylineBreak) cb);
+                } else {
+                    switch (cb.getBreakType()){
+                        case POINT_BREAK:
+                            this.drawPolyline(g, (LineString) shape, (PointBreak) cb);
+                            break;
+                        case POLYLINE_BREAK:
+                            this.drawPolyline(g, (LineString) shape, (PolylineBreak) cb);
+                            break;
+                        case COLOR_BREAK_COLLECTION:
+                            this.drawPolyline(g, (LineString) shape, (ColorBreakCollection) cb);
+                            break;
+                    }
+                }
+                break;
             case MULTI_LINESTRING:
                 if (shape instanceof CapLineString){
                     this.drawCapPolyline(g, (CapLineString) shape, (PolylineBreak) cb);
@@ -375,6 +391,8 @@ public class Plot2D extends AbstractPlot2D {
                 }
                 break;
             case POLYGON:
+                drawPolygon(g, (Polygon) shape, (PolygonBreak) cb, false);
+                break;
             case MULTI_POLYGON:
                 for (Polygon poly : ((MultiPolygon) shape).getPolygons()) {
                     drawPolygon(g, poly, (PolygonBreak) cb, false);

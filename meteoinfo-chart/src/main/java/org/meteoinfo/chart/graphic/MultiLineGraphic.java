@@ -1,11 +1,9 @@
 package org.meteoinfo.chart.graphic;
 
 import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.LineString;
 import org.meteoinfo.geometry.MultiLineString;
-import org.meteoinfo.geometry.legend.ColorBreak;
-import org.meteoinfo.geometry.legend.ColorBreakCollection;
-import org.meteoinfo.geometry.legend.LegendScheme;
-import org.meteoinfo.geometry.legend.PolylineBreak;
+import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.IndexIterator;
 
@@ -19,6 +17,9 @@ public class MultiLineGraphic extends Graphic implements LinealGraphic {
     private Array cData;
     private boolean curve = false;
     private LegendScheme legendScheme;
+    private float[] vertexPosition;
+    private float[] vertexColor;
+    private List<Integer> linePointNumbers;
 
     /**
      * Constructor
@@ -343,5 +344,49 @@ public class MultiLineGraphic extends Graphic implements LinealGraphic {
      */
     public LegendScheme getLegendScheme() {
         return this.legendScheme;
+    }
+
+    @Override
+    public float[] getVertexPosition() {
+        return this.vertexPosition;
+    }
+
+    @Override
+    public float[] getVertexColor() {
+        return this.vertexColor;
+    }
+
+    @Override
+    public List<Integer> getLinePointNumbers() {
+        return this.linePointNumbers;
+    }
+
+    @Override
+    public void updateVertex() {
+        int vertexNum = this.getNumPoints();
+
+        vertexPosition = new float[vertexNum * 3];
+        int i = 0;
+        float[] color;
+        linePointNumbers = new ArrayList<>();
+        for (LineString lineString : (LineString[]) ((MultiLineString) this.geometry).getGeometries()) {
+            List<Coordinate> ps = lineString.getCoordinates();
+            linePointNumbers.add(ps.size());
+            for (Coordinate p : ps) {
+                vertexPosition[i] = (float) p.x;
+                vertexPosition[i + 1] = (float) p.y;
+                vertexPosition[i + 2] = (float) p.z;
+                i += 3;
+            }
+        }
+
+        this.vertexColor = new float[vertexNum * 4];
+        ColorBreak cb = this.getLegendBreak();
+        i = 0;
+        color = cb.getColor().getRGBComponents(null);
+        for (int j = 0; j < vertexNum; j++) {
+            System.arraycopy(color, 0, vertexColor, i * 4, 4);
+            i++;
+        }
     }
 }

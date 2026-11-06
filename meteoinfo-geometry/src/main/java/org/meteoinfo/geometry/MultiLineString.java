@@ -248,7 +248,7 @@ public class MultiLineString extends GeometryCollection implements Cloneable {
         } else {
             Coordinate[] Pointps;
             LineString aPolyLine;
-            int numPoints = this.getNumPoints();
+            int numPoints = coordinates.size();
             for (int p = 0; p < numParts; p++) {
                 if (p == numParts - 1) {
                     Pointps = new Coordinate[numPoints - parts[p]];

@@ -1329,9 +1329,6 @@ public class GLPlot extends Plot {
      * @param graphic Graphic
      */
     public void addGraphic(Graphic graphic) {
-        if (graphic.is2D()) {
-            normalizeZ(graphic);
-        }
         graphic.doTransform();
         this.graphics.add(graphic);
         Extent ex = this.graphics.getExtent();
@@ -1350,9 +1347,6 @@ public class GLPlot extends Plot {
      * @param graphic Graphic
      */
     public void addGraphic(int index, Graphic graphic) {
-        if (graphic.is2D()) {
-            normalizeZ(graphic);
-        }
         graphic.doTransform();
         this.graphics.add(index, graphic);
         Extent ex = this.graphics.getExtent();
@@ -1400,42 +1394,6 @@ public class GLPlot extends Plot {
      *
      * @param graphic The graphic to be removed
      */
-    /**
-     * Replace NaN Z ordinates by zero for planar graphics.  Without this
-     * normalization fixed-function OpenGL would receive NaN vertices and the
-     * geometry would disappear.
-     *
-     * @param graphic graphic to normalize
-     */
-    private void normalizeZ(Graphic graphic) {
-        if (graphic instanceof GraphicCollection) {
-            for (Graphic child : ((GraphicCollection) graphic).getGraphics()) {
-                normalizeZ(child);
-            }
-            return;
-        }
-        Geometry geometry = graphic.getGeometry();
-        if (geometry == null) {
-            return;
-        }
-        if (geometry instanceof Point) {
-            Coordinate coordinate = ((Point) geometry).getCoordinate();
-            if (coordinate != null && Double.isNaN(coordinate.z)) {
-                coordinate.z = 0;
-            }
-            return;
-        }
-        List<Coordinate> coordinates = geometry.getCoordinates();
-        if (coordinates == null) {
-            return;
-        }
-        for (Coordinate coordinate : coordinates) {
-            if (coordinate != null && Double.isNaN(coordinate.z)) {
-                coordinate.z = 0;
-            }
-        }
-    }
-
     public void removeGraphic(Graphic graphic) {
         if (this.graphics.contains(graphic)) {
             this.graphics.remove(graphic);
@@ -3118,6 +3076,37 @@ public class GLPlot extends Plot {
             polygonRender.updateMatrix();
             polygonRender.setRotateModelView(this.modelViewMatrixR);
             polygonRender.draw();
+        } else if (graphic instanceof LinealGraphic) {
+            LinealGraphic linealGraphic = (LinealGraphic) graphic;
+            if (graphic.getGraphicN(0).getGeometry() instanceof PipeShape) {
+                if (!this.renderMap.containsKey(graphic)) {
+                    if (linealGraphic.getVertexPosition() == null) {
+                        linealGraphic.updateVertex();
+                    }
+                    renderMap.put(graphic, new PipeRender(gl, (LinealGraphic) graphic));
+                }
+                PipeRender pipeRender = (PipeRender) renderMap.get(graphic);
+                pipeRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                pipeRender.setOrthographic(this.orthographic);
+                pipeRender.setLighting(this.lighting);
+                pipeRender.updateMatrix();
+                pipeRender.setRotateModelView(this.modelViewMatrixR);
+                pipeRender.draw();
+            } else {
+                if (!this.renderMap.containsKey(graphic)) {
+                    if (linealGraphic.getVertexPosition() == null) {
+                        linealGraphic.updateVertex();
+                    }
+                    renderMap.put(graphic, new LineRender(gl, (LinealGraphic) graphic));
+                }
+                LineRender lineRender = (LineRender) renderMap.get(graphic);
+                lineRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+                lineRender.setOrthographic(this.orthographic);
+                lineRender.setLighting(this.lighting);
+                lineRender.updateMatrix();
+                lineRender.setRotateModelView(this.modelViewMatrixR);
+                lineRender.draw();
+            }
         } else if (graphic instanceof ModelGraphic) {
             if (!this.renderMap.containsKey(graphic)) {
                 renderMap.put(graphic, new ModelRender(gl, (ModelGraphic) graphic));
@@ -3198,7 +3187,7 @@ public class GLPlot extends Plot {
                         pointRender.setRotateModelView(this.modelViewMatrixR);
                         pointRender.draw();
                         break;
-                    case LINESTRING:
+                    /*case LINESTRING:
                     case MULTI_LINESTRING:
                         if (graphic.getGraphicN(0).getGeometry() instanceof PipeShape) {
                             if (!this.renderMap.containsKey(graphic)) {
@@ -3223,7 +3212,7 @@ public class GLPlot extends Plot {
                             lineRender.setRotateModelView(this.modelViewMatrixR);
                             lineRender.draw();
                         }
-                        break;
+                        break;*/
                     /*case POLYGON:
                     case MULTI_POLYGON:
                         if (!this.renderMap.containsKey(graphic)) {

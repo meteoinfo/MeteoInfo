@@ -607,18 +607,6 @@
     <inspection_tool class="ClassWithMultipleLoggers" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="loggerNamesString" value="java.util.logging.Logger,org.slf4j.Logger,org.apache.commons.logging.Log,org.apache.log4j.Logger,org.apache.logging.log4j.Logger" />
     </inspection_tool>
-    <inspection_tool class="ClassWithTooManyDependencies" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="limit" value="10" />
-    </inspection_tool>
-    <inspection_tool class="ClassWithTooManyDependents" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="limit" value="10" />
-    </inspection_tool>
-    <inspection_tool class="ClassWithTooManyTransitiveDependencies" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="limit" value="35" />
-    </inspection_tool>
-    <inspection_tool class="ClassWithTooManyTransitiveDependents" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="limit" value="35" />
-    </inspection_tool>
     <inspection_tool class="ClassWithoutLogger" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="loggerNamesString" value="java.util.logging.Logger,org.slf4j.Logger,org.apache.commons.logging.Log,org.apache.log4j.Logger,org.apache.logging.log4j.Logger" />
       <option name="ignoreSuperLoggers" value="false" />
@@ -876,29 +864,6 @@
     <inspection_tool class="HtmlRequiredAltAttribute" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="HtmlRequiredLangAttribute" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="HtmlRequiredTitleElement" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="HtmlUnknownAttribute" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="myValues">
-        <value>
-          <list size="0" />
-        </value>
-      </option>
-      <option name="myCustomValuesEnabled" value="true" />
-    </inspection_tool>
-    <inspection_tool class="HtmlUnknownTag" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="myValues">
-        <value>
-          <list size="6">
-            <item index="0" class="java.lang.String" itemvalue="nobr" />
-            <item index="1" class="java.lang.String" itemvalue="noembed" />
-            <item index="2" class="java.lang.String" itemvalue="comment" />
-            <item index="3" class="java.lang.String" itemvalue="noscript" />
-            <item index="4" class="java.lang.String" itemvalue="embed" />
-            <item index="5" class="java.lang.String" itemvalue="script" />
-          </list>
-        </value>
-      </option>
-      <option name="myCustomValuesEnabled" value="true" />
-    </inspection_tool>
     <inspection_tool class="HttpClientDuplicateImportInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="HttpClientInappropriateProtocolUsageInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="HttpClientRunRequestNameInspection" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
@@ -1262,12 +1227,6 @@
     <inspection_tool class="MissortedModifiers" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="m_requireAnnotationsFirst" value="true" />
     </inspection_tool>
-    <inspection_tool class="ModuleWithTooFewClasses" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="limit" value="10" />
-    </inspection_tool>
-    <inspection_tool class="ModuleWithTooManyClasses" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="limit" value="100" />
-    </inspection_tool>
     <inspection_tool class="MongoJSDeprecationInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MongoJSResolveInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="MongoJSSideEffectsInspection" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -1404,20 +1363,9 @@
     <inspection_tool class="OverrideDeprecatedMigration" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="OverwrittenKey" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="PackageInfoWithoutPackage" enabled="false" level="WARNING" enabled_by_default="false" />
-    <inspection_tool class="PackageNamingConvention" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="m_regex" value="[a-z]*" />
-      <option name="m_minLength" value="3" />
-      <option name="m_maxLength" value="16" />
-    </inspection_tool>
     <inspection_tool class="PackageVisibleInnerClass" enabled="false" level="WARNING" enabled_by_default="false">
       <option name="ignoreEnums" value="false" />
       <option name="ignoreInterfaces" value="false" />
-    </inspection_tool>
-    <inspection_tool class="PackageWithTooFewClasses" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="limit" value="3" />
-    </inspection_tool>
-    <inspection_tool class="PackageWithTooManyClasses" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="limit" value="50" />
     </inspection_tool>
     <inspection_tool class="ParameterCanBeLocal" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ParameterHidingMemberVariable" enabled="false" level="WARNING" enabled_by_default="false">
@@ -1680,10 +1628,6 @@
     <inspection_tool class="ReplaceNullCheck" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ReplaceOnLiteralHasNoEffect" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="ReplaceWithJavadoc" enabled="false" level="INFORMATION" enabled_by_default="false" />
-    <inspection_tool class="RequiredAttributes" enabled="true" level="WARNING" enabled_by_default="true">
-      <option name="myAdditionalRequiredHtmlAttributes" value="" />
-    </inspection_tool>
-    <inspection_tool class="RestRoleInspection" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="RestrictReturnStatementTargetMigration" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="RetrievingService" enabled="false" level="ERROR" enabled_by_default="false" />
     <inspection_tool class="ReturnFromFinallyBlock" enabled="false" level="WARNING" enabled_by_default="false" />
@@ -2080,11 +2024,6 @@
     <inspection_tool class="VulnerableLibrariesLocal" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="WaitWhileHoldingTwoLocks" enabled="false" level="WARNING" enabled_by_default="false" />
     <inspection_tool class="WarningOnMainUnusedParameterMigration" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
-    <inspection_tool class="WeakerAccess" enabled="false" level="WARNING" enabled_by_default="false">
-      <option name="SUGGEST_PACKAGE_LOCAL_FOR_MEMBERS" value="true" />
-      <option name="SUGGEST_PACKAGE_LOCAL_FOR_TOP_CLASSES" value="true" />
-      <option name="SUGGEST_PRIVATE_FOR_INNERS" value="false" />
-    </inspection_tool>
     <inspection_tool class="WearMargin" enabled="true" level="WARNING" enabled_by_default="true" />
     <inspection_tool class="WhileCanBeDoWhile" enabled="false" level="WEAK WARNING" enabled_by_default="false" />
     <inspection_tool class="WhileCanBeForeach" enabled="false" level="WARNING" enabled_by_default="false" />

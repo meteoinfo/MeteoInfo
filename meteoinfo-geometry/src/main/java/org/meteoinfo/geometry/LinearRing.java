@@ -1,8 +1,12 @@
 package org.meteoinfo.geometry;
 
-import java.util.List;
+import com.google.common.io.LineReader;
 
-public class LinearRing extends LineString {
+import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class LinearRing extends LineString implements Serializable {
 
     /**
      * The minimum number of vertices allowed in a valid non-empty ring.
@@ -31,5 +35,13 @@ public class LinearRing extends LineString {
             throw new IllegalArgumentException("Invalid number of points in LinearRing (found "
                     + coordinates.size() + " - must be 0 or >= " + MINIMUM_VALID_SIZE + ")");
         }
+    }
+
+    @Override
+    public LinearRing clone() {
+        List<Coordinate> copy = coordinates.stream()
+                .map(Coordinate::clone)
+                .collect(Collectors.toList());
+        return new LinearRing(copy);
     }
 }

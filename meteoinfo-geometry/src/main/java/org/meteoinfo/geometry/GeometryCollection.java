@@ -112,4 +112,13 @@ public class GeometryCollection extends Geometry {
             }
         }
     }
+
+    @Override
+    public GeometryCollection clone() {
+        Geometry[] geometries = new Geometry[this.geometries.length];
+        for (int i = 0; i < geometries.length; i++) {
+            geometries[i] = (Geometry) this.geometries[i].clone();
+        }
+        return new GeometryCollection(geometries);
+    }
 }

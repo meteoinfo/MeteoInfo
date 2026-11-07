@@ -18,6 +18,7 @@ import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.meteoinfo.common.DataConvert;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -350,6 +351,16 @@ public class Polygon extends Geometry {
         }
 
         this.setCoordinates(points);
+    }
+
+    @Override
+    public Polygon clone() {
+        LinearRing shellCopy = shell.clone();
+        List<LinearRing> holeCopies = new ArrayList<>();
+        for (int i = 0; i < holes.size(); i++) {
+            holeCopies.add(holes.get(i).clone());
+        }
+        return new Polygon(shellCopy, holeCopies);
     }
     // </editor-fold>
 }

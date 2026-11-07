@@ -109,7 +109,7 @@ public class WindArrow3D extends Point {
      * @return WindArrow object
      */
     @Override
-    public Object clone() {
+    public WindArrow3D clone() {
         WindArrow3D aWA = new WindArrow3D();
         aWA.u = u;
         aWA.v = v;

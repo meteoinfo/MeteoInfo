@@ -17,11 +17,13 @@ import org.meteoinfo.common.PointF;
 import org.meteoinfo.common.util.MathUtil;
 import org.meteoinfo.common.util.NumberUtil;
 
+import java.io.Serializable;
+
 /**
  *
  * @author yaqiang
  */
-public class Coordinate implements Comparable<Coordinate>,  Cloneable{
+public class Coordinate implements Comparable<Coordinate>, Cloneable, Serializable {
     // <editor-fold desc="Variables">
     private static final long serialVersionUID = 6683108902428366910L;
 
@@ -450,7 +452,8 @@ public class Coordinate implements Comparable<Coordinate>,  Cloneable{
      * 
      * @return Coordinate object
      */
-    public Object clone() {
+    @Override
+    public Coordinate clone() {
         try {
             Coordinate coord = (Coordinate) super.clone();
 

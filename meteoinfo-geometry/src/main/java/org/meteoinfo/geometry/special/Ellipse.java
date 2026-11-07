@@ -146,7 +146,7 @@
       * @return EllipseShape
       */
      @Override
-     public Object clone() {
+     public Ellipse clone() {
          Ellipse aPGS = new Ellipse();
          aPGS.setExtent(this.getExtent());
          aPGS.setCoordinates(this.getCoordinates());

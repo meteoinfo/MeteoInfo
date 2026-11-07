@@ -160,7 +160,7 @@ public class Point extends Geometry implements Cloneable{
      * @return PolygonShape
      */
     @Override
-    public Object clone() {
+    public Point clone() {
         Point ps = new Point();
         ps.setValue(this.getValue());
         ps.setCoordinate((Coordinate) this.getCoordinate().clone());

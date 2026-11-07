@@ -66,8 +66,8 @@ public class Extent implements Cloneable {
             maxY = yMax;
         }
 
-        minZ = Double.NaN;
-        maxZ = Double.NaN;
+        minZ = 0;
+        maxZ = 0;
     }
 
     /**
@@ -170,7 +170,7 @@ public class Extent implements Cloneable {
      * @return 2D or not
      */
     public boolean is2D() {
-        return Double.isNaN(minZ) || Double.isNaN(maxZ);
+        return Double.isNaN(minZ) || Double.isNaN(maxZ) || (minZ == maxZ);
     }
     // </editor-fold>
     // <editor-fold desc="Methods">

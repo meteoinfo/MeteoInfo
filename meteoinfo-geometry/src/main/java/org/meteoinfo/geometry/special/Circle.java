@@ -114,7 +114,7 @@ public class Circle extends MultiPolygon {
      * @return CircleShape
      */
     @Override
-    public Object clone() {
+    public Circle clone() {
         Circle aPGS = new Circle();
         aPGS.setExtent(this.getExtent());
         aPGS.setCoordinates(this.getCoordinates());

@@ -179,7 +179,7 @@ public class Arc extends Ellipse {
      * @return RectangleShape object
      */
     @Override
-    public Object clone() {
+    public Arc clone() {
         Arc aPGS = new Arc();
         aPGS.setExtent(this.getExtent());
         aPGS.setCoordinates(new ArrayList<>(this.getCoordinates()));

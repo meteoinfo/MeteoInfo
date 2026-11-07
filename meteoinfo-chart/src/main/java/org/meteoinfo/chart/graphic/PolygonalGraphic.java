@@ -1,6 +1,7 @@
 package org.meteoinfo.chart.graphic;
 
 import org.joml.Vector3f;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geometry.legend.ColorBreak;
 import org.meteoinfo.geometry.legend.PolygonBreak;
 
@@ -13,6 +14,8 @@ public interface PolygonalGraphic {
     boolean isFaceInterp();
 
     void updateExtent();
+
+    void setExtent(Extent value);
 
     /**
      * Get vertex number

@@ -20,6 +20,7 @@ import org.meteoinfo.common.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Polyline class
@@ -264,5 +265,13 @@ public class LineString extends Geometry implements Cloneable {
     public LineString reverse() {
         Collections.reverse(coordinates);
         return new LineString(coordinates);
+    }
+
+    @Override
+    public LineString clone() {
+        List<Coordinate> copy = coordinates.stream()
+                .map(Coordinate::clone)
+                .collect(Collectors.toList());
+        return new LineString(copy);
     }
 }

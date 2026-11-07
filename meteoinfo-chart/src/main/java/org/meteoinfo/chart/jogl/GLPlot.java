@@ -3107,6 +3107,17 @@ public class GLPlot extends Plot {
                 lineRender.setRotateModelView(this.modelViewMatrixR);
                 lineRender.draw();
             }
+        } else if (graphic instanceof PointGraphicCollection) {
+            if (!this.renderMap.containsKey(graphic)) {
+                renderMap.put(graphic, new PointRender(gl, (GraphicCollection) graphic));
+            }
+            PointRender pointRender = (PointRender) renderMap.get(graphic);
+            pointRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+            pointRender.setOrthographic(this.orthographic);
+            pointRender.setLighting(this.lighting);
+            pointRender.updateMatrix();
+            pointRender.setRotateModelView(this.modelViewMatrixR);
+            pointRender.draw();
         } else if (graphic instanceof ModelGraphic) {
             if (!this.renderMap.containsKey(graphic)) {
                 renderMap.put(graphic, new ModelRender(gl, (ModelGraphic) graphic));
@@ -3129,16 +3140,15 @@ public class GLPlot extends Plot {
             meshRender.updateMatrix();
             meshRender.draw();
         } else if (graphic instanceof ParticleGraphics) {
-            //this.drawParticles(gl, (ParticleGraphics) graphic);
             if (!this.renderMap.containsKey(graphic)) {
-                renderMap.put(graphic, new PointRender(gl, (GraphicCollection) graphic));
+                renderMap.put(graphic, new ParticleRender(gl, (ParticleGraphics) graphic));
             }
-            PointRender pointRender = (PointRender) renderMap.get(graphic);
-            pointRender.setTransform(this.transform, this.alwaysUpdateBuffers);
-            pointRender.setOrthographic(this.orthographic);
-            pointRender.setLighting(this.lighting);
-            pointRender.updateMatrix();
-            pointRender.draw();
+            ParticleRender particleRender = (ParticleRender) renderMap.get(graphic);
+            particleRender.setTransform(this.transform, this.alwaysUpdateBuffers);
+            particleRender.setOrthographic(this.orthographic);
+            particleRender.setLighting(this.lighting);
+            particleRender.updateMatrix();
+            particleRender.draw();
         } else if (graphic instanceof VolumeGraphic) {
             try {
                 if (this.clipPlane)
@@ -3174,7 +3184,7 @@ public class GLPlot extends Plot {
             }
             if (isDraw) {
                 switch (graphic.getGraphicN(0).getShapeType()) {
-                    case POINT:
+                    /*case POINT:
                     case MULTI_POINT:
                         if (!this.renderMap.containsKey(graphic)) {
                             renderMap.put(graphic, new PointRender(gl, (GraphicCollection) graphic));
@@ -3186,7 +3196,7 @@ public class GLPlot extends Plot {
                         pointRender.updateMatrix();
                         pointRender.setRotateModelView(this.modelViewMatrixR);
                         pointRender.draw();
-                        break;
+                        break;*/
                     /*case LINESTRING:
                     case MULTI_LINESTRING:
                         if (graphic.getGraphicN(0).getGeometry() instanceof PipeShape) {

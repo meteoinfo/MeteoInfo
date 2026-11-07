@@ -368,7 +368,6 @@ public class MultiPolygonGraphicCollection extends GraphicCollection implements 
 
     public void setLineVertex(float[] lineVertex) {
         this.lineVertex = lineVertex;
-
     }
 
     /**

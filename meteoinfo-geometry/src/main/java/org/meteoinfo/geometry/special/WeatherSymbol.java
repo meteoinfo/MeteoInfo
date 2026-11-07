@@ -74,7 +74,7 @@ public class WeatherSymbol extends Point {
      * @return WindArraw object
      */
     @Override
-    public Object clone() {
+    public WeatherSymbol clone() {
         WeatherSymbol aWS = new WeatherSymbol();
         aWS.size = size;
         aWS.weather = weather;

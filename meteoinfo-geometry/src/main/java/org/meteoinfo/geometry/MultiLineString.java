@@ -394,17 +394,17 @@ public class MultiLineString extends GeometryCollection implements Cloneable {
      * @return PolylineShape
      */
     @Override
-    public Object clone() {
+    public MultiLineString clone() {
         MultiLineString aPLS = new MultiLineString();
         aPLS.setValue(this.getValue());
         aPLS.setExtent(this.getExtent());
         aPLS.numParts = numParts;
         aPLS.parts = (int[]) parts.clone();
-        LineString[] ls = new LineString[getNumGeometries()];
-        for (int i = 0; i < getNumGeometries(); i++) {
-            ls[i] = (LineString) geometries[i].clone();
+        LineString[] lineStrings = new LineString[this.geometries.length];
+        for (int i = 0; i < lineStrings.length; i++) {
+            lineStrings[i] = (LineString) this.geometries[i].clone();
         }
-        aPLS.geometries = ls;
+        aPLS.geometries = lineStrings;
         aPLS.setVisible(this.isVisible());
         aPLS.setSelected(this.isSelected());
         aPLS.setLegendIndex(this.getLegendIndex());

@@ -75,7 +75,7 @@ public class StationModel extends Point {
      * @return WindArraw object
      */
     @Override
-    public Object clone() {
+    public StationModel clone() {
         StationModel aSM = new StationModel();
         aSM.size = size;
         aSM.pressure = pressure;

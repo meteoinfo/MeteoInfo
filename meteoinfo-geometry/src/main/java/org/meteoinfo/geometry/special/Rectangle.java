@@ -128,7 +128,7 @@ public class Rectangle extends MultiPolygon {
      * @return RectangleShape object
      */
     @Override
-    public Object clone() {
+    public Rectangle clone() {
         Rectangle aPGS = new Rectangle();
         aPGS.setExtent(this.getExtent());
         aPGS.setCoordinates(new ArrayList<>(this.getCoordinates()));

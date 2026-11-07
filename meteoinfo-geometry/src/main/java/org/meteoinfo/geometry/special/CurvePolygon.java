@@ -47,7 +47,7 @@ public class CurvePolygon extends MultiPolygon {
      * @return CurvePolygonShape
      */
     @Override
-    public Object clone() {
+    public CurvePolygon clone() {
         CurvePolygon aPGS = new CurvePolygon();
         aPGS.setExtent(this.getExtent());
         aPGS.highValue = highValue;

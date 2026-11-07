@@ -229,6 +229,7 @@ public class SphericalTransform {
                     lineVertex[i+2] = vector3f.z;
                 }
                 polygonGraphic.setLineVertex(lineVertex);
+                polygonGraphic.setExtent(GraphicUtil.getExtent(lineVertex));
             }
             if (polygonGraphic.isFill()) {
                 polygonGraphic.tessellate(true);
@@ -241,8 +242,10 @@ public class SphericalTransform {
                     vertexPosition[i+2] = vector3f.z;
                 }
                 polygonGraphic.setVertexPosition(vertexPosition);
+                if (!polygonGraphic.isDrawOutline()) {
+                    polygonGraphic.setExtent(GraphicUtil.getExtent(vertexPosition));
+                }
             }
-            polygonGraphic.updateExtent();
             return (Graphic) polygonGraphic;
         } else {
             if (graphic instanceof GraphicCollection) {

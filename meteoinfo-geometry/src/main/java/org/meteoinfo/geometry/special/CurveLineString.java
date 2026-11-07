@@ -46,7 +46,7 @@ public class CurveLineString extends MultiLineString {
      * @return CurveLineShape
      */
     @Override
-    public Object clone() {
+    public CurveLineString clone() {
         CurveLineString aPLS = new CurveLineString();
         aPLS.setValue(this.getValue());
         aPLS.setExtent(this.getExtent());

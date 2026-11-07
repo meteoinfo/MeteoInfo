@@ -551,14 +551,19 @@ public class MultiPolygon extends GeometryCollection implements Cloneable {
      * @return PolygonShape
      */
     @Override
-    public Object clone() {
+    public MultiPolygon clone() {
+        Polygon[] polygons = new Polygon[this.geometries.length];
+        for (int i = 0; i < polygons.length; i++) {
+            polygons[i] = (Polygon) this.geometries[i].clone();
+        }
+
         MultiPolygon aPGS = new MultiPolygon();
         aPGS.setExtent(this.getExtent());
         aPGS.highValue = highValue;
         aPGS.lowValue = lowValue;
         aPGS.numParts = numParts;
         aPGS.parts = (int[]) parts.clone();
-        aPGS.geometries = (Polygon[]) geometries.clone();
+        aPGS.geometries = polygons;
         aPGS.setVisible(this.isVisible());
         aPGS.setSelected(this.isSelected());
         aPGS.setLegendIndex(this.getLegendIndex());

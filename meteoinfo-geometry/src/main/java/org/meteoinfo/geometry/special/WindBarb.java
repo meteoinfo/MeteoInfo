@@ -82,7 +82,7 @@ public class WindBarb extends Point {
      * @return WindArraw object
      */
     @Override
-    public Object clone() {
+    public WindBarb clone() {
         WindBarb aWB = new WindBarb();
         aWB.size = size;
         aWB.windSpeed = windSpeed;

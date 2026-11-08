@@ -1,6 +1,6 @@
 package org.meteoinfo.ndarray.io.matlab;
 
-import com.google.common.base.Charsets;
+import java.nio.charset.StandardCharsets;
 import org.meteoinfo.ndarray.Array;
 import org.meteoinfo.ndarray.DataType;
 import org.meteoinfo.ndarray.Index;
@@ -144,6 +144,6 @@ public class MatLabUtil {
         }
 
         // Convert to String
-        return length == 0 ? "" : new String(buffer, offset, length, Charsets.US_ASCII);
+        return length == 0 ? "" : new String(buffer, offset, length, StandardCharsets.US_ASCII);
     }
 }

@@ -33,7 +33,7 @@
 
 package org.meteoinfo.ndarray;
 
-import javax.annotation.concurrent.Immutable;
+import com.google.errorprone.annotations.Immutable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;

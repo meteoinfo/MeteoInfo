@@ -32,7 +32,7 @@
  */
 package org.meteoinfo.ndarray;
 
-import javax.annotation.concurrent.Immutable;
+import com.google.errorprone.annotations.Immutable;
 import java.time.LocalDateTime;
 
 /**

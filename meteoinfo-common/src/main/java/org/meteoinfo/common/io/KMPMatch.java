@@ -1,6 +1,6 @@
 package org.meteoinfo.common.io;
 
-import javax.annotation.concurrent.Immutable;
+import com.google.errorprone.annotations.Immutable;
 
 /**
  * Knuth-Morris-Pratt Algorithm for Pattern Matching.

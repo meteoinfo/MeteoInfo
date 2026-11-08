@@ -95,7 +95,8 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
      * Sets the JPopupMenu to be displayed, when the split part of the button is
      * clicked.
      *
-     * @param popupMenu
+     * @param popupMenu the JPopupMenu to display when the split part of the
+     * button is clicked
      */
     public void setPopupMenu(JPopupMenu popupMenu) {
         this.popupMenu = popupMenu;
@@ -119,7 +120,8 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
      * the separator( the line drawn when you hover your mouse over the split
      * part of the button).
      *
-     * @param separatorSpacing
+     * @param separatorSpacing the space, in pixels, above and below the
+     * separator
      */
     public void setSeparatorSpacing(int separatorSpacing) {
         this.separatorSpacing = separatorSpacing;
@@ -156,7 +158,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
     /**
      * Set the arrow color.
      *
-     * @param arrowColor
+     * @param arrowColor the color of the arrow
      */
     public void setArrowColor(Color arrowColor) {
         this.arrowColor = arrowColor;
@@ -194,7 +196,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
     /**
      * Splitwidth is the width of the split part of the button.
      *
-     * @param splitWidth
+     * @param splitWidth the width, in pixels, of the split part of the button
      */
     public void setSplitWidth(int splitWidth) {
         this.splitWidth = splitWidth;
@@ -224,7 +226,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
     /**
      * sets the size of the arrow
      *
-     * @param arrowSize
+     * @param arrowSize the size, in pixels, of the arrow
      */
     public void setArrowSize(int arrowSize) {
         this.arrowSize = arrowSize;
@@ -273,7 +275,8 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
     /**
      * Sets the image to draw instead of the triangle.
      *
-     * @param image
+     * @param image the image to draw in the split part instead of the
+     * triangle
      */
     public void setImage(Image image) {
         this.image = image;
@@ -281,7 +284,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
 
     /**
      *
-     * @param g
+     * @param g the <code>Graphics</code> context used to paint the component
      */
     @Override
     protected void paintComponent(Graphics g) {
@@ -345,7 +348,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
 
     /**
      *
-     * @param e
+     * @param e the mouse event
      */
     @Override
     public void mouseMoved(MouseEvent e) {
@@ -359,7 +362,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
 
     /**
      *
-     * @param e
+     * @param e the action event
      */
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -380,7 +383,7 @@ public class JSplitButton extends JButton implements MouseMotionListener, MouseL
 
     /**
      *
-     * @param e
+     * @param e the mouse event
      */
     public void mouseExited(MouseEvent e) {
         onSplit = false;

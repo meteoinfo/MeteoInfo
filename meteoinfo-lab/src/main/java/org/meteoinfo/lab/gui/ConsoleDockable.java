@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+import javax.swing.text.JTextComponent;
 import javax.swing.text.MutableAttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -70,6 +71,14 @@ public class ConsoleDockable extends DefaultSingleCDockable {
         // Console KeyListeners only fire when JConsole has focus. This dispatcher
         // intercepts Ctrl+C regardless of which component (editor, variable panel, etc.)
         // currently holds focus within the application window.
+        //
+        // Dispatch rules:
+        // 1. If the focus owner is a text component (code editor, console output)
+        //    with a non-empty selection, the event is NOT consumed so the standard
+        //    Ctrl+C copy action works as usual.
+        // 2. Otherwise, if a Jython script is running, interrupt it and consume the
+        //    event so "^C" is not typed into the console.
+        // 3. Otherwise (nothing running, nothing selected) let the event pass through.
         KeyboardFocusManager.getCurrentKeyboardFocusManager()
                 .addKeyEventDispatcher(new KeyEventDispatcher() {
                     @Override
@@ -77,6 +86,19 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                         if (e.getID() == KeyEvent.KEY_PRESSED
                                 && e.getKeyCode() == KeyEvent.VK_C
                                 && e.isControlDown()) {
+
+                            // [FIX] Do not break editor/console copy: when the focused
+                            // text component has selected text, hand the event back to
+                            // normal key processing (RSyntaxTextArea / JTextComponent
+                            // copy action, or the Edit > Copy menu accelerator).
+                            Component focusOwner = KeyboardFocusManager
+                                    .getCurrentKeyboardFocusManager().getFocusOwner();
+                            if (focusOwner instanceof JTextComponent) {
+                                String selected = ((JTextComponent) focusOwner).getSelectedText();
+                                if (selected != null && !selected.isEmpty()) {
+                                    return false;
+                                }
+                            }
 
                             Thread workerThread = myThread;
                             SwingWorker<?, ?> sw = myWorker;
@@ -98,10 +120,12 @@ public class ConsoleDockable extends DefaultSingleCDockable {
                                     console.print("^C\n", Color.RED);
                                     parent.getProgressBar().setVisible(false);
                                 });
+                                // Consume only when the event was used to interrupt,
+                                // so copy shortcuts keep working when idle.
+                                e.consume();
+                                return true;
                             }
-
-                            e.consume();
-                            return true;
+                            return false;
                         }
                         return false;
                     }

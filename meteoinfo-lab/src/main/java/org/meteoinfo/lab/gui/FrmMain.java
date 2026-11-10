@@ -351,45 +351,6 @@ public class FrmMain extends javax.swing.JFrame implements IApplication {
 
         System.setOut(this.consoleDock.getConsole().getOut());
         System.setErr(this.consoleDock.getConsole().getOut());
-
-        // Replace the broken JFrame KeyListener with a global dispatcher.
-        // JFrame KeyListeners do NOT fire when child components (like JConsole)
-        // have focus. KeyboardFocusManager intercepts ALL key events in the window
-        // regardless of which component currently holds focus.
-        KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                .addKeyEventDispatcher(new KeyEventDispatcher() {
-                    @Override
-                    public boolean dispatchKeyEvent(KeyEvent e) {
-                        // Only intercept Ctrl+C on KEY_PRESSED to avoid double-firing
-                        if (e.getID() == KeyEvent.KEY_PRESSED
-                                && e.getKeyCode() == KeyEvent.VK_C
-                                && e.isControlDown()) {
-
-                            // Use cooperative interrupt instead of deprecated Thread.stop().
-                            // Thread.stop() corrupts Jython interpreter state, leaks locks,
-                            // and can crash the JVM. interrupt() sets a flag that Jython's
-                            // execution loop checks between bytecodes, allowing clean shutdown.
-                            Thread workerThread = consoleDock.getMyThread();
-                            if (workerThread != null && workerThread.isAlive()) {
-                                workerThread.interrupt();
-
-                                // Also cancel SwingWorker if one is active
-                                SwingWorker<?, ?> sw = consoleDock.getSwingWorker();
-                                if (sw != null && !sw.isDone()) {
-                                    sw.cancel(true);
-                                }
-
-                                // Visual feedback so the user knows Ctrl+C was received
-                                consoleDock.getConsole().print("^C\n", Color.red);
-                            }
-
-                            // Consume the event to prevent it from being typed into the console
-                            e.consume();
-                            return true;
-                        }
-                        return false; // Let all other keys pass through normally
-                    }
-                });
     }
 
     /**

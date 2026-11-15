@@ -725,7 +725,7 @@ class Axes3D(Axes):
         self.stale = True
 
 
-    def plot(self, x, y, z, *args, **kwargs):
+    def plot3(self, x, y, z, *args, **kwargs):
         """
         Plot 3D lines and/or markers to the axes. *args* is a variable length argument, allowing
         for multiple *x, y* pairs with an optional format string.
@@ -848,7 +848,7 @@ class Axes3D(Axes):
             self.add_graphic(graphics)
         return graphics
         
-    def scatter(self, x, y, z, s=8, c='b', marker='o', **kwargs):
+    def scatter3(self, x, y, z, s=8, c='b', marker='o', **kwargs):
         """
         Make a 3D scatter plot of x, y and z, where x, y and z are sequence like objects of the same lengths.
         

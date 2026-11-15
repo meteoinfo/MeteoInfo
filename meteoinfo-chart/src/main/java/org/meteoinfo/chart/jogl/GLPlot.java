@@ -1331,7 +1331,10 @@ public class GLPlot extends Plot {
     public void addGraphic(Graphic graphic) {
         graphic.doTransform();
         this.graphics.add(graphic);
-        Extent ex = this.graphics.getExtent();
+        if (this.graphics.is2D()) {
+            this.auto2D = true;
+        }
+        Extent ex = (Extent) this.graphics.getExtent().clone();
         ex.asNonZero();
         this.graphicExtent = ex;
         if (!fixExtent) {
@@ -1349,7 +1352,10 @@ public class GLPlot extends Plot {
     public void addGraphic(int index, Graphic graphic) {
         graphic.doTransform();
         this.graphics.add(index, graphic);
-        Extent ex = this.graphics.getExtent();
+        if (this.graphics.is2D()) {
+            this.auto2D = true;
+        }
+        Extent ex = (Extent) this.graphics.getExtent().clone();
         ex.asNonZero();
         this.graphicExtent = ex;
         if (!fixExtent) {
@@ -3103,6 +3109,7 @@ public class GLPlot extends Plot {
                 lineRender.setTransform(this.transform, this.alwaysUpdateBuffers);
                 lineRender.setOrthographic(this.orthographic);
                 lineRender.setLighting(this.lighting);
+                lineRender.setClipExtent(this.axesExtent);
                 lineRender.updateMatrix();
                 lineRender.setRotateModelView(this.modelViewMatrixR);
                 lineRender.draw();
@@ -3115,6 +3122,7 @@ public class GLPlot extends Plot {
             pointRender.setTransform(this.transform, this.alwaysUpdateBuffers);
             pointRender.setOrthographic(this.orthographic);
             pointRender.setLighting(this.lighting);
+            pointRender.setClipExtent(this.axesExtent);
             pointRender.updateMatrix();
             pointRender.setRotateModelView(this.modelViewMatrixR);
             pointRender.draw();

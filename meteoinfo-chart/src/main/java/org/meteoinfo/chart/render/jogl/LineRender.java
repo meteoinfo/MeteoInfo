@@ -8,6 +8,8 @@ import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.chart.graphic.LinealGraphic;
+import org.meteoinfo.chart.graphic.PointGraphic;
+import org.meteoinfo.chart.graphic.PointGraphicCollection;
 import org.meteoinfo.chart.graphic.cylinder.Cylinder;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
@@ -16,11 +18,14 @@ import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.geometry.geoprocess.GeoComputation;
 import org.meteoinfo.geometry.legend.*;
 import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geometry.Geometry;
 import org.meteoinfo.geometry.LineString;
 import org.meteoinfo.geometry.MultiLineString;
+import org.meteoinfo.geometry.Point;
 import org.meteoinfo.math.Matrix4f;
 
+import java.awt.Color;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -39,7 +44,13 @@ public class LineRender extends JOGLGraphicRender {
     private float[] vertexPosition;
     private float[] vertexColor;
     private float lineWidth = 1.0f;
+    private LineStyles lineStyle = LineStyles.SOLID;
+    private List<PolylineBreak> lineBreaks = new ArrayList<>();
     private List<Integer> linePointNumbers;
+    private PointGraphicCollection symbolGraphics;
+    private PointRender symbolRender;
+    private boolean symbolsDirty = true;
+    private Extent clipExtent;
     private boolean streamline = false;
     private IntBuffer vboCone;
     private float[] coneVertexPosition;
@@ -87,11 +98,165 @@ public class LineRender extends JOGLGraphicRender {
         }
         this.streamline = lineBreak instanceof StreamlineBreak;
         this.lineWidth = lineBreak.getWidth();
+        this.lineStyle = lineBreak.getStyle();
 
         this.vertexNum = ((Graphic) this.linealGraphic).getNumPoints();
         this.vertexPosition = this.linealGraphic.getVertexPosition();
         this.vertexColor = this.linealGraphic.getVertexColor();
         this.linePointNumbers = this.linealGraphic.getLinePointNumbers();
+        this.lineBreaks = getLineBreaks();
+    }
+
+    /**
+     * Get the polyline break of a color break.
+     *
+     * @param cb Color break
+     * @return Polyline break, or null if the break has no line style
+     */
+    private static PolylineBreak getPolylineBreak(ColorBreak cb) {
+        if (cb instanceof PolylineBreak) {
+            return (PolylineBreak) cb;
+        }
+        if (cb instanceof ColorBreakCollection) {
+            ColorBreakCollection cbc = (ColorBreakCollection) cb;
+            if (cbc.size() > 0) {
+                return getPolylineBreak(cbc.get(0));
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Build the polyline break list with one entry for each line strip. The
+     * order has to match the line point number list.
+     *
+     * @return Polyline break list
+     */
+    private List<PolylineBreak> getLineBreaks() {
+        List<PolylineBreak> breaks = new ArrayList<>();
+        Graphic graphic = (Graphic) this.linealGraphic;
+        PolylineBreak defaultBreak = getPolylineBreak(this.linealGraphic.getLegendBreak());
+        for (int i = 0; i < graphic.getNumGraphics(); i++) {
+            Graphic child = graphic.getGraphicN(i);
+            PolylineBreak pb = getPolylineBreak(child.getLegendBreak());
+            if (pb == null) {
+                pb = defaultBreak;
+            }
+            Geometry geometry = child.getGeometry();
+            int lineNum = 1;
+            if (geometry instanceof MultiLineString) {
+                lineNum = ((MultiLineString) geometry).getPolylines().size();
+            }
+            for (int j = 0; j < lineNum; j++) {
+                breaks.add(pb);
+            }
+        }
+        return breaks;
+    }
+
+    /**
+     * Get the polyline break for a line strip.
+     *
+     * @param index Line strip index
+     * @return Polyline break
+     */
+    private PolylineBreak getLineBreak(int index) {
+        if (index >= 0 && index < this.lineBreaks.size()) {
+            return this.lineBreaks.get(index);
+        }
+        return null;
+    }
+
+    /**
+     * Set the extent used to clip the line symbols.
+     *
+     * @param value Clip extent, usually the axes extent of the plot
+     */
+    public void setClipExtent(Extent value) {
+        if (value == null) {
+            this.clipExtent = null;
+        } else if (this.clipExtent == null
+                || this.clipExtent.minX != value.minX || this.clipExtent.maxX != value.maxX
+                || this.clipExtent.minY != value.minY || this.clipExtent.maxY != value.maxY
+                || this.clipExtent.minZ != value.minZ || this.clipExtent.maxZ != value.maxZ) {
+            this.clipExtent = (Extent) value.clone();
+        }
+    }
+
+    /**
+     * Build the point symbols drawn on the line vertices. The symbols use the
+     * same {@link PointStyle} rendering as {@link PointRender}, so line symbols
+     * and point graphics have a consistent appearance.
+     */
+    private void buildSymbolGraphics() {
+        PointGraphicCollection symbols = new PointGraphicCollection();
+        if (this.vertexPosition == null || this.linePointNumbers == null) {
+            this.symbolGraphics = symbols;
+            this.symbolRender = null;
+            return;
+        }
+
+        int vertexCount = this.vertexPosition.length / 3;
+        int vertexIndex = 0;
+        for (int i = 0; i < this.linePointNumbers.size(); i++) {
+            int pointNum = this.linePointNumbers.get(i);
+            PolylineBreak pb = getLineBreak(i);
+            if (pb != null && pb.isDrawSymbol()) {
+                int interval = Math.max(1, pb.getSymbolInterval());
+                Color fillColor = pb.getSymbolFillColor();
+                if (fillColor == null) {
+                    fillColor = pb.getColor();
+                }
+                Color outlineColor = pb.getSymbolColor();
+                if (outlineColor == null) {
+                    outlineColor = fillColor;
+                }
+                PointBreak spb = new PointBreak();
+                spb.setMarkerType(MarkerType.SIMPLE);
+                spb.setStyle(pb.getSymbolStyle());
+                spb.setSize(pb.getSymbolSize());
+                spb.setColor(fillColor);
+                spb.setOutlineColor(outlineColor);
+                spb.setDrawFill(pb.isFillSymbol());
+                spb.setDrawOutline(pb.isDrawSymbolOutline());
+                for (int j = 0; j < pointNum; j += interval) {
+                    int idx = vertexIndex + j;
+                    if (idx >= vertexCount) {
+                        break;
+                    }
+                    Point point = new Point(new Coordinate(
+                            this.vertexPosition[idx * 3],
+                            this.vertexPosition[idx * 3 + 1],
+                            this.vertexPosition[idx * 3 + 2]));
+                    symbols.add(new PointGraphic(point, spb));
+                }
+            }
+            vertexIndex += pointNum;
+        }
+
+        this.symbolGraphics = symbols;
+        this.symbolRender = null;
+    }
+
+    /**
+     * Draw the point symbols of the lines.
+     */
+    private void drawSymbols() {
+        if (this.symbolGraphics == null || this.symbolGraphics.getNumGraphics() == 0) {
+            return;
+        }
+        if (this.symbolRender == null) {
+            this.symbolRender = new PointRender(gl, this.symbolGraphics);
+        }
+        if (this.transform != null) {
+            this.symbolRender.setTransform(this.transform, false);
+        }
+        this.symbolRender.setOrthographic(this.orthographic);
+        this.symbolRender.setLighting(this.lighting);
+        this.symbolRender.setClipExtent(this.clipExtent);
+        this.symbolRender.updateMatrix();
+        this.symbolRender.setRotateModelView(this.modelViewMatrixR);
+        this.symbolRender.draw();
     }
 
     void compileShaders() throws Exception {
@@ -247,9 +412,14 @@ public class LineRender extends JOGLGraphicRender {
         super.setTransform((Transform) transform.clone());
 
         if (updateBuffer) {
-            if (this.vertexPosition == null) {
-                this.linealGraphic.getVertexPosition();
+            if (this.vertexPosition == null || this.linePointNumbers == null) {
+                this.linealGraphic.updateVertex();
+                this.vertexPosition = this.linealGraphic.getVertexPosition();
+                this.vertexColor = this.linealGraphic.getVertexColor();
+                this.linePointNumbers = this.linealGraphic.getLinePointNumbers();
             }
+            this.lineBreaks = getLineBreaks();
+            this.symbolsDirty = true;
             FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(vertexPosition);
             sizePosition = vertexBuffer.capacity() * Float.BYTES;
 
@@ -298,6 +468,46 @@ public class LineRender extends JOGLGraphicRender {
 
     }
 
+    /**
+     * Apply the OpenGL line stipple pattern of a line style. The patterns use
+     * window pixels, so dashes keep a constant screen size at any camera
+     * distance and orientation.
+     *
+     * @param style Line style
+     */
+    private void applyLineStipple(LineStyles style) {
+        if (style == null) {
+            gl.glDisable(GL2.GL_LINE_STIPPLE);
+            return;
+        }
+        int factor = Math.max(1, Math.round(this.dpiScale));
+        switch (style) {
+            case DASH:
+                // 4 pixels on, 4 pixels off
+                gl.glLineStipple(factor, (short) 0x0F0F);
+                gl.glEnable(GL2.GL_LINE_STIPPLE);
+                break;
+            case DOT:
+                // 2 pixels on, 2 pixels off
+                gl.glLineStipple(factor, (short) 0x3333);
+                gl.glEnable(GL2.GL_LINE_STIPPLE);
+                break;
+            case DASH_DOT:
+                // 7 pixels on, 4 off, 1 on, 4 off
+                gl.glLineStipple(factor, (short) 0x087F);
+                gl.glEnable(GL2.GL_LINE_STIPPLE);
+                break;
+            case DASH_DOT_DOT:
+                // 10 pixels on, 6 off, 2 on, 6 off, 2 on, 6 off
+                gl.glLineStipple(2 * factor, (short) 0x111F);
+                gl.glEnable(GL2.GL_LINE_STIPPLE);
+                break;
+            default:
+                gl.glDisable(GL2.GL_LINE_STIPPLE);
+                break;
+        }
+    }
+
     @Override
     public void draw() {
         if (useShader) {    //  not working now
@@ -306,6 +516,14 @@ public class LineRender extends JOGLGraphicRender {
 
             gl.glUseProgram(0);
         } else {
+            if (this.linePointNumbers == null) {
+                return;
+            }
+            if (this.symbolsDirty || this.symbolGraphics == null) {
+                buildSymbolGraphics();
+                this.symbolsDirty = false;
+            }
+
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, vbo.get(0));
 
             // enable vertex arrays
@@ -318,12 +536,20 @@ public class LineRender extends JOGLGraphicRender {
             if (lightEnabled) {
                 this.lighting.stop(gl);
             }
-            gl.glLineWidth(this.lineWidth * this.dpiScale);
             int sIdx = 0;
-            for (int np : linePointNumbers) {
-                gl.glDrawArrays(GL.GL_LINE_STRIP, sIdx, np);
+            for (int i = 0; i < linePointNumbers.size(); i++) {
+                int np = linePointNumbers.get(i);
+                PolylineBreak pb = getLineBreak(i);
+                if (pb == null || pb.isDrawPolyline()) {
+                    float width = pb == null ? this.lineWidth : pb.getWidth();
+                    LineStyles style = pb == null ? this.lineStyle : pb.getStyle();
+                    gl.glLineWidth(Math.max(1.0f, width * this.dpiScale));
+                    applyLineStipple(style);
+                    gl.glDrawArrays(GL.GL_LINE_STRIP, sIdx, np);
+                }
                 sIdx += np;
             }
+            gl.glDisable(GL2.GL_LINE_STIPPLE);
             if (lightEnabled) {
                 this.lighting.start(gl);
             }
@@ -332,6 +558,8 @@ public class LineRender extends JOGLGraphicRender {
             gl.glDisableClientState(GL2.GL_COLOR_ARRAY);
 
             gl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+
+            drawSymbols();
 
             if (this.streamline) {
                 gl.glPushMatrix();

@@ -161,7 +161,7 @@ def step(x, y, *args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3D.plot)
+@_copy_docstring_and_deprecators(Axes3D.plot3)
 def plot3(x, y, z, *args, **kwargs):
     global g_axes
     if g_axes is None:
@@ -170,7 +170,7 @@ def plot3(x, y, z, *args, **kwargs):
         if not isinstance(g_axes, Axes3D):
             g_axes = axes3d()
 
-    r = g_axes.plot(x, y, z, *args, **kwargs)
+    r = g_axes.plot3(x, y, z, *args, **kwargs)
     draw_if_interactive()
     return r
 
@@ -366,7 +366,7 @@ def scatter(*args, **kwargs):
     return g_axes.scatter(*args, **kwargs)
 
 
-@_copy_docstring_and_deprecators(Axes3D.scatter)
+@_copy_docstring_and_deprecators(Axes3D.scatter3)
 def scatter3(x, y, z, s=8, c='b', marker='o', **kwargs):
     global g_axes
     if g_axes is None:
@@ -375,7 +375,7 @@ def scatter3(x, y, z, s=8, c='b', marker='o', **kwargs):
         if not isinstance(g_axes, Axes3D):
             g_axes = axes3d()
 
-    return g_axes.scatter(x, y, z, s, c, marker, **kwargs)
+    return g_axes.scatter3(x, y, z, s, c, marker, **kwargs)
 
 
 @_copy_docstring_and_deprecators(Axes.arrow)
@@ -837,6 +837,31 @@ def axes(*args, **kwargs):
     
     :returns: The axes.
     """
+    #return axes2d(*args, **kwargs)
+    return axes3d(*args, **kwargs)
+
+
+def axes2d(*args, **kwargs):
+    """
+    Add an axes to the figure.
+
+    :param position: (*list*) Optional, axes position specified by *position=* [left, bottom, width
+        height] in normalized (0, 1) units. Default is [0.13, 0.11, 0.775, 0.815].
+    :param outerposition: (*list*) Optional, axes size and location, including labels and margin.
+    :param aspect: (*string*) ['equal' | 'auto'] or a number. If a number the ratio of x-unit/y-unit in screen-space.
+        Default is 'auto'.
+    :param bgcolor: (*Color*) Optional, axes background color.
+    :param axis: (*boolean*) Optional, set all axis visible or not. Default is ``True`` .
+    :param bottomaxis: (*boolean*) Optional, set bottom axis visible or not. Default is ``True`` .
+    :param leftaxis: (*boolean*) Optional, set left axis visible or not. Default is ``True`` .
+    :param topaxis: (*boolean*) Optional, set top axis visible or not. Default is ``True`` .
+    :param rightaxis: (*boolean*) Optional, set right axis visible or not. Default is ``True`` .
+    :param xaxistype: (*string*) Optional, set x axis type as 'normal', 'lon', 'lat' or 'time'.
+    :param xinvert: (*boolean*) Optional, set x axis inverted or not. Default is ``False`` .
+    :param yinvert: (*boolean*) Optional, set y axis inverted or not. Default is ``False`` .
+
+    :returns: The axes.
+    """
     global g_axes
 
     if g_figure is None:
@@ -873,7 +898,7 @@ def axesm(*args, **kwargs):
     :returns: The map axes.
     """
     kwargs['axestype'] = 'map'
-    return axes(*args, **kwargs)
+    return axes2d(*args, **kwargs)
 
 
 def axes3d(*args, **kwargs):

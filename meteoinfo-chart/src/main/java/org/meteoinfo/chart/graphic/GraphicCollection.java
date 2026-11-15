@@ -712,6 +712,17 @@ public class GraphicCollection extends Graphic implements Iterator {
         this.graphics.removeAll(gs);
     }
 
+    @Override
+    public boolean is2D() {
+        for (Graphic graphic : this.graphics) {
+            if (graphic.is3D()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Get legend list
      * @return Legend list

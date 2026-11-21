@@ -167,6 +167,14 @@ public class LineRender extends JOGLGraphicRender {
         return null;
     }
 
+    @Override
+    public void setDpiScale(float value) {
+        if (Math.abs(this.dpiScale - value) > 1.0e-4f) {
+            this.symbolsDirty = true;
+        }
+        super.setDpiScale(value);
+    }
+
     /**
      * Set the extent used to clip the line symbols.
      *
@@ -248,6 +256,7 @@ public class LineRender extends JOGLGraphicRender {
         if (this.symbolRender == null) {
             this.symbolRender = new PointRender(gl, this.symbolGraphics);
         }
+        this.symbolRender.setDpiScale(this.dpiScale);
         if (this.transform != null) {
             this.symbolRender.setTransform(this.transform, false);
         }

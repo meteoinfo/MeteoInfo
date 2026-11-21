@@ -13,11 +13,12 @@ import org.meteoinfo.ndarray.IndexIterator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PointGraphicCollection extends GraphicCollection {
+public class PointGraphicCollection extends GraphicCollection implements PuntalGraphic {
     private Array xData;
     private Array yData;
     private Array zData;
     private Array cData;
+    protected boolean sphere = false;
 
     /**
      * Constructor
@@ -294,7 +295,7 @@ public class PointGraphicCollection extends GraphicCollection {
                     c = cIter.getDoubleNext();
                     ps.setValue(c);
                     cb = ls.getLegendBreak(i);
-                    this.add(new Graphic(ps, cb));
+                    this.add(new PointGraphic(ps, (PointBreak) cb));
                     i += 1;
                 }
             } else {
@@ -306,7 +307,7 @@ public class PointGraphicCollection extends GraphicCollection {
                     c = cIter.getDoubleNext();
                     ps.setValue(c);
                     cb = ls.getLegendBreak(i);
-                    this.add(new Graphic(ps, cb));
+                    this.add(new PointGraphic(ps, (PointBreak) cb));
                     i += 1;
                 }
             }
@@ -319,7 +320,7 @@ public class PointGraphicCollection extends GraphicCollection {
                     ps.setValue(c);
                     cb = ls.findLegendBreak(c);
                     if (cb != null) {
-                        this.add(new Graphic(ps, cb));
+                        this.add(new PointGraphic(ps, (PointBreak) cb));
                     }
                 }
             } else {
@@ -332,7 +333,7 @@ public class PointGraphicCollection extends GraphicCollection {
                     ps.setValue(c);
                     cb = ls.findLegendBreak(c);
                     if (cb != null) {
-                        this.add(new Graphic(ps, cb));
+                        this.add(new PointGraphic(ps, (PointBreak) cb));
                     }
                 }
             }
@@ -363,5 +364,15 @@ public class PointGraphicCollection extends GraphicCollection {
         this.yData = yData;
         this.zData = zData;
         updateShape();
+    }
+
+    @Override
+    public boolean isSphere() {
+        return this.sphere;
+    }
+
+    @Override
+    public void setSphere(boolean value) {
+        this.sphere = value;
     }
 }

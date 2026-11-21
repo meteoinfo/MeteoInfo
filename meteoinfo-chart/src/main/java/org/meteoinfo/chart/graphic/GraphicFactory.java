@@ -7,6 +7,7 @@ package org.meteoinfo.chart.graphic;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math4.legacy.analysis.BivariateFunction;
+import org.apache.commons.numbers.gamma.RegularizedGamma;
 import org.meteoinfo.chart.ChartText;
 import org.meteoinfo.chart.ChartText3D;
 import org.meteoinfo.chart.jogl.mc.CallbackMC;
@@ -3752,7 +3753,7 @@ public class GraphicFactory {
      * @param isSmooth Is smooth or not
      * @return Contour lines
      */
-    public static GraphicCollection createContourLines(Array xa, Array ya, Array va, LegendScheme ls, boolean isSmooth) {
+    public static LineGraphicCollection createContourLines(Array xa, Array ya, Array va, LegendScheme ls, boolean isSmooth) {
         ls = ls.convertTo(GeometryType.LINESTRING);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
         double[] cValues = (double[]) ccs[0];
@@ -3786,12 +3787,12 @@ public class GraphicFactory {
         PolyLine aLine;
         double v;
         ColorBreak cbb = ls.findLegendBreak(0);
-        GraphicCollection graphics = new GraphicCollection();
+        LineGraphicCollection graphics = new LineGraphicCollection();
         for (int i = 0; i < ContourLines.size(); i++) {
             aLine = ContourLines.get(i);
             v = aLine.Value;
 
-            MultiLineString aPolyline = new MultiLineString();
+            LineString aPolyline = new LineString();
             Coordinate aPoint;
             List<Coordinate> pList = new ArrayList<>();
             for (int j = 0; j < aLine.PointList.size(); j++) {
@@ -3829,7 +3830,7 @@ public class GraphicFactory {
                     }
                     break;
             }
-            graphics.add(new Graphic(aPolyline, cbb));
+            graphics.add(new LineGraphic(aPolyline, (PolylineBreak) cbb));
         }
         graphics.setSingleLegend(false);
         graphics.setLegendScheme(ls);
@@ -3849,7 +3850,7 @@ public class GraphicFactory {
      * @param isSmooth Is smooth or not
      * @return Contour lines
      */
-    public static GraphicCollection createContourLines(Array xa, Array ya, Array va, double offset,
+    public static LineGraphicCollection createContourLines(Array xa, Array ya, Array va, double offset,
                                                        String zdir, LegendScheme ls, boolean isSmooth) {
         ls = ls.convertTo(GeometryType.LINESTRING);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
@@ -3884,7 +3885,7 @@ public class GraphicFactory {
         PolyLine aLine;
         double v;
         ColorBreak cbb;
-        GraphicCollection graphics = new GraphicCollection();
+        LineGraphicCollection graphics = new LineGraphicCollection();
         graphics.setFixZ(true);
         graphics.setZValue(offset);
         zdir = zdir.toLowerCase();
@@ -3893,7 +3894,7 @@ public class GraphicFactory {
             aLine = ContourLines.get(i);
             v = aLine.Value;
 
-            MultiLineString aPolyline = new MultiLineString();
+            LineString aPolyline = new LineString();
             Coordinate aPoint;
             List<Coordinate> pList = new ArrayList<>();
             switch (zdir) {
@@ -3929,7 +3930,7 @@ public class GraphicFactory {
             aPolyline.setValue(v);
             aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
             cbb = ls.findLegendBreak(v);
-            graphics.add(new Graphic(aPolyline, cbb));
+            graphics.add(new LineGraphic(aPolyline, (PolylineBreak) cbb));
         }
         graphics.setSingleLegend(false);
         graphics.setLegendScheme(ls);
@@ -4025,7 +4026,7 @@ public class GraphicFactory {
      * @param sePoint Start and end points [xstart, ystart, xend, yend]
      * @return Contour lines
      */
-    public static GraphicCollection createContourLines(Array xa, Array ya, Array va, double offset,
+    public static LineGraphicCollection createContourLines(Array xa, Array ya, Array va, double offset,
                                                        String zdir, LegendScheme ls, boolean isSmooth, List<Number> sePoint) {
         ls = ls.convertTo(GeometryType.LINESTRING);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
@@ -4060,7 +4061,7 @@ public class GraphicFactory {
         PolyLine aLine;
         double v;
         ColorBreak cbb;
-        GraphicCollection graphics = new GraphicCollection();
+        LineGraphicCollection graphics = new LineGraphicCollection();
         graphics.setFixZ(true);
         graphics.setZValue(offset);
         graphics.setSEPoint(sePoint);
@@ -4075,7 +4076,7 @@ public class GraphicFactory {
             aLine = ContourLines.get(i);
             v = aLine.Value;
 
-            MultiLineString aPolyline = new MultiLineString();
+            LineString aPolyline = new LineString();
             Coordinate aPoint;
             List<Coordinate> pList = new ArrayList<>();
             switch (zdir) {
@@ -4122,7 +4123,7 @@ public class GraphicFactory {
             aPolyline.setValue(v);
             aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
             cbb = ls.findLegendBreak(v);
-            graphics.add(new Graphic(aPolyline, cbb));
+            graphics.add(new LineGraphic(aPolyline, (PolylineBreak) cbb));
         }
         graphics.setSingleLegend(false);
         graphics.setLegendScheme(ls);
@@ -4138,7 +4139,7 @@ public class GraphicFactory {
      * @param isSmooth Is smooth or not
      * @return Contour lines
      */
-    public static GraphicCollection createContourLines(GridData gridData, LegendScheme ls, boolean isSmooth) {
+    public static LineGraphicCollection createContourLines(GridData gridData, LegendScheme ls, boolean isSmooth) {
         ls = ls.convertTo(GeometryType.LINESTRING);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
         double[] cValues = (double[]) ccs[0];
@@ -4169,12 +4170,12 @@ public class GraphicFactory {
         PolyLine aLine;
         double v;
         ColorBreak cbb = ls.findLegendBreak(0);
-        GraphicCollection graphics = new GraphicCollection();
+        LineGraphicCollection graphics = new LineGraphicCollection();
         for (int i = 0; i < ContourLines.size(); i++) {
             aLine = ContourLines.get(i);
             v = aLine.Value;
 
-            MultiLineString aPolyline = new MultiLineString();
+            LineString aPolyline = new LineString();
             Coordinate aPoint;
             List<Coordinate> pList = new ArrayList<>();
             for (int j = 0; j < aLine.PointList.size(); j++) {
@@ -4212,7 +4213,7 @@ public class GraphicFactory {
                     }
                     break;
             }
-            graphics.add(new Graphic(aPolyline, cbb));
+            graphics.add(new LineGraphic(aPolyline, (PolylineBreak) cbb));
         }
         graphics.setSingleLegend(false);
         graphics.setLegendScheme(ls);
@@ -4230,7 +4231,7 @@ public class GraphicFactory {
      * @param isSmooth Is smooth or not
      * @return Contour lines
      */
-    public static GraphicCollection createContourLines(GridData gridData, double offset,
+    public static LineGraphicCollection createContourLines(GridData gridData, double offset,
             String zdir, LegendScheme ls, boolean isSmooth) {
         ls = ls.convertTo(GeometryType.LINESTRING);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
@@ -4262,7 +4263,7 @@ public class GraphicFactory {
         PolyLine aLine;
         double v;
         ColorBreak cbb;
-        GraphicCollection graphics = new GraphicCollection();
+        LineGraphicCollection graphics = new LineGraphicCollection();
         graphics.setFixZ(true);
         graphics.setZValue(offset);
         zdir = zdir.toLowerCase();
@@ -4271,7 +4272,7 @@ public class GraphicFactory {
             aLine = ContourLines.get(i);
             v = aLine.Value;
 
-            MultiLineString aPolyline = new MultiLineString();
+            LineString aPolyline = new LineString();
             Coordinate aPoint;
             List<Coordinate> pList = new ArrayList<>();
             switch (zdir) {
@@ -4307,7 +4308,7 @@ public class GraphicFactory {
             aPolyline.setValue(v);
             aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
             cbb = ls.findLegendBreak(v);
-            graphics.add(new Graphic(aPolyline, cbb));
+            graphics.add(new LineGraphic(aPolyline, (PolylineBreak) cbb));
         }
         graphics.setSingleLegend(false);
         graphics.setLegendScheme(ls);
@@ -4326,7 +4327,7 @@ public class GraphicFactory {
      * @param sePoint Start and end points [xstart, ystart, xend, yend]
      * @return Contour lines
      */
-    public static GraphicCollection createContourLines(GridData gridData, double offset,
+    public static LineGraphicCollection createContourLines(GridData gridData, double offset,
             String zdir, LegendScheme ls, boolean isSmooth, List<Number> sePoint) {
         ls = ls.convertTo(GeometryType.LINESTRING);
         Object[] ccs = LegendManage.getContoursAndColors(ls);
@@ -4358,7 +4359,7 @@ public class GraphicFactory {
         PolyLine aLine;
         double v;
         ColorBreak cbb;
-        GraphicCollection graphics = new GraphicCollection();
+        LineGraphicCollection graphics = new LineGraphicCollection();
         graphics.setFixZ(true);
         graphics.setZValue(offset);
         graphics.setSEPoint(sePoint);
@@ -4373,7 +4374,7 @@ public class GraphicFactory {
             aLine = ContourLines.get(i);
             v = aLine.Value;
 
-            MultiLineString aPolyline = new MultiLineString();
+            LineString aPolyline = new LineString();
             Coordinate aPoint;
             List<Coordinate> pList = new ArrayList<>();
             switch (zdir) {
@@ -4420,7 +4421,7 @@ public class GraphicFactory {
             aPolyline.setValue(v);
             aPolyline.setExtent(GeometryUtil.getPointsExtent(pList));
             cbb = ls.findLegendBreak(v);
-            graphics.add(new Graphic(aPolyline, cbb));
+            graphics.add(new LineGraphic(aPolyline, (PolylineBreak) cbb));
         }
         graphics.setSingleLegend(false);
         graphics.setLegendScheme(ls);

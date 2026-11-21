@@ -102,8 +102,47 @@ public class EarthGLPlot extends GLPlot {
 
     @Override
     public void setDrawExtent(Extent value) {
-        this.drawExtent = value;
+        this.drawExtent = ensureNonZeroExtent(value);
         this.transform.setExtent(this.drawExtent);
+    }
+
+    /**
+     * Make sure the scene extent has non-zero ranges in all three dimensions.
+     * A zero range would produce an infinite scale in {@link Transform}.
+     *
+     * @param value Extent
+     * @return Non-zero extent
+     */
+    private static Extent ensureNonZeroExtent(Extent value) {
+        Extent extent = (Extent) value.clone();
+        extent.asNonZero();
+        if (extent.getWidth() == 0) {
+            extent.minX -= 1;
+            extent.maxX += 1;
+        }
+        if (extent.getHeight() == 0) {
+            extent.minY -= 1;
+            extent.maxY += 1;
+        }
+        if (extent.getZLength() == 0) {
+            extent.minZ -= 1;
+            extent.maxZ += 1;
+        }
+        return extent;
+    }
+
+    /**
+     * The scene coordinates of an earth plot are earth centred cartesian
+     * coordinates.  Zooming changes the draw extent (the camera scale), not the
+     * data bounds, so screen space point/line symbols must be clipped by the
+     * full transformed graphic extent.  Otherwise zooming in would cull the
+     * points on the earth surface.
+     *
+     * @return Clip extent
+     */
+    @Override
+    protected Extent getClipExtent() {
+        return this.graphicExtent;
     }
 
     // </editor-fold>
@@ -131,9 +170,9 @@ public class EarthGLPlot extends GLPlot {
         updateDataExtent();
 
         this.graphics.add(SphericalTransform.transform(graphic));
-        Extent ex = this.graphics.getExtent();
+        Extent ex = ensureNonZeroExtent(this.graphics.getExtent());
         this.graphicExtent = ex;
-        this.setDrawExtent((Extent) this.graphicExtent.clone());
+        this.setDrawExtent((Extent) ex.clone());
         // A volume renderer keeps its own GPU buffers / textures, refresh them
         this.alwaysUpdateBuffers = true;
     }
@@ -154,9 +193,9 @@ public class EarthGLPlot extends GLPlot {
         updateDataExtent();
 
         this.graphics.add(index, SphericalTransform.transform(graphic));
-        Extent ex = this.graphics.getExtent();
+        Extent ex = ensureNonZeroExtent(this.graphics.getExtent());
         this.graphicExtent = ex;
-        this.setDrawExtent((Extent) this.graphicExtent.clone());
+        this.setDrawExtent((Extent) ex.clone());
         this.alwaysUpdateBuffers = true;
     }
 
@@ -230,6 +269,7 @@ public class EarthGLPlot extends GLPlot {
 
     @Override
     public void display(GLAutoDrawable drawable) {
+        this.updateSurfaceScale(drawable);
         final GL2 gl = drawable.getGL().getGL2();
         gl.glLoadIdentity();
 
@@ -564,6 +604,7 @@ public class EarthGLPlot extends GLPlot {
                 }
                 render = (EarthVolumeRender) renderMap.get(graphic);
                 render.setRadius(this.radius);
+                render.setDpiScale(this.dpiScale);
                 render.setTransform(this.transform, this.alwaysUpdateBuffers);
                 render.setOrthographic(this.orthographic);
                 render.updateMatrix();

@@ -4,9 +4,10 @@ import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.legend.PointBreak;
 import org.meteoinfo.geometry.Point;
 
-public class PointGraphic extends Graphic {
+public class PointGraphic extends Graphic implements PuntalGraphic{
 
     private Coordinate coordinate;
+    protected boolean sphere = false;
 
     /**
      * Constructor
@@ -65,5 +66,15 @@ public class PointGraphic extends Graphic {
      */
     public void setZ(double value) {
         this.coordinate.z = value;
+    }
+
+    @Override
+    public boolean isSphere() {
+        return this.sphere;
+    }
+
+    @Override
+    public void setSphere(boolean value) {
+        this.sphere = value;
     }
 }

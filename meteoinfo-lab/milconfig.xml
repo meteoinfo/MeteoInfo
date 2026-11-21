@@ -1,34 +1,34 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <MeteoInfo File="milconfig.xml" Type="configurefile">
-  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\plot">
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\io\grib"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\error"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\bar"/>
+  <Path OpenPath="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth">
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\scatter"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\stem"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\contour"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\plot"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\scatter"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\surf"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\contour"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\jogl\imshow"/>
     <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types"/>
-    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\plot"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\imshow"/>
+    <RecentFolder Folder="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth"/>
   </Path>
   <File>
     <OpenedFiles>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter\scatterm_1.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_color_linewidth.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_marker.py"/>
-      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_marker_2.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\imshow_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\streamslice_1.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\contour.py"/>
+      <OpenedFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\traj_1.py"/>
     </OpenedFiles>
     <RecentFiles>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\scatter\scatterm_1.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_color_linewidth.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_marker.py"/>
-      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\plot\plot_marker_2.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\imshow_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\streamslice_1.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\contour.py"/>
+      <RecentFile File="D:\Working\MIScript\Jython\mis\plot_types\3d\3d_earth\traj_1.py"/>
     </RecentFiles>
   </File>
   <Font>

@@ -2214,28 +2214,28 @@ class EarthAxes3D(Axes3DGL):
         :return: Longitude and latitude lines.
         """
         nlon = int(360. / lon_delta)
-        lons = np.zeros([nlon, npoints])
-        lats = np.zeros([nlon, npoints])
-        alts = np.zeros([nlon, npoints]) + offset
+        lons = np.zeros([npoints, nlon])
+        lats = np.zeros([npoints, nlon])
+        alts = np.zeros([npoints, nlon]) + offset
         lat = np.linspace(-90., 90., npoints)
         idx = 0
         for i in np.arange(0., 360., lon_delta):
-            lons[idx] = np.full(npoints, i)
-            lats[idx] = lat
+            lons[:,idx] = np.full(npoints, i)
+            lats[:,idx] = lat
             idx += 1
-        self.plot(lons, lats, alts, **kwargs)
+        self.plot3(lons, lats, alts, **kwargs)
 
         nlat = int(180. / lat_delta)
-        lons = np.zeros([nlat, npoints])
-        lats = np.zeros([nlat, npoints])
-        alts = np.zeros([nlat, npoints]) + offset
+        lons = np.zeros([npoints, nlat])
+        lats = np.zeros([npoints, nlat])
+        alts = np.zeros([npoints, nlat]) + offset
         lon = np.linspace(-180., 180., npoints)
         idx = 0
         for i in np.arange(-90., 90., lat_delta):
-            lats[idx] = np.full(npoints, i)
-            lons[idx] = lon
+            lats[:,idx] = np.full(npoints, i)
+            lons[:,idx] = lon
             idx += 1
-        self.plot(lons, lats, alts, **kwargs)
+        self.plot3(lons, lats, alts, **kwargs)
 
     def axis(self, limits):
         """

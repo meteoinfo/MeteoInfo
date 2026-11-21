@@ -10,9 +10,17 @@ import org.meteoinfo.chart.graphic.GraphicCollection;
 import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geometry.legend.PolygonBreak;
 import org.meteoinfo.geometry.Coordinate;
+import org.meteoinfo.geometry.Point;
 import org.meteoinfo.geometry.Polygon;
 import org.meteoinfo.geometry.MultiPolygon;
 import org.meteoinfo.geometry.Geometry;
+import org.meteoinfo.geometry.LineString;
+import org.meteoinfo.geometry.MultiLineString;
+import org.meteoinfo.geometry.legend.ColorBreak;
+import org.meteoinfo.geometry.legend.ColorBreakCollection;
+import org.meteoinfo.geometry.legend.PolylineBreak;
+import org.meteoinfo.geometry.legend.LegendScheme;
+import org.meteoinfo.geometry.GeometryType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -258,7 +266,12 @@ public class SphericalTransform {
                         PolygonBreak pb = (PolygonBreak) gg.getGraphicN(0).getLegendBreak();
                         isTess = pb.isDrawFill();
                     }
-                    if (isTess) {
+                    if (shape instanceof Point) {
+                        // Point.setCoordinates() is a no-op, and PointGraphic
+                        // caches the Coordinate instance.  Transform the
+                        // coordinate in place so both stay in sync.
+                        transformPoint((Point) shape);
+                    } else if (isTess) {
                         MultiPolygon polygonZShape = (MultiPolygon) shape;
                         List<Polygon> polygonZS = polygonZShape.getPolygons();
                         for (int j = 0; j < polygonZS.size(); j++) {
@@ -286,11 +299,24 @@ public class SphericalTransform {
                             ((MultiPolygon) shape).setPoints_keep(points);
                         else
                             shape.setCoordinates(points);
+                        shape.updateExtent();
                     }
                     gg.setGeometry(shape);
+                    syncPointGraphic(gg, shape);
+                    if (gg instanceof LinealGraphic) {
+                        ((LinealGraphic) gg).updateVertex();
+                    }
                     graphics.setGraphicN(i, gg);
                 }
                 graphics.updateExtent();
+                if (graphic instanceof LinealGraphic) {
+                    ((LinealGraphic) graphic).updateVertex();
+                } else {
+                    Graphic lineGraphics = toLineGraphicCollection(graphics);
+                    if (lineGraphics != null) {
+                        return lineGraphics;
+                    }
+                }
                 return graphics;
             } else {
                 Graphic gg = graphic.getGraphicN(0);
@@ -298,6 +324,8 @@ public class SphericalTransform {
                 if (shape instanceof ChartText3D) {
                     Coordinate p = ((ChartText3D) shape).getPoint();
                     ((ChartText3D) shape).setPoint(SphericalTransform.transform(p));
+                } else if (shape instanceof Point) {
+                    transformPoint((Point) shape);
                 } else {
                     List<Coordinate> points = (List<Coordinate>) shape.getCoordinates();
                     points.replaceAll(SphericalTransform::transform);
@@ -305,10 +333,113 @@ public class SphericalTransform {
                         ((MultiPolygon) shape).setPoints_keep(points);
                     else
                         shape.setCoordinates(points);
+                    shape.updateExtent();
                 }
 
                 gg.setGeometry(shape);
+                syncPointGraphic(gg, shape);
+                if (gg instanceof LinealGraphic) {
+                    ((LinealGraphic) gg).updateVertex();
+                }
                 return gg;
+            }
+        }
+    }
+
+    /**
+     * Convert a plain collection of line graphics (for example streamlines)
+     * into a LineGraphicCollection.  The GL plot only has a line renderer for
+     * LinealGraphic, so a plain GraphicCollection would fall through to the
+     * generic child recursion and never be drawn.
+     *
+     * @param graphics Graphic collection
+     * @return Line graphic collection, or null when the collection is not all lines
+     */
+    private static LineGraphicCollection toLineGraphicCollection(GraphicCollection graphics) {
+        LineGraphicCollection lines = new LineGraphicCollection();
+        PolylineBreak defaultBreak = null;
+        for (Graphic child : graphics.getGraphics()) {
+            Geometry shape = child.getGeometry();
+            PolylineBreak lineBreak = getPolylineBreak(child.getLegendBreak());
+            if (shape instanceof LineString) {
+                lines.add(new LineGraphic((LineString) shape, lineBreak));
+            } else if (shape instanceof MultiLineString) {
+                for (LineString line : ((MultiLineString) shape).getPolylines()) {
+                    lines.add(new LineGraphic(line, lineBreak));
+                }
+            } else {
+                return null;
+            }
+            if (defaultBreak == null) {
+                defaultBreak = lineBreak;
+            }
+        }
+        if (lines.getNumGraphics() == 0) {
+            return null;
+        }
+        if (defaultBreak != null) {
+            lines.setLegendBreak(defaultBreak);
+        }
+        LegendScheme ls = graphics.getLegendScheme();
+        if (ls == null) {
+            ls = new LegendScheme(GeometryType.LINESTRING);
+            ls.getLegendBreaks().add(defaultBreak != null ? defaultBreak : new PolylineBreak());
+        }
+        lines.setLegendScheme(ls);
+        lines.updateVertex();
+        lines.updateExtent();
+        return lines;
+    }
+
+    /**
+     * Get a line break from a color break.
+     *
+     * @param cb Color break
+     * @return Polyline break
+     */
+    private static PolylineBreak getPolylineBreak(ColorBreak cb) {
+        if (cb instanceof PolylineBreak) {
+            return (PolylineBreak) cb;
+        }
+        if (cb instanceof ColorBreakCollection && ((ColorBreakCollection) cb).size() > 0) {
+            return getPolylineBreak(((ColorBreakCollection) cb).get(0));
+        }
+        return new PolylineBreak();
+    }
+
+    /**
+     * Transform a point coordinate in place. Point.setCoordinates() is empty,
+     * so replacing the coordinate list does not update the Point. Mutating the
+     * existing Coordinate also keeps the PointGraphic coordinate cache valid.
+     *
+     * @param point Point
+     */
+    private static void transformPoint(Point point) {
+        Coordinate coordinate = point.getCoordinate();
+        if (coordinate == null) {
+            return;
+        }
+        Vector3f xyz = transform((float) coordinate.x, (float) coordinate.y, (float) coordinate.z);
+        coordinate.x = xyz.x;
+        coordinate.y = xyz.y;
+        coordinate.z = xyz.z;
+        point.updateExtent();
+    }
+
+    /**
+     * Keep a PointGraphic coordinate cache in sync with its Point geometry.
+     *
+     * @param graphic Graphic
+     * @param shape Geometry
+     */
+    private static void syncPointGraphic(Graphic graphic, Geometry shape) {
+        if (graphic instanceof PointGraphic && shape instanceof Point) {
+            Coordinate coordinate = ((Point) shape).getCoordinate();
+            if (coordinate != null) {
+                PointGraphic pointGraphic = (PointGraphic) graphic;
+                pointGraphic.setX(coordinate.x);
+                pointGraphic.setY(coordinate.y);
+                pointGraphic.setZ(coordinate.z);
             }
         }
     }

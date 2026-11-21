@@ -6,8 +6,8 @@ import com.jogamp.opengl.GLOffscreenAutoDrawable;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.GL2;
 import org.joml.Matrix4f;
-import org.meteoinfo.chart.graphic.Graphic;
-import org.meteoinfo.chart.graphic.GraphicCollection;
+import org.meteoinfo.chart.graphic.PointGraphic;
+import org.meteoinfo.chart.graphic.PointGraphicCollection;
 import org.meteoinfo.chart.jogl.Transform;
 import org.meteoinfo.chart.render.jogl.PointRender;
 import org.meteoinfo.geometry.Coordinate;
@@ -103,7 +103,7 @@ public class PointMarkerRenderTest {
     }
 
     private static BufferedImage renderGrid(final Matrix4f modelView, File file) throws Exception {
-        final GraphicCollection graphics = new GraphicCollection();
+        final PointGraphicCollection graphics = new PointGraphicCollection();
         for (int i = 0; i < STYLES.length; i++) {
             PointBreak pb = new PointBreak();
             pb.setStyle(STYLES[i]);
@@ -111,13 +111,13 @@ public class PointMarkerRenderTest {
             pb.setColor(COLORS[i]);
             pb.setOutlineColor(Color.BLACK);
             pb.setOutlineSize(1.0f);
-            graphics.add(new Graphic(new Point(new Coordinate(gridX(i), gridY(i), 0.0)), pb));
+            graphics.add(new PointGraphic(new Point(new Coordinate(gridX(i), gridY(i), 0.0)), pb));
         }
         return render(graphics, modelView, file);
     }
 
     private static BufferedImage renderHollow(File file) throws Exception {
-        GraphicCollection graphics = new GraphicCollection();
+        PointGraphicCollection graphics = new PointGraphicCollection();
         PointBreak pb = new PointBreak();
         pb.setStyle(PointStyle.CIRCLE);
         pb.setSize(40);
@@ -126,12 +126,12 @@ public class PointMarkerRenderTest {
         pb.setOutlineSize(2.0f);
         pb.setDrawFill(false);
         pb.setDrawOutline(true);
-        graphics.add(new Graphic(new Point(new Coordinate(0.0, 0.0, 0.0)), pb));
+        graphics.add(new PointGraphic(new Point(new Coordinate(0.0, 0.0, 0.0)), pb));
         return render(graphics, new Matrix4f(), file);
     }
 
-    private static BufferedImage render(final GraphicCollection graphics, final Matrix4f modelView,
-                                        File file) throws Exception {
+    private static BufferedImage render(final PointGraphicCollection graphics,
+                                        final Matrix4f modelView, File file) throws Exception {
         GLProfile profile = GLProfile.get(GLProfile.GL2);
         GLCapabilities caps = new GLCapabilities(profile);
         caps.setDoubleBuffered(true);

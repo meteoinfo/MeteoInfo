@@ -1,8 +1,7 @@
 import org.meteoinfo.chart.GLChart;
 import org.meteoinfo.chart.GLChartPanel;
 import org.meteoinfo.chart.MouseMode;
-import org.meteoinfo.chart.graphic.GraphicCollection;
-import org.meteoinfo.chart.graphic.GraphicFactory;
+import org.meteoinfo.chart.graphic.PointGraphicCollection;
 import org.meteoinfo.chart.jogl.GLPlot;
 import org.meteoinfo.chart.jogl.Lighting;
 import org.meteoinfo.geometry.Extent;
@@ -16,7 +15,7 @@ import java.awt.*;
 
 public class SphereTest1 {
 
-    GraphicCollection createSpheres() {
+    PointGraphicCollection createSpheres() {
         int[] shape = new int[]{1};
         Array z = ArrayUtil.lineSpace(0., 1., 10, true);
         Array x = ArrayMath.mul(z, ArrayMath.sin(ArrayMath.mul(z, 20)));
@@ -25,7 +24,7 @@ public class SphereTest1 {
         cb.setSize(50);
         cb.setColor(Color.RED);
 
-        GraphicCollection graphics = (GraphicCollection) GraphicFactory.createPoints3D(x, y, z, cb);
+        PointGraphicCollection graphics = new PointGraphicCollection(x, y, z, cb);
         graphics.setSphere(true);
 
         return graphics;
@@ -51,7 +50,7 @@ public class SphereTest1 {
         //plot.getGridLine().setDrawZLine(false);
 
         SphereTest1 test = new SphereTest1();
-        GraphicCollection graphics = test.createSpheres();
+        PointGraphicCollection graphics = test.createSpheres();
         plot.addGraphic(graphics);
         plot.setDrawExtent(new Extent(-2, 2, -2, 2, -2, 2));
         plot.setAntialias(true);

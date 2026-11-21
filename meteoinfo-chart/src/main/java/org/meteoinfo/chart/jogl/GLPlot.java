@@ -1,6 +1,7 @@
 package org.meteoinfo.chart.jogl;
 
 import com.jogamp.common.nio.Buffers;
+import com.jogamp.nativewindow.ScalableSurface;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
@@ -74,6 +75,12 @@ import static com.jogamp.opengl.GL2ES3.GL_TEXTURE_BASE_LEVEL;
  * start in 2-D mode until the camera is first moved.  {@link #set2D(boolean)}
  * can force either mode explicitly.</p>
  *
+ * <p>The plot also detects the HiDPI scale of the JOGL surface automatically.
+ * Font sizes, line widths, point sizes and marker sizes are scaled by this
+ * factor so that the rendered result has the same apparent size on normal and
+ * high resolution displays.  {@link #setDpiScale(float)} can be used as an
+ * additional multiplier, for example when exporting a high DPI image.</p>
+ *
  * @author Yaqiang Wang
  */
 public class GLPlot extends Plot {
@@ -145,6 +152,8 @@ public class GLPlot extends Plot {
     protected Lighting lighting = new Lighting();
     protected boolean antialias;
     protected float dpiScale;   //DPI scale factor
+    protected float manualDpiScale = 1.0f;  //explicit DPI scale for image export
+    protected float surfaceScale = 1.0f;    //HiDPI surface scale reported by JOGL/AWT
     protected boolean orthographic;
     protected float distance;
     protected float fieldOfView;
@@ -179,6 +188,8 @@ public class GLPlot extends Plot {
         this.displayZ = true;
         this.drawBoundingBox = false;
         this.antialias = false;
+        this.manualDpiScale = 1f;
+        this.surfaceScale = 1f;
         this.dpiScale = 1;
         this.orthographic = true;
         this.distance = 5.f;
@@ -1153,7 +1164,9 @@ public class GLPlot extends Plot {
     public void setAntialias(boolean value) { this.antialias = value; }
 
     /**
-     * Get DPI scale
+     * Get the effective DPI scale, including the automatic HiDPI surface
+     * scale.
+     *
      * @return DPI scale
      */
     public float getDpiScale() {
@@ -1161,11 +1174,61 @@ public class GLPlot extends Plot {
     }
 
     /**
-     * Set DPI scale
+     * Set DPI scale. The value is a multiplier on top of the automatic HiDPI
+     * surface scale and is mainly used when rendering an image with a higher
+     * DPI than the screen.
+     *
      * @param value DPI scale
      */
     public void setDpiScale(float value) {
-        this.dpiScale = value;
+        this.manualDpiScale = value > 0 ? value : 1.0f;
+        this.recalcDpiScale();
+    }
+
+    /**
+     * Update the automatic HiDPI scale from the JOGL surface size or the
+     * surface scale reported by JOGL.
+     *
+     * @param drawable GL drawable
+     */
+    protected void updateSurfaceScale(GLAutoDrawable drawable) {
+        if (drawable == null) {
+            return;
+        }
+        float scale = -1.0f;
+        // The surface size in physical pixels versus the AWT component size in
+        // logical pixels is the most reliable HiDPI scale.
+        if (drawable instanceof Component) {
+            Component component = (Component) drawable;
+            int componentWidth = component.getWidth();
+            int surfaceWidth = drawable.getSurfaceWidth();
+            if (componentWidth > 0 && surfaceWidth > 0) {
+                scale = (float) surfaceWidth / componentWidth;
+            }
+        }
+        if (scale <= 0 && drawable instanceof ScalableSurface) {
+            float[] scales = ((ScalableSurface) drawable).getCurrentSurfaceScale(new float[2]);
+            if (scales != null && scales.length > 0 && scales[0] > 0) {
+                scale = scales[0];
+            }
+        }
+        if (scale <= 0 || Float.isNaN(scale)) {
+            scale = 1.0f;
+        }
+        if (Float.compare(scale, this.surfaceScale) != 0) {
+            this.surfaceScale = scale;
+            this.recalcDpiScale();
+        }
+    }
+
+    /**
+     * Recalculate the effective DPI scale and update all graphic renderers.
+     */
+    private void recalcDpiScale() {
+        this.dpiScale = this.manualDpiScale * this.surfaceScale;
+        for (JOGLGraphicRender render : this.renderMap.values()) {
+            render.setDpiScale(this.dpiScale);
+        }
     }
 
     /**
@@ -1450,11 +1513,14 @@ public class GLPlot extends Plot {
     }
 
     public void display(GLAutoDrawable drawable) {
+        this.updateSurfaceScale(drawable);
         if (is2D()) {
             boolean oldDisplayZ = displayZ;
             displayZ = false;
-            angleX = Math.round(angleX / 180.f) * 180.f;
-            angleY = Math.round(angleY / 90.f) * 90.f;
+            angleX = 0.f;
+            angleY = 0.f;
+            //angleX = Math.round(angleX / 180.f) * 180.f;
+            //angleY = Math.round(angleY / 90.f) * 90.f;
             display3D(drawable);
             displayZ = oldDisplayZ;
         } else {
@@ -1786,7 +1852,7 @@ public class GLPlot extends Plot {
     }
 
     protected int getLabelGap(Font font, java.util.List<ChartText> labels, double len) {
-        TextRenderer textRenderer = new TextRenderer(font);
+        TextRenderer textRenderer = new TextRenderer(getDpiFont(font));
         int n = labels.size();
         int nn;
         Rectangle2D rect = textRenderer.getBounds("Text".subSequence(0, 4));
@@ -1802,10 +1868,7 @@ public class GLPlot extends Plot {
             return 1;
         }
 
-        Font font = legend.getTickLabelFont();
-        if (this.dpiScale != 1) {
-            font = new Font(font.getFontName(), font.getStyle(), (int)(font.getSize() * this.dpiScale));
-        }
+        Font font = getDpiFont(legend.getTickLabelFont());
         TextRenderer textRenderer = new TextRenderer(font);
         int n = legend.getLegendScheme().getBreakNum();
         int nn;
@@ -2232,7 +2295,7 @@ public class GLPlot extends Plot {
                     ChartText label = this.xAxis.getLabel();
                     if (label != null) {
                         this.updateTextRender(label.getFont());
-                        strWidth += this.tickSpace;
+                        strWidth += this.tickSpace * this.dpiScale;
                         float angle = this.toScreenAngle(xMin, y, zMin, xMax, y, zMin);
                         angle = is2D() ? 0.0f : (y < center.y ? 270 - angle : 90 - angle);
                         float yShift = Math.min(-strWidth, -strWidth);
@@ -2322,7 +2385,7 @@ public class GLPlot extends Plot {
                     ChartText label = this.yAxis.getLabel();
                     if (label != null) {
                         this.updateTextRender(label.getFont());
-                        strWidth += this.tickSpace;
+                        strWidth += this.tickSpace * this.dpiScale;
                         float angle = this.toScreenAngle(x, yMin, zMin, x, yMax, zMin);
                         angle = is2D() ? 90.0f : (x > center.x ? 270 - angle : 90 - angle);
                         float yShift = Math.min(-strWidth, -strWidth);
@@ -2431,7 +2494,8 @@ public class GLPlot extends Plot {
 
             //Draw tick label
             if (this.zAxis.isDrawTickLabel()) {
-                rect = drawString(gl, tlabs.get(i), x1, y1, v, xAlign, yAlign, -this.tickSpace, 0);
+                rect = drawString(gl, tlabs.get(i), x1, y1, v, xAlign, yAlign,
+                        -this.tickSpace * this.dpiScale, 0);
                 if (strWidth < rect.getWidth()) {
                     strWidth = (float) rect.getWidth();
                 }
@@ -2443,7 +2507,7 @@ public class GLPlot extends Plot {
             ChartText label = this.zAxis.getLabel();
             if (label != null) {
                 this.updateTextRender(label.getFont());
-                float yShift = strWidth + this.tickSpace * 3;
+                float yShift = strWidth + this.tickSpace * 3 * this.dpiScale;
                 float z1 = (zMax + zMin) * 0.5f;
                 drawString(gl, label, x1, y1, z1, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
             }
@@ -2514,11 +2578,11 @@ public class GLPlot extends Plot {
             if (left) {
                 xyz1.x -= tickLen;
                 xAlign = XAlign.RIGHT;
-                xShift = -this.tickSpace;
+                xShift = -this.tickSpace * this.dpiScale;
             } else {
                 xyz1.x += tickLen;
                 xAlign = XAlign.LEFT;
-                xShift = this.tickSpace;
+                xShift = this.tickSpace * this.dpiScale;
             }
 
             //Draw tick line
@@ -2544,11 +2608,11 @@ public class GLPlot extends Plot {
             mvMatrix.transformPosition(xyz);
             if (left) {
                 xyz.x -= tickLen;
-                float yShift = strWidth + this.tickSpace * 3;
+                float yShift = strWidth + this.tickSpace * 3 * this.dpiScale;
                 drawString(gl, label, xyz.x, xyz.y, xyz.z, XAlign.CENTER, YAlign.BOTTOM, 90.f, 0, yShift);
             } else {
                 xyz.x += tickLen;
-                float yShift = -(strWidth + this.tickSpace * 3);
+                float yShift = -(strWidth + this.tickSpace * 3 * this.dpiScale);
                 drawString(gl, label, xyz.x, xyz.y, xyz.z, XAlign.CENTER, YAlign.TOP, 90.f, 0, yShift);
             }
         }
@@ -2564,26 +2628,29 @@ public class GLPlot extends Plot {
     }
 
     void updateTextRender(Font font) {
-        boolean newTR = false;
-        if (this.dpiScale != 1) {
-            newTR = true;
-        } else {
-            if (this.textRenderer == null) {
-                newTR = true;
-            } else {
-                if (!this.textRenderer.getFont().equals(font)) {
-                    //this.textRenderer.dispose();
-                    newTR = true;
-                }
+        Font dpiFont = getDpiFont(font);
+        if (this.textRenderer == null || !this.textRenderer.getFont().equals(dpiFont)) {
+            if (this.textRenderer != null) {
+                this.textRenderer.dispose();
             }
+            this.textRenderer = new TextRenderer(dpiFont, true, true);
         }
-        if (newTR) {
-            if (this.dpiScale == 1) {
-                textRenderer = new TextRenderer(font, true, true);
-            } else {
-                textRenderer = new TextRenderer(font.deriveFont(font.getSize() * this.dpiScale), true, true);
-            }
+    }
+
+    /**
+     * Scale a font for the current DPI scale.
+     *
+     * @param font Font
+     * @return Scaled font
+     */
+    private Font getDpiFont(Font font) {
+        if (font == null) {
+            return null;
         }
+        if (Math.abs(this.dpiScale - 1.0f) < 1.0e-4f) {
+            return font;
+        }
+        return font.deriveFont(font.getSize2D() * this.dpiScale);
     }
 
     Rectangle2D drawString(GL2 gl, ChartText text, float vx, float vy, float vz, XAlign xAlign, YAlign yAlign) {
@@ -2613,6 +2680,7 @@ public class GLPlot extends Plot {
         float y = coord.y;
 
         //Rendering text string
+        this.updateTextRender(font);
         textRenderer.beginRendering(this.width, this.height);
         textRenderer.setColor(color);
         textRenderer.setSmoothing(true);
@@ -2655,10 +2723,12 @@ public class GLPlot extends Plot {
         TeXFormula formula = new TeXFormula(str);
 
         // render the formula to an icon of the same size as the formula.
-        TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_TEXT, font.getSize());
+        Font dpiFont = getDpiFont(font);
+        TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_TEXT, dpiFont.getSize2D());
 
         // insert a border
-        icon.setInsets(new Insets(5, 5, 5, 5));
+        int inset = Math.max(1, Math.round(5 * this.dpiScale));
+        icon.setInsets(new Insets(inset, inset, inset, inset));
 
         BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(),
                 BufferedImage.TYPE_INT_ARGB);
@@ -2750,6 +2820,7 @@ public class GLPlot extends Plot {
         }
 
         //Rendering text string
+        this.updateTextRender(font);
         textRenderer.beginRendering(this.width, this.height);
         textRenderer.setColor(color);
         textRenderer.setSmoothing(true);
@@ -2794,10 +2865,12 @@ public class GLPlot extends Plot {
         TeXFormula formula = new TeXFormula(str);
 
         // render the formula to an icon of the same size as the formula.
-        TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_TEXT, font.getSize2D());
+        Font dpiFont = getDpiFont(font);
+        TeXIcon icon = formula.createTeXIcon(TeXConstants.STYLE_TEXT, dpiFont.getSize2D());
 
         // insert a border
-        icon.setInsets(new Insets(5, 5, 5, 5));
+        int inset = Math.max(1, Math.round(5 * this.dpiScale));
+        icon.setInsets(new Insets(inset, inset, inset, inset));
 
         BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(),
                 BufferedImage.TYPE_INT_ARGB);
@@ -2912,7 +2985,7 @@ public class GLPlot extends Plot {
 
     protected void drawTriMeshGraphic(GL2 gl, TriMeshGraphic graphic) {
         if (!this.renderMap.containsKey(graphic)) {
-            renderMap.put(graphic, new TriMeshRender(gl, graphic));
+            registerRender(graphic, new TriMeshRender(gl, graphic));
         }
         TriMeshRender triMeshRender = (TriMeshRender) renderMap.get(graphic);
         triMeshRender.setTransform(this.transform, this.alwaysUpdateBuffers);
@@ -3054,6 +3127,28 @@ public class GLPlot extends Plot {
         return Double.isNaN(z) ? 0.0f : (float) z;
     }
 
+    /**
+     * Get the extent used to clip screen space point and line symbols.
+     *
+     * @return Clip extent
+     */
+    protected Extent getClipExtent() {
+        return this.axesExtent;
+    }
+
+    /**
+     * Register a graphic renderer and apply the current DPI scale.
+     *
+     * @param graphic Graphic
+     * @param render Renderer
+     * @return The renderer
+     */
+    private JOGLGraphicRender registerRender(Graphic graphic, JOGLGraphicRender render) {
+        render.setDpiScale(this.dpiScale);
+        this.renderMap.put(graphic, render);
+        return render;
+    }
+
     protected void drawGraphics(GL2 gl, Graphic graphic) {
         boolean lightEnabled = this.lighting.isEnable();
         if (graphic instanceof GraphicCollection) {
@@ -3073,7 +3168,7 @@ public class GLPlot extends Plot {
                         polygonalGraphic.tessellate();
                     }
                 }
-                renderMap.put(graphic, new PolygonRender(gl, polygonalGraphic));
+                registerRender(graphic, new PolygonRender(gl, polygonalGraphic));
             }
             PolygonRender polygonRender = (PolygonRender) renderMap.get(graphic);
             polygonRender.setTransform(this.transform, this.alwaysUpdateBuffers);
@@ -3089,7 +3184,7 @@ public class GLPlot extends Plot {
                     if (linealGraphic.getVertexPosition() == null) {
                         linealGraphic.updateVertex();
                     }
-                    renderMap.put(graphic, new PipeRender(gl, (LinealGraphic) graphic));
+                    registerRender(graphic, new PipeRender(gl, (LinealGraphic) graphic));
                 }
                 PipeRender pipeRender = (PipeRender) renderMap.get(graphic);
                 pipeRender.setTransform(this.transform, this.alwaysUpdateBuffers);
@@ -3103,32 +3198,32 @@ public class GLPlot extends Plot {
                     if (linealGraphic.getVertexPosition() == null) {
                         linealGraphic.updateVertex();
                     }
-                    renderMap.put(graphic, new LineRender(gl, (LinealGraphic) graphic));
+                    registerRender(graphic, new LineRender(gl, (LinealGraphic) graphic));
                 }
                 LineRender lineRender = (LineRender) renderMap.get(graphic);
                 lineRender.setTransform(this.transform, this.alwaysUpdateBuffers);
                 lineRender.setOrthographic(this.orthographic);
                 lineRender.setLighting(this.lighting);
-                lineRender.setClipExtent(this.axesExtent);
+                lineRender.setClipExtent(this.getClipExtent());
                 lineRender.updateMatrix();
                 lineRender.setRotateModelView(this.modelViewMatrixR);
                 lineRender.draw();
             }
-        } else if (graphic instanceof PointGraphicCollection) {
+        } else if (graphic instanceof PuntalGraphic) {
             if (!this.renderMap.containsKey(graphic)) {
-                renderMap.put(graphic, new PointRender(gl, (GraphicCollection) graphic));
+                registerRender(graphic, new PointRender(gl, (PuntalGraphic) graphic));
             }
             PointRender pointRender = (PointRender) renderMap.get(graphic);
             pointRender.setTransform(this.transform, this.alwaysUpdateBuffers);
             pointRender.setOrthographic(this.orthographic);
             pointRender.setLighting(this.lighting);
-            pointRender.setClipExtent(this.axesExtent);
+            pointRender.setClipExtent(this.getClipExtent());
             pointRender.updateMatrix();
             pointRender.setRotateModelView(this.modelViewMatrixR);
             pointRender.draw();
         } else if (graphic instanceof ModelGraphic) {
             if (!this.renderMap.containsKey(graphic)) {
-                renderMap.put(graphic, new ModelRender(gl, (ModelGraphic) graphic));
+                registerRender(graphic, new ModelRender(gl, (ModelGraphic) graphic));
             }
             ModelRender modelRender = (ModelRender) renderMap.get(graphic);
             modelRender.setTransform(this.transform, this.alwaysUpdateBuffers);
@@ -3139,7 +3234,7 @@ public class GLPlot extends Plot {
             modelRender.draw();
         } else if (graphic instanceof MeshGraphic) {
             if (!this.renderMap.containsKey(graphic)) {
-                renderMap.put(graphic, new MeshRender(gl, (MeshGraphic) graphic));
+                registerRender(graphic, new MeshRender(gl, (MeshGraphic) graphic));
             }
             MeshRender meshRender = (MeshRender) renderMap.get(graphic);
             meshRender.setTransform(this.transform, this.alwaysUpdateBuffers);
@@ -3149,7 +3244,7 @@ public class GLPlot extends Plot {
             meshRender.draw();
         } else if (graphic instanceof ParticleGraphics) {
             if (!this.renderMap.containsKey(graphic)) {
-                renderMap.put(graphic, new ParticleRender(gl, (ParticleGraphics) graphic));
+                registerRender(graphic, new ParticleRender(gl, (ParticleGraphics) graphic));
             }
             ParticleRender particleRender = (ParticleRender) renderMap.get(graphic);
             particleRender.setTransform(this.transform, this.alwaysUpdateBuffers);
@@ -3162,7 +3257,7 @@ public class GLPlot extends Plot {
                 if (this.clipPlane)
                     this.disableClipPlane(gl);
                 if (!this.renderMap.containsKey(graphic)) {
-                    renderMap.put(graphic, new VolumeRender(gl, (VolumeGraphic) graphic));
+                    registerRender(graphic, new VolumeRender(gl, (VolumeGraphic) graphic));
                 }
                 VolumeRender volumeRender = (VolumeRender) renderMap.get(graphic);
                 volumeRender.setTransform(this.transform, this.alwaysUpdateBuffers);
@@ -3195,7 +3290,7 @@ public class GLPlot extends Plot {
                     /*case POINT:
                     case MULTI_POINT:
                         if (!this.renderMap.containsKey(graphic)) {
-                            renderMap.put(graphic, new PointRender(gl, (GraphicCollection) graphic));
+                            registerRender(graphic, new PointRender(gl, (GraphicCollection) graphic));
                         }
                         PointRender pointRender = (PointRender) renderMap.get(graphic);
                         pointRender.setTransform(this.transform, this.alwaysUpdateBuffers);
@@ -3246,7 +3341,7 @@ public class GLPlot extends Plot {
                         break;*/
                     case WIND_ARROW:
                         if (!this.renderMap.containsKey(graphic)) {
-                            renderMap.put(graphic, new QuiverRender(gl, (GraphicCollection) graphic));
+                            registerRender(graphic, new QuiverRender(gl, (GraphicCollection) graphic));
                         }
                         QuiverRender quiverRender = (QuiverRender) renderMap.get(graphic);
                         quiverRender.setTransform(this.transform, this.alwaysUpdateBuffers);
@@ -4540,7 +4635,14 @@ public class GLPlot extends Plot {
             GeometryType stype = GeometryType.LINESTRING;
             ls = new LegendScheme(stype);
             for (Graphic g : this.graphics.getGraphics()) {
-                ls.getLegendBreaks().add(g.getLegendBreak());
+                if (g instanceof GraphicCollection
+                        && ((GraphicCollection) g).getNumGraphics() == 0) {
+                    continue;
+                }
+                ColorBreak cb = g.getLegendBreak();
+                if (cb != null) {
+                    ls.getLegendBreaks().add(cb);
+                }
             }
         }
         return ls;
@@ -4563,6 +4665,7 @@ public class GLPlot extends Plot {
     public void init(GLAutoDrawable drawable) {
         this.drawable = drawable;
         drawable.getGL().setSwapInterval(1);
+        this.updateSurfaceScale(drawable);
         //drawable.getContext().makeCurrent();
         GL2 gl = drawable.getGL().getGL2();
         this.gl = gl;
@@ -4586,6 +4689,7 @@ public class GLPlot extends Plot {
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+        this.updateSurfaceScale(drawable);
         //this.width = width;
         //this.height = height;
         this.positionArea = this.getPositionArea(new Rectangle2D.Double(0, 0, width, height));
@@ -4731,6 +4835,8 @@ public class GLPlot extends Plot {
         plot3DGL.clipPlane = this.clipPlane;
         plot3DGL.displayXY = this.displayXY;
         plot3DGL.displayZ = this.displayZ;
+        plot3DGL.manualDpiScale = this.manualDpiScale;
+        plot3DGL.surfaceScale = this.surfaceScale;
         plot3DGL.dpiScale = this.dpiScale;
         plot3DGL.drawBase = this.drawBase;
         plot3DGL.drawBoundingBox = this.drawBoundingBox;

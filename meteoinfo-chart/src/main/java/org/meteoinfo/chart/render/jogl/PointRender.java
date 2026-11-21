@@ -7,7 +7,7 @@ import com.jogamp.opengl.util.GLBuffers;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.maplibre.earcut4j.Earcut;
-import org.meteoinfo.chart.graphic.GraphicCollection;
+import org.meteoinfo.chart.graphic.PuntalGraphic;
 import org.meteoinfo.chart.graphic.sphere.Sphere;
 import org.meteoinfo.chart.jogl.Program;
 import org.meteoinfo.chart.jogl.Transform;
@@ -41,7 +41,7 @@ public class PointRender extends JOGLGraphicRender {
 
     private static final Map<PointStyle, MarkerShape> MARKER_SHAPES = createMarkerShapes();
 
-    private GraphicCollection graphics;
+    private PuntalGraphic graphics;
     private IntBuffer vbo;
     private Program program;
     private int pointNum;
@@ -67,6 +67,7 @@ public class PointRender extends JOGLGraphicRender {
     private final float[] lastProjectionMatrix = new float[16];
     private final int[] lastViewport = new int[4];
     private boolean markerDirty = true;
+    private boolean dpiScaleDirty = false;
     private Extent clipExtent;
 
     /**
@@ -93,12 +94,11 @@ public class PointRender extends JOGLGraphicRender {
      * @param gl The opengl pipeline
      * @param pointGraphics 3D point graphics
      */
-    public PointRender(GL2 gl, GraphicCollection pointGraphics) {
+    public PointRender(GL2 gl, PuntalGraphic pointGraphics) {
         this(gl);
-
         this.graphics = pointGraphics;
         this.sphere = this.graphics.isSphere();
-        this.pointNum = pointGraphics.getNumGraphics();
+        this.pointNum = ((Graphic) pointGraphics).getNumGraphics();
     }
 
     void updateVertex() {
@@ -107,6 +107,18 @@ public class PointRender extends JOGLGraphicRender {
         } else {
             this.markerDirty = true;
         }
+    }
+
+    @Override
+    public void setDpiScale(float value) {
+        if (Math.abs(this.dpiScale - value) > 1.0e-4f) {
+            this.markerDirty = true;
+            this.dpiScaleDirty = true;
+            // Force the sphere geometry, whose radius depends on the DPI
+            // scale, to be regenerated.
+            this.vertexPosition = null;
+        }
+        super.setDpiScale(value);
     }
 
     /**
@@ -150,7 +162,8 @@ public class PointRender extends JOGLGraphicRender {
         Vector3f vp;
         float size = -1;
         Sphere sphere = null;
-        for (Graphic graphic : this.graphics.getGraphics()) {
+        for (int i = 0; i < ((Graphic) this.graphics).getNumGraphics(); i++) {
+            Graphic graphic = ((Graphic) this.graphics).getGraphicN(i);
             Point shape = (Point) graphic.getGeometry();
             Coordinate p = (Coordinate) shape.getCoordinate();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
@@ -215,7 +228,8 @@ public class PointRender extends JOGLGraphicRender {
         Vector3f vp;
         float size = -1;
         Sphere sphere = null;
-        for (Graphic graphic : this.graphics.getGraphics()) {
+        for (int i = 0; i < ((Graphic) this.graphics).getNumGraphics(); i++) {
+            Graphic graphic = ((Graphic) this.graphics).getGraphicN(i);
             Point shape = (Point) graphic.getGeometry();
             Coordinate p = (Coordinate) shape.getCoordinate();
             PointBreak pb = (PointBreak) graphic.getLegendBreak();
@@ -248,7 +262,8 @@ public class PointRender extends JOGLGraphicRender {
     @Override
     public void setTransform(Transform transform, boolean alwaysUpdateBuffers) {
         boolean updateBuffer = true;
-        if (!alwaysUpdateBuffers && this.transform != null && this.transform.equals(transform))
+        if (!alwaysUpdateBuffers && !this.dpiScaleDirty && this.transform != null
+                && this.transform.equals(transform))
             updateBuffer = false;
 
         super.setTransform((Transform) transform.clone());
@@ -258,6 +273,7 @@ public class PointRender extends JOGLGraphicRender {
 
         if (!this.sphere) {
             this.markerDirty = true;
+            this.dpiScaleDirty = false;
             return;
         }
 
@@ -266,6 +282,7 @@ public class PointRender extends JOGLGraphicRender {
         } else {
             this.updateSphereVertexPosition();
         }
+        this.dpiScaleDirty = false;
         FloatBuffer vertexBuffer = GLBuffers.newDirectFloatBuffer(this.vertexPosition);
         sizePosition = vertexBuffer.capacity() * Float.BYTES;
 
@@ -358,7 +375,7 @@ public class PointRender extends JOGLGraphicRender {
             return;
         }
 
-        if (this.graphics.getNumGraphics() != this.pointNum) {
+        if (((Graphic) this.graphics).getNumGraphics() != this.pointNum) {
             this.markerDirty = true;
         }
 
@@ -466,7 +483,10 @@ public class PointRender extends JOGLGraphicRender {
         FloatBuilder lineBuilder = new FloatBuilder();
         List<LineGroup> lineGroups = new ArrayList<>();
 
-        List<? extends Graphic> gs = this.graphics.getGraphics();
+        List<Graphic> gs = new ArrayList<>();
+        for (int i = 0; i < ((Graphic) this.graphics).getNumGraphics(); i++) {
+            gs.add(((Graphic) this.graphics).getGraphicN(i));
+        }
         this.pointNum = gs.size();
         Extent cullExtent = this.clipExtent;
         if (cullExtent == null && this.transform != null) {

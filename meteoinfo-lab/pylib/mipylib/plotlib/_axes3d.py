@@ -115,7 +115,8 @@ class Axes3D(Axes):
         """
         Dimension number property
         """
-        return 3
+        # return 3
+        return 31
     
     def get_distance(self):
         """

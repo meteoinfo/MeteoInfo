@@ -55,7 +55,6 @@ public class GraphicCollection extends Graphic implements Iterator {
     protected boolean allTriangle;
     protected boolean allConvexPolygon;
     protected boolean usingLight;
-    protected boolean sphere;
     // </editor-fold>
     // <editor-fold desc="Constructor">
 
@@ -74,7 +73,6 @@ public class GraphicCollection extends Graphic implements Iterator {
         allTriangle = false;
         allConvexPolygon = false;
         usingLight = true;
-        sphere = false;
     }
 
     /**
@@ -273,6 +271,9 @@ public class GraphicCollection extends Graphic implements Iterator {
     @Override
     public ColorBreak getLegendBreak() {
         if (this.legendBreak == null) {
+            if (this.graphics.isEmpty()) {
+                return null;
+            }
             return this.get(0).legendBreak;
         } else {
             return this.legendBreak;
@@ -454,22 +455,6 @@ public class GraphicCollection extends Graphic implements Iterator {
      */
     public void setUsingLight(boolean value) {
         this.usingLight = value;
-    }
-
-    /**
-     * Get is render point as sphere or not
-     * @return Render point as sphere or not
-     */
-    public boolean isSphere() {
-        return this.sphere;
-    }
-
-    /**
-     * Set is render point as sphere or not
-     * @param value Render point as sphere or not
-     */
-    public void setSphere(boolean value) {
-        this.sphere = value;
     }
 
     // </editor-fold>

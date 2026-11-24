@@ -21,6 +21,7 @@ import org.meteoinfo.geometry.legend.ColorBreakCollection;
 import org.meteoinfo.geometry.legend.PolylineBreak;
 import org.meteoinfo.geometry.legend.LegendScheme;
 import org.meteoinfo.geometry.GeometryType;
+import org.meteoinfo.geometry.special.WindArrow3D;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -266,7 +267,9 @@ public class SphericalTransform {
                         PolygonBreak pb = (PolygonBreak) gg.getGraphicN(0).getLegendBreak();
                         isTess = pb.isDrawFill();
                     }
-                    if (shape instanceof Point) {
+                    if (shape instanceof WindArrow3D) {
+                        transformArrow((WindArrow3D) shape);
+                    } else if (shape instanceof Point) {
                         // Point.setCoordinates() is a no-op, and PointGraphic
                         // caches the Coordinate instance.  Transform the
                         // coordinate in place so both stay in sync.
@@ -324,6 +327,8 @@ public class SphericalTransform {
                 if (shape instanceof ChartText3D) {
                     Coordinate p = ((ChartText3D) shape).getPoint();
                     ((ChartText3D) shape).setPoint(SphericalTransform.transform(p));
+                } else if (shape instanceof WindArrow3D) {
+                    transformArrow((WindArrow3D) shape);
                 } else if (shape instanceof Point) {
                     transformPoint((Point) shape);
                 } else {
@@ -405,6 +410,55 @@ public class SphericalTransform {
             return getPolylineBreak(((ColorBreakCollection) cb).get(0));
         }
         return new PolylineBreak();
+    }
+
+    /**
+     * Transform a 3D wind arrow so that it starts on the earth surface and
+     * follows the local east/north/up tangent plane.  The endpoint is projected
+     * back to the same earth radius, which keeps the arrow on the globe instead
+     * of letting it point along a straight lon/lat coordinate increment.
+     *
+     * @param arrow Wind arrow
+     */
+    private static void transformArrow(WindArrow3D arrow) {
+        Coordinate sp = arrow.getCoordinate();
+        if (sp == null) {
+            return;
+        }
+        double lon = sp.x;
+        double lat = sp.y;
+        double alt = Double.isNaN(sp.z) ? 0 : sp.z;
+        // Lift the arrows slightly above the surface to avoid depth fighting
+        // with the earth surface mesh.
+        float altitudeOffset = Math.max(1.0f, radius * 0.001f);
+        Vector3f start = transform((float) lon, (float) lat, (float) (alt + altitudeOffset));
+
+        double lonRad = Math.toRadians(lon);
+        double latRad = Math.toRadians(lat);
+        double sinLon = Math.sin(lonRad);
+        double cosLon = Math.cos(lonRad);
+        double sinLat = Math.sin(latRad);
+        double cosLat = Math.cos(latRad);
+
+        Vector3f east = new Vector3f((float) -sinLon, (float) cosLon, 0);
+        Vector3f north = new Vector3f((float) (-sinLat * cosLon),
+                (float) (-sinLat * sinLon), (float) cosLat);
+        Vector3f up = new Vector3f((float) (cosLat * cosLon),
+                (float) (cosLat * sinLon), (float) sinLat);
+
+        double scale = arrow.scale;
+        Vector3f delta = new Vector3f();
+        delta.add(east.mul((float) (arrow.u * scale), new Vector3f()));
+        delta.add(north.mul((float) (arrow.v * scale), new Vector3f()));
+        delta.add(up.mul((float) (arrow.w * scale), new Vector3f()));
+
+        Vector3f end = new Vector3f(start).add(delta);
+
+        sp.x = start.x;
+        sp.y = start.y;
+        sp.z = start.z;
+        arrow.setEndPoint(new Coordinate(end.x, end.y, end.z));
+        arrow.updateExtent();
     }
 
     /**

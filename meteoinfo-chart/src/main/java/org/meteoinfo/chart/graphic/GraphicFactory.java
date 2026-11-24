@@ -7243,6 +7243,30 @@ public class GraphicFactory {
      */
     public static GraphicCollection createArrows3D(Array xdata, Array ydata, Array zdata, Array udata,
             Array vdata, Array wdata, float scale, float headWidth, float headLength, Array cdata, LegendScheme ls) {
+        return createArrows3D(xdata, ydata, zdata, udata, vdata, wdata, scale, headWidth,
+                headLength, cdata, ls, true);
+    }
+
+    /**
+     * Create 3D arrows
+     *
+     * @param xdata X coordinate array
+     * @param ydata Y coordinate array
+     * @param zdata Z coordinate array
+     * @param udata U component array
+     * @param vdata V component array
+     * @param wdata W component array
+     * @param scale Arrow length scale
+     * @param headWidth Arrow head width
+     * @param headLength Arrow head length
+     * @param cdata Colored data array
+     * @param ls Legend scheme
+     * @param lineHead Use short line segments for the arrow head
+     * @return GraphicCollection
+     */
+    public static GraphicCollection createArrows3D(Array xdata, Array ydata, Array zdata, Array udata,
+            Array vdata, Array wdata, float scale, float headWidth, float headLength, Array cdata,
+            LegendScheme ls, boolean lineHead) {
         GraphicCollection gc = new GraphicCollection();
         GeometryType sts = ls.getShapeType();
         ls = ls.convertTo(GeometryType.POINT);
@@ -7281,6 +7305,7 @@ public class GraphicFactory {
                 wa.scale = scale;
                 wa.setHeadWidth(headWidth);
                 wa.setHeadLength(headLength);
+                wa.setLineHead(lineHead);
                 wa.setCoordinate(aPoint);
                 if (cdata == null) {
                     cb = ls.getLegendBreaks().get(0);

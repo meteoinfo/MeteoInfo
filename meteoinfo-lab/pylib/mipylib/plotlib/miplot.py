@@ -1672,7 +1672,7 @@ def quiver(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3D.quiver)
+@_copy_docstring_and_deprecators(Axes3D.quiver3)
 def quiver3(*args, **kwargs):
     global g_axes
     if g_axes is None:
@@ -1681,7 +1681,7 @@ def quiver3(*args, **kwargs):
         if not isinstance(g_axes, Axes3D):
             g_axes = axes3d()
 
-    return g_axes.quiver(*args, **kwargs)
+    return g_axes.quiver3(*args, **kwargs)
 
 
 @_copy_docstring_and_deprecators(Axes.barbs)

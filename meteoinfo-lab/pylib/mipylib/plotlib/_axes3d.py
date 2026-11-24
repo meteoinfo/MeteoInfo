@@ -1602,7 +1602,7 @@ class Axes3D(Axes):
             self.add_graphic(graphics)
         return graphics
         
-    def quiver(self, *args, **kwargs):
+    def quiver3(self, *args, **kwargs):
         """
         Plot a 3-D field of arrows.
         
@@ -1621,6 +1621,8 @@ class Axes3D(Axes):
             the same with the axes.
         :param headwidth: (*float*) Arrow head width, default is 1.
         :param headlength: (*float*) Arrow head length, default is 2.5.
+        :param arrowstyle: (*string*) Arrow head style, ``'line'`` (short line
+            segments, default) or ``'cone'``.
         
         :returns: (*Graphic list*) Created quiver graphics.
         """
@@ -1675,8 +1677,15 @@ class Axes3D(Axes):
         scale = kwargs.pop('scale', 1)
         headwidth = kwargs.pop('headwidth', 1)
         headlength = kwargs.pop('headlength', 2.5)
+        arrowstyle = kwargs.pop('arrowstyle', 'line')
+        if not isinstance(arrowstyle, basestring):
+            raise ValueError("arrowstyle must be 'line' or 'cone'")
+        arrowstyle = arrowstyle.lower()
+        if arrowstyle not in ('line', 'cone'):
+            raise ValueError("arrowstyle must be 'line' or 'cone'")
+        line_head = arrowstyle == 'line'
         igraphic = GraphicFactory.createArrows3D(x, y, z, u, v, w, scale, headwidth,
-                                                 headlength, cdata, ls)
+                                                 headlength, cdata, ls, line_head)
 
         lighting = kwargs.pop('lighting', None)
         if not lighting is None:

@@ -885,12 +885,12 @@ public class GraphicCollection extends Graphic implements Iterator {
             switch (shape.getGeometryType()) {
                 case POINT:
                 case MULTI_POINT:
-                    aPS.setCoordinate((Coordinate) ((Point) shape).getCoordinate().clone());
+                    aPS.setCoordinate((Coordinate) shape.getCoordinate().clone());
                     break;
                 case LINESTRING:
                 case MULTI_LINESTRING:
-                    int pIdx = ((MultiLineString) shape).getCoordinates().size() / 2;
-                    aPS.setCoordinate((Coordinate) ((MultiLineString) shape).getCoordinates().get(pIdx - 1).clone());
+                    int pIdx = shape.getNumPoints() / 2;
+                    aPS.setCoordinate((Coordinate) shape.getCoordinates().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                 case MULTI_POLYGON:
@@ -945,12 +945,12 @@ public class GraphicCollection extends Graphic implements Iterator {
             switch (shape.getGeometryType()) {
                 case POINT:
                 case MULTI_POINT:
-                    aPS.setCoordinate((Coordinate) ((Point) shape).getCoordinate().clone());
+                    aPS.setCoordinate((Coordinate) shape.getCoordinate().clone());
                     break;
                 case LINESTRING:
                 case MULTI_LINESTRING:
-                    int pIdx = ((MultiLineString) shape).getCoordinates().size() / 2;
-                    aPS.setCoordinate((Coordinate) ((MultiLineString) shape).getCoordinates().get(pIdx - 1).clone());
+                    int pIdx = shape.getNumPoints() / 2;
+                    aPS.setCoordinate((Coordinate) shape.getCoordinates().get(pIdx - 1).clone());
                     break;
                 case POLYGON:
                 case MULTI_POLYGON:
@@ -1002,17 +1002,14 @@ public class GraphicCollection extends Graphic implements Iterator {
         for (Graphic graphic : this.graphics) {
             Geometry shape = graphic.getGeometry();
             ColorBreak cb = graphic.getLegendBreak();
-            MultiLineString aPLS = (MultiLineString) shape;
-            Extent IExtent = aPLS.getExtent();
+            Extent IExtent = shape.getExtent();
             if (IExtent.maxX - IExtent.minX > (sExtent.maxX - sExtent.minX) / 10
                     || IExtent.maxY - IExtent.minY > (sExtent.maxY - sExtent.minY) / 10) {
                 LabelBreak aLP = new LabelBreak();
-                int pIdx = aPLS.getCoordinates().size() / 2;
-                //PointF aPoint = new PointF(0, 0);
+                int pIdx = shape.getNumPoints() / 2;
                 Point aPS = new Point();
-                aPS.setCoordinate(aPLS.getCoordinates().get(pIdx - 1));
-                //text = DataConvert.removeTailingZeros(String.valueOf(aPLS.getValue()));
-                text = String.format(dFormat, aPLS.getValue());
+                aPS.setCoordinate(shape.getCoordinates().get(pIdx - 1));
+                text = String.format(dFormat, shape.getValue());
                 aLP.setText(text);
                 aLP.setFont(labelSet.getLabelFont());
                 aLP.setAlignType(labelSet.getLabelAlignType());

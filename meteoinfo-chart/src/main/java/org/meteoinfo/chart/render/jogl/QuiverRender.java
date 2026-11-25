@@ -88,7 +88,6 @@ public class QuiverRender extends JOGLGraphicRender {
         List<Integer> vertexIndices = new ArrayList<>();
         List<Vector3f> headPositionList = new ArrayList<>();
         List<Vector4f> headColorList = new ArrayList<>();
-        Cylinder cylinder = null;
         for (int i = 0, pi = 0, ci = 0; i < quiverNumber; i++, pi+=6, ci+=8) {
             Graphic graphic = graphics.getGraphicN(i);
             WindArrow3D shape = (WindArrow3D) graphic.getGeometry();
@@ -110,37 +109,39 @@ public class QuiverRender extends JOGLGraphicRender {
             System.arraycopy(color, 0, vertexColor, ci, 4);
             System.arraycopy(color, 0, vertexColor, ci + 4, 4);
 
+            float arrowLength = v1.distance(v2);
+            float headLength = getHeadLength(arrowLength, shape);
+            float headWidth = getHeadWidth(arrowLength, shape);
+
             if (shape.isLineHead()) {
-                addLineHead(v1, v2, shape, color, headPositionList, headColorList);
+                addLineHead(v1, v2, headLength, headWidth, color,
+                        headPositionList, headColorList);
                 continue;
             }
 
-            if (cylinder == null) {
-                cylinder = new Cylinder(shape.getHeadWidth() * 0.02f,
-                        0, shape.getHeadLength() * 0.02f, 8, 1, true);
-            }
-            Matrix4f matrix = new Matrix4f();
-            matrix.lookAt(v2.sub(v1, new Vector3f()));
-            matrix.translate(v2);
-            List<Vector3f> vertices = cylinder.getVertices();
-            int n = vertices.size();
-            int nAdded = vertexPositionList.size();
-            for (Vector3f v : vertices) {
-                vertexPositionList.add(matrix.mul(v));
-            }
-            List<Vector3f> normals = cylinder.getNormals();
-            vertexNormalList.addAll(normals);
-            /*for (Vector3f v : normals) {
-                vertexNormalList.add(matrix.mul(v));
-            }*/
-            for (int j = 0; j < n; j++) {
-                vertexColorList.add(new Vector4f(color));
-            }
-            if (nAdded == 0) {
-                vertexIndices.addAll(cylinder.getIndices());
-            } else {
-                for (int idx : cylinder.getIndices()) {
-                    vertexIndices.add(idx + nAdded);
+            if (headLength > 0 && headWidth > 0) {
+                Cylinder cylinder = new Cylinder(headWidth * 0.5f,
+                        0, headLength, 8, 1, true);
+                Matrix4f matrix = new Matrix4f();
+                matrix.lookAt(v2.sub(v1, new Vector3f()));
+                matrix.translate(v2);
+                List<Vector3f> vertices = cylinder.getVertices();
+                int n = vertices.size();
+                int nAdded = vertexPositionList.size();
+                for (Vector3f v : vertices) {
+                    vertexPositionList.add(matrix.mul(v));
+                }
+                List<Vector3f> normals = cylinder.getNormals();
+                vertexNormalList.addAll(normals);
+                for (int j = 0; j < n; j++) {
+                    vertexColorList.add(new Vector4f(color));
+                }
+                if (nAdded == 0) {
+                    vertexIndices.addAll(cylinder.getIndices());
+                } else {
+                    for (int idx : cylinder.getIndices()) {
+                        vertexIndices.add(idx + nAdded);
+                    }
                 }
             }
         }
@@ -184,18 +185,55 @@ public class QuiverRender extends JOGLGraphicRender {
     }
 
     /**
+     * Get the arrow head length proportional to the arrow length.  A larger
+     * vector therefore gets both a longer shaft and a larger head, matching
+     * the MATLAB quiver appearance.
+     *
+     * @param arrowLength Arrow shaft length in scene coordinates
+     * @param shape Arrow shape
+     * @return Head length
+     */
+    private static float getHeadLength(float arrowLength, WindArrow3D shape) {
+        if (arrowLength <= 0) {
+            return 0;
+        }
+        float head = arrowLength * shape.getHeadLength() * 0.08f;
+        return Math.min(head, arrowLength * 0.6f);
+    }
+
+    /**
+     * Get the arrow head width proportional to the arrow length.
+     *
+     * @param arrowLength Arrow shaft length in scene coordinates
+     * @param shape Arrow shape
+     * @return Head width
+     */
+    private static float getHeadWidth(float arrowLength, WindArrow3D shape) {
+        if (arrowLength <= 0) {
+            return 0;
+        }
+        float head = arrowLength * shape.getHeadWidth() * 0.08f;
+        return Math.min(head, arrowLength * 0.4f);
+    }
+
+    /**
      * Add a MATLAB style arrow head made of short line segments.
      *
      * @param start Arrow start point in scene coordinates
      * @param end Arrow end point in scene coordinates
-     * @param shape Arrow shape
+     * @param headLength Arrow head length
+     * @param headWidth Arrow head width
      * @param color Arrow color
      * @param positions Output line positions
      * @param colors Output line colors
      */
-    private static void addLineHead(Vector3f start, Vector3f end, WindArrow3D shape,
-                                    float[] color, List<Vector3f> positions,
+    private static void addLineHead(Vector3f start, Vector3f end, float headLength,
+                                    float headWidth, float[] color,
+                                    List<Vector3f> positions,
                                     List<Vector4f> colors) {
+        if (headLength <= 0 || headWidth <= 0) {
+            return;
+        }
         Vector3f direction = new Vector3f(end).sub(start);
         float length = direction.length();
         if (length < 1.0e-6f) {
@@ -211,8 +249,6 @@ public class QuiverRender extends JOGLGraphicRender {
         }
         side.normalize();
 
-        float headLength = shape.getHeadLength() * 0.02f;
-        float headWidth = shape.getHeadWidth() * 0.02f;
         Vector3f base = new Vector3f(end).sub(direction.mul(headLength, new Vector3f()));
         Vector3f left = new Vector3f(base).add(side.mul(headWidth * 0.5f, new Vector3f()));
         Vector3f right = new Vector3f(base).sub(side.mul(headWidth * 0.5f, new Vector3f()));
@@ -221,9 +257,9 @@ public class QuiverRender extends JOGLGraphicRender {
         positions.add(left);
         positions.add(new Vector3f(end));
         positions.add(right);
-        colors.add(headColor);
         colors.add(new Vector4f(headColor));
-        colors.add(headColor);
+        colors.add(new Vector4f(headColor));
+        colors.add(new Vector4f(headColor));
         colors.add(new Vector4f(headColor));
     }
 

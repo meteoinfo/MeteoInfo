@@ -837,8 +837,8 @@ def axes(*args, **kwargs):
     
     :returns: The axes.
     """
-    #return axes2d(*args, **kwargs)
-    return axes3d(*args, **kwargs)
+    return axes2d(*args, **kwargs)
+    #return axes3d(*args, **kwargs)
 
 
 def axes2d(*args, **kwargs):

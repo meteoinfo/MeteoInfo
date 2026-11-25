@@ -1675,8 +1675,8 @@ class Axes3D(Axes):
         if not cdata is None:
             cdata = plotutil.getplotdata(cdata)
         scale = kwargs.pop('scale', 1)
-        headwidth = kwargs.pop('headwidth', 1)
-        headlength = kwargs.pop('headlength', 2.5)
+        headwidth = kwargs.pop('headwidth', 3)
+        headlength = kwargs.pop('headlength', 4)
         arrowstyle = kwargs.pop('arrowstyle', 'line')
         if not isinstance(arrowstyle, basestring):
             raise ValueError("arrowstyle must be 'line' or 'cone'")

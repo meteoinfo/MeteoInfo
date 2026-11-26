@@ -61,8 +61,8 @@ class Axes3DGL(Axes3D):
             position = kwargs.pop('position', None)
         outerposition = kwargs.pop('outerposition', None)
         if position is None:
-            # position = [0.13, 0.11, 0.71, 0.815]
-            position = [0, 0, 1, 1]
+            position = [0.13, 0.11, 0.71, 0.815]
+            #position = [0, 0, 1, 1]
             self.active_outerposition(True)
         else:
             self.active_outerposition(False)
@@ -581,7 +581,7 @@ class Axes3DGL(Axes3D):
         self.add_graphic(graphics)
         return graphics
 
-    def bar(self, *args, **kwargs):
+    def bar3(self, *args, **kwargs):
         """
         Make a 3D bar plot of x, y and z, where x, y and z are sequence like objects of the same lengths.
 

@@ -1080,6 +1080,10 @@ public class GLChart implements GLEventListener {
             List<GLPlot> glPlots = getGLPlots();
             for (GLPlot glPlot : glPlots) {
                 glPlot.reshape(drawable, 0, 0, width, height);
+                // The chart has already cleared the shared color buffer.
+                // Clearing it again for the second overlapping axes erases
+                // the first axes and leaves only a stray axis line.
+                glPlot.setClearBuffer(false);
                 glPlot.display(drawable);
             }
 

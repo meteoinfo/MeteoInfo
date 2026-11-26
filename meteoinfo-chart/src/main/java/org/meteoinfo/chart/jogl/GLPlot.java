@@ -16,7 +16,6 @@ import org.meteoinfo.chart.geo.ProjectUtil;
 import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.chart.graphic.pipe.Pipe;
 import org.meteoinfo.chart.graphic.pipe.PipeShape;
-import org.meteoinfo.chart.jogl.tessellator.Primitive;
 import org.meteoinfo.chart.jogl.tessellator.TessPolygon;
 import org.meteoinfo.chart.GridLine;
 import org.meteoinfo.chart.plot.Plot;
@@ -148,6 +147,11 @@ public class GLPlot extends Plot {
     protected int width;
     protected int height;
     protected float tickSpace = 5.0f;
+    private static final float TICK_LENGTH = 4.0f;
+    private static final float MIN_2D_TICK_LENGTH = 8.0f;
+    private boolean clearBuffer = true;
+    private static final float MIN_2D_GRID_GAP = 25.0f;
+    private static final float MIN_2D_AXIS_MARGIN = 50.0f;
     final protected float lenScale = 0.01f;
     protected Lighting lighting = new Lighting();
     protected boolean antialias;
@@ -182,7 +186,7 @@ public class GLPlot extends Plot {
         this.graphics = new GraphicCollection();
         this.hideOnDrag = false;
         this.boxed = true;
-        this.gridLine = new GridLine(true);
+        this.gridLine = new GridLine();
         this.drawBase = true;
         this.displayXY = true;
         this.displayZ = true;
@@ -1512,6 +1516,17 @@ public class GLPlot extends Plot {
         this.zAxisLocations.add(new ZAxisOption(x, y, left));
     }
 
+    /**
+     * Set whether this plot clears the color buffer before drawing.  When
+     * several overlapping GLPlots are rendered by one GLChart, only the chart
+     * should clear color.
+     *
+     * @param value Clear color buffer or not
+     */
+    public void setClearBuffer(boolean value) {
+        this.clearBuffer = value;
+    }
+
     public void display(GLAutoDrawable drawable) {
         this.updateSurfaceScale(drawable);
         if (is2D()) {
@@ -1567,7 +1582,13 @@ public class GLPlot extends Plot {
             float[] rgba = this.background.getRGBComponents(null);
             gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
         }
-        gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
+        if (this.clearBuffer) {
+            gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
+        } else {
+            // Multiple overlapping GLPlots share one color buffer.  Only the
+            // chart clears color; each plot still needs its own depth range.
+            gl.glClear(GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
+        }
 
         //Draw base
         if (this.drawBase) {
@@ -2016,6 +2037,13 @@ public class GLPlot extends Plot {
                 if (v <= axesExtent.minX || v >= axesExtent.maxX) {
                     continue;
                 }
+                if (is2D()) {
+                    float gapLeft = Math.abs(this.toScreenLength(xMin, y, zMin, v, y, zMin));
+                    float gapRight = Math.abs(this.toScreenLength(v, y, zMin, xMax, y, zMin));
+                    if (Math.min(gapLeft, gapRight) < MIN_2D_GRID_GAP * this.dpiScale) {
+                        continue;
+                    }
+                }
                 //v = this.transform.transform_x(v);
                 if (i == tlabs.size()) {
                     break;
@@ -2057,6 +2085,13 @@ public class GLPlot extends Plot {
                 v = (float) this.yAxis.getTickValues()[i];
                 if (v <= axesExtent.minY || v >= axesExtent.maxY) {
                     continue;
+                }
+                if (is2D()) {
+                    float gapBottom = Math.abs(this.toScreenLength(x, yMin, zMin, x, v, zMin));
+                    float gapTop = Math.abs(this.toScreenLength(x, v, zMin, x, yMax, zMin));
+                    if (Math.min(gapBottom, gapTop) < MIN_2D_GRID_GAP * this.dpiScale) {
+                        continue;
+                    }
                 }
                 //v = this.transform.transform_y(v);
                 if (i == tlabs.size()) {
@@ -2235,24 +2270,45 @@ public class GLPlot extends Plot {
             gl.glEnd();
 
             //x axis ticks
-            float tickLen = this.xAxis.getTickLength() * this.lenScale * transform.getYLength() / 2;
+            float xAxisScreen = this.toScreenLength(xMin, yMin, zMin, xMax, yMin, zMin);
+            float yAxisScreen = this.toScreenLength(xMin, yMin, zMin, xMin, yMax, zMin);
+            float tickPixels = is2D()
+                    ? Math.max(MIN_2D_TICK_LENGTH * this.dpiScale,
+                    (float) (this.xAxis.getTickLength2D()
+                    * Math.max(xAxisScreen, yAxisScreen)))
+                    : Math.min(this.xAxis.getTickLength(), TICK_LENGTH)
+                    * this.dpiScale;
+            float tickLen;
+            if (is2D()) {
+                tickLen = yAxisScreen > 0
+                        ? (float) (tickPixels * axesExtent.getHeight() / yAxisScreen)
+                        : this.xAxis.getTickLength() * this.lenScale
+                        * transform.getYLength() / 2;
+            } else {
+                tickLen = this.xAxis.getTickLength() * this.lenScale
+                        * transform.getYLength() / 2;
+            }
             this.xAxis.updateTickLabels();
             java.util.List<ChartText> tlabs = this.xAxis.getTickLabels();
             if (tlabs.size() > 0) {
                 float axisLen = this.toScreenLength(xMin, y, zMin, xMax, y, zMin);
                 skip = getLabelGap(this.xAxis.getTickLabelFont(), tlabs, axisLen);
                 float y1 = y > center.y ? y + tickLen : y - tickLen;
-                if (this.angleY < 90 || (this.angleY >= 180 && this.angleY < 270)) {
-                    xAlign = XAlign.LEFT;
-                } else {
-                    xAlign = XAlign.RIGHT;
-                }
+                float labelGap = 6.0f * this.dpiScale;
                 if (is2D()) {
-                    yAlign = YAlign.BOTTOM;
-                } else if (this.angleX > -120) {
+                    xAlign = XAlign.CENTER;
                     yAlign = YAlign.TOP;
                 } else {
-                    yAlign = YAlign.BOTTOM;
+                    if (this.angleY < 90 || (this.angleY >= 180 && this.angleY < 270)) {
+                        xAlign = XAlign.LEFT;
+                    } else {
+                        xAlign = XAlign.RIGHT;
+                    }
+                    if (this.angleX > -120) {
+                        yAlign = YAlign.TOP;
+                    } else {
+                        yAlign = YAlign.BOTTOM;
+                    }
                 }
                 strWidth = 0.0f;
                 strHeight = 0.0f;
@@ -2280,7 +2336,10 @@ public class GLPlot extends Plot {
 
                     //Draw tick label
                     if (this.xAxis.isDrawTickLabel()) {
-                        rect = drawString(gl, tlabs.get(i), v, y1, zMin, xAlign, yAlign);
+                        rect = is2D()
+                                ? drawString(gl, tlabs.get(i), v, y1, zMin, xAlign, yAlign,
+                                0, 0, -labelGap)
+                                : drawString(gl, tlabs.get(i), v, y1, zMin, xAlign, yAlign);
                         if (strWidth < rect.getWidth()) {
                             strWidth = (float) rect.getWidth();
                         }
@@ -2295,16 +2354,22 @@ public class GLPlot extends Plot {
                     ChartText label = this.xAxis.getLabel();
                     if (label != null) {
                         this.updateTextRender(label.getFont());
-                        strWidth += this.tickSpace * this.dpiScale;
                         float angle = this.toScreenAngle(xMin, y, zMin, xMax, y, zMin);
                         angle = is2D() ? 0.0f : (y < center.y ? 270 - angle : 90 - angle);
-                        float yShift = Math.min(-strWidth, -strWidth);
-                        if (this.angleX <= -120) {
-                            yShift = -yShift;
+                        float yShift;
+                        if (is2D()) {
+                            float xLabelHeight = Math.max(strHeight,
+                                    this.xAxis.getTickLabelFont().getSize2D());
+                            yShift = -(labelGap + xLabelHeight);
+                        } else {
+                            strWidth += this.tickSpace * this.dpiScale;
+                            yShift = -strWidth;
+                            if (this.angleX <= -120) {
+                                yShift = -yShift;
+                            }
                         }
                         float x1 = (xMin + xMax) / 2;
                         drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
-                        //drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, 0, yShift);
                     }
                 }
             }
@@ -2330,19 +2395,37 @@ public class GLPlot extends Plot {
             if (tlabs.size() > 0) {
                 float axisLen = this.toScreenLength(x, yMin, zMin, x, yMax, zMin);
                 skip = getLabelGap(this.yAxis.getTickLabelFont(), tlabs, axisLen);
-                tickLen = this.yAxis.getTickLength() * this.lenScale * transform.getXLength() / 2;
-                float x1 = x > center.x ? x + tickLen : x - tickLen;
-                if (this.angleY < 90 || (this.angleY >= 180 && this.angleY < 270)) {
-                    xAlign = XAlign.RIGHT;
-                } else {
-                    xAlign = XAlign.LEFT;
-                }
+                float yTickPixels = is2D()
+                        ? Math.max(MIN_2D_TICK_LENGTH * this.dpiScale,
+                        (float) (this.yAxis.getTickLength2D()
+                        * Math.max(xAxisScreen, yAxisScreen)))
+                        : Math.min(this.yAxis.getTickLength(), TICK_LENGTH)
+                        * this.dpiScale;
                 if (is2D()) {
-                    yAlign = YAlign.CENTER;
-                } else if (this.angleX > -120) {
-                    yAlign = YAlign.TOP;
+                    tickLen = xAxisScreen > 0
+                            ? (float) (yTickPixels * axesExtent.getWidth() / xAxisScreen)
+                            : this.yAxis.getTickLength() * this.lenScale
+                            * transform.getXLength() / 2;
                 } else {
-                    yAlign = YAlign.BOTTOM;
+                    tickLen = this.yAxis.getTickLength() * this.lenScale
+                            * transform.getXLength() / 2;
+                }
+                float x1 = x > center.x ? x + tickLen : x - tickLen;
+                float labelGap = 6.0f * this.dpiScale;
+                if (is2D()) {
+                    xAlign = XAlign.RIGHT;
+                    yAlign = YAlign.CENTER;
+                } else {
+                    if (this.angleY < 90 || (this.angleY >= 180 && this.angleY < 270)) {
+                        xAlign = XAlign.RIGHT;
+                    } else {
+                        xAlign = XAlign.LEFT;
+                    }
+                    if (this.angleX > -120) {
+                        yAlign = YAlign.TOP;
+                    } else {
+                        yAlign = YAlign.BOTTOM;
+                    }
                 }
                 strWidth = 0.0f;
                 strHeight = 0.0f;
@@ -2370,7 +2453,10 @@ public class GLPlot extends Plot {
 
                     //Draw tick label
                     if (this.yAxis.isDrawTickLabel()) {
-                        rect = drawString(gl, tlabs.get(i), x1, v, zMin, xAlign, yAlign);
+                        rect = is2D()
+                                ? drawString(gl, tlabs.get(i), x1, v, zMin, xAlign, yAlign,
+                                0, -labelGap, 0)
+                                : drawString(gl, tlabs.get(i), x1, v, zMin, xAlign, yAlign);
                         if (strWidth < rect.getWidth()) {
                             strWidth = (float) rect.getWidth();
                         }
@@ -2385,12 +2471,18 @@ public class GLPlot extends Plot {
                     ChartText label = this.yAxis.getLabel();
                     if (label != null) {
                         this.updateTextRender(label.getFont());
-                        strWidth += this.tickSpace * this.dpiScale;
                         float angle = this.toScreenAngle(x, yMin, zMin, x, yMax, zMin);
                         angle = is2D() ? 90.0f : (x > center.x ? 270 - angle : 90 - angle);
-                        float yShift = Math.min(-strWidth, -strWidth);
-                        if (this.angleX <= -120) {
-                            yShift = -yShift;
+                        float yShift;
+                        if (is2D()) {
+                            yShift = strWidth + labelGap
+                                    + this.tickSpace * this.dpiScale;
+                        } else {
+                            strWidth += this.tickSpace * this.dpiScale;
+                            yShift = -strWidth;
+                            if (this.angleX <= -120) {
+                                yShift = -yShift;
+                            }
                         }
                         float y1 = (yMin + yMax) / 2;
                         drawString(gl, label, x1, y1, zMin, XAlign.CENTER, yAlign, angle, 0, yShift);
@@ -4328,7 +4420,7 @@ public class GLPlot extends Plot {
             bNum -= 1;
         }
 
-        float x = 1.6f;
+        float x = 1.35f;
         x += legend.getXShift() * this.lenScale;
         float y = -1.0f;
         float lHeight = 2.0f;
@@ -4492,7 +4584,7 @@ public class GLPlot extends Plot {
             bNum = ((BoundaryNorm) normalize).getNRegions();
         }
 
-        float x = 1.6f;
+        float x = 1.35f;
         x += legend.getXShift() * this.lenScale;
         float y = -1.0f;
         float legendHeight = 2.0f;
@@ -4694,8 +4786,26 @@ public class GLPlot extends Plot {
         //this.height = height;
         this.positionArea = this.getPositionArea(new Rectangle2D.Double(0, 0, width, height));
         this.setGraphArea(this.positionArea);
-        this.width = (int) this.positionArea.getWidth();
-        this.height = (int) this.positionArea.getHeight();
+        Rectangle2D dataArea = this.positionArea;
+        Rectangle2D renderArea = dataArea;
+        // Position defines the data/axes box.  The surrounding GL viewport is
+        // enlarged for tick labels, titles and the colorbar.  This applies to
+        // both 2-D and rotated 3-D views.
+        float margin = MIN_2D_AXIS_MARGIN * this.dpiScale;
+        double left = Math.min(margin, dataArea.getX());
+        double top = Math.min(margin, dataArea.getY());
+        double right = Math.min(margin, width - dataArea.getX() - dataArea.getWidth());
+        if (!this.legends.isEmpty()) {
+            right = Math.min(Math.max(right, 90.0 * this.dpiScale),
+                    width - dataArea.getX() - dataArea.getWidth());
+        }
+        double bottom = Math.min(margin, height - dataArea.getY() - dataArea.getHeight());
+        renderArea = new Rectangle2D.Double(dataArea.getX() - left,
+                dataArea.getY() - top,
+                dataArea.getWidth() + left + right,
+                dataArea.getHeight() + top + bottom);
+        this.width = (int) renderArea.getWidth();
+        this.height = (int) renderArea.getHeight();
 
         final GL2 gl = drawable.getGL().getGL2();
         if (height <= 0) {
@@ -4703,22 +4813,28 @@ public class GLPlot extends Plot {
         }
 
         final float h = (float) width / (float) height;
-        gl.glViewport((int) positionArea.getX(), (int) (height - this.height - positionArea.getY()),
+        gl.glViewport((int) renderArea.getX(),
+                (int) (height - renderArea.getHeight() - renderArea.getY()),
                 this.width, this.height);
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
 
         if (is2D()) {
-            // Give the data a small border and preserve the axes aspect ratio.
-            float aspect = this.height == 0 ? 1.0f : (float) this.width / (float) this.height;
-            // Leave room for tick labels outside the [-1, 1] data range.
-            float v = 1.16f;
-            gl.glOrthof(-v * aspect, v * aspect, -v, v, -distance, distance);
+            // The normalized data box [-1, 1] maps exactly onto the position
+            // rectangle; the surrounding viewport margin is available for
+            // tick labels and axis titles.
+            float dataWidth = (float) dataArea.getWidth();
+            float dataHeight = (float) dataArea.getHeight();
+            float xHalf = dataWidth > 0 ? (float) (renderArea.getWidth() / dataWidth) : 1.5f;
+            float yHalf = dataHeight > 0 ? (float) (renderArea.getHeight() / dataHeight) : 1.5f;
+            gl.glOrthof(-xHalf, xHalf, -yHalf, yHalf, -distance, distance);
         } else if (this.orthographic) {
-            float v = 2.0f;
+            float v = 1.9f;
             switch (this.aspectType) {
                 case EQUAL:
-                    gl.glOrthof(-v * h, v * h, -v, v, -distance, distance);
+                    float xv = v * Math.max(1.0f, h);
+                    float yv = v * Math.max(1.0f, 1.0f / h);
+                    gl.glOrthof(-xv, xv, -yv, yv, -distance, distance);
                     break;
                 default:
                     gl.glOrthof(-v, v, -v, v, -distance, distance);
@@ -4753,10 +4869,12 @@ public class GLPlot extends Plot {
         gl.glLoadIdentity();
 
         if (this.orthographic) {
-            float v = 2.0f;
+            float v = 1.9f;
             switch (this.aspectType) {
                 case EQUAL:
-                    gl.glOrthof(-v * h, v * h, -v, v, -distance, distance);
+                    float xv = v * Math.max(1.0f, h);
+                    float yv = v * Math.max(1.0f, 1.0f / h);
+                    gl.glOrthof(-xv, xv, -yv, yv, -distance, distance);
                     break;
                 default:
                     gl.glOrthof(-v, v, -v, v, -distance, distance);

@@ -50,6 +50,8 @@ public class Axis extends Artist implements Cloneable {
     //protected Stroke tickStroke;
     protected float tickWidth;
     protected float tickLength;
+    protected double tickLength2D = 0.01;
+    protected double tickLength3D = 0.025;
     protected boolean insideTick;
     protected Font tickLabelFont;
     protected Color tickLabelColor;
@@ -90,6 +92,8 @@ public class Axis extends Artist implements Cloneable {
         this.tickColor = Color.black;
         this.tickWidth = 1.0f;
         this.tickLength = 5;
+        this.tickLength2D = 0.01;
+        this.tickLength3D = 0.025;
         this.insideTick = false;
         this.tickLabelFont = new Font("Arial", Font.PLAIN, 14);
         this.tickLabelColor = Color.black;
@@ -233,6 +237,8 @@ public class Axis extends Artist implements Cloneable {
         this.tickLabelColor = axis.getTickLabelColor();
         this.tickLabelFont = axis.getTickLabelFont();
         this.tickLength = axis.getTickLength();
+        this.tickLength2D = axis.getTickLength2D();
+        this.tickLength3D = axis.getTickLength3D();
         //this.tickStroke = axis.tickStroke;
         this.tickWidth = axis.tickWidth;
         this.visible = axis.isVisible();
@@ -527,6 +533,48 @@ public class Axis extends Artist implements Cloneable {
      */
     public void setTickLength(float value) {
         this.tickLength = value;
+    }
+
+    /**
+     * Get the 2-D tick length as a fraction of the longest axis dimension.
+     *
+     * @return 2-D tick length fraction
+     */
+    public double getTickLength2D() {
+        return this.tickLength2D;
+    }
+
+    /**
+     * Get the 3-D tick length as a fraction of the longest axis dimension.
+     *
+     * @return 3-D tick length fraction
+     */
+    public double getTickLength3D() {
+        return this.tickLength3D;
+    }
+
+    /**
+     * Get the MATLAB style TickLength vector [2D, 3D].
+     *
+     * @return Tick length vector
+     */
+    public double[] getTickLengthVector() {
+        return new double[]{this.tickLength2D, this.tickLength3D};
+    }
+
+    /**
+     * Set the MATLAB style TickLength vector [2D, 3D].
+     *
+     * @param values Tick length vector
+     */
+    public void setTickLength(double[] values) {
+        if (values == null || values.length == 0) {
+            return;
+        }
+        this.tickLength2D = Math.max(0, values[0]);
+        if (values.length > 1) {
+            this.tickLength3D = Math.max(0, values[1]);
+        }
     }
 
     /**

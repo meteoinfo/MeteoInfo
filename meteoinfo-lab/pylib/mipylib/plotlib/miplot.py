@@ -266,7 +266,7 @@ def bar(x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3D.bar)
+@_copy_docstring_and_deprecators(Axes3D.bar3)
 def bar3(*args, **kwargs):
     global g_axes
     if g_axes is None:
@@ -275,7 +275,7 @@ def bar3(*args, **kwargs):
         if not isinstance(g_axes, Axes3D):
             g_axes = axes3d()
 
-    r = g_axes.bar(*args, **kwargs)
+    r = g_axes.bar3(*args, **kwargs)
     draw_if_interactive()
     return r
 
@@ -837,8 +837,8 @@ def axes(*args, **kwargs):
     
     :returns: The axes.
     """
-    return axes2d(*args, **kwargs)
-    #return axes3d(*args, **kwargs)
+    #return axes2d(*args, **kwargs)
+    return axes3d(*args, **kwargs)
 
 
 def axes2d(*args, **kwargs):

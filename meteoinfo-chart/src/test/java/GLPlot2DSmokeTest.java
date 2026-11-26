@@ -31,6 +31,12 @@ public class GLPlot2DSmokeTest {
         GLPlot plot = new GLPlot();
         plot.setBackground(Color.WHITE);
         plot.setForeground(Color.BLACK);
+        plot.getXAxis().setLabel("X axis");
+        plot.getYAxis().setLabel("Y axis");
+        plot.getXAxis().setDrawLabel(true);
+        plot.getYAxis().setDrawLabel(true);
+        plot.getXAxis().setTickLength(new double[]{0.01, 0.025});
+        plot.getYAxis().setTickLength(new double[]{0.01, 0.025});
 
         List<Coordinate> coordinates = new ArrayList<>();
         double[] xs = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -48,11 +54,20 @@ public class GLPlot2DSmokeTest {
 
         PointBreak pb = new PointBreak();
         pb.setColor(new Color(30, 60, 200));
-        pb.setSize(8);
+        pb.setSize(50);
         org.meteoinfo.chart.graphic.GraphicCollection points =
                 new org.meteoinfo.chart.graphic.GraphicCollection();
+        Color[] pointColors = new Color[]{
+                new Color(220, 30, 30, 110), new Color(30, 170, 60, 110),
+                new Color(30, 60, 220, 110), new Color(220, 160, 20, 110),
+                new Color(150, 40, 190, 110), new Color(20, 180, 180, 110)};
         for (int i = 0; i < xs.length; i += 2) {
-            points.add(GraphicFactory.createPoint((float) xs[i], (float) ys[i], pb));
+            PointBreak pbi = new PointBreak();
+            pbi.setColor(pointColors[(i / 2) % pointColors.length]);
+            pbi.setSize(50);
+            pbi.setOutlineColor(pointColors[(i / 2) % pointColors.length]);
+            pbi.setOutlineSize(2.0f);
+            points.add(GraphicFactory.createPoint((float) xs[i], (float) ys[i], pbi));
         }
         plot.addGraphic(points);
         // A single (non-collection) graphic must work in both 2-D and 3-D modes.
@@ -92,10 +107,29 @@ public class GLPlot2DSmokeTest {
         drawable.display();
         save(drawable, new File(dir, "glplot-2d.png"));
 
+        // Zoom in and verify that the previous frame is completely replaced.
+        plot.setDrawExtent(new org.meteoinfo.geometry.Extent(2, 8, 2, 8));
+        drawable.display();
+        save(drawable, new File(dir, "glplot-2d-zoom.png"));
+        plot.setDrawExtent(new org.meteoinfo.geometry.Extent(0, 10, 1, 10));
+
+        org.meteoinfo.geometry.Extent zoomExtent = plot.getDrawExtent();
+        for (int i = 0; i < 8; i++) {
+            zoomExtent = zoomExtent.extend(-zoomExtent.getWidth() * 0.3,
+                    -zoomExtent.getHeight() * 0.3, 0);
+            plot.setDrawExtent(zoomExtent);
+            drawable.display();
+            save(drawable, new File(dir, "glplot-zoom-step-" + i + ".png"));
+        }
+        drawable.display();
+        save(drawable, new File(dir, "glplot-2d-deep-zoom.png"));
+
         // Rotate the camera: the same planar graphics should now show in 3-D.
+        plot.setDrawExtent(new org.meteoinfo.geometry.Extent(0, 10, 1, 10));
         plot.setAngleX(-30);
         plot.setAngleY(35);
         check(!plot.is2D(), "rotation should switch to 3-D");
+        plot.reshape(drawable, 0, 0, 500, 350);
         drawable.display();
         save(drawable, new File(dir, "glplot-3d.png"));
 

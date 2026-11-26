@@ -458,6 +458,14 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
      */
     @Override
     public void paintComponent(Graphics g) {
+        // GLJPanel may composite transparent point markers over the previous
+        // AWT window contents.  Erase the component before JOGL paints the
+        // new frame so old points cannot show through new transparent points.
+        Color bg = this.chart == null ? this.getBackground() : this.chart.getBackground();
+        if (bg != null) {
+            g.setColor(bg);
+            g.fillRect(0, 0, this.getWidth(), this.getHeight());
+        }
         super.paintComponent(g);
 
         if (this.getWidth() < 5 || this.getHeight() < 5) {
@@ -467,7 +475,12 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
         //this.setBackground(Color.white);
         Graphics2D g2 = (Graphics2D) g;
 
-        if (this.newPaint) {
+        if (this.chart != null && this.chart.containsGLPlot()) {
+            // GLPlot renders its own frame through JOGL.  Redraw the Java2D
+            // overlay here instead of blitting the previous mapBitmap, which
+            // would leave stale titles/labels over the new frame.
+            this.paintGraphics(g2);
+        } else if (this.newPaint) {
             this.paintGraphics(g2);
         } else {
             AffineTransform mx = new AffineTransform();
@@ -517,6 +530,15 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
      * New paint
      */
     public void repaintNew() {
+        if (this.chart != null && this.chart.containsGLPlot()) {
+            // GLJPanel needs a fresh GL frame and a fresh AWT composition.
+            // Redrawing once can leave the previous transparent point layer in
+            // the composited window until the next repaint.
+            this.display();
+            this.display();
+            this.repaint();
+            return;
+        }
         if (this.doubleBuffer) {
             this.paintGraphics();
         } else {
@@ -1167,13 +1189,26 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
             float zoomF = e.getWheelRotation() / 10.0f;
             double dx = extent.getWidth() * zoomF;
             double dy = extent.getHeight() * zoomF;
+            // Do not let a zoom-in step collapse or invert the draw extent.
+            // An inverted extent produces invalid axis/tick geometry and an
+            // extra stray line at some zoom levels.
+            if (zoomF < 0) {
+                dx = Math.max(dx, -extent.getWidth() * 0.45);
+                dy = Math.max(dy, -extent.getHeight() * 0.45);
+            }
             if (glPlot instanceof EarthGLPlot) {
                 double dz = extent.getZLength() * zoomF;
+                if (zoomF < 0) {
+                    dz = Math.max(dz, -extent.getZLength() * 0.45);
+                }
                 extent = extent.extend(dx, dy, dz);
             } else {
                 if (this.zoomXY) {
                     if (e.isShiftDown()) {
                         double dz = extent.getZLength() * zoomF;
+                        if (zoomF < 0) {
+                            dz = Math.max(dz, -extent.getZLength() * 0.45);
+                        }
                         extent = extent.extend(dx, dy, dz);
                     } else {
                         extent = extent.extend(dx, dy, 0);
@@ -1183,14 +1218,24 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
                         extent = extent.extend(dx, dy, 0);
                     } else {
                         double dz = extent.getZLength() * zoomF;
+                        if (zoomF < 0) {
+                            dz = Math.max(dz, -extent.getZLength() * 0.45);
+                        }
                         extent = extent.extend(dx, dy, dz);
                     }
                 }
             }
 
+            if (extent.getWidth() <= 0 || extent.getHeight() <= 0) {
+                return;
+            }
+
             glPlot.setDrawExtent(extent);
 
-            this.repaint();
+            // Refresh the Java2D overlay as well.  A plain repaint keeps the
+            // old mapBitmap and leaves axis labels/titles from the previous
+            // zoom frame visible as a shadow.
+            this.repaintNew();
         }
     }
 

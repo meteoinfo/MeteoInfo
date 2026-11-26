@@ -445,15 +445,14 @@ class Axes3D(Axes):
                                  "try 'on' or 'off'".format(arg))
         else:
             if arg is not None:
-                try:
+                if len(arg) == 4:
+                    xmin, xmax, ymin, ymax = arg
+                else:
                     xmin, xmax, ymin, ymax, zmin, zmax = arg
-                except (TypeError, ValueError) as err:
-                    raise TypeError('the first argument to axis() must be an '
-                                    'iterable of the form '
-                                    '[xmin, xmax, ymin, ymax, zmin, zmax]')
+                    self.set_zlim(zmin, zmax)
+
                 self.set_xlim(xmin, xmax)
                 self.set_ylim(ymin, ymax)
-                self.set_zlim(zmin, zmax)
 
         return self.get_xlim() + self.get_ylim() + self.get_zlim()
 
@@ -724,6 +723,32 @@ class Axes3D(Axes):
             gridline.setStyle(linestyle)
 
         self.stale = True
+
+
+    def bar3(self, *args, **kwargs):
+        """
+        Make a 3D bar plot of x, y and z, where x, y and z are sequence like objects of the same lengths.
+
+        :param x: (*array_like*) Input x data.
+        :param y: (*array_like*) Input y data.
+        :param z: (*array_like*) Input z data.
+        :param width: (*float*) Bar width.
+        :param cylinder: (*bool*) Is cylinder bar or rectangle bar.
+        :param bottom: (*bool*) Color of the points. Or z values.
+        :param facecolor: (*Color*) Optional, the color of the bar faces.
+        :param edgecolor: (*Color*) Optional, the color of the bar edge. Default is black color.
+            Edge line will not be plotted if ``edgecolor`` is ``None``.
+        :param linewidth: (*int*) Optional, width of bar edge.
+        :param label: (*string*) Label of the bar series.
+        :param hatch: (*string*) Hatch string.
+        :param hatchsize: (*int*) Hatch size. Default is None (8).
+        :param bgcolor: (*Color*) Background color, only valid with hatch.
+        :param barswidth: (*float*) Bars width (0 - 1), only used for automatic bar with plot
+            (only one argument without ``width`` argument). Default is 0.8.
+
+        :returns: Bar 3D graphics.
+        """
+        pass
 
 
     def plot3(self, x, y, z, *args, **kwargs):

@@ -82,7 +82,7 @@ import static com.jogamp.opengl.GL2ES3.GL_TEXTURE_BASE_LEVEL;
  *
  * @author Yaqiang Wang
  */
-public class GLPlot extends Plot {
+public class Axes extends Plot {
 
     // <editor-fold desc="Variables">
     protected ProjectionInfo projInfo;
@@ -143,7 +143,8 @@ public class GLPlot extends Plot {
     /** Leave 2-D mode when either camera angle exceeds this many degrees. */
     protected static final float TWO_D_EXIT_ANGLE = 4.0f;
 
-    protected GLPlot.TessCallback tessCallback;
+    private final AxesRenderer renderer = new AxesRenderer(this);
+    protected Axes.TessCallback tessCallback;
     protected int width;
     protected int height;
     protected float tickSpace = 5.0f;
@@ -172,7 +173,7 @@ public class GLPlot extends Plot {
     /**
      * Constructor
      */
-    public GLPlot() {
+    public Axes() {
         this.projInfo = null;
         this.doScreenShot = false;
         this.legends = new ArrayList<>();
@@ -369,7 +370,7 @@ public class GLPlot extends Plot {
     }
 
     /**
-     * Normalize a planar extent to a unit Z range.  GLPlot always needs a valid
+     * Normalize a planar extent to a unit Z range.  Axes always needs a valid
      * Z range even when the source data are 2-D, otherwise the transform matrix
      * would contain NaN values.
      *
@@ -1585,155 +1586,29 @@ public class GLPlot extends Plot {
         this.clearBuffer = value;
     }
 
+    /**
+     * Whether the color buffer is cleared by this plot.
+     *
+     * @return Clear color buffer or not
+     */
+    boolean isClearBuffer() {
+        return this.clearBuffer;
+    }
+
     public void display(GLAutoDrawable drawable) {
-        this.updateSurfaceScale(drawable);
-        if (is2D()) {
-            boolean oldDisplayZ = displayZ;
-            displayZ = false;
-            angleX = 0.f;
-            angleY = 0.f;
-            //angleX = Math.round(angleX / 180.f) * 180.f;
-            //angleY = Math.round(angleY / 90.f) * 90.f;
-            display3D(drawable);
-            displayZ = oldDisplayZ;
-        } else {
-            display3D(drawable);
-        }
+        this.renderer.display(drawable);
     }
 
     /**
-     * Draw the plot with the 3-D camera.
+     * Get the plot renderer.
      *
-     * @param drawable GL drawable
+     * @return Plot renderer
      */
-    protected void display3D(GLAutoDrawable drawable) {
-        final GL2 gl = drawable.getGL().getGL2();
-        gl.glLoadIdentity();
-
-        this.updateTextRender(this.xAxis.getTickLabelFont());
-
-        //Set light position - follow glLoadIdentity
-        this.lighting.setPosition(gl);
-
-        gl.glPushMatrix();
-
-        this.modelViewMatrix = new Matrix4f();
-        modelViewMatrix.rotate((float) Math.toRadians(angleX), 1.0f, 0.0f, 0.0f);
-        modelViewMatrix.rotate((float) Math.toRadians(angleY), 0.0f, 0.0f, 1.0f);
-        if (headAngle != 0) {
-            modelViewMatrix.rotate((float) Math.toRadians(headAngle), 0.0f, 1.0f, 0.0f);
-        }
-        modelViewMatrixR = new Matrix4f(modelViewMatrix);
-
-        Vector3f center = transform.getCenter();
-        Vector3f scale = transform.getScale();
-        if (this.xInverted) {
-            scale.x = -scale.x;
-        }
-        if (this.yInverted) {
-            scale.y = -scale.y;
-        }
-        if (this.zInverted) {
-            scale.z = -scale.z;
-        }
-        modelViewMatrix.scale(scale);
-        modelViewMatrix.translate(center.negate());
-
-        FloatBuffer fb = Buffers.newDirectFloatBuffer(16);
-        gl.glLoadMatrixf(modelViewMatrix.get(fb));
-
-        this.updateMatrix(gl);
-
-        //Clear
-        if (this.background != null) {
-            float[] rgba = this.background.getRGBComponents(null);
-            gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
-        }
-        if (this.clearBuffer) {
-            gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
-        } else {
-            // Multiple overlapping GLPlots share one color buffer.  Only the
-            // chart clears color; each plot still needs its own depth range.
-            gl.glClear(GL2.GL_DEPTH_BUFFER_BIT | GL2.GL_STENCIL_BUFFER_BIT);
-        }
-
-        //Draw base
-        if (this.drawBase) {
-            this.drawBase(gl);
-        }
-
-        //Draw box
-        if (this.boxed) {
-            this.drawBox(gl);
-        }
-
-        //Draw graphics
-        if (this.clipPlane) {
-            enableClipPlane(gl);
-        }
-
-        //Draw grid line
-        drawGridLine(gl);
-
-        //Lighting
-        this.setLight(gl);
-
-        for (int m = 0; m < this.graphics.getNumGraphics(); m++) {
-            Graphic graphic = this.graphics.get(m);
-            drawGraphics(gl, graphic);
-        }
-
-        if (this.clipPlane) {
-            disableClipPlane(gl);
-        }
-
-        //Stop lighting
-        if (this.lighting.isEnable()) {
-            this.lighting.stop(gl);
-        }
-
-        //Draw bounding box
-        if (this.drawBoundingBox) {
-            this.drawBoundingBox(gl);
-        }
-
-        //Draw axis
-        this.drawAxis(gl);
-        this.drawAllZAxis(gl);
-
-        //Draw legend
-        gl.glPopMatrix();
-        this.updateMatrix(gl);
-        if (!this.legends.isEmpty()) {
-            ChartColorBar legend = (ChartColorBar) this.legends.get(0);
-            updateTextRender(legend.getTickLabelFont());
-            if (legend.getLegendScheme().getColorMap() == null)
-                this.drawLegend(gl, legend);
-            else
-                this.drawColorbar(gl, legend);
-        }
-
-        //Draw title
-        this.drawTitle();
-
-        this.textRenderer.dispose();
-        this.textRenderer = null;
-
-        gl.glFlush();
-
-        /*//Do screenshot
-        if (this.doScreenShot) {
-            AWTGLReadBufferUtil glReadBufferUtil = new AWTGLReadBufferUtil(drawable.getGLProfile(), false);
-            this.screenImage = glReadBufferUtil.readPixelsToBufferedImage(drawable.getGL(), true);
-            this.doScreenShot = false;
-        }*/
-
-        //Disable always update buffers
-        if (this.alwaysUpdateBuffers)
-            this.alwaysUpdateBuffers = false;
+    public AxesRenderer getRenderer() {
+        return this.renderer;
     }
 
-    private void disableClipPlane(GL2 gl) {
+    void disableClipPlane(GL2 gl) {
         gl.glDisable(GL2.GL_CLIP_PLANE0);
         gl.glDisable(GL2.GL_CLIP_PLANE1);
         gl.glDisable(GL2.GL_CLIP_PLANE2);
@@ -1742,7 +1617,7 @@ public class GLPlot extends Plot {
         gl.glDisable(GL2.GL_CLIP_PLANE5);
     }
 
-    private void enableClipPlane(GL2 gl) {
+    void enableClipPlane(GL2 gl) {
         float xMin = (float) axesExtent.minX - (float) axesExtent.getWidth() * 0.001f;
         float xMax = (float) axesExtent.maxX + (float) axesExtent.getWidth() * 0.001f;
         float yMin = (float) axesExtent.minY - (float) axesExtent.getHeight() * 0.001f;
@@ -3163,7 +3038,7 @@ public class GLPlot extends Plot {
     /**
      * Draw a graphic with fixed-function OpenGL for the 2-D display mode.  This
      * path intentionally avoids the 3-D shader renderers: it handles the common
-     * planar point, line and polygon graphics directly and keeps a 2-D GLPlot
+     * planar point, line and polygon graphics directly and keeps a 2-D Axes
      * visually equivalent to a conventional 2-D plot.
      *
      * @param gl GL context
@@ -4822,117 +4697,15 @@ public class GLPlot extends Plot {
     }
 
     public void dispose(GLAutoDrawable drawable) {
-        GL2 gl = drawable.getGL().getGL2();
-        Program.destroyAllPrograms(gl);
-        this.alwaysUpdateBuffers = true;
+        this.renderer.dispose(drawable);
     }
 
     public void init(GLAutoDrawable drawable) {
-        this.drawable = drawable;
-        drawable.getGL().setSwapInterval(1);
-        this.updateSurfaceScale(drawable);
-        //drawable.getContext().makeCurrent();
-        GL2 gl = drawable.getGL().getGL2();
-        this.gl = gl;
-        this.glu = GLU.createGLU(gl);
-        Font font = this.xAxis.getTickLabelFont();
-        updateTextRender(font);
-        //Background
-        //gl.glClearColor(1f, 1f, 1f, 1.0f);
-        gl.glEnable(GL2.GL_POINT_SMOOTH);
-        gl.glEnable(GL2.GL_DEPTH_TEST);
-        gl.glShadeModel(GL2.GL_SMOOTH);
-        //gl.glShadeModel(GL2.GL_FLAT);
-        gl.glDepthFunc(GL2.GL_LEQUAL);
-        //gl.glDepthFunc(GL2.GL_LESS);
-        gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
-
-        //jogl specific addition for tessellation
-        tessCallback = new GLPlot.TessCallback(gl, glu);
-
-        this.positionArea = new Rectangle2D.Double(0, 0, 1, 1);
+        this.renderer.init(drawable);
     }
 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-        this.updateSurfaceScale(drawable);
-        //this.width = width;
-        //this.height = height;
-        this.positionArea = this.getPositionArea(new Rectangle2D.Double(0, 0, width, height));
-        this.setGraphArea(this.positionArea);
-        Rectangle2D dataArea = this.positionArea;
-        Rectangle2D renderArea = dataArea;
-        // Position defines the data/axes box.  The surrounding GL viewport is
-        // enlarged for tick labels, titles and the colorbar.  This applies to
-        // both 2-D and rotated 3-D views.
-        float margin = MIN_2D_AXIS_MARGIN * this.dpiScale;
-        double left = Math.min(margin, dataArea.getX());
-        double top = Math.min(margin, dataArea.getY());
-        double right = Math.min(margin, width - dataArea.getX() - dataArea.getWidth());
-        if (!this.legends.isEmpty()) {
-            right = Math.min(Math.max(right, 90.0 * this.dpiScale),
-                    width - dataArea.getX() - dataArea.getWidth());
-        }
-        double bottom = Math.min(margin, height - dataArea.getY() - dataArea.getHeight());
-        renderArea = new Rectangle2D.Double(dataArea.getX() - left,
-                dataArea.getY() - top,
-                dataArea.getWidth() + left + right,
-                dataArea.getHeight() + top + bottom);
-        this.width = (int) renderArea.getWidth();
-        this.height = (int) renderArea.getHeight();
-
-        final GL2 gl = drawable.getGL().getGL2();
-        if (height <= 0) {
-            height = 1;
-        }
-
-        final float h = (float) width / (float) height;
-        gl.glViewport((int) renderArea.getX(),
-                (int) (height - renderArea.getHeight() - renderArea.getY()),
-                this.width, this.height);
-        gl.glMatrixMode(GL2.GL_PROJECTION);
-        gl.glLoadIdentity();
-
-        if (is2D()) {
-            // The normalized data box [-1, 1] maps exactly onto the position
-            // rectangle; the surrounding viewport margin is available for
-            // tick labels and axis titles.
-            float dataWidth = (float) dataArea.getWidth();
-            float dataHeight = (float) dataArea.getHeight();
-            float xHalf = dataWidth > 0 ? (float) (renderArea.getWidth() / dataWidth) : 1.5f;
-            float yHalf = dataHeight > 0 ? (float) (renderArea.getHeight() / dataHeight) : 1.5f;
-            gl.glOrthof(-xHalf, xHalf, -yHalf, yHalf, -distance, distance);
-        } else if (this.orthographic) {
-            // Use the actual render viewport aspect so spheres remain round
-            // after the viewport is enlarged for axis labels and colorbars.
-            float aspect3D = this.height == 0 ? 1.0f : (float) this.width / (float) this.height;
-            float v = 1.9f;
-            float xv = v * Math.max(1.0f, aspect3D);
-            float yv = v * Math.max(1.0f, 1.0f / aspect3D);
-            switch (this.aspectType) {
-                case EQUAL:
-                    gl.glOrthof(-xv, xv, -yv, yv, -distance, distance);
-                    break;
-                default:
-                    gl.glOrthof(-xv, xv, -yv, yv, -distance, distance);
-                    break;
-            }
-        } else {
-            float near = 0.1f;
-            float far = 1000.0f;
-            float aspect3D = this.height == 0 ? 1.0f : (float) this.width / (float) this.height;
-            switch (this.aspectType) {
-                case EQUAL:
-                    glu.gluPerspective(fieldOfView, aspect3D, near, far);
-                    break;
-                default:
-                    glu.gluPerspective(fieldOfView, aspect3D, near, far);
-                    break;
-            }
-            float z = distance * 45.f / fieldOfView;
-            glu.gluLookAt(0.0f, 0.0f, z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-        }
-        gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glLoadIdentity();
+        this.renderer.reshape(drawable, x, y, width, height);
     }
 
     /**
@@ -5004,7 +4777,7 @@ public class GLPlot extends Plot {
      * @return Cloned Plot3DGL
      */
     public Object clone() {
-        GLPlot plot3DGL = new GLPlot();
+        Axes plot3DGL = new Axes();
         plot3DGL.graphics = this.graphics;
         plot3DGL.angleX = this.angleX;
         plot3DGL.angleY = this.angleY;

@@ -1,8 +1,8 @@
-import org.meteoinfo.chart.GLChart;
+import org.meteoinfo.chart.Figure;
 import org.meteoinfo.chart.GLChartPanel;
 import org.meteoinfo.chart.MouseMode;
 import org.meteoinfo.chart.graphic.PointGraphicCollection;
-import org.meteoinfo.chart.jogl.GLPlot;
+import org.meteoinfo.chart.jogl.Axes;
 import org.meteoinfo.chart.jogl.Lighting;
 import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geometry.legend.PointBreak;
@@ -32,7 +32,7 @@ public class SphereTest1 {
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Volume Test");
-        GLPlot plot = new GLPlot();
+        Axes plot = new Axes();
         plot.setOrthographic(true);
         plot.setClipPlane(false);
         //plot.setBackground(Color.black);
@@ -57,7 +57,7 @@ public class SphereTest1 {
         Lighting lighting = plot.getLighting();
         lighting.setEnable(true);
         lighting.setMaterialSpecular(1.0f);
-        GLChartPanel canvas = new GLChartPanel(new GLChart());
+        GLChartPanel canvas = new GLChartPanel(new Figure());
         canvas.getChart().addPlot(plot);
         canvas.setMouseMode(MouseMode.ROTATE);
         frame.getContentPane().add(canvas);

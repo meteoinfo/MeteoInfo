@@ -7,7 +7,7 @@ import com.jogamp.opengl.GLProfile;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.PointGraphic;
 import org.meteoinfo.chart.graphic.PointGraphicCollection;
-import org.meteoinfo.chart.jogl.GLPlot;
+import org.meteoinfo.chart.jogl.Axes;
 import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geometry.Point;
@@ -21,7 +21,7 @@ import java.io.File;
 
 /**
  * Integration check for the marker rendering of PointRender through a real
- * GLPlot. Every PointStyle is rendered in orthographic 3-D, perspective 3-D
+ * Axes. Every PointStyle is rendered in orthographic 3-D, perspective 3-D
  * and 2-D views, and the resulting image is checked for the presence and the
  * pixel size of the markers.
  */
@@ -45,7 +45,7 @@ public class PointMarkerPlotTest {
 
     private static void render(File dir, String name, boolean perspective, boolean force2D,
                                float angleX, float angleY) throws Exception {
-        GLPlot plot = new GLPlot();
+        Axes plot = new Axes();
         plot.setBackground(Color.WHITE);
         plot.setForeground(Color.BLACK);
         plot.setDrawBoundingBox(true);

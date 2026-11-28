@@ -6,7 +6,7 @@
 # Note: Jython
 # -----------------------------------------------------
 
-from org.meteoinfo.chart import GLChartPanel, GLChart, Location, MouseMode, ChartText
+from org.meteoinfo.chart import GLChartPanel, Figure, Location, MouseMode, ChartText
 
 import plotutil
 from ._axes2d import Axes2D, PolarAxes2D
@@ -35,7 +35,7 @@ class GLFigure(GLChartPanel, _FigureBase):
         """
         _FigureBase.__init__(self)
 
-        chart = GLChart()
+        chart = Figure()
         facecolor = plotutil.getcolor(facecolor)
         if kwargs.has_key('bgcolor'):
             facecolor = plotutil.getcolor(kwargs.pop('bgcolor'))

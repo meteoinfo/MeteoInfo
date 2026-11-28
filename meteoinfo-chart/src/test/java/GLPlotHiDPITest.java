@@ -1,11 +1,11 @@
-import org.meteoinfo.chart.GLChart;
+import org.meteoinfo.chart.Figure;
 import org.meteoinfo.chart.GLChartPanel;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.LineGraphic;
 import org.meteoinfo.chart.graphic.LineGraphicCollection;
 import org.meteoinfo.chart.graphic.PointGraphic;
 import org.meteoinfo.chart.graphic.PointGraphicCollection;
-import org.meteoinfo.chart.jogl.GLPlot;
+import org.meteoinfo.chart.jogl.Axes;
 import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geometry.LineString;
@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * On-screen HiDPI check for GLPlot.
+ * On-screen HiDPI check for Axes.
  *
  * <p>The test creates a 400x300 GLChartPanel and verifies that the plot's DPI
  * scale matches the actual surface/component pixel ratio of the JOGL panel. It
@@ -46,8 +46,8 @@ public class GLPlotHiDPITest {
         final BufferedImage[] imageHolder = new BufferedImage[1];
         final float[] result = new float[4];
         SwingUtilities.invokeAndWait(() -> {
-            GLChart chart = new GLChart();
-            GLPlot plot = new GLPlot();
+            Figure chart = new Figure();
+            Axes plot = new Axes();
             plot.setBackground(Color.WHITE);
             plot.setForeground(Color.BLACK);
             plot.setDrawBoundingBox(false);
@@ -83,7 +83,7 @@ public class GLPlotHiDPITest {
             chart.addPlot(plot);
 
             GLChartPanel panel = new GLChartPanel(chart, 400, 300);
-            JFrame frame = new JFrame("GLPlot HiDPI test");
+            JFrame frame = new JFrame("Axes HiDPI test");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.add(panel);
             frame.pack();

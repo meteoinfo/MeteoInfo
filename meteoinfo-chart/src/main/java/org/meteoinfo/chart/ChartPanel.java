@@ -72,7 +72,7 @@ import org.freehep.graphicsio.emf.EMFGraphics2D;
 import org.freehep.graphicsio.pdf.PDFGraphics2D;
 import org.freehep.graphicsio.ps.PSGraphics2D;
 import org.meteoinfo.chart.jogl.EarthGLPlot;
-import org.meteoinfo.chart.jogl.GLPlot;
+import org.meteoinfo.chart.jogl.Axes;
 import org.meteoinfo.chart.geo.MapPlot;
 import org.meteoinfo.chart.plot.Plot;
 import org.meteoinfo.chart.plot.XY1DPlot;
@@ -769,7 +769,7 @@ public class ChartPanel extends JPanel implements IChartPanel{
         switch (this.mouseMode) {
             case ZOOM_IN:
             case SELECT:
-                if (plot instanceof GLPlot) {
+                if (plot instanceof Axes) {
                     this.repaint();
                 } else {
                     this.repaintOld();
@@ -777,8 +777,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
                 break;
             case PAN:
                 if (plot != null) {
-                    if (plot instanceof GLPlot) {
-                        GLPlot plot3DGL = (GLPlot) plot;
+                    if (plot instanceof Axes) {
+                        Axes plot3DGL = (Axes) plot;
                         Dimension size = e.getComponent().getSize();
                         float dx = (float) (x - this.mouseLastPos.x) / size.width;
                         float dy = (float) (this.mouseLastPos.y - y) / size.height;
@@ -865,8 +865,8 @@ public class ChartPanel extends JPanel implements IChartPanel{
                             projector.setElevationAngle(new_value);
                         }
                         this.repaintNew();
-                    } else if (plot instanceof GLPlot) {
-                        GLPlot plot3DGL = (GLPlot) plot;
+                    } else if (plot instanceof Axes) {
+                        Axes plot3DGL = (Axes) plot;
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             if (e.isShiftDown()) {
                                 Dimension size = e.getComponent().getSize();

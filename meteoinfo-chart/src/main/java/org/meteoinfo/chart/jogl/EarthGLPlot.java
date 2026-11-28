@@ -43,7 +43,7 @@ import java.util.List;
  * {@link org.meteoinfo.chart.render.jogl.EarthVolumeRender}, so the volume follows the
  * curvature of the earth instead of the axis aligned box used by a plain 3D plot.
  */
-public class EarthGLPlot extends GLPlot {
+public class EarthGLPlot extends Axes {
     // <editor-fold desc="Variables">
     private float radius = 6371.f;
     private QuadMeshGraphic surface;

@@ -7,7 +7,7 @@ package org.meteoinfo.chart.jogl;
 
 import com.jogamp.opengl.*;
 import org.joml.Vector3f;
-import org.meteoinfo.chart.GLChart;
+import org.meteoinfo.chart.Figure;
 import org.meteoinfo.chart.GLChartPanel;
 import org.meteoinfo.chart.graphic.*;
 import org.meteoinfo.geometry.colors.OpacityTransferFunction;
@@ -445,7 +445,7 @@ public class JOGLUtil {
      * @param height Image height
      * @return View image
      */
-    public static BufferedImage paintViewImage(GLChart chart, int width, int height) {
+    public static BufferedImage paintViewImage(Figure chart, int width, int height) {
         final GLProfile glp = GLProfile.get(GLProfile.GL2);
         GLCapabilities caps = new GLCapabilities(glp);
         caps.setHardwareAccelerated(true);
@@ -459,7 +459,7 @@ public class JOGLUtil {
         GLDrawableFactory factory = GLDrawableFactory.getFactory(glp);
         GLOffscreenAutoDrawable drawable = factory.createOffscreenAutoDrawable(null, caps, null,
                 width, height);
-        drawable.addGLEventListener(chart);
+        drawable.addGLEventListener(chart.getRenderer());
         chart.setDoScreenShot(true);
         chart.setAlwaysUpdateBuffers(true);
         drawable.display();
@@ -480,7 +480,7 @@ public class JOGLUtil {
      * @param dpi      Image dpi
      * @return View image
      */
-    public static BufferedImage paintViewImage(GLChart chart, int width, int height, int dpi) {
+    public static BufferedImage paintViewImage(Figure chart, int width, int height, int dpi) {
         double scaleFactor = dpi / 72.0;
         width = (int) (width * scaleFactor);
         height = (int) (height * scaleFactor);
@@ -498,7 +498,7 @@ public class JOGLUtil {
      * @param height Image height
      * @throws InterruptedException
      */
-    public static void saveImage(GLChart plot3DGL, String fn, int width, int height) throws InterruptedException {
+    public static void saveImage(Figure plot3DGL, String fn, int width, int height) throws InterruptedException {
         BufferedImage image = paintViewImage(plot3DGL, width, height);
         if (image != null) {
             //String extension = fn.substring(fn.lastIndexOf('.') + 1);
@@ -521,7 +521,7 @@ public class JOGLUtil {
      * @param dpi      Image dpi
      * @throws InterruptedException
      */
-    public static void saveImage(GLChart plot3DGL, String fn, int width, int height, int dpi) throws InterruptedException, IOException {
+    public static void saveImage(Figure plot3DGL, String fn, int width, int height, int dpi) throws InterruptedException, IOException {
         BufferedImage image = paintViewImage(plot3DGL, width, height, dpi);
 
         if (image != null) {
@@ -539,7 +539,7 @@ public class JOGLUtil {
      * @param dpi      Image dpi
      * @throws InterruptedException
      */
-    public static void saveImage_bak(GLChart plot3DGL, String fn, int width, int height, int dpi) throws InterruptedException, IOException {
+    public static void saveImage_bak(Figure plot3DGL, String fn, int width, int height, int dpi) throws InterruptedException, IOException {
         String formatName = fn.substring(fn.lastIndexOf('.') + 1);
         if (formatName.equals("jpg")) {
             formatName = "jpeg";
@@ -582,7 +582,7 @@ public class JOGLUtil {
         }
     }
 
-    private static void saveImage_Jpeg(GLChart plot3DGL, String file, int width, int height, int dpi) {
+    private static void saveImage_Jpeg(Figure plot3DGL, String file, int width, int height, int dpi) {
         BufferedImage bufferedImage = paintViewImage(plot3DGL, width, height, dpi);
 
         if (bufferedImage != null) {

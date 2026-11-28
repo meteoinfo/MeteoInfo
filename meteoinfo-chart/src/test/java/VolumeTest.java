@@ -1,7 +1,7 @@
-import org.meteoinfo.chart.GLChart;
+import org.meteoinfo.chart.Figure;
 import org.meteoinfo.chart.GLChartPanel;
 import org.meteoinfo.chart.MouseMode;
-import org.meteoinfo.chart.jogl.GLPlot;
+import org.meteoinfo.chart.jogl.Axes;
 import org.meteoinfo.chart.graphic.VolumeGraphic;
 import org.meteoinfo.chart.render.jogl.RayCastingType;
 
@@ -109,7 +109,7 @@ public class VolumeTest {
         VolumeGraphic graphics = test.createGraphics();
         graphics.setRayCastingType(RayCastingType.SPECULAR);
         JFrame frame = new JFrame("Volume Test");
-        GLPlot plot = new GLPlot();
+        Axes plot = new Axes();
         plot.setOrthographic(false);
         plot.setClipPlane(false);
         //plot.setBackground(Color.black);
@@ -126,7 +126,7 @@ public class VolumeTest {
         //plot.getGridLine().setDrawYLine(false);
         //plot.getGridLine().setDrawZLine(false);
         plot.addGraphic(graphics);
-        GLChartPanel canvas = new GLChartPanel(new GLChart());
+        GLChartPanel canvas = new GLChartPanel(new Figure());
         canvas.getChart().addPlot(plot);
         canvas.setMouseMode(MouseMode.ROTATE);
         frame.getContentPane().add(canvas);

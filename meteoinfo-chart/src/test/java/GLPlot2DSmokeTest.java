@@ -4,7 +4,7 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.GLOffscreenAutoDrawable;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.GraphicFactory;
-import org.meteoinfo.chart.jogl.GLPlot;
+import org.meteoinfo.chart.jogl.Axes;
 import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.LineString;
 import org.meteoinfo.geometry.legend.PointBreak;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Verifies automatic 2-D display of a GLPlot and switching to 3-D by rotation.
+ * Verifies automatic 2-D display of a Axes and switching to 3-D by rotation.
  */
 public class GLPlot2DSmokeTest {
 
@@ -28,7 +28,7 @@ public class GLPlot2DSmokeTest {
             throw new IllegalStateException("Cannot create " + dir);
         }
 
-        GLPlot plot = new GLPlot();
+        Axes plot = new Axes();
         plot.setBackground(Color.WHITE);
         plot.setForeground(Color.BLACK);
         plot.getXAxis().setLabel("X axis");
@@ -163,7 +163,7 @@ public class GLPlot2DSmokeTest {
         check(!plot.is2D(), "angleY=45 should remain a 3-D orientation");
 
         // A real 3-D graphic also becomes 2-D at the top view.
-        GLPlot volumetric = new GLPlot();
+        Axes volumetric = new Axes();
         org.meteoinfo.chart.graphic.GraphicCollection points3d =
                 new org.meteoinfo.chart.graphic.GraphicCollection();
         PointBreak pb3 = new PointBreak();

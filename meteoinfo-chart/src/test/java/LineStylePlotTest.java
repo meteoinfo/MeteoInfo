@@ -7,7 +7,7 @@ import com.jogamp.opengl.GLProfile;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.LineGraphic;
 import org.meteoinfo.chart.graphic.LineGraphicCollection;
-import org.meteoinfo.chart.jogl.GLPlot;
+import org.meteoinfo.chart.jogl.Axes;
 import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geometry.LineString;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Integration check of the line styles through a real GLPlot. The lines are
+ * Integration check of the line styles through a real Axes. The lines are
  * rendered in 3-D orthographic, 3-D perspective and 2-D views.
  */
 public class LineStylePlotTest {
@@ -52,7 +52,7 @@ public class LineStylePlotTest {
 
     private static void render(File dir, String name, boolean perspective, boolean force2D,
                                float angleX, float angleY, boolean checkPatterns) throws Exception {
-        GLPlot plot = new GLPlot();
+        Axes plot = new Axes();
         plot.setBackground(Color.WHITE);
         plot.setForeground(Color.BLACK);
         plot.setDrawBoundingBox(false);

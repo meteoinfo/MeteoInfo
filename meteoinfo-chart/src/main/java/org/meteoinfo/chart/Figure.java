@@ -1,712 +1,1024 @@
 package org.meteoinfo.chart;
 
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLEventListener;
-import org.meteoinfo.chart.io.FigureExporter;
+import org.meteoinfo.chart.jogl.Axes;
+import org.meteoinfo.chart.geo.MapPlot;
+import org.meteoinfo.chart.plot.AbstractPlot2D;
 import org.meteoinfo.chart.plot.Plot;
+import org.meteoinfo.common.PointF;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A MATLAB-like figure canvas containing one or more {@link Axes}.
- *
- * <p>The figure owns layout and decorations.  Java2D paints the 2-D content and
- * JOGL paints axes backed by {@link org.meteoinfo.chart.jogl.GLPlot}.  The two
- * can be mixed in one figure.</p>
- *
- * @author MeteoInfo
- */
-public class Figure implements GLEventListener {
+public class Figure {
 
-    private final List<Axes> axesList = new ArrayList<>();
-    private int currentAxes = -1;
-
-    private int width;
-    private int height;
-    private int rowNum = 1;
-    private int columnNum = 1;
-
+    // <editor-fold desc="Variables">
+    protected List<Plot> plots;
+    private int currentPlot;
+    private int rowNum;
+    private int columnNum;
     private ChartText title;
     private ChartText subTitle;
     private ChartText xLabel;
     private ChartText yLabel;
-    private final List<ChartText> texts = new ArrayList<>();
+    private List<ChartText> texts;
     private ChartLegend legend;
-
-    private Color background = Color.white;
+    private Color background;
+    //private boolean drawBackground;
     private boolean drawLegend;
     private Rectangle2D plotArea;
+    protected boolean sampleBuffers = true;
+    private boolean antialias;
+    private boolean symbolAntialias;
+    private org.meteoinfo.chart.GLChartPanel parent;
+    protected boolean doScreenShot;
+    protected BufferedImage screenImage;
 
-    private boolean antiAlias;
-    private boolean symbolAntialias = true;
-    private boolean sampleBuffers = true;
-    private boolean doScreenShot;
-    private BufferedImage screenImage;
-
-    private IChartPanel parent;
-    private boolean java2D = true;
-
+    // </editor-fold>
+    // <editor-fold desc="Constructor">
+    /**
+     * Constructor
+     */
     public Figure() {
+        this.drawLegend = false;
+        this.background = Color.white;
+        //this.drawBackground = true;
+        this.antialias = false;
+        this.symbolAntialias = true;
+        this.rowNum = 1;
+        this.columnNum = 1;
+        this.plots = new ArrayList<>();
+        this.currentPlot = -1;
+        this.texts = new ArrayList<>();
+        this.doScreenShot = false;
     }
 
-    public Figure(IChartPanel parent) {
+    /**
+     * Constructor
+     *
+     * @param parent ChartPanel parent
+     */
+    public Figure(org.meteoinfo.chart.GLChartPanel parent) {
+        this();
         this.parent = parent;
     }
 
-    public Figure(Axes axes) {
-        addAxes(axes);
-    }
-
-    public Figure(Plot plot) {
-        addPlot(plot);
-    }
-
-    public Figure(String title, Plot plot) {
-        this(plot);
-        setTitle(title);
-    }
-
-    public Figure(Axes axes, IChartPanel parent) {
+    /**
+     * Constructor
+     *
+     * @param plot Plot
+     * @param parent ChartPanel
+     */
+    public Figure(Plot plot, org.meteoinfo.chart.GLChartPanel parent) {
         this(parent);
-        addAxes(axes);
-    }
-
-    public Figure(String title, Axes axes) {
-        this(axes);
-        setTitle(title);
-    }
-
-    // <editor-fold desc="Axes management">
-    public List<Axes> getAxesList() {
-        return axesList;
-    }
-
-    public Axes getCurrentAxes() {
-        if (axesList.isEmpty()) {
-            return null;
-        }
-        if (currentAxes < 0 || currentAxes >= axesList.size()) {
-            currentAxes = axesList.size() - 1;
-        }
-        return axesList.get(currentAxes);
-    }
-
-    public void setCurrentAxes(Axes axes) {
-        if (axes == null) {
-            return;
-        }
-        int index = axesList.indexOf(axes);
-        if (index >= 0) {
-            currentAxes = index;
-        }
-    }
-
-    public void setCurrentAxes(int index) {
-        if (index >= -1 && index < axesList.size()) {
-            currentAxes = index;
-        }
-    }
-
-    public int getCurrentAxesIndex() {
-        return currentAxes;
-    }
-
-    public Axes getAxes() {
-        return axesList.isEmpty() ? null : axesList.get(0);
-    }
-
-    public Axes getAxes(int axesIdx) {
-        for (Axes axes : axesList) {
-            int index = axes.getRowIndex() * columnNum + axes.getColumnIndex() + 1;
-            if (index == axesIdx) {
-                return axes;
-            }
-        }
-        if (axesIdx > 0 && axesIdx <= axesList.size()) {
-            return axesList.get(axesIdx - 1);
-        }
-        return null;
-    }
-
-    public void addAxes(Axes axes) {
-        if (axes == null) {
-            return;
-        }
-        axesList.add(axes);
-        if (parent != null && axes.getPlot() instanceof org.meteoinfo.chart.geo.MapPlot) {
-            ((org.meteoinfo.chart.geo.MapPlot) axes.getPlot()).setParent(parent);
-        }
-        if (currentAxes < 0) {
-            currentAxes = 0;
-        }
-    }
-
-    public boolean removeAxes(Axes axes) {
-        boolean removed = axesList.remove(axes);
-        if (removed && currentAxes >= axesList.size()) {
-            currentAxes = axesList.size() - 1;
-        }
-        return removed;
-    }
-
-    public void clearAxes() {
-        axesList.clear();
-        currentAxes = -1;
-    }
-
-    public int getAxesCount() {
-        return axesList.size();
-    }
-
-    public boolean hasJOGLAxes() {
-        for (Axes axes : axesList) {
-            if (axes.isJogl()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public boolean has3DAxes() {
-        for (Axes axes : axesList) {
-            if (axes.is3D()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public Axes findAxes(int x, int y) {
-        for (int i = axesList.size() - 1; i >= 0; i--) {
-            Axes axes = axesList.get(i);
-            if (axes.isVisible() && axes.getPositionArea().contains(x, y)) {
-                return axes;
-            }
-        }
-        return null;
-    }
-    // </editor-fold>
-
-    // <editor-fold desc="Legacy plot API">
-    public List<Plot> getPlots() {
-        List<Plot> plots = new ArrayList<>();
-        for (Axes axes : axesList) {
-            if (axes.getPlot() != null) {
-                plots.add(axes.getPlot());
-            }
-        }
-        return plots;
-    }
-
-    public void addPlot(Plot plot) {
-        addAxes(new Axes(plot));
-    }
-
-    public void setPlot(Plot plot) {
-        clearAxes();
-        addPlot(plot);
-    }
-
-    public Plot getPlot() {
-        Axes axes = getAxes();
-        return axes == null ? null : axes.getPlot();
-    }
-
-    public Plot getCurrentPlot() {
-        Axes axes = getCurrentAxes();
-        return axes == null ? null : axes.getPlot();
-    }
-
-    public void setCurrentPlot(Plot plot) {
-        for (int i = 0; i < axesList.size(); i++) {
-            if (axesList.get(i).getPlot() == plot) {
-                currentAxes = i;
-                return;
-            }
-        }
-    }
-
-    public void setCurrentPlot(int index) {
-        setCurrentAxes(index);
-    }
-
-    public void removePlot(Plot plot) {
-        for (int i = axesList.size() - 1; i >= 0; i--) {
-            if (axesList.get(i).getPlot() == plot) {
-                removeAxes(axesList.get(i));
-                return;
-            }
-        }
-    }
-
-    public int getPlotIndex(Plot plot) {
-        for (int i = 0; i < axesList.size(); i++) {
-            if (axesList.get(i).getPlot() == plot) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    public void clearPlots() {
-        clearAxes();
-    }
-    // </editor-fold>
-
-    // <editor-fold desc="Properties">
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public int getRowNum() {
-        return rowNum;
-    }
-
-    public void setRowNum(int rowNum) {
-        this.rowNum = Math.max(1, rowNum);
-    }
-
-    public int getColumnNum() {
-        return columnNum;
-    }
-
-    public void setColumnNum(int columnNum) {
-        this.columnNum = Math.max(1, columnNum);
-    }
-
-    public ChartText getTitle() {
-        return title;
-    }
-
-    public void setTitle(ChartText title) {
-        this.title = title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title == null ? null : new ChartText(title);
-    }
-
-    public ChartText getSubTitle() {
-        return subTitle;
-    }
-
-    public void setSubTitle(ChartText subTitle) {
-        this.subTitle = subTitle;
-    }
-
-    public ChartText getXLabel() {
-        return xLabel;
-    }
-
-    public void setXLabel(ChartText xLabel) {
-        this.xLabel = xLabel;
-    }
-
-    public void setXLabel(String xLabel) {
-        this.xLabel = xLabel == null ? null : new ChartText(xLabel);
-    }
-
-    public ChartText getYLabel() {
-        return yLabel;
-    }
-
-    public void setYLabel(ChartText yLabel) {
-        this.yLabel = yLabel;
-    }
-
-    public void setYLabel(String yLabel) {
-        this.yLabel = yLabel == null ? null : new ChartText(yLabel);
-    }
-
-    public Color getBackground() {
-        return background;
-    }
-
-    public void setBackground(Color background) {
-        this.background = background;
-    }
-
-    public ChartLegend getLegend() {
-        return legend;
-    }
-
-    public void setLegend(ChartLegend legend) {
-        this.legend = legend;
-        this.drawLegend = legend != null;
-    }
-
-    public boolean isDrawLegend() {
-        return drawLegend;
-    }
-
-    public void setDrawLegend(boolean drawLegend) {
-        this.drawLegend = drawLegend;
-    }
-
-    public Rectangle2D getPlotArea() {
-        return plotArea;
-    }
-
-    public boolean isAntialias() {
-        return antiAlias;
-    }
-
-    public void setAntialias(boolean antiAlias) {
-        this.antiAlias = antiAlias;
-    }
-
-    public boolean isSymbolAntialias() {
-        return symbolAntialias;
-    }
-
-    public void setSymbolAntialias(boolean symbolAntialias) {
-        this.symbolAntialias = symbolAntialias;
-    }
-
-    public boolean isDoScreenShot() {
-        return doScreenShot;
-    }
-
-    public void setDoScreenShot(boolean doScreenShot) {
-        this.doScreenShot = doScreenShot;
-    }
-
-    public BufferedImage getScreenImage() {
-        return screenImage;
-    }
-
-    public void setScreenImage(BufferedImage screenImage) {
-        this.screenImage = screenImage;
-    }
-
-    public IChartPanel getParent() {
-        return parent;
-    }
-
-    public void setParent(IChartPanel parent) {
-        this.parent = parent;
-        for (Axes axes : axesList) {
-            if (axes.getPlot() instanceof org.meteoinfo.chart.geo.MapPlot) {
-                ((org.meteoinfo.chart.geo.MapPlot) axes.getPlot()).setParent(parent);
-            }
-        }
-    }
-
-    public void addText(ChartText text) {
-        if (text != null) {
-            texts.add(text);
-        }
-    }
-
-    public void clearTexts() {
-        texts.clear();
-    }
-
-    public void clearAll() {
-        title = null;
-        subTitle = null;
-        xLabel = null;
-        yLabel = null;
-        legend = null;
-        drawLegend = false;
-        texts.clear();
-        clearAxes();
-    }
-
-    public void useJava2DRenderer() {
-        this.java2D = true;
-    }
-
-    public void useJOGLRenderer() {
-        this.java2D = false;
-    }
-
-    public boolean isJava2D() {
-        return java2D;
-    }
-    // </editor-fold>
-
-    // <editor-fold desc="Layout and rendering">
-    public Rectangle2D getPlotArea(Graphics2D g, Rectangle2D area) {
-        double top = 0;
-        double left = 0;
-        double bottom = 0;
-        double right = 0;
-        if (title != null) {
-            top += title.getTrueDimension(g).height + 12;
-        }
-        if (subTitle != null) {
-            top += subTitle.getTrueDimension(g).height + 6;
-        }
-        if (xLabel != null) {
-            bottom += xLabel.getTrueDimension(g).height + 10;
-        }
-        if (yLabel != null) {
-            left += yLabel.getTrueDimension(g).width + 10;
-        }
-        return new Rectangle2D.Double(area.getX() + left, area.getY() + top,
-                Math.max(1, area.getWidth() - left - right),
-                Math.max(1, area.getHeight() - top - bottom));
-    }
-
-    public void layout(Graphics2D g, Rectangle2D area) {
-        width = (int) Math.round(area.getWidth());
-        height = (int) Math.round(area.getHeight());
-        plotArea = getPlotArea(g, area);
-        List<Rectangle2D> baseAreas = new ArrayList<>();
-        for (Axes axes : axesList) {
-            Rectangle2D outer;
-            if (axes.isSubPlot()) {
-                double rowHeight = plotArea.getHeight() / rowNum;
-                double colWidth = plotArea.getWidth() / columnNum;
-                double x = plotArea.getX() + axes.getColumnIndex() * colWidth;
-                double y = plotArea.getY() + axes.getRowIndex() * rowHeight;
-                outer = new Rectangle2D.Double(x, y, colWidth, rowHeight);
-                axes.setPosition((x - plotArea.getX()) / plotArea.getWidth(),
-                        1.0 - ((y - plotArea.getY()) + rowHeight) / plotArea.getHeight(),
-                        colWidth / plotArea.getWidth(), rowHeight / plotArea.getHeight());
-            } else {
-                outer = axes.getOuterPositionArea(plotArea);
-            }
-            axes.setOuterPositionArea(outer);
-            Rectangle2D position = axes.getPositionArea(outer);
-            axes.setPositionArea(position);
-            axes.setGraphArea(position);
-            axes.getTightInset(g, position);
-            baseAreas.add(position);
-            syncPlotPosition(axes, area);
-        }
-        for (int i = 0; i < axesList.size(); i++) {
-            Axes axes = axesList.get(i);
-            if (!axes.isOuterPosActive()) {
-                continue;
-            }
-            axes.setPositionArea(baseAreas.get(i));
-            axes.setPlotShrink(axes.getPlotShrink());
-            axes.setGraphArea(axes.getPositionArea());
-            syncPlotPosition(axes, area);
-        }
-    }
-
-    private void syncPlotPosition(Axes axes, Rectangle2D area) {
-        Plot plot = axes.getPlot();
-        if (plot == null) {
-            return;
-        }
-        Rectangle2D rect = axes.getPositionArea();
-        plot.setPosition(new Rectangle2D.Double(
-                (rect.getX() - area.getX()) / area.getWidth(),
-                1.0 - ((rect.getY() - area.getY()) + rect.getHeight()) / area.getHeight(),
-                rect.getWidth() / area.getWidth(), rect.getHeight() / area.getHeight()));
-        plot.setOuterPositionArea(axes.getOuterPositionArea());
-        plot.setPositionArea(rect);
-        plot.setGraphArea(rect);
-        plot.setTightInset(axes.getTightInset());
-    }
-
-    public void draw(Graphics2D g, Rectangle2D area) {
-        configure(g);
-        java.awt.geom.AffineTransform oldTransform = g.getTransform();
-        java.awt.Rectangle oldClip = g.getClipBounds();
-        g.setClip(area);
-        g.translate(area.getX(), area.getY());
-        Rectangle2D local = new Rectangle2D.Double(0, 0,
-                Math.max(1, area.getWidth()), Math.max(1, area.getHeight()));
-        try {
-            layout(g, local);
-            if (background != null) {
-                g.setColor(background);
-                g.fill(local);
-            }
-            drawDecorations(g, local, false);
-        } finally {
-            g.setTransform(oldTransform);
-            g.setClip(oldClip);
+        this.plots.add(plot);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param plot Plot
+     */
+    public Figure(Plot plot) {
+        this(plot, null);
+    }
+
+    /**
+     * Constructor
+     *
+     * @param title Title
+     * @param plot Plot
+     * @param parent ChartPanel
+     */
+    public Figure(String title, Plot plot, org.meteoinfo.chart.GLChartPanel parent) {
+        this(plot, parent);
+        if (title == null) {
+            this.title = null;
+        } else {
+            this.title = new ChartText(title);
         }
     }
 
     /**
-     * Draw only the Java2D part, used as an overlay on a JOGL canvas.
+     * Constructor
      *
-     * @param g graphics
-     * @param area area
+     * @param title Title
+     * @param plot Plot
      */
-    public void drawOverlay(Graphics2D g, Rectangle2D area) {
-        configure(g);
-        java.awt.geom.AffineTransform oldTransform = g.getTransform();
-        java.awt.Rectangle oldClip = g.getClipBounds();
-        g.setClip(area);
-        g.translate(area.getX(), area.getY());
-        Rectangle2D local = new Rectangle2D.Double(0, 0,
-                Math.max(1, area.getWidth()), Math.max(1, area.getHeight()));
-        try {
-            layout(g, local);
-            drawDecorations(g, local, true);
-        } finally {
-            g.setTransform(oldTransform);
-            g.setClip(oldClip);
+    public Figure(String title, Plot plot) {
+        this(title, plot, null);
+    }
+
+    // </editor-fold>
+    // <editor-fold desc="Get Set Methods">
+    /**
+     * Set ChartPanel parent
+     *
+     * @param value ChartPanel
+     */
+    public void setParent(org.meteoinfo.chart.GLChartPanel value) {
+        this.parent = value;
+        for (Plot plot : this.plots) {
+            if (plot instanceof MapPlot) {
+                ((MapPlot) plot).setParent(value);
+            }
         }
     }
 
-    private void drawDecorations(Graphics2D g, Rectangle2D area, boolean skipJogl) {
-        float y = 5;
-        if (title != null) {
-            y += title.getDimension(g).height;
-            title.draw(g, (float) area.getWidth() / 2, y);
-            y += 5;
+    /**
+     * Get plot
+     *
+     * @return Plot
+     */
+    public List<Plot> getPlots() {
+        return plots;
+    }
+
+    /**
+     * Get current plot
+     *
+     * @return Current plot
+     */
+    public Plot getCurrentPlot() {
+        if (this.plots.isEmpty()) {
+            return null;
         }
-        if (subTitle != null) {
-            y += subTitle.getDimension(g).height;
-            subTitle.draw(g, (float) area.getWidth() / 2, y);
+
+        if (this.currentPlot < 0 || this.currentPlot >= this.plots.size()) {
+            this.currentPlot = this.plots.size() - 1;
         }
-        for (Axes axes : axesList) {
-            if (!axes.isVisible()) {
-                continue;
+        return this.plots.get(this.currentPlot);
+    }
+
+    /**
+     * Set current plot
+     *
+     * @param value Current plot
+     */
+    public void setCurrentPlot(Plot value) {
+        if (this.plots.isEmpty()) {
+            this.addPlot(value);
+            //this.currentPlot = 0;
+        } else if (this.currentPlot == -1) {
+            this.plots.add(value);
+        } else {
+            if (this.currentPlot >= this.plots.size()) {
+                this.currentPlot = this.plots.size() - 1;
             }
-            if (skipJogl && axes.isJogl()) {
-                continue;
-            }
-            axes.setAntiAlias(antiAlias);
-            axes.setSymbolAntiAlias(symbolAntialias);
-            axes.draw2D(g, area);
-            if (axes.getTitle() != null) {
-                Rectangle2D rect = axes.getPositionArea();
-                axes.getTitle().draw(g, (float) rect.getCenterX(), (float) (rect.getY() - 3));
-            }
-        }
-        if (xLabel != null && plotArea != null) {
-            xLabel.draw(g, (float) (plotArea.getX() + plotArea.getWidth() / 2),
-                    (float) (plotArea.getMaxY() + 5));
-        }
-        if (yLabel != null && plotArea != null) {
-            yLabel.draw(g, (float) (plotArea.getX() - 5),
-                    (float) (plotArea.getY() + plotArea.getHeight() / 2));
-        }
-        for (ChartText text : texts) {
-            text.draw(g, (float) (area.getWidth() * text.getX()),
-                    (float) (area.getHeight() * (1 - text.getY())));
-        }
-        if (drawLegend && legend != null) {
-            java.awt.Dimension dim = legend.getLegendDimension(g,
-                    new java.awt.Dimension((int) area.getWidth(), (int) area.getHeight()));
-            float lx = (float) area.getWidth() / 2 - dim.width / 2;
-            float ly = (float) area.getHeight() - dim.height - 5;
-            legend.draw(g, new org.meteoinfo.common.PointF(lx, ly));
+            Plot plot = this.plots.get(this.currentPlot);
+            value.isSubPlot = plot.isSubPlot;
+            value.columnIndex = plot.columnIndex;
+            value.rowIndex = plot.rowIndex;
+            this.plots.set(this.currentPlot, value);
         }
     }
 
-    private void configure(Graphics2D g) {
-        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
-                RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
-        if (antiAlias) {
+    /**
+     * Set current plot index
+     *
+     * @param value Current plot index
+     */
+    public void setCurrentPlot(int value) {
+        this.currentPlot = value;
+    }
+
+    /**
+     * Get the first plot
+     *
+     * @return Plot
+     */
+    public Plot getPlot() {
+        if (this.plots.isEmpty()) {
+            return null;
+        }
+
+        return this.plots.get(0);
+    }
+
+    /**
+     * Get row number of sub plots
+     *
+     * @return Row number of sub plots
+     */
+    public int getRowNum() {
+        return this.rowNum;
+    }
+
+    /**
+     * Set row number of sub plots
+     *
+     * @param value Row number of sub plots
+     */
+    public void setRowNum(int value) {
+        this.rowNum = value;
+    }
+
+    /**
+     * Get column number of sub plots
+     *
+     * @return Column number of sub plots
+     */
+    public int getColumnNum() {
+        return this.columnNum;
+    }
+
+    /**
+     * Set column number of sub plots
+     *
+     * @param value Column number of sub plots
+     */
+    public void setColumnNum(int value) {
+        this.columnNum = value;
+    }
+
+    /**
+     * Get title
+     *
+     * @return Title
+     */
+    public ChartText getTitle() {
+        return title;
+    }
+
+    /**
+     * Set title
+     *
+     * @param value Title
+     */
+    public void setTitle(ChartText value) {
+        title = value;
+    }
+
+    /**
+     * Get sub title
+     *
+     * @return Sub title
+     */
+    public ChartText getSubTitle() {
+        return subTitle;
+    }
+
+    /**
+     * Set sub title
+     *
+     * @param value Sub title
+     */
+    public void setSubTitle(ChartText value) {
+        subTitle = value;
+    }
+
+    /**
+     * Get super x label
+     * @return Super x label
+     */
+    public ChartText getXLabel() {
+        return this.xLabel;
+    }
+
+    /**
+     * Set super x label
+     * @param value Super x label
+     */
+    public void setXLabel(ChartText value) {
+        this.xLabel = value;
+    }
+
+    /**
+     * Get super y label
+     * @return Super y label
+     */
+    public ChartText getYLabel() {
+        return this.yLabel;
+    }
+
+    /**
+     * Set super y label
+     * @param value Super y label
+     */
+    public void setYLabel(ChartText value) {
+        this.yLabel = value;
+    }
+
+    /**
+     * Get background
+     *
+     * @return Background
+     */
+    public Color getBackground() {
+        return this.background;
+    }
+
+    /**
+     * Set background
+     *
+     * @param value Background
+     */
+    public void setBackground(Color value) {
+        this.background = value;
+    }
+
+//    /**
+//     * Get if draw background
+//     *
+//     * @return Boolean
+//     */
+//    public boolean isDrawBackground() {
+//        return this.drawBackground;
+//    }
+
+//    /**
+//     * Set if draw background
+//     *
+//     * @param value Boolean
+//     */
+//    public void setDrawBackground(boolean value) {
+//        this.drawBackground = value;
+//    }
+
+    /**
+     * Get chart legend
+     *
+     * @return Chart legend
+     */
+    public ChartLegend getLegend() {
+        return this.legend;
+    }
+
+    /**
+     * Get if draw legend
+     *
+     * @return If draw legend
+     */
+    public boolean isDrawLegend() {
+        return this.drawLegend;
+    }
+
+    /**
+     * Set if draw legend
+     *
+     * @param value Boolean
+     */
+    public void setDrawLegend(boolean value) {
+        this.drawLegend = value;
+    }
+
+    /**
+     * Get plot area
+     *
+     * @return Plot area
+     */
+    public Rectangle2D getPlotArea() {
+        return this.plotArea;
+    }
+
+    /**
+     * Get if is antialias
+     *
+     * @return Boolean
+     */
+    public boolean isAntialias() {
+        return this.antialias;
+    }
+
+    /**
+     * Set if is antialias
+     *
+     * @param value Boolean
+     */
+    public void setAntialias(boolean value) {
+        this.antialias = value;
+    }
+
+    /**
+     * Get symbol antialias
+     * @return Boolean
+     */
+    public boolean isSymbolAntialias() {
+        return this.symbolAntialias;
+    }
+
+    /**
+     * Set symbol antialias
+     * @param value Boolean
+     */
+    public void setSymbolAntialias(boolean value) {
+        this.symbolAntialias = value;
+    }
+
+    /**
+     * Get is sample buffers or not
+     * @return Boolean
+     */
+    public boolean isSampleBuffers() {
+        return this.sampleBuffers;
+    }
+
+    /**
+     * Set sample buffers or not
+     * @param value Boolean
+     */
+    public void setSampleBuffers(boolean value) {
+        this.sampleBuffers = value;
+    }
+
+    /**
+     * Get if do screenshot
+     * @return Boolean
+     */
+    public boolean isDoScreenShot() {
+        return this.doScreenShot;
+    }
+
+    /**
+     * Set if do screenshot
+     * @param value Boolean
+     */
+    public void setDoScreenShot(boolean value) {
+        this.doScreenShot = value;
+    }
+
+    /**
+     * Get screen image
+     *
+     * @return Screen image
+     */
+    public BufferedImage getScreenImage() {
+        return this.screenImage;
+    }
+
+    /**
+     * Set DPI scale
+     * @param value DPI scale
+     */
+    public void setDpiScale(float value) {
+        List<Axes> glPlots = this.getGLPlots();
+        for (Axes glPlot : glPlots) {
+            glPlot.setDpiScale(value);
+        }
+    }
+
+    /**
+     * Set whether always update buffers
+     * @param value Whether always update buffers
+     */
+    public void setAlwaysUpdateBuffers(boolean value) {
+        List<Axes> glPlots = this.getGLPlots();
+        for (Axes glPlot : glPlots) {
+            glPlot.setAlwaysUpdateBuffers(value);
+        }
+    }
+
+    // </editor-fold>
+    // <editor-fold desc="Methods">
+
+    /**
+     * Whether contains GL plot
+     * @return Boolean
+     */
+    public boolean containsGLPlot() {
+        for (Plot plot : this.plots) {
+            if (plot instanceof Axes) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Draw plot
+     *
+     * @param g Graphics2D
+     * @param area Drawing area
+     */
+    public void draw(Graphics2D g, Rectangle2D area) {
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+        if (antialias) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            //g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
             g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS,
-                    RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
             g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            //g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         } else {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            //g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
+            g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_OFF);
+            g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_DEFAULT);
+            //g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+            g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_DEFAULT);
         }
-    }
 
-    public Rectangle2D getGraphArea() {
-        return axesList.isEmpty() ? new Rectangle2D.Double() : axesList.get(0).getGraphArea();
-    }
+        AffineTransform oldMatrix = g.getTransform();
+        Rectangle oldRegion = g.getClipBounds();
+        g.setClip(area);
+        g.translate(area.getX(), area.getY());
 
-    public BufferedImage toImage(int width, int height) {
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g = image.createGraphics();
-        try {
-            draw(g, new Rectangle2D.Double(0, 0, width, height));
-        } finally {
-            g.dispose();
+        //Draw background
+        if (this.background != null && !containsGLPlot()) {
+            g.setColor(background);
+            g.fill(new Rectangle2D.Double(0, 0, area.getWidth(), area.getHeight()));
         }
-        return image;
-    }
 
-    public void saveImage(String fileName, int width, int height) throws IOException {
-        FigureExporter.export(this, fileName, width, height);
-    }
+        //Get plot area
+        plotArea = this.getPlotArea(g, area);
 
-    public void saveImage(String fileName) throws IOException {
-        saveImage(fileName, width > 0 ? width : 800, height > 0 ? height : 600);
-    }
-
-    public void export(String fileName, int width, int height) throws IOException {
-        saveImage(fileName, width, height);
-    }
-    // </editor-fold>
-
-    // <editor-fold desc="GLEventListener">
-    @Override
-    public void init(GLAutoDrawable drawable) {
-        drawable.getGL().setSwapInterval(1);
-        drawable.getGL().getGL2().glEnable(com.jogamp.opengl.GL2.GL_DEPTH_TEST);
-    }
-
-    @Override
-    public void dispose(GLAutoDrawable drawable) {
-    }
-
-    @Override
-    public void display(GLAutoDrawable drawable) {
-        int w = Math.max(1, drawable.getSurfaceWidth());
-        int h = Math.max(1, drawable.getSurfaceHeight());
-        com.jogamp.opengl.GL2 gl = drawable.getGL().getGL2();
-        gl.glViewport(0, 0, w, h);
-        if (background != null) {
-            float[] rgba = background.getRGBComponents(null);
-            gl.glClearColor(rgba[0], rgba[1], rgba[2], rgba[3]);
+        //Draw title
+        float y = 5;
+        if (title != null) {
+            float x = (float) area.getWidth() / 2;
+            y += title.getDimension(g).height;
+            title.draw(g, x, y);
+            y += 5;
         }
-        gl.glClear(com.jogamp.opengl.GL2.GL_COLOR_BUFFER_BIT
-                | com.jogamp.opengl.GL2.GL_DEPTH_BUFFER_BIT);
-        BufferedImage measure = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D mg = measure.createGraphics();
-        try {
-            layout(mg, new Rectangle2D.Double(0, 0, w, h));
-        } finally {
-            mg.dispose();
+
+        //Draw x/y label
+        if (this.xLabel != null) {
+            xLabel.draw(g, (int)(plotArea.getX() + plotArea.getWidth() / 2),
+                    (int)(plotArea.getMaxY() + 5));
         }
-        gl.glEnable(com.jogamp.opengl.GL2.GL_SCISSOR_TEST);
-        for (Axes axes : axesList) {
-            if (!axes.isVisible() || !axes.isJogl()) {
-                continue;
+        if (this.yLabel != null) {
+            yLabel.draw(g, (int)(plotArea.getX() - 5),
+                    (int)(plotArea.getY() + plotArea.getHeight() / 2));
+        }
+
+        //Draw plot
+        if (plotArea.getWidth() < 20 || plotArea.getHeight() < 20) {
+            g.setTransform(oldMatrix);
+            g.setClip(oldRegion);
+            return;
+        }
+
+        if (this.plots.size() > 0) {
+            //double zoom = this.getPositionAreaZoom(g, plotArea);
+            //Margin tightInset = this.getPlotsTightInset(g, plotArea);
+            Margin shrink = this.getPlotsShrink(g, plotArea);
+            for (Plot plot : this.plots) {
+                plot.setAntiAlias(this.antialias);
+                plot.setSymbolAntiAlias(this.symbolAntialias);
+                if (plot.isOuterPosActive()){
+                    if (plot.isSubPlot || plot.isSameShrink()) {
+                        plot.setPlotShrink(shrink);
+                    } else {
+                        //plot.setPlotShrink(this.getPlotShrink(g, area, plot));
+                        plot.setPlotShrink(this.getPlotShrink(g, plotArea, plot));
+                    }
+                }
+                if (plot instanceof AbstractPlot2D) {
+                    ((AbstractPlot2D) plot).setAntiAlias(this.antialias);
+                }
+                if (plot instanceof Axes) {
+                    Rectangle2D graphArea = plot.getPositionArea();
+                    plot.setGraphArea(graphArea);
+                } else {
+                    plot.draw(g, area);
+                }
             }
-            Rectangle2D rect = axes.getPositionArea();
-            int vx = (int) Math.round(rect.getX());
-            int vy = (int) Math.round(h - rect.getY() - rect.getHeight());
-            int vw = Math.max(1, (int) Math.round(rect.getWidth()));
-            int vh = Math.max(1, (int) Math.round(rect.getHeight()));
-            gl.glScissor(vx, vy, vw, vh);
-            gl.glViewport(vx, vy, vw, vh);
-            axes.prepare3D(drawable, w, h);
-            axes.draw3D(drawable);
         }
-        gl.glDisable(com.jogamp.opengl.GL2.GL_SCISSOR_TEST);
-        if (doScreenShot) {
-            com.jogamp.opengl.util.awt.AWTGLReadBufferUtil util =
-                    new com.jogamp.opengl.util.awt.AWTGLReadBufferUtil(drawable.getGLProfile(), false);
-            screenImage = util.readPixelsToBufferedImage(drawable.getGL(), true);
-            doScreenShot = false;
+
+        //Draw text
+        drawText(g, area);
+
+        //Draw legend
+        if (this.drawLegend) {
+            Dimension dim = this.legend.getLegendDimension(g, new Dimension((int) area.getWidth(), (int) area.getHeight()));
+            float x = 0;
+            switch (this.legend.getPosition()) {
+                case UPPER_CENTER_OUTSIDE:
+                    x = (float) area.getWidth() / 2 - dim.width / 2;
+                    y += 5;
+                    break;
+                case LOWER_CENTER_OUTSIDE:
+                    x = (float) area.getWidth() / 2 - dim.width / 2;
+                    y += plotArea.getHeight() + 5;
+                    break;
+                case LEFT_OUTSIDE:
+                    x = 10;
+                    y = (float) area.getHeight() / 2 - dim.height / 2;
+                    break;
+                case RIGHT_OUTSIDE:
+                    x = (float) plotArea.getWidth() + 10;
+                    y = (float) area.getHeight() / 2 - dim.height / 2;
+                    break;
+            }
+            this.legend.draw(g, new PointF(x, y));
+        }
+
+        g.setTransform(oldMatrix);
+        g.setClip(oldRegion);
+    }
+
+    void drawText(Graphics2D g, Rectangle2D area) {
+        float x, y;
+        for (ChartText text : this.texts) {
+            x = (float) (area.getWidth() * text.getX());
+            y = (float) (area.getHeight() * (1 - text.getY()));
+            text.draw(g, x, y);
         }
     }
 
-    @Override
-    public void reshape(GLAutoDrawable drawable, int x, int y, int w, int h) {
-        this.width = w;
-        this.height = h;
-        drawable.getGL().getGL2().glViewport(0, 0, Math.max(1, w), Math.max(1, h));
+    private Rectangle2D getPlotArea(Graphics2D g, Rectangle2D area) {
+        Rectangle2D pArea = new Rectangle2D.Double();
+        int edge = 0;
+        int top = edge;
+        int left = edge;
+        int right = edge;
+        int bottom = edge;
+        if (this.title != null) {
+            top += this.title.getTrueDimension(g).height + 12;
+        }
+        if (this.xLabel != null) {
+            bottom += this.xLabel.getTrueDimension(g).height + 10;
+        }
+        if (this.yLabel != null) {
+            left += this.yLabel.getTrueDimension(g).width + 10;
+        }
+        pArea.setRect(left, top, area.getWidth() - left - right, area.getHeight() - top - bottom);
+
+        return pArea;
+    }
+
+    private Rectangle2D getPlotArea_bak(Graphics2D g, Rectangle2D area) {
+        Rectangle2D pArea = new Rectangle2D.Double();
+        int edge = 2;
+        int top = edge;
+        int left = edge;
+        int right = edge;
+        int bottom = edge;
+        if (this.title != null) {
+            top += this.title.getTrueDimension(g).height + 10;
+        }
+        if (this.drawLegend) {
+            Dimension dim = this.legend.getLegendDimension(g, new Dimension((int) area.getWidth(), (int) area.getHeight()));
+            switch (this.legend.getPosition()) {
+                case UPPER_CENTER_OUTSIDE:
+                    top += dim.height + 10;
+                    break;
+                case LOWER_CENTER_OUTSIDE:
+                    bottom += dim.height + 10;
+                    break;
+                case LEFT_OUTSIDE:
+                    left += dim.width + 10;
+                    break;
+                case RIGHT_OUTSIDE:
+                    right += dim.width + 10;
+                    break;
+            }
+        }
+        pArea.setRect(left, top, area.getWidth() - left - right, area.getHeight() - top - bottom);
+
+        return pArea;
+    }
+
+    private Margin getPlotShrink(Graphics2D g, Rectangle2D area, Plot plot) {
+        Margin shrink;
+        if (plot.isSubPlot) {
+            double rowHeight = area.getHeight() / this.rowNum;
+            double colWidth = area.getWidth() / this.columnNum;
+            double x = area.getX() + plot.columnIndex * colWidth;
+            double y = area.getY() + plot.rowIndex * rowHeight;
+            Rectangle2D subPlotArea = new Rectangle2D.Double(x, y, colWidth, rowHeight);
+            plot.setOuterPositionArea(subPlotArea);
+            plot.updatePosition(area, subPlotArea);
+            Rectangle2D positionArea = plot.getPositionArea(area);
+            plot.setPositionArea(positionArea);
+            Margin tightInset = plot.getTightInset(g, positionArea);
+            plot.setTightInset(tightInset);
+            shrink = plot.getPlotShrink();
+        } else {
+            plot.setOuterPositionArea(area);
+            Rectangle2D positionArea = plot.getPositionArea(area);
+            plot.setPositionArea(positionArea);
+            Margin tightInset = plot.getTightInset(g, positionArea);
+            plot.setTightInset(tightInset);
+            shrink = plot.getPlotShrink();
+            //shrink = tightInset;
+        }
+
+        return shrink;
+    }
+
+    private Margin getPlotsShrink(Graphics2D g, Rectangle2D area) {
+        Margin pshrink = null, shrink;
+        for (Plot plot : this.plots) {
+            plot.setOuterPositionArea(plot.getOuterPositionArea(area));
+            Rectangle2D positionArea = plot.getPositionArea(area);
+            plot.setPositionArea(positionArea);
+            Margin tightInset = plot.getTightInset(g, positionArea);
+            plot.setTightInset(tightInset);
+            shrink = plot.getPlotShrink();
+            if (pshrink == null) {
+                pshrink = shrink;
+            } else {
+                pshrink = pshrink.extend(shrink);
+            }
+        }
+
+        return pshrink;
+    }
+
+    private Margin getPlotsShrink_bak(Graphics2D g, Rectangle2D area) {
+        Margin pshrink = null, shrink;
+        for (int i = 0; i < this.plots.size(); i++) {
+            Plot plot = this.plots.get(i);
+            if (plot.isSubPlot) {
+                double rowHeight = area.getHeight() / this.rowNum;
+                double colWidth = area.getWidth() / this.columnNum;
+                double x = area.getX() + plot.columnIndex * colWidth;
+                double y = area.getY() + plot.rowIndex * rowHeight;
+                Rectangle2D subPlotArea = new Rectangle2D.Double(x, y, colWidth, rowHeight);
+                plot.setOuterPositionArea(subPlotArea);
+                plot.updatePosition(area, subPlotArea);
+                Rectangle2D positionArea = plot.getPositionArea(area);
+                plot.setPositionArea(positionArea);
+                Margin tightInset = plot.getTightInset(g, positionArea);
+                plot.setTightInset(tightInset);
+                shrink = plot.getPlotShrink();
+            } else {
+                plot.setOuterPositionArea(area);
+                Rectangle2D positionArea = plot.getPositionArea(area);
+                plot.setPositionArea(positionArea);
+                Margin tightInset = plot.getTightInset(g, positionArea);
+                plot.setTightInset(tightInset);
+                shrink = plot.getPlotShrink();
+            }
+            if (i == 0) {
+                pshrink = shrink;
+            } else if (pshrink != null) {
+                pshrink = pshrink.extend(shrink);
+            }
+        }
+
+        return pshrink;
+    }
+
+    private Margin getPlotsTightInset(Graphics2D g, Rectangle2D area) {
+        int i = 0;
+        Margin pti = null, tightInset;
+        for (Plot plot : this.plots) {
+            if (plot.isSubPlot) {
+                double rowHeight = area.getHeight() / this.rowNum;
+                double colWidth = area.getWidth() / this.columnNum;
+                double x = area.getX() + plot.columnIndex * colWidth;
+                double y = area.getY() + plot.rowIndex * rowHeight;
+                Rectangle2D subPlotArea = new Rectangle2D.Double(x, y, colWidth, rowHeight);
+                plot.setOuterPositionArea(subPlotArea);
+                plot.updatePosition(area, subPlotArea);
+                Rectangle2D positionArea = plot.getPositionArea();
+                plot.setPositionArea(positionArea);
+                tightInset = plot.getTightInset(g, positionArea);
+            } else {
+                plot.setOuterPositionArea(area);
+                Rectangle2D positionArea = plot.getPositionArea();
+                plot.setPositionArea(positionArea);
+                tightInset = plot.getTightInset(g, positionArea);
+            }
+            if (i == 0) {
+                pti = tightInset;
+            } else if (pti != null) {
+                pti = pti.extend(tightInset);
+            }
+            i += 1;
+        }
+
+        return pti;
+    }
+
+    private double getPositionAreaZoom(Graphics2D g, Rectangle2D area) {
+        double zoom = 1.0;
+        for (Plot plot : this.plots) {
+            if (plot.isSubPlot) {
+                double rowHeight = area.getHeight() / this.rowNum;
+                double colWidth = area.getWidth() / this.columnNum;
+                double x = area.getX() + plot.columnIndex * colWidth;
+                double y = area.getY() + plot.rowIndex * rowHeight;
+                Rectangle2D subPlotArea = new Rectangle2D.Double(x, y, colWidth, rowHeight);
+                plot.setOuterPositionArea(subPlotArea);
+                plot.updatePosition(area, subPlotArea);
+                Rectangle2D positionArea = plot.getPositionArea();
+                plot.setPositionArea(positionArea);
+                Margin tightInset = plot.getTightInset(g, positionArea);
+                plot.setTightInset(tightInset);
+                double zoom1 = plot.getPositionAreaZoom();
+                if (zoom1 < zoom) {
+                    zoom = zoom1;
+                }
+            } else {
+                plot.setOuterPositionArea(area);
+                Rectangle2D positionArea = plot.getPositionArea();
+                plot.setPositionArea(positionArea);
+                Margin tightInset = plot.getTightInset(g, positionArea);
+                plot.setTightInset(tightInset);
+                double zoom1 = plot.getPositionAreaZoom();
+                if (zoom1 < zoom) {
+                    zoom = zoom1;
+                }
+            }
+        }
+
+        return zoom;
+    }
+
+    private Rectangle2D getSubPlotArea(Graphics2D g, Plot plot, Rectangle2D area) {
+        if (plot.isSubPlot) {
+            double rowHeight = area.getHeight() / this.rowNum;
+            double colWidth = area.getWidth() / this.columnNum;
+            double x = area.getX() + plot.columnIndex * colWidth;
+            double y = area.getY() + plot.rowIndex * rowHeight;
+            Rectangle2D subPlotArea = new Rectangle2D.Double(x, y, colWidth, rowHeight);
+            plot.setOuterPositionArea(subPlotArea);
+            plot.updatePosition(area, subPlotArea);
+            Rectangle2D positionArea = plot.getPositionArea();
+            plot.setPositionArea(positionArea);
+            Margin tightInset = plot.getTightInset(g, positionArea);
+            plot.setTightInset(tightInset);
+            double zoom = plot.getPositionAreaZoom();
+            plot.setPositionAreaZoom(zoom);
+            return subPlotArea;
+        } else {
+            plot.setOuterPositionArea(area);
+            Rectangle2D positionArea = plot.getPositionArea();
+            plot.setPositionArea(positionArea);
+            Margin tightInset = plot.getTightInset(g, positionArea);
+            plot.setTightInset(tightInset);
+            double zoom = plot.getPositionAreaZoom();
+            plot.setPositionAreaZoom(zoom);
+            //return tightInset.getArea(positionArea);
+            return area;
+        }
+    }
+
+    /**
+     * Get graph area
+     *
+     * @return Get graph area
+     */
+    public Rectangle2D getGraphArea() {
+        Rectangle2D rect = this.plots.get(0).getPositionArea();
+        double left = rect.getX() + this.plotArea.getX();
+        double top = rect.getY() + this.plotArea.getY();
+        return new Rectangle2D.Double(left, top, rect.getWidth(), rect.getHeight());
+    }
+
+    /**
+     * Find a plot by point
+     *
+     * @param x X
+     * @param y Y
+     * @return Plot
+     */
+    public Plot findPlot(int x, int y) {
+        for (Plot plot : this.plots) {
+            Rectangle2D area = plot.getPositionArea();
+            if (area.contains(x, y)) {
+                return plot;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Clear plots
+     */
+    public void clearPlots() {
+        this.plots.clear();
+    }
+
+    /**
+     * Clear texts
+     */
+    public void clearTexts() {
+        this.texts.clear();
+    }
+
+    /**
+     * Clear all chart components
+     */
+    public void clearAll() {
+        this.title = null;
+        this.xLabel = null;
+        this.yLabel = null;
+        this.clearTexts();
+        this.clearPlots();
+    }
+
+    /**
+     * Remove a plot
+     *
+     * @param plot The plot
+     */
+    public void removePlot(Plot plot) {
+        this.plots.remove(plot);
+    }
+
+    /**
+     * Add a plot
+     *
+     * @param plot Plot
+     */
+    public void addPlot(Plot plot) {
+        if (plot instanceof MapPlot) {
+            ((MapPlot) plot).setParent(parent);
+        }
+        this.plots.add(plot);
+    }
+
+    /**
+     * Set plot
+     *
+     * @param plot Plot
+     */
+    public void setPlot(Plot plot) {
+        clearPlots();
+        addPlot(plot);
+    }
+
+    /**
+     * Get plot by plot index
+     *
+     * @param plotIdx Plot index - begin with 1
+     * @return Plot index
+     */
+    public Plot getPlot(int plotIdx) {
+        for (Plot plot : this.plots) {
+            int pIdx = plot.rowIndex * this.columnNum + plot.columnIndex + 1;
+            if (pIdx == plotIdx) {
+                return plot;
+            }
+        }
+
+        if (plotIdx > 0 && plotIdx <= this.plots.size())
+            return this.plots.get(plotIdx - 1);
+        else
+            return null;
+    }
+
+    /**
+     * Get plot index
+     * @param plot The plot
+     * @return Plot index
+     */
+    public int getPlotIndex(Plot plot){
+        return this.plots.indexOf(plot);
+    }
+
+    /**
+     * Check whether it has web map layer
+     *
+     * @return Boolean
+     */
+    public boolean hasWebMap() {
+        for (Plot plot : this.plots) {
+            if (plot instanceof MapPlot) {
+                MapPlot mp = (MapPlot) plot;
+                if (mp.hasWebMapLayer()) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Add text
+     *
+     * @param text Text
+     */
+    public void addText(ChartText text) {
+        this.texts.add(text);
     }
     // </editor-fold>
+
+    private final FigureRenderer renderer = new FigureRenderer(this);
+
+    /**
+     * Get the chart renderer.
+     *
+     * @return Chart renderer
+     */
+    public FigureRenderer getRenderer() {
+        return this.renderer;
+    }
+
+    /**
+     * Get GL plots
+     * @return GL plots
+     */
+    public List<Axes> getGLPlots() {
+        List<Axes> glPlots = new ArrayList<>();
+        for (Plot plot : this.plots) {
+            if (plot instanceof Axes) {
+                glPlots.add((Axes) plot);
+            }
+        }
+
+        return glPlots;
+    }
 }

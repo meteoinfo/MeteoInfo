@@ -70,7 +70,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
     private BufferedImage tempImage = null;
     private boolean newPaint = false;
     private boolean doubleBuffer = true;
-    private GLChart chart;
+    private Figure chart;
     private Plot currentPlot;
     private Dimension chartSize;
     private Point mouseDownPoint = new Point(0, 0);
@@ -93,7 +93,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
      * Constructor
      */
     public GLChartPanel() {
-        this(new GLChart());
+        this(new Figure());
     }
 
     /**
@@ -101,7 +101,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
      *
      * @param chart Chart
      */
-    public GLChartPanel(GLChart chart) {
+    public GLChartPanel(Figure chart) {
         super(createCapabilities(true, true, 4));
 
         //this.setBackground(Color.white);
@@ -188,7 +188,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
         this.chart = chart;
         if (this.chart != null) {
             this.chart.setParent(this);
-            this.addGLEventListener(chart);
+            this.addGLEventListener(this.chart.getRenderer());
         }
     }
 
@@ -199,7 +199,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
      * @param width Chart width
      * @param height Chart height
      */
-    public GLChartPanel(GLChart chart, int width, int height) {
+    public GLChartPanel(Figure chart, int width, int height) {
         this(chart);
         this.chartSize = new Dimension(width, height);
         this.setPreferredSize(chartSize);
@@ -246,7 +246,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
      *
      * @return Chart
      */
-    public GLChart getChart() {
+    public Figure getChart() {
         return chart;
     }
 
@@ -255,7 +255,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
      *
      * @param value
      */
-    public void setChart(GLChart value) {
+    public void setChart(Figure value) {
         chart = value;
         if (this.chart != null) {
             chart.setParent(this);
@@ -438,7 +438,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
         for (int i = n - 1; i >= 0; i--) {
             Plot plot = this.chart.getPlots().get(i);
             Rectangle2D rect;
-            if (plot instanceof GLPlot) {
+            if (plot instanceof Axes) {
                 //rect = plot.getPositionArea(new Rectangle2D.Double(0, 0, this.chart.width, this.chart.height));
                 rect = plot.getPositionArea(new Rectangle2D.Double(0, 0, this.getWidth(), this.getHeight()));
             } else {
@@ -476,7 +476,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
         Graphics2D g2 = (Graphics2D) g;
 
         if (this.chart != null && this.chart.containsGLPlot()) {
-            // GLPlot renders its own frame through JOGL.  Redraw the Java2D
+            // Axes renders its own frame through JOGL.  Redraw the Java2D
             // overlay here instead of blitting the previous mapBitmap, which
             // would leave stale titles/labels over the new frame.
             this.paintGraphics(g2);
@@ -818,7 +818,7 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
         switch (this.mouseMode) {
             case ZOOM_IN:
             case SELECT:
-                if (plot instanceof GLPlot) {
+                if (plot instanceof Axes) {
                     this.repaint();
                 } else {
                     this.repaintOld();
@@ -826,8 +826,8 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
                 break;
             case PAN:
                 if (plot != null) {
-                    if (plot instanceof GLPlot) {
-                        GLPlot glPlot = (GLPlot) plot;
+                    if (plot instanceof Axes) {
+                        Axes glPlot = (Axes) plot;
                         Dimension size = e.getComponent().getSize();
                         float dx = (float) (x - this.mouseLastPos.x) / size.width;
                         float dy = (float) (this.mouseLastPos.y - y) / size.height;
@@ -914,8 +914,8 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
                             projector.setElevationAngle(new_value);
                         }
                         this.repaintNew();
-                    } else if (plot instanceof GLPlot) {
-                        GLPlot glPlot = (GLPlot) plot;
+                    } else if (plot instanceof Axes) {
+                        Axes glPlot = (Axes) plot;
                         if (SwingUtilities.isLeftMouseButton(e)) {
                             if (e.isShiftDown()) {
                                 Dimension size = e.getComponent().getSize();
@@ -1182,8 +1182,8 @@ public class GLChartPanel extends GLJPanel implements IChartPanel{
                     }
                     break;
             }
-        } else if (plot instanceof GLPlot) {
-            GLPlot glPlot = (GLPlot) plot;
+        } else if (plot instanceof Axes) {
+            Axes glPlot = (Axes) plot;
             Extent extent = glPlot.getDrawExtent();
             //float zoomF = 1 + e.getWheelRotation() / 10.0f;
             float zoomF = e.getWheelRotation() / 10.0f;

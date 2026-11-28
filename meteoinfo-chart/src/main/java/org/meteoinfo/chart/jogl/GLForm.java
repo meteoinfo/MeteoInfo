@@ -17,10 +17,10 @@ import javax.swing.*;
  * @author yaqiang
  */
 public class GLForm extends JFrame{
-    private GLPlot plt;
+    private Axes plt;
     private GLChartPanel chartPanel;
     
-    public GLForm(GLPlot plt) {
+    public GLForm(Axes plt) {
         this.plt = plt;
 
         chartPanel = new GLChartPanel();

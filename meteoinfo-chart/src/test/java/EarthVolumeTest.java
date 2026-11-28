@@ -2,7 +2,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLDrawableFactory;
 import com.jogamp.opengl.GLProfile;
-import org.meteoinfo.chart.GLChart;
+import org.meteoinfo.chart.Figure;
 import org.meteoinfo.chart.MouseMode;
 import org.meteoinfo.chart.graphic.GraphicFactory;
 import org.meteoinfo.chart.graphic.VolumeGraphic;
@@ -209,7 +209,7 @@ public class EarthVolumeTest {
      * @param dir Output directory
      * @param name File name
      */
-    private static void save(GLChart chart, GLAutoDrawable drawable, File dir, String name) throws Exception {
+    private static void save(Figure chart, GLAutoDrawable drawable, File dir, String name) throws Exception {
         drawable.display();
         chart.setDoScreenShot(true);
         drawable.display();
@@ -254,11 +254,11 @@ public class EarthVolumeTest {
                     (Color) scene[8], (Float) scene[9]));
             plot.setAlwaysUpdateBuffers(true);
 
-            GLChart chart = new GLChart();
+            Figure chart = new Figure();
             chart.addPlot(plot);
-            drawable.addGLEventListener(chart);
+            drawable.addGLEventListener(chart.getRenderer());
             save(chart, drawable, dir, (String) scene[0]);
-            drawable.removeGLEventListener(chart);
+            drawable.removeGLEventListener(chart.getRenderer());
         }
         drawable.destroy();
         System.out.println("DONE");
@@ -314,11 +314,11 @@ public class EarthVolumeTest {
             }
             plot.setAlwaysUpdateBuffers(true);
 
-            GLChart chart = new GLChart();
+            Figure chart = new Figure();
             chart.addPlot(plot);
-            drawable.addGLEventListener(chart);
+            drawable.addGLEventListener(chart.getRenderer());
             save(chart, drawable, dir, (String) scene[0]);
-            drawable.removeGLEventListener(chart);
+            drawable.removeGLEventListener(chart.getRenderer());
         }
         drawable.destroy();
         System.out.println("DONE");
@@ -340,9 +340,9 @@ public class EarthVolumeTest {
         plot.addGraphic(createVolume(-60, 100, -20, 60, 0, 3000));
         plot.setAlwaysUpdateBuffers(true);
 
-        GLChart chart = new GLChart();
+        Figure chart = new Figure();
         chart.addPlot(plot);
-        drawable.addGLEventListener(chart);
+        drawable.addGLEventListener(chart.getRenderer());
         for (int i = 0; i < 5; i++) {
             drawable.display();
         }
@@ -383,7 +383,7 @@ public class EarthVolumeTest {
             plot.initAngles();
             plot.addGraphic(plot.earthSurface(60));
             plot.addGraphic(createVolume());
-            org.meteoinfo.chart.GLChartPanel panel = new org.meteoinfo.chart.GLChartPanel(new GLChart(plot));
+            org.meteoinfo.chart.GLChartPanel panel = new org.meteoinfo.chart.GLChartPanel(new Figure(plot));
             panel.setMouseMode(MouseMode.ROTATE);
             javax.swing.JFrame frame = new javax.swing.JFrame("Earth Volume Plot Test");
             frame.getContentPane().add(panel);

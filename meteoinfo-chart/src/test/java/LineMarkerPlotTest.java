@@ -7,7 +7,7 @@ import com.jogamp.opengl.GLProfile;
 import org.meteoinfo.chart.graphic.Graphic;
 import org.meteoinfo.chart.graphic.LineGraphic;
 import org.meteoinfo.chart.graphic.LineGraphicCollection;
-import org.meteoinfo.chart.jogl.GLPlot;
+import org.meteoinfo.chart.jogl.Axes;
 import org.meteoinfo.geometry.Coordinate;
 import org.meteoinfo.geometry.Extent;
 import org.meteoinfo.geometry.LineString;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Integration check for line markers through a real GLPlot in 3-D and 2-D.
+ * Integration check for line markers through a real Axes in 3-D and 2-D.
  */
 public class LineMarkerPlotTest {
 
@@ -48,7 +48,7 @@ public class LineMarkerPlotTest {
 
     private static void render(File dir, String name, boolean perspective, boolean drawLine,
                                boolean force2D) throws Exception {
-        GLPlot plot = new GLPlot();
+        Axes plot = new Axes();
         plot.setBackground(Color.WHITE);
         plot.setForeground(Color.BLACK);
         plot.setDrawBoundingBox(false);

@@ -18,7 +18,7 @@ import org.meteoinfo.projection.ProjectionInfo;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
-public class MapGLPlot extends GLPlot {
+public class MapGLPlot extends Axes {
     private ProjectionInfo projInfo;
 
     /**

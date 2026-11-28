@@ -13,7 +13,7 @@ from org.meteoinfo.geo.layer import LayerTypes
 from org.meteoinfo.geo.io import GraphicUtil
 from org.meteoinfo.geometry import GeometryType, Extent
 from org.meteoinfo.chart.graphic import Graphic, GraphicCollection, ModelGraphic
-from org.meteoinfo.chart.jogl import GLPlot, GLForm, JOGLUtil, EarthGLPlot, MapGLPlot
+from org.meteoinfo.chart.jogl import Axes as JAxes, GLForm, JOGLUtil, EarthGLPlot, MapGLPlot
 from org.meteoinfo.math.interpolate import InterpolationMethod
 from org.meteoinfo.image import ImageUtil
 from org.meteoinfo.chart.transform import GeoTransform
@@ -162,7 +162,7 @@ class Axes(object):
         :param plot: (*Axes3D*) Plot.
         """
         if plot is None:
-            self._axes = GLPlot()
+            self._axes = JAxes()
         else:
             self._axes = plot
 

@@ -9,10 +9,10 @@
 from org.meteoinfo.chart import GLChartPanel, GLChart, Location, MouseMode, ChartText
 
 import plotutil
-from ._axes import Axes, PolarAxes
-from ._mapaxes import MapAxes
+from ._axes2d import Axes2D, PolarAxes2D
+from ._mapaxes import MapAxes2D
 from ._axes3d import Axes3D
-from ._axes3dgl import Axes3DGL
+from ._axes import Axes
 from _figure import _FigureBase
 
 from java.awt import Font, GraphicsEnvironment
@@ -433,11 +433,11 @@ class GLFigure(GLChartPanel, _FigureBase):
         elif axestype == '3d':
             opengl = kwargs.pop('opengl', True)
             if opengl:
-                ax = Axes3DGL(*args, **kwargs)
+                ax = Axes(*args, **kwargs)
             else:
                 ax = Axes3D(*args, **kwargs)
         else:
-            ax = Axes(*args, **kwargs)
+            ax = Axes2D(*args, **kwargs)
             # self.__set_axes(ax, **kwargs)
         # self.__set_axes_common(ax, *args, **kwargs)
 
@@ -464,7 +464,7 @@ class GLFigure(GLChartPanel, _FigureBase):
 
         :returns: The axes.
         """
-        if len(args) > 0 and isinstance(args[0], Axes):
+        if len(args) > 0 and isinstance(args[0], (Axes2D, Axes)):
             ax = args[0]
         else:
             ax = self.new_axes(*args, **kwargs)
@@ -480,7 +480,7 @@ class GLFigure(GLChartPanel, _FigureBase):
                 if position is None:
                     ax.position = plot.getPosition()
             chart.setCurrentPlot(ax._axes)
-        ax.figure = self
+        ax._figure = self
 
         return ax
 
@@ -490,12 +490,12 @@ class GLFigure(GLChartPanel, _FigureBase):
 
         :param ax: (*Axes*) The axes.
         """
-        ax.figure = self
+        ax._figure = self
         self.axes.append(ax)
         self.getChart().addPlot(ax._axes)
         self.getChart().setCurrentPlot(self.getChart().getPlots().size())
         if not GraphicsEnvironment.getLocalGraphicsEnvironment().isHeadless():
-            if isinstance(ax, (Axes3DGL, Axes3D)):
+            if isinstance(ax, (Axes, Axes3D)):
                 self.set_mousemode("rotate")
             else:
                 self.set_mousemode("pan")

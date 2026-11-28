@@ -16,7 +16,7 @@ from org.meteoinfo.geometry import GeometryType
 from org.meteoinfo.chart.graphic import Graphic
 from org.meteoinfo.geo.layer import LayerTypes
 
-from ._axes import Axes
+from ._axes2d import Axes2D
 from .graphic import LineCollection, PointCollection
 from mipylib.numeric.core import NDArray
 from mipylib.dataset import DimArray
@@ -36,7 +36,7 @@ from java.awt import Font, Color, BasicStroke
 __all__ = ['Axes3D']
 
 #########################################################
-class Axes3D(Axes):
+class Axes3D(Axes2D):
     """
     Axes with 3 dimensional.
     """
@@ -46,7 +46,7 @@ class Axes3D(Axes):
         self._set_plot(axes)
         
         figure = kwargs.pop('figure', None)
-        self.figure = figure
+        self._figure = figure
         
         if len(args) > 0:
             position = args[0]
@@ -1958,5 +1958,5 @@ class Axes3D(Axes):
         r = self._axes.projToScreen(x, y, rect)
         sx = r[0] + rect.getX()
         sy = r[1] + rect.getY()
-        sy = self.figure.get_size()[1] - sy
+        sy = self._figure.get_size()[1] - sy
         return sx, sy

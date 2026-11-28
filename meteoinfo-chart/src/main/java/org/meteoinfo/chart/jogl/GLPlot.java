@@ -150,6 +150,7 @@ public class GLPlot extends Plot {
     private static final float TICK_LENGTH = 4.0f;
     private static final float MIN_2D_TICK_LENGTH = 8.0f;
     private boolean clearBuffer = true;
+    private boolean xInverted, yInverted, zInverted;
     private static final float MIN_2D_GRID_GAP = 25.0f;
     private static final float MIN_2D_AXIS_MARGIN = 50.0f;
     final protected float lenScale = 0.01f;
@@ -559,6 +560,63 @@ public class GLPlot extends Plot {
      */
     public void setDisplayXY(boolean value) {
         this.displayXY = value;
+    }
+
+    /**
+     * Get if the x axis direction is inverted.
+     *
+     * @return Boolean
+     */
+    public boolean isXInverted() {
+        return this.xInverted;
+    }
+
+    /**
+     * Set if the x axis direction is inverted.
+     *
+     * @param value Boolean
+     */
+    public void setXInverted(boolean value) {
+        this.xInverted = value;
+        this.alwaysUpdateBuffers = true;
+    }
+
+    /**
+     * Get if the y axis direction is inverted.
+     *
+     * @return Boolean
+     */
+    public boolean isYInverted() {
+        return this.yInverted;
+    }
+
+    /**
+     * Set if the y axis direction is inverted.
+     *
+     * @param value Boolean
+     */
+    public void setYInverted(boolean value) {
+        this.yInverted = value;
+        this.alwaysUpdateBuffers = true;
+    }
+
+    /**
+     * Get if the z axis direction is inverted.
+     *
+     * @return Boolean
+     */
+    public boolean isZInverted() {
+        return this.zInverted;
+    }
+
+    /**
+     * Set if the z axis direction is inverted.
+     *
+     * @param value Boolean
+     */
+    public void setZInverted(boolean value) {
+        this.zInverted = value;
+        this.alwaysUpdateBuffers = true;
     }
 
     /**
@@ -1569,6 +1627,15 @@ public class GLPlot extends Plot {
 
         Vector3f center = transform.getCenter();
         Vector3f scale = transform.getScale();
+        if (this.xInverted) {
+            scale.x = -scale.x;
+        }
+        if (this.yInverted) {
+            scale.y = -scale.y;
+        }
+        if (this.zInverted) {
+            scale.z = -scale.z;
+        }
         modelViewMatrix.scale(scale);
         modelViewMatrix.translate(center.negate());
 
@@ -2376,10 +2443,16 @@ public class GLPlot extends Plot {
 
             ////////////////////////////////////////////
             //y axis line
-            if (this.angleY >= 180 && this.angleY < 360) {
-                x = xMax;
-            } else {
+            boolean yAxisOnLeft = !(this.angleY >= 180 && this.angleY < 360);
+            if (this.xInverted) {
+                // X inversion mirrors the data, but the y-axis itself should
+                // stay on the same side of the plot as before.
+                yAxisOnLeft = !yAxisOnLeft;
+            }
+            if (yAxisOnLeft) {
                 x = xMin;
+            } else {
+                x = xMax;
             }
             rgba = this.yAxis.getLineColor().getRGBComponents(null);
             gl.glColor4f(rgba[0], rgba[1], rgba[2], rgba[3]);
@@ -4829,26 +4902,30 @@ public class GLPlot extends Plot {
             float yHalf = dataHeight > 0 ? (float) (renderArea.getHeight() / dataHeight) : 1.5f;
             gl.glOrthof(-xHalf, xHalf, -yHalf, yHalf, -distance, distance);
         } else if (this.orthographic) {
+            // Use the actual render viewport aspect so spheres remain round
+            // after the viewport is enlarged for axis labels and colorbars.
+            float aspect3D = this.height == 0 ? 1.0f : (float) this.width / (float) this.height;
             float v = 1.9f;
+            float xv = v * Math.max(1.0f, aspect3D);
+            float yv = v * Math.max(1.0f, 1.0f / aspect3D);
             switch (this.aspectType) {
                 case EQUAL:
-                    float xv = v * Math.max(1.0f, h);
-                    float yv = v * Math.max(1.0f, 1.0f / h);
                     gl.glOrthof(-xv, xv, -yv, yv, -distance, distance);
                     break;
                 default:
-                    gl.glOrthof(-v, v, -v, v, -distance, distance);
+                    gl.glOrthof(-xv, xv, -yv, yv, -distance, distance);
                     break;
             }
         } else {
             float near = 0.1f;
             float far = 1000.0f;
+            float aspect3D = this.height == 0 ? 1.0f : (float) this.width / (float) this.height;
             switch (this.aspectType) {
                 case EQUAL:
-                    glu.gluPerspective(fieldOfView, h, near, far);
+                    glu.gluPerspective(fieldOfView, aspect3D, near, far);
                     break;
                 default:
-                    glu.gluPerspective(fieldOfView, 1.0f, near, far);
+                    glu.gluPerspective(fieldOfView, aspect3D, near, far);
                     break;
             }
             float z = distance * 45.f / fieldOfView;
@@ -4864,33 +4941,19 @@ public class GLPlot extends Plot {
     public void updateProjections(GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
 
-        final float h = (float) width / (float) height;
+        final float h = this.height == 0 ? 1.0f : (float) this.width / (float) this.height;
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
 
         if (this.orthographic) {
             float v = 1.9f;
-            switch (this.aspectType) {
-                case EQUAL:
-                    float xv = v * Math.max(1.0f, h);
-                    float yv = v * Math.max(1.0f, 1.0f / h);
-                    gl.glOrthof(-xv, xv, -yv, yv, -distance, distance);
-                    break;
-                default:
-                    gl.glOrthof(-v, v, -v, v, -distance, distance);
-                    break;
-            }
+            float xv = v * Math.max(1.0f, h);
+            float yv = v * Math.max(1.0f, 1.0f / h);
+            gl.glOrthof(-xv, xv, -yv, yv, -distance, distance);
         } else {
             float near = 0.1f;
             float far = 1000.0f;
-            switch (this.aspectType) {
-                case EQUAL:
-                    glu.gluPerspective(45.0f, h, near, far);
-                    break;
-                default:
-                    glu.gluPerspective(45.0f, 1.0f, near, far);
-                    break;
-            }
+            glu.gluPerspective(45.0f, h, near, far);
             glu.gluLookAt(0.0f, 0.0f, distance, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
         }
         gl.glMatrixMode(GL2.GL_MODELVIEW);

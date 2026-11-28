@@ -10,10 +10,10 @@ from org.meteoinfo.chart import ChartPanel, Chart, Location, MouseMode, ChartTex
 
 from abc import ABCMeta, abstractmethod
 import plotutil
-from ._axes import Axes, PolarAxes
-from ._mapaxes import MapAxes
+from ._axes2d import Axes2D, PolarAxes2D
+from ._mapaxes import MapAxes2D
 from ._axes3d import Axes3D
-from ._axes3dgl import Axes3DGL
+from ._axes import Axes
 
 from java.awt import Font
 
@@ -460,16 +460,16 @@ class Figure(ChartPanel, _FigureBase):
         kwargs['figure'] = self
 
         if axestype == 'polar':
-            ax = PolarAxes(*args, **kwargs)
+            ax = PolarAxes2D(*args, **kwargs)
             # self.__set_axes(ax, **kwargs)
         elif axestype == 'map':
-            ax = MapAxes(*args, **kwargs)
+            ax = MapAxes2D(*args, **kwargs)
             # self.__set_axesm(ax, **kwargs)
         elif axestype == '3d':
             # ax = Axes3D(*args, **kwargs)
-            ax = Axes3DGL(*args, **kwargs)
-        else:
             ax = Axes(*args, **kwargs)
+        else:
+            ax = Axes2D(*args, **kwargs)
             # self.__set_axes(ax, **kwargs)
         # self.__set_axes_common(ax, *args, **kwargs)
 
@@ -496,7 +496,7 @@ class Figure(ChartPanel, _FigureBase):
         
         :returns: The axes.
         """
-        if len(args) > 0 and isinstance(args[0], Axes):
+        if len(args) > 0 and isinstance(args[0], (Axes2D, Axes)):
             ax = args[0]
         else:
             ax = self.new_axes(*args, **kwargs)
@@ -522,7 +522,7 @@ class Figure(ChartPanel, _FigureBase):
         
         :param ax: (*Axes*) The axes.
         """
-        ax.figure = self
+        ax._figure = self
         self.axes.append(ax)
         self.getChart().addPlot(ax._axes)
         self.getChart().setCurrentPlot(self.getChart().getPlots().size())

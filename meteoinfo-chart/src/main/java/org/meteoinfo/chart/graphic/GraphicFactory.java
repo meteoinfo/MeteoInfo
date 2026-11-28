@@ -4443,7 +4443,7 @@ public class GraphicFactory {
      * @param isSmooth Smooth contour lines or not
      * @return Contour slice graphics
      */
-    public static List<GraphicCollection> contourSlice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
+    public static List<LineGraphicCollection> contourSlice(Array data, Array xa, Array ya, Array za, List<Number> xSlice,
                                               List<Number> ySlice, List<Number> zSlice, LegendScheme ls,
                                                          boolean isSmooth) throws InvalidRangeException {
         data = data.copyIfView();
@@ -4451,7 +4451,7 @@ public class GraphicFactory {
         ya = ya.copyIfView();
         za = za.copyIfView();
 
-        List<GraphicCollection> sgs = new ArrayList<>();
+        List<LineGraphicCollection> sgs = new ArrayList<>();
 
         int dim1, dim2;
         double x, y, z;
@@ -4483,10 +4483,10 @@ public class GraphicFactory {
                     contourLines = Contour.smoothLines(contourLines);
                 }
 
-                GraphicCollection graphics = new GraphicCollection();
+                LineGraphicCollection graphics = new LineGraphicCollection();
                 ColorBreak cb;
                 for (PolyLine line : contourLines) {
-                    MultiLineString shape = new MultiLineString();
+                    LineString shape = new LineString();
                     List<Coordinate> points = new ArrayList<>();
                     for (wcontour.global.PointD p : line.PointList) {
                         points.add(new Coordinate(x, p.X, p.Y));
@@ -4495,7 +4495,7 @@ public class GraphicFactory {
                     shape.setValue(line.Value);
                     //shape.setExtent(GeometryUtil.getPointsExtent(points));
                     cb = ls.findLegendBreak(line.Value);
-                    graphics.add(new Graphic(shape, cb));
+                    graphics.add(new LineGraphic(shape, (PolylineBreak) cb));
                 }
                 graphics.setLegendScheme(ls);
                 sgs.add(graphics);
@@ -4523,19 +4523,18 @@ public class GraphicFactory {
                     contourLines = Contour.smoothLines(contourLines);
                 }
 
-                GraphicCollection graphics = new GraphicCollection();
+                LineGraphicCollection graphics = new LineGraphicCollection();
                 ColorBreak cb;
                 for (PolyLine line : contourLines) {
-                    MultiLineString shape = new MultiLineString();
+                    LineString shape = new LineString();
                     List<Coordinate> points = new ArrayList<>();
                     for (wcontour.global.PointD p : line.PointList) {
                         points.add(new Coordinate(p.X, y, p.Y));
                     }
                     shape.setCoordinates(points);
                     shape.setValue(line.Value);
-                    //shape.setExtent(GeometryUtil.getPointsExtent(points));
                     cb = ls.findLegendBreak(line.Value);
-                    graphics.add(new Graphic(shape, cb));
+                    graphics.add(new LineGraphic(shape, (PolylineBreak) cb));
                 }
                 graphics.setLegendScheme(ls);
                 sgs.add(graphics);
@@ -4563,19 +4562,18 @@ public class GraphicFactory {
                     contourLines = Contour.smoothLines(contourLines);
                 }
 
-                GraphicCollection graphics = new GraphicCollection();
+                LineGraphicCollection graphics = new LineGraphicCollection();
                 ColorBreak cb;
                 for (PolyLine line : contourLines) {
-                    MultiLineString shape = new MultiLineString();
+                    LineString shape = new LineString();
                     List<Coordinate> points = new ArrayList<>();
                     for (wcontour.global.PointD p : line.PointList) {
                         points.add(new Coordinate(p.X, p.Y, z));
                     }
                     shape.setCoordinates(points);
                     shape.setValue(line.Value);
-                    //shape.setExtent(GeometryUtil.getPointsExtent(points));
                     cb = ls.findLegendBreak(line.Value);
-                    graphics.add(new Graphic(shape, cb));
+                    graphics.add(new LineGraphic(shape, (PolylineBreak) cb));
                 }
                 graphics.setLegendScheme(ls);
                 sgs.add(graphics);
@@ -4599,7 +4597,7 @@ public class GraphicFactory {
      * @param isSmooth Smooth contour lines or not
      * @return Contour slice graphics
      */
-    public static GraphicCollection contourSlice(Array data, Array xa, Array ya, Array za, Array xSlice,
+    public static LineGraphicCollection contourSlice(Array data, Array xa, Array ya, Array za, Array xSlice,
                                                          Array ySlice, Array zSlice, LegendScheme ls,
                                                          boolean isSmooth) throws InvalidRangeException {
         data = data.copyIfView();
@@ -4640,10 +4638,10 @@ public class GraphicFactory {
         }
 
         BivariateFunction interpolator = InterpUtil.getBiInterpFunc(xa1d, ya1d, zSlice.transpose(0, 1), "linear");
-        GraphicCollection graphics = new GraphicCollection();
+        LineGraphicCollection graphics = new LineGraphicCollection();
         ColorBreak cb;
         for (PolyLine line : contourLines) {
-            MultiLineString pls = new MultiLineString();
+            LineString pls = new LineString();
             List<Coordinate> points = new ArrayList<>();
             for (wcontour.global.PointD p : line.PointList) {
                 points.add(new Coordinate(p.X, p.Y, interpolator.value(p.X, p.Y)));
@@ -4651,7 +4649,7 @@ public class GraphicFactory {
             pls.setCoordinates(points);
             pls.setValue(line.Value);
             cb = ls.findLegendBreak(line.Value);
-            graphics.add(new Graphic(pls, cb));
+            graphics.add(new LineGraphic(pls, (PolylineBreak) cb));
         }
         graphics.setLegendScheme(ls);
 
@@ -4671,7 +4669,7 @@ public class GraphicFactory {
      * @param isSmooth Smooth contour lines or not
      * @return Contour slice graphics
      */
-    public static GraphicCollection contourSlice(Array data, Array xa, Array ya, Array za, List<Number> xySlice,
+    public static LineGraphicCollection contourSlice(Array data, Array xa, Array ya, Array za, List<Number> xySlice,
                                                     InterpolationMethod method, LegendScheme ls, boolean isSmooth) throws InvalidRangeException {
         data = data.copyIfView();
         xa = xa.copyIfView();
@@ -4713,11 +4711,11 @@ public class GraphicFactory {
                     contourLines = Contour.smoothLines(contourLines);
                 }
 
-                GraphicCollection graphics = new GraphicCollection();
+                LineGraphicCollection graphics = new LineGraphicCollection();
                 ColorBreak cb;
                 Coordinate pz;
                 for (PolyLine line : contourLines) {
-                    MultiLineString shape = new MultiLineString();
+                    LineString shape = new LineString();
                     List<Coordinate> points = new ArrayList<>();
                     for (wcontour.global.PointD p : line.PointList) {
                         x = p.X;
@@ -4731,7 +4729,7 @@ public class GraphicFactory {
                     shape.setCoordinates(points);
                     shape.setValue(line.Value);
                     cb = ls.findLegendBreak(line.Value);
-                    graphics.add(new Graphic(shape, cb));
+                    graphics.add(new LineGraphic(shape, (PolylineBreak) cb));
                 }
                 graphics.setLegendScheme(ls);
                 return graphics;

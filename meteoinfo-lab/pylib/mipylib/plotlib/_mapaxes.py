@@ -28,7 +28,7 @@ from org.meteoinfo.data.mapdata.webmap import WebMapProvider, DefaultTileFactory
 
 from java.awt import Font, Color
 
-from ._axes import Axes
+from ._axes2d import Axes2D
 from .graphic import PointCollection, Line, LineCollection
 import mipylib.numeric as np
 from mipylib.numeric.core import NDArray
@@ -42,7 +42,7 @@ import colors
 import mipylib.migl as migl
 import mipylib.miutil as miutil
 
-__all__ = ['MapAxes','WebMapProvider']
+__all__ = ['MapAxes2D', 'WebMapProvider']
 
 
 def _add_transform(func):
@@ -59,13 +59,13 @@ def _add_transform(func):
     return wrapper
 
 ##############################################        
-class MapAxes(Axes):
+class MapAxes2D(Axes2D):
     """
     Axes with geological map coordinate.
     """
     
     def __init__(self, *args, **kwargs):
-        super(MapAxes, self).__init__(*args, **kwargs)               
+        super(MapAxes2D, self).__init__(*args, **kwargs)
      
         # Set projection
         projinfo = kwargs.pop('projection', None)
@@ -435,7 +435,7 @@ class MapAxes(Axes):
         :param tickfont: (*dict*) Tick label font.
         :param fixlocation: (*bool*) Fix lon/lat locations or not.
         """
-        gridline = Axes.grid(self, b, **kwargs)
+        gridline = Axes2D.grid(self, b, **kwargs)
 
         tickvisible = kwargs.pop('tickvisible', None)
         if not tickvisible is None:
@@ -463,7 +463,7 @@ class MapAxes(Axes):
         Set x axis tick locations.
         """
         if self.islonlat():
-            Axes.set_xticks(self, locs)
+            Axes2D.set_xticks(self, locs)
         else:
             gridline = self._axes.getGridLine()
             if isinstance(locs, NDArray):
@@ -475,7 +475,7 @@ class MapAxes(Axes):
         Set y axis tick locations.
         """
         if self.islonlat():
-            Axes.set_yticks(self, locs)
+            Axes2D.set_yticks(self, locs)
         else:
             gridline = self._axes.getGridLine()
             if isinstance(locs, NDArray):

@@ -23,12 +23,12 @@ import mipylib.migl as migl
 import mipylib.miutil as miutil
 from mipylib.numeric.core import NDArray
 import plotutil
-from ._axes import Axes, PolarAxes
+from ._axes import Axes, MapAxes, EarthAxes
 from ._axes3d import Axes3D
-from ._axes3dgl import Axes3DGL, MapAxes3D, EarthAxes3D
+from ._axes2d import PolarAxes2D
 from ._figure import Figure
 from ._glfigure import GLFigure
-from ._mapaxes import MapAxes
+from ._mapaxes import MapAxes2D
 import docstring
 
 ## Global ##
@@ -161,13 +161,13 @@ def step(x, y, *args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3D.plot3)
+@_copy_docstring_and_deprecators(Axes.plot3)
 def plot3(x, y, z, *args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3D):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3d()
 
     r = g_axes.plot3(x, y, z, *args, **kwargs)
@@ -266,13 +266,13 @@ def bar(x, height, width=0.8, bottom=None, align='center', data=None, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3D.bar3)
+@_copy_docstring_and_deprecators(Axes.bar3)
 def bar3(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3D):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3d()
 
     r = g_axes.bar3(*args, **kwargs)
@@ -336,14 +336,14 @@ def stem(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3D.stem)
+@_copy_docstring_and_deprecators(Axes.stem)
 def stem3(x, y, z, s=8, c='b', marker='o', alpha=None, linewidth=None,
           verts=None, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3D):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3d()
 
     r = g_axes.stem(x, y, z, s, c, marker, alpha, linewidth, verts, **kwargs)
@@ -366,13 +366,13 @@ def scatter(*args, **kwargs):
     return g_axes.scatter(*args, **kwargs)
 
 
-@_copy_docstring_and_deprecators(Axes3D.scatter3)
+@_copy_docstring_and_deprecators(Axes.scatter3)
 def scatter3(x, y, z, s=8, c='b', marker='o', **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3D):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3d()
 
     return g_axes.scatter3(x, y, z, s, c, marker, **kwargs)
@@ -450,13 +450,13 @@ def fill(x, y, color=None, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.fill)
+@_copy_docstring_and_deprecators(Axes.fill)
 def fill3(x, y, z, color=None, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3D):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3d()
 
     r = g_axes.fill(x, y, z, color, **kwargs)
@@ -483,13 +483,13 @@ def patch(x, y=None, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.patch)
+@_copy_docstring_and_deprecators(Axes.patch)
 def patch3(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3D):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3d()
 
     r = g_axes.patch(*args, **kwargs)
@@ -613,7 +613,7 @@ def violinplot(dataset, positions=None, widths=0.5, boxwidth=0.01, boxprops=None
     return r
 
 
-@_copy_docstring_and_deprecators(PolarAxes.windrose)
+@_copy_docstring_and_deprecators(PolarAxes2D.windrose)
 def windrose(wd, ws, nwdbins=16, wsbins=None, degree=True, colors=None, cmap='matlab_jet', \
              alpha=0.7, rmax=None, rtickloc=None, rticks=None, rlabelpos=60, xticks=None, **kwargs):
     bottom = kwargs.pop('bottom', None)
@@ -808,9 +808,9 @@ def __get_axes(chart, idx):
     if isinstance(ax, Plot2D):
         ax = Axes(ax)
     elif isinstance(ax, MapPlot):
-        ax = MapAxes(ax)
+        ax = MapAxes2D(ax)
     elif isinstance(ax, PolarAxes):
-        ax = PolarAxes(ax)
+        ax = PolarAxes2D(ax)
     elif isinstance(ax, Plot3D):
         ax = Plot3D(ax)
     return ax
@@ -950,7 +950,7 @@ def axes3dgl(*args, **kwargs):
     """
     global g_axes
 
-    ax = Axes3DGL(*args, **kwargs)
+    ax = Axes(*args, **kwargs)
     g_axes = ax
 
     if g_figure is None:
@@ -969,7 +969,7 @@ def axes3d_map(*args, **kwargs):
     """
     global g_axes
 
-    ax = MapAxes3D(*args, **kwargs)
+    ax = MapAxes(*args, **kwargs)
     g_axes = ax
 
     if g_figure is None:
@@ -988,7 +988,7 @@ def axes3d_earth(*args, **kwargs):
     """
     global g_axes
 
-    ax = EarthAxes3D(*args, **kwargs)
+    ax = EarthAxes(*args, **kwargs)
     g_axes = ax
 
     if g_figure is None:
@@ -1110,7 +1110,7 @@ def savefig(fname, width=None, height=None, dpi=None, sleep=None):
     global g_axes
     global g_figure
 
-    if batchmode and isinstance(g_axes, Axes3DGL):
+    if batchmode and isinstance(g_axes, Axes):
         if width is None:
             width = g_figure.getWidth() if not g_figure is None else 600
         if height is None:
@@ -1476,13 +1476,13 @@ def text(x, y, s, **kwargs):
     return ctext
 
 
-@_copy_docstring_and_deprecators(Axes3D.text)
+@_copy_docstring_and_deprecators(Axes.text)
 def text3(x, y, z, s, zdir=None, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3D):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3d()
 
     r = g_axes.text(x, y, z, s, zdir, **kwargs)
@@ -1672,13 +1672,13 @@ def quiver(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3D.quiver3)
+@_copy_docstring_and_deprecators(Axes.quiver3)
 def quiver3(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3D):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3d()
 
     return g_axes.quiver3(*args, **kwargs)
@@ -1732,13 +1732,13 @@ def scatterm(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.streamplot3)
+@_copy_docstring_and_deprecators(Axes.streamplot3)
 def streamplot3(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     r = g_axes.streamplot3(*args, **kwargs)
@@ -1746,13 +1746,13 @@ def streamplot3(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.streamslice)
+@_copy_docstring_and_deprecators(Axes.streamslice)
 def streamslice(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     r = g_axes.streamslice(*args, **kwargs)
@@ -1778,7 +1778,7 @@ def plotm(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(MapAxes.stationmodel)
+@_copy_docstring_and_deprecators(MapAxes2D.stationmodel)
 def stationmodel(smdata, **kwargs):
     global g_axes
     if g_figure is None:
@@ -1972,7 +1972,7 @@ def clabel(layer, **kwargs):
     draw_if_interactive()
 
 
-@_copy_docstring_and_deprecators(MapAxes.webmap)
+@_copy_docstring_and_deprecators(MapAxes2D.webmap)
 def webmap(provider='OpenStreetMap', zorder=0):
     layer = g_axes.webmap(provider, zorder)
     draw_if_interactive()
@@ -1986,10 +1986,12 @@ def geoshow(*args, **kwargs):
         figure()
 
     if g_axes is None:
-        g_axes = axesm()
+        #g_axes = axesm()
+        g_axes = axes()
     else:
-        if not isinstance(g_axes, (MapAxes, Axes3D)):
-            g_axes = axesm()
+        if not isinstance(g_axes, (MapAxes, Axes)):
+            #g_axes = axesm()
+            g_axes = axes()
 
     r = g_axes.geoshow(*args, **kwargs)
     if r is not None:
@@ -2017,38 +2019,38 @@ def taylor_diagram(stddev, correlation, std_max=1.65, labels=None, ref_std=1., c
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.set_lighting)
+@_copy_docstring_and_deprecators(Axes.set_lighting)
 def lighting(enable=True, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     g_axes.set_lighting(enable, **kwargs)
     draw_if_interactive()
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.material)
+@_copy_docstring_and_deprecators(Axes.material)
 def material(mvalues):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     g_axes.material = mvalues
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.view)
+@_copy_docstring_and_deprecators(Axes.view)
 def view(*args):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     r = g_axes.view(*args)
@@ -2056,13 +2058,13 @@ def view(*args):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3D.mesh)
+@_copy_docstring_and_deprecators(Axes.mesh)
 def mesh(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3D):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3d()
 
     r = g_axes.mesh(*args, **kwargs)
@@ -2070,7 +2072,7 @@ def mesh(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.mesh)
+@_copy_docstring_and_deprecators(Axes.mesh)
 def meshc(*args, **kwargs):
     global g_axes
     if g_axes is None:
@@ -2084,13 +2086,13 @@ def meshc(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3D.surf)
+@_copy_docstring_and_deprecators(Axes.surf)
 def surf(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3D):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3d()
 
     r = g_axes.surf(*args, **kwargs)
@@ -2098,13 +2100,13 @@ def surf(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.surfc)
+@_copy_docstring_and_deprecators(Axes.surfc)
 def surfc(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3D):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3d()
 
     r = g_axes.surfc(*args, **kwargs)
@@ -2112,13 +2114,13 @@ def surfc(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.trisurf)
+@_copy_docstring_and_deprecators(Axes.trisurf)
 def trisurf(T, x, y, z, normal=None, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     r = g_axes.trisurf(T, x, y, z, normal, **kwargs)
@@ -2126,13 +2128,13 @@ def trisurf(T, x, y, z, normal=None, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.model)
+@_copy_docstring_and_deprecators(Axes.model)
 def model(T, x, y, z, normal=None, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     r = g_axes.model(T, x, y, z, normal, **kwargs)
@@ -2140,13 +2142,13 @@ def model(T, x, y, z, normal=None, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.slice)
+@_copy_docstring_and_deprecators(Axes.slice)
 def slice3(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     r = g_axes.slice(*args, **kwargs)
@@ -2154,13 +2156,13 @@ def slice3(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3D.contour3)
+@_copy_docstring_and_deprecators(Axes.contour3)
 def contour3(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     r = g_axes.contour3(*args, **kwargs)
@@ -2168,13 +2170,13 @@ def contour3(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.contourslice)
+@_copy_docstring_and_deprecators(Axes.contourslice)
 def contourslice(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     r = g_axes.contourslice(*args, **kwargs)
@@ -2182,13 +2184,13 @@ def contourslice(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.contourfslice)
+@_copy_docstring_and_deprecators(Axes.contourfslice)
 def contourfslice(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     r = g_axes.contourfslice(*args, **kwargs)
@@ -2196,13 +2198,13 @@ def contourfslice(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.isosurface)
+@_copy_docstring_and_deprecators(Axes.isosurface)
 def isosurface(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     r = g_axes.isosurface(*args, **kwargs)
@@ -2210,13 +2212,13 @@ def isosurface(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.fimplicit3)
+@_copy_docstring_and_deprecators(Axes.fimplicit3)
 def fimplicit3(f, interval=[-5., 5.], mesh_density=35, *args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     r = g_axes.fimplicit3(f, interval, mesh_density, *args, **kwargs)
@@ -2224,13 +2226,13 @@ def fimplicit3(f, interval=[-5., 5.], mesh_density=35, *args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.particles)
+@_copy_docstring_and_deprecators(Axes.particles)
 def particles(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     r = g_axes.particles(*args, **kwargs)
@@ -2238,13 +2240,13 @@ def particles(*args, **kwargs):
     return r
 
 
-@_copy_docstring_and_deprecators(Axes3DGL.volumeplot)
+@_copy_docstring_and_deprecators(Axes.volumeplot)
 def volumeplot(*args, **kwargs):
     global g_axes
     if g_axes is None:
         g_axes = axes3d()
     else:
-        if not isinstance(g_axes, Axes3DGL):
+        if not isinstance(g_axes, Axes):
             g_axes = axes3dgl()
 
     r = g_axes.volumeplot(*args, **kwargs)
@@ -2372,7 +2374,7 @@ def cloudspec(size=12, color='b'):
     return LegendManage.createCloudLegendScheme(size, c)
 
 
-@_copy_docstring_and_deprecators(MapAxes.masklayer)
+@_copy_docstring_and_deprecators(MapAxes2D.masklayer)
 def masklayer(mobj, layers):
     g_axes.masklayer(mobj, layers)
     draw_if_interactive()
